@@ -1,0 +1,164 @@
+@model AdminApplicationDetailViewModel
+@{
+    var a = Model.Application;
+    ViewData["Title"] = $"{a.FirstName} {a.LastName}";
+
+    var badgeClass = a.Status switch
+    {
+        ApplicationStatus.Approved => "admin-badge admin-badge--open",
+        ApplicationStatus.Rejected => "admin-badge admin-badge--closed",
+        ApplicationStatus.Submitted => "admin-badge admin-badge--draft",
+        _ => "admin-badge",
+    };
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div class="admin-toolbar" style="justify-content: space-between; align-items: center;">
+    <span class="@badgeClass" style="font-size:0.75rem;">@a.Status.ToDisplayLabel()</span>
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; Back to Applications</a>
+</div>
+
+<div class="admin-review-grid">
+    <div class="admin-review-main">
+        <div class="admin-card">
+            <h2>Applicant</h2>
+            <dl class="admin-detail-list">
+                <div><dt>Name</dt><dd>@a.FirstName @a.LastName</dd></div>
+                <div><dt>Email</dt><dd>@a.Email</dd></div>
+                <div><dt>Phone</dt><dd>@(a.Phone ?? "—")</dd></div>
+                <div><dt>Location</dt><dd>@(a.City is null ? a.Country : $"{a.City}, {a.Country}")</dd></div>
+                <div><dt>Experience</dt><dd>@Model.ExperienceLabel</dd></div>
+                <div><dt>Submitted</dt><dd>@(a.SubmittedAt?.ToString("dd MMM yyyy, HH:mm") ?? "—")</dd></div>
+            </dl>
+        </div>
+
+        <div class="admin-card">
+            <h2>Professional</h2>
+            <dl class="admin-detail-list">
+                <div><dt>Company</dt><dd>@(a.CompanyName ?? "—")</dd></div>
+                <div><dt>Role</dt><dd>@(a.JobTitle ?? "—")</dd></div>
+                <div><dt>Industry</dt><dd>@(a.Industry ?? "—")</dd></div>
+                <div><dt>Stage</dt><dd>@(a.CompanyStage ?? "—")</dd></div>
+                <div>
+                    <dt>LinkedIn</dt>
+                    <dd>
+                        @if (a.LinkedInUrl is null) { <text>—</text> }
+                        else { <a href="@a.LinkedInUrl" target="_blank" rel="noopener">@a.LinkedInUrl</a> }
+                    </dd>
+                </div>
+                <div>
+                    <dt>Website</dt>
+                    <dd>
+                        @if (a.WebsiteUrl is null) { <text>—</text> }
+                        else { <a href="@a.WebsiteUrl" target="_blank" rel="noopener">@a.WebsiteUrl</a> }
+                    </dd>
+                </div>
+                <div><dt>Years of Experience</dt><dd>@(a.YearsOfExperience?.ToString() ?? "—")</dd></div>
+                <div><dt>Revenue Band</dt><dd>@(a.AnnualRevenueBand ?? "—")</dd></div>
+            </dl>
+        </div>
+
+        <div class="admin-card">
+            <h2>Statements</h2>
+            <p><strong>Why do you want to join?</strong><br />@a.MotivationStatement</p>
+            <p><strong>What are you building?</strong><br />@a.BuildingStatement</p>
+            @if (!string.IsNullOrWhiteSpace(a.ContributionStatement))
+            {
+                <p><strong>What could you bring?</strong><br />@a.ContributionStatement</p>
+            }
+            @if (!string.IsNullOrWhiteSpace(a.HowDidYouHear))
+            {
+                <p><strong>How did they hear about us?</strong> @a.HowDidYouHear</p>
+            }
+        </div>
+
+        <div class="admin-card">
+            <h2>Internal Notes</h2>
+            <p style="font-size:0.75rem; color:#999; margin-top:-8px;">Never shown to the applicant.</p>
+            <form asp-action="UpdateNotes" asp-route-id="@a.Id" method="post">
+                <textarea name="internalNotes" rows="4" style="width:100%; padding:10px 12px; border:1px solid var(--vih-line-on-light); border-radius:4px; font-family:inherit;">@a.InternalNotes</textarea>
+                <div style="margin-top:12px;">
+                    <button type="submit" class="admin-btn">Save Notes</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-card">
+            <h2>Tags</h2>
+            @if (a.Tags.Count > 0)
+            {
+                <div class="admin-inline-list">
+                    @foreach (var tag in a.Tags)
+                    {
+                        <div class="admin-inline-list__row">
+                            <span>@tag.Label</span>
+                            <form asp-action="RemoveTag" asp-route-id="@a.Id" asp-route-tagId="@tag.Id" method="post">
+                                <button type="submit" class="admin-btn admin-btn--danger">Remove</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            }
+            <form asp-action="AddTag" asp-route-id="@a.Id" method="post" class="admin-inline-form">
+                <div class="admin-field">
+                    <label for="tag-label">Add Tag</label>
+                    <input id="tag-label" name="label" placeholder="e.g. Investor, Fintech, VIP" required />
+                </div>
+                <button type="submit" class="admin-btn">Add</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="admin-review-side">
+        <div class="admin-card">
+            <h2>Review</h2>
+
+            @if (Model.CanMarkUnderReview)
+            {
+                <form asp-action="MarkUnderReview" asp-route-id="@a.Id" method="post">
+                    <button type="submit" class="admin-btn" style="width:100%;">Start Review</button>
+                </form>
+            }
+            else if (Model.CanShortlist)
+            {
+                <form asp-action="Shortlist" asp-route-id="@a.Id" method="post">
+                    <button type="submit" class="admin-btn" style="width:100%;">Shortlist</button>
+                </form>
+            }
+            else if (Model.CanDecide)
+            {
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <form asp-action="Approve" asp-route-id="@a.Id" method="post">
+                        <button type="submit" class="admin-btn" style="width:100%; background: var(--vih-gold); color: var(--vih-green-950);">Approve &amp; Send Invitation</button>
+                    </form>
+                    <form asp-action="Waitlist" asp-route-id="@a.Id" method="post">
+                        <button type="submit" class="admin-btn admin-btn--ghost" style="width:100%;">Waitlist</button>
+                    </form>
+                    <form asp-action="Reject" asp-route-id="@a.Id" method="post" style="display:flex; flex-direction:column; gap:8px;">
+                        <textarea name="reason" placeholder="Reason (optional, internal)" rows="2" style="padding:8px 10px; border:1px solid var(--vih-line-on-light); border-radius:4px; font-family:inherit; font-size:0.8125rem;"></textarea>
+                        <button type="submit" class="admin-btn admin-btn--danger" style="width:100%;">Reject</button>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <p style="font-size:0.875rem; color:#666;">
+                    This application is @a.Status.ToDisplayLabel().ToLowerInvariant() — no further review actions apply.
+                    @if (a.DecisionAt is not null)
+                    {
+                        <br />
+                        <span>Decided @a.DecisionAt.Value.ToString("dd MMM yyyy")@(Model.ReviewedByEmail is null ? "" : $" by {Model.ReviewedByEmail}").</span>
+                    }
+                </p>
+                @if (!string.IsNullOrWhiteSpace(a.DecisionReason))
+                {
+                    <p style="font-size:0.8125rem; color:#666;"><strong>Reason:</strong> @a.DecisionReason</p>
+                }
+            }
+        </div>
+    </div>
+</div>

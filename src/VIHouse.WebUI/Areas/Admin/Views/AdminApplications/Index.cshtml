@@ -1,0 +1,61 @@
+@model List<AdminApplicationListItemViewModel>
+@{
+    ViewData["Title"] = "Applications";
+    var selected = ViewData["SelectedStatus"] as ApplicationStatus?;
+
+    string TabClass(ApplicationStatus? s) =>
+        selected == s ? "admin-tabs__link active" : "admin-tabs__link";
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<nav class="admin-tabs">
+    <a class="@TabClass(null)" asp-action="Index">All</a>
+    <a class="@TabClass(ApplicationStatus.Submitted)" asp-action="Index" asp-route-status="Submitted">Submitted</a>
+    <a class="@TabClass(ApplicationStatus.UnderReview)" asp-action="Index" asp-route-status="UnderReview">Under Review</a>
+    <a class="@TabClass(ApplicationStatus.Shortlisted)" asp-action="Index" asp-route-status="Shortlisted">Shortlisted</a>
+    <a class="@TabClass(ApplicationStatus.Approved)" asp-action="Index" asp-route-status="Approved">Approved</a>
+    <a class="@TabClass(ApplicationStatus.Rejected)" asp-action="Index" asp-route-status="Rejected">Rejected</a>
+    <a class="@TabClass(ApplicationStatus.Waitlisted)" asp-action="Index" asp-route-status="Waitlisted">Waitlisted</a>
+</nav>
+
+@if (Model.Count == 0)
+{
+    <p>No applications here yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Applicant</th>
+                <th>Email</th>
+                <th>Experience</th>
+                <th>Status</th>
+                <th>Submitted</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model)
+            {
+                var badgeClass = a.Status switch
+                {
+                    ApplicationStatus.Approved => "admin-badge admin-badge--open",
+                    ApplicationStatus.Rejected => "admin-badge admin-badge--closed",
+                    ApplicationStatus.Submitted => "admin-badge admin-badge--draft",
+                    _ => "admin-badge",
+                };
+                <tr>
+                    <td><a asp-action="Details" asp-route-id="@a.Id">@a.FirstName @a.LastName</a></td>
+                    <td>@a.Email</td>
+                    <td>@a.ExperienceLabel</td>
+                    <td><span class="@badgeClass">@a.Status.ToDisplayLabel()</span></td>
+                    <td>@(a.SubmittedAt?.ToString("dd MMM yyyy") ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

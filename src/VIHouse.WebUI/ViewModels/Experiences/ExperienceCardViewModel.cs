@@ -1,4 +1,5 @@
 using VIHouse.Entities.Experiences;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.ViewModels.Experiences;
 
@@ -18,16 +19,7 @@ public class ExperienceCardViewModel
 
     public int DurationDays => Math.Max(1, (EndAtUtc.Date - StartAtUtc.Date).Days + 1);
 
-    public string StatusLabel => Status switch
-    {
-        ExperienceStatus.ApplicationsOpen => "Applications Open",
-        ExperienceStatus.AlmostFull => "Almost Full",
-        ExperienceStatus.Waitlist => "Waitlist",
-        ExperienceStatus.ApplicationsClosed => "Applications Closed",
-        ExperienceStatus.Completed => "Completed",
-        ExperienceStatus.ComingSoon => "Coming Soon",
-        _ => "Draft",
-    };
+    public string StatusLabel => Status.ToDisplayLabel();
 
     public static ExperienceCardViewModel FromEntity(Experience e) => new()
     {

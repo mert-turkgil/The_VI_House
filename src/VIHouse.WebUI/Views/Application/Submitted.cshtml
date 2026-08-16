@@ -1,0 +1,20 @@
+@using VIHouse.Entities.Experiences
+@model Experience
+@{
+    ViewData["Title"] = "Application Received";
+}
+
+<div class="apply-confirmation">
+    <div class="container apply-confirmation__inner">
+        <span class="apply-confirmation__mark">&#10003;</span>
+        <h1>Application Received</h1>
+        <p>
+            Thank you for applying to <strong>The VI House — @Model.City</strong>.
+            Every application is reviewed by hand — you'll hear back by email within a few days.
+        </p>
+        <div class="apply-confirmation__actions">
+            <a class="btn btn--primary" href="/experiences">Explore More Experiences</a>
+            <a class="btn btn--ghost-dark" href="/">Back to Home</a>
+        </div>
+    </div>
+</div>

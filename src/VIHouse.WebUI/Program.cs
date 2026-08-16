@@ -63,6 +63,7 @@ builder.Services.AddScoped<IWebhookEventRepository, EfWebhookEventRepository>();
 
 // --- Business services -------------------------------------------------------------------------
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
+builder.Services.AddScoped<IApplicationService, ApplicationService>();
 
 // --- MVC + Razor Pages (Identity UI is Razor-Pages-based) -----------------------------------------
 builder.Services.AddControllersWithViews(options =>

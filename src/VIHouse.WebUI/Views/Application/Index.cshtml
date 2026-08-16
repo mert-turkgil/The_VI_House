@@ -1,0 +1,147 @@
+@model ApplyFormViewModel
+@{
+    ViewData["Title"] = "Request Access";
+}
+
+<div class="apply-header">
+    <div class="container">
+        <span class="apply-header__eyebrow">Request Access</span>
+        <h1>The VI House — @Model.ExperienceCity</h1>
+        <p>@Model.ExperienceStartAtUtc.ToString("d MMM")–@Model.ExperienceEndAtUtc.ToString("d MMM yyyy") &middot; @Model.ExperienceCity, @Model.ExperienceCountry</p>
+    </div>
+</div>
+
+<div class="container apply-body">
+    <form asp-action="Index" method="post" class="apply-form" novalidate>
+        <div asp-validation-summary="ModelOnly" class="apply-form__summary"></div>
+
+        <input type="hidden" asp-for="ExperienceId" />
+        <input type="hidden" asp-for="ExperienceSlug" />
+        <input type="hidden" asp-for="ExperienceTitle" />
+        <input type="hidden" asp-for="ExperienceCity" />
+        <input type="hidden" asp-for="ExperienceCountry" />
+        <input type="hidden" asp-for="ExperienceStartAtUtc" />
+        <input type="hidden" asp-for="ExperienceEndAtUtc" />
+
+        <fieldset class="apply-form__section">
+            <legend>Personal</legend>
+            <div class="apply-form__grid apply-form__grid--2">
+                <div class="apply-field">
+                    <label asp-for="FirstName">First Name</label>
+                    <input asp-for="FirstName" />
+                    <span asp-validation-for="FirstName" class="apply-field__error"></span>
+                </div>
+                <div class="apply-field">
+                    <label asp-for="LastName">Last Name</label>
+                    <input asp-for="LastName" />
+                    <span asp-validation-for="LastName" class="apply-field__error"></span>
+                </div>
+                <div class="apply-field">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" type="email" />
+                    <span asp-validation-for="Email" class="apply-field__error"></span>
+                </div>
+                <div class="apply-field">
+                    <label asp-for="Phone">Phone</label>
+                    <input asp-for="Phone" />
+                    <span asp-validation-for="Phone" class="apply-field__error"></span>
+                </div>
+                <div class="apply-field">
+                    <label asp-for="Country">Country Code</label>
+                    <input asp-for="Country" placeholder="e.g. GB" maxlength="2" />
+                    <span asp-validation-for="Country" class="apply-field__error"></span>
+                </div>
+                <div class="apply-field">
+                    <label asp-for="City">City</label>
+                    <input asp-for="City" />
+                    <span asp-validation-for="City" class="apply-field__error"></span>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="apply-form__section">
+            <legend>Professional</legend>
+            <div class="apply-form__grid apply-form__grid--2">
+                <div class="apply-field">
+                    <label asp-for="CompanyName">Company</label>
+                    <input asp-for="CompanyName" />
+                </div>
+                <div class="apply-field">
+                    <label asp-for="JobTitle">Role</label>
+                    <input asp-for="JobTitle" />
+                </div>
+                <div class="apply-field">
+                    <label asp-for="Industry">Industry</label>
+                    <input asp-for="Industry" />
+                </div>
+                <div class="apply-field">
+                    <label asp-for="CompanyStage">Company Stage</label>
+                    <input asp-for="CompanyStage" placeholder="e.g. Seed, Series A, Bootstrapped" />
+                </div>
+                <div class="apply-field">
+                    <label asp-for="LinkedInUrl">LinkedIn URL</label>
+                    <input asp-for="LinkedInUrl" />
+                    <span asp-validation-for="LinkedInUrl" class="apply-field__error"></span>
+                </div>
+                <div class="apply-field">
+                    <label asp-for="WebsiteUrl">Company Website</label>
+                    <input asp-for="WebsiteUrl" />
+                    <span asp-validation-for="WebsiteUrl" class="apply-field__error"></span>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="apply-form__section">
+            <legend>Tell Us About You</legend>
+            <div class="apply-form__grid apply-form__grid--2">
+                <div class="apply-field">
+                    <label asp-for="YearsOfExperience">Years of Experience</label>
+                    <input asp-for="YearsOfExperience" type="number" min="0" max="60" />
+                </div>
+                <div class="apply-field">
+                    <label asp-for="AnnualRevenueBand">Annual Revenue Band</label>
+                    <input asp-for="AnnualRevenueBand" placeholder="e.g. €1M–€5M" />
+                </div>
+            </div>
+            <div class="apply-field">
+                <label asp-for="MotivationStatement">Why do you want to join The VI House?</label>
+                <textarea asp-for="MotivationStatement" rows="4"></textarea>
+                <span asp-validation-for="MotivationStatement" class="apply-field__error"></span>
+            </div>
+            <div class="apply-field">
+                <label asp-for="BuildingStatement">What are you building?</label>
+                <textarea asp-for="BuildingStatement" rows="4"></textarea>
+                <span asp-validation-for="BuildingStatement" class="apply-field__error"></span>
+            </div>
+            <div class="apply-field">
+                <label asp-for="ContributionStatement">What could you bring to the community? (optional)</label>
+                <textarea asp-for="ContributionStatement" rows="3"></textarea>
+            </div>
+            <div class="apply-form__grid apply-form__grid--2">
+                <div class="apply-field">
+                    <label asp-for="HowDidYouHear">How did you hear about us?</label>
+                    <input asp-for="HowDidYouHear" />
+                </div>
+                <div class="apply-field">
+                    <label asp-for="ReferralCode">Referral Code (optional)</label>
+                    <input asp-for="ReferralCode" />
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="apply-field apply-field--checkbox">
+            <label>
+                <input asp-for="AgreeToTerms" type="checkbox" />
+                <span>I agree to The VI House <a href="/legal/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="/legal/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+            </label>
+            <span asp-validation-for="AgreeToTerms" class="apply-field__error"></span>
+        </div>
+
+        <button type="submit" class="btn btn--primary apply-form__submit">Submit Application</button>
+        <p class="apply-form__note">Every application is reviewed by hand. You'll hear back within a few days.</p>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

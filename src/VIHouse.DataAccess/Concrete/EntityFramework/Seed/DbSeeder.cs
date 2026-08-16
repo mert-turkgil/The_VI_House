@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VIHouse.DataAccess.Identity;
+using VIHouse.Entities.Applications;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
 
@@ -27,7 +28,10 @@ public static class DbSeeder
         await SeedRolesAsync(roleManager);
         await SeedAdminUserAsync(userManager, seedAdminEmail, seedAdminPassword);
         await SeedExperiencesAsync(db);
+        await db.SaveChangesAsync(); // commit Experiences first — SeedApplicationsAsync looks them up by slug
+
         await SeedHomepageContentAsync(db);
+        await SeedApplicationsAsync(db);
 
         await db.SaveChangesAsync();
     }
@@ -225,6 +229,81 @@ public static class DbSeeder
         });
 
         db.ContentPages.Add(home);
+        await Task.CompletedTask;
+    }
+
+    /// <summary>Sample applications in a few different funnel states, so the admin review screen isn't empty on first run.</summary>
+    private static async Task SeedApplicationsAsync(VIHouseDbContext db)
+    {
+        if (await db.Applications.AnyAsync())
+            return;
+
+        var izmir = await db.Experiences.FirstOrDefaultAsync(e => e.Slug == "izmir-founder-experience-2026");
+        var london = await db.Experiences.FirstOrDefaultAsync(e => e.Slug == "london-growth-mastermind-2026");
+        if (izmir is null || london is null)
+            return;
+
+        var now = DateTimeOffset.UtcNow;
+
+        db.Applications.Add(new Application
+        {
+            ExperienceId = izmir.Id,
+            FirstName = "Elif",
+            LastName = "Aydin",
+            Email = "elif.aydin@example.com",
+            Country = "TR",
+            City = "Istanbul",
+            CompanyName = "Aydin Ventures",
+            JobTitle = "Founder & CEO",
+            Industry = "Fintech",
+            CompanyStage = "Series A",
+            YearsOfExperience = 8,
+            MotivationStatement = "Looking to connect with other founders scaling past their first big raise.",
+            BuildingStatement = "A payments infrastructure platform for SME lending across the Middle East.",
+            Status = ApplicationStatus.Submitted,
+            SubmittedAt = now.AddDays(-1),
+        });
+
+        db.Applications.Add(new Application
+        {
+            ExperienceId = izmir.Id,
+            FirstName = "Marcus",
+            LastName = "Webb",
+            Email = "marcus.webb@example.com",
+            Country = "GB",
+            City = "London",
+            CompanyName = "Webb & Co",
+            JobTitle = "Managing Partner",
+            Industry = "Venture Capital",
+            CompanyStage = "N/A",
+            YearsOfExperience = 15,
+            MotivationStatement = "Want direct access to the founders VI House curates before they raise.",
+            BuildingStatement = "An early-stage fund focused on operator-led fintech and infrastructure.",
+            Status = ApplicationStatus.UnderReview,
+            SubmittedAt = now.AddDays(-3),
+            ReviewedAt = now.AddDays(-2),
+        });
+
+        db.Applications.Add(new Application
+        {
+            ExperienceId = london.Id,
+            FirstName = "Priya",
+            LastName = "Shah",
+            Email = "priya.shah@example.com",
+            Country = "US",
+            City = "New York",
+            CompanyName = "Northline",
+            JobTitle = "Co-Founder",
+            Industry = "E-commerce",
+            CompanyStage = "Bootstrapped",
+            YearsOfExperience = 6,
+            MotivationStatement = "Ready to plug into a room of operators who've actually scaled past 7 figures.",
+            BuildingStatement = "A DTC logistics platform doing low-eight-figures ARR.",
+            Status = ApplicationStatus.Shortlisted,
+            SubmittedAt = now.AddDays(-5),
+            ReviewedAt = now.AddDays(-4),
+        });
+
         await Task.CompletedTask;
     }
 }

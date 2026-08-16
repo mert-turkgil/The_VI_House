@@ -29,7 +29,7 @@
 
         <nav class="admin-sidebar__nav" aria-label="Admin">
             <a class="@NavClass("AdminDashboard")" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">Dashboard</a>
-            <a class="admin-sidebar__link" href="/admin/applications">Applications</a>
+            <a class="@NavClass("AdminApplications")" asp-area="Admin" asp-controller="AdminApplications" asp-action="Index">Applications</a>
             <a class="@NavClass("AdminExperiences")" asp-area="Admin" asp-controller="AdminExperiences" asp-action="Index">Experiences</a>
             <a class="admin-sidebar__link" href="/admin/bookings">Bookings</a>
             <a class="admin-sidebar__link" href="/admin/payments">Payments</a>

@@ -43,7 +43,7 @@ else
                     <td><a asp-action="Edit" asp-route-id="@e.Id">@e.Title</a></td>
                     <td>@e.City, @e.Country</td>
                     <td>@e.StartAtUtc.ToString("dd MMM yyyy")</td>
-                    <td><span class="@badgeClass">@e.Status</span></td>
+                    <td><span class="@badgeClass">@e.Status.ToDisplayLabel()</span></td>
                     <td>@e.TicketTypeCount</td>
                     <td>
                         <form asp-action="Delete" asp-route-id="@e.Id" method="post" onsubmit="return confirm('Delete this experience?');" style="display:inline;">
