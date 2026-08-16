@@ -1,0 +1,20 @@
+@model HeroContent
+
+<section class="home-hero">
+    <div class="container home-hero__inner">
+        <div class="home-hero__content">
+            <h1>@Model.Heading</h1>
+            @if (!string.IsNullOrWhiteSpace(Model.Subheading))
+            {
+                <p>@Model.Subheading</p>
+            }
+            <div class="home-hero__actions">
+                <a class="btn btn--primary" href="@Model.CtaUrl">@Model.CtaLabel</a>
+                <a class="btn btn--ghost-dark" href="/experiences">Explore Experiences</a>
+            </div>
+        </div>
+        <div class="home-hero__crest" aria-hidden="true">
+            <partial name="_Crest" />
+        </div>
+    </div>
+</section>

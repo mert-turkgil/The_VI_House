@@ -1,0 +1,16 @@
+@model List<StatItem>
+
+@if (Model.Count > 0)
+{
+    <section class="home-stats">
+        <div class="container home-stats__row">
+            @foreach (var stat in Model)
+            {
+                <div class="home-stats__item">
+                    <span class="home-stats__value">@stat.Value</span>
+                    <span class="home-stats__label">@stat.Label</span>
+                </div>
+            }
+        </div>
+    </section>
+}

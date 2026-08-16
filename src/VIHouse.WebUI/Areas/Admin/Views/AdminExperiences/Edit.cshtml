@@ -1,0 +1,104 @@
+@model AdminExperienceEditViewModel
+@{
+    ViewData["Title"] = $"Edit — {Model.Form.Title}";
+    var experienceId = Model.Form.Id!.Value;
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div class="admin-card" style="margin-bottom:24px;">
+    <h2>Details</h2>
+    <form asp-action="Edit" asp-route-id="@experienceId" method="post" class="admin-form">
+        <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+        <partial name="_FormFields" model="Model.Form" />
+        <div>
+            <button type="submit" class="admin-btn">Save Changes</button>
+            <a class="admin-btn admin-btn--ghost" asp-action="Index">Back to List</a>
+        </div>
+    </form>
+</div>
+
+<div class="admin-card" style="margin-bottom:24px;">
+    <h2>Ticket Types</h2>
+    <div class="admin-inline-list">
+        @if (Model.TicketTypes.Count == 0)
+        {
+            <p>No ticket types yet — add one below.</p>
+        }
+        @foreach (var t in Model.TicketTypes)
+        {
+            <div class="admin-inline-list__row">
+                <span>
+                    <strong>@t.Title</strong> — @((t.PriceMinor / 100m).ToString("0.00")) @t.Currency ·
+                    @t.Inventory remaining
+                </span>
+                <form asp-action="RemoveTicketType" method="post" onsubmit="return confirm('Remove this ticket type?');">
+                    <input type="hidden" name="experienceId" value="@experienceId" />
+                    <input type="hidden" name="ticketTypeId" value="@t.Id" />
+                    <button type="submit" class="admin-btn admin-btn--danger">Remove</button>
+                </form>
+            </div>
+        }
+    </div>
+    <form asp-action="AddTicketType" method="post" class="admin-inline-form">
+        <input type="hidden" name="ExperienceId" value="@experienceId" />
+        <div class="admin-field"><label>Title</label><input name="Title" placeholder="Standard Experience" required /></div>
+        <div class="admin-field"><label>Price (minor units)</label><input name="PriceMinor" type="number" min="0" required /></div>
+        <div class="admin-field"><label>Currency</label><input name="Currency" value="GBP" maxlength="3" required /></div>
+        <div class="admin-field"><label>Inventory</label><input name="Inventory" type="number" min="0" required /></div>
+        <button type="submit" class="admin-btn">Add</button>
+    </form>
+</div>
+
+<div class="admin-card" style="margin-bottom:24px;">
+    <h2>Included / Not Included</h2>
+    <div class="admin-inline-list">
+        @foreach (var i in Model.Inclusions)
+        {
+            <div class="admin-inline-list__row">
+                <span>@(i.IsIncluded ? "✓" : "✗") @i.Text</span>
+                <form asp-action="RemoveInclusion" method="post">
+                    <input type="hidden" name="experienceId" value="@experienceId" />
+                    <input type="hidden" name="inclusionId" value="@i.Id" />
+                    <button type="submit" class="admin-btn admin-btn--danger">Remove</button>
+                </form>
+            </div>
+        }
+    </div>
+    <form asp-action="AddInclusion" method="post" class="admin-inline-form">
+        <input type="hidden" name="ExperienceId" value="@experienceId" />
+        <div class="admin-field" style="flex:3;"><label>Text</label><input name="Text" required /></div>
+        <div class="admin-field admin-field--checkbox"><input type="checkbox" name="IsIncluded" value="true" checked /><label>Included</label></div>
+        <button type="submit" class="admin-btn">Add</button>
+    </form>
+</div>
+
+<div class="admin-card">
+    <h2>FAQ</h2>
+    <div class="admin-inline-list">
+        @foreach (var f in Model.Faqs)
+        {
+            <div class="admin-inline-list__row">
+                <span><strong>@f.Question</strong> — @f.Answer</span>
+                <form asp-action="RemoveFaq" method="post">
+                    <input type="hidden" name="experienceId" value="@experienceId" />
+                    <input type="hidden" name="faqId" value="@f.Id" />
+                    <button type="submit" class="admin-btn admin-btn--danger">Remove</button>
+                </form>
+            </div>
+        }
+    </div>
+    <form asp-action="AddFaq" method="post" class="admin-inline-form">
+        <input type="hidden" name="ExperienceId" value="@experienceId" />
+        <div class="admin-field" style="flex:2;"><label>Question</label><input name="Question" required /></div>
+        <div class="admin-field" style="flex:3;"><label>Answer</label><input name="Answer" required /></div>
+        <button type="submit" class="admin-btn">Add</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

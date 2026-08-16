@@ -1,0 +1,178 @@
+// Baseline styling for the scaffolded ASP.NET Core Identity Razor Pages (Areas/Identity/Pages),
+// which emit Bootstrap-shaped class names (form-floating, btn-primary, row/col-md-4, text-danger)
+// regardless of whether Bootstrap itself is loaded. Rather than hand-restyle all ~40 scaffolded
+// pages, this gives every one of them a consistent, on-brand baseline; Login and the Manage shell
+// get a bespoke pass on top since they're the pages members actually see.
+.auth-page {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 72px 24px 96px;
+
+  h1,
+  h2 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.75rem;
+    margin: 0 0 24px;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+  }
+
+  .col-md-4,
+  .col-md-6,
+  .col-md-8 {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-floating {
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: 4px;
+    font-size: 0.9375rem;
+    font-family: var(--vih-font-sans);
+    background: var(--vih-white);
+    color: var(--vih-ink);
+
+    &:focus {
+      outline: none;
+      border-color: var(--vih-gold);
+    }
+  }
+
+  .form-floating > label {
+    font-size: 0.8125rem;
+    color: #666;
+    margin-bottom: 4px;
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  .btn,
+  button[type='submit'] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 24px;
+    border-radius: var(--vih-radius-pill);
+    background: var(--vih-green-900);
+    color: var(--vih-cream);
+    border: 1px solid transparent;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s var(--vih-ease);
+
+    &:hover {
+      background: var(--vih-green-800);
+    }
+  }
+
+  .btn-primary {
+    background: var(--vih-gold);
+    color: var(--vih-green-950);
+
+    &:hover {
+      background: var(--vih-gold-light);
+    }
+  }
+
+  a {
+    color: var(--vih-green-900);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .text-danger,
+  .validation-summary-errors {
+    color: #9a3324;
+    font-size: 0.8125rem;
+  }
+
+  ul.validation-summary-errors {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 8px;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--vih-line-on-light);
+    margin: 24px 0;
+  }
+
+  section {
+    margin-top: 8px;
+    font-size: 0.875rem;
+    color: #555;
+  }
+}
+
+// --- Member account "Manage" shell (2FA, password, profile) --------------------------------------
+.account-manage {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 56px 24px 96px;
+  display: grid;
+  gap: 40px;
+
+  @media (min-width: 720px) {
+    grid-template-columns: 220px 1fr;
+  }
+}
+
+.account-manage__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  a {
+    padding: 10px 4px;
+    font-size: 0.875rem;
+    color: #555;
+    border-left: 2px solid transparent;
+
+    &.active {
+      color: var(--vih-ink);
+      border-left-color: var(--vih-gold);
+      font-weight: 600;
+    }
+  }
+}
+
+.account-manage__content h1,
+.account-manage__content h2,
+.account-manage__content h3,
+.account-manage__content h4 {
+  font-family: var(--vih-font-serif);
+}

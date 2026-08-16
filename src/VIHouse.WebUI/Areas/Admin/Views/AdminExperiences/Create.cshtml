@@ -1,0 +1,17 @@
+@model AdminExperienceFormViewModel
+@{
+    ViewData["Title"] = "New Experience";
+}
+
+<form asp-action="Create" method="post" class="admin-form">
+    <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+    <partial name="_FormFields" model="Model" />
+    <div>
+        <button type="submit" class="admin-btn">Create Experience</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

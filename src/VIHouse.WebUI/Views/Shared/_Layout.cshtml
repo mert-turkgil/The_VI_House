@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - The VI House</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/dist/main.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <partial name="_Nav" />
+
+    <main id="main-content" role="main">
+        @RenderBody()
+    </main>
+
+    <partial name="_Footer" />
+
+    <script type="module" src="~/dist/main.js" asp-append-version="true"></script>
+    @* jQuery is kept globally only for ASP.NET Core's unobtrusive client-side validation
+       (per-page validation plugin scripts load via the page's own "Scripts" section, e.g.
+       _ValidationScriptsPartial) — not pulled in as a general-purpose dependency. *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,48 @@
+@{
+    // Hard-coded hrefs (not asp-controller/asp-action) for pages whose controllers don't exist
+    // yet (Experiences/Membership/About/Apply/Login land in later milestones) — avoids the
+    // AnchorTagHelper failing to resolve a route that isn't registered yet. Swap these to proper
+    // tag helpers as each controller is built.
+}
+<header class="site-header">
+    <div class="container site-header__inner">
+        <a class="site-brand" asp-controller="Home" asp-action="Index" aria-label="The VI House — Home">
+            <span class="site-brand__crest">
+                <partial name="_Crest" />
+            </span>
+            <span class="site-brand__wordmark">The VI House</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+            <ul class="site-nav__list">
+                <li><a class="site-nav__link" asp-controller="Home" asp-action="Index" aria-current="page">Home</a></li>
+                <li><a class="site-nav__link" href="/experiences">Experiences</a></li>
+                <li><a class="site-nav__link" href="/membership">Membership</a></li>
+                <li><a class="site-nav__link" href="/about">About</a></li>
+            </ul>
+        </nav>
+
+        <div class="site-header__actions">
+            <a class="site-header__login" href="/Identity/Account/Login">Log In</a>
+            <a class="btn btn--primary site-header__cta" href="/apply">Apply to Join</a>
+            <button type="button" class="site-header__burger" data-nav-burger aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="site-mobile-nav" id="mobile-nav" data-nav-panel data-open="false">
+    <nav aria-label="Mobile">
+        <ul class="site-mobile-nav__list">
+            <li><a class="site-mobile-nav__link" asp-controller="Home" asp-action="Index">Home</a></li>
+            <li><a class="site-mobile-nav__link" href="/experiences">Experiences</a></li>
+            <li><a class="site-mobile-nav__link" href="/membership">Membership</a></li>
+            <li><a class="site-mobile-nav__link" href="/about">About</a></li>
+        </ul>
+    </nav>
+    <div class="site-mobile-nav__actions">
+        <a class="btn btn--primary" href="/apply">Apply to Join</a>
+        <a class="btn btn--ghost-dark" href="/Identity/Account/Login">Log In</a>
+    </div>
+</div>

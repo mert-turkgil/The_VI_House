@@ -1,0 +1,30 @@
+// The VI House brand tokens (brief §8). British Racing Green + cream + muted metallics.
+// Deliberately avoids startup-blue, neon, gradients and cheap-gold effects.
+:root {
+  --vih-green-950: #001a02;
+  --vih-green-900: #00230a; // primary brand ground
+  --vih-green-800: #0e3018;
+  --vih-green-700: #1c4229;
+
+  --vih-cream: #f4f0e6;
+  --vih-cream-dim: #e9e3d3;
+  --vih-white: #ffffff;
+
+  --vih-gold: #b8955a;
+  --vih-gold-light: #d7bd8a;
+
+  --vih-silver: #c7c9c2;
+  --vih-ink: #12160f;
+
+  --vih-line-on-dark: rgba(244, 240, 230, 0.16);
+  --vih-line-on-light: rgba(18, 22, 15, 0.12);
+
+  --vih-font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --vih-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --vih-header-height: 76px;
+  --vih-container-max: 1280px;
+  --vih-radius-pill: 999px;
+
+  --vih-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}

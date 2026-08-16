@@ -1,0 +1,36 @@
+@model EcosystemContent
+
+@if (!string.IsNullOrWhiteSpace(Model.Heading) || Model.Pillars.Count > 0)
+{
+    <section class="home-ecosystem">
+        <div class="container home-ecosystem__inner">
+            <div class="home-ecosystem__intro">
+                @if (!string.IsNullOrWhiteSpace(Model.Heading))
+                {
+                    <h2>@Model.Heading</h2>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Body))
+                {
+                    <p>@Model.Body</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.CtaLabel) && !string.IsNullOrWhiteSpace(Model.CtaUrl))
+                {
+                    <a class="btn btn--ghost-dark" href="@Model.CtaUrl">@Model.CtaLabel</a>
+                }
+            </div>
+
+            @if (Model.Pillars.Count > 0)
+            {
+                <div class="home-ecosystem__grid">
+                    @foreach (var pillar in Model.Pillars)
+                    {
+                        <div class="home-ecosystem__card">
+                            <h3>@pillar.Title</h3>
+                            <p>@pillar.Description</p>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+}

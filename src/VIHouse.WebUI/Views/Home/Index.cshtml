@@ -1,0 +1,13 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<partial name="_Hero" model="Model.Hero" />
+<partial name="_FilterBar" />
+<partial name="_FeatureStrip" model="Model" />
+<partial name="_Ecosystem" model="Model.Ecosystem" />
+<partial name="_Stats" model="Model.Stats" />
+<partial name="_Upcoming" model="Model.Upcoming" />
+<partial name="_Signature" model="Model.Signature" />
+<partial name="_Trust" model="Model.Trust" />

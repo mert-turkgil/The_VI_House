@@ -1,0 +1,23 @@
+@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout != null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        Layout = "/Views/Shared/_Layout.cshtml";
+    }
+}
+
+<div class="account-manage">
+    <nav class="account-manage__nav" aria-label="Account settings">
+        <partial name="_ManageNav" />
+    </nav>
+    <div class="account-manage__content">
+        @RenderBody()
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

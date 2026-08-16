@@ -1,0 +1,141 @@
+.site-footer {
+  background: var(--vih-green-950);
+  color: var(--vih-cream-dim);
+  padding: 64px 0 0;
+}
+
+.site-footer__grid {
+  display: grid;
+  gap: 40px;
+  grid-template-columns: 1fr;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--vih-line-on-dark);
+
+  @media (min-width: 720px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1080px) {
+    grid-template-columns: 1.4fr repeat(3, 1fr) 1.4fr;
+  }
+}
+
+.site-footer__brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  svg {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    color: var(--vih-cream);
+  }
+
+  p {
+    margin: 8px 0 0;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--vih-silver);
+    max-width: 32ch;
+  }
+}
+
+.site-footer__wordmark {
+  font-family: var(--vih-font-serif);
+  font-size: 0.9375rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vih-cream);
+}
+
+.site-footer__col h4 {
+  margin: 0 0 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-cream);
+}
+
+.site-footer__col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.site-footer__col a {
+  font-size: 0.875rem;
+  color: var(--vih-cream-dim);
+  transition: color 0.2s var(--vih-ease);
+
+  &:hover {
+    color: var(--vih-cream);
+  }
+}
+
+.site-footer__newsletter h4 {
+  margin: 0 0 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-cream);
+}
+
+.site-footer__newsletter-form {
+  display: flex;
+  gap: 8px;
+}
+
+.site-footer__newsletter-form input[type='email'] {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--vih-line-on-dark);
+  background: transparent;
+  color: var(--vih-cream);
+  font-size: 0.875rem;
+
+  &::placeholder {
+    color: var(--vih-silver);
+  }
+
+  &:focus {
+    outline: 1px solid var(--vih-gold);
+  }
+}
+
+.site-footer__newsletter-note {
+  margin: 10px 0 0;
+  font-size: 0.75rem;
+  color: var(--vih-silver);
+}
+
+.site-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 24px 0;
+  font-size: 0.75rem;
+  color: var(--vih-silver);
+}
+
+.site-footer__legal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  a:hover {
+    color: var(--vih-cream);
+  }
+}

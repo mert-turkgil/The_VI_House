@@ -1,0 +1,145 @@
+@model ExperienceDetailViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<section class="experience-hero" style="@(string.IsNullOrEmpty(Model.CoverImageUrl) ? "" : $"background-image:url('{Model.CoverImageUrl}')")">
+    <div class="container experience-hero__inner">
+        <h1>@Model.Title</h1>
+        <div class="experience-hero__meta">
+            <span>@Model.City, @Model.Country</span>
+            <span>@Model.StartAtUtc.ToString("d MMM")–@Model.EndAtUtc.ToString("d MMM yyyy")</span>
+            <span>@Model.DurationDays Days</span>
+        </div>
+        @if (Model.CanApply)
+        {
+            <a class="btn btn--primary" href="/apply?experience=@Model.Slug">Request Access</a>
+        }
+        else
+        {
+            <span class="btn btn--ghost-dark" aria-disabled="true">@Model.ClosedStateLabel</span>
+        }
+    </div>
+</section>
+
+<div class="container experience-body">
+    <div>
+        @if (!string.IsNullOrWhiteSpace(Model.ShortSummary))
+        {
+            <section class="experience-section">
+                <h2>The Experience</h2>
+                <p>@Model.ShortSummary</p>
+                <p>@Model.Description</p>
+            </section>
+        }
+        else
+        {
+            <section class="experience-section">
+                <h2>The Experience</h2>
+                <p>@Model.Description</p>
+            </section>
+        }
+
+        <section class="experience-section">
+            <h2>Who Is In The Room?</h2>
+            <div class="experience-room-tags">
+                <span>Founders</span>
+                <span>Operators</span>
+                <span>Investors</span>
+                <span>Creators</span>
+                <span>Builders</span>
+            </div>
+        </section>
+
+        @if (Model.ProgramDays.Count > 0)
+        {
+            <section class="experience-section">
+                <h2>What Happens</h2>
+                @foreach (var day in Model.ProgramDays)
+                {
+                    <div class="experience-program-day">
+                        <h3>@(day.DateLabel ?? $"Day {day.DayNumber}") — @day.Title</h3>
+                        @foreach (var session in day.Sessions.OrderBy(s => s.SortOrder))
+                        {
+                            <div class="experience-session">
+                                <time>@session.StartTime.ToString(@"hh\:mm")</time>
+                                <span>@session.Title</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </section>
+        }
+
+        @if (Model.Included.Count > 0 || Model.NotIncluded.Count > 0)
+        {
+            <section class="experience-section">
+                <h2>What's Included</h2>
+                <div class="experience-inclusions">
+                    <div>
+                        <h4>Included</h4>
+                        <ul>
+                            @foreach (var i in Model.Included)
+                            {
+                                <li>✓ @i.Text</li>
+                            }
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Not Included</h4>
+                        <ul>
+                            @foreach (var i in Model.NotIncluded)
+                            {
+                                <li>✗ @i.Text</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        }
+
+        @if (Model.Faqs.Count > 0)
+        {
+            <section class="experience-section">
+                <h2>FAQ</h2>
+                @foreach (var faq in Model.Faqs)
+                {
+                    <details class="experience-faq-item">
+                        <summary>@faq.Question</summary>
+                        <p>@faq.Answer</p>
+                    </details>
+                }
+            </section>
+        }
+    </div>
+
+    <aside class="experience-ticket-panel">
+        <h2 style="font-family:var(--vih-font-serif); font-size:1.125rem; margin-top:0;">Experience Options</h2>
+        @if (Model.TicketTypes.Count == 0)
+        {
+            <p>Ticket details coming soon.</p>
+        }
+        @foreach (var ticket in Model.TicketTypes)
+        {
+            <div class="experience-ticket">
+                <div class="experience-ticket__title">@ticket.Title</div>
+                <div class="experience-ticket__price">@MoneyFormatter.Format(ticket.PriceMinor, ticket.Currency)</div>
+                @if (!string.IsNullOrWhiteSpace(ticket.PerksText))
+                {
+                    <p style="font-size:0.8125rem; color:#666; margin: 6px 0 0;">@ticket.PerksText</p>
+                }
+            </div>
+        }
+        @if (Model.CanApply)
+        {
+            <a class="btn btn--primary" style="width:100%; margin-top:16px;" href="/apply?experience=@Model.Slug">Request Access</a>
+        }
+    </aside>
+</div>
+
+@if (Model.CanApply)
+{
+    <div class="experience-mobile-cta">
+        <a class="btn btn--primary" href="/apply?experience=@Model.Slug">Request Access</a>
+    </div>
+}

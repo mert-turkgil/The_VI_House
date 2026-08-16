@@ -1,0 +1,211 @@
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--vih-green-900);
+  border-bottom: 1px solid var(--vih-line-on-dark);
+}
+
+.site-header__inner {
+  height: var(--vih-header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+// --- Brand / crest ------------------------------------------------------------------------------
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.site-brand__crest {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  color: var(--vih-cream);
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+.site-brand__wordmark {
+  font-family: var(--vih-font-serif);
+  font-size: 1rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vih-cream);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+// --- Desktop nav ---------------------------------------------------------------------------------
+.site-nav {
+  display: none;
+}
+
+.site-nav__list {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav__link {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vih-cream-dim);
+  padding: 8px 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s var(--vih-ease), border-color 0.2s var(--vih-ease);
+
+  &:hover,
+  &[aria-current='page'] {
+    color: var(--vih-cream);
+    border-bottom-color: var(--vih-gold);
+  }
+}
+
+// --- Actions (Log In / Apply / burger) -----------------------------------------------------------
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.site-header__login {
+  display: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vih-cream-dim);
+  transition: color 0.2s var(--vih-ease);
+
+  &:hover {
+    color: var(--vih-cream);
+  }
+}
+
+.site-header__cta {
+  display: none;
+}
+
+.site-header__burger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--vih-line-on-dark);
+  border-radius: 999px;
+  cursor: pointer;
+
+  span {
+    display: block;
+    width: 16px;
+    height: 1px;
+    background: var(--vih-cream);
+    transition: transform 0.25s var(--vih-ease), opacity 0.2s var(--vih-ease);
+  }
+
+  &[aria-expanded='true'] {
+    span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+    }
+    span:nth-child(2) {
+      opacity: 0;
+    }
+    span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+  }
+}
+
+// --- Mobile full-screen panel ---------------------------------------------------------------------
+.site-mobile-nav {
+  position: fixed;
+  inset: var(--vih-header-height) 0 0 0;
+  z-index: 99;
+  background: var(--vih-green-950);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px 24px 40px;
+  transform: translateY(-8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s var(--vih-ease), transform 0.25s var(--vih-ease), visibility 0.25s;
+
+  &[data-open='true'] {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+  }
+}
+
+.site-mobile-nav__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.site-mobile-nav__link {
+  display: block;
+  padding: 16px 4px;
+  font-family: var(--vih-font-serif);
+  font-size: 1.75rem;
+  color: var(--vih-cream);
+  border-bottom: 1px solid var(--vih-line-on-dark);
+}
+
+.site-mobile-nav__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 24px;
+
+  .btn {
+    width: 100%;
+  }
+}
+
+// Body scroll-lock while the mobile panel is open (class toggled by nav.ts).
+.no-scroll {
+  overflow: hidden;
+}
+
+// --- Breakpoint: desktop nav takes over from the burger -------------------------------------------
+@media (min-width: 960px) {
+  .site-nav {
+    display: block;
+  }
+
+  .site-header__login,
+  .site-header__cta {
+    display: inline-flex;
+  }
+
+  .site-header__burger,
+  .site-mobile-nav {
+    display: none;
+  }
+}

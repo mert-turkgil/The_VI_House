@@ -1,0 +1,15 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="admin-kpi-grid">
+    <div class="admin-kpi-card">
+        <div class="admin-kpi-card__value">@Model.PendingApplications</div>
+        <div class="admin-kpi-card__label">Applications Awaiting Review</div>
+    </div>
+    <div class="admin-kpi-card">
+        <div class="admin-kpi-card__value">@Model.TotalBookings</div>
+        <div class="admin-kpi-card__label">Total Bookings</div>
+    </div>
+</div>

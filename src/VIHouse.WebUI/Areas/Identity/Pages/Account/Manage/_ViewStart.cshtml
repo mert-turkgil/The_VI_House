@@ -1,0 +1,7 @@
+@{
+    // Wraps every Manage/*.cshtml page in the sidebar-nav shell (Manage/_Layout.cshtml), which in
+    // turn nests inside the site's own _Layout.cshtml. Without this, Manage pages would silently
+    // fall back to the top-level Areas/Identity/Pages/_ViewStart.cshtml and render with no way to
+    // navigate between Profile/Email/Password/2FA/Personal data.
+    Layout = "_Layout";
+}

@@ -1,0 +1,58 @@
+<footer class="site-footer">
+    <div class="container">
+        <div class="site-footer__grid">
+            <div class="site-footer__brand">
+                <partial name="_Crest" />
+                <div>
+                    <div class="site-footer__wordmark">The VI House</div>
+                    <p>A private global community for the next generation of founders.</p>
+                </div>
+            </div>
+
+            <div class="site-footer__col">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="/experiences">Experiences</a></li>
+                    <li><a href="/membership">Membership</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </div>
+
+            <div class="site-footer__col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="site-footer__col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/contact">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <div class="site-footer__newsletter">
+                <h4>Join the VI List</h4>
+                @* TODO: wire to a real newsletter endpoint once Contact/CMS lands — inert for now rather than a dead POST. *@
+                <form class="site-footer__newsletter-form" onsubmit="return false;">
+                    <input type="email" placeholder="Your email address" aria-label="Email address" required />
+                    <button type="submit" class="btn btn--primary" aria-label="Subscribe">&rarr;</button>
+                </form>
+                <p class="site-footer__newsletter-note">We respect your privacy.</p>
+            </div>
+        </div>
+
+        <div class="site-footer__bottom">
+            <span>&copy; @DateTime.UtcNow.Year The VI House Group Ltd. All rights reserved.</span>
+            <ul class="site-footer__legal-links">
+                <li><a href="/legal/terms">Terms &amp; Conditions</a></li>
+                <li><a href="/legal/privacy">Privacy Policy</a></li>
+                <li><a href="/legal/cookies">Cookie Policy</a></li>
+                <li><a href="/legal/refund">Refund Policy</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>

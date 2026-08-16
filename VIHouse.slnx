@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/VIHouse.Business/VIHouse.Business.csproj" />
+    <Project Path="src/VIHouse.DataAccess/VIHouse.DataAccess.csproj" />
+    <Project Path="src/VIHouse.Entities/VIHouse.Entities.csproj" />
+    <Project Path="src/VIHouse.WebUI/VIHouse.WebUI.csproj" />
+  </Folder>
+</Solution>

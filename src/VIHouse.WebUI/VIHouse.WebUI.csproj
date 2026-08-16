@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\VIHouse.Entities\VIHouse.Entities.csproj" />
+    <ProjectReference Include="..\VIHouse.DataAccess\VIHouse.DataAccess.csproj" />
+    <ProjectReference Include="..\VIHouse.Business\VIHouse.Business.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.11">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>22cc579a-3536-4caa-b5f9-cb2b955e2e99</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ClientApp is built by Vite (see targets below), not by MSBuild directly. -->
+    <Content Remove="ClientApp/**" />
+    <Compile Remove="ClientApp/**" />
+    <None Remove="ClientApp/**" />
+  </ItemGroup>
+
+  <Target Name="NpmInstall" BeforeTargets="Build" Condition="!Exists('ClientApp/node_modules')">
+    <Exec Command="npm install" WorkingDirectory="ClientApp" />
+  </Target>
+
+  <Target Name="ViteBuild" BeforeTargets="Build">
+    <Exec Command="npm run build" WorkingDirectory="ClientApp" />
+  </Target>
+
+</Project>

@@ -1,0 +1,21 @@
+<section class="home-filter">
+    <div class="container">
+        <form class="home-filter__form" method="get" action="/experiences">
+            <div class="home-filter__field">
+                <label for="filter-city">City</label>
+                <input type="text" id="filter-city" name="city" placeholder="Any City" autocomplete="off" />
+            </div>
+            <div class="home-filter__field">
+                <label for="filter-status">Status</label>
+                <select id="filter-status" name="status">
+                    <option value="">Any Status</option>
+                    <option value="ApplicationsOpen">Applications Open</option>
+                    <option value="AlmostFull">Almost Full</option>
+                    <option value="Waitlist">Waitlist</option>
+                    <option value="ComingSoon">Coming Soon</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn--primary home-filter__submit">Search</button>
+        </form>
+    </div>
+</section>

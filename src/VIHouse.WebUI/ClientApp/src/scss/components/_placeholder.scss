@@ -1,0 +1,21 @@
+// Temporary styling for pages not yet rebuilt onto the brand system (removed as each page is
+// migrated in later milestones).
+.page-placeholder {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 96px 24px;
+
+  h1 {
+    font-family: var(--vih-font-serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 12px;
+  }
+
+  p {
+    color: #555;
+    margin: 0;
+  }
+}

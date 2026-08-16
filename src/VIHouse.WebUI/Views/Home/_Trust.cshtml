@@ -1,0 +1,30 @@
+@model TrustContent
+
+@if (!string.IsNullOrWhiteSpace(Model.Heading))
+{
+    <section class="home-trust">
+        <div class="container home-trust__inner">
+            <div class="home-trust__intro">
+                <h2>@Model.Heading</h2>
+                @if (!string.IsNullOrWhiteSpace(Model.Body))
+                {
+                    <p>@Model.Body</p>
+                }
+                <a class="btn btn--primary" href="/apply">Become a Member</a>
+            </div>
+
+            @if (Model.Testimonials.Count > 0)
+            {
+                <div class="home-trust__quotes">
+                    @foreach (var t in Model.Testimonials)
+                    {
+                        <blockquote class="home-trust__quote">
+                            <p>&ldquo;@t.Quote&rdquo;</p>
+                            <footer>@t.Author<span>@t.Role</span></footer>
+                        </blockquote>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+}
