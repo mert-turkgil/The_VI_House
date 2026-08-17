@@ -9,7 +9,7 @@
         <div class="experience-hero__meta">
             <span>@Model.City, @Model.Country</span>
             <span>@Model.StartAtUtc.ToString("d MMM")–@Model.EndAtUtc.ToString("d MMM yyyy")</span>
-            <span>@Model.DurationDays Days</span>
+            <span>@Model.DurationLabel</span>
         </div>
         @if (Model.CanApply)
         {

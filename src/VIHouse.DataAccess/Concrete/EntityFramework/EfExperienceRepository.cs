@@ -27,7 +27,10 @@ public class EfExperienceRepository(VIHouseDbContext db) : EfRepository<Experien
             query = query.Where(e => e.Status == filter.Status);
 
         return await query
-            .Where(e => e.Visibility == ExperienceVisibility.Public)
+            // Draft is excluded unconditionally, not just when the caller asks for a specific
+            // status — an admin can set Visibility=Public on a still-Draft experience while
+            // preparing it, and that must never be enough on its own to make it publicly listed.
+            .Where(e => e.Visibility == ExperienceVisibility.Public && e.Status != ExperienceStatus.Draft)
             .OrderBy(e => e.StartAtUtc)
             .Skip(filter.Skip)
             .Take(filter.Take)
@@ -46,7 +49,7 @@ public class EfExperienceRepository(VIHouseDbContext db) : EfRepository<Experien
 
     public Task<List<Experience>> GetSignatureAsync(int take, CancellationToken ct = default) =>
         Set.Include(e => e.TicketTypes)
-            .Where(e => e.Visibility == ExperienceVisibility.Public && e.IsSignature)
+            .Where(e => e.Visibility == ExperienceVisibility.Public && e.IsSignature && e.Status != ExperienceStatus.Draft)
             .OrderBy(e => e.SortOrder)
             .Take(take)
             .ToListAsync(ct);

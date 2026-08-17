@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Applications;
@@ -32,6 +33,7 @@ public class ApplicationController(IExperienceService experienceService, IApplic
 
     [HttpPost("")]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("application-submit")]
     public async Task<IActionResult> Index(ApplyFormViewModel form, CancellationToken ct)
     {
         var exp = await experienceService.GetPublicDetailBySlugAsync(form.ExperienceSlug, ct);

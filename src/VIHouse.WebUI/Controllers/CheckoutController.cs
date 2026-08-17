@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Identity;
@@ -13,6 +14,7 @@ public class CheckoutController(IPaymentService paymentService, UserManager<Appl
 {
     [HttpPost("create")]
     [ValidateAntiForgeryToken]
+    [EnableRateLimiting("checkout")]
     public async Task<IActionResult> Create(string code, Guid ticketTypeId, string? promoCode, CancellationToken ct)
     {
         var successUrl = Url.Action(nameof(Success), "Checkout", null, Request.Scheme)!;

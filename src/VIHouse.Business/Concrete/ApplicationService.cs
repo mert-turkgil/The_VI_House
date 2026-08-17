@@ -139,17 +139,29 @@ public class ApplicationService(
     public Task RevertToApprovedAsync(Guid id, CancellationToken ct = default) =>
         TransitionAsync(id, ApplicationStatus.Approved, SystemActorId, "CheckoutAbandoned", null, ct: ct);
 
-    public async Task UpdateInternalNotesAsync(Guid id, string? notes, CancellationToken ct = default)
+    public async Task UpdateInternalNotesAsync(Guid id, string? notes, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
         var application = await applications.GetByIdAsync(id, ct)
             ?? throw new InvalidOperationException($"Application {id} not found.");
 
         application.InternalNotes = notes;
         application.UpdatedAt = DateTimeOffset.UtcNow;
+
+        // Notes can contain sensitive assessment text — log that a change happened, not the
+        // content itself, consistent with AuditLogEntry never carrying free-text PII.
+        await auditLogs.AddAsync(new AuditLogEntry
+        {
+            AdminUserId = adminUserId,
+            Action = "ApplicationNotesUpdated",
+            EntityType = nameof(Application),
+            EntityId = id,
+            IpAddress = ipAddress,
+        }, ct);
+
         await applications.SaveChangesAsync(ct);
     }
 
-    public async Task AddTagAsync(Guid applicationId, string label, CancellationToken ct = default)
+    public async Task AddTagAsync(Guid applicationId, string label, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
         if (await applications.GetByIdAsync(applicationId, ct) is null)
             throw new InvalidOperationException($"Application {applicationId} not found.");
@@ -158,16 +170,35 @@ public class ApplicationService(
         // Application's Tags collection navigation — same reasoning as ExperienceService's
         // ticket-type/inclusion/FAQ adds: avoids EF Core misreading a client-generated-GUID
         // entity's Added state as an Update.
-        await tags.AddAsync(new ApplicationTag { ApplicationId = applicationId, Label = label }, ct);
+        var tag = new ApplicationTag { ApplicationId = applicationId, Label = label };
+        await tags.AddAsync(tag, ct);
+        await auditLogs.AddAsync(new AuditLogEntry
+        {
+            AdminUserId = adminUserId,
+            Action = "ApplicationTagAdded",
+            EntityType = nameof(ApplicationTag),
+            EntityId = tag.Id,
+            DataAfter = JsonSerializer.Serialize(new { ApplicationId = applicationId, Label = label }),
+            IpAddress = ipAddress,
+        }, ct);
         await tags.SaveChangesAsync(ct);
     }
 
-    public async Task RemoveTagAsync(Guid applicationId, Guid tagId, CancellationToken ct = default)
+    public async Task RemoveTagAsync(Guid applicationId, Guid tagId, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
         var tag = await tags.GetByIdAsync(tagId, ct);
         if (tag is null || tag.ApplicationId != applicationId) return;
 
         tags.Remove(tag);
+        await auditLogs.AddAsync(new AuditLogEntry
+        {
+            AdminUserId = adminUserId,
+            Action = "ApplicationTagRemoved",
+            EntityType = nameof(ApplicationTag),
+            EntityId = tagId,
+            DataBefore = JsonSerializer.Serialize(new { ApplicationId = applicationId, tag.Label }),
+            IpAddress = ipAddress,
+        }, ct);
         await tags.SaveChangesAsync(ct);
     }
 

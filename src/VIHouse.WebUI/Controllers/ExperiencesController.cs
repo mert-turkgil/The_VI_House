@@ -24,7 +24,7 @@ public class ExperiencesController(IExperienceService experienceService) : Contr
     public async Task<IActionResult> Details(string slug, CancellationToken ct)
     {
         var experience = await experienceService.GetPublicDetailBySlugAsync(slug, ct);
-        if (experience is null || experience.Visibility != ExperienceVisibility.Public)
+        if (experience is null || experience.Visibility != ExperienceVisibility.Public || experience.Status == ExperienceStatus.Draft)
             return NotFound();
 
         return View(ExperienceDetailViewModel.FromEntity(experience));

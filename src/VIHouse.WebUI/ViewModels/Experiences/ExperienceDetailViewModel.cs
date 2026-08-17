@@ -26,6 +26,7 @@ public class ExperienceDetailViewModel
     public List<ExperienceImage> Gallery { get; set; } = [];
 
     public int DurationDays => Math.Max(1, (EndAtUtc.Date - StartAtUtc.Date).Days + 1);
+    public string DurationLabel => DurationDays == 1 ? "1 Day" : $"{DurationDays} Days";
 
     public bool CanApply => Status is ExperienceStatus.ApplicationsOpen or ExperienceStatus.AlmostFull;
 

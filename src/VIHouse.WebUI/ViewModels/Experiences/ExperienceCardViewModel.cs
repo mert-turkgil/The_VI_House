@@ -18,6 +18,7 @@ public class ExperienceCardViewModel
     public string? Currency { get; set; }
 
     public int DurationDays => Math.Max(1, (EndAtUtc.Date - StartAtUtc.Date).Days + 1);
+    public string DurationLabel => DurationDays == 1 ? "1 Day" : $"{DurationDays} Days";
 
     public string StatusLabel => Status.ToDisplayLabel();
 

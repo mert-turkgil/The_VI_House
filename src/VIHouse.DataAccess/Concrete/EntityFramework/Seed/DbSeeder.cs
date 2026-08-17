@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Applications;
+using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
 
@@ -140,7 +141,97 @@ public static class DbSeeder
         };
         zurich.TicketTypes.Add(new TicketType { ExperienceId = zurich.Id, Title = "Standard Experience", PriceMinor = 49900, Currency = "CHF", Inventory = 16, SortOrder = 1 });
 
-        db.Experiences.AddRange(izmir, london, zurich);
+        var lisbon = new Experience
+        {
+            Slug = "lisbon-founder-retreat-2026",
+            Title = "The VI House — Lisbon",
+            ShortSummary = "A four-day founder retreat on the Portuguese coast.",
+            Description = "A small-group retreat for founders navigating growth-stage decisions, hosted in Lisbon.",
+            City = "Lisbon",
+            Country = "PT",
+            Venue = "To be confirmed on approval",
+            TimeZoneId = "Europe/Lisbon",
+            StartAtUtc = now.AddMonths(3),
+            EndAtUtc = now.AddMonths(3).AddDays(4),
+            Capacity = 18,
+            Status = ExperienceStatus.AlmostFull,
+            Visibility = ExperienceVisibility.Public,
+            SortOrder = 4,
+        };
+        lisbon.TicketTypes.Add(new TicketType { ExperienceId = lisbon.Id, Title = "Standard Experience", PriceMinor = 149900, Currency = "EUR", Inventory = 2, SortOrder = 1 });
+
+        var singapore = new Experience
+        {
+            Slug = "singapore-growth-summit-2026",
+            Title = "The VI House — Singapore",
+            ShortSummary = "A growth-stage summit for founders building across Southeast Asia.",
+            Description = "A two-day summit connecting founders and operators scaling across Southeast Asian markets.",
+            City = "Singapore",
+            Country = "SG",
+            Venue = "To be confirmed on approval",
+            TimeZoneId = "Asia/Singapore",
+            StartAtUtc = now.AddMonths(4),
+            EndAtUtc = now.AddMonths(4).AddDays(2),
+            Capacity = 22,
+            Status = ExperienceStatus.Waitlist,
+            Visibility = ExperienceVisibility.Public,
+            SortOrder = 5,
+        };
+        singapore.TicketTypes.Add(new TicketType { ExperienceId = singapore.Id, Title = "Standard Experience", PriceMinor = 129900, Currency = "USD", Inventory = 0, SortOrder = 1 });
+
+        var miami = new Experience
+        {
+            Slug = "miami-founder-weekend-2025",
+            Title = "The VI House — Miami",
+            ShortSummary = "A private founder weekend in Miami.",
+            Description = "An intimate weekend gathering for founders across fintech and consumer, hosted in Miami.",
+            City = "Miami",
+            Country = "US",
+            Venue = "The Confidante, Miami Beach",
+            TimeZoneId = "America/New_York",
+            StartAtUtc = now.AddMonths(-2),
+            EndAtUtc = now.AddMonths(-2).AddDays(3),
+            Capacity = 20,
+            Status = ExperienceStatus.Completed,
+            Visibility = ExperienceVisibility.Public,
+            SortOrder = 6,
+        };
+        miami.TicketTypes.Add(new TicketType { ExperienceId = miami.Id, Title = "Standard Experience", PriceMinor = 119900, Currency = "USD", Inventory = 0, SortOrder = 1 });
+
+        // Deliberately Draft + Visibility=Public — proves an admin mid-edit can never leak this
+        // onto the public site, listing, or homepage signature grid (see EfExperienceRepository's
+        // unconditional Status != Draft filters and ExperiencesController.Details' explicit check).
+        var berlinDraft = new Experience
+        {
+            Slug = "berlin-founder-summit-2026",
+            Title = "The VI House — Berlin",
+            ShortSummary = "Draft — not yet ready for review.",
+            Description = "Draft description, still being written by the events team.",
+            City = "Berlin",
+            Country = "DE",
+            TimeZoneId = "Europe/Berlin",
+            StartAtUtc = now.AddMonths(5),
+            EndAtUtc = now.AddMonths(5).AddDays(3),
+            Capacity = 20,
+            Status = ExperienceStatus.Draft,
+            Visibility = ExperienceVisibility.Public,
+            IsSignature = true, // also proves GetSignatureAsync excludes Draft even when flagged signature
+            SortOrder = 7,
+        };
+
+        db.Experiences.AddRange(izmir, london, zurich, lisbon, singapore, miami, berlinDraft);
+
+        // A live promo code against Izmir — 10% off, capped at 25 redemptions — demonstrates the
+        // PromoCode -> PaymentService.TryApplyPromoAsync path without needing an admin CMS screen yet.
+        db.PromoCodes.Add(new PromoCode
+        {
+            Code = "FOUNDER10",
+            Type = PromoCodeType.Percentage,
+            Value = 10,
+            ExperienceId = izmir.Id,
+            MaxRedemptions = 25,
+            IsActive = true,
+        });
     }
 
     private static async Task SeedHomepageContentAsync(VIHouseDbContext db)

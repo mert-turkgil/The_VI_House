@@ -1,5 +1,8 @@
 using System.Globalization;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using VIHouse.Business.Abstract;
@@ -42,6 +45,16 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     .AddEntityFrameworkStores<VIHouseDbContext>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
+
+// HSTS: 1 year + subdomains + preload-ready, since Production genuinely serves both the main
+// domain and the admin subdomain over HTTPS only. Framework default (30 days, no subdomains) is
+// too easy to accidentally fall back to plain HTTP on the admin subdomain if it's ever missed.
+builder.Services.AddHsts(options =>
+{
+    options.MaxAge = TimeSpan.FromDays(365);
+    options.IncludeSubDomains = true;
+    options.Preload = true;
+});
 
 // Only set when the admin panel lives on its own subdomain (see "AdminHost" below) — a shared
 // cookie domain (e.g. ".thevihouse.com") lets one login work across both thevihouse.com and
@@ -103,8 +116,34 @@ builder.Services.AddControllersWithViews(options =>
     // Global, but self-scoping: the filter only acts on requests routed into the Admin area
     // (brief §95 — 2FA for admins). See AdminTwoFactorRequirementFilter for the check itself.
     options.Filters.Add(typeof(AdminTwoFactorRequirementFilter));
+
+    // Defense-in-depth: every POST/PUT/DELETE/PATCH is antiforgery-checked by default now, not
+    // just the ones that remembered to add [ValidateAntiForgeryToken]. The one deliberate
+    // exception is the Stripe webhook, which opts out explicitly via [IgnoreAntiforgeryToken]
+    // (it's a server-to-server call with no browser cookie/form to carry a token).
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 });
 builder.Services.AddRazorPages();
+
+// --- Rate limiting (brief-adjacent hardening: brute-force/spam protection on sensitive endpoints) ---
+// Fixed-window, partitioned per client IP. QueueLimit 0 means excess requests are rejected
+// immediately (429) rather than queued — right call for anti-abuse limits, wrong call for
+// smoothing legitimate burst traffic, which isn't the goal here.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    static string PartitionKey(HttpContext ctx) => ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+    options.AddPolicy("auth", ctx => RateLimitPartition.GetFixedWindowLimiter(PartitionKey(ctx), _ =>
+        new FixedWindowRateLimiterOptions { PermitLimit = 10, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+
+    options.AddPolicy("application-submit", ctx => RateLimitPartition.GetFixedWindowLimiter(PartitionKey(ctx), _ =>
+        new FixedWindowRateLimiterOptions { PermitLimit = 5, Window = TimeSpan.FromHours(1), QueueLimit = 0 }));
+
+    options.AddPolicy("checkout", ctx => RateLimitPartition.GetFixedWindowLimiter(PartitionKey(ctx), _ =>
+        new FixedWindowRateLimiterOptions { PermitLimit = 20, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+});
 
 var app = builder.Build();
 
@@ -147,6 +186,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();

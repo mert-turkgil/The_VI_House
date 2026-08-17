@@ -1,11 +1,13 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.Business.Abstract;
+using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Experiences;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
-public class AdminExperiencesController(IExperienceService experienceService) : AdminControllerBase
+public class AdminExperiencesController(IExperienceService experienceService, UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -39,7 +41,8 @@ public class AdminExperiencesController(IExperienceService experienceService) : 
         if (!ModelState.IsValid) return View(form);
 
         var entity = form.ToEntity();
-        await experienceService.CreateAsync(entity, ct);
+        var (adminId, ip) = CurrentActor();
+        await experienceService.CreateAsync(entity, adminId, ip, ct);
 
         TempData["StatusMessage"] = $"\"{entity.Title}\" created.";
         return RedirectToAction(nameof(Edit), new { id = entity.Id });
@@ -81,7 +84,8 @@ public class AdminExperiencesController(IExperienceService experienceService) : 
             return View(model);
         }
 
-        await experienceService.UpdateCoreFieldsAsync(form.ToEntity(), ct);
+        var (adminId, ip) = CurrentActor();
+        await experienceService.UpdateCoreFieldsAsync(form.ToEntity(), adminId, ip, ct);
         TempData["StatusMessage"] = "Changes saved.";
         return RedirectToAction(nameof(Edit), new { id });
     }
@@ -90,7 +94,8 @@ public class AdminExperiencesController(IExperienceService experienceService) : 
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
-        var deleted = await experienceService.TryDeleteAsync(id, ct);
+        var (adminId, ip) = CurrentActor();
+        var deleted = await experienceService.TryDeleteAsync(id, adminId, ip, ct);
         TempData["StatusMessage"] = deleted
             ? "Experience deleted."
             : "Can't delete — this experience already has applications or bookings against it.";
@@ -104,6 +109,7 @@ public class AdminExperiencesController(IExperienceService experienceService) : 
     {
         if (ModelState.IsValid)
         {
+            var (adminId, ip) = CurrentActor();
             await experienceService.AddTicketTypeAsync(input.ExperienceId, new TicketType
             {
                 Title = input.Title,
@@ -113,7 +119,7 @@ public class AdminExperiencesController(IExperienceService experienceService) : 
                 Inventory = input.Inventory,
                 MaxQuantityPerOrder = input.MaxQuantityPerOrder,
                 PerksText = input.PerksText,
-            }, ct);
+            }, adminId, ip, ct);
         }
 
         return RedirectToAction(nameof(Edit), new { id = input.ExperienceId });
@@ -123,7 +129,8 @@ public class AdminExperiencesController(IExperienceService experienceService) : 
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveTicketType(Guid experienceId, Guid ticketTypeId, CancellationToken ct)
     {
-        var removed = await experienceService.TryRemoveTicketTypeAsync(experienceId, ticketTypeId, ct);
+        var (adminId, ip) = CurrentActor();
+        var removed = await experienceService.TryRemoveTicketTypeAsync(experienceId, ticketTypeId, adminId, ip, ct);
         if (!removed)
             TempData["StatusMessage"] = "Can't remove — this ticket type already has bookings against it.";
 
@@ -136,11 +143,12 @@ public class AdminExperiencesController(IExperienceService experienceService) : 
     {
         if (ModelState.IsValid)
         {
+            var (adminId, ip) = CurrentActor();
             await experienceService.AddInclusionAsync(input.ExperienceId, new ExperienceInclusion
             {
                 Text = input.Text,
                 IsIncluded = input.IsIncluded,
-            }, ct);
+            }, adminId, ip, ct);
         }
 
         return RedirectToAction(nameof(Edit), new { id = input.ExperienceId });
@@ -150,7 +158,8 @@ public class AdminExperiencesController(IExperienceService experienceService) : 
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveInclusion(Guid experienceId, Guid inclusionId, CancellationToken ct)
     {
-        await experienceService.RemoveInclusionAsync(experienceId, inclusionId, ct);
+        var (adminId, ip) = CurrentActor();
+        await experienceService.RemoveInclusionAsync(experienceId, inclusionId, adminId, ip, ct);
         return RedirectToAction(nameof(Edit), new { id = experienceId });
     }
 
@@ -160,11 +169,12 @@ public class AdminExperiencesController(IExperienceService experienceService) : 
     {
         if (ModelState.IsValid)
         {
+            var (adminId, ip) = CurrentActor();
             await experienceService.AddFaqAsync(input.ExperienceId, new ExperienceFaq
             {
                 Question = input.Question,
                 Answer = input.Answer,
-            }, ct);
+            }, adminId, ip, ct);
         }
 
         return RedirectToAction(nameof(Edit), new { id = input.ExperienceId });
@@ -174,7 +184,11 @@ public class AdminExperiencesController(IExperienceService experienceService) : 
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveFaq(Guid experienceId, Guid faqId, CancellationToken ct)
     {
-        await experienceService.RemoveFaqAsync(experienceId, faqId, ct);
+        var (adminId, ip) = CurrentActor();
+        await experienceService.RemoveFaqAsync(experienceId, faqId, adminId, ip, ct);
         return RedirectToAction(nameof(Edit), new { id = experienceId });
     }
+
+    private (Guid AdminId, string? IpAddress) CurrentActor() =>
+        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 }

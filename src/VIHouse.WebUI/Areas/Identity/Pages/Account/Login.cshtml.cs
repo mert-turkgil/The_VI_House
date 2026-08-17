@@ -13,11 +13,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Logging;
 using VIHouse.DataAccess.Identity;
 
 namespace VIHouse.WebUI.Areas.Identity.Pages.Account
 {
+    // Brute-force protection alongside Identity's own per-account lockout (Program.cs) — this one
+    // is per-IP, so it also slows down username-spray attempts across many different accounts.
+    [EnableRateLimiting("auth")]
     public class LoginModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;

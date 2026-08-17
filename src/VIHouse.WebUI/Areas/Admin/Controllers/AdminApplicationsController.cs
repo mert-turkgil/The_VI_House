@@ -105,7 +105,8 @@ public class AdminApplicationsController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateNotes(Guid id, string? internalNotes, CancellationToken ct)
     {
-        await applicationService.UpdateInternalNotesAsync(id, internalNotes, ct);
+        var (adminId, ip) = CurrentActor();
+        await applicationService.UpdateInternalNotesAsync(id, internalNotes, adminId, ip, ct);
         TempData["StatusMessage"] = "Notes saved.";
         return RedirectToAction(nameof(Details), new { id });
     }
@@ -115,7 +116,10 @@ public class AdminApplicationsController(
     public async Task<IActionResult> AddTag(Guid id, string label, CancellationToken ct)
     {
         if (!string.IsNullOrWhiteSpace(label))
-            await applicationService.AddTagAsync(id, label.Trim(), ct);
+        {
+            var (adminId, ip) = CurrentActor();
+            await applicationService.AddTagAsync(id, label.Trim(), adminId, ip, ct);
+        }
 
         return RedirectToAction(nameof(Details), new { id });
     }
@@ -124,14 +128,17 @@ public class AdminApplicationsController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveTag(Guid id, Guid tagId, CancellationToken ct)
     {
-        await applicationService.RemoveTagAsync(id, tagId, ct);
+        var (adminId, ip) = CurrentActor();
+        await applicationService.RemoveTagAsync(id, tagId, adminId, ip, ct);
         return RedirectToAction(nameof(Details), new { id });
     }
 
+    private (Guid AdminId, string? IpAddress) CurrentActor() =>
+        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
+
     private async Task RunTransitionAsync(Guid id, Func<Guid, string?, CancellationToken, Task> action, CancellationToken ct)
     {
-        var adminId = Guid.Parse(userManager.GetUserId(User)!);
-        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var (adminId, ip) = CurrentActor();
 
         try
         {

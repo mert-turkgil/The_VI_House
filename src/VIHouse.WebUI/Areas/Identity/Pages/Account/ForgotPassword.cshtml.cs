@@ -12,11 +12,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
 using VIHouse.DataAccess.Identity;
 
 namespace VIHouse.WebUI.Areas.Identity.Pages.Account
 {
+    [EnableRateLimiting("auth")] // prevents this becoming an email-enumeration/spam vector
     public class ForgotPasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
