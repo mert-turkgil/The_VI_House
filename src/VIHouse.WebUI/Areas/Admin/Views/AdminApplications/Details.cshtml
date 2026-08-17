@@ -160,5 +160,26 @@
                 }
             }
         </div>
+
+        @if (Model.Invitation is not null)
+        {
+            var inv = Model.Invitation;
+            <div class="admin-card">
+                <h2>Payment Invitation</h2>
+                <p style="font-size:0.75rem; color:#999; margin-top:-8px;">
+                    No email pipeline yet — share this link with the applicant manually.
+                </p>
+                <dl class="admin-detail-list">
+                    <div><dt>Status</dt><dd>@(inv.IsUsed ? "Used" : inv.ExpiresAt < DateTimeOffset.UtcNow ? "Expired" : "Active")</dd></div>
+                    <div><dt>Expires</dt><dd>@inv.ExpiresAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
+                </dl>
+                @if (!inv.IsUsed && inv.ExpiresAt >= DateTimeOffset.UtcNow)
+                {
+                    <p style="font-size:0.8125rem; word-break:break-all; background:#faf9f6; border:1px solid var(--vih-line-on-light); border-radius:6px; padding:10px 12px; margin-top:12px;">
+                        /invitation/@inv.Code
+                    </p>
+                }
+            </div>
+        }
     </div>
 </div>

@@ -153,6 +153,62 @@
   margin: 4px 0 0;
 }
 
+// --- Checkout / invitation ticket picker ----------------------------------------------------
+.checkout-ticket-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkout-ticket-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s var(--vih-ease);
+
+  &:has(input:checked) {
+    border-color: var(--vih-gold);
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  input {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+}
+
+.checkout-ticket-option__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checkout-ticket-option__title {
+  font-weight: 600;
+}
+
+.checkout-ticket-option__desc,
+.checkout-ticket-option__perks {
+  font-size: 0.8125rem;
+  color: #666;
+}
+
+.checkout-ticket-option__price {
+  font-family: var(--vih-font-serif);
+  font-size: 1.0625rem;
+  white-space: nowrap;
+}
+
 // --- Confirmation ------------------------------------------------------------------------------
 .apply-confirmation {
   background: var(--vih-green-950);

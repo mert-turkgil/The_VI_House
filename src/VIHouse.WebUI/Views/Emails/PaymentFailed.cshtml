@@ -1,0 +1,14 @@
+@model PaymentFailedEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">We Couldn't Complete Your Payment</h1>
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    Your checkout for <strong>@Model.ExperienceTitle</strong> wasn't completed in time, so no payment was
+    taken and your held place has been released. You can start a new checkout below.
+</p>
+<p style="margin:0 0 16px;">
+    <a href="@Model.InvitationUrl" style="display:inline-block; padding:12px 24px; background-color:#b8955a; color:#001a02; text-decoration:none; font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; border-radius:24px;">
+        Try Again
+    </a>
+</p>
+<p style="margin:0;">&mdash; The VI House</p>

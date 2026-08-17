@@ -1,0 +1,17 @@
+@model ApplicationApprovedEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">You're Approved</h1>
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    You've been approved for <strong>The VI House &mdash; @Model.ExperienceCity</strong>.
+    Complete your booking below to secure your place.
+</p>
+<p style="margin:0 0 24px;">
+    <a href="@Model.InvitationUrl" style="display:inline-block; padding:12px 24px; background-color:#b8955a; color:#001a02; text-decoration:none; font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; border-radius:24px;">
+        Complete Your Booking
+    </a>
+</p>
+<p style="margin:0 0 16px; font-size:13px; color:#666666; font-family:Arial,Helvetica,sans-serif;">
+    This link expires @Model.ExpiresAt.ToString("d MMMM yyyy") — get in touch if you need more time.
+</p>
+<p style="margin:0;">&mdash; The VI House</p>

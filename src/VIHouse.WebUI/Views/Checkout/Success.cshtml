@@ -1,0 +1,45 @@
+@model CheckoutSuccessViewModel
+@{
+    ViewData["Title"] = Model.Info.IsConfirmed ? "Booking Confirmed" : "Processing Payment";
+}
+
+@if (!Model.Info.IsConfirmed)
+{
+    @section Styles {
+        <meta http-equiv="refresh" content="3" />
+    }
+}
+
+<div class="apply-confirmation">
+    <div class="container apply-confirmation__inner">
+        @if (Model.Info.IsConfirmed)
+        {
+            <span class="apply-confirmation__mark">&#10003;</span>
+            <h1>Booking Confirmed</h1>
+            <p>
+                You're in — <strong>@Model.Info.ExperienceTitle</strong> in @Model.Info.ExperienceCity.
+                Your booking reference is <strong>@Model.Info.BookingReference</strong>.
+            </p>
+            @if (!string.IsNullOrWhiteSpace(Model.PasswordSetupUrl))
+            {
+                <p>One last step — set a password to access your VI House member account.</p>
+                <div class="apply-confirmation__actions">
+                    <a class="btn btn--primary" href="@Model.PasswordSetupUrl">Set Your Password</a>
+                    <a class="btn btn--ghost-dark" href="/">Back to Home</a>
+                </div>
+            }
+            else
+            {
+                <div class="apply-confirmation__actions">
+                    <a class="btn btn--primary" href="/">Back to Home</a>
+                </div>
+            }
+        }
+        else
+        {
+            <span class="apply-confirmation__mark">&hellip;</span>
+            <h1>Confirming Your Payment</h1>
+            <p>This usually takes just a few seconds. This page will refresh automatically.</p>
+        }
+    </div>
+</div>

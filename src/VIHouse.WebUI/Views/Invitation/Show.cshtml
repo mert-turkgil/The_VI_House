@@ -1,0 +1,82 @@
+@model InvitationViewModel
+@{
+    ViewData["Title"] = "Complete Your Booking";
+    var info = Model.Info;
+}
+
+@if (!info.IsValid)
+{
+    <div class="apply-confirmation">
+        <div class="container apply-confirmation__inner">
+            <h1>@info.InvalidReason</h1>
+            <p>If you believe this is a mistake, get in touch and we'll help sort it out.</p>
+            <div class="apply-confirmation__actions">
+                <a class="btn btn--primary" href="/">Back to Home</a>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="apply-header">
+        <div class="container">
+            <span class="apply-header__eyebrow">You're Approved</span>
+            <h1>@info.ExperienceTitle</h1>
+            <p>@info.ExperienceStartAtUtc.ToString("d MMM")–@info.ExperienceEndAtUtc.ToString("d MMM yyyy") &middot; @info.ExperienceCity, @info.ExperienceCountry</p>
+        </div>
+    </div>
+
+    <div class="container apply-body">
+        <p>Welcome, @info.ApplicantFirstName — choose your option below to complete your booking.</p>
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="apply-form__summary">@Model.ErrorMessage</div>
+        }
+
+        <form asp-controller="Checkout" asp-action="Create" method="post" class="apply-form">
+            <input type="hidden" name="code" value="@Model.Code" />
+
+            <fieldset class="apply-form__section">
+                <legend>Choose Your Option</legend>
+                <div class="checkout-ticket-options">
+                    @foreach (var ticket in info.TicketTypes)
+                    {
+                        <label class="checkout-ticket-option @(ticket.IsSoldOut ? "checkout-ticket-option--disabled" : "")">
+                            @if (ticket.IsSoldOut)
+                            {
+                                <input type="radio" name="ticketTypeId" value="@ticket.Id" disabled required />
+                            }
+                            else
+                            {
+                                <input type="radio" name="ticketTypeId" value="@ticket.Id" required />
+                            }
+                            <span class="checkout-ticket-option__body">
+                                <span class="checkout-ticket-option__title">@ticket.Title</span>
+                                @if (!string.IsNullOrWhiteSpace(ticket.Description))
+                                {
+                                    <span class="checkout-ticket-option__desc">@ticket.Description</span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(ticket.PerksText))
+                                {
+                                    <span class="checkout-ticket-option__perks">@ticket.PerksText</span>
+                                }
+                            </span>
+                            <span class="checkout-ticket-option__price">
+                                @(ticket.IsSoldOut ? "Sold Out" : MoneyFormatter.Format(ticket.PriceMinor, ticket.Currency))
+                            </span>
+                        </label>
+                    }
+                </div>
+            </fieldset>
+
+            <div class="apply-field">
+                <label for="promoCode">Promo Code (optional)</label>
+                <input id="promoCode" name="promoCode" />
+            </div>
+
+            <button type="submit" class="btn btn--primary apply-form__submit">Continue to Payment</button>
+            <p class="apply-form__note">You'll be taken to Stripe's secure checkout — VI House never sees or stores your card details.</p>
+        </form>
+    </div>
+}

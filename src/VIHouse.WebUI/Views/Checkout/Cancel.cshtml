@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Checkout Cancelled";
+    var code = ViewBag.InvitationCode as string;
+}
+
+<div class="apply-confirmation">
+    <div class="container apply-confirmation__inner">
+        <h1>Checkout Cancelled</h1>
+        <p>No payment was taken. Your seat is held for a short while — you can pick up where you left off whenever you're ready.</p>
+        <div class="apply-confirmation__actions">
+            @if (!string.IsNullOrWhiteSpace(code))
+            {
+                <a class="btn btn--primary" href="/invitation/@code">Return to Checkout</a>
+            }
+            <a class="btn btn--ghost-dark" href="/">Back to Home</a>
+        </div>
+    </div>
+</div>

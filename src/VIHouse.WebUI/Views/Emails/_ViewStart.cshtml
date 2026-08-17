@@ -1,0 +1,7 @@
+@{
+    // Fully-qualified path, not just "_EmailLayout" — these views are rendered via
+    // IRazorViewEngine.GetView() outside any real controller/action context (see
+    // RazorEmailTemplateRenderer), so the normal convention-based layout search (which needs
+    // controller/area route values) can't locate a bare name.
+    Layout = "~/Views/Emails/_EmailLayout.cshtml";
+}

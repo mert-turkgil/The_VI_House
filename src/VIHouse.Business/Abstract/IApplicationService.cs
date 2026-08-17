@@ -19,6 +19,11 @@ public interface IApplicationService
     Task RejectAsync(Guid id, Guid adminUserId, string? reason, string? ipAddress, CancellationToken ct = default);
     Task WaitlistAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 
+    // --- System-triggered (Stripe checkout flow, not an admin action — see PaymentService) ---
+    Task MarkPaymentPendingAsync(Guid id, CancellationToken ct = default);
+    Task MarkPaidAsync(Guid id, CancellationToken ct = default);
+    Task RevertToApprovedAsync(Guid id, CancellationToken ct = default);
+
     Task UpdateInternalNotesAsync(Guid id, string? notes, CancellationToken ct = default);
     Task AddTagAsync(Guid applicationId, string label, CancellationToken ct = default);
     Task RemoveTagAsync(Guid applicationId, Guid tagId, CancellationToken ct = default);

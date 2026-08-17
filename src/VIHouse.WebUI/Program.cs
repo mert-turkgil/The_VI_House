@@ -1,13 +1,16 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Concrete;
+using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Concrete.EntityFramework;
 using VIHouse.DataAccess.Concrete.EntityFramework.Seed;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Areas.Admin.Filters;
+using VIHouse.WebUI.Services;
 
 // English-only for Phase 1 (brief §66) — pinned explicitly so date/number formatting (e.g.
 // experience card dates) doesn't silently follow whatever OS locale the app happens to run under.
@@ -40,6 +43,15 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
+// Only set when the admin panel lives on its own subdomain (see "AdminHost" below) — a shared
+// cookie domain (e.g. ".thevihouse.com") lets one login work across both thevihouse.com and
+// admin.thevihouse.com. Left unset in Development, where everything is on localhost anyway.
+var cookieDomain = builder.Configuration["CookieDomain"];
+if (!string.IsNullOrWhiteSpace(cookieDomain))
+{
+    builder.Services.ConfigureApplicationCookie(options => options.Cookie.Domain = cookieDomain);
+}
+
 // --- Repositories (DataAccess.Abstract -> Concrete.EntityFramework) -----------------------------
 // Open-generic fallback for entities that only ever need generic CRUD (no custom queries) — e.g.
 // ExperienceInclusion/ExperienceFaq, used directly by ExperienceService for unambiguous Added-state
@@ -64,6 +76,26 @@ builder.Services.AddScoped<IWebhookEventRepository, EfWebhookEventRepository>();
 // --- Business services -------------------------------------------------------------------------
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
 builder.Services.AddScoped<IApplicationService, ApplicationService>();
+builder.Services.AddScoped<ICapacityService, CapacityService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+// Stripe keys: user-secrets in Development, environment variables (or a real vault) in Production —
+// never a committed appsettings.*.json file, same policy as SeedAdmin's credentials.
+builder.Services.Configure<StripeOptions>(builder.Configuration.GetSection("Stripe"));
+builder.Services.AddScoped<IPaymentProvider, StripePaymentProvider>();
+
+// SMTP: Host/Port/FromName/FromEmail are plain config (appsettings.Development.json /
+// appsettings.Production.json) since they aren't secret and change per environment. Username/Password
+// are secret and come from user-secrets/environment variables only — see SmtpOptions.
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
+builder.Services.Configure<SiteOptions>(builder.Configuration.GetSection("Site"));
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
+builder.Services.AddScoped<IEmailTemplateRenderer, RazorEmailTemplateRenderer>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Releases abandoned TicketHolds back to inventory every 60s (brief §177-179) — a safety net
+// alongside the immediate release on checkout failure/expiry in PaymentService.
+builder.Services.AddHostedService<TicketHoldExpiryService>();
 
 // --- MVC + Razor Pages (Identity UI is Razor-Pages-based) -----------------------------------------
 builder.Services.AddControllersWithViews(options =>
@@ -75,6 +107,20 @@ builder.Services.AddControllersWithViews(options =>
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+// Fail fast in Production rather than silently taking money-facing requests with no Stripe keys
+// configured — Development is allowed to run without them (only checkout/webhook routes need them).
+if (app.Environment.IsProduction())
+{
+    var stripeOptions = app.Services.GetRequiredService<IOptions<StripeOptions>>().Value;
+    if (string.IsNullOrWhiteSpace(stripeOptions.SecretKey) || string.IsNullOrWhiteSpace(stripeOptions.WebhookSecret))
+    {
+        throw new InvalidOperationException(
+            "Stripe:SecretKey / Stripe:WebhookSecret are not configured. Set them via environment " +
+            "variables (Stripe__SecretKey, Stripe__WebhookSecret) or your secrets manager — never in " +
+            "appsettings.Production.json.");
+    }
+}
 
 // --- Development-only: apply migrations + seed data --------------------------------------------
 if (app.Environment.IsDevelopment())
@@ -107,10 +153,19 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
-app.MapControllerRoute(
+// The admin panel (Areas/Admin) is meant to live on its own subdomain, not be discoverable by
+// crawling the public site (e.g. https://admin.thevihouse.com rather than thevihouse.com/Admin/...).
+// AdminHost is unset in Development, so this route stays unrestricted on localhost — set it in
+// appsettings.Production.json (see the "AdminHost" key) to gate it for real.
+var adminHost = builder.Configuration["AdminHost"];
+var adminRoute = app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=AdminDashboard}/{action=Index}/{id?}")
     .WithStaticAssets();
+if (!string.IsNullOrWhiteSpace(adminHost))
+{
+    adminRoute.RequireHost(adminHost, "localhost:*", "127.0.0.1:*");
+}
 
 app.MapControllerRoute(
     name: "default",

@@ -1,12 +1,14 @@
 using System.Security.Cryptography;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Applications;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Commerce;
-using VIHouse.Entities.Communication;
 using VIHouse.Entities.Compliance;
+using VIHouse.Entities.Experiences;
 
 namespace VIHouse.Business.Concrete;
 
@@ -19,18 +21,25 @@ namespace VIHouse.Business.Concrete;
 public class ApplicationService(
     IApplicationRepository applications,
     IInvitationRepository invitations,
-    IEmailLogRepository emailLogs,
+    IExperienceRepository experiences,
     IAuditLogRepository auditLogs,
     IRepository<ConsentRecord> consentRecords,
-    IRepository<ApplicationTag> tags) : IApplicationService
+    IRepository<ApplicationTag> tags,
+    IEmailService emailService,
+    IOptions<SiteOptions> siteOptions) : IApplicationService
 {
     private const string InvitationAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I ambiguity
+
+    /// <summary>Audit-log actor id for transitions the Stripe webhook/checkout flow triggers — there's no admin behind these.</summary>
+    private static readonly Guid SystemActorId = Guid.Empty;
 
     private static readonly Dictionary<ApplicationStatus, ApplicationStatus[]> Allowed = new()
     {
         [ApplicationStatus.Submitted] = [ApplicationStatus.UnderReview],
         [ApplicationStatus.UnderReview] = [ApplicationStatus.Shortlisted],
         [ApplicationStatus.Shortlisted] = [ApplicationStatus.Approved, ApplicationStatus.Rejected, ApplicationStatus.Waitlisted],
+        [ApplicationStatus.Approved] = [ApplicationStatus.PaymentPending],
+        [ApplicationStatus.PaymentPending] = [ApplicationStatus.Paid, ApplicationStatus.Approved],
     };
 
     public async Task<Application> SubmitAsync(Application application, bool agreedToTerms, string? ipAddress, CancellationToken ct = default)
@@ -54,6 +63,16 @@ public class ApplicationService(
         }
 
         await applications.SaveChangesAsync(ct);
+
+        var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
+        if (experience is not null)
+        {
+            await emailService.SendAsync(
+                "ApplicationReceived", application.Email, "Application Received",
+                new ApplicationReceivedEmailModel(application.FirstName, experience.Title, experience.City),
+                nameof(Application), application.Id, ct);
+        }
+
         return application;
     }
 
@@ -81,25 +100,44 @@ public class ApplicationService(
             ExpiresAt = DateTimeOffset.UtcNow.AddDays(14),
         };
         await invitations.AddAsync(invitation, ct);
-
-        await emailLogs.AddAsync(new EmailLog
-        {
-            TemplateKey = "application-approved",
-            RecipientEmail = application.Email,
-            Subject = "You're approved — complete your booking",
-            Status = EmailStatus.Queued, // no SMTP pipeline wired yet (brief plan milestone 8)
-            RelatedEntityType = nameof(Application),
-            RelatedEntityId = application.Id,
-        }, ct);
-
         await applications.SaveChangesAsync(ct);
+
+        var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
+        if (experience is not null)
+        {
+            var invitationUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/invitation/{invitation.Code}";
+            await emailService.SendAsync(
+                "ApplicationApproved", application.Email, "You're approved — complete your booking",
+                new ApplicationApprovedEmailModel(application.FirstName, experience.Title, experience.City, invitationUrl, invitation.ExpiresAt),
+                nameof(Application), application.Id, ct);
+        }
     }
 
     public Task RejectAsync(Guid id, Guid adminUserId, string? reason, string? ipAddress, CancellationToken ct = default) =>
         TransitionAsync(id, ApplicationStatus.Rejected, adminUserId, "ApplicationRejected", ipAddress, reason, ct: ct);
 
-    public Task WaitlistAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default) =>
-        TransitionAsync(id, ApplicationStatus.Waitlisted, adminUserId, "ApplicationWaitlisted", ipAddress, ct: ct);
+    public async Task WaitlistAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var application = await TransitionAsync(id, ApplicationStatus.Waitlisted, adminUserId, "ApplicationWaitlisted", ipAddress, ct: ct);
+
+        var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
+        if (experience is not null)
+        {
+            await emailService.SendAsync(
+                "ApplicationWaitlisted", application.Email, "You're on the waitlist",
+                new ApplicationWaitlistedEmailModel(application.FirstName, experience.Title),
+                nameof(Application), application.Id, ct);
+        }
+    }
+
+    public Task MarkPaymentPendingAsync(Guid id, CancellationToken ct = default) =>
+        TransitionAsync(id, ApplicationStatus.PaymentPending, SystemActorId, "CheckoutStarted", null, ct: ct);
+
+    public Task MarkPaidAsync(Guid id, CancellationToken ct = default) =>
+        TransitionAsync(id, ApplicationStatus.Paid, SystemActorId, "PaymentConfirmed", null, ct: ct);
+
+    public Task RevertToApprovedAsync(Guid id, CancellationToken ct = default) =>
+        TransitionAsync(id, ApplicationStatus.Approved, SystemActorId, "CheckoutAbandoned", null, ct: ct);
 
     public async Task UpdateInternalNotesAsync(Guid id, string? notes, CancellationToken ct = default)
     {
@@ -151,9 +189,15 @@ public class ApplicationService(
 
         var before = application.Status;
         application.Status = target;
-        application.ReviewedByUserId = adminUserId;
-        application.ReviewedAt ??= DateTimeOffset.UtcNow;
         application.UpdatedAt = DateTimeOffset.UtcNow;
+
+        // System-triggered transitions (Stripe checkout flow) aren't a "review" — leave the
+        // original reviewing admin's attribution on the record instead of overwriting it.
+        if (adminUserId != SystemActorId)
+        {
+            application.ReviewedByUserId = adminUserId;
+            application.ReviewedAt ??= DateTimeOffset.UtcNow;
+        }
 
         if (target is ApplicationStatus.Approved or ApplicationStatus.Rejected or ApplicationStatus.Waitlisted)
         {

@@ -1,8 +1,11 @@
 docs/*.**
 .claude/*.**
+appsettings.Production.json
+appsettings.Development.json
 
 ## .NET / Visual Studio ##
 bin/
+bin/Debug/*.**
 obj/
 *.user
 *.suo
