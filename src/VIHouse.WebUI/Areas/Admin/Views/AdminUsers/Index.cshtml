@@ -1,0 +1,35 @@
+@model List<AdminCustomerListItemViewModel>
+@{
+    ViewData["Title"] = "Customers";
+}
+
+@if (Model.Count == 0)
+{
+    <p>No registered accounts yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Company</th>
+                <th>Roles</th>
+                <th>Applications</th>
+                <th>Bookings</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td><a asp-action="Details" asp-route-id="@u.UserId">@u.Email</a></td>
+                    <td>@(u.CompanyName ?? "—")</td>
+                    <td>@(u.Roles.Count == 0 ? "—" : string.Join(", ", u.Roles))</td>
+                    <td>@u.ApplicationCount</td>
+                    <td>@u.BookingCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

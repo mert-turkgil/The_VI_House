@@ -1,8 +1,13 @@
+@using System.Globalization
 @{
     // Hard-coded hrefs (not asp-controller/asp-action) for pages whose controllers don't exist
-    // yet (Experiences/Membership/About/Apply/Login land in later milestones) — avoids the
-    // AnchorTagHelper failing to resolve a route that isn't registered yet. Swap these to proper
-    // tag helpers as each controller is built.
+    // yet (Membership lands in a later milestone) — avoids the AnchorTagHelper failing to resolve
+    // a route that isn't registered yet. Swap these to proper tag helpers as each controller is built.
+    var currentCulture = CultureInfo.CurrentUICulture.Name;
+    var currentPath = Context.Request.Path + Context.Request.QueryString;
+    string CultureUrl(string culture) => Url.Action("Set", "Culture", new { culture, returnUrl = currentPath })!;
+    string CultureClass(string culture) => culture == currentCulture ? "site-lang__link active" : "site-lang__link";
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
 }
 <header class="site-header">
     <div class="container site-header__inner">
@@ -15,17 +20,34 @@
 
         <nav class="site-nav" aria-label="Primary">
             <ul class="site-nav__list">
-                <li><a class="site-nav__link" asp-controller="Home" asp-action="Index" aria-current="page">Home</a></li>
-                <li><a class="site-nav__link" href="/experiences">Experiences</a></li>
-                <li><a class="site-nav__link" href="/membership">Membership</a></li>
-                <li><a class="site-nav__link" href="/about">About</a></li>
+                <li><a class="site-nav__link" asp-controller="Home" asp-action="Index" aria-current="page">@Loc["Nav.Home"]</a></li>
+                <li><a class="site-nav__link" asp-controller="Experiences" asp-action="Index">@Loc["Nav.Experiences"]</a></li>
+                <li><a class="site-nav__link" href="/membership">@Loc["Nav.Membership"]</a></li>
+                <li><a class="site-nav__link" asp-controller="About" asp-action="Index">@Loc["Nav.About"]</a></li>
             </ul>
         </nav>
 
         <div class="site-header__actions">
-            <a class="site-header__login" href="/Identity/Account/Login">Log In</a>
-            <a class="btn btn--primary site-header__cta" href="/apply">Apply to Join</a>
-            <button type="button" class="site-header__burger" data-nav-burger aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+            <div class="site-lang" aria-label="@Loc["Nav.LanguageLabel"]">
+                <a class="@CultureClass("en-GB")" href="@CultureUrl("en-GB")">EN</a>
+                <a class="@CultureClass("de-DE")" href="@CultureUrl("de-DE")">DE</a>
+                <a class="@CultureClass("tr-TR")" href="@CultureUrl("tr-TR")">TR</a>
+                <a class="@CultureClass("et-EE")" href="@CultureUrl("et-EE")">ET</a>
+            </div>
+
+            @if (isAuthenticated)
+            {
+                <a class="site-header__login" asp-controller="Account" asp-action="Index">@Loc["Nav.MyAccount"]</a>
+                <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" class="site-header__logout-form">
+                    <button type="submit" class="btn btn--primary site-header__cta">@Loc["Nav.LogOut"]</button>
+                </form>
+            }
+            else
+            {
+                <a class="site-header__login" href="/Identity/Account/Login">@Loc["Nav.LogIn"]</a>
+                <a class="btn btn--primary site-header__cta" href="/apply">@Loc["Nav.ApplyToJoin"]</a>
+            }
+            <button type="button" class="site-header__burger" data-nav-burger aria-label="@Loc["Nav.OpenMenu"]" aria-expanded="false" aria-controls="mobile-nav">
                 <span></span><span></span><span></span>
             </button>
         </div>
@@ -35,14 +57,30 @@
 <div class="site-mobile-nav" id="mobile-nav" data-nav-panel data-open="false">
     <nav aria-label="Mobile">
         <ul class="site-mobile-nav__list">
-            <li><a class="site-mobile-nav__link" asp-controller="Home" asp-action="Index">Home</a></li>
-            <li><a class="site-mobile-nav__link" href="/experiences">Experiences</a></li>
-            <li><a class="site-mobile-nav__link" href="/membership">Membership</a></li>
-            <li><a class="site-mobile-nav__link" href="/about">About</a></li>
+            <li><a class="site-mobile-nav__link" asp-controller="Home" asp-action="Index">@Loc["Nav.Home"]</a></li>
+            <li><a class="site-mobile-nav__link" asp-controller="Experiences" asp-action="Index">@Loc["Nav.Experiences"]</a></li>
+            <li><a class="site-mobile-nav__link" href="/membership">@Loc["Nav.Membership"]</a></li>
+            <li><a class="site-mobile-nav__link" asp-controller="About" asp-action="Index">@Loc["Nav.About"]</a></li>
         </ul>
     </nav>
+    <div class="site-mobile-nav__lang">
+        <a class="@CultureClass("en-GB")" href="@CultureUrl("en-GB")">EN</a>
+        <a class="@CultureClass("de-DE")" href="@CultureUrl("de-DE")">DE</a>
+        <a class="@CultureClass("tr-TR")" href="@CultureUrl("tr-TR")">TR</a>
+        <a class="@CultureClass("et-EE")" href="@CultureUrl("et-EE")">ET</a>
+    </div>
     <div class="site-mobile-nav__actions">
-        <a class="btn btn--primary" href="/apply">Apply to Join</a>
-        <a class="btn btn--ghost-dark" href="/Identity/Account/Login">Log In</a>
+        @if (isAuthenticated)
+        {
+            <a class="btn btn--primary" asp-controller="Account" asp-action="Index">@Loc["Nav.MyAccount"]</a>
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                <button type="submit" class="btn btn--ghost-dark" style="width:100%;">@Loc["Nav.LogOut"]</button>
+            </form>
+        }
+        else
+        {
+            <a class="btn btn--primary" href="/apply">@Loc["Nav.ApplyToJoin"]</a>
+            <a class="btn btn--ghost-dark" href="/Identity/Account/Login">@Loc["Nav.LogIn"]</a>
+        }
     </div>
 </div>

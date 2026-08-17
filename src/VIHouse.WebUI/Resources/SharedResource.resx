@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="Nav.Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Nav.Experiences" xml:space="preserve"><value>Experiences</value></data>
+  <data name="Nav.Membership" xml:space="preserve"><value>Membership</value></data>
+  <data name="Nav.About" xml:space="preserve"><value>About</value></data>
+  <data name="Nav.LanguageLabel" xml:space="preserve"><value>Language</value></data>
+  <data name="Nav.MyAccount" xml:space="preserve"><value>My Account</value></data>
+  <data name="Nav.LogOut" xml:space="preserve"><value>Log Out</value></data>
+  <data name="Nav.LogIn" xml:space="preserve"><value>Log In</value></data>
+  <data name="Nav.ApplyToJoin" xml:space="preserve"><value>Apply to Join</value></data>
+  <data name="Nav.OpenMenu" xml:space="preserve"><value>Open menu</value></data>
+
+  <data name="Footer.Tagline" xml:space="preserve"><value>A private global community for the next generation of founders.</value></data>
+  <data name="Footer.Explore" xml:space="preserve"><value>Explore</value></data>
+  <data name="Footer.Company" xml:space="preserve"><value>Company</value></data>
+  <data name="Footer.AboutUs" xml:space="preserve"><value>About Us</value></data>
+  <data name="Footer.Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="Footer.Support" xml:space="preserve"><value>Support</value></data>
+  <data name="Footer.Faq" xml:space="preserve"><value>FAQ</value></data>
+  <data name="Footer.ContactUs" xml:space="preserve"><value>Contact Us</value></data>
+  <data name="Footer.NewsletterHeading" xml:space="preserve"><value>Join the VI List</value></data>
+  <data name="Footer.NewsletterPlaceholder" xml:space="preserve"><value>Your email address</value></data>
+  <data name="Footer.NewsletterSubmit" xml:space="preserve"><value>Subscribe</value></data>
+  <data name="Footer.NewsletterNote" xml:space="preserve"><value>We respect your privacy.</value></data>
+  <data name="Footer.RightsReserved" xml:space="preserve"><value>All rights reserved.</value></data>
+  <data name="Footer.Terms" xml:space="preserve"><value>Terms &amp; Conditions</value></data>
+  <data name="Footer.Privacy" xml:space="preserve"><value>Privacy Policy</value></data>
+  <data name="Footer.Cookies" xml:space="preserve"><value>Cookie Policy</value></data>
+  <data name="Footer.RefundPolicy" xml:space="preserve"><value>Refund Policy</value></data>
+
+  <data name="About.Title" xml:space="preserve"><value>About The VI House</value></data>
+  <data name="About.Eyebrow" xml:space="preserve"><value>Our Story</value></data>
+  <data name="About.Heading" xml:space="preserve"><value>Where Ambition Meets Alignment.</value></data>
+  <data name="About.Subheading" xml:space="preserve"><value>The VI House is a private, invitation-first community for founders, operators and investors who take building seriously — and take the people around them just as seriously.</value></data>
+  <data name="About.Paragraph1" xml:space="preserve"><value>We started The VI House on a simple observation: the best decisions rarely happen in a boardroom. They happen over dinner, on a walk, in the quiet conversation after the panel ends. So instead of building another conference, we built a series of small, curated rooms — real places, real people, real depth.</value></data>
+  <data name="About.Paragraph2" xml:space="preserve"><value>Every experience is capped in size and reviewed applicant by applicant. We are not optimizing for attendance numbers — we are optimizing for the right twenty people in the right room, for long enough that trust actually forms.</value></data>
+  <data name="About.Paragraph3" xml:space="preserve"><value>What you'll find inside is not a course, and not a networking event in the usual sense. It's a working retreat for people building serious things, hosted with the care of a home rather than the logistics of a conference.</value></data>
+  <data name="About.ValuesHeading" xml:space="preserve"><value>What We Believe</value></data>
+  <data name="About.Value1Title" xml:space="preserve"><value>Curated, Not Crowded</value></data>
+  <data name="About.Value1Body" xml:space="preserve"><value>Every application is reviewed by hand. We would rather have twenty right people than two hundred maybe-right ones.</value></data>
+  <data name="About.Value2Title" xml:space="preserve"><value>Substance Over Spectacle</value></data>
+  <data name="About.Value2Body" xml:space="preserve"><value>No stage lighting, no sponsor booths. Just serious conversation, in rooms built for it.</value></data>
+  <data name="About.Value3Title" xml:space="preserve"><value>Built to Last</value></data>
+  <data name="About.Value3Body" xml:space="preserve"><value>The relationships formed here are meant to outlast the event itself — that's the actual product.</value></data>
+
+  <data name="Faq.Title" xml:space="preserve"><value>Frequently Asked Questions</value></data>
+  <data name="Faq.Eyebrow" xml:space="preserve"><value>Good to Know</value></data>
+  <data name="Faq.Heading" xml:space="preserve"><value>Frequently Asked Questions</value></data>
+  <data name="Faq.Subheading" xml:space="preserve"><value>Everything you need to know before you apply.</value></data>
+  <data name="Faq.StillHaveQuestions" xml:space="preserve"><value>Still have questions?</value></data>
+  <data name="Faq.Q1" xml:space="preserve"><value>How does the application process work?</value></data>
+  <data name="Faq.A1" xml:space="preserve"><value>You submit a short application telling us about you and what you're building. Every application is reviewed by hand — we don't use automated scoring. If approved, you'll receive a private, time-limited link to complete payment and secure your place.</value></data>
+  <data name="Faq.Q2" xml:space="preserve"><value>How long does review take?</value></data>
+  <data name="Faq.A2" xml:space="preserve"><value>Most applicants hear back within a few business days. Because every application is read individually, review time can vary slightly around larger experiences.</value></data>
+  <data name="Faq.Q3" xml:space="preserve"><value>What happens if I'm waitlisted?</value></data>
+  <data name="Faq.A3" xml:space="preserve"><value>You'll be notified by email, and we'll reach out the moment a place opens up. Waitlisted applicants are not charged anything until a spot is confirmed.</value></data>
+  <data name="Faq.Q4" xml:space="preserve"><value>Can I get a refund if my plans change?</value></data>
+  <data name="Faq.A4" xml:space="preserve"><value>Refund terms vary by experience and are set out in our Refund Policy, which you'll also see again before you complete payment.</value></data>
+  <data name="Faq.Q5" xml:space="preserve"><value>Is The VI House only for founders?</value></data>
+  <data name="Faq.A5" xml:space="preserve"><value>Primarily, but we also welcome operators and investors who are genuinely engaged in building — the room is curated for fit, not job title alone.</value></data>
+  <data name="Faq.Q6" xml:space="preserve"><value>Do you offer any membership beyond a single experience?</value></data>
+  <data name="Faq.A6" xml:space="preserve"><value>Full membership, with year-round access rather than single experiences, is on our roadmap — join an experience today and you'll be first to hear when it opens.</value></data>
+  <data name="Faq.Q7" xml:space="preserve"><value>What's included in the price?</value></data>
+  <data name="Faq.A7" xml:space="preserve"><value>Each experience page lists exactly what's included and what isn't under "What's Included." It varies by location and format.</value></data>
+  <data name="Faq.Q8" xml:space="preserve"><value>How do I get in touch with a question that isn't answered here?</value></data>
+  <data name="Faq.A8" xml:space="preserve"><value>Use the Contact page — a real person reads every message.</value></data>
+
+  <data name="Contact.Title" xml:space="preserve"><value>Contact</value></data>
+  <data name="Contact.Eyebrow" xml:space="preserve"><value>Get in Touch</value></data>
+  <data name="Contact.Heading" xml:space="preserve"><value>We'd Love to Hear From You</value></data>
+  <data name="Contact.Subheading" xml:space="preserve"><value>Questions about an experience, your application, or anything else — send us a note.</value></data>
+  <data name="Contact.EmailHeading" xml:space="preserve"><value>Email</value></data>
+  <data name="Contact.FaqHeading" xml:space="preserve"><value>Common Questions</value></data>
+  <data name="Contact.FaqBody" xml:space="preserve"><value>Before you write in, you might find your answer on our</value></data>
+  <data name="Contact.SuccessMessage" xml:space="preserve"><value>Thank you — your message has been sent. We'll be in touch shortly.</value></data>
+  <data name="Contact.NameLabel" xml:space="preserve"><value>Name</value></data>
+  <data name="Contact.EmailLabel" xml:space="preserve"><value>Email</value></data>
+  <data name="Contact.SubjectLabel" xml:space="preserve"><value>Subject</value></data>
+  <data name="Contact.MessageLabel" xml:space="preserve"><value>Message</value></data>
+  <data name="Contact.Submit" xml:space="preserve"><value>Send Message</value></data>
+
+  <data name="Legal.LastUpdated" xml:space="preserve"><value>Last updated: 17 August 2026.</value></data>
+  <data name="Legal.Terms.Body" xml:space="preserve"><value>These Terms &amp; Conditions govern your use of The VI House website and your participation in any VI House experience. By applying, purchasing a ticket, or otherwise using this site, you agree to be bound by these terms.
+
+Membership &amp; Applications. Access to The VI House is by application only. Submitting an application does not guarantee acceptance. We reserve the right to accept, reject, or waitlist any application at our sole discretion, without obligation to provide a reason.
+
+Payments. Once approved, you will receive a private, time-limited link to complete payment via our third-party payment processor. Prices are shown in the currency stated on the relevant experience page and are inclusive of any fees disclosed at checkout.
+
+Cancellations &amp; Changes. We reserve the right to reschedule, relocate, or cancel an experience due to circumstances beyond our reasonable control, in which case affected guests will be offered a transfer or refund in line with our Refund Policy.
+
+Conduct. Guests are expected to behave respectfully toward other attendees, hosts, and venue staff. We reserve the right to remove any guest from an experience, without refund, for conduct we reasonably consider disruptive or unsafe.
+
+Liability. To the fullest extent permitted by law, The VI House Group Ltd. is not liable for any indirect or consequential loss arising from your participation in an experience. Nothing in these terms limits liability that cannot be excluded under applicable law.
+
+Governing Law. These terms are governed by the laws of England and Wales, without regard to conflict-of-law principles.
+
+Contact. Questions about these terms can be sent to us via our Contact page.</value></data>
+  <data name="Legal.Privacy.Body" xml:space="preserve"><value>This Privacy Policy explains how The VI House Group Ltd. collects, uses, and protects your personal data when you apply, book an experience, or otherwise interact with this site.
+
+What We Collect. When you apply or register, we collect the information you provide directly — name, contact details, company and professional information, and your application responses — along with technical information such as your IP address for security purposes.
+
+How We Use It. We use your information to process your application, administer bookings and payments, send you service-related communications, and, where you've agreed, occasional updates about future experiences.
+
+Payment Data. We never store your card details. Payments are processed directly by our third-party payment provider, which maintains its own compliance and security standards.
+
+Sharing. We do not sell your personal data. We share it only with service providers who help us operate the site, such as payment processing and email delivery, and only to the extent necessary for them to provide that service.
+
+Your Rights. Depending on where you live, you may have rights to access, correct, or delete your personal data, or to object to certain processing. You can exercise these rights by contacting us via our Contact page.
+
+Data Retention. We retain personal data only for as long as necessary for the purposes described in this policy, or as required by law.
+
+Changes to This Policy. We may update this policy from time to time; the date of the latest revision is shown at the top of this page.</value></data>
+  <data name="Legal.Cookies.Body" xml:space="preserve"><value>This Cookie Policy explains how The VI House uses cookies and similar technologies on this website.
+
+What Are Cookies. Cookies are small text files stored on your device that help websites function correctly and remember your preferences — for example, your selected language.
+
+Essential Cookies. We use a small number of essential cookies required for the site to work, such as keeping you signed in and remembering your language preference. These cannot be disabled without affecting site functionality.
+
+Analytics. We may use limited, privacy-respecting analytics to understand how the site is used, so we can improve it. Where required by law, we will ask for your consent before setting non-essential cookies.
+
+Managing Cookies. Most browsers let you control cookies through their settings, including deleting existing cookies and blocking new ones. Blocking essential cookies may affect your ability to use parts of this site.
+
+Changes. We may update this policy as our use of cookies changes; the date of the latest revision is shown at the top of this page.</value></data>
+  <data name="Legal.Refund.Body" xml:space="preserve"><value>This Refund Policy explains how cancellations and refunds are handled for VI House experiences.
+
+Cancellations by You. Refund eligibility depends on how far in advance of the experience you cancel. Specific cancellation windows and any applicable fees are shown at checkout for each experience before you complete payment.
+
+Cancellations by Us. If we cancel, reschedule, or relocate an experience for reasons within our control, you will be offered a full refund or a transfer to a future experience, at your choice.
+
+Non-Refundable Circumstances. We are not able to offer refunds for failure to attend, late arrival, or voluntary early departure, except where required by law.
+
+How Refunds Are Processed. Approved refunds are returned to your original payment method via our payment processor, and may take several business days to appear depending on your bank.
+
+Questions. If you believe you're entitled to a refund outside these terms, contact us via our Contact page and we'll review it individually.</value></data>
+
+  <data name="Applied.Title" xml:space="preserve"><value>Application Received</value></data>
+  <data name="Applied.Body" xml:space="preserve"><value>Thank you for applying to The VI House — {0}. Every application is reviewed by hand — you'll hear back by email within a few days.</value></data>
+  <data name="Applied.StatusHint" xml:space="preserve"><value>You can check your application status any time at:</value></data>
+  <data name="Applied.ExploreMore" xml:space="preserve"><value>Explore More Experiences</value></data>
+  <data name="Applied.BackHome" xml:space="preserve"><value>Back to Home</value></data>
+
+  <data name="Status.Title" xml:space="preserve"><value>Application Status</value></data>
+  <data name="Status.Intro" xml:space="preserve"><value>Hi {0}, here's where things stand.</value></data>
+  <data name="Status.SubmittedOn" xml:space="preserve"><value>Submitted on {0}.</value></data>
+  <data name="Status.Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="Status.Draft.Detail" xml:space="preserve"><value>Your application hasn't been submitted yet.</value></data>
+  <data name="Status.Submitted" xml:space="preserve"><value>Submitted</value></data>
+  <data name="Status.Submitted.Detail" xml:space="preserve"><value>We've received your application and it's in the queue for review. Every application is read by hand — we'll be in touch by email within a few days.</value></data>
+  <data name="Status.UnderReview" xml:space="preserve"><value>Under Review</value></data>
+  <data name="Status.UnderReview.Detail" xml:space="preserve"><value>Your application is currently being reviewed. No action is needed from you right now.</value></data>
+  <data name="Status.Shortlisted" xml:space="preserve"><value>Shortlisted</value></data>
+  <data name="Status.Shortlisted.Detail" xml:space="preserve"><value>You've been shortlisted — a final decision is on its way.</value></data>
+  <data name="Status.Approved" xml:space="preserve"><value>Approved</value></data>
+  <data name="Status.Approved.Detail" xml:space="preserve"><value>Congratulations — your application has been approved. Check your email for a private link to complete your booking.</value></data>
+  <data name="Status.Rejected" xml:space="preserve"><value>Not Approved</value></data>
+  <data name="Status.Rejected.Detail" xml:space="preserve"><value>We're not able to offer you a place on this occasion. We'd love to see a future application.</value></data>
+  <data name="Status.Waitlisted" xml:space="preserve"><value>Waitlisted</value></data>
+  <data name="Status.Waitlisted.Detail" xml:space="preserve"><value>You're on the waitlist. We'll email you the moment a place becomes available.</value></data>
+  <data name="Status.PaymentPending" xml:space="preserve"><value>Payment Pending</value></data>
+  <data name="Status.PaymentPending.Detail" xml:space="preserve"><value>You've been approved and invited to complete payment — check your email for your private booking link.</value></data>
+  <data name="Status.Paid" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Status.Paid.Detail" xml:space="preserve"><value>You're confirmed. Look out for a confirmation email with your booking details.</value></data>
+  <data name="Status.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Status.Cancelled.Detail" xml:space="preserve"><value>This application has been cancelled. Contact us if you believe this is a mistake.</value></data>
+
+  <data name="Account.NavProfile" xml:space="preserve"><value>Profile</value></data>
+  <data name="Account.NavBookings" xml:space="preserve"><value>My Bookings</value></data>
+  <data name="Account.NavSecurity" xml:space="preserve"><value>Security &amp; Login</value></data>
+  <data name="Account.ProfileTitle" xml:space="preserve"><value>My Profile</value></data>
+  <data name="Account.CompanyLabel" xml:space="preserve"><value>Company</value></data>
+  <data name="Account.RoleLabel" xml:space="preserve"><value>Role</value></data>
+  <data name="Account.IndustryLabel" xml:space="preserve"><value>Industry</value></data>
+  <data name="Account.LinkedInLabel" xml:space="preserve"><value>LinkedIn URL</value></data>
+  <data name="Account.WebsiteLabel" xml:space="preserve"><value>Website</value></data>
+  <data name="Account.BioLabel" xml:space="preserve"><value>Bio</value></data>
+  <data name="Account.SaveProfile" xml:space="preserve"><value>Save Profile</value></data>
+  <data name="Account.BookingsTitle" xml:space="preserve"><value>My Bookings</value></data>
+  <data name="Account.NoBookings" xml:space="preserve"><value>You don't have any bookings yet.</value></data>
+  <data name="Account.BookingReference" xml:space="preserve"><value>Reference</value></data>
+  <data name="Account.BookingExperience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Account.BookingDate" xml:space="preserve"><value>Date</value></data>
+  <data name="Account.BookingStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Account.BookingAmount" xml:space="preserve"><value>Amount</value></data>
+</root>

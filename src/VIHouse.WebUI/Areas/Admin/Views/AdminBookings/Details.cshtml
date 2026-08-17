@@ -1,0 +1,47 @@
+@model AdminBookingDetailViewModel
+@{
+    var b = Model.Booking;
+    ViewData["Title"] = b.BookingReference;
+}
+
+<div class="admin-toolbar" style="justify-content: space-between; align-items: center;">
+    <span class="admin-badge">@b.Status</span>
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; Back to Bookings</a>
+</div>
+
+<div class="admin-card">
+    <h2>Booking</h2>
+    <dl class="admin-detail-list">
+        <div><dt>Reference</dt><dd>@b.BookingReference</dd></div>
+        <div><dt>Customer</dt><dd>@(Model.CustomerEmail ?? "—")</dd></div>
+        <div><dt>Experience</dt><dd>@Model.ExperienceLabel</dd></div>
+        <div><dt>Quantity</dt><dd>@b.Quantity</dd></div>
+        <div><dt>Amount</dt><dd>@MoneyFormatter.Format(b.AmountMinor, b.Currency)</dd></div>
+        <div><dt>Created</dt><dd>@b.CreatedAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
+        <div><dt>Confirmed</dt><dd>@(b.ConfirmedAt?.ToString("dd MMM yyyy, HH:mm") ?? "—")</dd></div>
+        @if (b.CancelledAt is not null)
+        {
+            <div><dt>Cancelled</dt><dd>@b.CancelledAt.Value.ToString("dd MMM yyyy, HH:mm")</dd></div>
+        }
+    </dl>
+</div>
+
+@if (Model.Payment is not null)
+{
+    var p = Model.Payment;
+    <div class="admin-card">
+        <h2>Payment</h2>
+        <p style="font-size:0.75rem; color:#999; margin-top:-8px;">Refunds/disputes are handled in the Stripe dashboard — this is a read-only mirror.</p>
+        <dl class="admin-detail-list">
+            <div><dt>Status</dt><dd>@p.Status</dd></div>
+            <div><dt>Provider</dt><dd>@p.Provider</dd></div>
+            <div><dt>Provider Reference</dt><dd style="word-break:break-all;">@p.ProviderReference</dd></div>
+            <div><dt>Amount</dt><dd>@MoneyFormatter.Format(p.AmountMinor, p.Currency)</dd></div>
+            @if (!string.IsNullOrWhiteSpace(p.RefundStatus))
+            {
+                <div><dt>Refund Status</dt><dd>@p.RefundStatus</dd></div>
+            }
+        </dl>
+        <p style="margin-top:12px;"><a asp-area="Admin" asp-controller="AdminPayments" asp-action="Details" asp-route-id="@p.Id">View full payment record &rarr;</a></p>
+    </div>
+}

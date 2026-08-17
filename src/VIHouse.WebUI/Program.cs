@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
@@ -15,11 +16,15 @@ using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Areas.Admin.Filters;
 using VIHouse.WebUI.Services;
 
-// English-only for Phase 1 (brief §66) — pinned explicitly so date/number formatting (e.g.
-// experience card dates) doesn't silently follow whatever OS locale the app happens to run under.
+// Process-wide fallback only (background services like TicketHoldExpiryService run with no HTTP
+// request, so there's no per-request culture to fall back to) — the real per-request culture for
+// site chrome/static pages is chosen by UseRequestLocalization below, driven by a cookie set via
+// CultureController (brief: EN/DE/TR/ET). Admin area and CMS/experience content stay en-GB only.
 var defaultCulture = new CultureInfo("en-GB");
 CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
 CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
+
+var supportedCultures = new[] { "en-GB", "de-DE", "tr-TR", "et-EE" };
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,6 +96,7 @@ builder.Services.AddScoped<IExperienceService, ExperienceService>();
 builder.Services.AddScoped<IApplicationService, ApplicationService>();
 builder.Services.AddScoped<ICapacityService, CapacityService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IContentService, ContentService>();
 
 // Stripe keys: user-secrets in Development, environment variables (or a real vault) in Production —
 // never a committed appsettings.*.json file, same policy as SeedAdmin's credentials.
@@ -109,6 +115,25 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // Releases abandoned TicketHolds back to inventory every 60s (brief §177-179) — a safety net
 // alongside the immediate release on checkout failure/expiry in PaymentService.
 builder.Services.AddHostedService<TicketHoldExpiryService>();
+
+// --- Localization (EN default / DE / TR / ET) --------------------------------------------------
+// Cookie-driven, not URL-prefixed: switching language never changes the URL (thevihouse.com/about
+// stays thevihouse.com/about in every language), which keeps every existing [Route] attribute
+// untouched and avoids reworking routing across the whole controller set for this pass. Covers
+// site chrome (nav/footer) plus the new About/FAQ/Contact/Legal/Account/Status pages — CMS and
+// Experience content stay English-only for now (they're admin-authored content, not UI chrome).
+// No ResourcesPath set: SharedResource.cs and its .resx files live in the same folder
+// (Resources/), which makes MSBuild treat them as a "dependent" pair and name the embedded
+// resource after the .cs file's namespace (VIHouse.WebUI.SharedResource.resources) rather than
+// the folder path — so the lookup base name must match that, not "Resources.SharedResource".
+builder.Services.AddLocalization();
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.SetDefaultCulture(supportedCultures[0]);
+    options.AddSupportedCultures(supportedCultures);
+    options.AddSupportedUICultures(supportedCultures);
+    options.RequestCultureProviders = [new CookieRequestCultureProvider { CookieName = CookieRequestCultureProvider.DefaultCookieName }];
+});
 
 // --- MVC + Razor Pages (Identity UI is Razor-Pages-based) -----------------------------------------
 builder.Services.AddControllersWithViews(options =>
@@ -185,6 +210,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+
 app.UseRouting();
 
 app.UseRateLimiter();

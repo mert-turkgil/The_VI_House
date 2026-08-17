@@ -1,0 +1,39 @@
+@using VIHouse.Entities.Applications
+@model ApplicationStatusViewModel
+@{
+    ViewData["Title"] = Loc["Status.Title"];
+
+    string StatusKey(ApplicationStatus status) => status switch
+    {
+        ApplicationStatus.Draft => "Status.Draft",
+        ApplicationStatus.Submitted => "Status.Submitted",
+        ApplicationStatus.UnderReview => "Status.UnderReview",
+        ApplicationStatus.Shortlisted => "Status.Shortlisted",
+        ApplicationStatus.Approved => "Status.Approved",
+        ApplicationStatus.Rejected => "Status.Rejected",
+        ApplicationStatus.Waitlisted => "Status.Waitlisted",
+        ApplicationStatus.PaymentPending => "Status.PaymentPending",
+        ApplicationStatus.Paid => "Status.Paid",
+        ApplicationStatus.Cancelled => "Status.Cancelled",
+        _ => "Status.Submitted",
+    };
+}
+
+<div class="content-hero">
+    <div class="container">
+        <h1>@Loc["Status.Title"]</h1>
+        <p>@Loc["Status.Intro", Model.FirstName]</p>
+    </div>
+</div>
+
+<div class="container content-body">
+    <div class="status-card">
+        <span class="status-card__badge">@Loc[StatusKey(Model.Status)]</span>
+        <h2>@Model.ExperienceLabel</h2>
+        <p>@Loc[$"{StatusKey(Model.Status)}.Detail"]</p>
+        @if (Model.SubmittedAt is not null)
+        {
+            <p style="margin-top:12px; font-size:0.8125rem; color:#999;">@Loc["Status.SubmittedOn", Model.SubmittedAt.Value.ToString("dd MMM yyyy")]</p>
+        }
+    </div>
+</div>

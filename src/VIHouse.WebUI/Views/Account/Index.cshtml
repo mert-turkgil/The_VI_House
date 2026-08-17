@@ -1,0 +1,53 @@
+@model ProfileFormViewModel
+@{
+    ViewData["Title"] = Loc["Account.ProfileTitle"];
+}
+
+<div class="account-manage">
+    <partial name="_AccountNav" />
+    <div class="account-manage__content">
+        <h1>@Loc["Account.ProfileTitle"]</h1>
+
+        @if (TempData["StatusMessage"] is string status)
+        {
+            <div class="contact-success" style="margin-bottom:20px;">@status</div>
+        }
+
+        <form asp-action="Index" method="post" class="apply-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="apply-form__summary"></div>
+            <div class="apply-form__grid apply-form__grid--2">
+                <div class="apply-field">
+                    <label asp-for="CompanyName">@Loc["Account.CompanyLabel"]</label>
+                    <input asp-for="CompanyName" />
+                </div>
+                <div class="apply-field">
+                    <label asp-for="JobTitle">@Loc["Account.RoleLabel"]</label>
+                    <input asp-for="JobTitle" />
+                </div>
+                <div class="apply-field">
+                    <label asp-for="Industry">@Loc["Account.IndustryLabel"]</label>
+                    <input asp-for="Industry" />
+                </div>
+                <div class="apply-field">
+                    <label asp-for="LinkedInUrl">@Loc["Account.LinkedInLabel"]</label>
+                    <input asp-for="LinkedInUrl" />
+                    <span asp-validation-for="LinkedInUrl" class="apply-field__error"></span>
+                </div>
+                <div class="apply-field">
+                    <label asp-for="WebsiteUrl">@Loc["Account.WebsiteLabel"]</label>
+                    <input asp-for="WebsiteUrl" />
+                    <span asp-validation-for="WebsiteUrl" class="apply-field__error"></span>
+                </div>
+            </div>
+            <div class="apply-field">
+                <label asp-for="Bio">@Loc["Account.BioLabel"]</label>
+                <textarea asp-for="Bio" rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn btn--primary apply-form__submit">@Loc["Account.SaveProfile"]</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

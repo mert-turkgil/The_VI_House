@@ -1,0 +1,94 @@
+@model AdminCustomerDetailViewModel
+@{
+    ViewData["Title"] = Model.Email;
+    var allRoles = VIHouse.DataAccess.Identity.Roles.All;
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div class="admin-toolbar" style="justify-content: space-between; align-items: center;">
+    <span></span>
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; Back to Customers</a>
+</div>
+
+<div class="admin-review-grid">
+    <div class="admin-review-main">
+        <div class="admin-card">
+            <h2>Account</h2>
+            <dl class="admin-detail-list">
+                <div><dt>Email</dt><dd>@Model.Email</dd></div>
+                <div><dt>Company</dt><dd>@(Model.Profile?.CompanyName ?? "—")</dd></div>
+                <div><dt>Role</dt><dd>@(Model.Profile?.JobTitle ?? "—")</dd></div>
+                <div><dt>Industry</dt><dd>@(Model.Profile?.Industry ?? "—")</dd></div>
+            </dl>
+        </div>
+
+        <div class="admin-card">
+            <h2>Applications</h2>
+            @if (Model.Applications.Count == 0)
+            {
+                <p>No applications from this account.</p>
+            }
+            else
+            {
+                <table class="admin-table">
+                    <thead><tr><th>Status</th><th>Submitted</th></tr></thead>
+                    <tbody>
+                        @foreach (var a in Model.Applications)
+                        {
+                            <tr>
+                                <td><a asp-area="Admin" asp-controller="AdminApplications" asp-action="Details" asp-route-id="@a.Id">@a.Status.ToDisplayLabel()</a></td>
+                                <td>@(a.SubmittedAt?.ToString("dd MMM yyyy") ?? "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <div class="admin-card">
+            <h2>Bookings</h2>
+            @if (Model.Bookings.Count == 0)
+            {
+                <p>No bookings from this account.</p>
+            }
+            else
+            {
+                <table class="admin-table">
+                    <thead><tr><th>Reference</th><th>Status</th><th>Amount</th></tr></thead>
+                    <tbody>
+                        @foreach (var b in Model.Bookings)
+                        {
+                            <tr>
+                                <td><a asp-area="Admin" asp-controller="AdminBookings" asp-action="Details" asp-route-id="@b.Id">@b.BookingReference</a></td>
+                                <td>@b.Status</td>
+                                <td>@MoneyFormatter.Format(b.AmountMinor, b.Currency)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <div class="admin-review-side">
+        <div class="admin-card">
+            <h2>Roles</h2>
+            <form asp-action="UpdateRoles" asp-route-id="@Model.UserId" method="post">
+                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+                    @foreach (var role in allRoles)
+                    {
+                        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;">
+                            <input type="checkbox" name="roles" value="@role" checked="@Model.Roles.Contains(role)" />
+                            @role
+                        </label>
+                    }
+                </div>
+                <button type="submit" class="admin-btn" style="width:100%;">Save Roles</button>
+            </form>
+        </div>
+    </div>
+</div>

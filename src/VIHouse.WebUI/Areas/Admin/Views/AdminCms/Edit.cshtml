@@ -1,0 +1,102 @@
+@model ContentPage
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<p style="color:#666; font-size:0.875rem; margin-top:-16px; margin-bottom:24px;">
+    SectionKey must match what the page's view expects (e.g. "hero", "feature-strip", "ecosystem", "stats", "trust" for the homepage) — this screen edits content, not layout.
+</p>
+
+@foreach (var block in Model.Blocks)
+{
+    <div class="admin-card" style="margin-bottom:16px;">
+        <h2>@block.SectionKey</h2>
+        <form asp-action="UpdateBlock" method="post" class="admin-form">
+            <input type="hidden" name="Id" value="@block.Id" />
+            <input type="hidden" name="PageSlug" value="@Model.Slug" />
+            <div class="admin-form__grid">
+                <div class="admin-field">
+                    <label>Section Key</label>
+                    <input name="SectionKey" value="@block.SectionKey" required />
+                </div>
+                <div class="admin-field">
+                    <label>Sort Order</label>
+                    <input name="SortOrder" type="number" value="@block.SortOrder" />
+                </div>
+                <div class="admin-field">
+                    <label>Heading</label>
+                    <input name="Heading" value="@block.Heading" />
+                </div>
+                <div class="admin-field">
+                    <label>Subheading</label>
+                    <input name="Subheading" value="@block.Subheading" />
+                </div>
+                <div class="admin-field">
+                    <label>CTA Label</label>
+                    <input name="CtaLabel" value="@block.CtaLabel" />
+                </div>
+                <div class="admin-field">
+                    <label>CTA URL</label>
+                    <input name="CtaUrl" value="@block.CtaUrl" />
+                </div>
+                <div class="admin-field">
+                    <label>Image URL</label>
+                    <input name="ImageUrl" value="@block.ImageUrl" />
+                </div>
+            </div>
+            <div class="admin-field">
+                <label>Body Text</label>
+                <textarea name="BodyText" rows="3">@block.BodyText</textarea>
+            </div>
+            <div class="admin-field">
+                <label>Extra JSON (structured content — e.g. feature/stat/testimonial lists)</label>
+                <textarea name="ExtraJson" rows="5" style="font-family:monospace; font-size:0.8125rem;">@block.ExtraJson</textarea>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button type="submit" class="admin-btn">Save Block</button>
+            </div>
+        </form>
+        <form asp-action="RemoveBlock" method="post" style="margin-top:10px;" onsubmit="return confirm('Remove this block?');">
+            <input type="hidden" name="pageId" value="@Model.Id" />
+            <input type="hidden" name="blockId" value="@block.Id" />
+            <input type="hidden" name="pageSlug" value="@Model.Slug" />
+            <button type="submit" class="admin-btn admin-btn--danger">Remove Block</button>
+        </form>
+    </div>
+}
+
+<div class="admin-card">
+    <h2>Add Block</h2>
+    <form asp-action="AddBlock" method="post" class="admin-form">
+        <input type="hidden" name="PageId" value="@Model.Id" />
+        <input type="hidden" name="PageSlug" value="@Model.Slug" />
+        <div class="admin-form__grid">
+            <div class="admin-field">
+                <label>Section Key</label>
+                <input name="SectionKey" required />
+            </div>
+            <div class="admin-field">
+                <label>Sort Order</label>
+                <input name="SortOrder" type="number" value="0" />
+            </div>
+            <div class="admin-field">
+                <label>Heading</label>
+                <input name="Heading" />
+            </div>
+            <div class="admin-field">
+                <label>Subheading</label>
+                <input name="Subheading" />
+            </div>
+        </div>
+        <div class="admin-field">
+            <label>Body Text</label>
+            <textarea name="BodyText" rows="3"></textarea>
+        </div>
+        <button type="submit" class="admin-btn">Add Block</button>
+    </form>
+</div>

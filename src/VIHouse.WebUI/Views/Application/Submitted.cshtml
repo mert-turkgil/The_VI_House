@@ -1,20 +1,22 @@
-@using VIHouse.Entities.Experiences
-@model Experience
+@model SubmittedViewModel
 @{
-    ViewData["Title"] = "Application Received";
+    ViewData["Title"] = Loc["Applied.Title"];
+    var statusUrl = Url.Action("Status", "Application", new { id = Model.ApplicationId });
 }
 
 <div class="apply-confirmation">
     <div class="container apply-confirmation__inner">
         <span class="apply-confirmation__mark">&#10003;</span>
-        <h1>Application Received</h1>
+        <h1>@Loc["Applied.Title"]</h1>
         <p>
-            Thank you for applying to <strong>The VI House — @Model.City</strong>.
-            Every application is reviewed by hand — you'll hear back by email within a few days.
+            @Loc["Applied.Body", Model.Experience.City]
+        </p>
+        <p class="apply-form__note" style="color: var(--vih-cream-dim);">
+            @Loc["Applied.StatusHint"] <a href="@statusUrl" style="color: var(--vih-gold-light);">@statusUrl</a>
         </p>
         <div class="apply-confirmation__actions">
-            <a class="btn btn--primary" href="/experiences">Explore More Experiences</a>
-            <a class="btn btn--ghost-dark" href="/">Back to Home</a>
+            <a class="btn btn--primary" asp-controller="Experiences" asp-action="Index">@Loc["Applied.ExploreMore"]</a>
+            <a class="btn btn--ghost-dark" asp-controller="Home" asp-action="Index">@Loc["Applied.BackHome"]</a>
         </div>
     </div>
 </div>

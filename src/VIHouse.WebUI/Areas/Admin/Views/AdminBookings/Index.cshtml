@@ -1,0 +1,56 @@
+@using VIHouse.Entities.Commerce
+@model List<AdminBookingListItemViewModel>
+@{
+    ViewData["Title"] = "Bookings";
+    var selected = ViewData["SelectedStatus"] as BookingStatus?;
+
+    string TabClass(BookingStatus? s) => selected == s ? "admin-tabs__link active" : "admin-tabs__link";
+    string BadgeClass(BookingStatus s) => s switch
+    {
+        BookingStatus.Confirmed => "admin-badge admin-badge--open",
+        BookingStatus.Cancelled => "admin-badge admin-badge--closed",
+        BookingStatus.Refunded => "admin-badge admin-badge--closed",
+        _ => "admin-badge",
+    };
+}
+
+<nav class="admin-tabs">
+    <a class="@TabClass(null)" asp-action="Index">All</a>
+    <a class="@TabClass(BookingStatus.Pending)" asp-action="Index" asp-route-status="Pending">Pending</a>
+    <a class="@TabClass(BookingStatus.Confirmed)" asp-action="Index" asp-route-status="Confirmed">Confirmed</a>
+    <a class="@TabClass(BookingStatus.Cancelled)" asp-action="Index" asp-route-status="Cancelled">Cancelled</a>
+    <a class="@TabClass(BookingStatus.Refunded)" asp-action="Index" asp-route-status="Refunded">Refunded</a>
+</nav>
+
+@if (Model.Count == 0)
+{
+    <p>No bookings here yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Reference</th>
+                <th>Customer</th>
+                <th>Experience</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var b in Model)
+            {
+                <tr>
+                    <td><a asp-action="Details" asp-route-id="@b.Id">@b.BookingReference</a></td>
+                    <td>@(b.CustomerEmail ?? "—")</td>
+                    <td>@b.ExperienceLabel</td>
+                    <td><span class="@BadgeClass(b.Status)">@b.Status</span></td>
+                    <td>@MoneyFormatter.Format(b.AmountMinor, b.Currency)</td>
+                    <td>@b.CreatedAt.ToString("dd MMM yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

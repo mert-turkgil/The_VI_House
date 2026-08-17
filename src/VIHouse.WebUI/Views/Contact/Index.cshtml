@@ -1,0 +1,65 @@
+@model ContactFormViewModel
+@{
+    ViewData["Title"] = Loc["Contact.Title"];
+    var sent = ViewData["Sent"] is true;
+}
+
+<div class="content-hero">
+    <div class="container">
+        <span class="content-hero__eyebrow">@Loc["Contact.Eyebrow"]</span>
+        <h1>@Loc["Contact.Heading"]</h1>
+        <p>@Loc["Contact.Subheading"]</p>
+    </div>
+</div>
+
+<div class="container content-body">
+    <div class="contact-grid">
+        <div class="contact-info">
+            <div class="contact-info__item">
+                <h4>@Loc["Contact.EmailHeading"]</h4>
+                <p><a href="mailto:concierge@thevihouse.com">concierge@thevihouse.com</a></p>
+            </div>
+            <div class="contact-info__item">
+                <h4>@Loc["Contact.FaqHeading"]</h4>
+                <p>@Loc["Contact.FaqBody"] <a asp-controller="Faq" asp-action="Index">@Loc["Footer.Faq"]</a></p>
+            </div>
+        </div>
+
+        <div>
+            @if (sent)
+            {
+                <div class="contact-success">@Loc["Contact.SuccessMessage"]</div>
+            }
+            else
+            {
+                <form asp-action="Index" method="post" class="apply-form" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="apply-form__summary"></div>
+                    <div class="apply-field">
+                        <label asp-for="Name">@Loc["Contact.NameLabel"]</label>
+                        <input asp-for="Name" />
+                        <span asp-validation-for="Name" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="Email">@Loc["Contact.EmailLabel"]</label>
+                        <input asp-for="Email" type="email" />
+                        <span asp-validation-for="Email" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="Subject">@Loc["Contact.SubjectLabel"]</label>
+                        <input asp-for="Subject" />
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="Message">@Loc["Contact.MessageLabel"]</label>
+                        <textarea asp-for="Message" rows="6"></textarea>
+                        <span asp-validation-for="Message" class="apply-field__error"></span>
+                    </div>
+                    <button type="submit" class="btn btn--primary apply-form__submit">@Loc["Contact.Submit"]</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

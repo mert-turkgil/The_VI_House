@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="Nav.Home" xml:space="preserve"><value>Start</value></data>
+  <data name="Nav.Experiences" xml:space="preserve"><value>Erlebnisse</value></data>
+  <data name="Nav.Membership" xml:space="preserve"><value>Mitgliedschaft</value></data>
+  <data name="Nav.About" xml:space="preserve"><value>Über uns</value></data>
+  <data name="Nav.LanguageLabel" xml:space="preserve"><value>Sprache</value></data>
+  <data name="Nav.MyAccount" xml:space="preserve"><value>Mein Konto</value></data>
+  <data name="Nav.LogOut" xml:space="preserve"><value>Abmelden</value></data>
+  <data name="Nav.LogIn" xml:space="preserve"><value>Anmelden</value></data>
+  <data name="Nav.ApplyToJoin" xml:space="preserve"><value>Jetzt bewerben</value></data>
+  <data name="Nav.OpenMenu" xml:space="preserve"><value>Menü öffnen</value></data>
+
+  <data name="Footer.Tagline" xml:space="preserve"><value>Eine private, globale Gemeinschaft für die nächste Generation von Gründerinnen und Gründern.</value></data>
+  <data name="Footer.Explore" xml:space="preserve"><value>Entdecken</value></data>
+  <data name="Footer.Company" xml:space="preserve"><value>Unternehmen</value></data>
+  <data name="Footer.AboutUs" xml:space="preserve"><value>Über uns</value></data>
+  <data name="Footer.Contact" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="Footer.Support" xml:space="preserve"><value>Support</value></data>
+  <data name="Footer.Faq" xml:space="preserve"><value>Häufige Fragen</value></data>
+  <data name="Footer.ContactUs" xml:space="preserve"><value>Kontaktieren Sie uns</value></data>
+  <data name="Footer.NewsletterHeading" xml:space="preserve"><value>VI-Liste beitreten</value></data>
+  <data name="Footer.NewsletterPlaceholder" xml:space="preserve"><value>Ihre E-Mail-Adresse</value></data>
+  <data name="Footer.NewsletterSubmit" xml:space="preserve"><value>Abonnieren</value></data>
+  <data name="Footer.NewsletterNote" xml:space="preserve"><value>Wir respektieren Ihre Privatsphäre.</value></data>
+  <data name="Footer.RightsReserved" xml:space="preserve"><value>Alle Rechte vorbehalten.</value></data>
+  <data name="Footer.Terms" xml:space="preserve"><value>Allgemeine Geschäftsbedingungen</value></data>
+  <data name="Footer.Privacy" xml:space="preserve"><value>Datenschutzerklärung</value></data>
+  <data name="Footer.Cookies" xml:space="preserve"><value>Cookie-Richtlinie</value></data>
+  <data name="Footer.RefundPolicy" xml:space="preserve"><value>Rückerstattungsrichtlinie</value></data>
+
+  <data name="About.Title" xml:space="preserve"><value>Über The VI House</value></data>
+  <data name="About.Eyebrow" xml:space="preserve"><value>Unsere Geschichte</value></data>
+  <data name="About.Heading" xml:space="preserve"><value>Wo Ambition auf Übereinstimmung trifft.</value></data>
+  <data name="About.Subheading" xml:space="preserve"><value>The VI House ist eine private, einladungsbasierte Gemeinschaft für Gründerinnen, Gründer, Operator:innen und Investor:innen, die ihr Vorhaben ebenso ernst nehmen wie die Menschen um sich herum.</value></data>
+  <data name="About.Paragraph1" xml:space="preserve"><value>The VI House entstand aus einer einfachen Beobachtung: Die besten Entscheidungen fallen selten im Sitzungssaal. Sie entstehen beim Abendessen, auf einem Spaziergang, im leisen Gespräch nach dem Panel. Deshalb haben wir keine weitere Konferenz gebaut, sondern eine Reihe kleiner, kuratierter Räume — echte Orte, echte Menschen, echte Tiefe.</value></data>
+  <data name="About.Paragraph2" xml:space="preserve"><value>Jedes Erlebnis ist in der Teilnehmerzahl begrenzt und wird Bewerbung für Bewerbung geprüft. Wir optimieren nicht auf Teilnehmerzahlen — wir optimieren auf die richtigen zwanzig Menschen im richtigen Raum, lange genug, damit echtes Vertrauen entstehen kann.</value></data>
+  <data name="About.Paragraph3" xml:space="preserve"><value>Was Sie hier erwartet, ist kein Kurs und kein Networking-Event im üblichen Sinne. Es ist ein Arbeitsretreat für Menschen, die ernsthafte Vorhaben verfolgen — ausgerichtet mit der Sorgfalt eines Zuhauses statt der Logistik einer Konferenz.</value></data>
+  <data name="About.ValuesHeading" xml:space="preserve"><value>Woran wir glauben</value></data>
+  <data name="About.Value1Title" xml:space="preserve"><value>Kuratiert, nicht überfüllt</value></data>
+  <data name="About.Value1Body" xml:space="preserve"><value>Jede Bewerbung wird persönlich geprüft. Uns sind zwanzig richtige Menschen lieber als zweihundert vielleicht-richtige.</value></data>
+  <data name="About.Value2Title" xml:space="preserve"><value>Substanz statt Show</value></data>
+  <data name="About.Value2Body" xml:space="preserve"><value>Keine Bühnenbeleuchtung, keine Sponsorenstände. Nur ernsthafte Gespräche, in Räumen, die dafür gemacht sind.</value></data>
+  <data name="About.Value3Title" xml:space="preserve"><value>Für die Dauer gebaut</value></data>
+  <data name="About.Value3Body" xml:space="preserve"><value>Die hier entstehenden Beziehungen sollen über das Ereignis hinaus Bestand haben — das ist das eigentliche Produkt.</value></data>
+
+  <data name="Faq.Title" xml:space="preserve"><value>Häufig gestellte Fragen</value></data>
+  <data name="Faq.Eyebrow" xml:space="preserve"><value>Gut zu wissen</value></data>
+  <data name="Faq.Heading" xml:space="preserve"><value>Häufig gestellte Fragen</value></data>
+  <data name="Faq.Subheading" xml:space="preserve"><value>Alles, was Sie vor Ihrer Bewerbung wissen sollten.</value></data>
+  <data name="Faq.StillHaveQuestions" xml:space="preserve"><value>Noch Fragen?</value></data>
+  <data name="Faq.Q1" xml:space="preserve"><value>Wie funktioniert der Bewerbungsprozess?</value></data>
+  <data name="Faq.A1" xml:space="preserve"><value>Sie reichen eine kurze Bewerbung ein, in der Sie sich und Ihr Vorhaben vorstellen. Jede Bewerbung wird persönlich geprüft — wir verwenden keine automatisierte Bewertung. Bei Zusage erhalten Sie einen privaten, zeitlich begrenzten Link, um die Zahlung abzuschließen und Ihren Platz zu sichern.</value></data>
+  <data name="Faq.Q2" xml:space="preserve"><value>Wie lange dauert die Prüfung?</value></data>
+  <data name="Faq.A2" xml:space="preserve"><value>Die meisten Bewerber:innen erhalten innerhalb weniger Werktage eine Rückmeldung. Da jede Bewerbung einzeln gelesen wird, kann die Bearbeitungszeit bei größeren Erlebnissen leicht variieren.</value></data>
+  <data name="Faq.Q3" xml:space="preserve"><value>Was passiert, wenn ich auf der Warteliste stehe?</value></data>
+  <data name="Faq.A3" xml:space="preserve"><value>Sie werden per E-Mail benachrichtigt, und wir melden uns, sobald ein Platz frei wird. Bewerber:innen auf der Warteliste wird nichts berechnet, bis ein Platz bestätigt ist.</value></data>
+  <data name="Faq.Q4" xml:space="preserve"><value>Bekomme ich eine Rückerstattung, wenn sich meine Pläne ändern?</value></data>
+  <data name="Faq.A4" xml:space="preserve"><value>Die Rückerstattungsbedingungen variieren je nach Erlebnis und sind in unserer Rückerstattungsrichtlinie festgelegt, die Ihnen auch vor Abschluss der Zahlung erneut angezeigt wird.</value></data>
+  <data name="Faq.Q5" xml:space="preserve"><value>Ist The VI House nur für Gründer:innen?</value></data>
+  <data name="Faq.A5" xml:space="preserve"><value>In erster Linie ja, aber wir heißen auch Operator:innen und Investor:innen willkommen, die sich ernsthaft mit dem Aufbau von Unternehmen beschäftigen — der Raum wird nach Passung kuratiert, nicht allein nach Berufsbezeichnung.</value></data>
+  <data name="Faq.Q6" xml:space="preserve"><value>Gibt es eine Mitgliedschaft über ein einzelnes Erlebnis hinaus?</value></data>
+  <data name="Faq.A6" xml:space="preserve"><value>Eine vollständige Mitgliedschaft mit ganzjährigem Zugang, statt einzelner Erlebnisse, steht auf unserer Roadmap — melden Sie sich noch heute für ein Erlebnis an, um als Erste:r zu erfahren, wann sie startet.</value></data>
+  <data name="Faq.Q7" xml:space="preserve"><value>Was ist im Preis enthalten?</value></data>
+  <data name="Faq.A7" xml:space="preserve"><value>Jede Erlebnis-Seite listet unter „Leistungen" genau auf, was enthalten ist und was nicht. Dies variiert je nach Ort und Format.</value></data>
+  <data name="Faq.Q8" xml:space="preserve"><value>Wie erreiche ich Sie mit einer Frage, die hier nicht beantwortet wird?</value></data>
+  <data name="Faq.A8" xml:space="preserve"><value>Nutzen Sie unsere Kontaktseite — jede Nachricht wird von einer echten Person gelesen.</value></data>
+
+  <data name="Contact.Title" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="Contact.Eyebrow" xml:space="preserve"><value>Kontaktieren Sie uns</value></data>
+  <data name="Contact.Heading" xml:space="preserve"><value>Wir freuen uns, von Ihnen zu hören</value></data>
+  <data name="Contact.Subheading" xml:space="preserve"><value>Fragen zu einem Erlebnis, Ihrer Bewerbung oder etwas anderem — schreiben Sie uns.</value></data>
+  <data name="Contact.EmailHeading" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="Contact.FaqHeading" xml:space="preserve"><value>Häufige Fragen</value></data>
+  <data name="Contact.FaqBody" xml:space="preserve"><value>Bevor Sie uns schreiben, finden Sie Ihre Antwort vielleicht in unseren</value></data>
+  <data name="Contact.SuccessMessage" xml:space="preserve"><value>Vielen Dank — Ihre Nachricht wurde gesendet. Wir melden uns in Kürze bei Ihnen.</value></data>
+  <data name="Contact.NameLabel" xml:space="preserve"><value>Name</value></data>
+  <data name="Contact.EmailLabel" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="Contact.SubjectLabel" xml:space="preserve"><value>Betreff</value></data>
+  <data name="Contact.MessageLabel" xml:space="preserve"><value>Nachricht</value></data>
+  <data name="Contact.Submit" xml:space="preserve"><value>Nachricht senden</value></data>
+
+  <data name="Legal.LastUpdated" xml:space="preserve"><value>Zuletzt aktualisiert: 17. August 2026.</value></data>
+  <data name="Legal.Terms.Body" xml:space="preserve"><value>Diese Allgemeinen Geschäftsbedingungen regeln Ihre Nutzung der Website von The VI House sowie Ihre Teilnahme an jedem VI-House-Erlebnis. Mit der Bewerbung, dem Kauf eines Tickets oder der sonstigen Nutzung dieser Website erklären Sie sich mit diesen Bedingungen einverstanden.
+
+Mitgliedschaft &amp; Bewerbungen. Der Zugang zu The VI House erfolgt ausschließlich über eine Bewerbung. Die Einreichung einer Bewerbung garantiert keine Zusage. Wir behalten uns das Recht vor, jede Bewerbung nach eigenem Ermessen anzunehmen, abzulehnen oder auf eine Warteliste zu setzen, ohne Angabe von Gründen.
+
+Zahlungen. Nach Zusage erhalten Sie einen privaten, zeitlich begrenzten Link, um die Zahlung über unseren externen Zahlungsdienstleister abzuschließen. Preise werden in der auf der jeweiligen Erlebnis-Seite angegebenen Währung angezeigt und enthalten alle beim Checkout ausgewiesenen Gebühren.
+
+Stornierungen &amp; Änderungen. Wir behalten uns das Recht vor, ein Erlebnis aus Gründen außerhalb unserer angemessenen Kontrolle zu verschieben, zu verlegen oder abzusagen; betroffene Gäste erhalten in diesem Fall eine Umbuchung oder Rückerstattung gemäß unserer Rückerstattungsrichtlinie.
+
+Verhalten. Von Gästen wird erwartet, dass sie sich anderen Teilnehmenden, Gastgeber:innen und dem Veranstaltungspersonal gegenüber respektvoll verhalten. Wir behalten uns das Recht vor, Gäste ohne Rückerstattung von einem Erlebnis auszuschließen, wenn wir ihr Verhalten als störend oder unsicher einstufen.
+
+Haftung. Im gesetzlich zulässigen Rahmen haftet The VI House Group Ltd. nicht für indirekte oder Folgeschäden aus Ihrer Teilnahme an einem Erlebnis. Nichts in diesen Bedingungen beschränkt eine Haftung, die nach geltendem Recht nicht ausgeschlossen werden kann.
+
+Anwendbares Recht. Diese Bedingungen unterliegen dem Recht von England und Wales, ohne Berücksichtigung des Kollisionsrechts.
+
+Kontakt. Fragen zu diesen Bedingungen senden Sie uns bitte über unsere Kontaktseite.</value></data>
+  <data name="Legal.Privacy.Body" xml:space="preserve"><value>Diese Datenschutzerklärung erläutert, wie The VI House Group Ltd. Ihre personenbezogenen Daten erhebt, verwendet und schützt, wenn Sie sich bewerben, ein Erlebnis buchen oder anderweitig mit dieser Website interagieren.
+
+Was wir erheben. Wenn Sie sich bewerben oder registrieren, erheben wir die von Ihnen direkt bereitgestellten Informationen — Name, Kontaktdaten, Unternehmens- und berufliche Angaben sowie Ihre Bewerbungsantworten — zusammen mit technischen Informationen wie Ihrer IP-Adresse zu Sicherheitszwecken.
+
+Wie wir sie verwenden. Wir verwenden Ihre Daten, um Ihre Bewerbung zu bearbeiten, Buchungen und Zahlungen zu verwalten, Ihnen servicebezogene Mitteilungen zu senden und — sofern Sie zugestimmt haben — gelegentlich über zukünftige Erlebnisse zu informieren.
+
+Zahlungsdaten. Wir speichern niemals Ihre Kartendaten. Zahlungen werden direkt von unserem externen Zahlungsdienstleister verarbeitet, der eigene Compliance- und Sicherheitsstandards einhält.
+
+Weitergabe. Wir verkaufen Ihre personenbezogenen Daten nicht. Wir geben sie nur an Dienstleister weiter, die uns beim Betrieb der Website unterstützen, etwa bei der Zahlungsabwicklung und dem E-Mail-Versand, und nur in dem für diesen Zweck erforderlichen Umfang.
+
+Ihre Rechte. Je nach Wohnort haben Sie möglicherweise das Recht, auf Ihre personenbezogenen Daten zuzugreifen, sie zu berichtigen oder zu löschen, oder bestimmten Verarbeitungen zu widersprechen. Sie können diese Rechte ausüben, indem Sie uns über unsere Kontaktseite kontaktieren.
+
+Aufbewahrung. Wir bewahren personenbezogene Daten nur so lange auf, wie es für die in dieser Erklärung beschriebenen Zwecke erforderlich ist oder gesetzlich vorgeschrieben wird.
+
+Änderungen dieser Erklärung. Wir können diese Erklärung von Zeit zu Zeit aktualisieren; das Datum der letzten Änderung wird oben auf dieser Seite angezeigt.</value></data>
+  <data name="Legal.Cookies.Body" xml:space="preserve"><value>Diese Cookie-Richtlinie erläutert, wie The VI House Cookies und ähnliche Technologien auf dieser Website verwendet.
+
+Was sind Cookies. Cookies sind kleine Textdateien, die auf Ihrem Gerät gespeichert werden und Websites helfen, korrekt zu funktionieren und sich Ihre Einstellungen zu merken — zum Beispiel Ihre gewählte Sprache.
+
+Essenzielle Cookies. Wir verwenden eine kleine Anzahl essenzieller Cookies, die für die Funktion der Website erforderlich sind, etwa um Sie angemeldet zu halten und Ihre Spracheinstellung zu merken. Diese können nicht deaktiviert werden, ohne die Funktionalität der Website zu beeinträchtigen.
+
+Analyse. Wir nutzen möglicherweise begrenzte, datenschutzfreundliche Analysen, um zu verstehen, wie die Website genutzt wird, damit wir sie verbessern können. Wo gesetzlich vorgeschrieben, bitten wir vor dem Setzen nicht essenzieller Cookies um Ihre Einwilligung.
+
+Cookies verwalten. Die meisten Browser ermöglichen es Ihnen, Cookies über ihre Einstellungen zu kontrollieren, einschließlich des Löschens bestehender und der Blockierung neuer Cookies. Das Blockieren essenzieller Cookies kann Ihre Nutzung mancher Teile dieser Website beeinträchtigen.
+
+Änderungen. Wir können diese Richtlinie aktualisieren, wenn sich unsere Cookie-Nutzung ändert; das Datum der letzten Änderung wird oben auf dieser Seite angezeigt.</value></data>
+  <data name="Legal.Refund.Body" xml:space="preserve"><value>Diese Rückerstattungsrichtlinie erläutert, wie Stornierungen und Rückerstattungen für VI-House-Erlebnisse gehandhabt werden.
+
+Stornierung durch Sie. Der Anspruch auf Rückerstattung hängt davon ab, wie weit im Voraus vor dem Erlebnis Sie stornieren. Konkrete Stornofristen und etwaige Gebühren werden vor Abschluss der Zahlung beim Checkout für jedes Erlebnis angezeigt.
+
+Stornierung durch uns. Wenn wir ein Erlebnis aus Gründen absagen, verschieben oder verlegen, die in unserer Kontrolle liegen, erhalten Sie nach Wahl eine vollständige Rückerstattung oder eine Umbuchung auf ein zukünftiges Erlebnis.
+
+Nicht erstattungsfähige Fälle. Wir können keine Rückerstattung bei Nichterscheinen, verspäteter Ankunft oder freiwilliger vorzeitiger Abreise anbieten, außer wenn gesetzlich vorgeschrieben.
+
+Abwicklung von Rückerstattungen. Genehmigte Rückerstattungen erfolgen über unseren Zahlungsdienstleister auf Ihre ursprüngliche Zahlungsmethode und können je nach Bank mehrere Werktage in Anspruch nehmen.
+
+Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rückerstattung zu haben, kontaktieren Sie uns über unsere Kontaktseite — wir prüfen dies individuell.</value></data>
+
+  <data name="Applied.Title" xml:space="preserve"><value>Bewerbung eingegangen</value></data>
+  <data name="Applied.Body" xml:space="preserve"><value>Vielen Dank für Ihre Bewerbung bei The VI House — {0}. Jede Bewerbung wird persönlich geprüft — Sie erhalten innerhalb weniger Tage eine Rückmeldung per E-Mail.</value></data>
+  <data name="Applied.StatusHint" xml:space="preserve"><value>Sie können den Status Ihrer Bewerbung jederzeit hier einsehen:</value></data>
+  <data name="Applied.ExploreMore" xml:space="preserve"><value>Weitere Erlebnisse entdecken</value></data>
+  <data name="Applied.BackHome" xml:space="preserve"><value>Zurück zur Startseite</value></data>
+
+  <data name="Status.Title" xml:space="preserve"><value>Bewerbungsstatus</value></data>
+  <data name="Status.Intro" xml:space="preserve"><value>Hallo {0}, hier ist der aktuelle Stand.</value></data>
+  <data name="Status.SubmittedOn" xml:space="preserve"><value>Eingereicht am {0}.</value></data>
+  <data name="Status.Draft" xml:space="preserve"><value>Entwurf</value></data>
+  <data name="Status.Draft.Detail" xml:space="preserve"><value>Ihre Bewerbung wurde noch nicht eingereicht.</value></data>
+  <data name="Status.Submitted" xml:space="preserve"><value>Eingereicht</value></data>
+  <data name="Status.Submitted.Detail" xml:space="preserve"><value>Wir haben Ihre Bewerbung erhalten — sie steht zur Prüfung an. Jede Bewerbung wird persönlich gelesen; wir melden uns innerhalb weniger Tage per E-Mail.</value></data>
+  <data name="Status.UnderReview" xml:space="preserve"><value>In Prüfung</value></data>
+  <data name="Status.UnderReview.Detail" xml:space="preserve"><value>Ihre Bewerbung wird derzeit geprüft. Sie müssen im Moment nichts weiter tun.</value></data>
+  <data name="Status.Shortlisted" xml:space="preserve"><value>In der engeren Auswahl</value></data>
+  <data name="Status.Shortlisted.Detail" xml:space="preserve"><value>Sie sind in der engeren Auswahl — eine endgültige Entscheidung folgt in Kürze.</value></data>
+  <data name="Status.Approved" xml:space="preserve"><value>Angenommen</value></data>
+  <data name="Status.Approved.Detail" xml:space="preserve"><value>Herzlichen Glückwunsch — Ihre Bewerbung wurde angenommen. Prüfen Sie Ihr E-Mail-Postfach für einen privaten Link zum Abschluss Ihrer Buchung.</value></data>
+  <data name="Status.Rejected" xml:space="preserve"><value>Nicht angenommen</value></data>
+  <data name="Status.Rejected.Detail" xml:space="preserve"><value>Wir können Ihnen diesmal leider keinen Platz anbieten. Wir würden uns über eine zukünftige Bewerbung freuen.</value></data>
+  <data name="Status.Waitlisted" xml:space="preserve"><value>Warteliste</value></data>
+  <data name="Status.Waitlisted.Detail" xml:space="preserve"><value>Sie stehen auf der Warteliste. Wir informieren Sie per E-Mail, sobald ein Platz frei wird.</value></data>
+  <data name="Status.PaymentPending" xml:space="preserve"><value>Zahlung ausstehend</value></data>
+  <data name="Status.PaymentPending.Detail" xml:space="preserve"><value>Sie wurden angenommen und eingeladen, die Zahlung abzuschließen — prüfen Sie Ihr E-Mail-Postfach für Ihren privaten Buchungslink.</value></data>
+  <data name="Status.Paid" xml:space="preserve"><value>Bestätigt</value></data>
+  <data name="Status.Paid.Detail" xml:space="preserve"><value>Ihr Platz ist bestätigt. Achten Sie auf eine Bestätigungs-E-Mail mit Ihren Buchungsdetails.</value></data>
+  <data name="Status.Cancelled" xml:space="preserve"><value>Storniert</value></data>
+  <data name="Status.Cancelled.Detail" xml:space="preserve"><value>Diese Bewerbung wurde storniert. Kontaktieren Sie uns, wenn Sie glauben, dass dies ein Fehler ist.</value></data>
+
+  <data name="Account.NavProfile" xml:space="preserve"><value>Profil</value></data>
+  <data name="Account.NavBookings" xml:space="preserve"><value>Meine Buchungen</value></data>
+  <data name="Account.NavSecurity" xml:space="preserve"><value>Sicherheit &amp; Anmeldung</value></data>
+  <data name="Account.ProfileTitle" xml:space="preserve"><value>Mein Profil</value></data>
+  <data name="Account.CompanyLabel" xml:space="preserve"><value>Unternehmen</value></data>
+  <data name="Account.RoleLabel" xml:space="preserve"><value>Rolle</value></data>
+  <data name="Account.IndustryLabel" xml:space="preserve"><value>Branche</value></data>
+  <data name="Account.LinkedInLabel" xml:space="preserve"><value>LinkedIn-URL</value></data>
+  <data name="Account.WebsiteLabel" xml:space="preserve"><value>Website</value></data>
+  <data name="Account.BioLabel" xml:space="preserve"><value>Über mich</value></data>
+  <data name="Account.SaveProfile" xml:space="preserve"><value>Profil speichern</value></data>
+  <data name="Account.BookingsTitle" xml:space="preserve"><value>Meine Buchungen</value></data>
+  <data name="Account.NoBookings" xml:space="preserve"><value>Sie haben noch keine Buchungen.</value></data>
+  <data name="Account.BookingReference" xml:space="preserve"><value>Referenz</value></data>
+  <data name="Account.BookingExperience" xml:space="preserve"><value>Erlebnis</value></data>
+  <data name="Account.BookingDate" xml:space="preserve"><value>Datum</value></data>
+  <data name="Account.BookingStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Account.BookingAmount" xml:space="preserve"><value>Betrag</value></data>
+</root>

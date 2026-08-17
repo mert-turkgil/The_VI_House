@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="Nav.Home" xml:space="preserve"><value>Ana Sayfa</value></data>
+  <data name="Nav.Experiences" xml:space="preserve"><value>Deneyimler</value></data>
+  <data name="Nav.Membership" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Nav.About" xml:space="preserve"><value>Hakkımızda</value></data>
+  <data name="Nav.LanguageLabel" xml:space="preserve"><value>Dil</value></data>
+  <data name="Nav.MyAccount" xml:space="preserve"><value>Hesabım</value></data>
+  <data name="Nav.LogOut" xml:space="preserve"><value>Çıkış Yap</value></data>
+  <data name="Nav.LogIn" xml:space="preserve"><value>Giriş Yap</value></data>
+  <data name="Nav.ApplyToJoin" xml:space="preserve"><value>Başvur</value></data>
+  <data name="Nav.OpenMenu" xml:space="preserve"><value>Menüyü aç</value></data>
+
+  <data name="Footer.Tagline" xml:space="preserve"><value>Yeni nesil girişimciler için özel, küresel bir topluluk.</value></data>
+  <data name="Footer.Explore" xml:space="preserve"><value>Keşfet</value></data>
+  <data name="Footer.Company" xml:space="preserve"><value>Şirket</value></data>
+  <data name="Footer.AboutUs" xml:space="preserve"><value>Hakkımızda</value></data>
+  <data name="Footer.Contact" xml:space="preserve"><value>İletişim</value></data>
+  <data name="Footer.Support" xml:space="preserve"><value>Destek</value></data>
+  <data name="Footer.Faq" xml:space="preserve"><value>Sıkça Sorulan Sorular</value></data>
+  <data name="Footer.ContactUs" xml:space="preserve"><value>Bize Ulaşın</value></data>
+  <data name="Footer.NewsletterHeading" xml:space="preserve"><value>VI Listesine Katılın</value></data>
+  <data name="Footer.NewsletterPlaceholder" xml:space="preserve"><value>E-posta adresiniz</value></data>
+  <data name="Footer.NewsletterSubmit" xml:space="preserve"><value>Abone Ol</value></data>
+  <data name="Footer.NewsletterNote" xml:space="preserve"><value>Gizliliğinize saygı duyuyoruz.</value></data>
+  <data name="Footer.RightsReserved" xml:space="preserve"><value>Tüm hakları saklıdır.</value></data>
+  <data name="Footer.Terms" xml:space="preserve"><value>Kullanım Koşulları</value></data>
+  <data name="Footer.Privacy" xml:space="preserve"><value>Gizlilik Politikası</value></data>
+  <data name="Footer.Cookies" xml:space="preserve"><value>Çerez Politikası</value></data>
+  <data name="Footer.RefundPolicy" xml:space="preserve"><value>İade Politikası</value></data>
+
+  <data name="About.Title" xml:space="preserve"><value>The VI House Hakkında</value></data>
+  <data name="About.Eyebrow" xml:space="preserve"><value>Hikayemiz</value></data>
+  <data name="About.Heading" xml:space="preserve"><value>Hırsın Uyumla Buluştuğu Yer.</value></data>
+  <data name="About.Subheading" xml:space="preserve"><value>The VI House, kurduklarını olduğu kadar çevrelerindeki insanları da ciddiye alan girişimciler, operatörler ve yatırımcılar için özel, davetle katılınan bir topluluktur.</value></data>
+  <data name="About.Paragraph1" xml:space="preserve"><value>The VI House basit bir gözlemle başladı: en iyi kararlar nadiren toplantı odalarında alınır. Bunlar bir akşam yemeğinde, bir yürüyüşte, panelin bitiminden sonraki sessiz sohbette ortaya çıkar. Bu yüzden bir konferans daha inşa etmek yerine, küçük ve özenle seçilmiş bir dizi mekân kurduk — gerçek yerler, gerçek insanlar, gerçek derinlik.</value></data>
+  <data name="About.Paragraph2" xml:space="preserve"><value>Her deneyimin kontenjanı sınırlıdır ve her başvuru tek tek incelenir. Katılımcı sayısını değil, doğru yirmi kişiyi doğru odada, gerçek güvenin oluşabileceği kadar uzun süre bir araya getirmeyi önceliklendiriyoruz.</value></data>
+  <data name="About.Paragraph3" xml:space="preserve"><value>İçeride bulacağınız şey bir kurs ya da alışılagelmiş bir networking etkinliği değil. Ciddi işler kuran insanlar için, bir konferansın lojistiğinden çok bir evin özeniyle ağırlanan bir çalışma inzivası.</value></data>
+  <data name="About.ValuesHeading" xml:space="preserve"><value>İnandıklarımız</value></data>
+  <data name="About.Value1Title" xml:space="preserve"><value>Seçilmiş, Kalabalık Değil</value></data>
+  <data name="About.Value1Body" xml:space="preserve"><value>Her başvuru elle incelenir. İki yüz belki-doğru kişi yerine yirmi doğru kişiyi tercih ederiz.</value></data>
+  <data name="About.Value2Title" xml:space="preserve"><value>Gösteriş Değil, Öz</value></data>
+  <data name="About.Value2Body" xml:space="preserve"><value>Sahne ışığı yok, sponsor standı yok. Sadece bunun için tasarlanmış odalarda ciddi sohbetler.</value></data>
+  <data name="About.Value3Title" xml:space="preserve"><value>Kalıcı Olmak Üzere Kurulmuş</value></data>
+  <data name="About.Value3Body" xml:space="preserve"><value>Burada kurulan ilişkilerin etkinliğin kendisinden daha uzun sürmesi hedeflenir — asıl ürün budur.</value></data>
+
+  <data name="Faq.Title" xml:space="preserve"><value>Sıkça Sorulan Sorular</value></data>
+  <data name="Faq.Eyebrow" xml:space="preserve"><value>Bilmekte Fayda Var</value></data>
+  <data name="Faq.Heading" xml:space="preserve"><value>Sıkça Sorulan Sorular</value></data>
+  <data name="Faq.Subheading" xml:space="preserve"><value>Başvurmadan önce bilmeniz gereken her şey.</value></data>
+  <data name="Faq.StillHaveQuestions" xml:space="preserve"><value>Hâlâ sorunuz mu var?</value></data>
+  <data name="Faq.Q1" xml:space="preserve"><value>Başvuru süreci nasıl işliyor?</value></data>
+  <data name="Faq.A1" xml:space="preserve"><value>Kendinizi ve ne inşa ettiğinizi anlatan kısa bir başvuru gönderiyorsunuz. Her başvuru elle incelenir — otomatik puanlama kullanmıyoruz. Onaylanırsa, ödemeyi tamamlayıp yerinizi ayırtmanız için özel, süreli bir bağlantı alırsınız.</value></data>
+  <data name="Faq.Q2" xml:space="preserve"><value>İnceleme ne kadar sürer?</value></data>
+  <data name="Faq.A2" xml:space="preserve"><value>Çoğu başvuru sahibi birkaç iş günü içinde yanıt alır. Her başvuru tek tek okunduğu için, daha büyük deneyimlerde inceleme süresi biraz değişebilir.</value></data>
+  <data name="Faq.Q3" xml:space="preserve"><value>Bekleme listesine alınırsam ne olur?</value></data>
+  <data name="Faq.A3" xml:space="preserve"><value>E-posta ile bilgilendirilirsiniz ve bir yer açılır açılmaz size ulaşırız. Bekleme listesindeki başvuru sahiplerinden bir yer kesinleşene kadar herhangi bir ücret alınmaz.</value></data>
+  <data name="Faq.Q4" xml:space="preserve"><value>Planlarım değişirse iade alabilir miyim?</value></data>
+  <data name="Faq.A4" xml:space="preserve"><value>İade koşulları deneyime göre değişir ve İade Politikamızda belirtilir; ödemeyi tamamlamadan önce bunu tekrar göreceksiniz.</value></data>
+  <data name="Faq.Q5" xml:space="preserve"><value>The VI House yalnızca girişimciler için mi?</value></data>
+  <data name="Faq.A5" xml:space="preserve"><value>Öncelikle evet, ama inşa etme sürecine gerçekten dahil olan operatörleri ve yatırımcıları da ağırlıyoruz — oda, yalnızca unvana göre değil uyuma göre seçilir.</value></data>
+  <data name="Faq.Q6" xml:space="preserve"><value>Tek bir deneyimin ötesinde bir üyelik sunuyor musunuz?</value></data>
+  <data name="Faq.A6" xml:space="preserve"><value>Tek bir deneyim yerine yıl boyu erişim sunan tam üyelik yol haritamızda — bugün bir deneyime katılın, açıldığında ilk haberdar olan siz olun.</value></data>
+  <data name="Faq.Q7" xml:space="preserve"><value>Fiyata neler dahil?</value></data>
+  <data name="Faq.A7" xml:space="preserve"><value>Her deneyim sayfası, "Neler Dahil" başlığı altında tam olarak nelerin dahil olup olmadığını listeler. Bu, konuma ve formata göre değişir.</value></data>
+  <data name="Faq.Q8" xml:space="preserve"><value>Burada yanıtlanmayan bir sorum varsa nasıl ulaşabilirim?</value></data>
+  <data name="Faq.A8" xml:space="preserve"><value>İletişim sayfasını kullanın — her mesajı gerçek bir kişi okur.</value></data>
+
+  <data name="Contact.Title" xml:space="preserve"><value>İletişim</value></data>
+  <data name="Contact.Eyebrow" xml:space="preserve"><value>Bize Ulaşın</value></data>
+  <data name="Contact.Heading" xml:space="preserve"><value>Sizden Haber Almak İsteriz</value></data>
+  <data name="Contact.Subheading" xml:space="preserve"><value>Bir deneyim, başvurunuz veya başka bir konu hakkında sorularınız mı var — bize yazın.</value></data>
+  <data name="Contact.EmailHeading" xml:space="preserve"><value>E-posta</value></data>
+  <data name="Contact.FaqHeading" xml:space="preserve"><value>Sık Sorulan Sorular</value></data>
+  <data name="Contact.FaqBody" xml:space="preserve"><value>Yazmadan önce yanıtınızı şurada bulabilirsiniz:</value></data>
+  <data name="Contact.SuccessMessage" xml:space="preserve"><value>Teşekkürler — mesajınız gönderildi. Kısa süre içinde sizinle iletişime geçeceğiz.</value></data>
+  <data name="Contact.NameLabel" xml:space="preserve"><value>Ad Soyad</value></data>
+  <data name="Contact.EmailLabel" xml:space="preserve"><value>E-posta</value></data>
+  <data name="Contact.SubjectLabel" xml:space="preserve"><value>Konu</value></data>
+  <data name="Contact.MessageLabel" xml:space="preserve"><value>Mesaj</value></data>
+  <data name="Contact.Submit" xml:space="preserve"><value>Mesaj Gönder</value></data>
+
+  <data name="Legal.LastUpdated" xml:space="preserve"><value>Son güncelleme: 17 Ağustos 2026.</value></data>
+  <data name="Legal.Terms.Body" xml:space="preserve"><value>Bu Kullanım Koşulları, The VI House web sitesini kullanımınızı ve herhangi bir VI House deneyimine katılımınızı düzenler. Başvurarak, bilet satın alarak veya bu siteyi başka bir şekilde kullanarak bu koşulları kabul etmiş olursunuz.
+
+Üyelik ve Başvurular. The VI House'a erişim yalnızca başvuru yoluyla mümkündür. Başvuru göndermek kabul garantisi vermez. Herhangi bir başvuruyu, gerekçe belirtme zorunluluğu olmaksızın, kendi takdirimize göre kabul etme, reddetme veya bekleme listesine alma hakkını saklı tutarız.
+
+Ödemeler. Onaylandıktan sonra, üçüncü taraf ödeme sağlayıcımız üzerinden ödemeyi tamamlamanız için özel, süreli bir bağlantı alırsınız. Fiyatlar ilgili deneyim sayfasında belirtilen para biriminde gösterilir ve ödeme sırasında açıklanan tüm ücretleri içerir.
+
+İptaller ve Değişiklikler. Makul kontrolümüz dışındaki koşullar nedeniyle bir deneyimi erteleme, taşıma veya iptal etme hakkını saklı tutarız; bu durumda etkilenen misafirlere İade Politikamıza uygun olarak transfer veya iade teklif edilir.
+
+Davranış. Misafirlerin diğer katılımcılara, ev sahiplerine ve mekân personeline saygılı davranması beklenir. Makul ölçüde rahatsız edici veya güvensiz bulduğumuz davranışlar nedeniyle herhangi bir misafiri, iade yapmaksızın bir deneyimden çıkarma hakkını saklı tutarız.
+
+Sorumluluk. Yasaların izin verdiği azami ölçüde, The VI House Group Ltd. bir deneyime katılımınızdan doğan dolaylı veya sonuç niteliğindeki zararlardan sorumlu değildir. Bu koşullardaki hiçbir şey, yürürlükteki yasalar kapsamında hariç tutulamayacak sorumluluğu sınırlamaz.
+
+Uygulanacak Hukuk. Bu koşullar, kanunlar ihtilafı ilkeleri dikkate alınmaksızın İngiltere ve Galler yasalarına tabidir.
+
+İletişim. Bu koşullarla ilgili sorularınızı İletişim sayfamız üzerinden bize iletebilirsiniz.</value></data>
+  <data name="Legal.Privacy.Body" xml:space="preserve"><value>Bu Gizlilik Politikası, The VI House Group Ltd.'nin başvurduğunuzda, bir deneyim rezervasyonu yaptığınızda veya bu siteyle başka bir şekilde etkileşime girdiğinizde kişisel verilerinizi nasıl topladığını, kullandığını ve koruduğunu açıklar.
+
+Ne Topluyoruz. Başvurduğunuzda veya kayıt olduğunuzda, doğrudan sağladığınız bilgileri — ad, iletişim bilgileri, şirket ve mesleki bilgiler ile başvuru yanıtlarınızı — güvenlik amacıyla IP adresiniz gibi teknik bilgilerle birlikte topluyoruz.
+
+Nasıl Kullanıyoruz. Bilgilerinizi başvurunuzu işlemek, rezervasyon ve ödemeleri yönetmek, size hizmetle ilgili iletişimler göndermek ve — onay verdiyseniz — gelecekteki deneyimler hakkında zaman zaman güncellemeler göndermek için kullanıyoruz.
+
+Ödeme Verileri. Kart bilgilerinizi asla saklamayız. Ödemeler, kendi uyumluluk ve güvenlik standartlarını uygulayan üçüncü taraf ödeme sağlayıcımız tarafından doğrudan işlenir.
+
+Paylaşım. Kişisel verilerinizi satmıyoruz. Bunları yalnızca siteyi işletmemize yardımcı olan hizmet sağlayıcılarla — ödeme işleme ve e-posta gönderimi gibi — ve yalnızca hizmeti sağlamaları için gerekli ölçüde paylaşıyoruz.
+
+Haklarınız. Yaşadığınız yere bağlı olarak, kişisel verilerinize erişme, düzeltme veya silme ya da belirli işlemlere itiraz etme hakkına sahip olabilirsiniz. Bu haklarınızı İletişim sayfamız üzerinden bizimle iletişime geçerek kullanabilirsiniz.
+
+Veri Saklama. Kişisel verileri yalnızca bu politikada açıklanan amaçlar için gerekli olduğu sürece veya yasaların gerektirdiği şekilde saklarız.
+
+Bu Politikadaki Değişiklikler. Bu politikayı zaman zaman güncelleyebiliriz; en son revizyon tarihi bu sayfanın üst kısmında gösterilir.</value></data>
+  <data name="Legal.Cookies.Body" xml:space="preserve"><value>Bu Çerez Politikası, The VI House'un bu web sitesinde çerezleri ve benzer teknolojileri nasıl kullandığını açıklar.
+
+Çerez Nedir. Çerezler, web sitelerinin doğru çalışmasına ve tercihlerinizi hatırlamasına yardımcı olan, cihazınızda saklanan küçük metin dosyalarıdır — örneğin seçtiğiniz dil.
+
+Zorunlu Çerezler. Sitenin çalışması için gerekli az sayıda zorunlu çerez kullanıyoruz; örneğin oturumunuzu açık tutmak ve dil tercihinizi hatırlamak gibi. Bunlar, site işlevselliğini etkilemeden devre dışı bırakılamaz.
+
+Analitik. Siteyi nasıl kullanıldığını anlayıp geliştirebilmek için sınırlı, gizliliğe saygılı analitik araçlar kullanabiliriz. Yasaların gerektirdiği durumlarda, zorunlu olmayan çerezleri ayarlamadan önce onayınızı isteyeceğiz.
+
+Çerezleri Yönetme. Çoğu tarayıcı, mevcut çerezleri silme ve yenilerini engelleme dahil olmak üzere ayarları üzerinden çerezleri kontrol etmenize izin verir. Zorunlu çerezleri engellemek, bu sitenin bazı bölümlerini kullanma yeteneğinizi etkileyebilir.
+
+Değişiklikler. Çerez kullanımımız değiştikçe bu politikayı güncelleyebiliriz; en son revizyon tarihi bu sayfanın üst kısmında gösterilir.</value></data>
+  <data name="Legal.Refund.Body" xml:space="preserve"><value>Bu İade Politikası, VI House deneyimleri için iptallerin ve iadelerin nasıl ele alındığını açıklar.
+
+Sizin Tarafınızdan İptaller. İade hakkı, deneyimden ne kadar önce iptal ettiğinize bağlıdır. Belirli iptal süreleri ve geçerli ücretler, ödemeyi tamamlamadan önce her deneyim için ödeme ekranında gösterilir.
+
+Bizim Tarafımızdan İptaller. Kontrolümüz dahilindeki nedenlerle bir deneyimi iptal eder, ertelersek veya taşırsak, tercihinize göre tam iade veya gelecekteki bir deneyime transfer teklif edilir.
+
+İade Edilemeyen Durumlar. Yasaların gerektirdiği durumlar dışında, katılmama, geç varış veya gönüllü erken ayrılma nedeniyle iade sunamıyoruz.
+
+İadeler Nasıl İşlenir. Onaylanan iadeler, ödeme sağlayıcımız aracılığıyla orijinal ödeme yönteminize iade edilir ve bankanıza bağlı olarak görünmesi birkaç iş günü sürebilir.
+
+Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünüyorsanız, İletişim sayfamız üzerinden bize ulaşın; durumu ayrı ayrı değerlendireceğiz.</value></data>
+
+  <data name="Applied.Title" xml:space="preserve"><value>Başvurunuz Alındı</value></data>
+  <data name="Applied.Body" xml:space="preserve"><value>The VI House — {0} için başvurduğunuz için teşekkür ederiz. Her başvuru elle incelenir — birkaç gün içinde e-posta ile size dönüş yapılacaktır.</value></data>
+  <data name="Applied.StatusHint" xml:space="preserve"><value>Başvuru durumunuzu istediğiniz zaman şu adresten kontrol edebilirsiniz:</value></data>
+  <data name="Applied.ExploreMore" xml:space="preserve"><value>Diğer Deneyimleri Keşfet</value></data>
+  <data name="Applied.BackHome" xml:space="preserve"><value>Ana Sayfaya Dön</value></data>
+
+  <data name="Status.Title" xml:space="preserve"><value>Başvuru Durumu</value></data>
+  <data name="Status.Intro" xml:space="preserve"><value>Merhaba {0}, işte mevcut durum.</value></data>
+  <data name="Status.SubmittedOn" xml:space="preserve"><value>{0} tarihinde gönderildi.</value></data>
+  <data name="Status.Draft" xml:space="preserve"><value>Taslak</value></data>
+  <data name="Status.Draft.Detail" xml:space="preserve"><value>Başvurunuz henüz gönderilmedi.</value></data>
+  <data name="Status.Submitted" xml:space="preserve"><value>Gönderildi</value></data>
+  <data name="Status.Submitted.Detail" xml:space="preserve"><value>Başvurunuzu aldık ve inceleme sırasında. Her başvuru elle okunur — birkaç gün içinde e-posta ile size ulaşacağız.</value></data>
+  <data name="Status.UnderReview" xml:space="preserve"><value>İnceleniyor</value></data>
+  <data name="Status.UnderReview.Detail" xml:space="preserve"><value>Başvurunuz şu anda inceleniyor. Şu an sizden herhangi bir işlem gerekmiyor.</value></data>
+  <data name="Status.Shortlisted" xml:space="preserve"><value>Kısa Listede</value></data>
+  <data name="Status.Shortlisted.Detail" xml:space="preserve"><value>Kısa listeye alındınız — nihai karar yolda.</value></data>
+  <data name="Status.Approved" xml:space="preserve"><value>Onaylandı</value></data>
+  <data name="Status.Approved.Detail" xml:space="preserve"><value>Tebrikler — başvurunuz onaylandı. Rezervasyonunuzu tamamlamak için özel bağlantı içeren e-postanızı kontrol edin.</value></data>
+  <data name="Status.Rejected" xml:space="preserve"><value>Onaylanmadı</value></data>
+  <data name="Status.Rejected.Detail" xml:space="preserve"><value>Bu sefer size bir yer sunamıyoruz. Gelecekte tekrar başvurmanızı isteriz.</value></data>
+  <data name="Status.Waitlisted" xml:space="preserve"><value>Bekleme Listesinde</value></data>
+  <data name="Status.Waitlisted.Detail" xml:space="preserve"><value>Bekleme listesindesiniz. Bir yer açılır açılmaz size e-posta göndereceğiz.</value></data>
+  <data name="Status.PaymentPending" xml:space="preserve"><value>Ödeme Bekleniyor</value></data>
+  <data name="Status.PaymentPending.Detail" xml:space="preserve"><value>Onaylandınız ve ödemeyi tamamlamaya davet edildiniz — özel rezervasyon bağlantınız için e-postanızı kontrol edin.</value></data>
+  <data name="Status.Paid" xml:space="preserve"><value>Onaylandı ve Ödendi</value></data>
+  <data name="Status.Paid.Detail" xml:space="preserve"><value>Yeriniz kesinleşti. Rezervasyon detaylarınızı içeren onay e-postasını takip edin.</value></data>
+  <data name="Status.Cancelled" xml:space="preserve"><value>İptal Edildi</value></data>
+  <data name="Status.Cancelled.Detail" xml:space="preserve"><value>Bu başvuru iptal edildi. Bunun bir hata olduğunu düşünüyorsanız bizimle iletişime geçin.</value></data>
+
+  <data name="Account.NavProfile" xml:space="preserve"><value>Profil</value></data>
+  <data name="Account.NavBookings" xml:space="preserve"><value>Rezervasyonlarım</value></data>
+  <data name="Account.NavSecurity" xml:space="preserve"><value>Güvenlik ve Giriş</value></data>
+  <data name="Account.ProfileTitle" xml:space="preserve"><value>Profilim</value></data>
+  <data name="Account.CompanyLabel" xml:space="preserve"><value>Şirket</value></data>
+  <data name="Account.RoleLabel" xml:space="preserve"><value>Unvan</value></data>
+  <data name="Account.IndustryLabel" xml:space="preserve"><value>Sektör</value></data>
+  <data name="Account.LinkedInLabel" xml:space="preserve"><value>LinkedIn Adresi</value></data>
+  <data name="Account.WebsiteLabel" xml:space="preserve"><value>Web Sitesi</value></data>
+  <data name="Account.BioLabel" xml:space="preserve"><value>Hakkında</value></data>
+  <data name="Account.SaveProfile" xml:space="preserve"><value>Profili Kaydet</value></data>
+  <data name="Account.BookingsTitle" xml:space="preserve"><value>Rezervasyonlarım</value></data>
+  <data name="Account.NoBookings" xml:space="preserve"><value>Henüz bir rezervasyonunuz yok.</value></data>
+  <data name="Account.BookingReference" xml:space="preserve"><value>Referans</value></data>
+  <data name="Account.BookingExperience" xml:space="preserve"><value>Deneyim</value></data>
+  <data name="Account.BookingDate" xml:space="preserve"><value>Tarih</value></data>
+  <data name="Account.BookingStatus" xml:space="preserve"><value>Durum</value></data>
+  <data name="Account.BookingAmount" xml:space="preserve"><value>Tutar</value></data>
+</root>

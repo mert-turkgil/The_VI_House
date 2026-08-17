@@ -15,3 +15,6 @@ public record BookingConfirmedEmailModel(
     DateTimeOffset StartAtUtc, DateTimeOffset EndAtUtc, long AmountMinor, string Currency);
 
 public record PaymentFailedEmailModel(string FirstName, string ExperienceTitle, string InvitationUrl);
+
+/// <summary>Internal notification sent to Site:ContactEmail when a visitor submits the public Contact page form.</summary>
+public record ContactMessageEmailModel(string Name, string Email, string? Subject, string Message);

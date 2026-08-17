@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = Loc["Faq.Title"];
+    const int QuestionCount = 8;
+}
+
+<div class="content-hero">
+    <div class="container">
+        <span class="content-hero__eyebrow">@Loc["Faq.Eyebrow"]</span>
+        <h1>@Loc["Faq.Heading"]</h1>
+        <p>@Loc["Faq.Subheading"]</p>
+    </div>
+</div>
+
+<div class="container content-body">
+    <div class="faq-list">
+        @for (var i = 1; i <= QuestionCount; i++)
+        {
+            <details class="faq-item">
+                <summary>@Loc[$"Faq.Q{i}"]</summary>
+                <p>@Loc[$"Faq.A{i}"]</p>
+            </details>
+        }
+    </div>
+
+    <p style="margin-top:32px; text-align:center;">
+        @Loc["Faq.StillHaveQuestions"] <a asp-controller="Contact" asp-action="Index">@Loc["Footer.ContactUs"]</a>
+    </p>
+</div>

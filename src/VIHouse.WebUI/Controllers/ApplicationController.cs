@@ -82,7 +82,26 @@ public class ApplicationController(IExperienceService experienceService, IApplic
         await applicationService.SubmitAsync(application, form.AgreeToTerms, HttpContext.Connection.RemoteIpAddress?.ToString(), ct);
 
         ViewData["Title"] = "Application Received";
-        return View("Submitted", exp);
+        return View("Submitted", new SubmittedViewModel { Experience = exp!, ApplicationId = application.Id });
+    }
+
+    [HttpGet("status/{id:guid}")]
+    public async Task<IActionResult> Status(Guid id, CancellationToken ct)
+    {
+        var application = await applicationService.GetForAdminAsync(id, ct);
+        if (application is null) return NotFound();
+
+        var experience = await experienceService.GetForAdminEditAsync(application.ExperienceId, ct);
+
+        ViewData["Title"] = "Application Status";
+        return View(new ApplicationStatusViewModel
+        {
+            Id = application.Id,
+            FirstName = application.FirstName,
+            Status = application.Status,
+            ExperienceLabel = experience is null ? "—" : $"The VI House — {experience.City}",
+            SubmittedAt = application.SubmittedAt,
+        });
     }
 
     private static bool CanApply(ExperienceStatus status) =>

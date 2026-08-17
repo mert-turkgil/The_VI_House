@@ -12,4 +12,54 @@
         <div class="admin-kpi-card__value">@Model.TotalBookings</div>
         <div class="admin-kpi-card__label">Total Bookings</div>
     </div>
+    <div class="admin-kpi-card">
+        <div class="admin-kpi-card__value">@Model.ConversionToPaidPercent%</div>
+        <div class="admin-kpi-card__label">Application &rarr; Paid Conversion</div>
+    </div>
+    @foreach (var (currency, amountMinor) in Model.RevenueByCurrency)
+    {
+        <div class="admin-kpi-card">
+            <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
+            <div class="admin-kpi-card__label">Revenue Collected (@currency)</div>
+        </div>
+    }
+</div>
+
+<div class="admin-card" style="margin-top:24px;">
+    <h2>Application Funnel</h2>
+    <table class="admin-table">
+        <thead><tr><th>Status</th><th>Count</th><th>% of Total</th></tr></thead>
+        <tbody>
+            @foreach (var status in new[] { ApplicationStatus.Submitted, ApplicationStatus.UnderReview, ApplicationStatus.Shortlisted, ApplicationStatus.Approved, ApplicationStatus.PaymentPending, ApplicationStatus.Paid, ApplicationStatus.Waitlisted, ApplicationStatus.Rejected })
+            {
+                var count = Model.ApplicationsByStatus.GetValueOrDefault(status);
+                var pct = Model.TotalApplications == 0 ? 0 : Math.Round(count * 100.0 / Model.TotalApplications, 1);
+                <tr>
+                    <td>@status.ToDisplayLabel()</td>
+                    <td>@count</td>
+                    <td>@pct%</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="admin-card" style="margin-top:24px;">
+    <h2>Bookings by Status</h2>
+    @if (Model.BookingsByStatus.Count == 0)
+    {
+        <p>No bookings yet.</p>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead><tr><th>Status</th><th>Count</th></tr></thead>
+            <tbody>
+                @foreach (var (status, count) in Model.BookingsByStatus)
+                {
+                    <tr><td>@status</td><td>@count</td></tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>

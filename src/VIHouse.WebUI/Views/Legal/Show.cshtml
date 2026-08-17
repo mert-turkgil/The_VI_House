@@ -1,0 +1,19 @@
+@model LegalDocumentViewModel
+@{
+    ViewData["Title"] = Loc[Model.TitleKey];
+    var paragraphs = Loc[Model.BodyKey].Value.Split("\n\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+}
+
+<div class="content-hero">
+    <div class="container">
+        <h1>@Loc[Model.TitleKey]</h1>
+        <p>@Loc["Legal.LastUpdated"]</p>
+    </div>
+</div>
+
+<div class="container content-body">
+    @foreach (var paragraph in paragraphs)
+    {
+        <p>@paragraph</p>
+    }
+</div>

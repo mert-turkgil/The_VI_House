@@ -1,0 +1,53 @@
+@using VIHouse.Entities.Commerce
+@model List<AdminPaymentListItemViewModel>
+@{
+    ViewData["Title"] = "Payments";
+    var selected = ViewData["SelectedStatus"] as PaymentStatus?;
+
+    string TabClass(PaymentStatus? s) => selected == s ? "admin-tabs__link active" : "admin-tabs__link";
+    string BadgeClass(PaymentStatus s) => s switch
+    {
+        PaymentStatus.Paid => "admin-badge admin-badge--open",
+        PaymentStatus.Failed or PaymentStatus.Cancelled or PaymentStatus.Chargeback => "admin-badge admin-badge--closed",
+        _ => "admin-badge",
+    };
+}
+
+<nav class="admin-tabs">
+    <a class="@TabClass(null)" asp-action="Index">All</a>
+    <a class="@TabClass(PaymentStatus.Created)" asp-action="Index" asp-route-status="Created">Created</a>
+    <a class="@TabClass(PaymentStatus.Paid)" asp-action="Index" asp-route-status="Paid">Paid</a>
+    <a class="@TabClass(PaymentStatus.Failed)" asp-action="Index" asp-route-status="Failed">Failed</a>
+    <a class="@TabClass(PaymentStatus.Refunded)" asp-action="Index" asp-route-status="Refunded">Refunded</a>
+</nav>
+
+@if (Model.Count == 0)
+{
+    <p>No payments here yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Customer</th>
+                <th>Experience</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td><a asp-action="Details" asp-route-id="@p.Id">@(p.CustomerEmail ?? "—")</a></td>
+                    <td>@p.ExperienceLabel</td>
+                    <td><span class="@BadgeClass(p.Status)">@p.Status</span></td>
+                    <td>@MoneyFormatter.Format(p.AmountMinor, p.Currency)</td>
+                    <td>@p.CreatedAt.ToString("dd MMM yyyy")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

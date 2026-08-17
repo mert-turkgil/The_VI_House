@@ -1,0 +1,30 @@
+@model AdminPaymentDetailViewModel
+@{
+    var p = Model.Payment;
+    ViewData["Title"] = "Payment";
+}
+
+<div class="admin-toolbar" style="justify-content: space-between; align-items: center;">
+    <span class="admin-badge">@p.Status</span>
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; Back to Payments</a>
+</div>
+
+<div class="admin-card">
+    <h2>Payment</h2>
+    <p style="font-size:0.75rem; color:#999; margin-top:-8px;">Refunds/disputes are handled in the Stripe dashboard — this is a read-only mirror.</p>
+    <dl class="admin-detail-list">
+        <div><dt>Customer</dt><dd>@(Model.CustomerEmail ?? "—")</dd></div>
+        <div><dt>Experience</dt><dd>@Model.ExperienceLabel</dd></div>
+        <div><dt>Provider</dt><dd>@p.Provider</dd></div>
+        <div><dt>Provider Reference</dt><dd style="word-break:break-all;">@p.ProviderReference</dd></div>
+        <div><dt>Amount</dt><dd>@MoneyFormatter.Format(p.AmountMinor, p.Currency)</dd></div>
+        <div><dt>Payment Method</dt><dd>@(p.PaymentMethod ?? "—")</dd></div>
+        <div><dt>Invoice Reference</dt><dd>@(p.InvoiceReference ?? "—")</dd></div>
+        <div><dt>Refund Status</dt><dd>@(p.RefundStatus ?? "—")</dd></div>
+        <div><dt>Created</dt><dd>@p.CreatedAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
+        @if (Model.BookingReference is not null)
+        {
+            <div><dt>Booking</dt><dd>@Model.BookingReference</dd></div>
+        }
+    </dl>
+</div>

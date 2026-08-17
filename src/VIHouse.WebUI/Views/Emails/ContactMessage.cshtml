@@ -1,0 +1,9 @@
+@model ContactMessageEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">New Contact Message</h1>
+<p style="margin:0 0 16px;"><strong>From:</strong> @Model.Name (@Model.Email)</p>
+@if (!string.IsNullOrWhiteSpace(Model.Subject))
+{
+    <p style="margin:0 0 16px;"><strong>Subject:</strong> @Model.Subject</p>
+}
+<p style="margin:0 0 16px; white-space:pre-line;">@Model.Message</p>

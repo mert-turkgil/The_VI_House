@@ -5,53 +5,53 @@
                 <partial name="_Crest" />
                 <div>
                     <div class="site-footer__wordmark">The VI House</div>
-                    <p>A private global community for the next generation of founders.</p>
+                    <p>@Loc["Footer.Tagline"]</p>
                 </div>
             </div>
 
             <div class="site-footer__col">
-                <h4>Explore</h4>
+                <h4>@Loc["Footer.Explore"]</h4>
                 <ul>
-                    <li><a href="/experiences">Experiences</a></li>
-                    <li><a href="/membership">Membership</a></li>
-                    <li><a href="/about">About</a></li>
+                    <li><a asp-controller="Experiences" asp-action="Index">@Loc["Nav.Experiences"]</a></li>
+                    <li><a href="/membership">@Loc["Nav.Membership"]</a></li>
+                    <li><a asp-controller="About" asp-action="Index">@Loc["Nav.About"]</a></li>
                 </ul>
             </div>
 
             <div class="site-footer__col">
-                <h4>Company</h4>
+                <h4>@Loc["Footer.Company"]</h4>
                 <ul>
-                    <li><a href="/about">About Us</a></li>
-                    <li><a href="/contact">Contact</a></li>
+                    <li><a asp-controller="About" asp-action="Index">@Loc["Footer.AboutUs"]</a></li>
+                    <li><a asp-controller="Contact" asp-action="Index">@Loc["Footer.Contact"]</a></li>
                 </ul>
             </div>
 
             <div class="site-footer__col">
-                <h4>Support</h4>
+                <h4>@Loc["Footer.Support"]</h4>
                 <ul>
-                    <li><a href="/faq">FAQ</a></li>
-                    <li><a href="/contact">Contact Us</a></li>
+                    <li><a asp-controller="Faq" asp-action="Index">@Loc["Footer.Faq"]</a></li>
+                    <li><a asp-controller="Contact" asp-action="Index">@Loc["Footer.ContactUs"]</a></li>
                 </ul>
             </div>
 
             <div class="site-footer__newsletter">
-                <h4>Join the VI List</h4>
-                @* TODO: wire to a real newsletter endpoint once Contact/CMS lands — inert for now rather than a dead POST. *@
+                <h4>@Loc["Footer.NewsletterHeading"]</h4>
+                @* TODO: wire to a real newsletter endpoint once a mailing-list provider is chosen — inert for now rather than a dead POST. *@
                 <form class="site-footer__newsletter-form" onsubmit="return false;">
-                    <input type="email" placeholder="Your email address" aria-label="Email address" required />
-                    <button type="submit" class="btn btn--primary" aria-label="Subscribe">&rarr;</button>
+                    <input type="email" placeholder="@Loc["Footer.NewsletterPlaceholder"]" aria-label="@Loc["Footer.NewsletterPlaceholder"]" required />
+                    <button type="submit" class="btn btn--primary" aria-label="@Loc["Footer.NewsletterSubmit"]">&rarr;</button>
                 </form>
-                <p class="site-footer__newsletter-note">We respect your privacy.</p>
+                <p class="site-footer__newsletter-note">@Loc["Footer.NewsletterNote"]</p>
             </div>
         </div>
 
         <div class="site-footer__bottom">
-            <span>&copy; @DateTime.UtcNow.Year The VI House Group Ltd. All rights reserved.</span>
+            <span>&copy; @DateTime.UtcNow.Year The VI House Group Ltd. @Loc["Footer.RightsReserved"]</span>
             <ul class="site-footer__legal-links">
-                <li><a href="/legal/terms">Terms &amp; Conditions</a></li>
-                <li><a href="/legal/privacy">Privacy Policy</a></li>
-                <li><a href="/legal/cookies">Cookie Policy</a></li>
-                <li><a href="/legal/refund">Refund Policy</a></li>
+                <li><a asp-controller="Legal" asp-action="Terms">@Loc["Footer.Terms"]</a></li>
+                <li><a asp-controller="Legal" asp-action="Privacy">@Loc["Footer.Privacy"]</a></li>
+                <li><a asp-controller="Legal" asp-action="Cookies">@Loc["Footer.Cookies"]</a></li>
+                <li><a asp-controller="Legal" asp-action="Refund">@Loc["Footer.RefundPolicy"]</a></li>
             </ul>
         </div>
     </div>

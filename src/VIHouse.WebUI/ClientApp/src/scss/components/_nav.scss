@@ -102,6 +102,59 @@
   display: none;
 }
 
+.site-header__logout-form {
+  display: contents; // no box of its own — the inner .btn.site-header__cta governs visibility/sizing
+}
+
+// --- Language switcher (EN / DE / TR / ET) --------------------------------------------------------
+.site-lang {
+  display: none;
+  gap: 2px;
+}
+
+.site-lang__link {
+  padding: 4px 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--vih-cream-dim);
+  opacity: 0.55;
+  border-radius: 4px;
+  transition: opacity 0.15s var(--vih-ease), background-color 0.15s var(--vih-ease);
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &.active {
+    opacity: 1;
+    background: rgba(244, 240, 230, 0.12);
+    color: var(--vih-cream);
+  }
+}
+
+.site-mobile-nav__lang {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 0;
+  border-top: 1px solid var(--vih-line-on-dark);
+  border-bottom: 1px solid var(--vih-line-on-dark);
+
+  a {
+    padding: 6px 10px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--vih-cream-dim);
+    border-radius: 4px;
+
+    &.active {
+      color: var(--vih-cream);
+      background: rgba(244, 240, 230, 0.12);
+    }
+  }
+}
+
 .site-header__burger {
   display: inline-flex;
   flex-direction: column;
@@ -202,6 +255,10 @@
   .site-header__login,
   .site-header__cta {
     display: inline-flex;
+  }
+
+  .site-lang {
+    display: flex;
   }
 
   .site-header__burger,

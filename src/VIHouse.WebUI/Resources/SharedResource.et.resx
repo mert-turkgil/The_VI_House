@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="Nav.Home" xml:space="preserve"><value>Avaleht</value></data>
+  <data name="Nav.Experiences" xml:space="preserve"><value>Elamused</value></data>
+  <data name="Nav.Membership" xml:space="preserve"><value>Liikmelisus</value></data>
+  <data name="Nav.About" xml:space="preserve"><value>Meist</value></data>
+  <data name="Nav.LanguageLabel" xml:space="preserve"><value>Keel</value></data>
+  <data name="Nav.MyAccount" xml:space="preserve"><value>Minu konto</value></data>
+  <data name="Nav.LogOut" xml:space="preserve"><value>Logi välja</value></data>
+  <data name="Nav.LogIn" xml:space="preserve"><value>Logi sisse</value></data>
+  <data name="Nav.ApplyToJoin" xml:space="preserve"><value>Kandideeri</value></data>
+  <data name="Nav.OpenMenu" xml:space="preserve"><value>Ava menüü</value></data>
+
+  <data name="Footer.Tagline" xml:space="preserve"><value>Privaatne globaalne kogukond järgmise põlvkonna asutajatele.</value></data>
+  <data name="Footer.Explore" xml:space="preserve"><value>Avasta</value></data>
+  <data name="Footer.Company" xml:space="preserve"><value>Ettevõte</value></data>
+  <data name="Footer.AboutUs" xml:space="preserve"><value>Meist</value></data>
+  <data name="Footer.Contact" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="Footer.Support" xml:space="preserve"><value>Tugi</value></data>
+  <data name="Footer.Faq" xml:space="preserve"><value>KKK</value></data>
+  <data name="Footer.ContactUs" xml:space="preserve"><value>Võta ühendust</value></data>
+  <data name="Footer.NewsletterHeading" xml:space="preserve"><value>Liitu VI nimekirjaga</value></data>
+  <data name="Footer.NewsletterPlaceholder" xml:space="preserve"><value>Sinu e-posti aadress</value></data>
+  <data name="Footer.NewsletterSubmit" xml:space="preserve"><value>Telli</value></data>
+  <data name="Footer.NewsletterNote" xml:space="preserve"><value>Austame sinu privaatsust.</value></data>
+  <data name="Footer.RightsReserved" xml:space="preserve"><value>Kõik õigused kaitstud.</value></data>
+  <data name="Footer.Terms" xml:space="preserve"><value>Kasutustingimused</value></data>
+  <data name="Footer.Privacy" xml:space="preserve"><value>Privaatsuspoliitika</value></data>
+  <data name="Footer.Cookies" xml:space="preserve"><value>Küpsiste poliitika</value></data>
+  <data name="Footer.RefundPolicy" xml:space="preserve"><value>Tagastamispoliitika</value></data>
+
+  <data name="About.Title" xml:space="preserve"><value>The VI House'ist</value></data>
+  <data name="About.Eyebrow" xml:space="preserve"><value>Meie lugu</value></data>
+  <data name="About.Heading" xml:space="preserve"><value>Kus ambitsioon kohtub kooskõlaga.</value></data>
+  <data name="About.Subheading" xml:space="preserve"><value>The VI House on privaatne, kutsepõhine kogukond asutajatele, tegevjuhtidele ja investoritele, kes suhtuvad oma ettevõtmisse sama tõsiselt kui enda ümber olevatesse inimestesse.</value></data>
+  <data name="About.Paragraph1" xml:space="preserve"><value>The VI House sündis lihtsast tähelepanekust: parimad otsused ei sünni harva koosolekulaua taga. Need sünnivad õhtusöögi ajal, jalutuskäigul, vaikses vestluses pärast paneeli lõppu. Seetõttu ei ehitanud me veel üht konverentsi, vaid seeria väikseid, hoolikalt valitud ruume — pärisohad, pärisinimesed, pärissügavus.</value></data>
+  <data name="About.Paragraph2" xml:space="preserve"><value>Iga elamus on osalejate arvult piiratud ja iga taotlus vaadatakse üle eraldi. Me ei optimeeri osalejate arvu järgi — me optimeerime selle järgi, et õiged kakskümmend inimest oleksid õiges ruumis piisavalt kaua, et tekiks tõeline usaldus.</value></data>
+  <data name="About.Paragraph3" xml:space="preserve"><value>Sisu, mille leiad, ei ole kursus ega tavapärane võrgustumisüritus. See on töörežiimis retriit inimestele, kes ehitavad midagi tõsist — korraldatud kodu hoolega, mitte konverentsi logistikaga.</value></data>
+  <data name="About.ValuesHeading" xml:space="preserve"><value>Millesse me usume</value></data>
+  <data name="About.Value1Title" xml:space="preserve"><value>Hoolikalt valitud, mitte rahvarohke</value></data>
+  <data name="About.Value1Body" xml:space="preserve"><value>Iga taotlus vaadatakse käsitsi üle. Eelistame kahtekümmet õiget inimest kahesajale ehk-õigele.</value></data>
+  <data name="About.Value2Title" xml:space="preserve"><value>Sisu, mitte lava</value></data>
+  <data name="About.Value2Body" xml:space="preserve"><value>Ei lavavalgustust ega sponsorstende. Ainult tõsised vestlused ruumides, mis on selleks loodud.</value></data>
+  <data name="About.Value3Title" xml:space="preserve"><value>Loodud kestma</value></data>
+  <data name="About.Value3Body" xml:space="preserve"><value>Siin tekkinud suhted on mõeldud kestma kauem kui üritus ise — see ongi tegelik toode.</value></data>
+
+  <data name="Faq.Title" xml:space="preserve"><value>Korduma kippuvad küsimused</value></data>
+  <data name="Faq.Eyebrow" xml:space="preserve"><value>Kasulik teada</value></data>
+  <data name="Faq.Heading" xml:space="preserve"><value>Korduma kippuvad küsimused</value></data>
+  <data name="Faq.Subheading" xml:space="preserve"><value>Kõik, mida on vaja teada enne kandideerimist.</value></data>
+  <data name="Faq.StillHaveQuestions" xml:space="preserve"><value>Kas jäi veel küsimusi?</value></data>
+  <data name="Faq.Q1" xml:space="preserve"><value>Kuidas taotlusprotsess töötab?</value></data>
+  <data name="Faq.A1" xml:space="preserve"><value>Esitad lühikese taotluse, kus räägid endast ja sellest, mida ehitad. Iga taotlus vaadatakse käsitsi üle — me ei kasuta automaatset hindamist. Heakskiidu korral saad privaatse, ajaliselt piiratud lingi makse tegemiseks ja koha kinnitamiseks.</value></data>
+  <data name="Faq.Q2" xml:space="preserve"><value>Kui kaua läbivaatamine aega võtab?</value></data>
+  <data name="Faq.A2" xml:space="preserve"><value>Enamik taotlejaid saab vastuse mõne tööpäeva jooksul. Kuna iga taotlus loetakse eraldi, võib läbivaatamise aeg suuremate elamuste puhul veidi varieeruda.</value></data>
+  <data name="Faq.Q3" xml:space="preserve"><value>Mis juhtub, kui satun ootenimekirja?</value></data>
+  <data name="Faq.A3" xml:space="preserve"><value>Sind teavitatakse e-kirjaga ja võtame ühendust niipea, kui koht vabaneb. Ootenimekirjas olevatelt taotlejatelt ei võeta tasu enne, kui koht on kinnitatud.</value></data>
+  <data name="Faq.Q4" xml:space="preserve"><value>Kas saan tagasimakse, kui mu plaanid muutuvad?</value></data>
+  <data name="Faq.A4" xml:space="preserve"><value>Tagastamistingimused erinevad elamuse kaupa ja on sätestatud meie tagastamispoliitikas, mille näed uuesti enne makse lõpuleviimist.</value></data>
+  <data name="Faq.Q5" xml:space="preserve"><value>Kas The VI House on ainult asutajatele?</value></data>
+  <data name="Faq.A5" xml:space="preserve"><value>Peamiselt jah, kuid tervitame ka tegevjuhte ja investoreid, kes on ehitamisse tõeliselt kaasatud — ruum valitakse sobivuse, mitte ainult ametinimetuse järgi.</value></data>
+  <data name="Faq.Q6" xml:space="preserve"><value>Kas pakute liikmelisust, mis ulatub ühest elamusest kaugemale?</value></data>
+  <data name="Faq.A6" xml:space="preserve"><value>Täielik liikmelisus aastaringse juurdepääsuga (mitte ainult üksikute elamustega) on meie plaanides — liitu juba täna ühe elamusega ja kuule esimesena, kui see avaneb.</value></data>
+  <data name="Faq.Q7" xml:space="preserve"><value>Mis kuulub hinna sisse?</value></data>
+  <data name="Faq.A7" xml:space="preserve"><value>Iga elamuse lehel on jaotise „Mis on hinna sees" all täpselt kirjas, mis kuulub ja mis ei kuulu hinna sisse. See erineb asukoha ja formaadi kaupa.</value></data>
+  <data name="Faq.Q8" xml:space="preserve"><value>Kuidas saan ühendust, kui mu küsimusele siit vastust ei leia?</value></data>
+  <data name="Faq.A8" xml:space="preserve"><value>Kasuta kontaktilehte — iga sõnumit loeb päris inimene.</value></data>
+
+  <data name="Contact.Title" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="Contact.Eyebrow" xml:space="preserve"><value>Võta ühendust</value></data>
+  <data name="Contact.Heading" xml:space="preserve"><value>Meil on hea meel sinust kuulda</value></data>
+  <data name="Contact.Subheading" xml:space="preserve"><value>Küsimusi elamuse, taotluse või millegi muu kohta — saada meile sõnum.</value></data>
+  <data name="Contact.EmailHeading" xml:space="preserve"><value>E-post</value></data>
+  <data name="Contact.FaqHeading" xml:space="preserve"><value>Sagedased küsimused</value></data>
+  <data name="Contact.FaqBody" xml:space="preserve"><value>Enne kirjutamist võid oma vastuse leida meie</value></data>
+  <data name="Contact.SuccessMessage" xml:space="preserve"><value>Aitäh — sinu sõnum on saadetud. Võtame peagi ühendust.</value></data>
+  <data name="Contact.NameLabel" xml:space="preserve"><value>Nimi</value></data>
+  <data name="Contact.EmailLabel" xml:space="preserve"><value>E-post</value></data>
+  <data name="Contact.SubjectLabel" xml:space="preserve"><value>Teema</value></data>
+  <data name="Contact.MessageLabel" xml:space="preserve"><value>Sõnum</value></data>
+  <data name="Contact.Submit" xml:space="preserve"><value>Saada sõnum</value></data>
+
+  <data name="Legal.LastUpdated" xml:space="preserve"><value>Viimati uuendatud: 17. august 2026.</value></data>
+  <data name="Legal.Terms.Body" xml:space="preserve"><value>Need kasutustingimused reguleerivad The VI House veebisaidi kasutamist ja osalemist mis tahes VI House'i elamusel. Taotluse esitamisega, pileti ostmisega või selle saidi muul viisil kasutamisega nõustud nende tingimustega.
+
+Liikmelisus ja taotlused. Juurdepääs The VI House'ile toimub ainult taotluse alusel. Taotluse esitamine ei taga selle heakskiitmist. Jätame endale õiguse taotlus omal äranägemisel vastu võtta, tagasi lükata või ootenimekirja panna, ilma kohustuseta põhjust selgitada.
+
+Maksed. Pärast heakskiitmist saad privaatse, ajaliselt piiratud lingi makse lõpuleviimiseks meie kolmandast osapoolest maksetöötleja kaudu. Hinnad on näidatud vastaval elamuse lehel märgitud vääringus ja sisaldavad kõiki maksmisel avaldatud tasusid.
+
+Tühistamised ja muudatused. Jätame endale õiguse lükata edasi, muuta toimumiskohta või tühistada elamus meist mõistlikult mitteolenevatel põhjustel; sellisel juhul pakutakse mõjutatud külalistele ülekannet või tagasimakset vastavalt meie tagastamispoliitikale.
+
+Käitumine. Külalistelt oodatakse lugupidavat käitumist teiste osalejate, korraldajate ja asutuse töötajate suhtes. Jätame endale õiguse eemaldada külaline elamuselt ilma tagasimakseta käitumise eest, mida peame põhjendatult häirivaks või ohtlikuks.
+
+Vastutus. Seaduses lubatud ulatuses ei vastuta The VI House Group Ltd. kaudsete ega tulenevate kahjude eest, mis tulenevad sinu osalemisest elamusel. Miski neis tingimustes ei piira vastutust, mida kohaldatava õiguse alusel ei saa välistada.
+
+Kohaldatav õigus. Neid tingimusi reguleerib Inglismaa ja Walesi õigus, arvestamata kollisiooninorme.
+
+Kontakt. Küsimused nende tingimuste kohta saad saata meile kontaktilehe kaudu.</value></data>
+  <data name="Legal.Privacy.Body" xml:space="preserve"><value>See privaatsuspoliitika selgitab, kuidas The VI House Group Ltd. kogub, kasutab ja kaitseb sinu isikuandmeid, kui esitad taotluse, broneerid elamuse või muul viisil selle saidiga suhtled.
+
+Mida kogume. Taotledes või registreerudes kogume otse sinu esitatud teavet — nimi, kontaktandmed, ettevõtte ja tööalane teave ning taotluse vastused — koos tehnilise teabega, näiteks IP-aadress turvalisuse eesmärgil.
+
+Kuidas kasutame. Kasutame sinu andmeid taotluse töötlemiseks, broneeringute ja maksete haldamiseks, teenusega seotud teadete saatmiseks ning — kui oled nõustunud — aeg-ajalt tulevaste elamuste kohta info saatmiseks.
+
+Maksmise andmed. Me ei salvesta kunagi sinu kaardiandmeid. Makseid töötleb otse meie kolmandast osapoolest maksetöötleja, kes järgib enda vastavus- ja turvastandardeid.
+
+Jagamine. Me ei müü sinu isikuandmeid. Jagame neid ainult teenusepakkujatega, kes aitavad meil saiti käitada (näiteks maksete töötlemine ja e-kirjade saatmine), ja ainult ulatuses, mis on vajalik teenuse osutamiseks.
+
+Sinu õigused. Sõltuvalt elukohast võib sul olla õigus pääseda ligi oma isikuandmetele, neid parandada või kustutada, või vaidlustada teatud töötlemist. Neid õigusi saad kasutada, võttes meiega ühendust kontaktilehe kaudu.
+
+Andmete säilitamine. Säilitame isikuandmeid ainult nii kaua, kui see on vajalik selles poliitikas kirjeldatud eesmärkidel või seadusega nõutud.
+
+Selle poliitika muudatused. Võime seda poliitikat aeg-ajalt uuendada; viimase muudatuse kuupäev on näidatud selle lehe ülaosas.</value></data>
+  <data name="Legal.Cookies.Body" xml:space="preserve"><value>See küpsiste poliitika selgitab, kuidas The VI House kasutab sellel veebisaidil küpsiseid ja sarnaseid tehnoloogiaid.
+
+Mis on küpsised. Küpsised on väikesed tekstifailid, mis salvestatakse sinu seadmesse ja aitavad veebisaitidel korrektselt toimida ning meelde jätta sinu eelistusi — näiteks valitud keele.
+
+Vajalikud küpsised. Kasutame väikest hulka vajalikke küpsiseid, mis on saidi toimimiseks hädavajalikud, näiteks sisselogituna hoidmiseks ja keele-eelistuse meelespidamiseks. Neid ei saa keelata ilma saidi funktsionaalsust mõjutamata.
+
+Analüütika. Võime kasutada piiratud, privaatsust austavat analüütikat, et mõista saidi kasutamist ja seda parandada. Kui seadus seda nõuab, küsime enne mittevajalike küpsiste seadmist sinu nõusolekut.
+
+Küpsiste haldamine. Enamik brausereid võimaldab küpsiseid oma seadete kaudu kontrollida, sealhulgas olemasolevate kustutamist ja uute blokeerimist. Vajalike küpsiste blokeerimine võib mõjutada sinu võimalust kasutada mõnda selle saidi osa.
+
+Muudatused. Võime seda poliitikat uuendada vastavalt meie küpsiste kasutuse muutumisele; viimase muudatuse kuupäev on näidatud selle lehe ülaosas.</value></data>
+  <data name="Legal.Refund.Body" xml:space="preserve"><value>See tagastamispoliitika selgitab, kuidas VI House'i elamuste tühistamisi ja tagasimakseid käsitletakse.
+
+Tühistamine sinu poolt. Tagasimakseõigus sõltub sellest, kui kaua enne elamust tühistad. Konkreetsed tühistamisajad ja kehtivad tasud kuvatakse iga elamuse puhul maksmisel enne makse lõpuleviimist.
+
+Tühistamine meie poolt. Kui tühistame, lükkame edasi või muudame elamuse toimumiskohta meist olenevatel põhjustel, pakutakse sulle valikuliselt kas täielikku tagasimakset või ülekannet tulevasele elamusele.
+
+Tagastamatud olukorrad. Me ei saa pakkuda tagasimakset kohalejõudmata jätmise, hilinemise või vabatahtliku varasema lahkumise korral, välja arvatud juhul, kui seadus seda nõuab.
+
+Kuidas tagasimakseid töödeldakse. Heakskiidetud tagasimaksed tagastatakse meie maksetöötleja kaudu sinu algsele maksemeetodile ja võivad olenevalt pangast ilmumiseks võtta mitu tööpäeva.
+
+Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi, võta meiega ühendust kontaktilehe kaudu — vaatame selle eraldi üle.</value></data>
+
+  <data name="Applied.Title" xml:space="preserve"><value>Taotlus on vastu võetud</value></data>
+  <data name="Applied.Body" xml:space="preserve"><value>Täname, et kandideerisid The VI House'i — {0} elamusele. Iga taotlus vaadatakse käsitsi üle — saad e-kirjaga vastuse mõne päeva jooksul.</value></data>
+  <data name="Applied.StatusHint" xml:space="preserve"><value>Saad oma taotluse staatust igal ajal kontrollida siit:</value></data>
+  <data name="Applied.ExploreMore" xml:space="preserve"><value>Avasta rohkem elamusi</value></data>
+  <data name="Applied.BackHome" xml:space="preserve"><value>Tagasi avalehele</value></data>
+
+  <data name="Status.Title" xml:space="preserve"><value>Taotluse staatus</value></data>
+  <data name="Status.Intro" xml:space="preserve"><value>Tere {0}, siin on hetkeseis.</value></data>
+  <data name="Status.SubmittedOn" xml:space="preserve"><value>Esitatud {0}.</value></data>
+  <data name="Status.Draft" xml:space="preserve"><value>Mustand</value></data>
+  <data name="Status.Draft.Detail" xml:space="preserve"><value>Sinu taotlust ei ole veel esitatud.</value></data>
+  <data name="Status.Submitted" xml:space="preserve"><value>Esitatud</value></data>
+  <data name="Status.Submitted.Detail" xml:space="preserve"><value>Oleme sinu taotluse kätte saanud ja see ootab läbivaatamist. Iga taotlus loetakse käsitsi — võtame mõne päeva jooksul e-kirjaga ühendust.</value></data>
+  <data name="Status.UnderReview" xml:space="preserve"><value>Läbivaatamisel</value></data>
+  <data name="Status.UnderReview.Detail" xml:space="preserve"><value>Sinu taotlust vaadatakse praegu läbi. Sinu poolt ei ole hetkel midagi vaja teha.</value></data>
+  <data name="Status.Shortlisted" xml:space="preserve"><value>Lühinimekirjas</value></data>
+  <data name="Status.Shortlisted.Detail" xml:space="preserve"><value>Oled lühinimekirjas — lõplik otsus on teel.</value></data>
+  <data name="Status.Approved" xml:space="preserve"><value>Heaks kiidetud</value></data>
+  <data name="Status.Approved.Detail" xml:space="preserve"><value>Palju õnne — sinu taotlus on heaks kiidetud. Vaata oma e-postist privaatset linki broneeringu lõpuleviimiseks.</value></data>
+  <data name="Status.Rejected" xml:space="preserve"><value>Ei kiidetud heaks</value></data>
+  <data name="Status.Rejected.Detail" xml:space="preserve"><value>Sel korral ei saa sulle kohta pakkuda. Ootame sinult meelsasti uut taotlust tulevikus.</value></data>
+  <data name="Status.Waitlisted" xml:space="preserve"><value>Ootenimekirjas</value></data>
+  <data name="Status.Waitlisted.Detail" xml:space="preserve"><value>Oled ootenimekirjas. Saadame sulle e-kirja niipea, kui koht vabaneb.</value></data>
+  <data name="Status.PaymentPending" xml:space="preserve"><value>Makse ootel</value></data>
+  <data name="Status.PaymentPending.Detail" xml:space="preserve"><value>Oled heaks kiidetud ja kutsutud makset lõpetama — vaata oma e-postist privaatset broneerimislinki.</value></data>
+  <data name="Status.Paid" xml:space="preserve"><value>Kinnitatud</value></data>
+  <data name="Status.Paid.Detail" xml:space="preserve"><value>Sinu koht on kinnitatud. Oota kinnituskirja koos broneeringu andmetega.</value></data>
+  <data name="Status.Cancelled" xml:space="preserve"><value>Tühistatud</value></data>
+  <data name="Status.Cancelled.Detail" xml:space="preserve"><value>See taotlus on tühistatud. Kui arvad, et tegemist on veaga, võta meiega ühendust.</value></data>
+
+  <data name="Account.NavProfile" xml:space="preserve"><value>Profiil</value></data>
+  <data name="Account.NavBookings" xml:space="preserve"><value>Minu broneeringud</value></data>
+  <data name="Account.NavSecurity" xml:space="preserve"><value>Turvalisus ja sisselogimine</value></data>
+  <data name="Account.ProfileTitle" xml:space="preserve"><value>Minu profiil</value></data>
+  <data name="Account.CompanyLabel" xml:space="preserve"><value>Ettevõte</value></data>
+  <data name="Account.RoleLabel" xml:space="preserve"><value>Roll</value></data>
+  <data name="Account.IndustryLabel" xml:space="preserve"><value>Valdkond</value></data>
+  <data name="Account.LinkedInLabel" xml:space="preserve"><value>LinkedIn URL</value></data>
+  <data name="Account.WebsiteLabel" xml:space="preserve"><value>Veebileht</value></data>
+  <data name="Account.BioLabel" xml:space="preserve"><value>Enda kohta</value></data>
+  <data name="Account.SaveProfile" xml:space="preserve"><value>Salvesta profiil</value></data>
+  <data name="Account.BookingsTitle" xml:space="preserve"><value>Minu broneeringud</value></data>
+  <data name="Account.NoBookings" xml:space="preserve"><value>Sul ei ole veel broneeringuid.</value></data>
+  <data name="Account.BookingReference" xml:space="preserve"><value>Viide</value></data>
+  <data name="Account.BookingExperience" xml:space="preserve"><value>Elamus</value></data>
+  <data name="Account.BookingDate" xml:space="preserve"><value>Kuupäev</value></data>
+  <data name="Account.BookingStatus" xml:space="preserve"><value>Staatus</value></data>
+  <data name="Account.BookingAmount" xml:space="preserve"><value>Summa</value></data>
+</root>
