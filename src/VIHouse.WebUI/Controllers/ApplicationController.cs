@@ -4,6 +4,7 @@ using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Applications;
 using VIHouse.Entities.Experiences;
+using VIHouse.WebUI.Services;
 using VIHouse.WebUI.ViewModels.Applications;
 using VIHouse.WebUI.ViewModels.Experiences;
 
@@ -27,8 +28,12 @@ public class ApplicationController(IExperienceService experienceService, IApplic
             return View("ChooseExperience", open.Select(ExperienceCardViewModel.FromEntity).ToList());
         }
 
+        var form = BuildForm(exp);
+        if (string.IsNullOrWhiteSpace(form.ReferralCode) && Request.Cookies.TryGetValue(ReferralCookie.Name, out var cookieCode))
+            form.ReferralCode = cookieCode;
+
         ViewData["Title"] = "Request Access";
-        return View(BuildForm(exp));
+        return View(form);
     }
 
     [HttpPost("")]

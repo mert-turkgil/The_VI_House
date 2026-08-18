@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Localization;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Identity;
+using VIHouse.WebUI.Services;
 using VIHouse.WebUI.ViewModels.Membership;
 
 namespace VIHouse.WebUI.Controllers;
@@ -39,7 +40,8 @@ public class MembershipController(
         successUrl += (successUrl.Contains('?') ? "&" : "?") + "session_id={CHECKOUT_SESSION_ID}";
         var cancelUrl = Url.Action(nameof(Cancel), "Membership", null, Request.Scheme)!;
 
-        var result = await membershipService.InitiateCheckoutAsync(planId, userId, successUrl, cancelUrl, ct);
+        var referralCode = Request.Cookies[ReferralCookie.Name];
+        var result = await membershipService.InitiateCheckoutAsync(planId, userId, referralCode, successUrl, cancelUrl, ct);
         if (!result.Success)
         {
             TempData["MembershipError"] = result.Error;

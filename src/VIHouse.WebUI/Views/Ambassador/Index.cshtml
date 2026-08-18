@@ -1,0 +1,61 @@
+@model AmbassadorDashboardViewModel
+@{
+    ViewData["Title"] = "Ambassador Dashboard";
+    var referralUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/r/{Model.Code}";
+}
+
+<div class="content-hero">
+    <div class="container">
+        <span class="content-hero__eyebrow">Ambassador</span>
+        <h1>Welcome, @Model.Name</h1>
+        <p>Your referral link and performance — commission rate: @Model.CommissionPercent%.</p>
+    </div>
+</div>
+
+<div class="container content-body">
+    <div class="status-card" style="margin-top:0;">
+        <p style="margin:0 0 8px; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.04em; color:#888;">Your Referral Link</p>
+        <p style="font-size:1.0625rem; font-weight:600; word-break:break-all;">@referralUrl</p>
+    </div>
+
+    <h2 style="margin-top:40px;">Performance</h2>
+    <p style="font-size:0.8125rem; color:#888; margin-top:-12px;">Aggregate counts and revenue only — we don't share the names or contact details of the people you refer.</p>
+
+    <div class="admin-kpi-grid" style="margin-top:20px;">
+        <div class="admin-kpi-card">
+            <div class="admin-kpi-card__value">@Model.Stats.Visits</div>
+            <div class="admin-kpi-card__label">Link Visits</div>
+        </div>
+        <div class="admin-kpi-card">
+            <div class="admin-kpi-card__value">@Model.Stats.Applications</div>
+            <div class="admin-kpi-card__label">Applications</div>
+        </div>
+        <div class="admin-kpi-card">
+            <div class="admin-kpi-card__value">@Model.Stats.ApprovedApplications</div>
+            <div class="admin-kpi-card__label">Approved</div>
+        </div>
+        <div class="admin-kpi-card">
+            <div class="admin-kpi-card__value">@(Model.Stats.TicketPurchases + Model.Stats.MembershipPurchases)</div>
+            <div class="admin-kpi-card__label">Purchases</div>
+        </div>
+        @foreach (var (currency, amountMinor) in Model.Stats.RevenueByCurrency)
+        {
+            <div class="admin-kpi-card">
+                <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
+                <div class="admin-kpi-card__label">Revenue (@currency)</div>
+            </div>
+        }
+        @foreach (var (currency, amountMinor) in Model.Stats.CommissionByCurrency)
+        {
+            <div class="admin-kpi-card">
+                <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
+                <div class="admin-kpi-card__label">Your Commission (@currency)</div>
+            </div>
+        }
+    </div>
+
+    @if (Model.Stats.Visits == 0)
+    {
+        <p style="margin-top:32px; color:#666;">Share your referral link above to start tracking visits, applications and commission.</p>
+    }
+</div>

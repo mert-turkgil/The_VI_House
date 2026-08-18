@@ -91,6 +91,7 @@ builder.Services.AddScoped<IAuditLogRepository, EfAuditLogRepository>();
 builder.Services.AddScoped<IProfileRepository, EfProfileRepository>();
 builder.Services.AddScoped<IWebhookEventRepository, EfWebhookEventRepository>();
 builder.Services.AddScoped<IMembershipPaymentRepository, EfMembershipPaymentRepository>();
+builder.Services.AddScoped<IAmbassadorRepository, EfAmbassadorRepository>();
 
 // --- Business services -------------------------------------------------------------------------
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
@@ -99,6 +100,7 @@ builder.Services.AddScoped<ICapacityService, CapacityService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IMembershipService, MembershipService>();
+builder.Services.AddScoped<IAmbassadorService, AmbassadorService>();
 
 // Stripe keys: user-secrets in Development, environment variables (or a real vault) in Production —
 // never a committed appsettings.*.json file, same policy as SeedAdmin's credentials.

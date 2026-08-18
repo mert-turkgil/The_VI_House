@@ -1,0 +1,44 @@
+@model List<Ambassador>
+@{
+    ViewData["Title"] = "Ambassadors";
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div class="admin-toolbar">
+    <a class="admin-btn" asp-action="Create">+ New Ambassador</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <p>No ambassadors yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Referral Link</th>
+                <th>Commission</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td><a asp-action="Edit" asp-route-id="@a.Id">@a.Name</a></td>
+                    <td>@a.Code</td>
+                    <td>/r/@a.Code</td>
+                    <td>@a.CommissionPercent%</td>
+                    <td><span class="@(a.Status == AmbassadorStatus.Active ? "admin-badge admin-badge--open" : "admin-badge admin-badge--closed")">@a.Status</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

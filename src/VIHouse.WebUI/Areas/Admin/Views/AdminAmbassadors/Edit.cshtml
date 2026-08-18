@@ -1,0 +1,90 @@
+@model AdminAmbassadorEditViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div class="admin-review-grid">
+    <div class="admin-review-main">
+        <div class="admin-card">
+            <h2>Ambassador</h2>
+            <dl class="admin-detail-list">
+                <div><dt>Code</dt><dd>@Model.Code</dd></div>
+                <div><dt>Referral Link</dt><dd>/r/@Model.Code</dd></div>
+                <div><dt>Email</dt><dd>@(Model.Email ?? "—")</dd></div>
+            </dl>
+        </div>
+
+        <div class="admin-card">
+            <h2>Stats</h2>
+            <p style="font-size:0.75rem; color:#999; margin-top:-8px;">Counts and revenue only — no names or contact details of referred people are shown here (brief §49).</p>
+            @if (Model.Stats is { } stats)
+            {
+                <div class="admin-kpi-grid">
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-card__value">@stats.Visits</div>
+                        <div class="admin-kpi-card__label">Visits</div>
+                    </div>
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-card__value">@stats.Applications</div>
+                        <div class="admin-kpi-card__label">Applications</div>
+                    </div>
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-card__value">@stats.ApprovedApplications</div>
+                        <div class="admin-kpi-card__label">Approved</div>
+                    </div>
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-card__value">@(stats.TicketPurchases + stats.MembershipPurchases)</div>
+                        <div class="admin-kpi-card__label">Purchases</div>
+                    </div>
+                    @foreach (var (currency, amountMinor) in stats.RevenueByCurrency)
+                    {
+                        <div class="admin-kpi-card">
+                            <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
+                            <div class="admin-kpi-card__label">Revenue (@currency)</div>
+                        </div>
+                    }
+                    @foreach (var (currency, amountMinor) in stats.CommissionByCurrency)
+                    {
+                        <div class="admin-kpi-card">
+                            <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
+                            <div class="admin-kpi-card__label">Commission Owed (@currency)</div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="admin-review-side">
+        <div class="admin-card">
+            <h2>Edit</h2>
+            <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
+                <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+                <div class="admin-field">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" />
+                    <span asp-validation-for="Name" class="field-validation-error"></span>
+                </div>
+                <div class="admin-field">
+                    <label asp-for="CommissionPercent">Commission %</label>
+                    <input asp-for="CommissionPercent" type="number" step="0.01" />
+                    <span asp-validation-for="CommissionPercent" class="field-validation-error"></span>
+                </div>
+                <div class="admin-field">
+                    <label asp-for="Status"></label>
+                    <select asp-for="Status" asp-items="Html.GetEnumSelectList<AmbassadorStatus>()"></select>
+                </div>
+                <button type="submit" class="admin-btn" style="width:100%;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -14,8 +14,8 @@ public interface IMembershipService
     /// <summary>Most recent Active membership for a user, if any — null means never purchased or lapsed.</summary>
     Task<Membership?> GetCurrentMembershipAsync(Guid userId, CancellationToken ct = default);
 
-    /// <summary>Requires an existing account (brief: purchase happens post-login, no guest checkout — a membership isn't preceded by an Application that already captured name/email the way event tickets are).</summary>
-    Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string successUrl, string cancelUrl, CancellationToken ct = default);
+    /// <summary>Requires an existing account (brief: purchase happens post-login, no guest checkout — a membership isn't preceded by an Application that already captured name/email the way event tickets are). referralCode comes from the /r/{code} cookie, if present — see Application.ReferralCode for the equivalent on the ticket-purchase side.</summary>
+    Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string? referralCode, string successUrl, string cancelUrl, CancellationToken ct = default);
 
     /// <summary>Reads LOCAL state only, same "never trust the browser redirect alone" rule as the ticket-purchase flow.</summary>
     Task<MembershipConfirmationInfo?> GetConfirmationBySessionAsync(string sessionId, CancellationToken ct = default);

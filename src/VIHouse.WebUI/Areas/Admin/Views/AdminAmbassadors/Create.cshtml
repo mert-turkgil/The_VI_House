@@ -1,0 +1,42 @@
+@model AdminAmbassadorCreateViewModel
+@{
+    ViewData["Title"] = "New Ambassador";
+}
+
+<form asp-action="Create" method="post" class="admin-form">
+    <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+
+    <div class="admin-field">
+        <label asp-for="Email">Email</label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email" class="field-validation-error"></span>
+        <p style="font-size:0.75rem; color:#999; margin:4px 0 0;">If an account with this email already exists, it's reused (and given the Ambassador role) instead of creating a new one.</p>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" />
+            <span asp-validation-for="Name" class="field-validation-error"></span>
+        </div>
+        <div class="admin-field">
+            <label asp-for="Code">Code (used as /r/{code})</label>
+            <input asp-for="Code" placeholder="ANTON" />
+            <span asp-validation-for="Code" class="field-validation-error"></span>
+        </div>
+        <div class="admin-field">
+            <label asp-for="CommissionPercent">Commission %</label>
+            <input asp-for="CommissionPercent" type="number" step="0.01" />
+            <span asp-validation-for="CommissionPercent" class="field-validation-error"></span>
+        </div>
+    </div>
+
+    <div>
+        <button type="submit" class="admin-btn">Create Ambassador</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

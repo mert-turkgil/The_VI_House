@@ -6,6 +6,7 @@ using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
 using VIHouse.Entities.Membership;
+using VIHouse.Entities.Referrals;
 
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Seed;
 
@@ -35,8 +36,48 @@ public static class DbSeeder
         await SeedHomepageContentAsync(db);
         await SeedApplicationsAsync(db);
         await SeedMembershipPlansAsync(db);
+        await db.SaveChangesAsync(); // commit before SeedAmbassadorsAsync, which needs Roles.Ambassador to already exist
+
+        await SeedAmbassadorsAsync(db, userManager);
 
         await db.SaveChangesAsync();
+    }
+
+    private static async Task SeedAmbassadorsAsync(VIHouseDbContext db, UserManager<ApplicationUser> userManager)
+    {
+        if (await db.Ambassadors.AnyAsync())
+            return;
+
+        const string email = "anton@example.com";
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                FirstName = "Anton",
+                LastName = "Weber",
+                Country = "DE",
+                MemberStatus = Entities.Users.MemberStatus.Active,
+            };
+
+            var result = await userManager.CreateAsync(user, "Ambassador-Demo-2026!");
+            if (!result.Succeeded) return;
+        }
+
+        if (!await userManager.IsInRoleAsync(user, Roles.Ambassador))
+            await userManager.AddToRoleAsync(user, Roles.Ambassador);
+
+        db.Ambassadors.Add(new Ambassador
+        {
+            UserId = user.Id,
+            Code = "ANTON",
+            Name = "Anton Weber",
+            CommissionPercent = 15m,
+            Status = AmbassadorStatus.Active,
+        });
     }
 
     private static async Task SeedMembershipPlansAsync(VIHouseDbContext db)

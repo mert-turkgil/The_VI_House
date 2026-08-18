@@ -84,7 +84,7 @@ public class MembershipService(
             .FirstOrDefault();
     }
 
-    public async Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string successUrl, string cancelUrl, CancellationToken ct = default)
+    public async Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string? referralCode, string successUrl, string cancelUrl, CancellationToken ct = default)
     {
         var plan = await plans.GetByIdAsync(planId, ct);
         if (plan is null || plan.Status != MembershipPlanStatus.Active)
@@ -101,6 +101,7 @@ public class MembershipService(
             AmountMinor = plan.PriceMinor,
             Currency = plan.Currency,
             Status = PaymentStatus.Created,
+            ReferralCode = referralCode,
         };
         payment.ProviderReference = $"pending_{payment.Id:N}"; // placeholder, unique — replaced once Stripe returns a session id
         await membershipPayments.AddAsync(payment, ct);

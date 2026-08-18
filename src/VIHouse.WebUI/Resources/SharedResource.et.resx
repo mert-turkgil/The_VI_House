@@ -11,6 +11,7 @@
   <data name="Nav.About" xml:space="preserve"><value>Meist</value></data>
   <data name="Nav.LanguageLabel" xml:space="preserve"><value>Keel</value></data>
   <data name="Nav.MyAccount" xml:space="preserve"><value>Minu konto</value></data>
+  <data name="Nav.AmbassadorDashboard" xml:space="preserve"><value>Ambassadori vaade</value></data>
   <data name="Nav.LogOut" xml:space="preserve"><value>Logi välja</value></data>
   <data name="Nav.LogIn" xml:space="preserve"><value>Logi sisse</value></data>
   <data name="Nav.ApplyToJoin" xml:space="preserve"><value>Kandideeri</value></data>

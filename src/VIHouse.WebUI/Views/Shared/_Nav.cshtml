@@ -6,6 +6,7 @@
     string CultureUrl(string culture) => Url.Action("Set", "Culture", new { culture, returnUrl = currentPath })!;
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
     var isMember = User.IsInRole(Roles.Member);
+    var isAmbassador = User.IsInRole(Roles.Ambassador);
 
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     string NavLinkClass(string controller) =>
@@ -76,6 +77,10 @@
 
             @if (isAuthenticated)
             {
+                @if (isAmbassador)
+                {
+                    <a class="site-header__login" asp-controller="Ambassador" asp-action="Index">@Loc["Nav.AmbassadorDashboard"]</a>
+                }
                 <a class="site-header__login" asp-controller="Account" asp-action="Index">@Loc["Nav.MyAccount"]</a>
                 <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" class="site-header__logout-form">
                     <button type="submit" class="btn btn--primary site-header__cta">@Loc["Nav.LogOut"]</button>
@@ -122,6 +127,10 @@
     <div class="site-mobile-nav__actions">
         @if (isAuthenticated)
         {
+            @if (isAmbassador)
+            {
+                <a class="btn btn--ghost-dark" asp-controller="Ambassador" asp-action="Index">@Loc["Nav.AmbassadorDashboard"]</a>
+            }
             <a class="btn btn--primary" asp-controller="Account" asp-action="Index">@Loc["Nav.MyAccount"]</a>
             <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
                 <button type="submit" class="btn btn--ghost-dark" style="width:100%;">@Loc["Nav.LogOut"]</button>

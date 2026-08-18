@@ -14,6 +14,7 @@ public class MembershipPaymentConfiguration : IEntityTypeConfiguration<Membershi
         builder.HasIndex(p => p.ProviderReference).IsUnique();
         builder.Property(p => p.ProviderReference).HasMaxLength(200).IsRequired();
         builder.Property(p => p.Currency).HasMaxLength(3).IsRequired();
+        builder.Property(p => p.ReferralCode).HasMaxLength(40);
 
         builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<MembershipPlan>().WithMany().HasForeignKey(p => p.PlanId).OnDelete(DeleteBehavior.Restrict);

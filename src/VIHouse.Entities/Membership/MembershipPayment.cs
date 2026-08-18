@@ -20,4 +20,7 @@ public class MembershipPayment : BaseEntity
     public PaymentStatus Status { get; set; } = PaymentStatus.Created;
 
     public string ProviderReference { get; set; } = default!;
+
+    /// <summary>Captured from the referral cookie at checkout time — mirrors Application.ReferralCode, which serves the same purpose for ticket purchases (a membership purchase has no Application to carry it instead).</summary>
+    public string? ReferralCode { get; set; }
 }
