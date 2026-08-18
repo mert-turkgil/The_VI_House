@@ -107,51 +107,124 @@
 }
 
 // --- Language switcher (EN / DE / TR / ET) --------------------------------------------------------
-.site-lang {
+// A <details>/<summary> dropdown — same no-JS-required pattern as the FAQ accordion. Desktop-only:
+// below 960px it collapses into the burger panel instead (.site-mobile-nav__lang below), same as
+// Log In/Apply already do, rather than crowding the header next to the burger on a small screen.
+.lang-switch {
+  position: relative;
+  flex-shrink: 0;
   display: none;
-  gap: 2px;
+
+  // Browsers add a default disclosure triangle to <summary> — replaced by our own chevron SVG.
+  summary {
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
 }
 
-.site-lang__link {
-  padding: 4px 6px;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
+.lang-switch__toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--vih-line-on-dark);
+  border-radius: 999px;
   color: var(--vih-cream-dim);
-  opacity: 0.55;
-  border-radius: 4px;
-  transition: opacity 0.15s var(--vih-ease), background-color 0.15s var(--vih-ease);
+  cursor: pointer;
+  transition: border-color 0.15s var(--vih-ease), color 0.15s var(--vih-ease);
 
   &:hover {
+    color: var(--vih-cream);
+    border-color: rgba(244, 240, 230, 0.4);
+  }
+
+  .lang-switch[open] & {
+    color: var(--vih-cream);
+    border-color: var(--vih-gold);
+  }
+}
+
+.lang-switch__globe {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.lang-switch__code {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.lang-switch__chevron {
+  width: 9px;
+  height: 6px;
+  flex-shrink: 0;
+  transition: transform 0.2s var(--vih-ease);
+
+  .lang-switch[open] & {
+    transform: rotate(180deg);
+  }
+}
+
+.lang-switch__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 10;
+  min-width: 160px;
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+
+  // A native, no-JS "pop in" — <details> has no open/close transition hook, so this only animates
+  // forward (native browser behavior for details content has no exit transition either).
+  animation: lang-switch-in 0.15s var(--vih-ease);
+}
+
+@keyframes lang-switch-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
     opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lang-switch__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--vih-ink);
+
+  svg {
+    width: 12px;
+    height: 10px;
+    color: var(--vih-gold);
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: #faf9f6;
   }
 
   &.active {
-    opacity: 1;
-    background: rgba(244, 240, 230, 0.12);
-    color: var(--vih-cream);
-  }
-}
-
-.site-mobile-nav__lang {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  padding: 16px 0;
-  border-top: 1px solid var(--vih-line-on-dark);
-  border-bottom: 1px solid var(--vih-line-on-dark);
-
-  a {
-    padding: 6px 10px;
-    font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--vih-cream-dim);
-    border-radius: 4px;
-
-    &.active {
-      color: var(--vih-cream);
-      background: rgba(244, 240, 230, 0.12);
-    }
   }
 }
 
@@ -222,12 +295,64 @@
 }
 
 .site-mobile-nav__link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 16px 4px;
   font-family: var(--vih-font-serif);
   font-size: 1.75rem;
   color: var(--vih-cream);
   border-bottom: 1px solid var(--vih-line-on-dark);
+
+  &[aria-current='page'] {
+    color: var(--vih-gold-light);
+
+    // A small dot instead of restyling the whole (large, serif) line — stays legible at this size.
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--vih-gold);
+      flex-shrink: 0;
+    }
+  }
+}
+
+.site-mobile-nav__lang {
+  padding: 20px 4px;
+  border-bottom: 1px solid var(--vih-line-on-dark);
+}
+
+.site-mobile-nav__lang-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--vih-cream-dim);
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+.site-mobile-nav__lang-options {
+  display: flex;
+  gap: 8px;
+}
+
+.site-mobile-nav__lang-option {
+  padding: 8px 16px;
+  border: 1px solid var(--vih-line-on-dark);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vih-cream-dim);
+
+  &.active {
+    color: var(--vih-green-950);
+    background: var(--vih-gold);
+    border-color: var(--vih-gold);
+  }
 }
 
 .site-mobile-nav__actions {
@@ -257,8 +382,8 @@
     display: inline-flex;
   }
 
-  .site-lang {
-    display: flex;
+  .lang-switch {
+    display: block;
   }
 
   .site-header__burger,

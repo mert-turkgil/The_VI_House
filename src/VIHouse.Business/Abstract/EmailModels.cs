@@ -18,3 +18,5 @@ public record PaymentFailedEmailModel(string FirstName, string ExperienceTitle, 
 
 /// <summary>Internal notification sent to Site:ContactEmail when a visitor submits the public Contact page form.</summary>
 public record ContactMessageEmailModel(string Name, string Email, string? Subject, string Message);
+
+public record MembershipConfirmedEmailModel(string FirstName, string PlanName, DateTimeOffset? ExpiresAt);

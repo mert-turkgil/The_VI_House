@@ -187,4 +187,54 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Account.BookingDate" xml:space="preserve"><value>Tarih</value></data>
   <data name="Account.BookingStatus" xml:space="preserve"><value>Durum</value></data>
   <data name="Account.BookingAmount" xml:space="preserve"><value>Tutar</value></data>
+  <data name="Account.MembershipValidUntil" xml:space="preserve"><value>{0} tarihine kadar geçerli.</value></data>
+  <data name="Account.MembershipNoExpiry" xml:space="preserve"><value>Son kullanma tarihi yok.</value></data>
+  <data name="Account.NoMembership" xml:space="preserve"><value>Henüz aktif bir üyeliğiniz yok.</value></data>
+  <data name="Account.ViewPlans" xml:space="preserve"><value>Planları görüntüle</value></data>
+
+  <data name="Membership.Title" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Membership.Eyebrow" xml:space="preserve"><value>Eve Katılın</value></data>
+  <data name="Membership.Heading" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Membership.Subheading" xml:space="preserve"><value>Tek bir deneyimin ötesinde — The VI House topluluğuna yıl boyu erişim.</value></data>
+  <data name="Membership.PerMonth" xml:space="preserve"><value>/ ay</value></data>
+  <data name="Membership.PerYear" xml:space="preserve"><value>/ yıl</value></data>
+  <data name="Membership.OneTime" xml:space="preserve"><value>tek seferlik</value></data>
+  <data name="Membership.NoPlans" xml:space="preserve"><value>Üyelik planları henüz açık değil — yakında tekrar kontrol edin.</value></data>
+  <data name="Membership.Join" xml:space="preserve"><value>Katıl</value></data>
+  <data name="Membership.LogInToJoin" xml:space="preserve"><value>Katılmak için Giriş Yap</value></data>
+  <data name="Membership.Confirmed" xml:space="preserve"><value>Üyelik Onaylandı</value></data>
+  <data name="Membership.Processing" xml:space="preserve"><value>Üyeliğiniz Onaylanıyor</value></data>
+  <data name="Membership.ConfirmedBody" xml:space="preserve"><value>{0} olarak onaylandınız.</value></data>
+  <data name="Membership.ValidUntil" xml:space="preserve"><value>{0} tarihine kadar geçerli.</value></data>
+  <data name="Membership.ProcessingBody" xml:space="preserve"><value>Bu genellikle sadece birkaç saniye sürer. Bu sayfa otomatik olarak yenilenecektir.</value></data>
+  <data name="Membership.GoToAccount" xml:space="preserve"><value>Hesabıma Git</value></data>
+  <data name="Membership.CancelledTitle" xml:space="preserve"><value>Üyelik Ödemesi İptal Edildi</value></data>
+  <data name="Membership.CancelledBody" xml:space="preserve"><value>Herhangi bir ödeme alınmadı. Hazır olduğunuzda üyeliğe kaldığınız yerden devam edebilirsiniz.</value></data>
+  <data name="Membership.BackToPlans" xml:space="preserve"><value>Üyelik Planlarına Dön</value></data>
+
+  <data name="Nav.Members" xml:space="preserve"><value>Üyeler</value></data>
+
+  <data name="Directory.Title" xml:space="preserve"><value>Üye Rehberi</value></data>
+  <data name="Directory.Eyebrow" xml:space="preserve"><value>Ev</value></data>
+  <data name="Directory.Heading" xml:space="preserve"><value>Üye Rehberi</value></data>
+  <data name="Directory.Subheading" xml:space="preserve"><value>Topluluğu arayın — sektöre, şehre veya üzerinde çalıştıkları şeye göre girişimcileri, operatörleri ve yatırımcıları bulun.</value></data>
+  <data name="Directory.SearchLabel" xml:space="preserve"><value>Ara</value></data>
+  <data name="Directory.SearchPlaceholder" xml:space="preserve"><value>İsim, şirket, unvan...</value></data>
+  <data name="Directory.IndustryLabel" xml:space="preserve"><value>Sektör</value></data>
+  <data name="Directory.CityLabel" xml:space="preserve"><value>Şehir</value></data>
+  <data name="Directory.CountryLabel" xml:space="preserve"><value>Ülke Kodu</value></data>
+  <data name="Directory.FilterSubmit" xml:space="preserve"><value>Ara</value></data>
+  <data name="Directory.ClearFilters" xml:space="preserve"><value>Filtreleri temizle</value></data>
+  <data name="Directory.NoResults" xml:space="preserve"><value>Bu filtrelere uyan üye bulunamadı.</value></data>
+  <data name="Directory.BackToDirectory" xml:space="preserve"><value>Rehbere Dön</value></data>
+  <data name="Directory.About" xml:space="preserve"><value>Hakkında</value></data>
+  <data name="Directory.LookingFor" xml:space="preserve"><value>Aradığı</value></data>
+  <data name="Directory.CanHelpWith" xml:space="preserve"><value>Yardımcı Olabileceği</value></data>
+
+  <data name="Account.DirectorySectionHeading" xml:space="preserve"><value>Üye Rehberi</value></data>
+  <data name="Account.DirectorySectionNote" xml:space="preserve"><value>Bu alanlar yalnızca Üye Rehberi'ndeki profil kartınızda görünür.</value></data>
+  <data name="Account.InterestsLabel" xml:space="preserve"><value>İlgi Alanları</value></data>
+  <data name="Account.LookingForLabel" xml:space="preserve"><value>Aradığı</value></data>
+  <data name="Account.CanHelpWithLabel" xml:space="preserve"><value>Yardımcı Olabileceği</value></data>
+  <data name="Account.VisibleInDirectoryLabel" xml:space="preserve"><value>Profilimi Üye Rehberi'nde göster</value></data>
 </root>

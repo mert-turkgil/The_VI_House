@@ -6,7 +6,11 @@ namespace VIHouse.WebUI.Controllers;
 [Route("webhooks")]
 [ApiController]
 [IgnoreAntiforgeryToken]
-public class WebhooksController(IPaymentProvider paymentProvider, IPaymentService paymentService, ILogger<WebhooksController> logger) : ControllerBase
+public class WebhooksController(
+    IPaymentProvider paymentProvider,
+    IPaymentService paymentService,
+    IMembershipService membershipService,
+    ILogger<WebhooksController> logger) : ControllerBase
 {
     [HttpPost("stripe")]
     public async Task<IActionResult> Stripe(CancellationToken ct)
@@ -30,7 +34,13 @@ public class WebhooksController(IPaymentProvider paymentProvider, IPaymentServic
             return BadRequest();
         }
 
+        // Both run unconditionally — each recognizes only its own checkout sessions (via its own
+        // table's ProviderReference) and no-ops otherwise, so a ticket-purchase event and a
+        // membership-purchase event both land safely regardless of which one this is. See
+        // MembershipService.HandleWebhookEventAsync's doc comment for why the membership path
+        // deliberately doesn't share PaymentService's ProcessedWebhookEvent idempotency ledger.
         await paymentService.HandleWebhookEventAsync(webhookEvent, ct);
+        await membershipService.HandleWebhookEventAsync(webhookEvent, ct);
         return Ok();
     }
 }

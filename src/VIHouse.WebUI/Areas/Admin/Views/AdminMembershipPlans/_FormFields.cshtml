@@ -1,0 +1,45 @@
+@model AdminMembershipPlanFormViewModel
+
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" placeholder="Founding Member" />
+        <span asp-validation-for="Name" class="field-validation-error"></span>
+    </div>
+    <div class="admin-field">
+        <label asp-for="Currency"></label>
+        <input asp-for="Currency" placeholder="GBP" maxlength="3" />
+        <span asp-validation-for="Currency" class="field-validation-error"></span>
+    </div>
+</div>
+
+<div class="admin-field">
+    <label asp-for="Description"></label>
+    <textarea asp-for="Description"></textarea>
+</div>
+
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label asp-for="PriceMinor">Price (minor units — e.g. 250000 = £2,500.00)</label>
+        <input asp-for="PriceMinor" type="number" />
+        <span asp-validation-for="PriceMinor" class="field-validation-error"></span>
+    </div>
+    <div class="admin-field">
+        <label asp-for="BillingPeriod"></label>
+        <select asp-for="BillingPeriod" asp-items="Html.GetEnumSelectList<VIHouse.Entities.Membership.MembershipBillingPeriod>()"></select>
+    </div>
+    <div class="admin-field">
+        <label asp-for="Status"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<VIHouse.Entities.Membership.MembershipPlanStatus>()"></select>
+    </div>
+</div>
+
+<div class="admin-field">
+    <label asp-for="Features"></label>
+    <textarea asp-for="Features" rows="5" placeholder="Priority booking&#10;Founding Member badge&#10;Invitation to House Notes previews"></textarea>
+</div>
+
+<div class="admin-field">
+    <label asp-for="SortOrder"></label>
+    <input asp-for="SortOrder" type="number" />
+</div>

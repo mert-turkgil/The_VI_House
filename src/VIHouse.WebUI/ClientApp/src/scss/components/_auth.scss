@@ -176,3 +176,37 @@
 .account-manage__content h4 {
   font-family: var(--vih-font-serif);
 }
+
+.account-membership-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 8px;
+  background: #faf9f6;
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #555;
+
+    a {
+      color: var(--vih-green-900);
+      font-weight: 600;
+    }
+  }
+}
+
+.account-membership-card__badge {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--vih-green-950);
+  color: var(--vih-gold-light);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

@@ -1,3 +1,4 @@
+@using VIHouse.DataAccess.Identity
 @{
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     string NavClass(string action) => string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase) ? "active" : "";
@@ -5,5 +6,9 @@
 <nav class="account-manage__nav" aria-label="Account">
     <a class="@NavClass("Index")" asp-controller="Account" asp-action="Index">@Loc["Account.NavProfile"]</a>
     <a class="@NavClass("Bookings")" asp-controller="Account" asp-action="Bookings">@Loc["Account.NavBookings"]</a>
+    @if (User.IsInRole(Roles.Member))
+    {
+        <a asp-controller="MemberDirectory" asp-action="Index">@Loc["Nav.Members"]</a>
+    }
     <a asp-area="Identity" asp-page="/Account/Manage/Index">@Loc["Account.NavSecurity"]</a>
 </nav>

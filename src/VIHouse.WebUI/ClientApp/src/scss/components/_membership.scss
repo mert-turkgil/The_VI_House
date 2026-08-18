@@ -1,0 +1,72 @@
+// Membership plan catalog (brief §44-46) — pricing-card grid, visually a sibling of
+// .experience-ticket-panel's ticket rows but standalone cards since these aren't tied to an event.
+.membership-body {
+  padding: 48px 0 96px;
+}
+
+.membership-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.membership-plan-card {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 12px;
+  background: var(--vih-white);
+
+  h3 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.375rem;
+    margin: 0 0 12px;
+  }
+}
+
+.membership-plan-card__price {
+  font-family: var(--vih-font-serif);
+  font-size: 2rem;
+  margin-bottom: 16px;
+
+  span {
+    font-family: var(--vih-font-sans);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: #888;
+    margin-left: 4px;
+  }
+}
+
+.membership-plan-card__description {
+  font-size: 0.875rem;
+  color: #555;
+  margin: 0 0 20px;
+  line-height: 1.6;
+}
+
+.membership-plan-card__features {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+
+  li {
+    font-size: 0.875rem;
+    color: #444;
+    padding-left: 22px;
+    position: relative;
+
+    &::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--vih-gold);
+      font-weight: 600;
+    }
+  }
+}

@@ -8,6 +8,7 @@ using VIHouse.Entities.Communication;
 using VIHouse.Entities.Compliance;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
+using VIHouse.Entities.Membership;
 using VIHouse.Entities.Users;
 
 namespace VIHouse.DataAccess.Concrete.EntityFramework;
@@ -44,6 +45,10 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
 
     public DbSet<ContentPage> ContentPages => Set<ContentPage>();
     public DbSet<ContentBlock> ContentBlocks => Set<ContentBlock>();
+
+    public DbSet<MembershipPlan> MembershipPlans => Set<MembershipPlan>();
+    public DbSet<Membership> Memberships => Set<Membership>();
+    public DbSet<MembershipPayment> MembershipPayments => Set<MembershipPayment>();
 
     public DbSet<EmailLog> EmailLogs => Set<EmailLog>();
     public DbSet<AuditLogEntry> AuditLogEntries => Set<AuditLogEntry>();

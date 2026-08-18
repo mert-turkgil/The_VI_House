@@ -1,0 +1,156 @@
+// Member Directory (brief §38) — visually a sibling of .experience-card/.experience-grid, not a
+// clone: avatars instead of cover photos, and the card is a flat row-ish block rather than an
+// image-led tile, since a directory is scanned quickly rather than browsed for imagery.
+.member-directory {
+  padding: 48px 0 96px;
+}
+
+.member-directory__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  background: #faf9f6;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 10px;
+
+  .apply-field {
+    flex: 1 1 160px;
+    min-width: 0;
+  }
+
+  .btn {
+    flex-shrink: 0;
+  }
+}
+
+.member-directory__clear {
+  font-size: 0.8125rem;
+  color: #666;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  align-self: center;
+}
+
+.member-directory__empty {
+  text-align: center;
+  padding: 48px 0;
+  color: #666;
+}
+
+.member-directory__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.member-card {
+  display: flex;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 10px;
+  background: var(--vih-white);
+  transition: box-shadow 0.2s var(--vih-ease), transform 0.2s var(--vih-ease);
+
+  &:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+}
+
+.member-card__avatar {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: var(--vih-green-900);
+  color: var(--vih-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--vih-font-serif);
+  font-size: 1.25rem;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &--lg {
+    width: 88px;
+    height: 88px;
+    font-size: 2rem;
+  }
+}
+
+.member-card__body {
+  min-width: 0;
+
+  h3 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.0625rem;
+    margin: 0 0 2px;
+  }
+}
+
+.member-card__role {
+  font-size: 0.8125rem;
+  color: #444;
+  margin: 0;
+}
+
+.member-card__meta {
+  font-size: 0.75rem;
+  color: #888;
+  margin: 4px 0 0;
+}
+
+.member-card__bio {
+  font-size: 0.8125rem;
+  color: #666;
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+
+// --- Detail page -----------------------------------------------------------------------------------
+.member-detail__back {
+  display: inline-block;
+  font-size: 0.8125rem;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.member-detail__header {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 32px;
+
+  h1 {
+    font-family: var(--vih-font-serif);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 0 0 4px;
+  }
+}
+
+.member-detail__role {
+  color: #444;
+  margin: 0 0 4px;
+}
+
+.member-detail__meta {
+  font-size: 0.875rem;
+  color: #888;
+  margin: 0 0 8px;
+}
+
+.member-detail__linkedin {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vih-green-900);
+}

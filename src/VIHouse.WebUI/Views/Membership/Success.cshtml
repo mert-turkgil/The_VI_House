@@ -1,0 +1,38 @@
+@model MembershipConfirmationInfo
+@{
+    ViewData["Title"] = Model.IsConfirmed ? Loc["Membership.Confirmed"] : Loc["Membership.Processing"];
+}
+
+@if (!Model.IsConfirmed)
+{
+    @section Styles {
+        <meta http-equiv="refresh" content="3" />
+    }
+}
+
+<div class="apply-confirmation">
+    <div class="container apply-confirmation__inner">
+        @if (Model.IsConfirmed)
+        {
+            <span class="apply-confirmation__mark">&#10003;</span>
+            <h1>@Loc["Membership.Confirmed"]</h1>
+            <p>
+                @Loc["Membership.ConfirmedBody", Model.PlanName ?? ""]
+                @if (Model.ExpiresAt is not null)
+                {
+                    <text> @Loc["Membership.ValidUntil", Model.ExpiresAt.Value.ToString("d MMMM yyyy")]</text>
+                }
+            </p>
+            <div class="apply-confirmation__actions">
+                <a class="btn btn--primary" asp-controller="Account" asp-action="Index">@Loc["Membership.GoToAccount"]</a>
+                <a class="btn btn--ghost-dark" asp-controller="Home" asp-action="Index">@Loc["Applied.BackHome"]</a>
+            </div>
+        }
+        else
+        {
+            <span class="apply-confirmation__mark">&hellip;</span>
+            <h1>@Loc["Membership.Processing"]</h1>
+            <p>@Loc["Membership.ProcessingBody"]</p>
+        }
+    </div>
+</div>

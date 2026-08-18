@@ -187,4 +187,54 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Account.BookingDate" xml:space="preserve"><value>Datum</value></data>
   <data name="Account.BookingStatus" xml:space="preserve"><value>Status</value></data>
   <data name="Account.BookingAmount" xml:space="preserve"><value>Betrag</value></data>
+  <data name="Account.MembershipValidUntil" xml:space="preserve"><value>Gültig bis {0}.</value></data>
+  <data name="Account.MembershipNoExpiry" xml:space="preserve"><value>Kein Ablaufdatum.</value></data>
+  <data name="Account.NoMembership" xml:space="preserve"><value>Sie haben noch keine aktive Mitgliedschaft.</value></data>
+  <data name="Account.ViewPlans" xml:space="preserve"><value>Mitgliedschaften ansehen</value></data>
+
+  <data name="Membership.Title" xml:space="preserve"><value>Mitgliedschaft</value></data>
+  <data name="Membership.Eyebrow" xml:space="preserve"><value>Dem Haus beitreten</value></data>
+  <data name="Membership.Heading" xml:space="preserve"><value>Mitgliedschaft</value></data>
+  <data name="Membership.Subheading" xml:space="preserve"><value>Über ein einzelnes Erlebnis hinaus — ganzjähriger Zugang zur The-VI-House-Community.</value></data>
+  <data name="Membership.PerMonth" xml:space="preserve"><value>/ Monat</value></data>
+  <data name="Membership.PerYear" xml:space="preserve"><value>/ Jahr</value></data>
+  <data name="Membership.OneTime" xml:space="preserve"><value>einmalig</value></data>
+  <data name="Membership.NoPlans" xml:space="preserve"><value>Mitgliedschaften sind noch nicht verfügbar — schauen Sie bald wieder vorbei.</value></data>
+  <data name="Membership.Join" xml:space="preserve"><value>Beitreten</value></data>
+  <data name="Membership.LogInToJoin" xml:space="preserve"><value>Zum Beitreten anmelden</value></data>
+  <data name="Membership.Confirmed" xml:space="preserve"><value>Mitgliedschaft bestätigt</value></data>
+  <data name="Membership.Processing" xml:space="preserve"><value>Ihre Mitgliedschaft wird bestätigt</value></data>
+  <data name="Membership.ConfirmedBody" xml:space="preserve"><value>Sie sind bestätigt als {0}.</value></data>
+  <data name="Membership.ValidUntil" xml:space="preserve"><value>Gültig bis {0}.</value></data>
+  <data name="Membership.ProcessingBody" xml:space="preserve"><value>Dies dauert normalerweise nur wenige Sekunden. Diese Seite wird automatisch aktualisiert.</value></data>
+  <data name="Membership.GoToAccount" xml:space="preserve"><value>Zu meinem Konto</value></data>
+  <data name="Membership.CancelledTitle" xml:space="preserve"><value>Mitgliedschafts-Checkout abgebrochen</value></data>
+  <data name="Membership.CancelledBody" xml:space="preserve"><value>Es wurde keine Zahlung vorgenommen. Sie können die Mitgliedschaft jederzeit fortsetzen.</value></data>
+  <data name="Membership.BackToPlans" xml:space="preserve"><value>Zurück zu den Mitgliedschaften</value></data>
+
+  <data name="Nav.Members" xml:space="preserve"><value>Mitglieder</value></data>
+
+  <data name="Directory.Title" xml:space="preserve"><value>Mitgliederverzeichnis</value></data>
+  <data name="Directory.Eyebrow" xml:space="preserve"><value>Das Haus</value></data>
+  <data name="Directory.Heading" xml:space="preserve"><value>Mitgliederverzeichnis</value></data>
+  <data name="Directory.Subheading" xml:space="preserve"><value>Durchsuchen Sie die Community — finden Sie Gründer:innen, Operator:innen und Investor:innen nach Branche, Stadt oder woran sie arbeiten.</value></data>
+  <data name="Directory.SearchLabel" xml:space="preserve"><value>Suche</value></data>
+  <data name="Directory.SearchPlaceholder" xml:space="preserve"><value>Name, Unternehmen, Rolle …</value></data>
+  <data name="Directory.IndustryLabel" xml:space="preserve"><value>Branche</value></data>
+  <data name="Directory.CityLabel" xml:space="preserve"><value>Stadt</value></data>
+  <data name="Directory.CountryLabel" xml:space="preserve"><value>Ländercode</value></data>
+  <data name="Directory.FilterSubmit" xml:space="preserve"><value>Suchen</value></data>
+  <data name="Directory.ClearFilters" xml:space="preserve"><value>Filter zurücksetzen</value></data>
+  <data name="Directory.NoResults" xml:space="preserve"><value>Keine Mitglieder entsprechen diesen Filtern.</value></data>
+  <data name="Directory.BackToDirectory" xml:space="preserve"><value>Zurück zum Verzeichnis</value></data>
+  <data name="Directory.About" xml:space="preserve"><value>Über</value></data>
+  <data name="Directory.LookingFor" xml:space="preserve"><value>Sucht</value></data>
+  <data name="Directory.CanHelpWith" xml:space="preserve"><value>Kann helfen bei</value></data>
+
+  <data name="Account.DirectorySectionHeading" xml:space="preserve"><value>Mitgliederverzeichnis</value></data>
+  <data name="Account.DirectorySectionNote" xml:space="preserve"><value>Diese Felder erscheinen nur auf Ihrer Profilkarte im Mitgliederverzeichnis.</value></data>
+  <data name="Account.InterestsLabel" xml:space="preserve"><value>Interessen</value></data>
+  <data name="Account.LookingForLabel" xml:space="preserve"><value>Sucht</value></data>
+  <data name="Account.CanHelpWithLabel" xml:space="preserve"><value>Kann helfen bei</value></data>
+  <data name="Account.VisibleInDirectoryLabel" xml:space="preserve"><value>Mein Profil im Mitgliederverzeichnis anzeigen</value></data>
 </root>

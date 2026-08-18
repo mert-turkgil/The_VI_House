@@ -1,13 +1,29 @@
 @using System.Globalization
+@using VIHouse.DataAccess.Identity
 @{
-    // Hard-coded hrefs (not asp-controller/asp-action) for pages whose controllers don't exist
-    // yet (Membership lands in a later milestone) — avoids the AnchorTagHelper failing to resolve
-    // a route that isn't registered yet. Swap these to proper tag helpers as each controller is built.
     var currentCulture = CultureInfo.CurrentUICulture.Name;
     var currentPath = Context.Request.Path + Context.Request.QueryString;
     string CultureUrl(string culture) => Url.Action("Set", "Culture", new { culture, returnUrl = currentPath })!;
-    string CultureClass(string culture) => culture == currentCulture ? "site-lang__link active" : "site-lang__link";
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
+    var isMember = User.IsInRole(Roles.Member);
+
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    string NavLinkClass(string controller) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) ? "site-nav__link active" : "site-nav__link";
+    string MobileNavLinkClass(string controller) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) ? "site-mobile-nav__link active" : "site-mobile-nav__link";
+    string? AriaCurrent(string controller) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) ? "page" : null;
+
+    var languages = new (string Code, string Short, string Label)[]
+    {
+        ("en-GB", "EN", "English"),
+        ("de-DE", "DE", "Deutsch"),
+        ("tr-TR", "TR", "Türkçe"),
+        ("et-EE", "ET", "Eesti"),
+    };
+    var current = Array.Find(languages, l => l.Code == currentCulture);
+    if (current.Code is null) current = languages[0];
 }
 <header class="site-header">
     <div class="container site-header__inner">
@@ -20,20 +36,43 @@
 
         <nav class="site-nav" aria-label="Primary">
             <ul class="site-nav__list">
-                <li><a class="site-nav__link" asp-controller="Home" asp-action="Index" aria-current="page">@Loc["Nav.Home"]</a></li>
-                <li><a class="site-nav__link" asp-controller="Experiences" asp-action="Index">@Loc["Nav.Experiences"]</a></li>
-                <li><a class="site-nav__link" href="/membership">@Loc["Nav.Membership"]</a></li>
-                <li><a class="site-nav__link" asp-controller="About" asp-action="Index">@Loc["Nav.About"]</a></li>
+                <li><a class="@NavLinkClass("Home")" asp-controller="Home" asp-action="Index" aria-current="@AriaCurrent("Home")">@Loc["Nav.Home"]</a></li>
+                <li><a class="@NavLinkClass("Experiences")" asp-controller="Experiences" asp-action="Index" aria-current="@AriaCurrent("Experiences")">@Loc["Nav.Experiences"]</a></li>
+                <li><a class="@NavLinkClass("Membership")" asp-controller="Membership" asp-action="Index" aria-current="@AriaCurrent("Membership")">@Loc["Nav.Membership"]</a></li>
+                <li><a class="@NavLinkClass("About")" asp-controller="About" asp-action="Index" aria-current="@AriaCurrent("About")">@Loc["Nav.About"]</a></li>
+                @if (isMember)
+                {
+                    <li><a class="@NavLinkClass("MemberDirectory")" asp-controller="MemberDirectory" asp-action="Index" aria-current="@AriaCurrent("MemberDirectory")">@Loc["Nav.Members"]</a></li>
+                }
             </ul>
         </nav>
 
         <div class="site-header__actions">
-            <div class="site-lang" aria-label="@Loc["Nav.LanguageLabel"]">
-                <a class="@CultureClass("en-GB")" href="@CultureUrl("en-GB")">EN</a>
-                <a class="@CultureClass("de-DE")" href="@CultureUrl("de-DE")">DE</a>
-                <a class="@CultureClass("tr-TR")" href="@CultureUrl("tr-TR")">TR</a>
-                <a class="@CultureClass("et-EE")" href="@CultureUrl("et-EE")">ET</a>
-            </div>
+            <details class="lang-switch">
+                <summary class="lang-switch__toggle" aria-label="@Loc["Nav.LanguageLabel"]: @current.Label">
+                    <svg class="lang-switch__globe" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.4" />
+                        <ellipse cx="12" cy="12" rx="3.6" ry="8.5" fill="none" stroke="currentColor" stroke-width="1.4" />
+                        <line x1="3.5" y1="12" x2="20.5" y2="12" stroke="currentColor" stroke-width="1.4" />
+                    </svg>
+                    <span class="lang-switch__code">@current.Short</span>
+                    <svg class="lang-switch__chevron" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+                        <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </summary>
+                <div class="lang-switch__menu" role="menu">
+                    @foreach (var lang in languages)
+                    {
+                        <a role="menuitem" class="@(lang.Code == current.Code ? "lang-switch__option active" : "lang-switch__option")" href="@CultureUrl(lang.Code)">
+                            <span>@lang.Label</span>
+                            @if (lang.Code == current.Code)
+                            {
+                                <svg viewBox="0 0 12 10" aria-hidden="true" focusable="false"><path d="M1 5l3.5 3.5L11 1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                            }
+                        </a>
+                    }
+                </div>
+            </details>
 
             @if (isAuthenticated)
             {
@@ -57,18 +96,29 @@
 <div class="site-mobile-nav" id="mobile-nav" data-nav-panel data-open="false">
     <nav aria-label="Mobile">
         <ul class="site-mobile-nav__list">
-            <li><a class="site-mobile-nav__link" asp-controller="Home" asp-action="Index">@Loc["Nav.Home"]</a></li>
-            <li><a class="site-mobile-nav__link" asp-controller="Experiences" asp-action="Index">@Loc["Nav.Experiences"]</a></li>
-            <li><a class="site-mobile-nav__link" href="/membership">@Loc["Nav.Membership"]</a></li>
-            <li><a class="site-mobile-nav__link" asp-controller="About" asp-action="Index">@Loc["Nav.About"]</a></li>
+            <li><a class="@MobileNavLinkClass("Home")" asp-controller="Home" asp-action="Index" aria-current="@AriaCurrent("Home")">@Loc["Nav.Home"]</a></li>
+            <li><a class="@MobileNavLinkClass("Experiences")" asp-controller="Experiences" asp-action="Index" aria-current="@AriaCurrent("Experiences")">@Loc["Nav.Experiences"]</a></li>
+            <li><a class="@MobileNavLinkClass("Membership")" asp-controller="Membership" asp-action="Index" aria-current="@AriaCurrent("Membership")">@Loc["Nav.Membership"]</a></li>
+            <li><a class="@MobileNavLinkClass("About")" asp-controller="About" asp-action="Index" aria-current="@AriaCurrent("About")">@Loc["Nav.About"]</a></li>
+            @if (isMember)
+            {
+                <li><a class="@MobileNavLinkClass("MemberDirectory")" asp-controller="MemberDirectory" asp-action="Index" aria-current="@AriaCurrent("MemberDirectory")">@Loc["Nav.Members"]</a></li>
+            }
         </ul>
     </nav>
+
     <div class="site-mobile-nav__lang">
-        <a class="@CultureClass("en-GB")" href="@CultureUrl("en-GB")">EN</a>
-        <a class="@CultureClass("de-DE")" href="@CultureUrl("de-DE")">DE</a>
-        <a class="@CultureClass("tr-TR")" href="@CultureUrl("tr-TR")">TR</a>
-        <a class="@CultureClass("et-EE")" href="@CultureUrl("et-EE")">ET</a>
+        <span class="site-mobile-nav__lang-label">@Loc["Nav.LanguageLabel"]</span>
+        <div class="site-mobile-nav__lang-options">
+            @foreach (var lang in languages)
+            {
+                <a class="@(lang.Code == current.Code ? "site-mobile-nav__lang-option active" : "site-mobile-nav__lang-option")" href="@CultureUrl(lang.Code)">
+                    @lang.Short
+                </a>
+            }
+        </div>
     </div>
+
     <div class="site-mobile-nav__actions">
         @if (isAuthenticated)
         {

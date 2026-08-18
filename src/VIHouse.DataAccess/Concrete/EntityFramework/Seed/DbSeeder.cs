@@ -5,6 +5,7 @@ using VIHouse.Entities.Applications;
 using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
+using VIHouse.Entities.Membership;
 
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Seed;
 
@@ -33,8 +34,50 @@ public static class DbSeeder
 
         await SeedHomepageContentAsync(db);
         await SeedApplicationsAsync(db);
+        await SeedMembershipPlansAsync(db);
 
         await db.SaveChangesAsync();
+    }
+
+    private static async Task SeedMembershipPlansAsync(VIHouseDbContext db)
+    {
+        if (await db.MembershipPlans.AnyAsync())
+            return;
+
+        db.MembershipPlans.AddRange(
+            new MembershipPlan
+            {
+                Name = "Member",
+                Description = "Standing access to The VI House community between experiences.",
+                PriceMinor = 60000, // £600.00
+                Currency = "GBP",
+                BillingPeriod = MembershipBillingPeriod.Annual,
+                Features = "Member Directory access\nPriority invitations to future experiences\nMonthly House Notes",
+                Status = MembershipPlanStatus.Active,
+                SortOrder = 1,
+            },
+            new MembershipPlan
+            {
+                Name = "Founding Member",
+                Description = "For the earliest backers of The VI House — locked-in pricing and a permanent mark of when you joined.",
+                PriceMinor = 150000, // £1,500.00
+                Currency = "GBP",
+                BillingPeriod = MembershipBillingPeriod.Annual,
+                Features = "Everything in Member\nFounding Member badge on your profile\nFirst access to new city launches\nAnnual founder dinner",
+                Status = MembershipPlanStatus.Active,
+                SortOrder = 2,
+            },
+            new MembershipPlan
+            {
+                Name = "Partner",
+                Description = "For operators and investors who want a standing seat in the room, not just a single experience.",
+                PriceMinor = 350000, // £3,500.00
+                Currency = "GBP",
+                BillingPeriod = MembershipBillingPeriod.Annual,
+                Features = "Everything in Founding Member\nComplimentary guest pass to one experience per year\nDirect line to the VI House team",
+                Status = MembershipPlanStatus.Active,
+                SortOrder = 3,
+            });
     }
 
     private static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)

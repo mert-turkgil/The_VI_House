@@ -1,0 +1,42 @@
+@model List<MembershipPlan>
+@{
+    ViewData["Title"] = "Membership Plans";
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div class="admin-toolbar">
+    <a class="admin-btn" asp-action="Create">+ New Plan</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <p>No membership plans yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Billing</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var plan in Model)
+            {
+                <tr>
+                    <td><a asp-action="Edit" asp-route-id="@plan.Id">@plan.Name</a></td>
+                    <td>@MoneyFormatter.Format(plan.PriceMinor, plan.Currency)</td>
+                    <td>@plan.BillingPeriod</td>
+                    <td><span class="@(plan.Status == MembershipPlanStatus.Active ? "admin-badge admin-badge--open" : "admin-badge admin-badge--closed")">@plan.Status</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

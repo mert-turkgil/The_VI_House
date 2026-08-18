@@ -1,0 +1,78 @@
+@model List<MemberCardViewModel>
+@{
+    ViewData["Title"] = Loc["Directory.Title"];
+}
+
+<div class="content-hero">
+    <div class="container">
+        <span class="content-hero__eyebrow">@Loc["Directory.Eyebrow"]</span>
+        <h1>@Loc["Directory.Heading"]</h1>
+        <p>@Loc["Directory.Subheading"]</p>
+    </div>
+</div>
+
+<div class="container member-directory">
+    <form method="get" class="member-directory__filters">
+        <div class="apply-field">
+            <label for="search">@Loc["Directory.SearchLabel"]</label>
+            <input id="search" name="search" value="@ViewData["Search"]" placeholder="@Loc["Directory.SearchPlaceholder"]" />
+        </div>
+        <div class="apply-field">
+            <label for="industry">@Loc["Directory.IndustryLabel"]</label>
+            <input id="industry" name="industry" value="@ViewData["Industry"]" />
+        </div>
+        <div class="apply-field">
+            <label for="city">@Loc["Directory.CityLabel"]</label>
+            <input id="city" name="city" value="@ViewData["City"]" />
+        </div>
+        <div class="apply-field">
+            <label for="country">@Loc["Directory.CountryLabel"]</label>
+            <input id="country" name="country" placeholder="e.g. GB" maxlength="2" value="@ViewData["Country"]" />
+        </div>
+        <button type="submit" class="btn btn--primary">@Loc["Directory.FilterSubmit"]</button>
+        @if (ViewData["Search"] is not null || ViewData["Industry"] is not null || ViewData["City"] is not null || ViewData["Country"] is not null)
+        {
+            <a class="member-directory__clear" asp-action="Index">@Loc["Directory.ClearFilters"]</a>
+        }
+    </form>
+
+    @if (Model.Count == 0)
+    {
+        <p class="member-directory__empty">@Loc["Directory.NoResults"]</p>
+    }
+    else
+    {
+        <div class="member-directory__grid">
+            @foreach (var m in Model)
+            {
+                <a class="member-card" asp-action="Details" asp-route-id="@m.UserId">
+                    <div class="member-card__avatar">
+                        @if (!string.IsNullOrWhiteSpace(m.PhotoUrl))
+                        {
+                            <img src="@m.PhotoUrl" alt="" />
+                        }
+                        else
+                        {
+                            <span>@m.FullName.Substring(0, 1)</span>
+                        }
+                    </div>
+                    <div class="member-card__body">
+                        <h3>@m.FullName</h3>
+                        @if (!string.IsNullOrWhiteSpace(m.JobTitle) || !string.IsNullOrWhiteSpace(m.CompanyName))
+                        {
+                            <p class="member-card__role">@m.JobTitle@(!string.IsNullOrWhiteSpace(m.JobTitle) && !string.IsNullOrWhiteSpace(m.CompanyName) ? " · " : "")@m.CompanyName</p>
+                        }
+                        <p class="member-card__meta">
+                            @if (!string.IsNullOrWhiteSpace(m.City)) { @($"{m.City}, ") }@m.Country
+                            @if (!string.IsNullOrWhiteSpace(m.Industry)) { <span> &middot; @m.Industry</span> }
+                        </p>
+                        @if (m.BioSnippet is not null)
+                        {
+                            <p class="member-card__bio">@m.BioSnippet</p>
+                        }
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>

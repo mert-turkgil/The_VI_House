@@ -187,4 +187,54 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Account.BookingDate" xml:space="preserve"><value>Date</value></data>
   <data name="Account.BookingStatus" xml:space="preserve"><value>Status</value></data>
   <data name="Account.BookingAmount" xml:space="preserve"><value>Amount</value></data>
+  <data name="Account.MembershipValidUntil" xml:space="preserve"><value>Valid until {0}.</value></data>
+  <data name="Account.MembershipNoExpiry" xml:space="preserve"><value>No expiry.</value></data>
+  <data name="Account.NoMembership" xml:space="preserve"><value>You don't have an active membership yet.</value></data>
+  <data name="Account.ViewPlans" xml:space="preserve"><value>View plans</value></data>
+
+  <data name="Membership.Title" xml:space="preserve"><value>Membership</value></data>
+  <data name="Membership.Eyebrow" xml:space="preserve"><value>Join The House</value></data>
+  <data name="Membership.Heading" xml:space="preserve"><value>Membership</value></data>
+  <data name="Membership.Subheading" xml:space="preserve"><value>Beyond a single experience — ongoing access to The VI House community, year-round.</value></data>
+  <data name="Membership.PerMonth" xml:space="preserve"><value>/ month</value></data>
+  <data name="Membership.PerYear" xml:space="preserve"><value>/ year</value></data>
+  <data name="Membership.OneTime" xml:space="preserve"><value>one-time</value></data>
+  <data name="Membership.NoPlans" xml:space="preserve"><value>Membership plans aren't open yet — check back soon.</value></data>
+  <data name="Membership.Join" xml:space="preserve"><value>Join</value></data>
+  <data name="Membership.LogInToJoin" xml:space="preserve"><value>Log In to Join</value></data>
+  <data name="Membership.Confirmed" xml:space="preserve"><value>Membership Confirmed</value></data>
+  <data name="Membership.Processing" xml:space="preserve"><value>Confirming Your Membership</value></data>
+  <data name="Membership.ConfirmedBody" xml:space="preserve"><value>You're confirmed as a {0}.</value></data>
+  <data name="Membership.ValidUntil" xml:space="preserve"><value>Valid until {0}.</value></data>
+  <data name="Membership.ProcessingBody" xml:space="preserve"><value>This usually takes just a few seconds. This page will refresh automatically.</value></data>
+  <data name="Membership.GoToAccount" xml:space="preserve"><value>Go to My Account</value></data>
+  <data name="Membership.CancelledTitle" xml:space="preserve"><value>Membership Checkout Cancelled</value></data>
+  <data name="Membership.CancelledBody" xml:space="preserve"><value>No payment was taken. You can pick membership back up whenever you're ready.</value></data>
+  <data name="Membership.BackToPlans" xml:space="preserve"><value>Back to Membership Plans</value></data>
+
+  <data name="Nav.Members" xml:space="preserve"><value>Members</value></data>
+
+  <data name="Directory.Title" xml:space="preserve"><value>Member Directory</value></data>
+  <data name="Directory.Eyebrow" xml:space="preserve"><value>The House</value></data>
+  <data name="Directory.Heading" xml:space="preserve"><value>Member Directory</value></data>
+  <data name="Directory.Subheading" xml:space="preserve"><value>Search the community — find founders, operators and investors by industry, city, or what they're working on.</value></data>
+  <data name="Directory.SearchLabel" xml:space="preserve"><value>Search</value></data>
+  <data name="Directory.SearchPlaceholder" xml:space="preserve"><value>Name, company, role…</value></data>
+  <data name="Directory.IndustryLabel" xml:space="preserve"><value>Industry</value></data>
+  <data name="Directory.CityLabel" xml:space="preserve"><value>City</value></data>
+  <data name="Directory.CountryLabel" xml:space="preserve"><value>Country Code</value></data>
+  <data name="Directory.FilterSubmit" xml:space="preserve"><value>Search</value></data>
+  <data name="Directory.ClearFilters" xml:space="preserve"><value>Clear filters</value></data>
+  <data name="Directory.NoResults" xml:space="preserve"><value>No members match these filters yet.</value></data>
+  <data name="Directory.BackToDirectory" xml:space="preserve"><value>Back to Directory</value></data>
+  <data name="Directory.About" xml:space="preserve"><value>About</value></data>
+  <data name="Directory.LookingFor" xml:space="preserve"><value>Looking For</value></data>
+  <data name="Directory.CanHelpWith" xml:space="preserve"><value>Can Help With</value></data>
+
+  <data name="Account.DirectorySectionHeading" xml:space="preserve"><value>Member Directory</value></data>
+  <data name="Account.DirectorySectionNote" xml:space="preserve"><value>These fields only appear on your Member Directory profile card.</value></data>
+  <data name="Account.InterestsLabel" xml:space="preserve"><value>Interests</value></data>
+  <data name="Account.LookingForLabel" xml:space="preserve"><value>Looking For</value></data>
+  <data name="Account.CanHelpWithLabel" xml:space="preserve"><value>Can Help With</value></data>
+  <data name="Account.VisibleInDirectoryLabel" xml:space="preserve"><value>Show my profile in the Member Directory</value></data>
 </root>

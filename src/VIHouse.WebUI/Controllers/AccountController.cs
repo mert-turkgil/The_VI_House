@@ -18,7 +18,8 @@ public class AccountController(
     UserManager<ApplicationUser> userManager,
     IProfileRepository profiles,
     IBookingRepository bookings,
-    IExperienceService experienceService) : Controller
+    IExperienceService experienceService,
+    IMembershipService membershipService) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -26,6 +27,7 @@ public class AccountController(
         var userId = CurrentUserId();
         var profile = await profiles.GetByUserIdAsync(userId, ct);
         ViewData["Title"] = "My Profile";
+        ViewData["Membership"] = await CurrentMembershipInfoAsync(userId, ct);
         return View(profile is null ? new ProfileFormViewModel() : ProfileFormViewModel.FromEntity(profile));
     }
 
@@ -34,9 +36,13 @@ public class AccountController(
     public async Task<IActionResult> Index(ProfileFormViewModel form, CancellationToken ct)
     {
         ViewData["Title"] = "My Profile";
-        if (!ModelState.IsValid) return View(form);
-
         var userId = CurrentUserId();
+        if (!ModelState.IsValid)
+        {
+            ViewData["Membership"] = await CurrentMembershipInfoAsync(userId, ct);
+            return View(form);
+        }
+
         var profile = await profiles.GetByUserIdAsync(userId, ct);
         if (profile is null)
         {
@@ -88,7 +94,20 @@ public class AccountController(
         profile.Bio = form.Bio;
         profile.LinkedInUrl = form.LinkedInUrl;
         profile.WebsiteUrl = form.WebsiteUrl;
+        profile.Interests = form.Interests;
+        profile.LookingFor = form.LookingFor;
+        profile.CanHelpWith = form.CanHelpWith;
+        profile.Visibility = form.VisibleInDirectory ? ProfileVisibility.MembersOnly : ProfileVisibility.Private;
         profile.UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    private async Task<AccountMembershipInfo?> CurrentMembershipInfoAsync(Guid userId, CancellationToken ct)
+    {
+        var membership = await membershipService.GetCurrentMembershipAsync(userId, ct);
+        if (membership is null) return null;
+
+        var plan = await membershipService.GetPlanAsync(membership.PlanId, ct);
+        return plan is null ? null : new AccountMembershipInfo(plan.Name, membership.ExpiresAt);
     }
 
     private Guid CurrentUserId() => Guid.Parse(userManager.GetUserId(User)!);

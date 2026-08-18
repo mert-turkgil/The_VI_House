@@ -90,6 +90,7 @@ builder.Services.AddScoped<IEmailLogRepository, EfEmailLogRepository>();
 builder.Services.AddScoped<IAuditLogRepository, EfAuditLogRepository>();
 builder.Services.AddScoped<IProfileRepository, EfProfileRepository>();
 builder.Services.AddScoped<IWebhookEventRepository, EfWebhookEventRepository>();
+builder.Services.AddScoped<IMembershipPaymentRepository, EfMembershipPaymentRepository>();
 
 // --- Business services -------------------------------------------------------------------------
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
@@ -97,6 +98,7 @@ builder.Services.AddScoped<IApplicationService, ApplicationService>();
 builder.Services.AddScoped<ICapacityService, CapacityService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IContentService, ContentService>();
+builder.Services.AddScoped<IMembershipService, MembershipService>();
 
 // Stripe keys: user-secrets in Development, environment variables (or a real vault) in Production —
 // never a committed appsettings.*.json file, same policy as SeedAdmin's credentials.
@@ -219,6 +221,25 @@ app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// The service worker script itself must never be aggressively cached by the browser's own HTTP
+// cache — otherwise a stuck stale sw.js means updates to it (and its cache-versioning logic) never
+// reach returning visitors. MapStaticAssets' fingerprinting is exactly wrong for this one file.
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/sw.js")
+    {
+        // Set after next(): the static file middleware sets its own Cache-Control on the way out,
+        // and setting ours beforehand left both present in the response (duplicate header) — this
+        // way ours is the one that actually lands.
+        context.Response.OnStarting(() =>
+        {
+            context.Response.Headers.CacheControl = "no-cache";
+            return Task.CompletedTask;
+        });
+    }
+    await next();
+});
 
 app.MapStaticAssets();
 

@@ -1,0 +1,12 @@
+@model MembershipConfirmedEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">Welcome to The VI House</h1>
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    You're confirmed as a <strong>@Model.PlanName</strong>.
+    @if (Model.ExpiresAt is not null)
+    {
+        <text>Your membership runs until @Model.ExpiresAt.Value.ToString("d MMMM yyyy").</text>
+    }
+</p>
+<p style="margin:0;">&mdash; The VI House</p>

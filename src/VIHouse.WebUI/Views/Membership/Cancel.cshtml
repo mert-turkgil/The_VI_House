@@ -1,0 +1,14 @@
+@{
+    ViewData["Title"] = Loc["Membership.CancelledTitle"];
+}
+
+<div class="apply-confirmation">
+    <div class="container apply-confirmation__inner">
+        <h1>@Loc["Membership.CancelledTitle"]</h1>
+        <p>@Loc["Membership.CancelledBody"]</p>
+        <div class="apply-confirmation__actions">
+            <a class="btn btn--primary" asp-controller="Membership" asp-action="Index">@Loc["Membership.BackToPlans"]</a>
+            <a class="btn btn--ghost-dark" asp-controller="Home" asp-action="Index">@Loc["Applied.BackHome"]</a>
+        </div>
+    </div>
+</div>

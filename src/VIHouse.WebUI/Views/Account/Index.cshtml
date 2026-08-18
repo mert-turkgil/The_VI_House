@@ -1,6 +1,7 @@
 @model ProfileFormViewModel
 @{
     ViewData["Title"] = Loc["Account.ProfileTitle"];
+    var membership = ViewData["Membership"] as AccountMembershipInfo;
 }
 
 <div class="account-manage">
@@ -12,6 +13,27 @@
         {
             <div class="contact-success" style="margin-bottom:20px;">@status</div>
         }
+
+        <div class="account-membership-card">
+            @if (membership is not null)
+            {
+                <span class="account-membership-card__badge">@membership.PlanName</span>
+                <p>
+                    @if (membership.ExpiresAt is not null)
+                    {
+                        @Loc["Account.MembershipValidUntil", membership.ExpiresAt.Value.ToString("d MMMM yyyy")]
+                    }
+                    else
+                    {
+                        @Loc["Account.MembershipNoExpiry"]
+                    }
+                </p>
+            }
+            else
+            {
+                <p>@Loc["Account.NoMembership"] <a asp-controller="Membership" asp-action="Index">@Loc["Account.ViewPlans"]</a></p>
+            }
+        </div>
 
         <form asp-action="Index" method="post" class="apply-form" novalidate>
             <div asp-validation-summary="ModelOnly" class="apply-form__summary"></div>
@@ -43,6 +65,32 @@
                 <label asp-for="Bio">@Loc["Account.BioLabel"]</label>
                 <textarea asp-for="Bio" rows="4"></textarea>
             </div>
+
+            <fieldset class="apply-form__section">
+                <legend>@Loc["Account.DirectorySectionHeading"]</legend>
+                <p class="apply-form__note" style="margin-top:-8px;">@Loc["Account.DirectorySectionNote"]</p>
+                <div class="apply-form__grid apply-form__grid--2">
+                    <div class="apply-field">
+                        <label asp-for="Interests">@Loc["Account.InterestsLabel"]</label>
+                        <input asp-for="Interests" />
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="LookingFor">@Loc["Account.LookingForLabel"]</label>
+                        <input asp-for="LookingFor" />
+                    </div>
+                </div>
+                <div class="apply-field">
+                    <label asp-for="CanHelpWith">@Loc["Account.CanHelpWithLabel"]</label>
+                    <input asp-for="CanHelpWith" />
+                </div>
+                <div class="apply-field apply-field--checkbox">
+                    <label>
+                        <input asp-for="VisibleInDirectory" type="checkbox" />
+                        <span>@Loc["Account.VisibleInDirectoryLabel"]</span>
+                    </label>
+                </div>
+            </fieldset>
+
             <button type="submit" class="btn btn--primary apply-form__submit">@Loc["Account.SaveProfile"]</button>
         </form>
     </div>

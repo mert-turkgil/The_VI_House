@@ -1,0 +1,70 @@
+@model List<MembershipPlanCardViewModel>
+@{
+    ViewData["Title"] = Loc["Membership.Title"];
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
+
+    string BillingLabel(VIHouse.Entities.Membership.MembershipBillingPeriod period) => period switch
+    {
+        VIHouse.Entities.Membership.MembershipBillingPeriod.Monthly => Loc["Membership.PerMonth"],
+        VIHouse.Entities.Membership.MembershipBillingPeriod.Annual => Loc["Membership.PerYear"],
+        _ => Loc["Membership.OneTime"],
+    };
+}
+
+<div class="content-hero">
+    <div class="container">
+        <span class="content-hero__eyebrow">@Loc["Membership.Eyebrow"]</span>
+        <h1>@Loc["Membership.Heading"]</h1>
+        <p>@Loc["Membership.Subheading"]</p>
+    </div>
+</div>
+
+<div class="container membership-body">
+    @if (TempData["MembershipError"] is string error)
+    {
+        <div class="apply-form__summary" style="margin-bottom:24px;">@error</div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <p style="text-align:center; padding:48px 0;">@Loc["Membership.NoPlans"]</p>
+    }
+    else
+    {
+        <div class="membership-plan-grid">
+            @foreach (var plan in Model)
+            {
+                <div class="membership-plan-card">
+                    <h3>@plan.Name</h3>
+                    <div class="membership-plan-card__price">
+                        @MoneyFormatter.Format(plan.PriceMinor, plan.Currency)
+                        <span>@BillingLabel(plan.BillingPeriod)</span>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(plan.Description))
+                    {
+                        <p class="membership-plan-card__description">@plan.Description</p>
+                    }
+                    @if (plan.Features.Count > 0)
+                    {
+                        <ul class="membership-plan-card__features">
+                            @foreach (var feature in plan.Features)
+                            {
+                                <li>@feature</li>
+                            }
+                        </ul>
+                    }
+                    @if (isAuthenticated)
+                    {
+                        <form asp-action="Checkout" asp-route-planId="@plan.Id" method="post">
+                            <button type="submit" class="btn btn--primary" style="width:100%;">@Loc["Membership.Join"]</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a class="btn btn--primary" style="width:100%;" href="/Identity/Account/Login?ReturnUrl=%2Fmembership">@Loc["Membership.LogInToJoin"]</a>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>

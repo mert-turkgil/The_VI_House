@@ -1,0 +1,58 @@
+@model MemberDetailViewModel
+@{
+    ViewData["Title"] = Model.FullName;
+}
+
+<div class="container content-body member-detail">
+    <a class="member-detail__back" asp-action="Index">&larr; @Loc["Directory.BackToDirectory"]</a>
+
+    <div class="member-detail__header">
+        <div class="member-card__avatar member-card__avatar--lg">
+            @if (!string.IsNullOrWhiteSpace(Model.PhotoUrl))
+            {
+                <img src="@Model.PhotoUrl" alt="" />
+            }
+            else
+            {
+                <span>@Model.FullName.Substring(0, 1)</span>
+            }
+        </div>
+        <div>
+            <h1>@Model.FullName</h1>
+            @if (!string.IsNullOrWhiteSpace(Model.JobTitle) || !string.IsNullOrWhiteSpace(Model.CompanyName))
+            {
+                <p class="member-detail__role">@Model.JobTitle@(!string.IsNullOrWhiteSpace(Model.JobTitle) && !string.IsNullOrWhiteSpace(Model.CompanyName) ? " · " : "")@Model.CompanyName</p>
+            }
+            <p class="member-detail__meta">
+                @if (!string.IsNullOrWhiteSpace(Model.City)) { @($"{Model.City}, ") }@Model.Country
+                @if (!string.IsNullOrWhiteSpace(Model.Industry)) { <span> &middot; @Model.Industry</span> }
+            </p>
+            @if (!string.IsNullOrWhiteSpace(Model.LinkedInUrl))
+            {
+                <a href="@Model.LinkedInUrl" target="_blank" rel="noopener" class="member-detail__linkedin">LinkedIn &rarr;</a>
+            }
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Bio))
+    {
+        <section class="experience-section">
+            <h2>@Loc["Directory.About"]</h2>
+            <p>@Model.Bio</p>
+        </section>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.LookingFor))
+    {
+        <section class="experience-section">
+            <h2>@Loc["Directory.LookingFor"]</h2>
+            <p>@Model.LookingFor</p>
+        </section>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.CanHelpWith))
+    {
+        <section class="experience-section">
+            <h2>@Loc["Directory.CanHelpWith"]</h2>
+            <p>@Model.CanHelpWith</p>
+        </section>
+    }
+</div>

@@ -3,8 +3,6 @@ using VIHouse.Entities.Users;
 
 namespace VIHouse.WebUI.ViewModels.Account;
 
-/// <summary>Deliberately just the "Basic Profile" fields (brief §206) — the fuller member-directory
-/// profile (photo, interests, looking-for/can-help-with, visibility) is Phase 2 scope.</summary>
 public class ProfileFormViewModel
 {
     [StringLength(150)]
@@ -25,6 +23,21 @@ public class ProfileFormViewModel
     [Url, StringLength(300)]
     public string? WebsiteUrl { get; set; }
 
+    // The three fields below only ever surface on the Member Directory profile card/detail page —
+    // added alongside the Directory itself (brief §38) rather than with the rest of "Basic Profile",
+    // since until the Directory existed there was nothing that read them.
+    [StringLength(300)]
+    public string? Interests { get; set; }
+
+    [StringLength(300)]
+    public string? LookingFor { get; set; }
+
+    [StringLength(300)]
+    public string? CanHelpWith { get; set; }
+
+    /// <summary>true = listed in the Member Directory (ProfileVisibility.MembersOnly), false = hidden (ProfileVisibility.Private). EventParticipants isn't offered here — nothing consumes it yet (see Event Attendee Directory, brief §41, not built).</summary>
+    public bool VisibleInDirectory { get; set; } = true;
+
     public static ProfileFormViewModel FromEntity(Profile profile) => new()
     {
         CompanyName = profile.CompanyName,
@@ -33,5 +46,9 @@ public class ProfileFormViewModel
         Bio = profile.Bio,
         LinkedInUrl = profile.LinkedInUrl,
         WebsiteUrl = profile.WebsiteUrl,
+        Interests = profile.Interests,
+        LookingFor = profile.LookingFor,
+        CanHelpWith = profile.CanHelpWith,
+        VisibleInDirectory = profile.Visibility == ProfileVisibility.MembersOnly,
     };
 }
