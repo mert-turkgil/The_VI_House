@@ -5,9 +5,13 @@
     ViewData["Title"] = "Log In";
 }
 
-@* No self-registration / external-login sections: membership is granted through the
-   application-approval funnel (brief §25), not open sign-up. The .auth-page wrapper itself comes
-   from Account/_Layout.cshtml, applied to every page under Account/. *@
+@* No self-registration section: membership is granted through the application-approval funnel
+   (brief §25), not open sign-up. The .auth-page wrapper itself comes from Account/_Layout.cshtml,
+   applied to every page under Account/.
+   External login (Google) IS rendered below: it can only ever sign in a Google account already
+   linked to an existing local account (ExternalLogin.cshtml.cs's OnGetCallbackAsync and
+   OnPostConfirmationAsync both reject unrecognized Google accounts instead of offering to create
+   one), so it cannot be used to self-register. *@
 <h1>Welcome back.</h1>
 <section>
     <form id="account" method="post">
@@ -38,6 +42,20 @@
         <p>Not a member yet? <a href="/apply">Request access</a>.</p>
     </section>
 </section>
+
+@if ((Model.ExternalLogins?.Count ?? 0) > 0)
+{
+    <hr />
+    <section>
+        <h2>Or sign in with</h2>
+        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            @foreach (var provider in Model.ExternalLogins ?? [])
+            {
+                <button type="submit" class="btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+            }
+        </form>
+    </section>
+}
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

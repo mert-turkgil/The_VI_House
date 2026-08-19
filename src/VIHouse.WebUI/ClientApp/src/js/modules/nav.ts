@@ -61,3 +61,37 @@ export function initDismissableDropdown(selector: string): void {
     });
   });
 }
+
+/**
+ * Site search popover: debounced fetch-as-you-type against /search/results, injected as
+ * server-rendered HTML — same "Razor renders, JS just fetches and swaps innerHTML" approach used
+ * everywhere else in this app that needs a partial update, not a client-side templating layer.
+ * Autofocuses the input when the popover opens (initDismissableDropdown handles the rest: outside
+ * click, Escape, link-click close). Enter submits the wrapping <form> natively to the full
+ * /search page — no JS needed for that.
+ */
+export function initSiteSearch(): void {
+  const details = document.querySelector<HTMLDetailsElement>('.site-search');
+  const input = details?.querySelector<HTMLInputElement>('[data-search-input]');
+  const results = details?.querySelector<HTMLElement>('[data-search-results]');
+  if (!details || !input || !results) return;
+
+  details.addEventListener('toggle', () => {
+    if (details.open) input.focus();
+  });
+
+  let debounceTimer: number | undefined;
+  input.addEventListener('input', () => {
+    window.clearTimeout(debounceTimer);
+    debounceTimer = window.setTimeout(() => {
+      fetch(`/search/results?q=${encodeURIComponent(input.value.trim())}`)
+        .then((response) => (response.ok ? response.text() : null))
+        .then((html) => {
+          if (html !== null) results.innerHTML = html;
+        })
+        .catch(() => {
+          // Non-fatal — the popover just keeps showing whatever it last rendered.
+        });
+    }, 250);
+  });
+}

@@ -4,6 +4,7 @@ using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Applications;
+using VIHouse.Entities.Commerce;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
@@ -12,6 +13,8 @@ public class AdminApplicationsController(
     IApplicationService applicationService,
     IExperienceService experienceService,
     IInvitationRepository invitations,
+    IPaymentRepository payments,
+    IPaymentProvider paymentProvider,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
     public async Task<IActionResult> Index(ApplicationStatus? status, CancellationToken ct)
@@ -49,12 +52,24 @@ public class AdminApplicationsController(
             : null;
         var invitation = await invitations.GetLatestByApplicationAsync(id, ct);
 
+        var applicationPayments = await payments.GetByApplicationAsync(id, ct);
+        var payment = applicationPayments
+            .OrderByDescending(p => p.CreatedAt)
+            .FirstOrDefault(p => p.Status == PaymentStatus.Paid)
+            ?? applicationPayments.OrderByDescending(p => p.CreatedAt).FirstOrDefault();
+
+        var liveDetails = payment is not null
+            ? await paymentProvider.GetPaymentDetailsAsync(payment.ProviderReference, ct)
+            : null;
+
         var model = new AdminApplicationDetailViewModel
         {
             Application = application,
             ExperienceLabel = experience is null ? "—" : $"The VI House — {experience.City}, {experience.Country}",
             ReviewedByEmail = reviewer?.Email,
             Invitation = invitation,
+            Payment = payment,
+            LivePaymentDetails = liveDetails,
         };
 
         return View(model);

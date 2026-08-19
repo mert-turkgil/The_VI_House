@@ -1,0 +1,18 @@
+@model SearchResultsViewModel
+
+<div class="journal-header">
+    <h1>Search</h1>
+    @if (!string.IsNullOrWhiteSpace(Model.Query))
+    {
+        <p>Results for "@Model.Query"</p>
+    }
+</div>
+
+<div class="container search-page">
+    <form method="get" action="/search" class="search-page__form">
+        <input type="text" name="q" class="search-page__input" value="@Model.Query" placeholder="Search experiences and journal entries…" autofocus />
+        <button type="submit" class="btn btn--primary">Search</button>
+    </form>
+
+    <partial name="_SearchResults" model="Model" />
+</div>

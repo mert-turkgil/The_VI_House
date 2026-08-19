@@ -28,3 +28,30 @@
         }
     </dl>
 </div>
+
+<div class="admin-card">
+    <h2>Live Stripe Details</h2>
+    @if (Model.LiveDetails is { } d)
+    {
+        <dl class="admin-detail-list">
+            <div><dt>Session Status</dt><dd>@(d.SessionStatus ?? "—")</dd></div>
+            <div><dt>Payment Status</dt><dd>@(d.PaymentStatus ?? "—")</dd></div>
+            <div><dt>Charge Status</dt><dd>@(d.ChargeStatus ?? "—")</dd></div>
+            <div><dt>Card</dt><dd>@(d.CardBrand is null ? "—" : $"{d.CardBrand} •••• {d.CardLast4}")</dd></div>
+            @if (d.AmountCapturedMinor is { } captured)
+            {
+                <div><dt>Amount Captured</dt><dd>@MoneyFormatter.Format(captured, p.Currency)</dd></div>
+            }
+            <div><dt>Refunded</dt><dd>@(d.Refunded == true ? MoneyFormatter.Format(d.AmountRefundedMinor ?? 0, p.Currency) : "No")</dd></div>
+            <div><dt>Disputed</dt><dd>@(d.Disputed == true ? "Yes" : "No")</dd></div>
+            @if (!string.IsNullOrWhiteSpace(d.ReceiptUrl))
+            {
+                <div><dt>Receipt</dt><dd><a href="@d.ReceiptUrl" target="_blank" rel="noopener">View receipt</a></dd></div>
+            }
+        </dl>
+    }
+    else
+    {
+        <p style="font-size:0.8125rem; color:#999;">Couldn't sync with Stripe just now — showing the last known status from our database.</p>
+    }
+</div>

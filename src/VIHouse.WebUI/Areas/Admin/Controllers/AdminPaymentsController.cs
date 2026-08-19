@@ -15,6 +15,7 @@ public class AdminPaymentsController(
     IPaymentRepository payments,
     IBookingRepository bookings,
     IExperienceService experienceService,
+    IPaymentProvider paymentProvider,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
     public async Task<IActionResult> Index(PaymentStatus? status, CancellationToken ct)
@@ -52,6 +53,7 @@ public class AdminPaymentsController(
         var experience = await experienceService.GetForAdminEditAsync(payment.ExperienceId, ct);
         var user = payment.UserId is { } userId ? await userManager.FindByIdAsync(userId.ToString()) : null;
         var booking = payment.BookingId is { } bookingId ? await bookings.GetByIdAsync(bookingId, ct) : null;
+        var liveDetails = await paymentProvider.GetPaymentDetailsAsync(payment.ProviderReference, ct);
 
         return View(new AdminPaymentDetailViewModel
         {
@@ -59,6 +61,7 @@ public class AdminPaymentsController(
             ExperienceLabel = experience is null ? "—" : $"The VI House — {experience.City}, {experience.Country}",
             CustomerEmail = user?.Email,
             BookingReference = booking?.BookingReference,
+            LiveDetails = liveDetails,
         });
     }
 }

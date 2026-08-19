@@ -125,77 +125,27 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             }
             else
             {
-                // If the user does not have an account, then ask the user to create an account.
-                ReturnUrl = returnUrl;
-                ProviderDisplayName = info.ProviderDisplayName;
-                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
-                {
-                    Input = new InputModel
-                    {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
-                    };
-                }
-                return Page();
+                // Invite-only membership (brief §25): unlike stock Identity scaffolding, an
+                // unrecognized external login must never be offered the "create an account" form —
+                // that would let any Google account holder self-register. Only a Google account
+                // already linked to an existing local account (via Manage/ExternalLogins) can sign
+                // in this way; anyone else is rejected here, same as the branches above.
+                ErrorMessage = "No VI House account is linked to this Google account.";
+                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
         }
 
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
-            // Get the information about the user from the external login provider
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
-            {
-                ErrorMessage = "Error loading external login information during confirmation.";
-                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
-            }
-
-            if (ModelState.IsValid)
-            {
-                var user = CreateUser();
-
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-
-                var result = await _userManager.CreateAsync(user);
-                if (result.Succeeded)
-                {
-                    result = await _userManager.AddLoginAsync(user, info);
-                    if (result.Succeeded)
-                    {
-                        _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
-
-                        var userId = await _userManager.GetUserIdAsync(user);
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                        var callbackUrl = Url.Page(
-                            "/Account/ConfirmEmail",
-                            pageHandler: null,
-                            values: new { area = "Identity", userId = userId, code = code },
-                            protocol: Request.Scheme);
-
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                        // If account confirmation is required, we need to show the link if we don't have a real email sender
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        {
-                            return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
-                        }
-
-                        await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
-                        return LocalRedirect(returnUrl);
-                    }
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-
-            ProviderDisplayName = info.ProviderDisplayName;
-            ReturnUrl = returnUrl;
-            return Page();
+            // Neutralized, not just OnGetCallbackAsync's branch above: this handler is reachable by
+            // a direct POST to ?handler=Confirmation using nothing more than an antiforgery token
+            // from any page on the site plus a completed Google OAuth round-trip for any Google
+            // account — it doesn't depend on OnGetCallbackAsync ever having rendered this page's
+            // form. Left unguarded, it would create a brand-new ApplicationUser (no role, no
+            // approval) for literally any Google email, bypassing the application-approval funnel.
+            returnUrl ??= Url.Content("~/");
+            ErrorMessage = "No VI House account is linked to this Google account.";
+            return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
         }
 
         private ApplicationUser CreateUser()

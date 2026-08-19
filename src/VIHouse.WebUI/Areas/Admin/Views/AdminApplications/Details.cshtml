@@ -181,5 +181,34 @@
                 }
             </div>
         }
+
+        @if (Model.Payment is { } pay)
+        {
+            <div class="admin-card">
+                <h2>Payment</h2>
+                <dl class="admin-detail-list">
+                    <div><dt>Status</dt><dd>@pay.Status</dd></div>
+                    <div><dt>Amount</dt><dd>@MoneyFormatter.Format(pay.AmountMinor, pay.Currency)</dd></div>
+                    <div><dt>Created</dt><dd>@pay.CreatedAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
+                </dl>
+                @if (Model.LivePaymentDetails is { } d)
+                {
+                    <dl class="admin-detail-list" style="margin-top:8px;">
+                        <div><dt>Card</dt><dd>@(d.CardBrand is null ? "—" : $"{d.CardBrand} •••• {d.CardLast4}")</dd></div>
+                        <div><dt>Charge Status</dt><dd>@(d.ChargeStatus ?? "—")</dd></div>
+                        <div><dt>Refunded</dt><dd>@(d.Refunded == true ? MoneyFormatter.Format(d.AmountRefundedMinor ?? 0, pay.Currency) : "No")</dd></div>
+                        @if (!string.IsNullOrWhiteSpace(d.ReceiptUrl))
+                        {
+                            <div><dt>Receipt</dt><dd><a href="@d.ReceiptUrl" target="_blank" rel="noopener">View receipt</a></dd></div>
+                        }
+                    </dl>
+                }
+                else
+                {
+                    <p style="font-size:0.75rem; color:#999; margin-top:8px;">Couldn't sync with Stripe just now — showing the last known status.</p>
+                }
+                <a class="admin-btn admin-btn--ghost" asp-controller="AdminPayments" asp-action="Details" asp-route-id="@pay.Id" style="margin-top:12px; display:inline-block;">View in Payments</a>
+            </div>
+        }
     </div>
 </div>

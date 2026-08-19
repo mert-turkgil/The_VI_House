@@ -106,6 +106,190 @@
   display: contents; // no box of its own — the inner .btn.site-header__cta governs visibility/sizing
 }
 
+// --- Site search -----------------------------------------------------------------------------
+// A <details> popover, same no-JS-required open/close mechanic as the language switcher and
+// notification bell — but stays visible at every width like the bell (search is worth reaching on
+// a phone too), rather than collapsing into the burger panel like the language switcher does.
+.site-search {
+  position: relative;
+  flex-shrink: 0;
+
+  summary {
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+}
+
+.site-search__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--vih-line-on-dark);
+  border-radius: 999px;
+  color: var(--vih-cream-dim);
+  cursor: pointer;
+  transition: border-color 0.15s var(--vih-ease), color 0.15s var(--vih-ease);
+
+  &:hover {
+    color: var(--vih-cream);
+    border-color: rgba(244, 240, 230, 0.4);
+  }
+
+  .site-search[open] & {
+    color: var(--vih-cream);
+    border-color: var(--vih-gold);
+  }
+}
+
+.site-search__icon {
+  width: 16px;
+  height: 16px;
+}
+
+.site-search__menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: -8px;
+  z-index: 10;
+  width: min(340px, calc(100vw - 32px));
+  max-height: 420px;
+  overflow-y: auto;
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  animation: lang-switch-in 0.15s var(--vih-ease);
+}
+
+.site-search__form {
+  padding: 10px;
+  border-bottom: 1px solid var(--vih-line-on-light);
+}
+
+.site-search__input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--vih-ink);
+  transition: border-color 0.15s var(--vih-ease);
+
+  &:focus {
+    outline: none;
+    border-color: var(--vih-gold);
+  }
+}
+
+.site-search__results {
+  padding: 6px;
+}
+
+.search-results__hint,
+.search-results__empty {
+  padding: 16px 10px;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #888;
+  text-align: center;
+}
+
+.search-results__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.search-results__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 8px;
+  border-radius: 6px;
+  color: var(--vih-ink);
+
+  &:hover {
+    background: #faf9f6;
+  }
+}
+
+.search-results__item-type {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--vih-cream-dim);
+  color: var(--vih-green-900);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 1px;
+}
+
+.search-results__item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.search-results__item-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.search-results__item-subtitle {
+  font-size: 0.75rem;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Full /search page — reuses .journal-header for the hero band, adds just the search form + a
+// wider (non-popover) results list.
+.search-page {
+  padding-bottom: 96px;
+}
+
+.search-page__form {
+  display: flex;
+  gap: 10px;
+  max-width: 520px;
+  margin: 0 auto 32px;
+}
+
+.search-page__input {
+  flex: 1;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 999px;
+  font-size: 0.9375rem;
+
+  &:focus {
+    outline: none;
+    border-color: var(--vih-gold);
+  }
+}
+
+.search-page .search-results__list {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.search-page .search-results__item {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--vih-line-on-light);
+  border-radius: 0;
+}
+
 // --- Language switcher (EN / DE / TR / ET) --------------------------------------------------------
 // A <details>/<summary> dropdown — same no-JS-required pattern as the FAQ accordion. Desktop-only:
 // below 960px it collapses into the burger panel instead (.site-mobile-nav__lang below), same as

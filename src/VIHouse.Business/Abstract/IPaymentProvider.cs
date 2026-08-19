@@ -12,6 +12,14 @@ public interface IPaymentProvider
 
     /// <summary>Verifies the inbound webhook's signature and maps it to a provider-agnostic result. Throws if the signature is invalid.</summary>
     PaymentWebhookEvent ConstructWebhookEvent(string requestBody, string signatureHeader);
+
+    /// <summary>Live read of a payment's current state directly from the provider — for admin
+    /// screens that want real card/receipt/refund details beyond what's stored locally. Returns
+    /// null (never throws) if the provider can't produce details for any reason — not-found
+    /// reference, network failure, or a reference that was never a real provider session (see
+    /// PaymentService.InitiateCheckoutAsync's placeholder ProviderReference). Callers fall back to
+    /// local DB fields when this is null.</summary>
+    Task<PaymentProviderDetails?> GetPaymentDetailsAsync(string providerReference, CancellationToken ct = default);
 }
 
 public record CreateCheckoutSessionRequest(
@@ -26,6 +34,19 @@ public record CreateCheckoutSessionRequest(
     IReadOnlyDictionary<string, string> Metadata);
 
 public record CheckoutSessionResult(string SessionId, string Url);
+
+public record PaymentProviderDetails(
+    string? SessionStatus,
+    string? PaymentStatus,
+    string? PaymentIntentStatus,
+    string? ChargeStatus,
+    long? AmountCapturedMinor,
+    string? CardBrand,
+    string? CardLast4,
+    string? ReceiptUrl,
+    bool? Refunded,
+    long? AmountRefundedMinor,
+    bool? Disputed);
 
 public enum PaymentWebhookEventType
 {

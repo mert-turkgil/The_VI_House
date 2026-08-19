@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
@@ -10,10 +11,12 @@ public class StripePaymentProvider : IPaymentProvider
 {
     private readonly StripeOptions options;
     private readonly SessionService sessionService;
+    private readonly ILogger<StripePaymentProvider> logger;
 
-    public StripePaymentProvider(IOptions<StripeOptions> options)
+    public StripePaymentProvider(IOptions<StripeOptions> options, ILogger<StripePaymentProvider> logger)
     {
         this.options = options.Value;
+        this.logger = logger;
         StripeConfiguration.ApiKey = this.options.SecretKey;
         sessionService = new SessionService();
     }
@@ -50,6 +53,33 @@ public class StripePaymentProvider : IPaymentProvider
 
         var session = await sessionService.CreateAsync(createOptions, cancellationToken: ct);
         return new CheckoutSessionResult(session.Id, session.Url);
+    }
+
+    public async Task<PaymentProviderDetails?> GetPaymentDetailsAsync(string providerReference, CancellationToken ct = default)
+    {
+        try
+        {
+            var session = await sessionService.GetAsync(providerReference, new SessionGetOptions
+            {
+                Expand = ["payment_intent.latest_charge"],
+            }, cancellationToken: ct);
+
+            var charge = session.PaymentIntent?.LatestCharge;
+            var card = charge?.PaymentMethodDetails?.Card;
+
+            return new PaymentProviderDetails(
+                session.Status, session.PaymentStatus, session.PaymentIntent?.Status, charge?.Status,
+                charge?.AmountCaptured, card?.Brand, card?.Last4, charge?.ReceiptUrl,
+                charge?.Refunded, charge?.AmountRefunded, charge?.Disputed);
+        }
+        catch (StripeException ex)
+        {
+            // Covers "no such session" (e.g. the pending_ placeholder ProviderReference from a
+            // checkout that never reached Stripe — see PaymentService.InitiateCheckoutAsync) as
+            // well as genuine network/API failures. The caller falls back to local DB fields.
+            logger.LogWarning(ex, "Could not fetch live Stripe details for {ProviderReference}", providerReference);
+            return null;
+        }
     }
 
     public PaymentWebhookEvent ConstructWebhookEvent(string requestBody, string signatureHeader)

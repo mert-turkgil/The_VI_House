@@ -1,3 +1,4 @@
+using VIHouse.Business.Abstract;
 using VIHouse.Entities.Commerce;
 
 namespace VIHouse.WebUI.Areas.Admin.ViewModels;
@@ -8,4 +9,5 @@ public class AdminPaymentDetailViewModel
     public string ExperienceLabel { get; set; } = default!;
     public string? CustomerEmail { get; set; }
     public string? BookingReference { get; set; }
+    public PaymentProviderDetails? LiveDetails { get; set; }
 }

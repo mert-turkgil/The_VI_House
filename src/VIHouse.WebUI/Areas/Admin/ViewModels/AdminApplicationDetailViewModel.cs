@@ -1,3 +1,4 @@
+using VIHouse.Business.Abstract;
 using VIHouse.Entities.Applications;
 using VIHouse.Entities.Commerce;
 
@@ -9,6 +10,8 @@ public class AdminApplicationDetailViewModel
     public string ExperienceLabel { get; set; } = default!;
     public string? ReviewedByEmail { get; set; }
     public Invitation? Invitation { get; set; }
+    public Payment? Payment { get; set; }
+    public PaymentProviderDetails? LivePaymentDetails { get; set; }
 
     public bool CanMarkUnderReview => Application.Status == ApplicationStatus.Submitted;
     public bool CanShortlist => Application.Status == ApplicationStatus.UnderReview;

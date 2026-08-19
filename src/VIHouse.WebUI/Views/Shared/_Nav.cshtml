@@ -60,6 +60,23 @@
         </nav>
 
         <div class="site-header__actions">
+            <details class="site-search">
+                <summary class="site-search__toggle" aria-label="Search">
+                    <svg class="site-search__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6" />
+                        <line x1="15.3" y1="15.3" x2="21" y2="21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                    </svg>
+                </summary>
+                <div class="site-search__menu">
+                    <form action="/search" method="get" class="site-search__form">
+                        <input type="text" name="q" class="site-search__input" placeholder="Search experiences, journal…" autocomplete="off" data-search-input />
+                    </form>
+                    <div class="site-search__results" data-search-results>
+                        <p class="search-results__hint">Search experiences and journal entries.</p>
+                    </div>
+                </div>
+            </details>
+
             <details class="lang-switch">
                 <summary class="lang-switch__toggle" aria-label="@Loc["Nav.LanguageLabel"]: @current.Label">
                     <svg class="lang-switch__globe" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

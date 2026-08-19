@@ -70,6 +70,26 @@ if (!string.IsNullOrWhiteSpace(cookieDomain))
     builder.Services.ConfigureApplicationCookie(options => options.Cookie.Domain = cookieDomain);
 }
 
+// Google Sign-In: an alternative way into an *existing* account (the admin's, today), never a way
+// to create one — ExternalLogin.cshtml.cs rejects any Google account not already linked via
+// Manage/ExternalLogins, so this can't be used to bypass the invite-only application-approval
+// funnel (brief §25). Registered only when configured, so an environment with no
+// Authentication:Google:ClientId/ClientSecret (missing user-secret in Development, blank
+// placeholder in appsettings.Production.json) just doesn't show the button instead of crashing —
+// same secrets policy as Stripe: user-secrets in Development, appsettings.Production.json on the
+// server, never a committed file.
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret))
+{
+    builder.Services.AddAuthentication()
+        .AddGoogle(options =>
+        {
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+        });
+}
+
 // --- Repositories (DataAccess.Abstract -> Concrete.EntityFramework) -----------------------------
 // Open-generic fallback for entities that only ever need generic CRUD (no custom queries) — e.g.
 // ExperienceInclusion/ExperienceFaq, used directly by ExperienceService for unambiguous Added-state

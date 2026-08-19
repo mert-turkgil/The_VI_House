@@ -1,0 +1,28 @@
+@model SearchResultsViewModel
+
+@if (Model.Query.Trim().Length < 2)
+{
+    <p class="search-results__hint">Keep typing — search experiences and journal entries.</p>
+}
+else if (Model.Results.Count == 0)
+{
+    <p class="search-results__empty">No results for "@Model.Query".</p>
+}
+else
+{
+    <div class="search-results__list">
+        @foreach (var r in Model.Results)
+        {
+            <a class="search-results__item" href="@r.Url">
+                <span class="search-results__item-type">@r.Type</span>
+                <span class="search-results__item-body">
+                    <span class="search-results__item-title">@r.Title</span>
+                    @if (!string.IsNullOrWhiteSpace(r.Subtitle))
+                    {
+                        <span class="search-results__item-subtitle">@r.Subtitle</span>
+                    }
+                </span>
+            </a>
+        }
+    </div>
+}
