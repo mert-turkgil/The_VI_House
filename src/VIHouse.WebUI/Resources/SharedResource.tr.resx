@@ -193,6 +193,16 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Account.NoMembership" xml:space="preserve"><value>Henüz aktif bir üyeliğiniz yok.</value></data>
   <data name="Account.ViewPlans" xml:space="preserve"><value>Planları görüntüle</value></data>
 
+  <data name="Card.Title" xml:space="preserve"><value>Üyelik Kartım</value></data>
+  <data name="Card.Intro" xml:space="preserve"><value>Dijital üyelik kartınız — kaydedin, yazdırın ya da elinizin altında bulundurun.</value></data>
+  <data name="Card.MemberSince" xml:space="preserve"><value>Üyelik Başlangıcı</value></data>
+  <data name="Card.ValidUntil" xml:space="preserve"><value>Geçerlilik Tarihi</value></data>
+  <data name="Card.NoExpiry" xml:space="preserve"><value>Süresiz</value></data>
+  <data name="Card.MemberNumber" xml:space="preserve"><value>Üye No.</value></data>
+  <data name="Card.Print" xml:space="preserve"><value>Kartı Yazdır</value></data>
+  <data name="Card.ViewCard" xml:space="preserve"><value>Kartı Görüntüle</value></data>
+  <data name="Card.NavLabel" xml:space="preserve"><value>Kartım</value></data>
+
   <data name="Membership.Title" xml:space="preserve"><value>Üyelik</value></data>
   <data name="Membership.Eyebrow" xml:space="preserve"><value>Eve Katılın</value></data>
   <data name="Membership.Heading" xml:space="preserve"><value>Üyelik</value></data>
@@ -238,4 +248,11 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Account.LookingForLabel" xml:space="preserve"><value>Aradığı</value></data>
   <data name="Account.CanHelpWithLabel" xml:space="preserve"><value>Yardımcı Olabileceği</value></data>
   <data name="Account.VisibleInDirectoryLabel" xml:space="preserve"><value>Profilimi Üye Rehberi'nde göster</value></data>
+
+  <data name="Notif.Title" xml:space="preserve"><value>Bildirimler</value></data>
+  <data name="Notif.MarkAllRead" xml:space="preserve"><value>Tümünü okundu işaretle</value></data>
+  <data name="Notif.Empty" xml:space="preserve"><value>Her şey güncel — henüz bildirim yok.</value></data>
+  <data name="Notif.ViewAll" xml:space="preserve"><value>Tüm bildirimleri görüntüle</value></data>
+
+  <data name="Nav.Journal" xml:space="preserve"><value>Dergi</value></data>
 </root>

@@ -7,6 +7,7 @@ using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Applications;
 using VIHouse.Entities.Commerce;
+using VIHouse.Entities.Notifications;
 using VIHouse.Entities.Users;
 
 namespace VIHouse.Business.Concrete;
@@ -25,6 +26,7 @@ public class PaymentService(
     ICapacityService capacity,
     IPaymentProvider paymentProvider,
     IEmailService emailService,
+    INotificationService notificationService,
     IOptions<SiteOptions> siteOptions,
     UserManager<ApplicationUser> userManager) : IPaymentService
 {
@@ -253,6 +255,11 @@ public class PaymentService(
                     confirmedApplication.FirstName, booking.BookingReference, confirmedExperience.Title, confirmedExperience.City,
                     confirmedExperience.StartAtUtc, confirmedExperience.EndAtUtc, booking.AmountMinor, booking.Currency),
                 nameof(Booking), booking.Id, ct);
+
+            await notificationService.CreateForUserAsync(
+                payment.UserId!.Value, NotificationType.Payment,
+                "Booking Confirmed", $"You're confirmed for The VI House — {confirmedExperience.City}. Reference {booking.BookingReference}.",
+                "/account/bookings", ct);
         }
     }
 

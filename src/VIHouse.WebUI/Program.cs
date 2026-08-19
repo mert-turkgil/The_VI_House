@@ -92,6 +92,8 @@ builder.Services.AddScoped<IProfileRepository, EfProfileRepository>();
 builder.Services.AddScoped<IWebhookEventRepository, EfWebhookEventRepository>();
 builder.Services.AddScoped<IMembershipPaymentRepository, EfMembershipPaymentRepository>();
 builder.Services.AddScoped<IAmbassadorRepository, EfAmbassadorRepository>();
+builder.Services.AddScoped<INotificationRepository, EfNotificationRepository>();
+builder.Services.AddScoped<IJournalPostRepository, EfJournalPostRepository>();
 
 // --- Business services -------------------------------------------------------------------------
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
@@ -101,6 +103,8 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IMembershipService, MembershipService>();
 builder.Services.AddScoped<IAmbassadorService, AmbassadorService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IJournalService, JournalService>();
 
 // Stripe keys: user-secrets in Development, environment variables (or a real vault) in Production —
 // never a committed appsettings.*.json file, same policy as SeedAdmin's credentials.
@@ -184,9 +188,9 @@ if (app.Environment.IsProduction())
     if (string.IsNullOrWhiteSpace(stripeOptions.SecretKey) || string.IsNullOrWhiteSpace(stripeOptions.WebhookSecret))
     {
         throw new InvalidOperationException(
-            "Stripe:SecretKey / Stripe:WebhookSecret are not configured. Set them via environment " +
-            "variables (Stripe__SecretKey, Stripe__WebhookSecret) or your secrets manager — never in " +
-            "appsettings.Production.json.");
+            "Stripe:SecretKey / Stripe:WebhookSecret are not configured. Set them in the server's " +
+            "appsettings.Production.json (gitignored — populated on the server, never committed) or " +
+            "via environment variables (Stripe__SecretKey, Stripe__WebhookSecret).");
     }
 }
 

@@ -193,6 +193,16 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Account.NoMembership" xml:space="preserve"><value>You don't have an active membership yet.</value></data>
   <data name="Account.ViewPlans" xml:space="preserve"><value>View plans</value></data>
 
+  <data name="Card.Title" xml:space="preserve"><value>My Membership Card</value></data>
+  <data name="Card.Intro" xml:space="preserve"><value>Your digital membership card — save it, print it, or just keep it handy.</value></data>
+  <data name="Card.MemberSince" xml:space="preserve"><value>Member Since</value></data>
+  <data name="Card.ValidUntil" xml:space="preserve"><value>Valid Until</value></data>
+  <data name="Card.NoExpiry" xml:space="preserve"><value>No Expiry</value></data>
+  <data name="Card.MemberNumber" xml:space="preserve"><value>Member No.</value></data>
+  <data name="Card.Print" xml:space="preserve"><value>Print Card</value></data>
+  <data name="Card.ViewCard" xml:space="preserve"><value>View Card</value></data>
+  <data name="Card.NavLabel" xml:space="preserve"><value>My Card</value></data>
+
   <data name="Membership.Title" xml:space="preserve"><value>Membership</value></data>
   <data name="Membership.Eyebrow" xml:space="preserve"><value>Join The House</value></data>
   <data name="Membership.Heading" xml:space="preserve"><value>Membership</value></data>
@@ -238,4 +248,11 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Account.LookingForLabel" xml:space="preserve"><value>Looking For</value></data>
   <data name="Account.CanHelpWithLabel" xml:space="preserve"><value>Can Help With</value></data>
   <data name="Account.VisibleInDirectoryLabel" xml:space="preserve"><value>Show my profile in the Member Directory</value></data>
+
+  <data name="Notif.Title" xml:space="preserve"><value>Notifications</value></data>
+  <data name="Notif.MarkAllRead" xml:space="preserve"><value>Mark all read</value></data>
+  <data name="Notif.Empty" xml:space="preserve"><value>You're all caught up — no notifications yet.</value></data>
+  <data name="Notif.ViewAll" xml:space="preserve"><value>View all notifications</value></data>
+
+  <data name="Nav.Journal" xml:space="preserve"><value>Journal</value></data>
 </root>

@@ -36,26 +36,26 @@ export function initNav(): void {
 }
 
 /**
- * Language switcher dropdown(s) — plain <details>/<summary>, so opening/closing needs no JS at
- * all. This only adds the polish a native <details> doesn't give for free: closing on an outside
- * click, on Escape, and immediately on choosing a language (so it doesn't still look open while
- * the next page is loading).
+ * Shared behavior for every <details>-as-dropdown in the header (language switcher, notification
+ * bell, ...): opening/closing itself needs no JS at all, this only adds the polish a native
+ * <details> doesn't give for free — closing on an outside click, on Escape, and immediately on
+ * picking a link inside it (so it doesn't still look open while the next page is loading).
  */
-export function initLangSwitch(): void {
-  const switches = document.querySelectorAll<HTMLDetailsElement>('.lang-switch');
-  if (switches.length === 0) return;
+export function initDismissableDropdown(selector: string): void {
+  const dropdowns = document.querySelectorAll<HTMLDetailsElement>(selector);
+  if (dropdowns.length === 0) return;
 
   document.addEventListener('click', (event) => {
-    switches.forEach((el) => {
+    dropdowns.forEach((el) => {
       if (el.open && !el.contains(event.target as Node)) el.open = false;
     });
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') switches.forEach((el) => { el.open = false; });
+    if (event.key === 'Escape') dropdowns.forEach((el) => { el.open = false; });
   });
 
-  switches.forEach((el) => {
+  dropdowns.forEach((el) => {
     el.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => { el.open = false; });
     });

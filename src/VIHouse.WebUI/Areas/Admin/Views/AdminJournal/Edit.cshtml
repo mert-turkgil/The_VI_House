@@ -1,0 +1,22 @@
+@model AdminJournalPostFormViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
+    <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+    <partial name="_FormFields" model="Model" />
+    <div>
+        <button type="submit" class="admin-btn">Save Changes</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">Back to Journal</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

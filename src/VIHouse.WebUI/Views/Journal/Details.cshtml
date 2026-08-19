@@ -1,0 +1,37 @@
+@model JournalPostDetailViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="content-hero">
+    <div class="container">
+        <span class="content-hero__eyebrow">@Model.CategoryLabel</span>
+        <h1>@Model.Title</h1>
+        <div class="journal-article__meta">
+            @if (Model.PublishedAt is not null)
+            {
+                <span>@Model.PublishedAt.Value.ToString("d MMMM yyyy")</span>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.AuthorName))
+            {
+                <span>@Model.AuthorName</span>
+            }
+        </div>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+{
+    <div class="journal-article__cover" style="background-image:url('@Model.CoverImageUrl')"></div>
+}
+
+<div class="container content-body">
+    @foreach (var paragraph in Model.Paragraphs)
+    {
+        <p>@paragraph</p>
+    }
+</div>
+
+<div class="container journal-article__back">
+    <a href="/journal">&larr; Back to The Journal</a>
+</div>

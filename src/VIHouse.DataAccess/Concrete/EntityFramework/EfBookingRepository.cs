@@ -13,6 +13,9 @@ public class EfBookingRepository(VIHouseDbContext db) : EfRepository<Booking>(db
     public Task<List<Booking>> GetByUserAsync(Guid userId, CancellationToken ct = default) =>
         Set.Where(b => b.UserId == userId).OrderByDescending(b => b.CreatedAt).ToListAsync(ct);
 
+    public Task<List<Booking>> GetByExperienceAsync(Guid experienceId, CancellationToken ct = default) =>
+        Set.Where(b => b.ExperienceId == experienceId).ToListAsync(ct);
+
     public async Task<string> GenerateNextReferenceAsync(int twoDigitYear, CancellationToken ct = default)
     {
         // Deliberately not Database.SqlQuery<T>() — EF Core always wraps that in a derived-table

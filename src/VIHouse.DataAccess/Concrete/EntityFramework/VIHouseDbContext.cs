@@ -8,7 +8,9 @@ using VIHouse.Entities.Communication;
 using VIHouse.Entities.Compliance;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
+using VIHouse.Entities.Journal;
 using VIHouse.Entities.Membership;
+using VIHouse.Entities.Notifications;
 using VIHouse.Entities.Referrals;
 using VIHouse.Entities.Users;
 
@@ -53,6 +55,9 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
 
     public DbSet<Ambassador> Ambassadors => Set<Ambassador>();
     public DbSet<ReferralVisit> ReferralVisits => Set<ReferralVisit>();
+
+    public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<JournalPost> JournalPosts => Set<JournalPost>();
 
     public DbSet<EmailLog> EmailLogs => Set<EmailLog>();
     public DbSet<AuditLogEntry> AuditLogEntries => Set<AuditLogEntry>();

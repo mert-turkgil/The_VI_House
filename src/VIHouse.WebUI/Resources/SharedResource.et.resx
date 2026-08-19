@@ -193,6 +193,16 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Account.NoMembership" xml:space="preserve"><value>Sul ei ole veel aktiivset liikmelisust.</value></data>
   <data name="Account.ViewPlans" xml:space="preserve"><value>Vaata plaane</value></data>
 
+  <data name="Card.Title" xml:space="preserve"><value>Minu liikmekaart</value></data>
+  <data name="Card.Intro" xml:space="preserve"><value>Sinu digitaalne liikmekaart — salvesta, prindi või hoia lihtsalt käepärast.</value></data>
+  <data name="Card.MemberSince" xml:space="preserve"><value>Liige alates</value></data>
+  <data name="Card.ValidUntil" xml:space="preserve"><value>Kehtiv kuni</value></data>
+  <data name="Card.NoExpiry" xml:space="preserve"><value>Aegumiskuupäev puudub</value></data>
+  <data name="Card.MemberNumber" xml:space="preserve"><value>Liikme nr</value></data>
+  <data name="Card.Print" xml:space="preserve"><value>Prindi kaart</value></data>
+  <data name="Card.ViewCard" xml:space="preserve"><value>Vaata kaarti</value></data>
+  <data name="Card.NavLabel" xml:space="preserve"><value>Minu kaart</value></data>
+
   <data name="Membership.Title" xml:space="preserve"><value>Liikmelisus</value></data>
   <data name="Membership.Eyebrow" xml:space="preserve"><value>Liitu majaga</value></data>
   <data name="Membership.Heading" xml:space="preserve"><value>Liikmelisus</value></data>
@@ -238,4 +248,11 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Account.LookingForLabel" xml:space="preserve"><value>Otsin</value></data>
   <data name="Account.CanHelpWithLabel" xml:space="preserve"><value>Saan aidata</value></data>
   <data name="Account.VisibleInDirectoryLabel" xml:space="preserve"><value>Näita minu profiili liikmete registris</value></data>
+
+  <data name="Notif.Title" xml:space="preserve"><value>Teated</value></data>
+  <data name="Notif.MarkAllRead" xml:space="preserve"><value>Märgi kõik loetuks</value></data>
+  <data name="Notif.Empty" xml:space="preserve"><value>Kõik on korras — teateid pole veel.</value></data>
+  <data name="Notif.ViewAll" xml:space="preserve"><value>Vaata kõiki teateid</value></data>
+
+  <data name="Nav.Journal" xml:space="preserve"><value>Ajakiri</value></data>
 </root>

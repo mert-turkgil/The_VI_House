@@ -6,6 +6,7 @@ using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Membership;
+using VIHouse.Entities.Notifications;
 
 namespace VIHouse.Business.Concrete;
 
@@ -15,6 +16,7 @@ public class MembershipService(
     IMembershipPaymentRepository membershipPayments,
     IPaymentProvider paymentProvider,
     IEmailService emailService,
+    INotificationService notificationService,
     IAuditLogRepository auditLogs,
     UserManager<ApplicationUser> userManager) : IMembershipService
 {
@@ -202,6 +204,11 @@ public class MembershipService(
                 "MembershipConfirmed", user.Email!, $"Welcome — you're a {plan.Name}",
                 new MembershipConfirmedEmailModel(user.FirstName, plan.Name, membership.ExpiresAt),
                 nameof(Membership), membership.Id, ct);
+
+            await notificationService.CreateForUserAsync(
+                user.Id, NotificationType.Payment,
+                "Membership Confirmed", $"You're confirmed as a {plan.Name}.",
+                "/account/card", ct);
         }
     }
 

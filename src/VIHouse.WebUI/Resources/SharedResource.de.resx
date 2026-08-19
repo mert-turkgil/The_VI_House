@@ -193,6 +193,16 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Account.NoMembership" xml:space="preserve"><value>Sie haben noch keine aktive Mitgliedschaft.</value></data>
   <data name="Account.ViewPlans" xml:space="preserve"><value>Mitgliedschaften ansehen</value></data>
 
+  <data name="Card.Title" xml:space="preserve"><value>Meine Mitgliedskarte</value></data>
+  <data name="Card.Intro" xml:space="preserve"><value>Ihre digitale Mitgliedskarte — speichern, drucken oder einfach griffbereit halten.</value></data>
+  <data name="Card.MemberSince" xml:space="preserve"><value>Mitglied seit</value></data>
+  <data name="Card.ValidUntil" xml:space="preserve"><value>Gültig bis</value></data>
+  <data name="Card.NoExpiry" xml:space="preserve"><value>Kein Ablaufdatum</value></data>
+  <data name="Card.MemberNumber" xml:space="preserve"><value>Mitgliedsnr.</value></data>
+  <data name="Card.Print" xml:space="preserve"><value>Karte drucken</value></data>
+  <data name="Card.ViewCard" xml:space="preserve"><value>Karte ansehen</value></data>
+  <data name="Card.NavLabel" xml:space="preserve"><value>Meine Karte</value></data>
+
   <data name="Membership.Title" xml:space="preserve"><value>Mitgliedschaft</value></data>
   <data name="Membership.Eyebrow" xml:space="preserve"><value>Dem Haus beitreten</value></data>
   <data name="Membership.Heading" xml:space="preserve"><value>Mitgliedschaft</value></data>
@@ -238,4 +248,11 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Account.LookingForLabel" xml:space="preserve"><value>Sucht</value></data>
   <data name="Account.CanHelpWithLabel" xml:space="preserve"><value>Kann helfen bei</value></data>
   <data name="Account.VisibleInDirectoryLabel" xml:space="preserve"><value>Mein Profil im Mitgliederverzeichnis anzeigen</value></data>
+
+  <data name="Notif.Title" xml:space="preserve"><value>Benachrichtigungen</value></data>
+  <data name="Notif.MarkAllRead" xml:space="preserve"><value>Alle als gelesen markieren</value></data>
+  <data name="Notif.Empty" xml:space="preserve"><value>Alles erledigt — noch keine Benachrichtigungen.</value></data>
+  <data name="Notif.ViewAll" xml:space="preserve"><value>Alle Benachrichtigungen anzeigen</value></data>
+
+  <data name="Nav.Journal" xml:space="preserve"><value>Journal</value></data>
 </root>

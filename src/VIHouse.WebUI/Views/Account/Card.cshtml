@@ -1,0 +1,37 @@
+@model DigitalMemberCardViewModel
+@{
+    ViewData["Title"] = Loc["Card.Title"];
+}
+
+<div class="account-manage">
+    <partial name="_AccountNav" />
+    <div class="account-manage__content">
+        <h1>@Loc["Card.Title"]</h1>
+        <p style="color:#666; font-size:0.875rem; margin:-8px 0 32px;">@Loc["Card.Intro"]</p>
+
+        <div class="member-card-visual" id="member-card">
+            <div class="member-card-visual__top">
+                <span class="member-card-visual__crest"><partial name="_Crest" /></span>
+                <span class="member-card-visual__brand">The VI House</span>
+            </div>
+            <div class="member-card-visual__tier">@Model.PlanName</div>
+            <div class="member-card-visual__name">@Model.FullName</div>
+            <div class="member-card-visual__footer">
+                <div>
+                    <span class="member-card-visual__label">@Loc["Card.MemberSince"]</span>
+                    <span class="member-card-visual__value">@Model.MemberSince.ToString("MMM yyyy")</span>
+                </div>
+                <div>
+                    <span class="member-card-visual__label">@Loc["Card.ValidUntil"]</span>
+                    <span class="member-card-visual__value">@(Model.ExpiresAt?.ToString("MMM yyyy") ?? Loc["Card.NoExpiry"])</span>
+                </div>
+                <div>
+                    <span class="member-card-visual__label">@Loc["Card.MemberNumber"]</span>
+                    <span class="member-card-visual__value">@Model.MemberNumber</span>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn--primary member-card-print-btn" onclick="window.print()">@Loc["Card.Print"]</button>
+    </div>
+</div>

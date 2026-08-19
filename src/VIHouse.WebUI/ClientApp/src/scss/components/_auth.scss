@@ -210,3 +210,101 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
+
+// --- Digital Member Card (brief §208) --------------------------------------------------------
+// ISO/IEC 7810 ID-1 aspect ratio (the same proportions as a physical card), so it reads as a
+// "card" rather than just another content box, and prints/exports sensibly at that shape too.
+.member-card-visual {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1.586;
+  border-radius: 16px;
+  padding: 28px;
+  background: linear-gradient(135deg, var(--vih-green-950) 0%, var(--vih-green-800) 100%);
+  color: var(--vih-cream);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 20px 48px rgba(0, 35, 10, 0.28);
+}
+
+.member-card-visual__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-card-visual__crest {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.member-card-visual__brand {
+  font-family: var(--vih-font-serif);
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.member-card-visual__tier {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--vih-gold-light);
+}
+
+.member-card-visual__name {
+  font-family: var(--vih-font-serif);
+  font-size: 1.5rem;
+  margin-top: -6px;
+}
+
+.member-card-visual__footer {
+  display: flex;
+  gap: 24px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.member-card-visual__label {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--vih-cream-dim);
+  opacity: 0.7;
+}
+
+.member-card-visual__value {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.member-card-print-btn {
+  margin-top: 24px;
+}
+
+@media print {
+  .site-header,
+  .site-footer,
+  .site-mobile-nav,
+  .account-manage__nav,
+  .member-card-print-btn {
+    display: none !important;
+  }
+
+  .account-manage {
+    display: block;
+    padding: 0;
+  }
+
+  .member-card-visual {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}

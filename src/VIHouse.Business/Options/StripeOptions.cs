@@ -2,8 +2,9 @@ namespace VIHouse.Business.Options;
 
 /// <summary>
 /// Bound from the "Stripe" configuration section. Values come from user-secrets in Development and
-/// from environment variables (or a real secrets manager) in Production — never from a committed
-/// appsettings.*.json file (brief's own credential-hygiene rule, same as SeedAdmin).
+/// from the server's own appsettings.Production.json in Production — that file is gitignored and
+/// populated by hand on the server itself, so real keys never enter git history (same policy as
+/// SeedAdmin's credentials — see appsettings.Production.json / .gitignore).
 /// </summary>
 public class StripeOptions
 {

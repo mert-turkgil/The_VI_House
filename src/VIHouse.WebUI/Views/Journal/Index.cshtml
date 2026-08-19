@@ -1,0 +1,55 @@
+@model List<JournalPostCardViewModel>
+@{
+    ViewData["Title"] = "The Journal";
+    var activeCategory = Context.Request.Query["category"].ToString();
+}
+
+<div class="journal-header">
+    <h1>The Journal</h1>
+    <p>Founder stories, business, technology, capital and culture — from inside The VI House.</p>
+</div>
+
+<div class="container">
+    <div class="journal-filter">
+        <a class="@(string.IsNullOrEmpty(activeCategory) ? "journal-filter__link active" : "journal-filter__link")" href="/journal">All</a>
+        @foreach (var cat in Enum.GetValues<JournalCategory>())
+        {
+            <a class="@(activeCategory == cat.ToString() ? "journal-filter__link active" : "journal-filter__link")" href="/journal?category=@cat">@cat.ToDisplayLabel()</a>
+        }
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <p style="text-align:center; padding: 48px 0;">No journal entries yet — check back soon.</p>
+    }
+    else
+    {
+        <div class="journal-grid">
+            @foreach (var post in Model)
+            {
+                <a class="journal-card" href="/journal/@post.Slug">
+                    <div class="journal-card__image" style="@(string.IsNullOrEmpty(post.CoverImageUrl) ? "" : $"background-image:url('{post.CoverImageUrl}')")">
+                        <span class="journal-card__badge">@post.CategoryLabel</span>
+                    </div>
+                    <div class="journal-card__body">
+                        <h3 class="journal-card__title">@post.Title</h3>
+                        @if (!string.IsNullOrWhiteSpace(post.Excerpt))
+                        {
+                            <p class="journal-card__excerpt">@post.Excerpt</p>
+                        }
+                        <div class="journal-card__meta">
+                            @if (post.PublishedAt is not null)
+                            {
+                                <span>@post.PublishedAt.Value.ToString("d MMMM yyyy")</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(post.AuthorName))
+                            {
+                                <span>@post.AuthorName</span>
+                            }
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>

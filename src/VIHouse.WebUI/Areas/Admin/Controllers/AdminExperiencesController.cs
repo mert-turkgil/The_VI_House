@@ -1,13 +1,17 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.Business.Abstract;
+using VIHouse.Entities.Notifications;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Experiences;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
-public class AdminExperiencesController(IExperienceService experienceService, UserManager<ApplicationUser> userManager) : AdminControllerBase
+public class AdminExperiencesController(
+    IExperienceService experienceService,
+    INotificationService notificationService,
+    UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -187,6 +191,27 @@ public class AdminExperiencesController(IExperienceService experienceService, Us
         var (adminId, ip) = CurrentActor();
         await experienceService.RemoveFaqAsync(experienceId, faqId, adminId, ip, ct);
         return RedirectToAction(nameof(Edit), new { id = experienceId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> NotifyAttendees(NotifyAttendeesInputModel input, CancellationToken ct)
+    {
+        if (ModelState.IsValid)
+        {
+            var (adminId, ip) = CurrentActor();
+            var count = await notificationService.BroadcastToExperienceAttendeesAsync(
+                input.ExperienceId, input.Type, input.Title, input.Body,
+                link: null, adminId, ip, ct);
+            TempData["StatusMessage"] = count switch
+            {
+                0 => "No confirmed attendees to notify yet.",
+                1 => "Notified 1 attendee.",
+                _ => $"Notified {count} attendees.",
+            };
+        }
+
+        return RedirectToAction(nameof(Edit), new { id = input.ExperienceId });
     }
 
     private (Guid AdminId, string? IpAddress) CurrentActor() =>

@@ -1,9 +1,10 @@
 import '../scss/main.scss';
-import { initNav, initLangSwitch } from './modules/nav';
+import { initNav, initDismissableDropdown } from './modules/nav';
 
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
-  initLangSwitch();
+  initDismissableDropdown('.lang-switch');
+  initDismissableDropdown('.notif-bell');
 });
 
 // PWA (brief §65) — registered on every page (Admin included, harmlessly; the service worker

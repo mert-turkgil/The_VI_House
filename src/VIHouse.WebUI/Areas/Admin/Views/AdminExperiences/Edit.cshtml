@@ -99,6 +99,32 @@
     </form>
 </div>
 
+<div class="admin-card" style="margin-top:24px;">
+    <h2>Notify Attendees</h2>
+    <p>Sends an in-portal notification to everyone with a confirmed booking on this experience.</p>
+    <form asp-action="NotifyAttendees" method="post" class="admin-form">
+        <input type="hidden" name="ExperienceId" value="@experienceId" />
+        <div class="admin-form__grid">
+            <div class="admin-field">
+                <label>Type</label>
+                <select name="Type">
+                    <option value="EventUpdate">Event Update</option>
+                    <option value="NewSchedule">New Schedule</option>
+                </select>
+            </div>
+            <div class="admin-field">
+                <label>Title</label>
+                <input name="Title" maxlength="200" required />
+            </div>
+        </div>
+        <div class="admin-field">
+            <label>Body</label>
+            <textarea name="Body" rows="3" maxlength="1000" required></textarea>
+        </div>
+        <button type="submit" class="admin-btn">Notify Attendees</button>
+    </form>
+</div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

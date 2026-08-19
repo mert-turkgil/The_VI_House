@@ -5,6 +5,7 @@ using VIHouse.Entities.Applications;
 using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
+using VIHouse.Entities.Journal;
 using VIHouse.Entities.Membership;
 using VIHouse.Entities.Referrals;
 
@@ -36,6 +37,7 @@ public static class DbSeeder
         await SeedHomepageContentAsync(db);
         await SeedApplicationsAsync(db);
         await SeedMembershipPlansAsync(db);
+        await SeedJournalPostsAsync(db);
         await db.SaveChangesAsync(); // commit before SeedAmbassadorsAsync, which needs Roles.Ambassador to already exist
 
         await SeedAmbassadorsAsync(db, userManager);
@@ -119,6 +121,72 @@ public static class DbSeeder
                 Status = MembershipPlanStatus.Active,
                 SortOrder = 3,
             });
+    }
+
+    private static async Task SeedJournalPostsAsync(VIHouseDbContext db)
+    {
+        if (await db.JournalPosts.AnyAsync())
+            return;
+
+        var now = DateTimeOffset.UtcNow;
+
+        db.JournalPosts.Add(new JournalPost
+        {
+            Title = "Why We Built The VI House",
+            Slug = "why-we-built-the-vi-house",
+            Category = JournalCategory.FounderStories,
+            Status = JournalPostStatus.Published,
+            Excerpt = "Every room we curate starts from the same question: who actually belongs in it.",
+            Body = "The best opportunities rarely happen by accident. They happen in rooms where the right " +
+                   "people are already in the same place, at the same time, with enough trust between them to " +
+                   "say what they actually think.\n\n" +
+                   "The VI House exists to build those rooms deliberately — not at conference scale, and not " +
+                   "through a payment form. Every experience starts with an application, reviewed by hand.",
+            AuthorName = "The VI House",
+            PublishedAt = now.AddDays(-30),
+        });
+
+        db.JournalPosts.Add(new JournalPost
+        {
+            Title = "The Quiet Signal: Reading Capital Before It Moves",
+            Slug = "the-quiet-signal-reading-capital-before-it-moves",
+            Category = JournalCategory.Capital,
+            Status = JournalPostStatus.Published,
+            Excerpt = "The founders who raise well are rarely the ones who pitch the loudest.",
+            Body = "Capital rarely announces itself before it moves. By the time a raise is public, the " +
+                   "relationship that made it possible has usually existed for months.\n\n" +
+                   "That's the case for rooms, not cold outreach — the founders who raise well are usually " +
+                   "the ones who were already known, in person, before they needed anything.",
+            AuthorName = "The VI House",
+            PublishedAt = now.AddDays(-14),
+        });
+
+        db.JournalPosts.Add(new JournalPost
+        {
+            Title = "Inside the Room: What Makes a Founder Session Work",
+            Slug = "inside-the-room-what-makes-a-founder-session-work",
+            Category = JournalCategory.HouseNotes,
+            Status = JournalPostStatus.Published,
+            Excerpt = "Notes from the House on running a session that people still talk about a year later.",
+            Body = "A good founder session has almost nothing to do with the agenda.\n\n" +
+                   "It has everything to do with who's in the room, how small it stays, and whether people " +
+                   "feel able to say the thing they actually came to say.",
+            AuthorName = "The VI House",
+            PublishedAt = now.AddDays(-3),
+        });
+
+        // Deliberately Draft — proves the public /journal listing and /journal/{slug} both hide it
+        // while it still appears in the admin Index.
+        db.JournalPosts.Add(new JournalPost
+        {
+            Title = "Building in Public Without Burning Out",
+            Slug = "building-in-public-without-burning-out",
+            Category = JournalCategory.Business,
+            Status = JournalPostStatus.Draft,
+            Excerpt = "Draft — still being written.",
+            Body = "Draft body, still being written by the team.",
+            AuthorName = "The VI House",
+        });
     }
 
     private static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)

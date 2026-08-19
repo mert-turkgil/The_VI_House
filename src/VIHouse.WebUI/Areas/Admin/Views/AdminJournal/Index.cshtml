@@ -1,0 +1,42 @@
+@model List<JournalPost>
+@{
+    ViewData["Title"] = "Journal";
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div class="admin-toolbar">
+    <a class="admin-btn" asp-action="Create">+ New Post</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <p>No journal posts yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Published</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in Model)
+            {
+                <tr>
+                    <td><a asp-action="Edit" asp-route-id="@post.Id">@post.Title</a></td>
+                    <td>@post.Category.ToDisplayLabel()</td>
+                    <td><span class="@(post.Status == JournalPostStatus.Published ? "admin-badge admin-badge--open" : "admin-badge admin-badge--closed")">@post.Status</span></td>
+                    <td>@(post.PublishedAt?.ToString("d MMM yyyy") ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

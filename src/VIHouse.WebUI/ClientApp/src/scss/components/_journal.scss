@@ -1,0 +1,141 @@
+// --- Listing (brief §125) -------------------------------------------------------------------------
+// Card grid mirrors .experience-grid/.experience-card exactly (same tokens, same shape) — the
+// Details page reuses .content-hero/.content-body from _content-page.scss instead of duplicating a
+// second prose layout, and only adds the few things that shared layout doesn't have: a cover image
+// banner and a byline/date meta row.
+.journal-header {
+  padding: 64px 0 32px;
+  text-align: center;
+
+  h1 {
+    font-family: var(--vih-font-serif);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    margin: 0 0 12px;
+  }
+
+  p {
+    color: #555;
+    max-width: 48ch;
+    margin: 0 auto;
+  }
+}
+
+.journal-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding-bottom: 40px;
+}
+
+.journal-filter__link {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--vih-line-on-light);
+  font-size: 0.8125rem;
+  color: #555;
+  transition: background 0.15s var(--vih-ease), color 0.15s var(--vih-ease), border-color 0.15s var(--vih-ease);
+
+  &:hover {
+    border-color: var(--vih-green-900);
+    color: var(--vih-green-900);
+  }
+
+  &.active {
+    background: var(--vih-green-950);
+    border-color: var(--vih-green-950);
+    color: var(--vih-cream);
+  }
+}
+
+.journal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+  padding: 0 0 96px;
+}
+
+.journal-card {
+  display: block;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--vih-white);
+  transition: box-shadow 0.2s var(--vih-ease), transform 0.2s var(--vih-ease);
+
+  &:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+}
+
+.journal-card__image {
+  aspect-ratio: 4 / 3;
+  background: var(--vih-green-900) center/cover no-repeat;
+  position: relative;
+}
+
+.journal-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(18, 22, 15, 0.72);
+  color: var(--vih-cream);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.journal-card__body {
+  padding: 20px;
+}
+
+.journal-card__title {
+  font-family: var(--vih-font-serif);
+  font-size: 1.25rem;
+  margin: 0 0 8px;
+}
+
+.journal-card__excerpt {
+  font-size: 0.875rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 14px;
+}
+
+.journal-card__meta {
+  font-size: 0.75rem;
+  color: #888;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+
+// --- Detail ----------------------------------------------------------------------------------------
+.journal-article__cover {
+  aspect-ratio: 21 / 9;
+  background: var(--vih-green-900) center/cover no-repeat;
+}
+
+.journal-article__meta {
+  font-size: 0.8125rem;
+  color: var(--vih-cream-dim);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.journal-article__back {
+  padding-bottom: 64px;
+
+  a {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--vih-green-900);
+  }
+}

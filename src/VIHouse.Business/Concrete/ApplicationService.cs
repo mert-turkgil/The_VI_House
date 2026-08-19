@@ -9,6 +9,7 @@ using VIHouse.Entities.Audit;
 using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Compliance;
 using VIHouse.Entities.Experiences;
+using VIHouse.Entities.Notifications;
 
 namespace VIHouse.Business.Concrete;
 
@@ -26,6 +27,7 @@ public class ApplicationService(
     IRepository<ConsentRecord> consentRecords,
     IRepository<ApplicationTag> tags,
     IEmailService emailService,
+    INotificationService notificationService,
     IOptions<SiteOptions> siteOptions) : IApplicationService
 {
     private const string InvitationAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I ambiguity
@@ -110,6 +112,13 @@ public class ApplicationService(
                 "ApplicationApproved", application.Email, "You're approved — complete your booking",
                 new ApplicationApprovedEmailModel(application.FirstName, experience.Title, experience.City, invitationUrl, invitation.ExpiresAt),
                 nameof(Application), application.Id, ct);
+
+            // No-ops silently if this applicant has no account yet (the common case — accounts are
+            // only provisioned at checkout). Only ever fires for an existing member re-applying.
+            await notificationService.CreateForEmailAsync(
+                application.Email, NotificationType.ApplicationApproved,
+                "Application Approved", $"Your application for The VI House — {experience.City} was approved.",
+                invitationUrl, ct);
         }
     }
 
