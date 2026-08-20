@@ -1,0 +1,43 @@
+@model OnboardingStatusViewModel
+
+<div class="onboarding">
+    <div class="container onboarding__inner onboarding__inner--narrow">
+        <span class="onboarding__eyebrow">You're all set</span>
+        <h1>Welcome to the House, @Model.FirstName</h1>
+
+        @if (Model.HasMembership)
+        {
+            <p class="onboarding__lede">
+                Your account is secured and your @(Model.PlanName ?? "membership") is active. The
+                community is open to you.
+            </p>
+
+            <div class="onboarding__next">
+                <a class="btn btn--primary" asp-controller="Account" asp-action="Community">Join the community</a>
+                <a class="btn btn--ghost" asp-controller="Account" asp-action="Card">View your member card</a>
+            </div>
+
+            <p class="onboarding__footnote">
+                The community page holds the Discord invite and any live broadcast links. They're
+                members-only, so don't pass them on.
+            </p>
+        }
+        else
+        {
+            <p class="onboarding__lede">
+                Your account is secured and your ticket is confirmed. You'll find it, along with the
+                event details, in your bookings.
+            </p>
+
+            <div class="onboarding__next">
+                <a class="btn btn--primary" asp-controller="Account" asp-action="Bookings">View your ticket</a>
+                <a class="btn btn--ghost" asp-controller="Membership" asp-action="Index">Explore membership</a>
+            </div>
+
+            <p class="onboarding__footnote">
+                You bought a ticket to a single experience. Full membership adds the member directory,
+                the community Discord and access to every House gathering.
+            </p>
+        }
+    </div>
+</div>

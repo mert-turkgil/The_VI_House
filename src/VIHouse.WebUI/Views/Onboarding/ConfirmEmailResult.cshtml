@@ -1,0 +1,22 @@
+@model ConfirmEmailResultViewModel
+
+<div class="onboarding">
+    <div class="container onboarding__inner onboarding__inner--narrow">
+        @if (Model.Succeeded)
+        {
+            <span class="onboarding__eyebrow">Email confirmed</span>
+            <h1>That's your address verified</h1>
+            <p class="onboarding__lede">
+                Thanks — we know we can reach you now. Head back to finish setting up your account.
+            </p>
+            <a class="btn btn--primary" asp-action="Index">Continue setup</a>
+        }
+        else
+        {
+            <span class="onboarding__eyebrow">Something went wrong</span>
+            <h1>We couldn't confirm that link</h1>
+            <p class="onboarding__lede">@Model.Error</p>
+            <a class="btn btn--primary" asp-action="Index">Back to setup</a>
+        }
+    </div>
+</div>

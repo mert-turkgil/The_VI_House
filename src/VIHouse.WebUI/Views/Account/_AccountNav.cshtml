@@ -1,16 +1,34 @@
 @using VIHouse.DataAccess.Identity
+@using VIHouse.Business.Abstract
+@using Microsoft.AspNetCore.Identity
+@inject IMembershipService MembershipService
+@inject UserManager<ApplicationUser> UserManager
 @{
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     string NavClass(string action) => string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+
+    // The Member role is granted to anyone who pays — including a single-event ticket holder — so it
+    // can't decide whether to show the members-only links. Only an active Membership can. Showing a
+    // link that immediately bounces the visitor back is worse than not showing it.
+    var hasMembership = false;
+    if (User.Identity?.IsAuthenticated == true && UserManager.GetUserId(User) is { } id && Guid.TryParse(id, out var userId))
+    {
+        hasMembership = await MembershipService.GetCurrentMembershipAsync(userId) is not null;
+    }
 }
 <nav class="account-manage__nav" aria-label="Account">
     <a class="@NavClass("Index")" asp-controller="Account" asp-action="Index">@Loc["Account.NavProfile"]</a>
     <a class="@NavClass("Bookings")" asp-controller="Account" asp-action="Bookings">@Loc["Account.NavBookings"]</a>
-    <a class="@NavClass("Card")" asp-controller="Account" asp-action="Card">@Loc["Card.NavLabel"]</a>
-    <a class="@NavClass("Notifications")" asp-controller="Account" asp-action="Notifications">@Loc["Notif.Title"]</a>
-    @if (User.IsInRole(Roles.Member))
+    @if (hasMembership)
     {
+        <a class="@NavClass("Card")" asp-controller="Account" asp-action="Card">@Loc["Card.NavLabel"]</a>
+        <a class="@NavClass("Community")" asp-controller="Account" asp-action="Community">Community</a>
         <a asp-controller="MemberDirectory" asp-action="Index">@Loc["Nav.Members"]</a>
+    }
+    <a class="@NavClass("Notifications")" asp-controller="Account" asp-action="Notifications">@Loc["Notif.Title"]</a>
+    @if (!hasMembership)
+    {
+        <a asp-controller="Membership" asp-action="Index">Become a member</a>
     }
     <a asp-area="Identity" asp-page="/Account/Manage/Index">@Loc["Account.NavSecurity"]</a>
 </nav>

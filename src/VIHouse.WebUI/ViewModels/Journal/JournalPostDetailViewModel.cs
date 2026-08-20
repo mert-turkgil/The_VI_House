@@ -1,3 +1,4 @@
+using VIHouse.Business.Concrete;
 using VIHouse.Entities.Journal;
 using VIHouse.WebUI.Helpers;
 
@@ -11,7 +12,10 @@ public class JournalPostDetailViewModel
     public string? CoverImageUrl { get; set; }
     public string? AuthorName { get; set; }
     public DateTimeOffset? PublishedAt { get; set; }
-    public List<string> Paragraphs { get; set; } = [];
+
+    /// <summary>Sanitised HTML from the admin's rich text editor, rendered with Html.Raw. Safe to
+    /// trust here because JournalService sanitises on every write — see JournalHtml.</summary>
+    public string BodyHtml { get; set; } = string.Empty;
 
     public string CategoryLabel => Category.ToDisplayLabel();
 
@@ -23,6 +27,8 @@ public class JournalPostDetailViewModel
         CoverImageUrl = p.CoverImageUrl,
         AuthorName = p.AuthorName,
         PublishedAt = p.PublishedAt,
-        Paragraphs = p.Body.Split("\n\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList(),
+        // EnsureHtml covers posts written before the editor existed, whose bodies are still stored
+        // as blank-line-separated plain text and would otherwise render as one run-on paragraph.
+        BodyHtml = JournalHtml.EnsureHtml(p.Body),
     };
 }

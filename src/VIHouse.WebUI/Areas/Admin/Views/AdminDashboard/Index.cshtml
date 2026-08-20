@@ -1,6 +1,34 @@
+@using System.Text.Json
 @model AdminDashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
+
+    // Charts read their data from a data-chart-payload attribute rather than an inline <script>,
+    // which keeps the page free of injected script and lets the module stay data-agnostic.
+    // Amounts are converted to major units here — the same /100 the rest of the panel does via
+    // MoneyFormatter — because the chart's axis labels format them as real currency.
+    string Payload(IEnumerable<string> labels, IEnumerable<decimal> values, string? currency = null) =>
+        JsonSerializer.Serialize(new { labels, values, currency });
+
+    var revenuePayload = Payload(
+        Model.RevenueByMonth.Select(m => m.Label),
+        Model.RevenueByMonth.Select(m => m.AmountMinor / 100m),
+        Model.PrimaryCurrency);
+
+    var funnelStatuses = new[]
+    {
+        ApplicationStatus.Submitted, ApplicationStatus.UnderReview, ApplicationStatus.Shortlisted,
+        ApplicationStatus.Approved, ApplicationStatus.PaymentPending, ApplicationStatus.Paid,
+        ApplicationStatus.Waitlisted, ApplicationStatus.Rejected,
+    };
+
+    var funnelPayload = Payload(
+        funnelStatuses.Select(s => s.ToDisplayLabel()),
+        funnelStatuses.Select(s => (decimal)Model.ApplicationsByStatus.GetValueOrDefault(s)));
+
+    var bookingsPayload = Payload(
+        Model.BookingsByStatus.Keys.Select(s => s.ToString()),
+        Model.BookingsByStatus.Values.Select(v => (decimal)v));
 }
 
 <div class="admin-kpi-grid">
@@ -25,12 +53,68 @@
     }
 </div>
 
+<div class="admin-chart-grid">
+    <div class="admin-chart-card admin-chart-card--wide">
+        <h2>Revenue Collected</h2>
+        <span class="admin-chart-card__hint">
+            @if (Model.PrimaryCurrency is not null)
+            {
+                @:Last 12 months, @Model.PrimaryCurrency only — currencies aren't combined.
+            }
+            else
+            {
+                @:Last 12 months.
+            }
+        </span>
+        @if (Model.RevenueByMonth.Any(m => m.AmountMinor > 0))
+        {
+            <div class="admin-chart-card__canvas">
+                <canvas data-chart="line" data-chart-payload="@revenuePayload"></canvas>
+            </div>
+        }
+        else
+        {
+            <div class="admin-chart-empty">No payments collected yet.</div>
+        }
+    </div>
+
+    <div class="admin-chart-card">
+        <h2>Application Funnel</h2>
+        <span class="admin-chart-card__hint">Where every application currently sits.</span>
+        @if (Model.TotalApplications > 0)
+        {
+            <div class="admin-chart-card__canvas">
+                <canvas data-chart="bar" data-chart-payload="@funnelPayload"></canvas>
+            </div>
+        }
+        else
+        {
+            <div class="admin-chart-empty">No applications yet.</div>
+        }
+    </div>
+
+    <div class="admin-chart-card">
+        <h2>Bookings by Status</h2>
+        <span class="admin-chart-card__hint">Across every experience.</span>
+        @if (Model.BookingsByStatus.Count > 0)
+        {
+            <div class="admin-chart-card__canvas">
+                <canvas data-chart="doughnut" data-chart-payload="@bookingsPayload"></canvas>
+            </div>
+        }
+        else
+        {
+            <div class="admin-chart-empty">No bookings yet.</div>
+        }
+    </div>
+</div>
+
 <div class="admin-card" style="margin-top:24px;">
     <h2>Application Funnel</h2>
     <table class="admin-table">
         <thead><tr><th>Status</th><th>Count</th><th>% of Total</th></tr></thead>
         <tbody>
-            @foreach (var status in new[] { ApplicationStatus.Submitted, ApplicationStatus.UnderReview, ApplicationStatus.Shortlisted, ApplicationStatus.Approved, ApplicationStatus.PaymentPending, ApplicationStatus.Paid, ApplicationStatus.Waitlisted, ApplicationStatus.Rejected })
+            @foreach (var status in funnelStatuses)
             {
                 var count = Model.ApplicationsByStatus.GetValueOrDefault(status);
                 var pct = Model.TotalApplications == 0 ? 0 : Math.Round(count * 100.0 / Model.TotalApplications, 1);

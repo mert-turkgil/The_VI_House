@@ -61,7 +61,11 @@
                     }
                     else
                     {
-                        <a class="btn btn--primary" style="width:100%;" href="/Identity/Account/Login?ReturnUrl=%2Fmembership">@Loc["Membership.LogInToJoin"]</a>
+                        @* Straight to /join with this plan already chosen. Sending a prospective
+                           member to a login page would be asking them to sign in to an account they
+                           haven't bought yet — the account is created by the purchase, not before it. *@
+                        <a class="btn btn--primary" style="width:100%;"
+                           asp-controller="Join" asp-action="Index" asp-route-plan="@plan.Id">@Loc["Membership.Join"]</a>
                     }
                 </div>
             }

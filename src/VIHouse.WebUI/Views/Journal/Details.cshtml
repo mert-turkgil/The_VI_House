@@ -25,11 +25,9 @@
     <div class="journal-article__cover" style="background-image:url('@Model.CoverImageUrl')"></div>
 }
 
-<div class="container content-body">
-    @foreach (var paragraph in Model.Paragraphs)
-    {
-        <p>@paragraph</p>
-    }
+@* Sanitised on write by JournalService (see JournalHtml), so the stored HTML is already safe. *@
+<div class="container content-body journal-article__body">
+    @Html.Raw(Model.BodyHtml)
 </div>
 
 <div class="container journal-article__back">

@@ -31,7 +31,22 @@ public record CreateCheckoutSessionRequest(
     string SuccessUrl,
     string CancelUrl,
     string ClientReferenceId,
-    IReadOnlyDictionary<string, string> Metadata);
+    IReadOnlyDictionary<string, string> Metadata)
+{
+    /// <summary>
+    /// Null for a one-off charge. Set it to bill the customer on a repeating schedule instead — the
+    /// provider then collects a payment method it can reuse, and keeps charging until the
+    /// subscription is cancelled. Deliberately expressed as an interval rather than a provider
+    /// price id so nothing above this interface has to know Stripe exists.
+    /// </summary>
+    public RecurringInterval? Recurring { get; init; }
+}
+
+public enum RecurringInterval
+{
+    Monthly,
+    Annual,
+}
 
 public record CheckoutSessionResult(string SessionId, string Url);
 

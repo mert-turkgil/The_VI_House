@@ -1,12 +1,17 @@
+using System.Buffers.Text;
+using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Membership;
 using VIHouse.Entities.Notifications;
+using VIHouse.Entities.Users;
 
 namespace VIHouse.Business.Concrete;
 
@@ -18,6 +23,7 @@ public class MembershipService(
     IEmailService emailService,
     INotificationService notificationService,
     IAuditLogRepository auditLogs,
+    IOptions<SiteOptions> siteOptions,
     UserManager<ApplicationUser> userManager) : IMembershipService
 {
     public async Task<List<MembershipPlan>> GetActivePlansAsync(CancellationToken ct = default)
@@ -125,7 +131,94 @@ public class MembershipService(
                     ["membershipPaymentId"] = payment.Id.ToString(),
                     ["planId"] = planId.ToString(),
                     ["userId"] = userId.ToString(),
-                }), ct);
+                })
+            {
+                // A Monthly/Annual plan becomes a real recurring subscription rather than a single
+                // charge that silently lapses — previously every plan was billed once and the
+                // "renewal" date was just a local expiry nothing ever acted on.
+                Recurring = ToRecurringInterval(plan.BillingPeriod),
+            }, ct);
+
+            payment.ProviderReference = session.SessionId;
+            await membershipPayments.SaveChangesAsync(ct);
+
+            return MembershipCheckoutResult.Ok(session.Url);
+        }
+        catch (Exception)
+        {
+            return MembershipCheckoutResult.Fail("We couldn't reach the payment provider — please try again in a moment.");
+        }
+    }
+
+    public async Task<MembershipCheckoutResult> InitiateJoinCheckoutAsync(JoinRequest request, string successUrl, string cancelUrl, CancellationToken ct = default)
+    {
+        var plan = await plans.GetByIdAsync(request.PlanId, ct);
+        if (plan is null || plan.Status != MembershipPlanStatus.Active)
+            return MembershipCheckoutResult.Fail("This membership plan isn't available right now.");
+
+        // Refusing rather than reusing: attaching this payment to an existing account would let
+        // anyone who knows a member's email buy "for" them, and would hand the payer an onboarding
+        // link to an account that isn't theirs.
+        if (await userManager.FindByEmailAsync(request.Email) is not null)
+        {
+            return MembershipCheckoutResult.Fail(
+                "An account already exists for that email address. Please sign in first, then choose your plan.");
+        }
+
+        var user = new ApplicationUser
+        {
+            UserName = request.Email,
+            Email = request.Email,
+            // Unconfirmed on purpose: unlike the application route, nobody has vetted this person,
+            // so the address is unproven until they click the link in the onboarding email.
+            EmailConfirmed = false,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Country = request.Country,
+            City = request.City,
+            MemberStatus = MemberStatus.PendingApplication,
+        };
+
+        // No password is ever set or communicated. The member creates their own during onboarding,
+        // via a reset token — so an abandoned checkout leaves behind an account nobody can sign in
+        // to, rather than one with a guessable or emailed credential.
+        var created = await userManager.CreateAsync(user);
+        if (!created.Succeeded)
+            return MembershipCheckoutResult.Fail(string.Join(" ", created.Errors.Select(e => e.Description)));
+
+        var payment = new MembershipPayment
+        {
+            UserId = user.Id,
+            PlanId = plan.Id,
+            AmountMinor = plan.PriceMinor,
+            Currency = plan.Currency,
+            Status = PaymentStatus.Created,
+            ReferralCode = request.ReferralCode,
+        };
+        payment.ProviderReference = $"pending_{payment.Id:N}";
+        await membershipPayments.AddAsync(payment, ct);
+        await membershipPayments.SaveChangesAsync(ct);
+
+        try
+        {
+            var session = await paymentProvider.CreateCheckoutSessionAsync(new CreateCheckoutSessionRequest(
+                CustomerEmail: user.Email!,
+                ProductName: $"The VI House Membership — {plan.Name}",
+                ProductDescription: plan.Description,
+                AmountMinor: plan.PriceMinor,
+                Currency: plan.Currency,
+                SuccessUrl: successUrl,
+                CancelUrl: cancelUrl,
+                ClientReferenceId: payment.Id.ToString(),
+                Metadata: new Dictionary<string, string>
+                {
+                    ["membershipPaymentId"] = payment.Id.ToString(),
+                    ["planId"] = plan.Id.ToString(),
+                    ["userId"] = user.Id.ToString(),
+                })
+            {
+                Recurring = ToRecurringInterval(plan.BillingPeriod),
+            }, ct);
 
             payment.ProviderReference = session.SessionId;
             await membershipPayments.SaveChangesAsync(ct);
@@ -149,7 +242,10 @@ public class MembershipService(
             return new MembershipConfirmationInfo(false, plan?.Name, payment.AmountMinor, payment.Currency, null);
 
         var membership = await memberships.GetByIdAsync(payment.MembershipId.Value, ct);
-        return new MembershipConfirmationInfo(true, plan?.Name, payment.AmountMinor, payment.Currency, membership?.ExpiresAt);
+        return new MembershipConfirmationInfo(true, plan?.Name, payment.AmountMinor, payment.Currency, membership?.ExpiresAt)
+        {
+            UserId = payment.UserId,
+        };
     }
 
     public async Task HandleWebhookEventAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct = default)
@@ -200,6 +296,30 @@ public class MembershipService(
             if (!await userManager.IsInRoleAsync(user, Roles.Member))
                 await userManager.AddToRoleAsync(user, Roles.Member);
 
+            if (user.MemberStatus != MemberStatus.Active)
+            {
+                user.MemberStatus = MemberStatus.Active;
+                await userManager.UpdateAsync(user);
+            }
+
+            // Someone who joined through /join has no password at all — the browser redirect shows
+            // them a setup link, but that tab is easily lost, so the same link is emailed. Sent from
+            // the webhook rather than the redirect because this is the path that always runs.
+            if (!await userManager.HasPasswordAsync(user))
+            {
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                // Same unpadded URL-safe alphabet as WebEncoders.Base64UrlEncode, which is what the
+                // ResetPassword page decodes with — using the framework primitive here keeps the
+                // Business layer free of an ASP.NET Core dependency.
+                var encoded = Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
+                var setupUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/Identity/Account/ResetPassword?code={encoded}";
+
+                await emailService.SendAsync(
+                    "WelcomeSetup", user.Email!, "Set up your VI House account",
+                    new WelcomeSetupEmailModel(user.FirstName, setupUrl, plan.Name),
+                    nameof(ApplicationUser), user.Id, ct);
+            }
+
             await emailService.SendAsync(
                 "MembershipConfirmed", user.Email!, $"Welcome — you're a {plan.Name}",
                 new MembershipConfirmedEmailModel(user.FirstName, plan.Name, membership.ExpiresAt),
@@ -222,6 +342,13 @@ public class MembershipService(
         payment.UpdatedAt = DateTimeOffset.UtcNow;
         await membershipPayments.SaveChangesAsync(ct);
     }
+
+    private static RecurringInterval? ToRecurringInterval(MembershipBillingPeriod period) => period switch
+    {
+        MembershipBillingPeriod.Monthly => RecurringInterval.Monthly,
+        MembershipBillingPeriod.Annual => RecurringInterval.Annual,
+        _ => null, // OneTime — a single charge, no renewal
+    };
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>
         auditLogs.AddAsync(new AuditLogEntry

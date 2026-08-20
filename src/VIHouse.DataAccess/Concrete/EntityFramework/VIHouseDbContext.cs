@@ -5,6 +5,7 @@ using VIHouse.Entities.Applications;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Communication;
+using VIHouse.Entities.Community;
 using VIHouse.Entities.Compliance;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
@@ -58,6 +59,7 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
 
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<JournalPost> JournalPosts => Set<JournalPost>();
+    public DbSet<CommunityLink> CommunityLinks => Set<CommunityLink>();
 
     public DbSet<EmailLog> EmailLogs => Set<EmailLog>();
     public DbSet<AuditLogEntry> AuditLogEntries => Set<AuditLogEntry>();

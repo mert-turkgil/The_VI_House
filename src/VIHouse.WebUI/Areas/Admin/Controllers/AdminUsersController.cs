@@ -15,6 +15,8 @@ public class AdminUsersController(
     UserManager<ApplicationUser> userManager,
     IApplicationRepository applications,
     IBookingRepository bookings,
+    IPaymentRepository payments,
+    IMembershipPaymentRepository membershipPayments,
     IProfileRepository profiles) : AdminControllerBase
 {
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -48,6 +50,7 @@ public class AdminUsersController(
 
         var allApplications = await applications.GetAllAsync(ct);
         var allBookings = await bookings.GetAllAsync(ct);
+        var allPayments = await payments.GetAllAsync(ct);
 
         return View(new AdminCustomerDetailViewModel
         {
@@ -57,6 +60,15 @@ public class AdminUsersController(
             Profile = await profiles.GetByUserIdAsync(id, ct),
             Applications = allApplications.Where(a => a.UserId == id).OrderByDescending(a => a.SubmittedAt).ToList(),
             Bookings = allBookings.Where(b => b.UserId == id).OrderByDescending(b => b.CreatedAt).ToList(),
+            Payments = allPayments.Where(p => p.UserId == id).OrderByDescending(p => p.CreatedAt).ToList(),
+            MembershipPayments = (await membershipPayments.GetAllAsync(ct))
+                .Where(p => p.UserId == id).OrderByDescending(p => p.CreatedAt).ToList(),
+            MemberStatus = user.MemberStatus,
+            TwoFactorEnabled = await userManager.GetTwoFactorEnabledAsync(user),
+            EmailConfirmed = user.EmailConfirmed,
+            IsLockedOut = await userManager.IsLockedOutAsync(user),
+            CreatedAt = user.CreatedAt,
+            LastLoginAt = user.LastLoginAt,
         });
     }
 

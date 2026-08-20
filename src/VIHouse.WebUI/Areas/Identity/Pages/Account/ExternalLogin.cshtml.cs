@@ -117,6 +117,13 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
+
+                if (await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey) is { } signedInUser)
+                {
+                    signedInUser.LastLoginAt = DateTimeOffset.UtcNow;
+                    await _userManager.UpdateAsync(signedInUser);
+                }
+
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)

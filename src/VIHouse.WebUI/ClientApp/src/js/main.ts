@@ -1,5 +1,9 @@
 import '../scss/main.scss';
 import { initNav, initDismissableDropdown, initSiteSearch } from './modules/nav';
+import { initScrollReveal } from './modules/reveal';
+import { initStatCounters } from './modules/counter';
+import { initCarousels } from './modules/carousel';
+import { initAuthenticatorQr } from './modules/qr';
 
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
@@ -7,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initDismissableDropdown('.notif-bell');
   initDismissableDropdown('.site-search');
   initSiteSearch();
+  initScrollReveal();
+  initStatCounters();
+  initCarousels();
+  initAuthenticatorQr();
 });
 
 // PWA (brief §65) — registered on every page (Admin included, harmlessly; the service worker

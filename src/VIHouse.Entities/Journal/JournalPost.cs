@@ -16,8 +16,10 @@ public class JournalPost : BaseEntity
 
     public string? Excerpt { get; set; }
 
-    /// <summary>Plain text; blank-line-separated paragraphs, split for rendering in the Razor view —
-    /// same technique already used for Legal page body text (Views/Legal/Show.cshtml).</summary>
+    /// <summary>Sanitised HTML, authored in the admin panel's rich text editor and rendered with
+    /// Html.Raw. Always written through JournalService, which sanitises it (see JournalHtml) — never
+    /// assign to this from raw request input. Posts predating the editor are stored as plain text
+    /// with blank-line-separated paragraphs and are converted on read.</summary>
     public string Body { get; set; } = default!;
 
     public string? CoverImageUrl { get; set; }

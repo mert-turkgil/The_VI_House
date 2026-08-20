@@ -1,0 +1,67 @@
+@model TwoFactorSetupViewModel
+
+<div class="onboarding">
+    <div class="container onboarding__inner onboarding__inner--narrow">
+        <a class="onboarding__back" asp-action="Index">&larr; Back to setup</a>
+        <span class="onboarding__eyebrow">Step 3 of 3</span>
+        <h1>Set up two-factor authentication</h1>
+        <p class="onboarding__lede">
+            You'll use a free authenticator app on your phone. It shows a 6-digit code that changes
+            every 30 seconds — you'll enter one each time you sign in.
+        </p>
+
+        <div asp-validation-summary="ModelOnly" class="onboarding__error" role="alert"></div>
+
+        <ol class="onboarding__instructions">
+            <li>
+                <h2>Install an authenticator app</h2>
+                <p>
+                    If you don't already have one, install
+                    <strong>Google Authenticator</strong>, <strong>Microsoft Authenticator</strong>, or
+                    <strong>1Password</strong> from your phone's app store. Any of them work — pick whichever
+                    you prefer.
+                </p>
+            </li>
+
+            <li>
+                <h2>Add The VI House to it</h2>
+                <p>Open the app, choose <em>Scan a QR code</em>, and point your phone at this:</p>
+
+                <div class="onboarding__qr" data-qr-uri="@Model.AuthenticatorUri" aria-hidden="false"></div>
+
+                <p class="onboarding__hint">
+                    Can't scan it? Choose <em>Enter a setup key</em> instead and type this in.
+                    Spaces and capitalisation don't matter.
+                </p>
+                <p class="onboarding__key"><code>@Model.SharedKey</code></p>
+            </li>
+
+            <li>
+                <h2>Enter the code it shows you</h2>
+                <p>
+                    Your app will start showing a 6-digit code for The VI House. Type the current one
+                    here to prove it's working.
+                </p>
+
+                <form asp-action="TwoFactor" method="post" class="onboarding__form">
+                    <div class="onboarding__field">
+                        <label asp-for="VerificationCode"></label>
+                        <input asp-for="VerificationCode" class="onboarding__code-input" autocomplete="one-time-code"
+                               inputmode="numeric" placeholder="000000" autofocus />
+                        <span asp-validation-for="VerificationCode" class="onboarding__field-error"></span>
+                    </div>
+                    <button type="submit" class="btn btn--primary">Verify and turn on</button>
+                </form>
+            </li>
+        </ol>
+
+        <p class="onboarding__footnote">
+            Codes are tied to the clock, so if yours is rejected repeatedly, check your phone's date
+            and time are set automatically.
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

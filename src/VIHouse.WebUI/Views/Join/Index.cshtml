@@ -1,0 +1,189 @@
+@using VIHouse.Entities.Membership
+@model JoinFormViewModel
+@{
+    string PeriodLabel(MembershipBillingPeriod period) => period switch
+    {
+        MembershipBillingPeriod.Monthly => "per month",
+        MembershipBillingPeriod.Annual => "per year",
+        _ => "one-time",
+    };
+}
+
+<div class="join">
+    <div class="container join__inner">
+        <span class="join__eyebrow">Membership</span>
+        <h1>Join The VI House</h1>
+        <p class="join__lede">
+            There are two ways in. Become a member for standing access to the House, or apply to a
+            single experience if you'd rather start with one room.
+        </p>
+
+        @* The two routes differ in more than price — one completes now, the other is reviewed by
+           hand — so the choice is stated up front rather than discovered halfway through. *@
+        <div class="join__routes" role="group" aria-label="How to join">
+            <div class="join__route join__route--active">
+                <span class="join__route-tag">Membership</span>
+                <p>Choose a plan and pay now. Your account is created straight away.</p>
+            </div>
+            <a class="join__route" href="#single-event">
+                <span class="join__route-tag">One experience</span>
+                <p>Apply to a single gathering. Reviewed by hand — you only pay once you're approved.</p>
+            </a>
+        </div>
+
+        <div asp-validation-summary="ModelOnly" class="join__error" role="alert"></div>
+
+        @{
+            var preselected = Model.Plans.FirstOrDefault(p => p.Id == Model.PlanId);
+        }
+        @if (preselected is not null)
+        {
+            @* Arriving from a plan card on /membership. Confirming the choice here means the visitor
+               can see it carried over instead of wondering whether the click registered. *@
+            <div class="join__preselected" role="status">
+                <strong>@preselected.Name</strong> selected &mdash; fill in your details below to continue.
+            </div>
+        }
+
+        <form asp-action="Index" method="post" class="join__form">
+            <input type="hidden" asp-for="ReferralCode" />
+
+            <fieldset class="join__plans">
+                <legend>Choose your plan</legend>
+                <span asp-validation-for="PlanId" class="join__field-error"></span>
+
+                @if (Model.Plans.Count == 0)
+                {
+                    <p class="join__empty">No plans are open right now. Please check back shortly.</p>
+                }
+
+                @foreach (var plan in Model.Plans)
+                {
+                    <label class="join__plan">
+                        <input type="radio" asp-for="PlanId" value="@plan.Id" />
+                        <span class="join__plan-body">
+                            <span class="join__plan-name">@plan.Name</span>
+                            <span class="join__plan-price">
+                                @MoneyFormatter.Format(plan.PriceMinor, plan.Currency)
+                                <em>@PeriodLabel(plan.BillingPeriod)</em>
+                            </span>
+                            @if (!string.IsNullOrWhiteSpace(plan.Description))
+                            {
+                                <span class="join__plan-desc">@plan.Description</span>
+                            }
+                            @if (plan.BillingPeriod != MembershipBillingPeriod.OneTime)
+                            {
+                                @* Deliberately not "cancel any time" — there is no self-service
+                                   cancellation yet, so this states the route that actually exists. *@
+                                <span class="join__plan-note">
+                                    Renews @(plan.BillingPeriod == MembershipBillingPeriod.Monthly ? "monthly" : "yearly")
+                                    until cancelled &mdash; <a href="/contact">contact us</a> to cancel.
+                                </span>
+                            }
+                        </span>
+                    </label>
+                }
+            </fieldset>
+
+            <fieldset class="join__details">
+                <legend>Your details</legend>
+
+                <div class="join__row">
+                    <div class="join__field">
+                        <label asp-for="FirstName"></label>
+                        <input asp-for="FirstName" autocomplete="given-name" />
+                        <span asp-validation-for="FirstName" class="join__field-error"></span>
+                    </div>
+                    <div class="join__field">
+                        <label asp-for="LastName"></label>
+                        <input asp-for="LastName" autocomplete="family-name" />
+                        <span asp-validation-for="LastName" class="join__field-error"></span>
+                    </div>
+                </div>
+
+                <div class="join__field">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" type="email" autocomplete="email" />
+                    <span class="join__hint">This is where your receipt and account setup link go.</span>
+                    <span asp-validation-for="Email" class="join__field-error"></span>
+                </div>
+
+                <div class="join__row">
+                    <div class="join__field">
+                        <label asp-for="Country"></label>
+                        <input asp-for="Country" placeholder="GB" maxlength="2" autocomplete="country" />
+                        <span asp-validation-for="Country" class="join__field-error"></span>
+                    </div>
+                    <div class="join__field">
+                        <label asp-for="City"></label>
+                        <input asp-for="City" autocomplete="address-level2" />
+                        <span asp-validation-for="City" class="join__field-error"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="join__consent">
+                <label>
+                    <input asp-for="AgreeToTerms" />
+                    I agree to the <a href="/legal/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a>
+                    and <a href="/legal/privacy" target="_blank" rel="noopener">Privacy Policy</a>.
+                </label>
+                <span asp-validation-for="AgreeToTerms" class="join__field-error"></span>
+            </div>
+
+            <button type="submit" class="btn btn--primary join__submit">Continue to payment</button>
+            <p class="join__secure">Payment is handled by Stripe. We never see or store your card details.</p>
+        </form>
+
+        <section class="join__single" id="single-event">
+            <span class="join__eyebrow">One experience</span>
+            <h2>Just want to attend one gathering?</h2>
+            <p class="join__single-lede">
+                No membership needed. Apply to the experience you're interested in — every
+                application is read by hand, and you'll only be asked to pay once you're approved.
+            </p>
+
+            @if (Model.OpenExperiences.Count == 0)
+            {
+                <p class="join__empty">
+                    No experiences are open for applications right now.
+                    <a href="/experiences">See what's coming up</a>.
+                </p>
+            }
+            else
+            {
+                <ul class="join__experiences">
+                    @foreach (var exp in Model.OpenExperiences)
+                    {
+                        <li class="join__experience">
+                            <div class="join__experience-body">
+                                <span class="join__experience-date">
+                                    @exp.StartAtUtc.ToString("d MMM")&ndash;@exp.EndAtUtc.ToString("d MMM yyyy")
+                                </span>
+                                <h3>The VI House &mdash; @exp.City</h3>
+                                <span class="join__experience-meta">
+                                    @exp.City, @exp.Country
+                                    @if (exp.FromPriceMinor is not null)
+                                    {
+                                        <text>&middot; from @MoneyFormatter.Format(exp.FromPriceMinor.Value, exp.Currency!)</text>
+                                    }
+                                </span>
+                            </div>
+                            @* Carries the chosen experience through to the application form, so the
+                               visitor never has to pick it a second time. *@
+                            <a class="btn btn--ghost" href="/apply?experience=@exp.Slug">Apply for this</a>
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+
+        <p class="join__alt">
+            Already have an account? <a asp-area="Identity" asp-page="/Account/Login">Sign in</a>.
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

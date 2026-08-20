@@ -1,0 +1,77 @@
+@using VIHouse.Entities.Commerce
+@model TicketViewModel
+
+<div class="container account-manage">
+    <partial name="_AccountNav" />
+
+    <div class="account-manage__body">
+        <a class="ticket__back" asp-action="Bookings">&larr; All bookings</a>
+
+        <div class="ticket @(Model.IsPast || Model.Status == BookingStatus.Cancelled ? "ticket--void" : "")">
+            <div class="ticket__stub">
+                <span class="ticket__brand">The VI House</span>
+                <span class="ticket__status">
+                    @(Model.Status == BookingStatus.Cancelled ? "Cancelled" : Model.IsPast ? "Past event" : Model.Status.ToString())
+                </span>
+            </div>
+
+            <div class="ticket__body">
+                <h1>@Model.ExperienceTitle</h1>
+                <p class="ticket__where">@Model.City@(string.IsNullOrEmpty(Model.Country) ? "" : $", {Model.Country}")</p>
+
+                <dl class="ticket__facts">
+                    <div>
+                        <dt>Dates</dt>
+                        <dd>@Model.StartAtUtc.ToString("d MMM")&ndash;@Model.EndAtUtc.ToString("d MMM yyyy")</dd>
+                    </div>
+                    <div>
+                        <dt>Attendee</dt>
+                        <dd>@Model.HolderName</dd>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Model.TicketTypeName))
+                    {
+                        <div>
+                            <dt>Ticket</dt>
+                            <dd>@Model.TicketTypeName@(Model.Quantity > 1 ? $" × {Model.Quantity}" : "")</dd>
+                        </div>
+                    }
+                    <div>
+                        <dt>Paid</dt>
+                        <dd>@MoneyFormatter.Format(Model.AmountMinor, Model.Currency)</dd>
+                    </div>
+                </dl>
+            </div>
+
+            @* The reference is what the door checks against, so it gets the most visual weight of
+               anything on the ticket. *@
+            <div class="ticket__ref">
+                <span class="ticket__ref-label">Booking reference</span>
+                <span class="ticket__ref-value">@Model.BookingReference</span>
+                @if (Model.ConfirmedAt is not null)
+                {
+                    <span class="ticket__ref-note">Confirmed @Model.ConfirmedAt.Value.ToString("d MMM yyyy")</span>
+                }
+            </div>
+        </div>
+
+        <p class="ticket__note">
+            Bring this reference with you — showing it on your phone is fine. It's tied to your
+            account, so there's nothing to print or download.
+        </p>
+
+        @if (!Model.HolderIsMember)
+        {
+            @* The one place a ticket holder is told, plainly, what they do and don't have — rather
+               than discovering it by hitting a locked page. *@
+            <div class="ticket__upsell">
+                <h2>This ticket covers this experience</h2>
+                <p>
+                    The member directory and the community channels are part of membership, not a
+                    single booking. If you'd like a standing seat in the House between gatherings,
+                    membership is open.
+                </p>
+                <a class="btn btn--ghost" asp-controller="Membership" asp-action="Index">See membership</a>
+            </div>
+        }
+    </div>
+</div>

@@ -23,15 +23,16 @@ public class StripePaymentProvider : IPaymentProvider
 
     public async Task<CheckoutSessionResult> CreateCheckoutSessionAsync(CreateCheckoutSessionRequest request, CancellationToken ct = default)
     {
+        var isSubscription = request.Recurring is not null;
+
         var createOptions = new SessionCreateOptions
         {
-            Mode = "payment",
+            Mode = isSubscription ? "subscription" : "payment",
             CustomerEmail = request.CustomerEmail,
             ClientReferenceId = request.ClientReferenceId,
             SuccessUrl = request.SuccessUrl,
             CancelUrl = request.CancelUrl,
             Metadata = new Dictionary<string, string>(request.Metadata),
-            ExpiresAt = DateTime.UtcNow.AddMinutes(30), // matches CapacityService's 15-min hold plus buffer
             LineItems =
             [
                 new SessionLineItemOptions
@@ -41,6 +42,15 @@ public class StripePaymentProvider : IPaymentProvider
                     {
                         Currency = request.Currency,
                         UnitAmount = request.AmountMinor,
+                        // An inline recurring price rather than a pre-created Price object: plans are
+                        // admin-editable data here, so requiring someone to mirror every price change
+                        // in the Stripe dashboard would guarantee the two drift apart.
+                        Recurring = request.Recurring switch
+                        {
+                            RecurringInterval.Monthly => new SessionLineItemPriceDataRecurringOptions { Interval = "month" },
+                            RecurringInterval.Annual => new SessionLineItemPriceDataRecurringOptions { Interval = "year" },
+                            _ => null,
+                        },
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
                             Name = request.ProductName,
@@ -50,6 +60,14 @@ public class StripePaymentProvider : IPaymentProvider
                 },
             ],
         };
+
+        // Ticket checkouts expire to release the seat hold (CapacityService holds for 15 minutes);
+        // Stripe rejects ExpiresAt on subscription sessions, and there's no inventory to free up for
+        // a membership anyway, so the window only applies to one-off purchases.
+        if (!isSubscription)
+        {
+            createOptions.ExpiresAt = DateTime.UtcNow.AddMinutes(30);
+        }
 
         var session = await sessionService.CreateAsync(createOptions, cancellationToken: ct);
         return new CheckoutSessionResult(session.Id, session.Url);

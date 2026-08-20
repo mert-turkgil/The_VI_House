@@ -120,6 +120,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    await RecordLoginAsync(Input.Email);
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -140,6 +141,20 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        // Stamps ApplicationUser.LastLoginAt so the admin "Customers" screen can answer "when did
+        // this member last sign in?" without digging through server logs. Only reached on a fully
+        // successful password sign-in — an account with 2FA enabled lands on LoginWith2fa instead,
+        // which stamps it there once the code checks out, so the timestamp always means a completed
+        // login rather than a passed first factor.
+        private async Task RecordLoginAsync(string email)
+        {
+            var user = await _signInManager.UserManager.FindByEmailAsync(email);
+            if (user is null) return;
+
+            user.LastLoginAt = DateTimeOffset.UtcNow;
+            await _signInManager.UserManager.UpdateAsync(user);
         }
     }
 }

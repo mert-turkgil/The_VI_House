@@ -6,19 +6,32 @@ import { fileURLToPath } from 'node:url';
 // hence deriving it from import.meta.url instead.
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Builds ClientApp/src -> ../wwwroot/dist/main.{css,js} with fixed (non-hashed) filenames,
-// referenced directly from _Layout.cshtml with asp-append-version for cache-busting.
-// Triggered automatically by `dotnet build`/`dotnet run` via the NpmInstall/ViteBuild MSBuild
-// targets in VIHouse.WebUI.csproj.
+// Two entry points, not one: the public site loads main.{css,js}, the admin panel loads
+// admin.{css,js}. They're split because the admin bundle carries CKEditor and Chart.js, which
+// together dwarf everything on the public site and are useless to a visitor — a single shared
+// bundle would push all of that onto every homepage load. Filenames stay fixed (non-hashed) and are
+// referenced directly from _Layout.cshtml / _AdminLayout.cshtml with asp-append-version for
+// cache-busting. Triggered automatically by `dotnet build`/`dotnet run` via the NpmInstall/ViteBuild
+// MSBuild targets in VIHouse.WebUI.csproj.
 export default defineConfig({
   build: {
     outDir: resolve(__dirname, '../wwwroot/dist'),
     emptyOutDir: true,
     rollupOptions: {
-      input: resolve(__dirname, 'src/js/main.ts'),
+      input: {
+        main: resolve(__dirname, 'src/js/main.ts'),
+        admin: resolve(__dirname, 'src/js/admin.ts'),
+      },
       output: {
-        entryFileNames: 'main.js',
-        assetFileNames: 'main.[ext]',
+        entryFileNames: '[name].js',
+        chunkFileNames: 'chunks/[name]-[hash].js',
+        // Stylesheets keep their bare entry name so the Razor layouts can hard-code the path;
+        // everything else (CKEditor's fonts/icons, etc.) is content-hashed into assets/ where
+        // nothing links to it by name and collisions between entries can't happen.
+        assetFileNames: (info) =>
+          info.names?.some((n) => n.endsWith('.css'))
+            ? '[name].[ext]'
+            : 'assets/[name]-[hash][extname]',
       },
     },
   },

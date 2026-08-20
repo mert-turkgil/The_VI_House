@@ -1,0 +1,98 @@
+// Admin-only stylesheet, loaded after main.css (which already carries the design tokens and the
+// shared .admin-* component styles). Scoped to things only the admin panel has: the rich text
+// editor chrome and the dashboard charts.
+
+// --- CKEditor -----------------------------------------------------------------------------------
+// CKEditor ships its own theme; these overrides bring it in line with the admin panel's borders,
+// radii and brand colour rather than restyling it wholesale.
+.ck.ck-editor {
+  --ck-color-base-border: rgba(18, 22, 15, 0.18);
+  --ck-color-focus-border: var(--vih-gold);
+  --ck-color-button-on-background: rgba(184, 149, 90, 0.18);
+  --ck-color-button-on-color: var(--vih-green-900);
+  --ck-border-radius: 6px;
+
+  max-width: 100%;
+}
+
+.ck.ck-editor__editable_inline {
+  min-height: 420px;
+  padding: 18px 20px;
+  font-family: var(--vih-font-sans);
+  line-height: 1.7;
+
+  // Mirror the public Journal article's typography so the editor is a fair preview of the result.
+  h2,
+  h3 {
+    font-family: var(--vih-font-serif);
+    color: var(--vih-green-900);
+  }
+
+  blockquote {
+    border-left: 3px solid var(--vih-gold);
+    padding-left: 16px;
+    font-style: italic;
+    color: rgba(18, 22, 15, 0.72);
+  }
+}
+
+.ck.ck-toolbar {
+  border-top-left-radius: 6px !important;
+  border-top-right-radius: 6px !important;
+  background: #f6f5f1 !important;
+}
+
+// --- Dashboard charts ---------------------------------------------------------------------------
+.admin-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.admin-chart-card {
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 10px;
+  padding: 20px 22px 24px;
+
+  h2 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.05rem;
+    margin: 0 0 4px;
+    color: var(--vih-green-900);
+  }
+}
+
+.admin-chart-card__hint {
+  display: block;
+  font-size: 0.78rem;
+  color: rgba(18, 22, 15, 0.55);
+  margin-bottom: 16px;
+}
+
+// Chart.js sizes its canvas to the parent, so the parent must have a definite height or the chart
+// grows on every resize tick.
+.admin-chart-card__canvas {
+  position: relative;
+  height: 260px;
+}
+
+.admin-chart-card--wide {
+  grid-column: 1 / -1;
+
+  .admin-chart-card__canvas {
+    height: 300px;
+  }
+}
+
+.admin-chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 260px;
+  color: rgba(18, 22, 15, 0.45);
+  font-size: 0.88rem;
+  border: 1px dashed var(--vih-line-on-light);
+  border-radius: 8px;
+}

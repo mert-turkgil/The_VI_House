@@ -1,0 +1,19 @@
+@model ConfirmEmailAddressEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">Confirm your email address</h1>
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    Please confirm this is the right address for your VI House account. It's where your tickets,
+    event details and receipts will be sent.
+</p>
+<p style="margin:0 0 24px;">
+    <a href="@Model.ConfirmUrl" style="display:inline-block; background:#00230a; color:#f4f0e6; padding:12px 22px; border-radius:999px; text-decoration:none; font-weight:600;">Confirm my email</a>
+</p>
+<p style="margin:0 0 16px; font-size:13px; color:#5a5f55;">
+    This link is valid for 24 hours. If the button doesn't work, copy this into your browser:<br />
+    <span style="word-break:break-all;">@Model.ConfirmUrl</span>
+</p>
+<p style="margin:0 0 16px; font-size:13px; color:#5a5f55;">
+    If you didn't sign up for The VI House, you can ignore this email.
+</p>
+<p style="margin:0;">&mdash; The VI House</p>

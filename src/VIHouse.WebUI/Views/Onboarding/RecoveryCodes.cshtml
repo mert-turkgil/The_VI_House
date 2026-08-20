@@ -1,0 +1,27 @@
+@model List<string>
+
+<div class="onboarding">
+    <div class="container onboarding__inner onboarding__inner--narrow">
+        <span class="onboarding__eyebrow">Almost done</span>
+        <h1>Save your recovery codes</h1>
+        <p class="onboarding__lede">
+            Two-factor authentication is on. These codes are your way back in if you lose your phone
+            — each one works once. <strong>This is the only time they're shown.</strong>
+        </p>
+
+        <div class="onboarding__codes">
+            @foreach (var code in Model)
+            {
+                <code>@code</code>
+            }
+        </div>
+
+        <p class="onboarding__hint">
+            Store them somewhere you'll still have access to without your phone — a password manager,
+            or printed and kept with your passport. Don't save them only on the phone that generates
+            your codes.
+        </p>
+
+        <a class="btn btn--primary" asp-action="Index">I've saved them — continue</a>
+    </div>
+</div>

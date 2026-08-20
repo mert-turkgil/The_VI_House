@@ -1,0 +1,56 @@
+@using VIHouse.Entities.Community
+@model AdminCommunityLinkFormViewModel
+@{
+    ViewData["Title"] = Model.Id is null ? "New Community Link" : "Edit Community Link";
+}
+
+<form asp-action="Save" method="post" class="admin-form">
+    <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+    <input type="hidden" asp-for="Id" />
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Label"></label>
+            <input asp-for="Label" placeholder="The VI House Discord" />
+            <span asp-validation-for="Label" class="field-validation-error"></span>
+        </div>
+        <div class="admin-field">
+            <label asp-for="Kind"></label>
+            <select asp-for="Kind" asp-items="Html.GetEnumSelectList<CommunityLinkKind>()"></select>
+        </div>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="Url"></label>
+        <input asp-for="Url" placeholder="https://discord.gg/..." />
+        <span asp-validation-for="Url" class="field-validation-error"></span>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" rows="3" placeholder="One line explaining what this channel is for."></textarea>
+        <span asp-validation-for="Description" class="field-validation-error"></span>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="SortOrder"></label>
+            <input asp-for="SortOrder" type="number" />
+        </div>
+        <div class="admin-field">
+            <label style="display:flex; align-items:center; gap:8px;">
+                <input asp-for="IsActive" type="checkbox" />
+                Visible to members
+            </label>
+        </div>
+    </div>
+
+    <div>
+        <button type="submit" class="admin-btn">@(Model.Id is null ? "Add Link" : "Save Changes")</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

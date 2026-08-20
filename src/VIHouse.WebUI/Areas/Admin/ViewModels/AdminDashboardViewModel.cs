@@ -14,4 +14,15 @@ public class AdminDashboardViewModel
     public double ConversionToPaidPercent { get; set; }
     public Dictionary<string, long> RevenueByCurrency { get; set; } = [];
     public Dictionary<BookingStatus, int> BookingsByStatus { get; set; } = [];
+
+    /// <summary>Collected revenue per calendar month for the trailing 12 months, in the currency
+    /// most of it was taken in. Months with no payments are present with a zero so the chart shows a
+    /// continuous timeline rather than skipping quiet periods.</summary>
+    public List<MonthlyRevenuePoint> RevenueByMonth { get; set; } = [];
+
+    /// <summary>Currency the monthly series is denominated in — null when nothing has been paid yet.
+    /// Mixed-currency revenue is deliberately not summed; see AdminDashboardController.</summary>
+    public string? PrimaryCurrency { get; set; }
 }
+
+public record MonthlyRevenuePoint(string Label, long AmountMinor);

@@ -20,14 +20,17 @@ public class AdminJournalPostFormViewModel
     public JournalPostStatus Status { get; set; } = JournalPostStatus.Draft;
 
     [StringLength(500)]
+    [Display(Name = "Excerpt", Description = "Shown on the Journal listing card.")]
     public string? Excerpt { get; set; }
 
     [Required]
     public string Body { get; set; } = default!;
 
+    [Display(Name = "Cover image URL")]
     public string? CoverImageUrl { get; set; }
 
     [StringLength(150)]
+    [Display(Name = "Author name")]
     public string? AuthorName { get; set; }
 
     public JournalPost ToEntity() => new()

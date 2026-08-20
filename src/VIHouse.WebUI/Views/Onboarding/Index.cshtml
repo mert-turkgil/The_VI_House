@@ -1,0 +1,84 @@
+@model OnboardingStatusViewModel
+
+<div class="onboarding">
+    <div class="container onboarding__inner">
+        <span class="onboarding__eyebrow">Welcome to The VI House</span>
+        <h1>Two things left, @Model.FirstName</h1>
+        <p class="onboarding__lede">
+            Your payment went through and your account exists. Before you can use it, we need to
+            confirm your email address and turn on two-factor authentication. It takes about two
+            minutes.
+        </p>
+
+        @if (TempData["StatusMessage"] is string status)
+        {
+            <div class="onboarding__notice">@status</div>
+        }
+
+        <div class="onboarding__progress" role="group" aria-label="Setup progress">
+            <div class="onboarding__progress-bar">
+                <span style="width:@(Model.CompletedSteps * 100 / Model.TotalSteps)%"></span>
+            </div>
+            <span class="onboarding__progress-label">@Model.CompletedSteps of @Model.TotalSteps complete</span>
+        </div>
+
+        <ol class="onboarding__steps">
+            <li class="onboarding__step onboarding__step--done">
+                <span class="onboarding__step-mark" aria-hidden="true">✓</span>
+                <div class="onboarding__step-body">
+                    <h2>Password set</h2>
+                    <p>You chose a password when you followed your welcome link. Nothing more to do here.</p>
+                </div>
+            </li>
+
+            <li class="onboarding__step @(Model.EmailConfirmed ? "onboarding__step--done" : "onboarding__step--active")">
+                <span class="onboarding__step-mark" aria-hidden="true">@(Model.EmailConfirmed ? "✓" : "2")</span>
+                <div class="onboarding__step-body">
+                    <h2>Confirm your email</h2>
+                    @if (Model.EmailConfirmed)
+                    {
+                        <p><strong>@Model.Email</strong> is confirmed.</p>
+                    }
+                    else
+                    {
+                        <p>
+                            We need to know we can reach you at <strong>@Model.Email</strong> — it's where
+                            your tickets, event details and receipts go. Send yourself a link, then click it.
+                        </p>
+                        <p class="onboarding__hint">
+                            The link works for 24 hours. If it doesn't arrive within a few minutes, check
+                            your spam folder before sending another.
+                        </p>
+                        <form asp-action="SendConfirmation" method="post">
+                            <button type="submit" class="btn btn--primary">Send confirmation email</button>
+                        </form>
+                    }
+                </div>
+            </li>
+
+            <li class="onboarding__step @(Model.TwoFactorEnabled ? "onboarding__step--done" : Model.EmailConfirmed ? "onboarding__step--active" : "")">
+                <span class="onboarding__step-mark" aria-hidden="true">@(Model.TwoFactorEnabled ? "✓" : "3")</span>
+                <div class="onboarding__step-body">
+                    <h2>Turn on two-factor authentication</h2>
+                    @if (Model.TwoFactorEnabled)
+                    {
+                        <p>Two-factor authentication is on. Your account is protected.</p>
+                    }
+                    else
+                    {
+                        <p>
+                            The House is a private community. Two-factor means a stolen password alone
+                            isn't enough to get into your account — you'll also need a 6-digit code from
+                            your phone. We'll walk you through it.
+                        </p>
+                        <a class="btn btn--primary" asp-action="TwoFactor">Set up two-factor</a>
+                    }
+                </div>
+            </li>
+        </ol>
+
+        <p class="onboarding__footnote">
+            Stuck? <a href="/contact">Contact us</a> and we'll sort it out with you.
+        </p>
+    </div>
+</div>

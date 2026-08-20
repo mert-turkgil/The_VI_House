@@ -17,7 +17,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    @* main.css carries the design tokens and the shared .admin-* component styles; admin.css adds
+       only what the panel alone needs (rich text editor chrome, dashboard charts). *@
     <link rel="stylesheet" href="~/dist/main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/dist/admin.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="admin-shell">
@@ -37,6 +40,7 @@
             <a class="@NavClass("AdminPayments")" asp-area="Admin" asp-controller="AdminPayments" asp-action="Index">Payments</a>
             <a class="@NavClass("AdminCms")" asp-area="Admin" asp-controller="AdminCms" asp-action="Index">Content</a>
             <a class="@NavClass("AdminJournal")" asp-area="Admin" asp-controller="AdminJournal" asp-action="Index">Journal</a>
+            <a class="@NavClass("AdminCommunity")" asp-area="Admin" asp-controller="AdminCommunity" asp-action="Index">Community</a>
             <a class="@NavClass("AdminUsers")" asp-area="Admin" asp-controller="AdminUsers" asp-action="Index">Customers</a>
         </nav>
 
@@ -60,6 +64,7 @@
     </main>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="module" src="~/dist/admin.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

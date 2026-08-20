@@ -1,3 +1,65 @@
+// --- Motion ------------------------------------------------------------------------------------
+// The `.reveal` class is applied by JS (see modules/reveal.ts), never in the markup, so a visitor
+// whose bundle fails never ends up staring at permanently-hidden content.
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s var(--vih-ease) var(--reveal-delay, 0ms),
+    transform 0.7s var(--vih-ease) var(--reveal-delay, 0ms);
+}
+
+@keyframes home-hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// Staggered entrance for the hero, which is above the fold and so can't wait for a scroll event.
+.home-hero__content--enter {
+  > h1,
+  > p,
+  > .home-hero__actions {
+    opacity: 0;
+    animation: home-hero-enter 0.75s var(--vih-ease) forwards;
+  }
+
+  > h1 {
+    animation-delay: 0.08s;
+  }
+
+  > p {
+    animation-delay: 0.22s;
+  }
+
+  > .home-hero__actions {
+    animation-delay: 0.36s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.is-visible,
+  .home-hero__content--enter > h1,
+  .home-hero__content--enter > p,
+  .home-hero__content--enter > .home-hero__actions {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+}
+
 // --- Hero ------------------------------------------------------------------------------------
 .home-hero {
   background: radial-gradient(ellipse at 80% 20%, var(--vih-green-800) 0%, var(--vih-green-950) 65%);
@@ -291,21 +353,76 @@
   padding: 0;
 }
 
-.home-upcoming__track {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  padding-bottom: 8px;
-  margin: 0 -24px;
-  padding-inline: 24px;
+// --- Carousels (Swiper) --------------------------------------------------------------------------
+// Shared by the Upcoming and Signature strips. Swiper's own stylesheet handles the mechanics; these
+// rules are only the brand skin plus the room the controls need.
+.home-carousel {
+  position: relative;
+  // Swiper clips overflow, which would also clip the cards' hover shadow — the padding gives the
+  // shadow somewhere to land, and the negative margin keeps the cards aligned to the container.
+  padding: 6px 6px 48px;
+  margin: -6px -6px 0;
 
-  scrollbar-width: thin;
+  --swiper-navigation-size: 20px;
+  --swiper-navigation-color: var(--vih-green-900);
+  --swiper-pagination-color: var(--vih-gold);
+  --swiper-pagination-bullet-inactive-color: var(--vih-ink);
+  --swiper-pagination-bullet-inactive-opacity: 0.22;
+
+  .swiper-slide {
+    height: auto; // equal-height cards regardless of title wrapping
+    display: flex;
+  }
+
+  .home-upcoming__card,
+  .home-signature__card {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    width: 38px;
+    height: 38px;
+    // Centre on the card's image rather than the whole card, so the control doesn't straddle the
+    // boundary between the artwork and the title block.
+    top: 38%;
+    border-radius: 50%;
+    background: var(--vih-white);
+    border: 1px solid var(--vih-line-on-light);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s var(--vih-ease), color 0.2s var(--vih-ease);
+
+    &:hover {
+      background: var(--vih-green-900);
+      --swiper-navigation-color: var(--vih-cream);
+    }
+
+    &::after {
+      font-size: var(--swiper-navigation-size);
+      font-weight: 700;
+    }
+  }
+
+  .swiper-pagination {
+    bottom: 8px;
+  }
+}
+
+// Arrows are a pointer affordance; on touch widths the swipe itself is the interaction and they
+// only crowd the cards.
+@media (max-width: 767px) {
+  .home-carousel {
+    .swiper-button-prev,
+    .swiper-button-next {
+      display: none;
+    }
+  }
 }
 
 .home-upcoming__card {
-  flex: 0 0 260px;
-  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--vih-line-on-light);
   border-radius: 10px;
   overflow: hidden;
@@ -365,14 +482,9 @@
 }
 
 // --- Signature grid --------------------------------------------------------------------------
-.home-signature__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 24px;
-}
-
 .home-signature__card {
-  display: block;
+  display: flex;
+  flex-direction: column;
   border-radius: 10px;
   overflow: hidden;
   background: var(--vih-white);

@@ -1,0 +1,53 @@
+@using VIHouse.Entities.Community
+@model List<CommunityLink>
+@{
+    string KindLabel(CommunityLinkKind kind) => kind switch
+    {
+        CommunityLinkKind.Discord => "Discord",
+        CommunityLinkKind.Broadcast => "Broadcast",
+        CommunityLinkKind.Call => "Live call",
+        _ => "Resource",
+    };
+}
+
+<div class="container account-manage">
+    <partial name="_AccountNav" />
+
+    <div class="account-manage__body">
+        <h1>Community</h1>
+        <p class="community__lede">
+            Where the House talks between gatherings. These links are for members only — please don't
+            forward them.
+        </p>
+
+        @if (Model.Count == 0)
+        {
+            <div class="community__empty">
+                <p>No community channels are published right now. They'll appear here as soon as they're live.</p>
+            </div>
+        }
+        else
+        {
+            <ul class="community__list">
+                @foreach (var link in Model)
+                {
+                    <li class="community__item community__item--@link.Kind.ToString().ToLowerInvariant()">
+                        <div class="community__item-body">
+                            <span class="community__kind">@KindLabel(link.Kind)</span>
+                            <h2>@link.Label</h2>
+                            @if (!string.IsNullOrWhiteSpace(link.Description))
+                            {
+                                <p>@link.Description</p>
+                            }
+                        </div>
+                        @* rel=noopener because these open in a new tab and target=_blank otherwise
+                           hands the destination a scriptable reference back to this page. *@
+                        <a class="btn btn--primary" href="@link.Url" target="_blank" rel="noopener noreferrer">
+                            Open @KindLabel(link.Kind)
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

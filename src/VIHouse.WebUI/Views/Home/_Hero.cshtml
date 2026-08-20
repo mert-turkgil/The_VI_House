@@ -2,7 +2,9 @@
 
 <section class="home-hero">
     <div class="container home-hero__inner">
-        <div class="home-hero__content">
+        @* The hero is above the fold, so it animates on load rather than on scroll — hence CSS
+           keyframes here instead of the data-reveal/IntersectionObserver used further down. *@
+        <div class="home-hero__content home-hero__content--enter">
             <h1>@Model.Heading</h1>
             @if (!string.IsNullOrWhiteSpace(Model.Subheading))
             {

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Applications;
 using VIHouse.Entities.Commerce;
+using VIHouse.Entities.Community;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
 using VIHouse.Entities.Journal;
@@ -38,6 +39,7 @@ public static class DbSeeder
         await SeedApplicationsAsync(db);
         await SeedMembershipPlansAsync(db);
         await SeedJournalPostsAsync(db);
+        await SeedCommunityLinksAsync(db);
         await db.SaveChangesAsync(); // commit before SeedAmbassadorsAsync, which needs Roles.Ambassador to already exist
 
         await SeedAmbassadorsAsync(db, userManager);
@@ -82,12 +84,51 @@ public static class DbSeeder
         });
     }
 
+    private static async Task SeedCommunityLinksAsync(VIHouseDbContext db)
+    {
+        if (await db.CommunityLinks.AnyAsync())
+            return;
+
+        // Placeholder destinations — replace the URLs under Admin → Community before launch. They're
+        // seeded inactive so a demo invite can never be shown to a real member by accident.
+        db.CommunityLinks.AddRange(
+            new CommunityLink
+            {
+                Label = "The VI House Discord",
+                Description = "The members' server — introductions, city channels, and everything between gatherings.",
+                Url = "https://discord.gg/replace-me",
+                Kind = CommunityLinkKind.Discord,
+                IsActive = false,
+                SortOrder = 1,
+            },
+            new CommunityLink
+            {
+                Label = "House Broadcast",
+                Description = "Our members-only broadcast channel for announcements and live sessions.",
+                Url = "https://example.com/replace-me",
+                Kind = CommunityLinkKind.Broadcast,
+                IsActive = false,
+                SortOrder = 2,
+            });
+    }
+
     private static async Task SeedMembershipPlansAsync(VIHouseDbContext db)
     {
         if (await db.MembershipPlans.AnyAsync())
             return;
 
         db.MembershipPlans.AddRange(
+            new MembershipPlan
+            {
+                Name = "Member — Monthly",
+                Description = "The same access as annual membership, billed monthly instead of up front.",
+                PriceMinor = 6000, // £60.00 / month
+                Currency = "GBP",
+                BillingPeriod = MembershipBillingPeriod.Monthly,
+                Features = "Member Directory access\nCommunity Discord\nPriority invitations to future experiences",
+                Status = MembershipPlanStatus.Active,
+                SortOrder = 0,
+            },
             new MembershipPlan
             {
                 Name = "Member",
@@ -450,13 +491,15 @@ public static class DbSeeder
             PageId = home.Id,
             SectionKey = "stats",
             SortOrder = 4,
-            // Placeholder — replace with real, admin-verified figures once available (brief §15).
+            // Indicative figures, not live counts — edit them under Admin → Content once the real,
+            // admin-verified numbers are available (brief §15). The homepage animates whatever
+            // number is here; a non-numeric value is simply displayed as written.
             ExtraJson = """
             [
-              {"value":"—","label":"Members"},
-              {"value":"—","label":"Countries"},
-              {"value":"—","label":"Experiences"},
-              {"value":"—","label":"Experts"}
+              {"value":"180+","label":"Members"},
+              {"value":"24","label":"Countries"},
+              {"value":"65+","label":"Experiences"},
+              {"value":"40+","label":"Experts"}
             ]
             """,
         });

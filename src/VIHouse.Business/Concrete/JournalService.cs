@@ -25,6 +25,8 @@ public class JournalService(IJournalPostRepository posts, IAuditLogRepository au
         if (post.Status == JournalPostStatus.Published)
             post.PublishedAt = DateTimeOffset.UtcNow;
 
+        post.Body = JournalHtml.Sanitize(post.Body);
+
         await posts.AddAsync(post, ct);
         await LogAsync("JournalPostCreated", post.Id, adminUserId, ipAddress,
             before: null, after: new { post.Title, post.Slug, post.Category, post.Status }, ct);
@@ -43,7 +45,7 @@ public class JournalService(IJournalPostRepository posts, IAuditLogRepository au
         existing.Slug = updated.Slug;
         existing.Category = updated.Category;
         existing.Excerpt = updated.Excerpt;
-        existing.Body = updated.Body;
+        existing.Body = JournalHtml.Sanitize(updated.Body);
         existing.CoverImageUrl = updated.CoverImageUrl;
         existing.AuthorName = updated.AuthorName;
         existing.Status = updated.Status;
@@ -57,6 +59,22 @@ public class JournalService(IJournalPostRepository posts, IAuditLogRepository au
         // No explicit Update() call: `existing` is already tracked, loaded on this same scoped
         // DbContext — same reasoning as ExperienceService.UpdateCoreFieldsAsync.
         await posts.SaveChangesAsync(ct);
+    }
+
+    public async Task<bool> DeleteAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var existing = await posts.GetByIdAsync(id, ct);
+        if (existing is null) return false;
+
+        // Unlike an Experience, a journal post has no dependent records (no bookings, applications
+        // or payments reference it), so there's nothing to guard against here — a delete is always
+        // safe. The audit entry keeps the title/slug recoverable afterwards.
+        posts.Remove(existing);
+        await LogAsync("JournalPostDeleted", existing.Id, adminUserId, ipAddress,
+            before: new { existing.Title, existing.Slug, existing.Category, existing.Status }, after: null, ct);
+        await posts.SaveChangesAsync(ct);
+
+        return true;
     }
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>

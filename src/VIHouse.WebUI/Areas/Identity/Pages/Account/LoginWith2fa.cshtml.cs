@@ -116,6 +116,8 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 _logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", user.Id);
+                user.LastLoginAt = DateTimeOffset.UtcNow;
+                await _userManager.UpdateAsync(user);
                 return LocalRedirect(returnUrl);
             }
             else if (result.IsLockedOut)
@@ -126,7 +128,11 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             else
             {
                 _logger.LogWarning("Invalid authenticator code entered for user with ID '{UserId}'.", user.Id);
-                ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
+                // TOTP codes are time-based — the #1 real-world cause of a code that "should" be right but
+                // isn't is the phone's or the server's clock being off by more than a step or two, so the
+                // hint is worth the extra sentence rather than leaving the admin to guess.
+                ModelState.AddModelError(string.Empty,
+                    "Invalid authenticator code. If this keeps happening, double-check that your device's clock is set automatically/accurately — authenticator codes are time-based.");
                 return Page();
             }
         }

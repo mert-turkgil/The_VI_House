@@ -1,0 +1,911 @@
+// Onboarding, join-and-pay, and the members' community page. Grouped together because they're one
+// continuous journey — join, pay, secure the account, arrive — and share a calm, single-column,
+// one-thing-at-a-time layout that deliberately differs from the marketing pages.
+
+.onboarding {
+  background: var(--vih-cream);
+  min-height: 70vh;
+  padding: 56px 0 88px;
+}
+
+.onboarding__inner {
+  max-width: 760px;
+
+  &--narrow {
+    max-width: 620px;
+  }
+
+  h1 {
+    font-family: var(--vih-font-serif);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    line-height: 1.15;
+    margin: 0 0 16px;
+    color: var(--vih-green-900);
+  }
+}
+
+.onboarding__eyebrow {
+  display: block;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vih-gold);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.onboarding__lede {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: rgba(18, 22, 15, 0.75);
+  margin: 0 0 32px;
+}
+
+.onboarding__back {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 0.875rem;
+  color: rgba(18, 22, 15, 0.6);
+}
+
+.onboarding__notice {
+  background: rgba(184, 149, 90, 0.14);
+  border: 1px solid rgba(184, 149, 90, 0.4);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-size: 0.9375rem;
+}
+
+.onboarding__error {
+  color: #8c2f22;
+  font-size: 0.9375rem;
+
+  &:empty {
+    display: none;
+  }
+}
+
+// --- Progress -------------------------------------------------------------------------------
+.onboarding__progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.onboarding__progress-bar {
+  flex: 1;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(18, 22, 15, 0.1);
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    background: var(--vih-gold);
+    transition: width 0.4s var(--vih-ease);
+  }
+}
+
+.onboarding__progress-label {
+  font-size: 0.75rem;
+  color: rgba(18, 22, 15, 0.55);
+  white-space: nowrap;
+}
+
+// --- Checklist ------------------------------------------------------------------------------
+.onboarding__steps {
+  list-style: none;
+  margin: 0 0 32px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.onboarding__step {
+  display: flex;
+  gap: 16px;
+  padding: 22px 24px;
+  border-radius: 12px;
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+
+  h2 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.125rem;
+    margin: 0 0 8px;
+    color: var(--vih-green-900);
+  }
+
+  p {
+    margin: 0 0 12px;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: rgba(18, 22, 15, 0.75);
+  }
+
+  // A step that is neither done nor current is context, not an instruction — recede it so the
+  // eye lands on the one thing to do now.
+  &:not(&--done):not(&--active) {
+    opacity: 0.55;
+  }
+
+  &--active {
+    border-color: var(--vih-gold);
+    box-shadow: 0 6px 24px rgba(184, 149, 90, 0.16);
+  }
+}
+
+.onboarding__step-mark {
+  flex: 0 0 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  background: rgba(18, 22, 15, 0.08);
+  color: rgba(18, 22, 15, 0.6);
+
+  .onboarding__step--done & {
+    background: var(--vih-green-900);
+    color: var(--vih-cream);
+  }
+
+  .onboarding__step--active & {
+    background: var(--vih-gold);
+    color: var(--vih-green-950);
+  }
+}
+
+.onboarding__step-body {
+  flex: 1;
+  min-width: 0;
+}
+
+// --- Numbered instructions (2FA setup) -------------------------------------------------------
+.onboarding__instructions {
+  counter-reset: step;
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  > li {
+    position: relative;
+    padding: 24px 26px 26px 62px;
+    background: var(--vih-white);
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: 12px;
+    counter-increment: step;
+
+    &::before {
+      content: counter(step);
+      position: absolute;
+      left: 22px;
+      top: 24px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--vih-green-900);
+      color: var(--vih-cream);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+  }
+
+  h2 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.0625rem;
+    margin: 0 0 8px;
+    color: var(--vih-green-900);
+  }
+
+  p {
+    margin: 0 0 12px;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: rgba(18, 22, 15, 0.75);
+  }
+}
+
+.onboarding__hint {
+  font-size: 0.8125rem !important;
+  color: rgba(18, 22, 15, 0.55) !important;
+}
+
+.onboarding__qr {
+  display: inline-block;
+  padding: 12px;
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 10px;
+  margin: 4px 0 16px;
+  min-height: 40px;
+
+  canvas {
+    display: block;
+  }
+
+  &--failed {
+    padding: 14px 18px;
+    font-size: 0.8125rem;
+    color: rgba(18, 22, 15, 0.6);
+  }
+}
+
+.onboarding__key {
+  code {
+    display: inline-block;
+    padding: 10px 16px;
+    background: rgba(18, 22, 15, 0.05);
+    border-radius: 8px;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    user-select: all; // one click selects the whole secret for copying
+  }
+}
+
+.onboarding__form {
+  margin-top: 8px;
+}
+
+.onboarding__field {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--vih-green-900);
+  }
+}
+
+.onboarding__field-error {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  color: #8c2f22;
+}
+
+.onboarding__code-input {
+  width: 100%;
+  max-width: 220px;
+  padding: 12px 16px;
+  font-size: 1.5rem;
+  letter-spacing: 0.32em;
+  text-align: center;
+  font-family: var(--vih-font-sans);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 8px;
+  background: var(--vih-white);
+
+  &:focus {
+    outline: 2px solid var(--vih-gold);
+    outline-offset: 1px;
+  }
+}
+
+// --- Recovery codes ---------------------------------------------------------------------------
+.onboarding__codes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 22px;
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 12px;
+  margin-bottom: 20px;
+
+  code {
+    font-size: 0.9375rem;
+    letter-spacing: 0.06em;
+    user-select: all;
+  }
+}
+
+.onboarding__next {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.onboarding__footnote {
+  font-size: 0.8125rem;
+  color: rgba(18, 22, 15, 0.55);
+  line-height: 1.6;
+  margin: 0;
+}
+
+// --- Join & pay ---------------------------------------------------------------------------------
+.join {
+  background: var(--vih-cream);
+  padding: 56px 0 88px;
+}
+
+.join__inner {
+  max-width: 720px;
+
+  h1 {
+    font-family: var(--vih-font-serif);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    margin: 0 0 16px;
+    color: var(--vih-green-900);
+  }
+}
+
+.join__eyebrow {
+  display: block;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vih-gold);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.join__lede {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: rgba(18, 22, 15, 0.75);
+  margin: 0 0 32px;
+}
+
+.join__error {
+  color: #8c2f22;
+  font-size: 0.9375rem;
+  margin-bottom: 16px;
+
+  &:empty {
+    display: none;
+  }
+}
+
+// --- The two routes in --------------------------------------------------------------------------
+.join__routes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 36px;
+
+  @media (max-width: 599px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.join__route {
+  display: block;
+  padding: 18px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--vih-line-on-light);
+  background: var(--vih-white);
+  text-decoration: none;
+  color: inherit;
+
+  p {
+    margin: 6px 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: rgba(18, 22, 15, 0.65);
+  }
+
+  // The membership route is the one this page performs; the other is a signpost further down.
+  &--active {
+    border-color: var(--vih-gold);
+    background: rgba(184, 149, 90, 0.08);
+  }
+
+  &:not(&--active):hover {
+    border-color: rgba(18, 22, 15, 0.28);
+  }
+}
+
+.join__route-tag {
+  display: block;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--vih-green-900);
+}
+
+.join__preselected {
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background: rgba(184, 149, 90, 0.14);
+  border: 1px solid rgba(184, 149, 90, 0.4);
+  font-size: 0.9375rem;
+}
+
+// --- Single-experience section --------------------------------------------------------------------
+.join__single {
+  margin-top: 48px;
+  padding-top: 36px;
+  border-top: 1px solid var(--vih-line-on-light);
+
+  h2 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.375rem;
+    margin: 0 0 10px;
+    color: var(--vih-green-900);
+  }
+}
+
+.join__single-lede {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: rgba(18, 22, 15, 0.7);
+  margin: 0 0 22px;
+}
+
+.join__experiences {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.join__experience {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 20px;
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 12px;
+
+  h3 {
+    font-family: var(--vih-font-serif);
+    font-size: 1rem;
+    margin: 2px 0 3px;
+    color: var(--vih-green-900);
+  }
+
+  @media (max-width: 599px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.join__experience-date {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 700;
+  color: var(--vih-gold);
+}
+
+.join__experience-meta {
+  font-size: 0.8125rem;
+  color: rgba(18, 22, 15, 0.6);
+}
+
+.join__form fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 32px;
+
+  legend {
+    font-family: var(--vih-font-serif);
+    font-size: 1.125rem;
+    color: var(--vih-green-900);
+    margin-bottom: 16px;
+    padding: 0;
+  }
+}
+
+.join__plans {
+  display: block;
+}
+
+.join__plan {
+  display: block;
+  position: relative;
+  margin-bottom: 12px;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  // The whole card is the control, not just the radio dot — a bigger, more obvious target,
+  // especially on touch.
+  .join__plan-body {
+    display: block;
+    padding: 20px 22px;
+    background: var(--vih-white);
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: 12px;
+    transition: border-color 0.15s var(--vih-ease), box-shadow 0.15s var(--vih-ease);
+  }
+
+  input:checked + .join__plan-body {
+    border-color: var(--vih-gold);
+    box-shadow: 0 0 0 1px var(--vih-gold), 0 6px 20px rgba(184, 149, 90, 0.15);
+  }
+
+  input:focus-visible + .join__plan-body {
+    outline: 2px solid var(--vih-gold);
+    outline-offset: 2px;
+  }
+}
+
+.join__plan-name {
+  display: block;
+  font-family: var(--vih-font-serif);
+  font-size: 1.125rem;
+  color: var(--vih-green-900);
+  margin-bottom: 4px;
+}
+
+.join__plan-price {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--vih-green-900);
+
+  em {
+    font-style: normal;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: rgba(18, 22, 15, 0.55);
+    margin-left: 4px;
+  }
+}
+
+.join__plan-desc {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: rgba(18, 22, 15, 0.7);
+}
+
+.join__plan-note {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--vih-gold);
+  font-weight: 600;
+}
+
+.join__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 599px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.join__field {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--vih-green-900);
+  }
+
+  input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: 8px;
+    background: var(--vih-white);
+    font-family: var(--vih-font-sans);
+    font-size: 0.9375rem;
+
+    &:focus {
+      outline: 2px solid var(--vih-gold);
+      outline-offset: 1px;
+    }
+  }
+}
+
+.join__hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: rgba(18, 22, 15, 0.55);
+}
+
+.join__field-error {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  color: #8c2f22;
+}
+
+.join__consent {
+  margin-bottom: 24px;
+  font-size: 0.875rem;
+
+  label {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.55;
+  }
+}
+
+.join__submit {
+  width: 100%;
+  justify-content: center;
+}
+
+.join__secure {
+  margin: 12px 0 0;
+  font-size: 0.75rem;
+  color: rgba(18, 22, 15, 0.55);
+  text-align: center;
+}
+
+.join__alt {
+  margin-top: 32px;
+  font-size: 0.875rem;
+  color: rgba(18, 22, 15, 0.6);
+}
+
+.join__empty {
+  font-size: 0.9375rem;
+  color: rgba(18, 22, 15, 0.6);
+}
+
+// --- Members' community page --------------------------------------------------------------------
+.community__lede {
+  font-size: 0.9375rem;
+  color: rgba(18, 22, 15, 0.7);
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+
+.community__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.community__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px;
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 12px;
+
+  h2 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.0625rem;
+    margin: 0 0 4px;
+    color: var(--vih-green-900);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: rgba(18, 22, 15, 0.68);
+  }
+
+  @media (max-width: 599px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.community__kind {
+  display: inline-block;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--vih-gold);
+  margin-bottom: 6px;
+}
+
+.community__item-body {
+  min-width: 0;
+}
+
+// --- Ticket ---------------------------------------------------------------------------------------
+.ticket__back {
+  display: inline-block;
+  margin-bottom: 18px;
+  font-size: 0.875rem;
+  color: rgba(18, 22, 15, 0.6);
+}
+
+.ticket {
+  max-width: 520px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.07);
+
+  // A cancelled or finished ticket must not read as valid at a glance.
+  &--void {
+    opacity: 0.6;
+    filter: grayscale(0.8);
+  }
+}
+
+.ticket__stub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--vih-green-900);
+  color: var(--vih-cream);
+}
+
+.ticket__brand {
+  font-family: var(--vih-font-serif);
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+}
+
+.ticket__status {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(244, 240, 230, 0.16);
+}
+
+.ticket__body {
+  padding: 26px 24px 20px;
+
+  h1 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.5rem;
+    margin: 0 0 4px;
+    color: var(--vih-green-900);
+  }
+}
+
+.ticket__where {
+  margin: 0 0 20px;
+  font-size: 0.875rem;
+  color: rgba(18, 22, 15, 0.6);
+}
+
+.ticket__facts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 20px;
+  margin: 0;
+
+  dt {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(18, 22, 15, 0.5);
+    margin-bottom: 3px;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--vih-ink);
+  }
+}
+
+// The perforation: a dashed rule with notches punched out of either side, so the reference reads as
+// the detachable stub the door actually checks.
+.ticket__ref {
+  position: relative;
+  margin-top: 8px;
+  padding: 22px 24px 24px;
+  border-top: 2px dashed var(--vih-line-on-light);
+  text-align: center;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: -13px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--vih-cream);
+  }
+
+  &::before {
+    left: -13px;
+  }
+
+  &::after {
+    right: -13px;
+  }
+}
+
+.ticket__ref-label {
+  display: block;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(18, 22, 15, 0.5);
+  margin-bottom: 6px;
+}
+
+.ticket__ref-value {
+  display: block;
+  font-family: var(--vih-font-serif);
+  font-size: 1.75rem;
+  letter-spacing: 0.1em;
+  color: var(--vih-green-900);
+  user-select: all;
+}
+
+.ticket__ref-note {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: rgba(18, 22, 15, 0.5);
+}
+
+.ticket__note {
+  max-width: 520px;
+  margin: 18px 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: rgba(18, 22, 15, 0.55);
+}
+
+.ticket__upsell {
+  max-width: 520px;
+  margin-top: 28px;
+  padding: 22px 24px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 12px;
+  background: rgba(184, 149, 90, 0.07);
+
+  h2 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.0625rem;
+    margin: 0 0 8px;
+    color: var(--vih-green-900);
+  }
+
+  p {
+    margin: 0 0 14px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: rgba(18, 22, 15, 0.7);
+  }
+}
+
+.community__empty {
+  padding: 28px;
+  border: 1px dashed var(--vih-line-on-light);
+  border-radius: 12px;
+  color: rgba(18, 22, 15, 0.55);
+  font-size: 0.9375rem;
+}

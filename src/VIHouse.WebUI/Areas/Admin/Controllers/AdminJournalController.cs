@@ -54,6 +54,17 @@ public class AdminJournalController(IJournalService journalService, UserManager<
         return RedirectToAction(nameof(Edit), new { id });
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
+    {
+        var (adminId, ip) = CurrentActor();
+        var deleted = await journalService.DeleteAsync(id, adminId, ip, ct);
+
+        TempData["StatusMessage"] = deleted ? "Post deleted." : "That post no longer exists.";
+        return RedirectToAction(nameof(Index));
+    }
+
     private (Guid AdminId, string? IpAddress) CurrentActor() =>
         (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 }

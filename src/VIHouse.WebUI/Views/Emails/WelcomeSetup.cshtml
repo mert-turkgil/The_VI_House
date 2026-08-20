@@ -1,0 +1,21 @@
+@model WelcomeSetupEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">Set up your account</h1>
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    Your payment went through@(Model.PlanName is null ? "" : $" and your {Model.PlanName} is active").
+    The last step is to choose a password, confirm this email address, and switch on two-factor
+    authentication. We'll walk you through it — it takes about two minutes.
+</p>
+<p style="margin:0 0 24px;">
+    <a href="@Model.SetupUrl" style="display:inline-block; background:#00230a; color:#f4f0e6; padding:12px 22px; border-radius:999px; text-decoration:none; font-weight:600;">Choose your password</a>
+</p>
+<p style="margin:0 0 16px; font-size:13px; color:#5a5f55;">
+    If the button doesn't work, copy this into your browser:<br />
+    <span style="word-break:break-all;">@Model.SetupUrl</span>
+</p>
+<p style="margin:0 0 16px; font-size:13px; color:#5a5f55;">
+    This link can only be used once. If it expires, use "Forgot your password?" on the sign-in page
+    to get a new one.
+</p>
+<p style="margin:0;">&mdash; The VI House</p>

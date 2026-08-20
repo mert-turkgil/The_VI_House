@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
+using VIHouse.Entities.Community;
 using VIHouse.Entities.Users;
 using VIHouse.WebUI.ViewModels.Account;
 
@@ -20,7 +21,8 @@ public class AccountController(
     IBookingRepository bookings,
     IExperienceService experienceService,
     IMembershipService membershipService,
-    INotificationService notificationService) : Controller
+    INotificationService notificationService,
+    IRepository<CommunityLink> communityLinks) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -89,6 +91,33 @@ public class AccountController(
         });
     }
 
+    /// <summary>
+    /// The Discord invite and any live broadcast links. Gated on holding an <em>active
+    /// membership</em>, not merely on the Member role: buying a ticket to one experience provisions
+    /// an account with that role too, and a single-event guest is not entitled to the year-round
+    /// community. An invite URL is a bearer credential — anyone holding it can join — so this must
+    /// fail closed.
+    /// </summary>
+    [HttpGet("community")]
+    public async Task<IActionResult> Community(CancellationToken ct)
+    {
+        var userId = CurrentUserId();
+        var membership = await membershipService.GetCurrentMembershipAsync(userId, ct);
+        if (membership is null)
+        {
+            TempData["MembershipError"] = "The community channels are open to members. Your ticket covers the event itself.";
+            return RedirectToAction("Index", "Membership");
+        }
+
+        var links = (await communityLinks.FindAsync(l => l.IsActive, ct))
+            .OrderBy(l => l.SortOrder)
+            .ThenBy(l => l.Label)
+            .ToList();
+
+        ViewData["Title"] = "Community";
+        return View(links);
+    }
+
     [HttpGet("notifications")]
     public async Task<IActionResult> Notifications(CancellationToken ct)
     {
@@ -140,6 +169,44 @@ public class AccountController(
 
         ViewData["Title"] = "My Bookings";
         return View(model);
+    }
+
+    /// <summary>
+    /// The ticket for one booking, looked up by its customer-facing reference rather than the
+    /// internal id (brief §110). Scoped to the signed-in user's own bookings, so a guessed or shared
+    /// reference belonging to someone else returns 404 rather than someone else's ticket.
+    /// </summary>
+    [HttpGet("bookings/{reference}")]
+    public async Task<IActionResult> Ticket(string reference, CancellationToken ct)
+    {
+        var userId = CurrentUserId();
+        var booking = (await bookings.GetByUserAsync(userId, ct))
+            .FirstOrDefault(b => string.Equals(b.BookingReference, reference, StringComparison.OrdinalIgnoreCase));
+
+        if (booking is null) return NotFound();
+
+        var experience = await experienceService.GetForAdminEditAsync(booking.ExperienceId, ct);
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        var ticketType = experience?.TicketTypes?.FirstOrDefault(t => t.Id == booking.TicketTypeId);
+
+        ViewData["Title"] = $"Ticket {booking.BookingReference}";
+        return View(new TicketViewModel
+        {
+            BookingReference = booking.BookingReference,
+            HolderName = user is null ? "" : $"{user.FirstName} {user.LastName}",
+            ExperienceTitle = experience is null ? "The VI House" : $"The VI House — {experience.City}",
+            City = experience?.City ?? "—",
+            Country = experience?.Country ?? "",
+            StartAtUtc = experience?.StartAtUtc ?? booking.CreatedAt,
+            EndAtUtc = experience?.EndAtUtc ?? booking.CreatedAt,
+            TicketTypeName = ticketType?.Title,
+            Quantity = booking.Quantity,
+            AmountMinor = booking.AmountMinor,
+            Currency = booking.Currency,
+            Status = booking.Status,
+            ConfirmedAt = booking.ConfirmedAt,
+            HolderIsMember = await membershipService.GetCurrentMembershipAsync(userId, ct) is not null,
+        });
     }
 
     private static void ApplyForm(Profile profile, ProfileFormViewModel form)

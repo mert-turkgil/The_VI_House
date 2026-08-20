@@ -22,17 +22,19 @@
                         <th>@Loc["Account.BookingDate"]</th>
                         <th>@Loc["Account.BookingStatus"]</th>
                         <th>@Loc["Account.BookingAmount"]</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var b in Model)
                     {
                         <tr>
-                            <td>@b.BookingReference</td>
+                            <td><a asp-action="Ticket" asp-route-reference="@b.BookingReference">@b.BookingReference</a></td>
                             <td>@b.ExperienceLabel</td>
                             <td>@b.StartAtUtc.ToString("dd MMM yyyy")</td>
                             <td>@b.Status</td>
                             <td>@MoneyFormatter.Format(b.AmountMinor, b.Currency)</td>
+                            <td><a class="btn btn--ghost btn--sm" asp-action="Ticket" asp-route-reference="@b.BookingReference">View ticket</a></td>
                         </tr>
                     }
                 </tbody>

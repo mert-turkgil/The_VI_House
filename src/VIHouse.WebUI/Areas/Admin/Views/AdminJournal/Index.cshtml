@@ -25,6 +25,7 @@ else
                 <th>Category</th>
                 <th>Status</th>
                 <th>Published</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -35,6 +36,11 @@ else
                     <td>@post.Category.ToDisplayLabel()</td>
                     <td><span class="@(post.Status == JournalPostStatus.Published ? "admin-badge admin-badge--open" : "admin-badge admin-badge--closed")">@post.Status</span></td>
                     <td>@(post.PublishedAt?.ToString("d MMM yyyy") ?? "—")</td>
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@post.Id" method="post" onsubmit="return confirm('Delete &quot;@post.Title&quot;? This can\'t be undone.');" style="display:inline;">
+                            <button type="submit" class="admin-btn admin-btn--danger">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             }
         </tbody>

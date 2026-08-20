@@ -20,3 +20,11 @@ public record PaymentFailedEmailModel(string FirstName, string ExperienceTitle, 
 public record ContactMessageEmailModel(string Name, string Email, string? Subject, string Message);
 
 public record MembershipConfirmedEmailModel(string FirstName, string PlanName, DateTimeOffset? ExpiresAt);
+
+/// <summary>Sent during onboarding to prove the member owns the address they signed up with.</summary>
+public record ConfirmEmailAddressEmailModel(string FirstName, string ConfirmUrl);
+
+/// <summary>Sent the moment an account is provisioned by a completed payment — carries the one-time
+/// link the new member uses to choose a password and start onboarding. Nothing else in the system
+/// ever emails a credential.</summary>
+public record WelcomeSetupEmailModel(string FirstName, string SetupUrl, string? PlanName);

@@ -32,7 +32,9 @@
 
 <div class="admin-field">
     <label asp-for="Body"></label>
-    <textarea asp-for="Body" rows="16" placeholder="Separate paragraphs with a blank line."></textarea>
+    @* data-ckeditor upgrades this into a rich text editor (see ClientApp modules/editor.ts). The
+       textarea stays the real form field and keeps working on its own if that script fails. *@
+    <textarea asp-for="Body" rows="16" data-ckeditor></textarea>
     <span asp-validation-for="Body" class="field-validation-error"></span>
 </div>
 

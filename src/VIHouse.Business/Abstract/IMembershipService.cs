@@ -14,8 +14,20 @@ public interface IMembershipService
     /// <summary>Most recent Active membership for a user, if any — null means never purchased or lapsed.</summary>
     Task<Membership?> GetCurrentMembershipAsync(Guid userId, CancellationToken ct = default);
 
-    /// <summary>Requires an existing account (brief: purchase happens post-login, no guest checkout — a membership isn't preceded by an Application that already captured name/email the way event tickets are). referralCode comes from the /r/{code} cookie, if present — see Application.ReferralCode for the equivalent on the ticket-purchase side.</summary>
+    /// <summary>For a visitor who is already signed in. referralCode comes from the /r/{code} cookie, if present — see Application.ReferralCode for the equivalent on the ticket-purchase side.</summary>
     Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string? referralCode, string successUrl, string cancelUrl, CancellationToken ct = default);
+
+    /// <summary>
+    /// Join-and-pay in one step for someone with no account yet: the form's details provision a
+    /// pending account, then checkout begins against it. The account exists before payment (it has
+    /// to — the payment must be attributable to someone) but is unusable until the webhook confirms
+    /// the money: no password is ever set, the email is unconfirmed, and the onboarding gate blocks
+    /// every signed-in page until 2FA is set up.
+    ///
+    /// Returns a failure if the email already belongs to an account, rather than silently attaching
+    /// a stranger's payment to it.
+    /// </summary>
+    Task<MembershipCheckoutResult> InitiateJoinCheckoutAsync(JoinRequest request, string successUrl, string cancelUrl, CancellationToken ct = default);
 
     /// <summary>Reads LOCAL state only, same "never trust the browser redirect alone" rule as the ticket-purchase flow.</summary>
     Task<MembershipConfirmationInfo?> GetConfirmationBySessionAsync(string sessionId, CancellationToken ct = default);
@@ -35,4 +47,18 @@ public record MembershipCheckoutResult(bool Success, string? CheckoutUrl, string
     public static MembershipCheckoutResult Fail(string error) => new(false, null, error);
 }
 
-public record MembershipConfirmationInfo(bool IsConfirmed, string? PlanName, long AmountMinor, string Currency, DateTimeOffset? ExpiresAt);
+public record MembershipConfirmationInfo(bool IsConfirmed, string? PlanName, long AmountMinor, string Currency, DateTimeOffset? ExpiresAt)
+{
+    /// <summary>Set once the payment is confirmed, so the success page can hand the new member
+    /// straight into onboarding without asking them to log in first (they have no password yet).</summary>
+    public Guid? UserId { get; init; }
+}
+
+public record JoinRequest(
+    Guid PlanId,
+    string FirstName,
+    string LastName,
+    string Email,
+    string Country,
+    string? City,
+    string? ReferralCode);

@@ -1,0 +1,43 @@
+@model JoinSuccessViewModel
+
+<div class="onboarding">
+    <div class="container onboarding__inner onboarding__inner--narrow">
+        @if (Model.Info.IsConfirmed)
+        {
+            <span class="onboarding__eyebrow">Payment received</span>
+            <h1>You're in</h1>
+            <p class="onboarding__lede">
+                Your @(Model.Info.PlanName ?? "membership") is active and we've emailed your receipt.
+                One more step: choose a password, and we'll walk you through securing your account.
+            </p>
+
+            @if (Model.SetupUrl is not null)
+            {
+                <a class="btn btn--primary" href="@Model.SetupUrl">Choose your password</a>
+                <p class="onboarding__footnote">
+                    We've emailed you this same link, so you can safely close this tab and pick it up
+                    later.
+                </p>
+            }
+            else
+            {
+                <a class="btn btn--primary" asp-area="Identity" asp-page="/Account/Login">Sign in to continue</a>
+            }
+        }
+        else
+        {
+            @* The browser redirect can beat Stripe's webhook by a moment. The payment isn't lost —
+               the webhook is what confirms it — so this says "wait", never "failed". *@
+            <span class="onboarding__eyebrow">Just a moment</span>
+            <h1>Confirming your payment</h1>
+            <p class="onboarding__lede">
+                Your bank has approved the payment and we're finalising your account. This usually
+                takes a few seconds.
+            </p>
+            <p class="onboarding__footnote">
+                Refresh this page in a moment, or watch your inbox — we'll email your account setup
+                link as soon as it's ready. Nothing further is needed from you.
+            </p>
+        }
+    </div>
+</div>

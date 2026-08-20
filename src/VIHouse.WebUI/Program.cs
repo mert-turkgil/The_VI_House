@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Concrete.EntityFramework;
 using VIHouse.DataAccess.Concrete.EntityFramework.Seed;
 using VIHouse.DataAccess.Identity;
-using VIHouse.WebUI.Areas.Admin.Filters;
+using VIHouse.WebUI.Filters;
 using VIHouse.WebUI.Services;
 
 // Process-wide fallback only (background services like TicketHoldExpiryService run with no HTTP
@@ -50,6 +51,47 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     .AddEntityFrameworkStores<VIHouseDbContext>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
+
+// --- Data Protection ---------------------------------------------------------------------------
+// Without this the key ring lives wherever ASP.NET Core's default picks (often the app folder, or
+// nowhere durable at all under IIS with no loaded user profile), which means a redeploy or app-pool
+// recycle silently invalidates every auth cookie, antiforgery token, and Identity-issued token —
+// the exact failure mode behind "2FA is broken in production" reports. Keys must therefore live at
+// a stable path *outside* the deployed app directory in Production (set DataProtection:KeysPath in
+// appsettings.Production.json), so publishing over the app never wipes them. SetApplicationName is
+// what lets the main site and the admin subdomain share one key ring: they're the same app, so the
+// purpose strings must match even if the deployment layout ever splits them.
+var keysPath = builder.Configuration["DataProtection:KeysPath"];
+if (string.IsNullOrWhiteSpace(keysPath))
+{
+    keysPath = Path.Combine(builder.Environment.ContentRootPath, "App_Data", "dp-keys");
+}
+
+Directory.CreateDirectory(keysPath);
+var dataProtection = builder.Services.AddDataProtection()
+    .SetApplicationName("VIHouse")
+    .PersistKeysToFileSystem(new DirectoryInfo(keysPath));
+
+// PersistKeysToFileSystem turns off the automatic at-rest encryption that would otherwise apply, so
+// without this the key ring sits on disk in plaintext — and anything that can read those files can
+// forge an authentication cookie for any account. DPAPI is Windows-only; protectToLocalMachine
+// scopes the key to the machine rather than the current user, so it still decrypts after an IIS app
+// pool identity change. Non-Windows hosts fall through to plaintext and rely on filesystem
+// permissions instead, which is the framework's own default there.
+if (OperatingSystem.IsWindows())
+{
+    dataProtection.ProtectKeysWithDpapi(protectToLocalMachine: true);
+}
+
+// UseHttpsRedirection can't infer a port when the app isn't itself listening on HTTPS (typical
+// behind a reverse proxy / IIS doing TLS termination), and logs "Failed to determine the https port
+// for redirect" then skips redirecting entirely. Stating it explicitly makes the redirect actually
+// work in Production; Development is left alone so the Kestrel launch profile keeps deciding.
+if (!builder.Environment.IsDevelopment())
+{
+    var httpsPort = builder.Configuration.GetValue<int?>("Https:Port") ?? 443;
+    builder.Services.AddHttpsRedirection(options => options.HttpsPort = httpsPort);
+}
 
 // HSTS: 1 year + subdomains + preload-ready, since Production genuinely serves both the main
 // domain and the admin subdomain over HTTPS only. Framework default (30 days, no subdomains) is
@@ -166,9 +208,11 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 // --- MVC + Razor Pages (Identity UI is Razor-Pages-based) -----------------------------------------
 builder.Services.AddControllersWithViews(options =>
 {
-    // Global, but self-scoping: the filter only acts on requests routed into the Admin area
-    // (brief §95 — 2FA for admins). See AdminTwoFactorRequirementFilter for the check itself.
-    options.Filters.Add(typeof(AdminTwoFactorRequirementFilter));
+    // Global, but self-scoping: the filter only acts on endpoints that require authorization, so
+    // the public site and the apply/join/checkout path are untouched. Members and admins alike must
+    // confirm their email and switch on 2FA before any signed-in page will render. See
+    // OnboardingRequirementFilter.
+    options.Filters.Add(typeof(OnboardingRequirementFilter));
 
     // Defense-in-depth: every POST/PUT/DELETE/PATCH is antiforgery-checked by default now, not
     // just the ones that remembered to add [ValidateAntiForgeryToken]. The one deliberate

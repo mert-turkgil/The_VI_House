@@ -50,6 +50,56 @@
         </div>
 
         <div class="admin-card">
+            <h2>Membership Payments</h2>
+            @if (Model.MembershipPayments.Count == 0)
+            {
+                <p>No membership purchases from this account.</p>
+            }
+            else
+            {
+                <table class="admin-table">
+                    <thead><tr><th>Date</th><th>Status</th><th>Amount</th><th>Stripe reference</th></tr></thead>
+                    <tbody>
+                        @foreach (var mp in Model.MembershipPayments)
+                        {
+                            <tr>
+                                <td>@mp.CreatedAt.ToString("dd MMM yyyy")</td>
+                                <td>@mp.Status</td>
+                                <td>@MoneyFormatter.Format(mp.AmountMinor, mp.Currency)</td>
+                                <td><code style="font-size:0.75rem;">@mp.ProviderReference</code></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <div class="admin-card">
+            <h2>Experience Payments</h2>
+            @if (Model.Payments.Count == 0)
+            {
+                <p>No experience payments from this account.</p>
+            }
+            else
+            {
+                <table class="admin-table">
+                    <thead><tr><th>Date</th><th>Provider</th><th>Status</th><th>Amount</th></tr></thead>
+                    <tbody>
+                        @foreach (var p in Model.Payments)
+                        {
+                            <tr>
+                                <td><a asp-area="Admin" asp-controller="AdminPayments" asp-action="Details" asp-route-id="@p.Id">@p.CreatedAt.ToString("dd MMM yyyy")</a></td>
+                                <td>@p.Provider</td>
+                                <td>@p.Status</td>
+                                <td>@MoneyFormatter.Format(p.AmountMinor, p.Currency)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <div class="admin-card">
             <h2>Bookings</h2>
             @if (Model.Bookings.Count == 0)
             {
@@ -75,6 +125,39 @@
     </div>
 
     <div class="admin-review-side">
+        <div class="admin-card">
+            <h2>Account Health</h2>
+            <dl class="admin-detail-list">
+                <div><dt>Member status</dt><dd>@Model.MemberStatus</dd></div>
+                <div>
+                    <dt>Two-factor</dt>
+                    <dd>
+                        @* 2FA is mandatory site-wide (TwoFactorRequirementFilter), so "Not set up"
+                           is also the answer to "why is this member stuck on a setup page?" *@
+                        <span class="@(Model.TwoFactorEnabled ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")">
+                            @(Model.TwoFactorEnabled ? "Enabled" : "Not set up")
+                        </span>
+                    </dd>
+                </div>
+                <div>
+                    <dt>Email confirmed</dt>
+                    <dd>@(Model.EmailConfirmed ? "Yes" : "No")</dd>
+                </div>
+                @if (Model.IsLockedOut)
+                {
+                    <div>
+                        <dt>Locked out</dt>
+                        <dd><span class="admin-badge admin-badge--closed">Yes — too many failed attempts</span></dd>
+                    </div>
+                }
+                <div><dt>Account created</dt><dd>@Model.CreatedAt.ToString("dd MMM yyyy")</dd></div>
+                <div>
+                    <dt>Last sign-in</dt>
+                    <dd>@(Model.LastLoginAt?.ToString("dd MMM yyyy, HH:mm") ?? "Never signed in")</dd>
+                </div>
+            </dl>
+        </div>
+
         <div class="admin-card">
             <h2>Roles</h2>
             <form asp-action="UpdateRoles" asp-route-id="@Model.UserId" method="post">
