@@ -5,7 +5,23 @@
         <span class="onboarding__eyebrow">You're all set</span>
         <h1>Welcome to the House, @Model.FirstName</h1>
 
-        @if (Model.HasMembership)
+        @if (Model.IsStaff)
+        {
+            <p class="onboarding__lede">
+                Your account is secured and your admin access is active. From now on you'll be asked
+                for a code from your authenticator app each time you sign in.
+            </p>
+
+            <div class="onboarding__next">
+                <a class="btn btn--primary" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">Open the admin panel</a>
+            </div>
+
+            <p class="onboarding__footnote">
+                Keep your recovery codes somewhere safe — without your phone they're the only way
+                back into an admin account.
+            </p>
+        }
+        else if (Model.HasMembership)
         {
             <p class="onboarding__lede">
                 Your account is secured and your @(Model.PlanName ?? "membership") is active. The

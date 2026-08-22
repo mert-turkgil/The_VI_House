@@ -1,0 +1,92 @@
+@using VIHouse.DataAccess.Identity
+@model AdminInviteViewModel
+@{
+    ViewData["Title"] = "Invite Admin";
+    var justIssued = Model.IssuedSetupUrl is not null;
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+@if (justIssued)
+{
+    <div class="admin-card" style="margin-bottom:24px;">
+        <h2>Setup link for @Model.IssuedEmail</h2>
+        <p class="admin-hint">
+            This link has been emailed to them. It works once and lets them set a password — if the
+            email doesn't arrive, send them this directly over a channel you trust. It won't be
+            shown again.
+        </p>
+        <p><code style="word-break:break-all; font-size:0.75rem;">@Model.IssuedSetupUrl</code></p>
+        <p class="admin-hint">
+            After setting a password they'll be walked through confirming their email and scanning a
+            QR code for two-factor. The admin panel stays closed until both are done.
+        </p>
+        <a class="admin-btn" asp-action="Index">Back to Customers</a>
+    </div>
+}
+
+<form asp-action="Invite" method="post" class="admin-form">
+    <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+
+    <p class="admin-hint">
+        Creates a staff account and emails a one-time setup link. You never choose their password —
+        they set their own, then must confirm their email address and switch on two-factor
+        authentication before the panel will open for them.
+    </p>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="FirstName"></label>
+            <input asp-for="FirstName" autocomplete="off" />
+            <span asp-validation-for="FirstName" class="field-validation-error"></span>
+        </div>
+        <div class="admin-field">
+            <label asp-for="LastName"></label>
+            <input asp-for="LastName" autocomplete="off" />
+            <span asp-validation-for="LastName" class="field-validation-error"></span>
+        </div>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" type="email" autocomplete="off" />
+            <span asp-validation-for="Email" class="field-validation-error"></span>
+        </div>
+        <div class="admin-field">
+            <label asp-for="Country"></label>
+            <input asp-for="Country" placeholder="GB" maxlength="2" autocomplete="off" />
+            <span asp-validation-for="Country" class="field-validation-error"></span>
+        </div>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="Roles"></label>
+        <span asp-validation-for="Roles" class="field-validation-error"></span>
+        <div class="admin-role-list">
+            @foreach (var role in Roles.AdminRoles)
+            {
+                <label class="admin-role-option">
+                    <input type="checkbox" name="Roles" value="@role" checked="@(Model.Roles.Contains(role))" />
+                    <span>@role</span>
+                </label>
+            }
+        </div>
+        <span class="admin-hint">
+            SuperAdmin can manage roles and invite other admins. Every other role can use the panel
+            but not change who has access.
+        </span>
+    </div>
+
+    <div>
+        <button type="submit" class="admin-btn">Create Admin &amp; Send Setup Link</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

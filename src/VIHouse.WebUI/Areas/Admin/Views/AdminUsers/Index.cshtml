@@ -1,6 +1,21 @@
+@using VIHouse.DataAccess.Identity
 @model List<AdminCustomerListItemViewModel>
 @{
     ViewData["Title"] = "Customers";
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+@* Only SuperAdmin can create staff accounts, so anyone else is not shown a button that would
+   just refuse them. *@
+@if (User.IsInRole(Roles.SuperAdmin))
+{
+    <div class="admin-toolbar">
+        <a class="admin-btn" asp-action="Invite">+ Invite Admin</a>
+    </div>
 }
 
 @if (Model.Count == 0)

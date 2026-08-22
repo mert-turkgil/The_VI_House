@@ -258,20 +258,82 @@ if (app.Environment.IsProduction())
     }
 }
 
-// --- Development-only: apply migrations + seed data --------------------------------------------
-if (app.Environment.IsDevelopment())
+// --- Seeding ------------------------------------------------------------------------------------
+// Two different scopes on purpose. Development gets the full seed: migrations plus demo content
+// (sample experiences, journal posts, a fake ambassador). Production gets ONLY roles and the
+// bootstrap admin accounts — demo content must never appear in front of real customers, and
+// migrations stay a deliberate deployment step rather than something that runs itself on boot.
 {
     using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<VIHouseDbContext>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+    var seedLogger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Seed");
 
-    var seedAdminEmail = builder.Configuration["SeedAdmin:Email"]
-        ?? throw new InvalidOperationException("SeedAdmin:Email is not configured.");
-    var seedAdminPassword = builder.Configuration["SeedAdmin:Password"]
-        ?? throw new InvalidOperationException("SeedAdmin:Password is not configured.");
+    var seedAdmins = ReadSeedAdmins(builder.Configuration);
 
-    await DbSeeder.SeedAsync(db, userManager, roleManager, seedAdminEmail, seedAdminPassword);
+    if (app.Environment.IsDevelopment())
+    {
+        if (seedAdmins.Count == 0)
+            throw new InvalidOperationException(
+                "No seed admin configured. Set SeedAdmin:Email/SeedAdmin:Password (or a SeedAdmins array) in user-secrets.");
+
+        var db = scope.ServiceProvider.GetRequiredService<VIHouseDbContext>();
+        await DbSeeder.SeedAsync(db, userManager, roleManager, seedAdmins);
+    }
+    else if (seedAdmins.Count > 0)
+    {
+        try
+        {
+            await DbSeeder.SeedIdentityAsync(userManager, roleManager, seedAdmins);
+        }
+        catch (Exception ex)
+        {
+            // Logged rather than thrown: a seeding problem (most likely a schema that hasn't had
+            // migrations applied yet) shouldn't take the whole site down on boot. Existing admins
+            // can still sign in; the log says what went wrong.
+            seedLogger.LogCritical(ex, "Admin seeding failed. Check that migrations have been applied to the production database.");
+        }
+    }
+    else
+    {
+        seedLogger.LogWarning(
+            "No seed admin configured. If this is a fresh deployment nobody can sign in — set SeedAdmin or SeedAdmins in appsettings.Production.json.");
+    }
+}
+
+/// Accepts either the original single "SeedAdmin" object or a "SeedAdmins" array (or both, deduped
+/// by email). Keeping the singular form working means existing user-secrets setups don't break.
+static List<SeedAdminAccount> ReadSeedAdmins(IConfiguration configuration)
+{
+    var accounts = new List<SeedAdminAccount>();
+
+    var singleEmail = configuration["SeedAdmin:Email"];
+    var singlePassword = configuration["SeedAdmin:Password"];
+    if (!string.IsNullOrWhiteSpace(singleEmail) && !string.IsNullOrWhiteSpace(singlePassword))
+    {
+        accounts.Add(new SeedAdminAccount(
+            singleEmail.Trim(), singlePassword,
+            configuration["SeedAdmin:FirstName"], configuration["SeedAdmin:LastName"],
+            configuration.GetSection("SeedAdmin:Roles").Get<string[]>()));
+    }
+
+    foreach (var section in configuration.GetSection("SeedAdmins").GetChildren())
+    {
+        var email = section["Email"];
+        var password = section["Password"];
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            continue; // a placeholder entry left blank in the template — skip, don't fail
+
+        accounts.Add(new SeedAdminAccount(
+            email.Trim(), password,
+            section["FirstName"], section["LastName"],
+            section.GetSection("Roles").Get<string[]>()));
+    }
+
+    return accounts
+        .GroupBy(a => a.Email, StringComparer.OrdinalIgnoreCase)
+        .Select(g => g.First())
+        .ToList();
 }
 
 // --- HTTP pipeline --------------------------------------------------------------------------------

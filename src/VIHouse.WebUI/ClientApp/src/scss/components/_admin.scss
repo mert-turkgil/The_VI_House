@@ -137,6 +137,35 @@
 }
 
 // --- Toolbar / actions ----------------------------------------------------------------------------
+.admin-role-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.admin-role-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+
+  // The pill is the target, not the 13px checkbox inside it.
+  &:has(input:checked) {
+    border-color: var(--vih-gold);
+    background: rgba(184, 149, 90, 0.16);
+  }
+
+  &:has(input:focus-visible) {
+    outline: 2px solid var(--vih-gold);
+    outline-offset: 2px;
+  }
+}
+
 .admin-toolbar {
   display: flex;
   justify-content: flex-end;

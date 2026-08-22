@@ -2,13 +2,24 @@
 
 <div class="onboarding">
     <div class="container onboarding__inner">
-        <span class="onboarding__eyebrow">Welcome to The VI House</span>
+        <span class="onboarding__eyebrow">@(Model.IsStaff ? "Admin access" : "Welcome to The VI House")</span>
         <h1>Two things left, @Model.FirstName</h1>
-        <p class="onboarding__lede">
-            Your payment went through and your account exists. Before you can use it, we need to
-            confirm your email address and turn on two-factor authentication. It takes about two
-            minutes.
-        </p>
+        @if (Model.IsStaff)
+        {
+            <p class="onboarding__lede">
+                Your admin account is ready. Before the panel will open, we need to confirm your
+                email address and turn on two-factor authentication — both are required for every
+                account with admin access. It takes about two minutes.
+            </p>
+        }
+        else
+        {
+            <p class="onboarding__lede">
+                Your payment went through and your account exists. Before you can use it, we need to
+                confirm your email address and turn on two-factor authentication. It takes about two
+                minutes.
+            </p>
+        }
 
         @if (TempData["StatusMessage"] is string status)
         {
@@ -41,10 +52,21 @@
                     }
                     else
                     {
-                        <p>
-                            We need to know we can reach you at <strong>@Model.Email</strong> — it's where
-                            your tickets, event details and receipts go. Send yourself a link, then click it.
-                        </p>
+                        @if (Model.IsStaff)
+                        {
+                            <p>
+                                We need to know we can reach you at <strong>@Model.Email</strong> — it's
+                                where account and security notices go, and it's how you'd recover access.
+                                Send yourself a link, then click it.
+                            </p>
+                        }
+                        else
+                        {
+                            <p>
+                                We need to know we can reach you at <strong>@Model.Email</strong> — it's where
+                                your tickets, event details and receipts go. Send yourself a link, then click it.
+                            </p>
+                        }
                         <p class="onboarding__hint">
                             The link works for 24 hours. If it doesn't arrive within a few minutes, check
                             your spam folder before sending another.
@@ -66,11 +88,23 @@
                     }
                     else
                     {
-                        <p>
-                            The House is a private community. Two-factor means a stolen password alone
-                            isn't enough to get into your account — you'll also need a 6-digit code from
-                            your phone. We'll walk you through it.
-                        </p>
+                        @if (Model.IsStaff)
+                        {
+                            <p>
+                                Admin accounts can see every member's details and payment history, so
+                                this isn't optional. A stolen password alone won't be enough — you'll
+                                also need a 6-digit code from your phone. We'll show you a QR code to
+                                scan.
+                            </p>
+                        }
+                        else
+                        {
+                            <p>
+                                The House is a private community. Two-factor means a stolen password alone
+                                isn't enough to get into your account — you'll also need a 6-digit code from
+                                your phone. We'll walk you through it.
+                            </p>
+                        }
                         <a class="btn btn--primary" asp-action="TwoFactor">Set up two-factor</a>
                     }
                 </div>

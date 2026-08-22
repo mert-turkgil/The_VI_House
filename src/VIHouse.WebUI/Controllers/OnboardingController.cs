@@ -191,6 +191,7 @@ public class OnboardingController(
             TwoFactorEnabled = await userManager.GetTwoFactorEnabledAsync(user),
             PlanName = plan?.Name,
             HasMembership = membership is not null,
+            IsStaff = (await userManager.GetRolesAsync(user)).Intersect(Roles.AdminRoles).Any(),
         };
     }
 

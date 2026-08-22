@@ -28,3 +28,8 @@ public record ConfirmEmailAddressEmailModel(string FirstName, string ConfirmUrl)
 /// link the new member uses to choose a password and start onboarding. Nothing else in the system
 /// ever emails a credential.</summary>
 public record WelcomeSetupEmailModel(string FirstName, string SetupUrl, string? PlanName);
+
+/// <summary>Sent when an existing SuperAdmin creates a staff account. Carries the one-time link the
+/// new admin uses to set a password; no credential is ever emailed, and the account cannot be used
+/// until they also confirm the address and switch on two-factor.</summary>
+public record AdminInviteEmailModel(string FirstName, string SetupUrl, string InvitedBy, string RoleSummary);

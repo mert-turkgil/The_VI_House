@@ -17,6 +17,10 @@ public class OnboardingStatusViewModel
     /// ticket but no membership, which is what withholds the community invites from them.</summary>
     public bool HasMembership { get; set; }
 
+    /// <summary>True for an account holding any admin-side role. Staff arrive here through an
+    /// invite rather than a purchase, so the page must not tell them their payment went through.</summary>
+    public bool IsStaff { get; set; }
+
     /// <summary>The password step is excluded on purpose: it's completed before the member can sign
     /// in at all, so by the time this page renders it is always done.</summary>
     public bool IsComplete => EmailConfirmed && TwoFactorEnabled;

@@ -13,25 +13,46 @@ using VIHouse.Entities.Referrals;
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Seed;
 
 /// <summary>
-/// Development-only seed data: admin roles, one SuperAdmin account, a handful of sample
-/// Experiences, and the homepage ContentPage with a ContentBlock per section. Testimonial/stat
-/// content is deliberately placeholder-labelled rather than invented numbers/claims, per the
-/// brief's "no fake testimonials/claims until real ones exist" rule (§15) — admins replace these
-/// through the CMS once real figures/quotes are available.
+/// Two distinct jobs, deliberately kept separate:
+///
+/// <see cref="SeedIdentityAsync"/> creates the admin roles and the bootstrap admin accounts. It is
+/// safe in <em>any</em> environment and runs in Production too — without it a fresh deployment would
+/// have no way to sign in, since Invite Admin needs an existing SuperAdmin to use it.
+///
+/// <see cref="SeedAsync"/> additionally loads demo content — sample Experiences, applications,
+/// journal posts, a fake ambassador, placeholder community links. That is Development-only and must
+/// never touch a real database; it would put invented events and a dummy referral partner in front
+/// of real customers. Testimonial/stat content is placeholder-labelled rather than invented
+/// numbers, per the brief's "no fake testimonials/claims" rule (§15).
 /// </summary>
 public static class DbSeeder
 {
+    /// <summary>
+    /// Roles + bootstrap admin accounts only. Idempotent: an account whose email already exists is
+    /// left untouched, so restarting the app never resets a password someone has since changed.
+    /// </summary>
+    public static async Task SeedIdentityAsync(
+        UserManager<ApplicationUser> userManager,
+        RoleManager<ApplicationRole> roleManager,
+        IEnumerable<SeedAdminAccount> admins)
+    {
+        await SeedRolesAsync(roleManager);
+
+        foreach (var admin in admins)
+        {
+            await SeedAdminUserAsync(userManager, admin);
+        }
+    }
+
     public static async Task SeedAsync(
         VIHouseDbContext db,
         UserManager<ApplicationUser> userManager,
         RoleManager<ApplicationRole> roleManager,
-        string seedAdminEmail,
-        string seedAdminPassword)
+        IEnumerable<SeedAdminAccount> admins)
     {
         await db.Database.MigrateAsync();
 
-        await SeedRolesAsync(roleManager);
-        await SeedAdminUserAsync(userManager, seedAdminEmail, seedAdminPassword);
+        await SeedIdentityAsync(userManager, roleManager, admins);
         await SeedExperiencesAsync(db);
         await db.SaveChangesAsync(); // commit Experiences first — SeedApplicationsAsync looks them up by slug
 
@@ -239,25 +260,31 @@ public static class DbSeeder
         }
     }
 
-    private static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, string email, string password)
+    private static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager, SeedAdminAccount account)
     {
-        if (await userManager.FindByEmailAsync(email) is not null)
+        // Existing account is left completely alone — no password reset, no role changes. Otherwise
+        // every restart would undo a password the admin has since changed, and quietly re-grant a
+        // role someone deliberately removed.
+        if (await userManager.FindByEmailAsync(account.Email) is not null)
             return;
 
         var admin = new ApplicationUser
         {
-            UserName = email,
-            Email = email,
+            UserName = account.Email,
+            Email = account.Email,
+            // Pre-confirmed because there's nobody to send a confirmation link *from* on a fresh
+            // deployment. Two-factor is still enforced on first sign-in by
+            // OnboardingRequirementFilter, so the account is not usable until it's secured.
             EmailConfirmed = true,
-            FirstName = "VI House",
-            LastName = "Admin",
+            FirstName = account.FirstName ?? "VI House",
+            LastName = account.LastName ?? "Admin",
             Country = "GB",
             MemberStatus = Entities.Users.MemberStatus.Active,
         };
 
-        var result = await userManager.CreateAsync(admin, password);
+        var result = await userManager.CreateAsync(admin, account.Password);
         if (result.Succeeded)
-            await userManager.AddToRoleAsync(admin, Roles.SuperAdmin);
+            await userManager.AddToRolesAsync(admin, account.EffectiveRoles);
     }
 
     private static async Task SeedExperiencesAsync(VIHouseDbContext db)

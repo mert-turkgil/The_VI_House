@@ -1,0 +1,27 @@
+@model AdminInviteEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">You've been given admin access</h1>
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    @Model.InvitedBy has created an admin account for you on The VI House, with access as
+    <strong>@Model.RoleSummary</strong>.
+</p>
+<p style="margin:0 0 16px;">
+    Set your password below. You'll then be asked to confirm this email address and set up
+    two-factor authentication &mdash; both are required before the admin panel will open, and we'll
+    walk you through the two-factor step with a QR code.
+</p>
+<p style="margin:0 0 24px;">
+    <a href="@Model.SetupUrl" style="display:inline-block; padding:12px 24px; background-color:#b8955a; color:#001a02; text-decoration:none; font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; border-radius:24px;">
+        Set Your Password
+    </a>
+</p>
+<p style="margin:0 0 16px; font-size:13px; color:#5a5f55;">
+    If the button doesn't work, copy this into your browser:<br />
+    <span style="word-break:break-all;">@Model.SetupUrl</span>
+</p>
+<p style="margin:0 0 16px; font-size:13px; color:#5a5f55;">
+    This link can only be used once. If it expires, use "Forgot your password?" on the sign-in page.
+    If you weren't expecting this, tell @Model.InvitedBy &mdash; don't use the link.
+</p>
+<p style="margin:0;">&mdash; The VI House</p>
