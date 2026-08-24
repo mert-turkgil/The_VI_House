@@ -25,10 +25,10 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 @* The CKEditor licence key is host-locked and environment-specific, so it is configuration rather
-   than a compiled-in constant — and it follows the same policy as the Stripe and SMTP credentials:
-   user-secrets in Development, the gitignored appsettings.Production.json on the server, never a
-   committed file. Absent (a GPL deployment, or Production before a commercial key is bought) the
-   editor falls back to "GPL" on its own — see ClientApp modules/editor.ts. *@
+   than a compiled-in constant. It lives in appsettings.Development.json locally and in
+   appsettings.Production.json on the server — both gitignored and untracked, so neither reaches the
+   repository. Absent (a GPL deployment, or Production before a commercial key is bought) the editor
+   falls back to "GPL" on its own — see ClientApp modules/editor.ts. *@
 <body class="admin-shell" data-ckeditor-license="@Configuration["CkEditor:LicenseKey"]">
     <aside class="admin-sidebar">
         <a class="admin-sidebar__brand" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">

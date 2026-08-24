@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
@@ -123,10 +124,25 @@ builder.Services.AddHsts(options =>
 // Only set when the admin panel lives on its own subdomain (see "AdminHost" below) — a shared
 // cookie domain (e.g. ".thevihouse.com") lets one login work across both thevihouse.com and
 // admin.thevihouse.com. Left unset in Development, where everything is on localhost anyway.
+//
+// HostAwareCookieManager is what stops this setting from being a trap. A browser silently discards
+// a cookie whose Domain doesn't match the host it is talking to, so pointing this at a domain the
+// deployment doesn't actually serve — a typo, or a production build being smoke-tested on
+// localhost — makes every sign-in appear to succeed and then land the visitor back on the login
+// page with nothing logged anywhere. The manager degrades a mismatch to a host-only cookie and
+// warns, so the app stays usable and the misconfiguration is visible.
 var cookieDomain = builder.Configuration["CookieDomain"];
 if (!string.IsNullOrWhiteSpace(cookieDomain))
 {
     builder.Services.ConfigureApplicationCookie(options => options.Cookie.Domain = cookieDomain);
+
+    // Configured through the options pipeline rather than inside the call above, so the logger
+    // comes from the real container — building a second provider here to resolve one would give
+    // this manager its own duplicate singletons.
+    builder.Services
+        .AddOptions<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme)
+        .Configure<ILoggerFactory>((options, loggerFactory) =>
+            options.CookieManager = new HostAwareCookieManager(loggerFactory));
 }
 
 // Google Sign-In: an alternative way into an *existing* account (the admin's, today), never a way
