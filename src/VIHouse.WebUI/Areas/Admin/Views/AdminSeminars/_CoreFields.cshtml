@@ -1,0 +1,89 @@
+@model AdminSeminarFormViewModel
+
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label asp-for="Slug"></label>
+        <input asp-for="Slug" placeholder="scaling-past-your-first-ten-hires" />
+        <span asp-validation-for="Slug" class="field-validation-error"></span>
+        <p class="admin-field__hint">@Loc["Admin.Seminar.Slug.Hint"]</p>
+    </div>
+    <div class="admin-field">
+        <label asp-for="Visibility"></label>
+        <select asp-for="Visibility" asp-items="Html.GetEnumSelectList<SeminarVisibility>()"></select>
+        <p class="admin-field__hint">@Loc["Admin.Seminar.Visibility.Hint"]</p>
+    </div>
+</div>
+
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label asp-for="HostName"></label>
+        <input asp-for="HostName" />
+    </div>
+    <div class="admin-field">
+        <label asp-for="HostTitle"></label>
+        <input asp-for="HostTitle" placeholder="Founder, Acme" />
+    </div>
+</div>
+
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label asp-for="StartAtUtc"></label>
+        <input asp-for="StartAtUtc" type="datetime-local" />
+        <p class="admin-field__hint">@Loc["Admin.Seminar.StartAt.Hint"]</p>
+    </div>
+    <div class="admin-field">
+        <label asp-for="EndAtUtc"></label>
+        <input asp-for="EndAtUtc" type="datetime-local" />
+    </div>
+</div>
+
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label asp-for="TimeZoneId"></label>
+        <input asp-for="TimeZoneId" placeholder="Europe/London" />
+    </div>
+    <div class="admin-field">
+        <label asp-for="Capacity"></label>
+        <input asp-for="Capacity" type="number" min="0" />
+        <p class="admin-field__hint">@Loc["Admin.Seminar.Capacity.Hint"]</p>
+    </div>
+</div>
+
+<div class="admin-field admin-field--check">
+    <label>
+        <input asp-for="IsOnline" type="checkbox" />
+        <span>@Loc["Admin.Seminar.IsOnline"]</span>
+    </label>
+</div>
+
+<div class="admin-field">
+    <label asp-for="Location"></label>
+    <input asp-for="Location" placeholder="Zoom / The VI House, London" />
+    <p class="admin-field__hint">@Loc["Admin.Seminar.Location.Hint"]</p>
+</div>
+
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" type="number" step="0.01" min="0" />
+        <span asp-validation-for="Price" class="field-validation-error"></span>
+        <p class="admin-field__hint">@Loc["Admin.Seminar.Price.Hint"]</p>
+    </div>
+    <div class="admin-field">
+        <label asp-for="Currency"></label>
+        <input asp-for="Currency" maxlength="3" />
+    </div>
+</div>
+
+<div class="admin-field admin-field--check">
+    <label>
+        <input asp-for="IncludedWithMembership" type="checkbox" />
+        <span>@Loc["Admin.Seminar.IncludedWithMembership"]</span>
+    </label>
+    <p class="admin-field__hint">@Loc["Admin.Seminar.IncludedWithMembership.Hint"]</p>
+</div>
+
+<div class="admin-field">
+    <label asp-for="SortOrder"></label>
+    <input asp-for="SortOrder" type="number" />
+</div>

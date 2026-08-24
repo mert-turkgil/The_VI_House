@@ -10,6 +10,7 @@ public class WebhooksController(
     IPaymentProvider paymentProvider,
     IPaymentService paymentService,
     IMembershipService membershipService,
+    ISeminarService seminarService,
     ILogger<WebhooksController> logger) : ControllerBase
 {
     [HttpPost("stripe")]
@@ -34,13 +35,14 @@ public class WebhooksController(
             return BadRequest();
         }
 
-        // Both run unconditionally — each recognizes only its own checkout sessions (via its own
-        // table's ProviderReference) and no-ops otherwise, so a ticket-purchase event and a
-        // membership-purchase event both land safely regardless of which one this is. See
-        // MembershipService.HandleWebhookEventAsync's doc comment for why the membership path
-        // deliberately doesn't share PaymentService's ProcessedWebhookEvent idempotency ledger.
+        // All three run unconditionally — each recognizes only its own checkout sessions (via its
+        // own table's ProviderReference) and no-ops otherwise, so a ticket purchase, a membership
+        // purchase and a seminar enrolment all land safely regardless of which one this is. See
+        // MembershipService.HandleWebhookEventAsync's doc comment for why the membership and
+        // seminar paths deliberately don't share PaymentService's ProcessedWebhookEvent ledger.
         await paymentService.HandleWebhookEventAsync(webhookEvent, ct);
         await membershipService.HandleWebhookEventAsync(webhookEvent, ct);
+        await seminarService.HandleWebhookEventAsync(webhookEvent, ct);
         return Ok();
     }
 }

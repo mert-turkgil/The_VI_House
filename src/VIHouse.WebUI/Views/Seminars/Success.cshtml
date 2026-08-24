@@ -1,0 +1,34 @@
+@model SeminarCheckoutResultViewModel
+
+@if (!Model.IsConfirmed)
+{
+    @* Same treatment as the membership success page: the browser's return from the payment provider
+       proves nothing on its own, so this waits for the webhook rather than claiming success. *@
+    @section Styles {
+        <meta http-equiv="refresh" content="3" />
+    }
+}
+
+<div class="apply-confirmation">
+    <div class="container apply-confirmation__inner">
+        @if (Model.IsConfirmed)
+        {
+            <span class="apply-confirmation__mark">&#10003;</span>
+            <h1>@Loc["Seminars.Success.Heading"]</h1>
+            <p>@Loc["Seminars.Success.Body", Model.Title ?? ""]</p>
+            <div class="apply-confirmation__actions">
+                @if (!string.IsNullOrWhiteSpace(Model.Slug))
+                {
+                    <a class="btn btn--primary" asp-action="Details" asp-route-slug="@Model.Slug">@Loc["Seminars.Success.Open"]</a>
+                }
+                <a class="btn btn--ghost-dark" asp-action="Index">@Loc["Seminars.BackToAll"]</a>
+            </div>
+        }
+        else
+        {
+            <span class="apply-confirmation__mark">&hellip;</span>
+            <h1>@Loc["Seminars.Processing.Heading"]</h1>
+            <p>@Loc["Seminars.Processing.Body"]</p>
+        }
+    </div>
+</div>

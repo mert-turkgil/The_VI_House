@@ -7,6 +7,7 @@ using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Community;
 using VIHouse.Entities.Users;
 using VIHouse.WebUI.ViewModels.Account;
+using VIHouse.WebUI.ViewModels.Seminars;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -20,6 +21,7 @@ public class AccountController(
     IProfileRepository profiles,
     IBookingRepository bookings,
     IExperienceService experienceService,
+    ISeminarService seminarService,
     IMembershipService membershipService,
     INotificationService notificationService,
     IRepository<CommunityLink> communityLinks) : Controller
@@ -169,6 +171,22 @@ public class AccountController(
 
         ViewData["Title"] = "My Bookings";
         return View(model);
+    }
+
+    /// <summary>
+    /// The sessions this member has signed up for, whichever way they got in — free, covered by
+    /// their membership, or paid for. Kept next to Bookings rather than folded into it because an
+    /// Experience booking is a ticket to a place on a date, and a Session enrolment is standing
+    /// access to a body of content; showing them in one table would flatten that difference.
+    /// </summary>
+    [HttpGet("sessions")]
+    public async Task<IActionResult> Sessions(CancellationToken ct)
+    {
+        var culture = System.Globalization.CultureInfo.CurrentUICulture.Name;
+        var enrolled = await seminarService.GetEnrolledSeminarsAsync(CurrentUserId(), ct);
+
+        ViewData["Title"] = "My Sessions";
+        return View(enrolled.Select(s => SeminarCardViewModel.FromEntity(s, culture)).ToList());
     }
 
     /// <summary>

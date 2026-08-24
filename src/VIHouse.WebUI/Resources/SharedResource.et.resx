@@ -255,4 +255,275 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Notif.ViewAll" xml:space="preserve"><value>Vaata kõiki teateid</value></data>
 
   <data name="Nav.Journal" xml:space="preserve"><value>Ajakiri</value></data>
+
+  <!-- Onboarding / two-factor enrolment (Controllers/OnboardingController.cs). -->
+  <data name="Onboarding.Title" xml:space="preserve"><value>Seadista oma konto</value></data>
+  <data name="Onboarding.Eyebrow.Admin" xml:space="preserve"><value>Administraatori juurdepääs</value></data>
+  <data name="Onboarding.Eyebrow.Member" xml:space="preserve"><value>Tere tulemast The VI House'i</value></data>
+  <data name="Onboarding.Heading" xml:space="preserve"><value>Veel kaks sammu, {0}</value></data>
+  <data name="Onboarding.Lede.Admin" xml:space="preserve"><value>Sinu administraatorikonto on valmis. Enne kui paneel avaneb, peame kinnitama sinu e-posti aadressi ja lülitama sisse kaheastmelise autentimise — mõlemad on kohustuslikud igale administraatoriõigustega kontole. See võtab umbes kaks minutit.</value></data>
+  <data name="Onboarding.Lede.Member" xml:space="preserve"><value>Sinu makse laekus ja konto on olemas. Enne selle kasutamist peame kinnitama sinu e-posti aadressi ja lülitama sisse kaheastmelise autentimise. See võtab umbes kaks minutit.</value></data>
+  <data name="Onboarding.Progress.AriaLabel" xml:space="preserve"><value>Seadistamise edenemine</value></data>
+  <data name="Onboarding.Progress.Label" xml:space="preserve"><value>{0} / {1} tehtud</value></data>
+  <data name="Onboarding.Step1.Title" xml:space="preserve"><value>Parool määratud</value></data>
+  <data name="Onboarding.Step1.Body" xml:space="preserve"><value>Valisid parooli, kui avasid oma tervituslingi. Siin pole rohkem midagi teha.</value></data>
+  <data name="Onboarding.Step2.Title" xml:space="preserve"><value>Kinnita oma e-post</value></data>
+  <data name="Onboarding.Step2.Done" xml:space="preserve"><value>{0} on kinnitatud.</value></data>
+  <data name="Onboarding.Step2.Body.Admin" xml:space="preserve"><value>Peame teadma, et sind saab kätte aadressil {0} — sinna lähevad konto- ja turvateated ning nii taastad ka ligipääsu. Saada endale link ja klõpsa sellel.</value></data>
+  <data name="Onboarding.Step2.Body.Member" xml:space="preserve"><value>Peame teadma, et sind saab kätte aadressil {0} — sinna lähevad su piletid, ürituse üksikasjad ja kviitungid. Saada endale link ja klõpsa sellel.</value></data>
+  <data name="Onboarding.Step2.Hint" xml:space="preserve"><value>Link kehtib 24 tundi. Kui see mõne minuti jooksul ei saabu, kontrolli enne uue saatmist rämpsposti kausta.</value></data>
+  <data name="Onboarding.Step2.Send" xml:space="preserve"><value>Saada kinnituskiri</value></data>
+  <data name="Onboarding.Step3.Title" xml:space="preserve"><value>Lülita sisse kaheastmeline autentimine</value></data>
+  <data name="Onboarding.Step3.Done" xml:space="preserve"><value>Kaheastmeline autentimine on sisse lülitatud. Sinu konto on kaitstud.</value></data>
+  <data name="Onboarding.Step3.Body.Admin" xml:space="preserve"><value>Administraatorikontod näevad iga liikme andmeid ja maksete ajalugu, seega ei ole see valikuline. Varastatud paroolist üksi ei piisa — vaja on ka 6-kohalist koodi sinu telefonist. Näitame sulle skannimiseks QR-koodi.</value></data>
+  <data name="Onboarding.Step3.Body.Member" xml:space="preserve"><value>The House on privaatne kogukond. Kaheastmeline autentimine tähendab, et varastatud paroolist üksi kontole pääsemiseks ei piisa — vaja on ka 6-kohalist koodi sinu telefonist. Juhendame sind samm-sammult.</value></data>
+  <data name="Onboarding.Step3.Cta" xml:space="preserve"><value>Seadista kaheastmeline autentimine</value></data>
+  <data name="Onboarding.Footnote" xml:space="preserve"><value>Jäid hätta?</value></data>
+  <data name="Onboarding.Footnote.Link" xml:space="preserve"><value>Võta meiega ühendust ja lahendame selle koos.</value></data>
+  <data name="Onboarding.Confirm.Sent" xml:space="preserve"><value>Kinnituslink saadeti aadressile {0}. See kehtib 24 tundi.</value></data>
+  <data name="Onboarding.Confirm.Success.Title" xml:space="preserve"><value>E-post kinnitatud</value></data>
+  <data name="Onboarding.Confirm.Success.Eyebrow" xml:space="preserve"><value>E-post kinnitatud</value></data>
+  <data name="Onboarding.Confirm.Success.Heading" xml:space="preserve"><value>Sinu aadress on kinnitatud</value></data>
+  <data name="Onboarding.Confirm.Success.Body" xml:space="preserve"><value>Aitäh — nüüd teame, et sind saab kätte. Mine tagasi ja lõpeta konto seadistamine.</value></data>
+  <data name="Onboarding.Confirm.Success.Cta" xml:space="preserve"><value>Jätka seadistamist</value></data>
+  <data name="Onboarding.Confirm.Fail.Title" xml:space="preserve"><value>Kinnitamine ebaõnnestus</value></data>
+  <data name="Onboarding.Confirm.Fail.Eyebrow" xml:space="preserve"><value>Midagi läks valesti</value></data>
+  <data name="Onboarding.Confirm.Fail.Heading" xml:space="preserve"><value>Me ei saanud seda linki kinnitada</value></data>
+  <data name="Onboarding.Confirm.Fail.Cta" xml:space="preserve"><value>Tagasi seadistuse juurde</value></data>
+  <data name="Onboarding.Confirm.Error.Incomplete" xml:space="preserve"><value>See kinnituslink on poolik.</value></data>
+  <data name="Onboarding.Confirm.Error.NotFound" xml:space="preserve"><value>Me ei leidnud seda kontot.</value></data>
+  <data name="Onboarding.Confirm.Error.Malformed" xml:space="preserve"><value>See kinnituslink on vigase kujuga.</value></data>
+  <data name="Onboarding.Confirm.Error.Expired" xml:space="preserve"><value>See link on aegunud või juba kasutatud. Logi sisse ja telli uus.</value></data>
+  <data name="Onboarding.TwoFactor.Title" xml:space="preserve"><value>Seadista kaheastmeline autentimine</value></data>
+  <data name="Onboarding.TwoFactor.Heading" xml:space="preserve"><value>Seadista kaheastmeline autentimine</value></data>
+  <data name="Onboarding.TwoFactor.Back" xml:space="preserve"><value>Tagasi seadistuse juurde</value></data>
+  <data name="Onboarding.TwoFactor.Eyebrow" xml:space="preserve"><value>Samm 3 / 3</value></data>
+  <data name="Onboarding.TwoFactor.Lede" xml:space="preserve"><value>Kasutad oma telefonis tasuta autentimisrakendust. See näitab 6-kohalist koodi, mis muutub iga 30 sekundi järel — sisestad ühe neist iga sisselogimise juures.</value></data>
+  <data name="Onboarding.TwoFactor.Step1.Title" xml:space="preserve"><value>Paigalda autentimisrakendus</value></data>
+  <data name="Onboarding.TwoFactor.Step1.Body" xml:space="preserve"><value>Kui sul veel ei ole, paigalda telefoni rakendusepoest Google Authenticator, Microsoft Authenticator või 1Password. Kõik sobivad — vali see, mis sulle meeldib.</value></data>
+  <data name="Onboarding.TwoFactor.Step2.Title" xml:space="preserve"><value>Lisa sinna The VI House</value></data>
+  <data name="Onboarding.TwoFactor.Step2.Body" xml:space="preserve"><value>Ava rakendus, vali Skanni QR-kood ja suuna telefon siia:</value></data>
+  <data name="Onboarding.TwoFactor.Step2.CantScan" xml:space="preserve"><value>Ei saa skannida? Vali hoopis Sisesta seadistusvõti ja tipi see sisse. Tühikud ja suurtähed ei loe.</value></data>
+  <data name="Onboarding.TwoFactor.Step3.Title" xml:space="preserve"><value>Sisesta kood, mida see näitab</value></data>
+  <data name="Onboarding.TwoFactor.Step3.Body" xml:space="preserve"><value>Sinu rakendus hakkab näitama The VI House'i 6-kohalist koodi. Sisesta praegune siia, et kinnitada selle toimimist.</value></data>
+  <data name="Onboarding.TwoFactor.CodeLabel" xml:space="preserve"><value>Kinnituskood</value></data>
+  <data name="Onboarding.TwoFactor.Submit" xml:space="preserve"><value>Kinnita ja lülita sisse</value></data>
+  <data name="Onboarding.TwoFactor.Footnote" xml:space="preserve"><value>Koodid sõltuvad kellaajast, seega kui sinu oma korduvalt tagasi lükatakse, kontrolli, kas telefoni kuupäev ja kellaaeg on automaatsed.</value></data>
+  <data name="Onboarding.TwoFactor.QrLabel" xml:space="preserve"><value>QR-kood sinu autentimisrakenduse jaoks</value></data>
+  <data name="Onboarding.TwoFactor.QrError" xml:space="preserve"><value>QR-koodi ei õnnestunud joonistada — kasuta selle asemel allolevat seadistusvõtit.</value></data>
+  <data name="Onboarding.TwoFactor.Error.Invalid" xml:space="preserve"><value>See kood ei sobinud. Koodid muutuvad iga 30 sekundi järel — oota uut ja proovi uuesti. Kui see korduvalt ebaõnnestub, kontrolli, kas telefoni kell on automaatne.</value></data>
+  <data name="Onboarding.TwoFactor.Error.Required" xml:space="preserve"><value>Sisesta 6-kohaline kood oma autentimisrakendusest.</value></data>
+  <data name="Onboarding.TwoFactor.Error.Length" xml:space="preserve"><value>Kood on 6-kohaline.</value></data>
+  <data name="Onboarding.Codes.Title" xml:space="preserve"><value>Salvesta oma taastekoodid</value></data>
+  <data name="Onboarding.Codes.Eyebrow" xml:space="preserve"><value>Peaaegu valmis</value></data>
+  <data name="Onboarding.Codes.Heading" xml:space="preserve"><value>Salvesta oma taastekoodid</value></data>
+  <data name="Onboarding.Codes.Lede" xml:space="preserve"><value>Kaheastmeline autentimine on sees. Need koodid on sinu tee tagasi, kui kaotad telefoni — igaüks toimib ühe korra. Neid näidatakse ainult sel korral.</value></data>
+  <data name="Onboarding.Codes.Hint" xml:space="preserve"><value>Hoia neid kohas, kuhu pääsed ka ilma telefonita — paroolihalduris või välja prinditult koos passiga. Ära salvesta neid ainult telefoni, mis koode genereerib.</value></data>
+  <data name="Onboarding.Codes.Download" xml:space="preserve"><value>Laadi alla tekstifailina</value></data>
+  <data name="Onboarding.Codes.Filename" xml:space="preserve"><value>vi-house-taastekoodid.txt</value></data>
+  <data name="Onboarding.Codes.Ack" xml:space="preserve"><value>Olen need koodid salvestanud kohta, kuhu pääsen ka ilma telefonita.</value></data>
+  <data name="Onboarding.Codes.Confirm" xml:space="preserve"><value>Lõpeta seadistamine</value></data>
+  <data name="Onboarding.Codes.Error.MustAcknowledge" xml:space="preserve"><value>Märgi kastike, et kinnitada taastekoodide salvestamine — neid ei saa uuesti näidata.</value></data>
+  <data name="Onboarding.Done.Title" xml:space="preserve"><value>Kõik on valmis</value></data>
+  <data name="Onboarding.Done.Eyebrow" xml:space="preserve"><value>Kõik on valmis</value></data>
+  <data name="Onboarding.Done.Heading" xml:space="preserve"><value>Tere tulemast House'i, {0}</value></data>
+  <data name="Onboarding.Done.Admin.Lede" xml:space="preserve"><value>Sinu konto on kaitstud ja administraatori juurdepääs aktiivne. Edaspidi küsitakse igal sisselogimisel koodi sinu autentimisrakendusest.</value></data>
+  <data name="Onboarding.Done.Admin.Cta" xml:space="preserve"><value>Ava administraatoripaneel</value></data>
+  <data name="Onboarding.Done.Admin.Footnote" xml:space="preserve"><value>Hoia taastekoode turvalises kohas — ilma telefonita on need ainus tee administraatorikontole tagasi.</value></data>
+  <data name="Onboarding.Done.Member.Lede" xml:space="preserve"><value>Sinu konto on kaitstud ja {0} on aktiivne. Kogukond on sulle avatud.</value></data>
+  <data name="Onboarding.Done.Member.FallbackPlan" xml:space="preserve"><value>liikmesus</value></data>
+  <data name="Onboarding.Done.Member.Cta1" xml:space="preserve"><value>Liitu kogukonnaga</value></data>
+  <data name="Onboarding.Done.Member.Cta2" xml:space="preserve"><value>Vaata oma liikmekaarti</value></data>
+  <data name="Onboarding.Done.Member.Footnote" xml:space="preserve"><value>Kogukonna leheküljel on Discordi kutse ja otseülekannete lingid. Need on ainult liikmetele — palun ära jaga neid edasi.</value></data>
+  <data name="Onboarding.Done.Ticket.Lede" xml:space="preserve"><value>Sinu konto on kaitstud ja pilet kinnitatud. Leiad selle koos ürituse üksikasjadega oma broneeringutest.</value></data>
+  <data name="Onboarding.Done.Ticket.Cta1" xml:space="preserve"><value>Vaata oma piletit</value></data>
+  <data name="Onboarding.Done.Ticket.Cta2" xml:space="preserve"><value>Tutvu liikmesusega</value></data>
+  <data name="Onboarding.Done.Ticket.Footnote" xml:space="preserve"><value>Ostsid pileti ühele elamusele. Täisliikmesus lisab liikmete kataloogi, kogukonna Discordi ja ligipääsu igale House'i kokkusaamisele.</value></data>
+
+  <!-- The VI House Sessions: public pages, service-layer error keys, admin panel. -->
+  <data name="Nav.Sessions" xml:space="preserve"><value>Sessioonid</value></data>
+  <data name="Seminars.Title" xml:space="preserve"><value>The VI House Sessioonid</value></data>
+  <data name="Seminars.Eyebrow" xml:space="preserve"><value>Sessioonid</value></data>
+  <data name="Seminars.Heading" xml:space="preserve"><value>The VI House Sessioonid</value></data>
+  <data name="Seminars.Subheading" xml:space="preserve"><value>Töötoad, asutajate sessioonid ja seminarid — toimuvad liikmetele otse ja jäävad siia alles.</value></data>
+  <data name="Seminars.Empty" xml:space="preserve"><value>Ühtegi sessiooni pole veel avaldatud — vaata varsti uuesti.</value></data>
+  <data name="Seminars.Past" xml:space="preserve"><value>Möödunud sessioon</value></data>
+  <data name="Seminars.OnDemand" xml:space="preserve"><value>Nõudmisel</value></data>
+  <data name="Seminars.Online" xml:space="preserve"><value>Veebis</value></data>
+  <data name="Seminars.InPerson" xml:space="preserve"><value>Kohapeal</value></data>
+  <data name="Seminars.Free" xml:space="preserve"><value>Tasuta</value></data>
+  <data name="Seminars.IncludedWithMembership" xml:space="preserve"><value>Sisaldub liikmesuses</value></data>
+  <data name="Seminars.Materials" xml:space="preserve"><value>Sessiooni materjalid</value></data>
+  <data name="Seminars.Download" xml:space="preserve"><value>Laadi alla</value></data>
+  <data name="Seminars.Enrol" xml:space="preserve"><value>Registreeru</value></data>
+  <data name="Seminars.EnrolFree" xml:space="preserve"><value>Registreeru — sisaldub</value></data>
+  <data name="Seminars.Buy" xml:space="preserve"><value>Registreeru hinnaga {0}</value></data>
+  <data name="Seminars.SeeMembership" xml:space="preserve"><value>Vaata liikmesust</value></data>
+  <data name="Seminars.SeatsLeft" xml:space="preserve"><value>Jäänud {0} kohta.</value></data>
+  <data name="Seminars.BackToAll" xml:space="preserve"><value>Kõik sessioonid</value></data>
+  <data name="Seminars.Enrolled" xml:space="preserve"><value>Oled sees. Sessioon on allpool avatud.</value></data>
+  <data name="Seminars.Access.Enrolled" xml:space="preserve"><value>Oled sellele sessioonile registreerunud.</value></data>
+  <data name="Seminars.Access.SignIn.Heading" xml:space="preserve"><value>Logi sisse, et osaleda</value></data>
+  <data name="Seminars.Access.SignIn.Body" xml:space="preserve"><value>Sessioonid on House'i liikmetele. Logi sisse, et oma koht võtta, või kandideeri liikmeks.</value></data>
+  <data name="Seminars.Access.Free.Heading" xml:space="preserve"><value>See on meie poolt</value></data>
+  <data name="Seminars.Access.Free.Body" xml:space="preserve"><value>Registreeru ja sessioon avaneb kohe — makset pole vaja.</value></data>
+  <data name="Seminars.Access.Included.Heading" xml:space="preserve"><value>Sisaldub sinu liikmesuses</value></data>
+  <data name="Seminars.Access.Included.Body" xml:space="preserve"><value>See sessioon maksab tavaliselt {0}. Sinu liikmesus katab selle — registreeru ja see avaneb kohe.</value></data>
+  <data name="Seminars.Access.Pay.Heading" xml:space="preserve"><value>Võta oma koht — {0}</value></data>
+  <data name="Seminars.Access.Pay.Body" xml:space="preserve"><value>Saad terve sessiooni koos kõige salvestatuga, mille juurde saad alati naasta.</value></data>
+  <data name="Seminars.Access.Pay.MembershipHint" xml:space="preserve"><value>Liikmetele on see lisatasuta.</value></data>
+  <data name="Seminars.Access.Pending.Heading" xml:space="preserve"><value>Makse on pooleli</value></data>
+  <data name="Seminars.Access.Pending.Body" xml:space="preserve"><value>Ootame sinu makse kinnitust. See leht avaneb kohe, kui see saabub — tavaliselt võtab see hetke.</value></data>
+  <data name="Seminars.Access.SoldOut.Heading" xml:space="preserve"><value>Kohad täis</value></data>
+  <data name="Seminars.Access.SoldOut.Body" xml:space="preserve"><value>Kõik kohad sellel sessioonil on täis. Korraldame neid regulaarselt — järgmine ilmub siia.</value></data>
+  <data name="Seminars.Access.Closed.Heading" xml:space="preserve"><value>Praegu ei ole avatud</value></data>
+  <data name="Seminars.Access.Closed.Body" xml:space="preserve"><value>See sessioon ei võta hetkel registreerumisi vastu.</value></data>
+  <data name="Seminars.Success.Title" xml:space="preserve"><value>Oled registreerunud</value></data>
+  <data name="Seminars.Success.Heading" xml:space="preserve"><value>Oled registreerunud</value></data>
+  <data name="Seminars.Success.Body" xml:space="preserve"><value>Sinu koht sessioonil {0} on kinnitatud. Saatsime sulle koopia e-postiga.</value></data>
+  <data name="Seminars.Success.Open" xml:space="preserve"><value>Ava sessioon</value></data>
+  <data name="Seminars.Processing.Heading" xml:space="preserve"><value>Kinnitame sinu makset</value></data>
+  <data name="Seminars.Processing.Body" xml:space="preserve"><value>See võtab paar sekundit. Leht värskendab end ise — uuesti maksma ei pea.</value></data>
+  <data name="Seminars.Cancelled.Title" xml:space="preserve"><value>Registreerumine tühistatud</value></data>
+  <data name="Seminars.Cancelled.Heading" xml:space="preserve"><value>Midagi ei võetud</value></data>
+  <data name="Seminars.Cancelled.Body" xml:space="preserve"><value>Katkestasid enne maksmist, seega kohta ei võetud. Võid igal ajal uuesti alustada.</value></data>
+  <data name="Seminars.Cancelled.TryAgain" xml:space="preserve"><value>Tagasi sessiooni juurde</value></data>
+  <data name="Seminar.Error.Unknown" xml:space="preserve"><value>Midagi läks valesti. Palun proovi uuesti.</value></data>
+  <data name="Seminar.Error.NotFound" xml:space="preserve"><value>Seda sessiooni enam ei ole.</value></data>
+  <data name="Seminar.Error.AlreadyEnrolled" xml:space="preserve"><value>Oled sellele sessioonile juba registreerunud.</value></data>
+  <data name="Seminar.Error.PaymentPending" xml:space="preserve"><value>Selle sessiooni makse on veel pooleli. Oota hetk, enne kui uuesti proovid.</value></data>
+  <data name="Seminar.Error.SoldOut" xml:space="preserve"><value>Kõik kohad sellel sessioonil on täis.</value></data>
+  <data name="Seminar.Error.NotOpen" xml:space="preserve"><value>See sessioon ei võta hetkel registreerumisi vastu.</value></data>
+  <data name="Seminar.Error.PaymentRequired" xml:space="preserve"><value>See sessioon on tasuline — kasuta registreerumisnuppu, et jõuda maksma.</value></data>
+  <data name="Seminar.Error.NoPaymentNeeded" xml:space="preserve"><value>Selle sessiooni eest ei pea midagi maksma.</value></data>
+  <data name="Seminar.Error.SignInRequired" xml:space="preserve"><value>Palun logi sisse, et oma koht võtta.</value></data>
+  <data name="Seminar.Error.AccountMissing" xml:space="preserve"><value>Me ei leidnud sinu kontot — palun logi uuesti sisse.</value></data>
+  <data name="Seminar.Error.ProviderUnreachable" xml:space="preserve"><value>Me ei saanud makseteenuse pakkujaga ühendust — palun proovi hetke pärast uuesti.</value></data>
+  <data name="Seminar.Error.SlugTaken" xml:space="preserve"><value>Seda veebiaadressi kasutab juba teine sessioon. Vali mõni muu.</value></data>
+  <data name="Seminar.Error.NeedsDefaultTranslation" xml:space="preserve"><value>Kirjuta enne avaldamist ingliskeelne tekst — kõik teised keeled taanduvad selle peale.</value></data>
+  <data name="Seminar.Error.CannotDeleteDefaultTranslation" xml:space="preserve"><value>Ingliskeelset teksti ei saa eemaldada — selle peale taanduvad kõik teised keeled.</value></data>
+  <data name="Seminar.Error.HasEnrolments" xml:space="preserve"><value>Sellele sessioonile on juba registreerutud, seega seda ei saa kustutada. Arhiveeri see hoopis — kõik registreerunud säilitavad ligipääsu.</value></data>
+  <data name="Seminar.Error.MediaType" xml:space="preserve"><value>See failitüüp ei ole toetatud. Kasuta JPG, PNG, WebP, AVIF, GIF, MP4, WebM, MOV, MP3, M4A või PDF.</value></data>
+  <data name="Seminar.Error.MediaTooLarge" xml:space="preserve"><value>See fail on liiga suur. Video kuni 512 MB, heli 128 MB, pildid 12 MB.</value></data>
+  <data name="Seminar.Error.MediaEmpty" xml:space="preserve"><value>Vali üleslaadimiseks fail.</value></data>
+  <data name="Seminar.Error.MediaFailed" xml:space="preserve"><value>Seda faili ei õnnestunud salvestada. Palun proovi uuesti.</value></data>
+  <data name="Seminar.Error.MediaNotFound" xml:space="preserve"><value>See fail ei ole enam selle sessiooniga seotud.</value></data>
+  <data name="Seminar.Error.CoverMustBeImage" xml:space="preserve"><value>Kaanepilt peab olema pilt.</value></data>
+  <data name="Seminar.Validation.Slug" xml:space="preserve"><value>Ainult väiketähed, numbrid ja sidekriipsud.</value></data>
+  <data name="Admin.Seminar.Slug" xml:space="preserve"><value>Veebiaadress</value></data>
+  <data name="Admin.Seminar.Visibility" xml:space="preserve"><value>Kes seda näeb</value></data>
+  <data name="Admin.Seminar.HostName" xml:space="preserve"><value>Läbiviija</value></data>
+  <data name="Admin.Seminar.HostTitle" xml:space="preserve"><value>Läbiviija tiitel</value></data>
+  <data name="Admin.Seminar.IsOnline" xml:space="preserve"><value>Toimub veebis</value></data>
+  <data name="Admin.Seminar.Location" xml:space="preserve"><value>Kus</value></data>
+  <data name="Admin.Seminar.TimeZone" xml:space="preserve"><value>Ajavöönd</value></data>
+  <data name="Admin.Seminar.StartAt" xml:space="preserve"><value>Algus (UTC)</value></data>
+  <data name="Admin.Seminar.EndAt" xml:space="preserve"><value>Lõpp (UTC)</value></data>
+  <data name="Admin.Seminar.Capacity" xml:space="preserve"><value>Kohti</value></data>
+  <data name="Admin.Seminar.Price" xml:space="preserve"><value>Hind</value></data>
+  <data name="Admin.Seminar.Currency" xml:space="preserve"><value>Valuuta</value></data>
+  <data name="Admin.Seminar.IncludedWithMembership" xml:space="preserve"><value>Tasuta aktiivse liikmesusega liikmetele</value></data>
+  <data name="Admin.Seminar.SortOrder" xml:space="preserve"><value>Järjekord</value></data>
+  <data name="Admin.Seminar.Title" xml:space="preserve"><value>Pealkiri</value></data>
+  <data name="Admin.Seminar.Summary" xml:space="preserve"><value>Kokkuvõte</value></data>
+  <data name="Admin.Seminar.Body" xml:space="preserve"><value>Sessiooni sisu</value></data>
+  <data name="Admin.Seminar.SeoTitle" xml:space="preserve"><value>SEO pealkiri</value></data>
+  <data name="Admin.Seminar.SeoDescription" xml:space="preserve"><value>SEO kirjeldus</value></data>
+  <data name="Admin.Seminar.Slug.Hint" xml:space="preserve"><value>Ilmub lingis: /sessions/sinu-aadress. Väiketähed, numbrid ja sidekriipsud.</value></data>
+  <data name="Admin.Seminar.Visibility.Hint" xml:space="preserve"><value>"Ainult liikmed" on privaatne seade: kes pole liikmena sisse loginud, saab sisselogimisviiba asemel 404. "Nimekirjast väljas" on lingiga ligipääsetav, kuid loendist peidetud.</value></data>
+  <data name="Admin.Seminar.StartAt.Hint" xml:space="preserve"><value>Jäta mõlemad tühjaks nõudmisel sisu jaoks — salvestis, millel pole kohtumist.</value></data>
+  <data name="Admin.Seminar.Capacity.Hint" xml:space="preserve"><value>0 tähendab piiranguta, mis on salvestise puhul enamasti õige.</value></data>
+  <data name="Admin.Seminar.Location.Hint" xml:space="preserve"><value>Kuvatakse kaardil ja lehel — nt "Zoom" või toimumiskoht.</value></data>
+  <data name="Admin.Seminar.Price.Hint" xml:space="preserve"><value>Täisühikutes, nt 49.00. Sisesta 0, et see oleks tasuta kõigile, kes seda näevad.</value></data>
+  <data name="Admin.Seminar.IncludedWithMembership.Hint" xml:space="preserve"><value>Kui see on sees, registreerub aktiivse liikmesusega liige ühe klõpsuga ega satu kunagi maksma. Kõik teised maksavad ülaltoodud hinna.</value></data>
+  <data name="Admin.Seminar.Summary.Hint" xml:space="preserve"><value>Loetakse enne registreerumist — see osa peab sessiooni üksinda müüma.</value></data>
+  <data name="Admin.Seminar.Body.Hint" xml:space="preserve"><value>Seda saavad lugeda ainult registreerunud. Lohista pildid ja GIF-id otse redaktorisse; video ja slaidid laadi üles allolevas meediakogus.</value></data>
+  <data name="Admin.Seminar.Index.Title" xml:space="preserve"><value>Sessioonid</value></data>
+  <data name="Admin.Seminar.Index.Empty" xml:space="preserve"><value>Sessioone veel ei ole.</value></data>
+  <data name="Admin.Seminar.New" xml:space="preserve"><value>Uus sessioon</value></data>
+  <data name="Admin.Seminar.Status" xml:space="preserve"><value>Olek</value></data>
+  <data name="Admin.Seminar.Languages" xml:space="preserve"><value>Keeled</value></data>
+  <data name="Admin.Seminar.OnDemand" xml:space="preserve"><value>Nõudmisel</value></data>
+  <data name="Admin.Seminar.FreeForMembers" xml:space="preserve"><value>Liikmetele tasuta</value></data>
+  <data name="Admin.Seminar.Enrolments" xml:space="preserve"><value>Registreerumised</value></data>
+  <data name="Admin.Seminar.StatusName.Draft" xml:space="preserve"><value>Mustand</value></data>
+  <data name="Admin.Seminar.StatusName.Published" xml:space="preserve"><value>Avaldatud</value></data>
+  <data name="Admin.Seminar.StatusName.Archived" xml:space="preserve"><value>Arhiveeritud</value></data>
+  <data name="Admin.Seminar.VisibilityName.Public" xml:space="preserve"><value>Avalik</value></data>
+  <data name="Admin.Seminar.VisibilityName.Members" xml:space="preserve"><value>Ainult liikmed</value></data>
+  <data name="Admin.Seminar.VisibilityName.Unlisted" xml:space="preserve"><value>Nimekirjast väljas</value></data>
+  <data name="Admin.Seminar.Create.Title" xml:space="preserve"><value>Uus sessioon</value></data>
+  <data name="Admin.Seminar.Create.Lede" xml:space="preserve"><value>Kirjuta see kõigepealt {0} keeles — kõik teised keeled taanduvad selle peale ja ilma selleta ei saa sessiooni avaldada. Ülejäänud tõlked saavad oma vahelehed, kui see on olemas.</value></data>
+  <data name="Admin.Seminar.CreateSubmit" xml:space="preserve"><value>Loo sessioon</value></data>
+  <data name="Admin.Seminar.Cancel" xml:space="preserve"><value>Loobu</value></data>
+  <data name="Admin.Seminar.Section.Copy" xml:space="preserve"><value>Tekst — {0}</value></data>
+  <data name="Admin.Seminar.Section.Details" xml:space="preserve"><value>Ajakava, hind ja nähtavus</value></data>
+  <data name="Admin.Seminar.Section.Media" xml:space="preserve"><value>Meediakogu</value></data>
+  <data name="Admin.Seminar.Section.Danger" xml:space="preserve"><value>Kustuta see sessioon</value></data>
+  <data name="Admin.Seminar.PublishedOn" xml:space="preserve"><value>Avaldatud {0}</value></data>
+  <data name="Admin.Seminar.NeverPublished" xml:space="preserve"><value>Pole kunagi avaldatud</value></data>
+  <data name="Admin.Seminar.EnrolledCount" xml:space="preserve"><value>{0} registreerunut</value></data>
+  <data name="Admin.Seminar.Publish" xml:space="preserve"><value>Avalda</value></data>
+  <data name="Admin.Seminar.Unpublish" xml:space="preserve"><value>Tagasi mustandiks</value></data>
+  <data name="Admin.Seminar.Archive" xml:space="preserve"><value>Arhiveeri</value></data>
+  <data name="Admin.Seminar.Preview" xml:space="preserve"><value>Vaata lehte</value></data>
+  <data name="Admin.Seminar.Status.Draft" xml:space="preserve"><value>Tagasi mustandiks — see on avalikust loendist väljas.</value></data>
+  <data name="Admin.Seminar.Status.Published" xml:space="preserve"><value>Avaldatud. See on nüüd väljas.</value></data>
+  <data name="Admin.Seminar.Status.Archived" xml:space="preserve"><value>Arhiveeritud. Kõik registreerunud säilitavad ligipääsu.</value></data>
+  <data name="Admin.Seminar.DefaultLanguage" xml:space="preserve"><value>vaikimisi</value></data>
+  <data name="Admin.Seminar.NotTranslated" xml:space="preserve"><value>kirjutamata</value></data>
+  <data name="Admin.Seminar.FallbackNotice" xml:space="preserve"><value>Siia pole veel midagi kirjutatud — selle keele lugejad näevad praegu {0} versiooni.</value></data>
+  <data name="Admin.Seminar.SaveCopy" xml:space="preserve"><value>Salvesta {0} tekst</value></data>
+  <data name="Admin.Seminar.DeleteTranslation" xml:space="preserve"><value>Eemalda see tõlge</value></data>
+  <data name="Admin.Seminar.DeleteTranslation.Confirm" xml:space="preserve"><value>Eemaldada {0} tõlge? Selle keele lugejad taanduvad vaikeversioonile.</value></data>
+  <data name="Admin.Seminar.Media.Lede" xml:space="preserve"><value>Selle sessiooni video, pildid ja slaidid. Neid saavad avada ainult registreerunud — failid voogesitatakse rakenduse kaudu, mitte kunagi tavaliste staatiliste URL-idena.</value></data>
+  <data name="Admin.Seminar.Media.File" xml:space="preserve"><value>Fail</value></data>
+  <data name="Admin.Seminar.Media.Caption" xml:space="preserve"><value>Pildiallkiri</value></data>
+  <data name="Admin.Seminar.Media.Upload" xml:space="preserve"><value>Laadi üles</value></data>
+  <data name="Admin.Seminar.Media.Limits" xml:space="preserve"><value>JPG, PNG, WebP, AVIF, GIF, MP4, WebM, MOV, MP3, M4A, PDF. Video kuni 512 MB, heli 128 MB, GIF 24 MB, pildid 12 MB.</value></data>
+  <data name="Admin.Seminar.Media.Empty" xml:space="preserve"><value>Midagi pole veel üles laaditud.</value></data>
+  <data name="Admin.Seminar.Media.Inline" xml:space="preserve"><value>artiklis</value></data>
+  <data name="Admin.Seminar.Media.IsCover" xml:space="preserve"><value>Kaanepilt</value></data>
+  <data name="Admin.Seminar.Media.MakeCover" xml:space="preserve"><value>Kasuta kaanepildina</value></data>
+  <data name="Admin.Seminar.Media.Remove" xml:space="preserve"><value>Eemalda</value></data>
+  <data name="Admin.Seminar.Media.Remove.Confirm" xml:space="preserve"><value>Eemaldada see fail? See kaob sessioonilt ja kustutatakse kettalt.</value></data>
+  <data name="Admin.Seminar.MediaKind.Image" xml:space="preserve"><value>Pilt</value></data>
+  <data name="Admin.Seminar.MediaKind.Animation" xml:space="preserve"><value>Animatsioon</value></data>
+  <data name="Admin.Seminar.MediaKind.Video" xml:space="preserve"><value>Video</value></data>
+  <data name="Admin.Seminar.MediaKind.Audio" xml:space="preserve"><value>Heli</value></data>
+  <data name="Admin.Seminar.MediaKind.Document" xml:space="preserve"><value>Dokument</value></data>
+  <data name="Admin.Seminar.SaveDetails" xml:space="preserve"><value>Salvesta üksikasjad</value></data>
+  <data name="Admin.Seminar.BackToList" xml:space="preserve"><value>Tagasi sessioonide juurde</value></data>
+  <data name="Admin.Seminar.BackToSeminar" xml:space="preserve"><value>Tagasi sessiooni juurde</value></data>
+  <data name="Admin.Seminar.Delete" xml:space="preserve"><value>Kustuta jäädavalt</value></data>
+  <data name="Admin.Seminar.Delete.Hint" xml:space="preserve"><value>Võimalik ainult seni, kuni keegi pole registreerunud. Kui on, arhiveeri see hoopis — nad säilitavad ligipääsu.</value></data>
+  <data name="Admin.Seminar.Delete.Confirm" xml:space="preserve"><value>Kustutada see sessioon, selle tekst kõigis keeltes ja kõik üleslaaditud failid? Seda ei saa tagasi võtta.</value></data>
+  <data name="Admin.Seminar.Created" xml:space="preserve"><value>"{0}" on loodud. Lisa järgmiseks meedia ja teised keeled.</value></data>
+  <data name="Admin.Seminar.Saved" xml:space="preserve"><value>Üksikasjad salvestatud.</value></data>
+  <data name="Admin.Seminar.TranslationSaved" xml:space="preserve"><value>{0} tekst salvestatud.</value></data>
+  <data name="Admin.Seminar.TranslationDeleted" xml:space="preserve"><value>{0} tõlge eemaldatud.</value></data>
+  <data name="Admin.Seminar.MediaAdded" xml:space="preserve"><value>"{0}" üles laaditud.</value></data>
+  <data name="Admin.Seminar.MediaRemoved" xml:space="preserve"><value>Fail eemaldatud.</value></data>
+  <data name="Admin.Seminar.CoverSet" xml:space="preserve"><value>Kaanepilt uuendatud.</value></data>
+  <data name="Admin.Seminar.Deleted" xml:space="preserve"><value>Sessioon kustutatud.</value></data>
+  <data name="Admin.Seminar.Enrolments.Title" xml:space="preserve"><value>Registreerumised — {0}</value></data>
+  <data name="Admin.Seminar.Enrolments.Empty" xml:space="preserve"><value>Keegi pole veel registreerunud.</value></data>
+  <data name="Admin.Seminar.Enrolments.Member" xml:space="preserve"><value>Liige</value></data>
+  <data name="Admin.Seminar.Enrolments.Status" xml:space="preserve"><value>Olek</value></data>
+  <data name="Admin.Seminar.Enrolments.GrantedVia" xml:space="preserve"><value>Kuidas</value></data>
+  <data name="Admin.Seminar.Enrolments.Paid" xml:space="preserve"><value>Makstud</value></data>
+  <data name="Admin.Seminar.Enrolments.Confirmed" xml:space="preserve"><value>Kinnitatud</value></data>
+  <data name="Admin.Seminar.EnrolmentStatus.Pending" xml:space="preserve"><value>Makse ootel</value></data>
+  <data name="Admin.Seminar.EnrolmentStatus.Confirmed" xml:space="preserve"><value>Kinnitatud</value></data>
+  <data name="Admin.Seminar.EnrolmentStatus.Cancelled" xml:space="preserve"><value>Tühistatud</value></data>
+  <data name="Admin.Seminar.Grant.Free" xml:space="preserve"><value>Tasuta sessioon</value></data>
+  <data name="Admin.Seminar.Grant.Membership" xml:space="preserve"><value>Liikmesus</value></data>
+  <data name="Admin.Seminar.Grant.Purchase" xml:space="preserve"><value>Ostetud</value></data>
+  <data name="Admin.Seminar.Grant.Comped" xml:space="preserve"><value>Antud administraatori poolt</value></data>
+  <data name="Seminars.Preview.Heading" xml:space="preserve"><value>Toimetaja eelvaade.</value></data>
+  <data name="Seminars.Preview.Body" xml:space="preserve"><value>Näed sisu sellepärast, et oled sisse loginud toimetajana, mitte sellepärast, et registreerusid. Allolev paneel on see, mida näeks tavaline külastaja.</value></data>
+  <data name="Account.NavSessions" xml:space="preserve"><value>Minu sessioonid</value></data>
+  <data name="Account.SessionsTitle" xml:space="preserve"><value>Minu sessioonid</value></data>
+  <data name="Account.NoSessions" xml:space="preserve"><value>Sa pole veel ühelegi sessioonile registreerunud.</value></data>
+  <data name="Account.BrowseSessions" xml:space="preserve"><value>Sirvi sessioone</value></data>
 </root>

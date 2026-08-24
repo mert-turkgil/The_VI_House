@@ -7,5 +7,9 @@ public enum NotificationType
     ApplicationApproved,
     Payment,
     EventUpdate,
-    NewSchedule
+    NewSchedule,
+
+    /// <summary>A place on a VI House Session is confirmed — free, membership-covered or paid.
+    /// Appended rather than slotted in, so the stored ordinals of the four above are unchanged.</summary>
+    SeminarEnrolled
 }

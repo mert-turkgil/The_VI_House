@@ -6,6 +6,10 @@
  *
  * If it fails to load, the page is still usable — the same secret is printed underneath as text for
  * manual entry, which is why that fallback is never hidden behind the QR code.
+ *
+ * The accessible label and the failure message arrive as data attributes: this page is localised
+ * (EN/DE/TR/ET) and the bundle cannot read the .resx files, so hard-coding English here would have
+ * been the one untranslated string on an otherwise translated page.
  */
 export function initAuthenticatorQr(): void {
   const target = document.querySelector<HTMLElement>('[data-qr-uri]');
@@ -18,7 +22,7 @@ export function initAuthenticatorQr(): void {
     .then(({ default: QRCode }) => {
       const canvas = document.createElement('canvas');
       canvas.setAttribute('role', 'img');
-      canvas.setAttribute('aria-label', 'QR code for your authenticator app');
+      canvas.setAttribute('aria-label', target.dataset.qrLabel ?? 'QR code for your authenticator app');
       target.appendChild(canvas);
 
       return QRCode.toCanvas(canvas, uri, {
@@ -30,7 +34,8 @@ export function initAuthenticatorQr(): void {
       });
     })
     .catch(() => {
-      target.textContent = 'Couldn’t draw the QR code — use the setup key below instead.';
+      target.textContent =
+        target.dataset.qrError ?? 'Couldn’t draw the QR code — use the setup key below instead.';
       target.classList.add('onboarding-qr--failed');
     });
 }

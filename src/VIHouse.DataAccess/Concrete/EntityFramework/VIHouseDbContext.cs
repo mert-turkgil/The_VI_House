@@ -13,6 +13,7 @@ using VIHouse.Entities.Journal;
 using VIHouse.Entities.Membership;
 using VIHouse.Entities.Notifications;
 using VIHouse.Entities.Referrals;
+using VIHouse.Entities.Seminars;
 using VIHouse.Entities.Users;
 
 namespace VIHouse.DataAccess.Concrete.EntityFramework;
@@ -56,6 +57,11 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
 
     public DbSet<Ambassador> Ambassadors => Set<Ambassador>();
     public DbSet<ReferralVisit> ReferralVisits => Set<ReferralVisit>();
+
+    public DbSet<Seminar> Seminars => Set<Seminar>();
+    public DbSet<SeminarTranslation> SeminarTranslations => Set<SeminarTranslation>();
+    public DbSet<SeminarMedia> SeminarMedia => Set<SeminarMedia>();
+    public DbSet<SeminarEnrollment> SeminarEnrollments => Set<SeminarEnrollment>();
 
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<JournalPost> JournalPosts => Set<JournalPost>();

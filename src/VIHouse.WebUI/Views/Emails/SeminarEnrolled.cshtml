@@ -1,0 +1,27 @@
+@model SeminarEnrolledEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">You're enrolled</h1>
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    Your place on <strong>@Model.SeminarTitle</strong> is confirmed.
+</p>
+
+@if (Model.StartAtUtc is not null)
+{
+    <p style="margin:0 0 16px;">
+        It runs on @Model.StartAtUtc.Value.ToString("d MMMM yyyy") at
+        @Model.StartAtUtc.Value.ToString("HH:mm") UTC@(Model.IsOnline ? ", online" : string.IsNullOrWhiteSpace(Model.Location) ? "" : $", at {Model.Location}").
+    </p>
+}
+else
+{
+    <p style="margin:0 0 16px;">
+        It's available on demand — open it whenever suits you, as many times as you like.
+    </p>
+}
+
+<p style="margin:0 0 16px;">
+    <a href="@Model.SeminarUrl" style="color:#00230a;">Open the session</a>
+</p>
+
+<p style="margin:0;">&mdash; The VI House</p>

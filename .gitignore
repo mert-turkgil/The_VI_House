@@ -22,6 +22,11 @@ efbundle*
 ## DataProtection:KeysPath). These are secrets: they decrypt auth cookies and Identity tokens. ##
 **/App_Data/
 
+## Uploaded seminar media (Development default path — Production points elsewhere via
+## Media:RootPath). Real customer-facing content, sometimes large video; it belongs on the server
+## and in backups, never in the repository. ##
+**/App_Media/
+
 ## Node / npm / Vite (src/VIHouse.WebUI/ClientApp) ##
 node_modules/
 npm-debug.log*

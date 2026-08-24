@@ -255,4 +255,275 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Notif.ViewAll" xml:space="preserve"><value>Tüm bildirimleri görüntüle</value></data>
 
   <data name="Nav.Journal" xml:space="preserve"><value>Dergi</value></data>
+
+  <!-- Onboarding / two-factor enrolment (Controllers/OnboardingController.cs). -->
+  <data name="Onboarding.Title" xml:space="preserve"><value>Hesabınızı kurun</value></data>
+  <data name="Onboarding.Eyebrow.Admin" xml:space="preserve"><value>Yönetici erişimi</value></data>
+  <data name="Onboarding.Eyebrow.Member" xml:space="preserve"><value>The VI House'a hoş geldiniz</value></data>
+  <data name="Onboarding.Heading" xml:space="preserve"><value>İki adım kaldı, {0}</value></data>
+  <data name="Onboarding.Lede.Admin" xml:space="preserve"><value>Yönetici hesabınız hazır. Panel açılmadan önce e-posta adresinizi doğrulamamız ve iki faktörlü kimlik doğrulamayı açmamız gerekiyor — her ikisi de yönetici erişimi olan tüm hesaplar için zorunludur. Yaklaşık iki dakika sürer.</value></data>
+  <data name="Onboarding.Lede.Member" xml:space="preserve"><value>Ödemeniz alındı ve hesabınız oluşturuldu. Hesabınızı kullanabilmeniz için e-posta adresinizi doğrulamamız ve iki faktörlü kimlik doğrulamayı açmamız gerekiyor. Yaklaşık iki dakika sürer.</value></data>
+  <data name="Onboarding.Progress.AriaLabel" xml:space="preserve"><value>Kurulum ilerlemesi</value></data>
+  <data name="Onboarding.Progress.Label" xml:space="preserve"><value>{1} adımdan {0} tamamlandı</value></data>
+  <data name="Onboarding.Step1.Title" xml:space="preserve"><value>Parola belirlendi</value></data>
+  <data name="Onboarding.Step1.Body" xml:space="preserve"><value>Karşılama bağlantınızı açtığınızda bir parola belirlediniz. Burada yapılacak başka bir şey yok.</value></data>
+  <data name="Onboarding.Step2.Title" xml:space="preserve"><value>E-postanızı doğrulayın</value></data>
+  <data name="Onboarding.Step2.Done" xml:space="preserve"><value>{0} doğrulandı.</value></data>
+  <data name="Onboarding.Step2.Body.Admin" xml:space="preserve"><value>Size {0} adresinden ulaşabildiğimizden emin olmamız gerekiyor — hesap ve güvenlik bildirimleri oraya gider ve erişiminizi bu yolla geri alırsınız. Kendinize bir bağlantı gönderin ve tıklayın.</value></data>
+  <data name="Onboarding.Step2.Body.Member" xml:space="preserve"><value>Size {0} adresinden ulaşabildiğimizden emin olmamız gerekiyor — biletleriniz, etkinlik ayrıntıları ve makbuzlarınız oraya gider. Kendinize bir bağlantı gönderin ve tıklayın.</value></data>
+  <data name="Onboarding.Step2.Hint" xml:space="preserve"><value>Bağlantı 24 saat geçerlidir. Birkaç dakika içinde gelmezse, yenisini istemeden önce spam klasörünüzü kontrol edin.</value></data>
+  <data name="Onboarding.Step2.Send" xml:space="preserve"><value>Doğrulama e-postası gönder</value></data>
+  <data name="Onboarding.Step3.Title" xml:space="preserve"><value>İki faktörlü kimlik doğrulamayı açın</value></data>
+  <data name="Onboarding.Step3.Done" xml:space="preserve"><value>İki faktörlü kimlik doğrulama açık. Hesabınız korunuyor.</value></data>
+  <data name="Onboarding.Step3.Body.Admin" xml:space="preserve"><value>Yönetici hesapları her üyenin bilgilerini ve ödeme geçmişini görebilir, bu yüzden bu adım isteğe bağlı değildir. Çalınan bir parola tek başına yeterli olmaz — ayrıca telefonunuzdan 6 haneli bir kod gerekir. Taramanız için bir QR kod göstereceğiz.</value></data>
+  <data name="Onboarding.Step3.Body.Member" xml:space="preserve"><value>The House özel bir topluluktur. İki faktörlü doğrulama, çalınan bir parolanın hesabınıza girmek için tek başına yetmemesi demektir — ayrıca telefonunuzdan 6 haneli bir kod gerekir. Adım adım anlatacağız.</value></data>
+  <data name="Onboarding.Step3.Cta" xml:space="preserve"><value>İki faktörlü doğrulamayı kur</value></data>
+  <data name="Onboarding.Footnote" xml:space="preserve"><value>Takıldınız mı?</value></data>
+  <data name="Onboarding.Footnote.Link" xml:space="preserve"><value>Bize ulaşın, birlikte çözelim.</value></data>
+  <data name="Onboarding.Confirm.Sent" xml:space="preserve"><value>Doğrulama bağlantısı {0} adresine gönderildi. 24 saat geçerlidir.</value></data>
+  <data name="Onboarding.Confirm.Success.Title" xml:space="preserve"><value>E-posta doğrulandı</value></data>
+  <data name="Onboarding.Confirm.Success.Eyebrow" xml:space="preserve"><value>E-posta doğrulandı</value></data>
+  <data name="Onboarding.Confirm.Success.Heading" xml:space="preserve"><value>Adresiniz doğrulandı</value></data>
+  <data name="Onboarding.Confirm.Success.Body" xml:space="preserve"><value>Teşekkürler — artık size ulaşabileceğimizi biliyoruz. Kurulumu tamamlamak için geri dönün.</value></data>
+  <data name="Onboarding.Confirm.Success.Cta" xml:space="preserve"><value>Kuruluma devam et</value></data>
+  <data name="Onboarding.Confirm.Fail.Title" xml:space="preserve"><value>Doğrulama başarısız</value></data>
+  <data name="Onboarding.Confirm.Fail.Eyebrow" xml:space="preserve"><value>Bir şeyler ters gitti</value></data>
+  <data name="Onboarding.Confirm.Fail.Heading" xml:space="preserve"><value>Bu bağlantıyı doğrulayamadık</value></data>
+  <data name="Onboarding.Confirm.Fail.Cta" xml:space="preserve"><value>Kuruluma dön</value></data>
+  <data name="Onboarding.Confirm.Error.Incomplete" xml:space="preserve"><value>Bu doğrulama bağlantısı eksik.</value></data>
+  <data name="Onboarding.Confirm.Error.NotFound" xml:space="preserve"><value>Bu hesabı bulamadık.</value></data>
+  <data name="Onboarding.Confirm.Error.Malformed" xml:space="preserve"><value>Bu doğrulama bağlantısı hatalı biçimlendirilmiş.</value></data>
+  <data name="Onboarding.Confirm.Error.Expired" xml:space="preserve"><value>Bu bağlantının süresi dolmuş veya daha önce kullanılmış. Giriş yapıp yenisini isteyin.</value></data>
+  <data name="Onboarding.TwoFactor.Title" xml:space="preserve"><value>İki faktörlü kimlik doğrulamayı kurun</value></data>
+  <data name="Onboarding.TwoFactor.Heading" xml:space="preserve"><value>İki faktörlü kimlik doğrulamayı kurun</value></data>
+  <data name="Onboarding.TwoFactor.Back" xml:space="preserve"><value>Kuruluma dön</value></data>
+  <data name="Onboarding.TwoFactor.Eyebrow" xml:space="preserve"><value>3 adımdan 3.</value></data>
+  <data name="Onboarding.TwoFactor.Lede" xml:space="preserve"><value>Telefonunuzda ücretsiz bir kimlik doğrulayıcı uygulama kullanacaksınız. Her 30 saniyede bir değişen 6 haneli bir kod gösterir — her girişte bir tanesini gireceksiniz.</value></data>
+  <data name="Onboarding.TwoFactor.Step1.Title" xml:space="preserve"><value>Bir kimlik doğrulayıcı uygulama yükleyin</value></data>
+  <data name="Onboarding.TwoFactor.Step1.Body" xml:space="preserve"><value>Henüz yoksa, telefonunuzun uygulama mağazasından Google Authenticator, Microsoft Authenticator veya 1Password yükleyin. Hepsi çalışır — tercih ettiğinizi seçin.</value></data>
+  <data name="Onboarding.TwoFactor.Step2.Title" xml:space="preserve"><value>The VI House'u ekleyin</value></data>
+  <data name="Onboarding.TwoFactor.Step2.Body" xml:space="preserve"><value>Uygulamayı açın, QR kodu tara seçeneğini seçin ve telefonunuzu buna doğrultun:</value></data>
+  <data name="Onboarding.TwoFactor.Step2.CantScan" xml:space="preserve"><value>Tarayamıyor musunuz? Bunun yerine Kurulum anahtarı gir seçeneğini seçip bunu yazın. Boşluklar ve büyük/küçük harf fark etmez.</value></data>
+  <data name="Onboarding.TwoFactor.Step3.Title" xml:space="preserve"><value>Size gösterdiği kodu girin</value></data>
+  <data name="Onboarding.TwoFactor.Step3.Body" xml:space="preserve"><value>Uygulamanız The VI House için 6 haneli bir kod göstermeye başlayacak. Çalıştığını doğrulamak için güncel olanı buraya yazın.</value></data>
+  <data name="Onboarding.TwoFactor.CodeLabel" xml:space="preserve"><value>Doğrulama kodu</value></data>
+  <data name="Onboarding.TwoFactor.Submit" xml:space="preserve"><value>Doğrula ve etkinleştir</value></data>
+  <data name="Onboarding.TwoFactor.Footnote" xml:space="preserve"><value>Kodlar saate bağlıdır; kodunuz sürekli reddediliyorsa telefonunuzun tarih ve saatinin otomatik ayarlandığını kontrol edin.</value></data>
+  <data name="Onboarding.TwoFactor.QrLabel" xml:space="preserve"><value>Kimlik doğrulayıcı uygulamanız için QR kod</value></data>
+  <data name="Onboarding.TwoFactor.QrError" xml:space="preserve"><value>QR kod çizilemedi — bunun yerine aşağıdaki kurulum anahtarını kullanın.</value></data>
+  <data name="Onboarding.TwoFactor.Error.Invalid" xml:space="preserve"><value>Bu kod eşleşmedi. Kodlar her 30 saniyede bir değişir — yeni bir kod bekleyip tekrar deneyin. Sorun sürerse telefonunuzun saatinin otomatik ayarlandığını kontrol edin.</value></data>
+  <data name="Onboarding.TwoFactor.Error.Required" xml:space="preserve"><value>Kimlik doğrulayıcı uygulamanızdaki 6 haneli kodu girin.</value></data>
+  <data name="Onboarding.TwoFactor.Error.Length" xml:space="preserve"><value>Kod 6 hanelidir.</value></data>
+  <data name="Onboarding.Codes.Title" xml:space="preserve"><value>Kurtarma kodlarınızı kaydedin</value></data>
+  <data name="Onboarding.Codes.Eyebrow" xml:space="preserve"><value>Neredeyse bitti</value></data>
+  <data name="Onboarding.Codes.Heading" xml:space="preserve"><value>Kurtarma kodlarınızı kaydedin</value></data>
+  <data name="Onboarding.Codes.Lede" xml:space="preserve"><value>İki faktörlü kimlik doğrulama açık. Telefonunuzu kaybederseniz bu kodlar geri dönüş yolunuzdur — her biri bir kez çalışır. Yalnızca bu sefer gösterilirler.</value></data>
+  <data name="Onboarding.Codes.Hint" xml:space="preserve"><value>Telefonunuz olmadan da erişebileceğiniz bir yerde saklayın — bir parola yöneticisinde ya da yazdırıp pasaportunuzla birlikte. Yalnızca kodları üreten telefonda saklamayın.</value></data>
+  <data name="Onboarding.Codes.Download" xml:space="preserve"><value>Metin dosyası olarak indir</value></data>
+  <data name="Onboarding.Codes.Filename" xml:space="preserve"><value>vi-house-kurtarma-kodlari.txt</value></data>
+  <data name="Onboarding.Codes.Ack" xml:space="preserve"><value>Bu kodları telefonum olmadan da erişebileceğim bir yere kaydettim.</value></data>
+  <data name="Onboarding.Codes.Confirm" xml:space="preserve"><value>Kurulumu bitir</value></data>
+  <data name="Onboarding.Codes.Error.MustAcknowledge" xml:space="preserve"><value>Kurtarma kodlarınızı kaydettiğinizi onaylamak için kutuyu işaretleyin — tekrar gösterilemezler.</value></data>
+  <data name="Onboarding.Done.Title" xml:space="preserve"><value>Her şey hazır</value></data>
+  <data name="Onboarding.Done.Eyebrow" xml:space="preserve"><value>Her şey hazır</value></data>
+  <data name="Onboarding.Done.Heading" xml:space="preserve"><value>House'a hoş geldiniz, {0}</value></data>
+  <data name="Onboarding.Done.Admin.Lede" xml:space="preserve"><value>Hesabınız güvence altında ve yönetici erişiminiz etkin. Bundan sonra her girişte kimlik doğrulayıcı uygulamanızdan bir kod istenecek.</value></data>
+  <data name="Onboarding.Done.Admin.Cta" xml:space="preserve"><value>Yönetici panelini aç</value></data>
+  <data name="Onboarding.Done.Admin.Footnote" xml:space="preserve"><value>Kurtarma kodlarınızı güvenli bir yerde saklayın — telefonunuz olmadan bir yönetici hesabına dönmenin tek yolu onlardır.</value></data>
+  <data name="Onboarding.Done.Member.Lede" xml:space="preserve"><value>Hesabınız güvence altında ve {0} üyeliğiniz etkin. Topluluk size açık.</value></data>
+  <data name="Onboarding.Done.Member.FallbackPlan" xml:space="preserve"><value>üyelik</value></data>
+  <data name="Onboarding.Done.Member.Cta1" xml:space="preserve"><value>Topluluğa katıl</value></data>
+  <data name="Onboarding.Done.Member.Cta2" xml:space="preserve"><value>Üye kartınızı görüntüleyin</value></data>
+  <data name="Onboarding.Done.Member.Footnote" xml:space="preserve"><value>Topluluk sayfasında Discord daveti ve canlı yayın bağlantıları bulunur. Yalnızca üyelere özeldir, lütfen paylaşmayın.</value></data>
+  <data name="Onboarding.Done.Ticket.Lede" xml:space="preserve"><value>Hesabınız güvence altında ve biletiniz onaylandı. Bileti ve etkinlik ayrıntılarını rezervasyonlarınızda bulacaksınız.</value></data>
+  <data name="Onboarding.Done.Ticket.Cta1" xml:space="preserve"><value>Biletinizi görüntüleyin</value></data>
+  <data name="Onboarding.Done.Ticket.Cta2" xml:space="preserve"><value>Üyeliği keşfedin</value></data>
+  <data name="Onboarding.Done.Ticket.Footnote" xml:space="preserve"><value>Tek bir deneyim için bilet aldınız. Tam üyelik; üye rehberini, topluluk Discord'unu ve tüm House buluşmalarına erişimi ekler.</value></data>
+
+  <!-- The VI House Sessions: public pages, service-layer error keys, admin panel. -->
+  <data name="Nav.Sessions" xml:space="preserve"><value>Oturumlar</value></data>
+  <data name="Seminars.Title" xml:space="preserve"><value>The VI House Oturumları</value></data>
+  <data name="Seminars.Eyebrow" xml:space="preserve"><value>Oturumlar</value></data>
+  <data name="Seminars.Heading" xml:space="preserve"><value>The VI House Oturumları</value></data>
+  <data name="Seminars.Subheading" xml:space="preserve"><value>Atölyeler, kurucu oturumları ve seminerler — üyeler için canlı yapılır, sonra burada saklanır.</value></data>
+  <data name="Seminars.Empty" xml:space="preserve"><value>Henüz yayımlanmış oturum yok — kısa süre sonra tekrar bakın.</value></data>
+  <data name="Seminars.Past" xml:space="preserve"><value>Geçmiş oturum</value></data>
+  <data name="Seminars.OnDemand" xml:space="preserve"><value>İstediğiniz zaman</value></data>
+  <data name="Seminars.Online" xml:space="preserve"><value>Çevrim içi</value></data>
+  <data name="Seminars.InPerson" xml:space="preserve"><value>Yüz yüze</value></data>
+  <data name="Seminars.Free" xml:space="preserve"><value>Ücretsiz</value></data>
+  <data name="Seminars.IncludedWithMembership" xml:space="preserve"><value>Üyeliğe dahil</value></data>
+  <data name="Seminars.Materials" xml:space="preserve"><value>Oturum materyalleri</value></data>
+  <data name="Seminars.Download" xml:space="preserve"><value>İndir</value></data>
+  <data name="Seminars.Enrol" xml:space="preserve"><value>Kaydol</value></data>
+  <data name="Seminars.EnrolFree" xml:space="preserve"><value>Kaydol — dahil</value></data>
+  <data name="Seminars.Buy" xml:space="preserve"><value>{0} karşılığında kaydol</value></data>
+  <data name="Seminars.SeeMembership" xml:space="preserve"><value>Üyeliği incele</value></data>
+  <data name="Seminars.SeatsLeft" xml:space="preserve"><value>{0} yer kaldı.</value></data>
+  <data name="Seminars.BackToAll" xml:space="preserve"><value>Tüm oturumlar</value></data>
+  <data name="Seminars.Enrolled" xml:space="preserve"><value>Kaydınız tamam. Oturum aşağıda açık.</value></data>
+  <data name="Seminars.Access.Enrolled" xml:space="preserve"><value>Bu oturuma kayıtlısınız.</value></data>
+  <data name="Seminars.Access.SignIn.Heading" xml:space="preserve"><value>Katılmak için giriş yapın</value></data>
+  <data name="Seminars.Access.SignIn.Body" xml:space="preserve"><value>Oturumlar House üyelerine özeldir. Yerinizi almak için giriş yapın veya bize katılmak için başvurun.</value></data>
+  <data name="Seminars.Access.Free.Heading" xml:space="preserve"><value>Bu bizden</value></data>
+  <data name="Seminars.Access.Free.Body" xml:space="preserve"><value>Kaydolun, oturum hemen açılır — ödeme gerekmez.</value></data>
+  <data name="Seminars.Access.Included.Heading" xml:space="preserve"><value>Üyeliğinize dahil</value></data>
+  <data name="Seminars.Access.Included.Body" xml:space="preserve"><value>Bu oturum normalde {0} tutarındadır. Üyeliğiniz bunu kapsıyor — kaydolun, hemen açılır.</value></data>
+  <data name="Seminars.Access.Pay.Heading" xml:space="preserve"><value>Yerinizi alın — {0}</value></data>
+  <data name="Seminars.Access.Pay.Body" xml:space="preserve"><value>Oturumun tamamına ve onunla birlikte kaydedilen her şeye, istediğiniz zaman dönebilecek şekilde erişirsiniz.</value></data>
+  <data name="Seminars.Access.Pay.MembershipHint" xml:space="preserve"><value>Üyeler için ek ücret yoktur.</value></data>
+  <data name="Seminars.Access.Pending.Heading" xml:space="preserve"><value>Ödeme sürüyor</value></data>
+  <data name="Seminars.Access.Pending.Body" xml:space="preserve"><value>Ödemenizin onaylanmasını bekliyoruz. Onay geldiği anda bu sayfa açılacak — genellikle kısa sürer.</value></data>
+  <data name="Seminars.Access.SoldOut.Heading" xml:space="preserve"><value>Kontenjan doldu</value></data>
+  <data name="Seminars.Access.SoldOut.Body" xml:space="preserve"><value>Bu oturumdaki tüm yerler doldu. Bunları düzenli olarak yapıyoruz — bir sonrakini burada göreceksiniz.</value></data>
+  <data name="Seminars.Access.Closed.Heading" xml:space="preserve"><value>Şu anda açık değil</value></data>
+  <data name="Seminars.Access.Closed.Body" xml:space="preserve"><value>Bu oturum şu anda kayıt almıyor.</value></data>
+  <data name="Seminars.Success.Title" xml:space="preserve"><value>Kaydınız tamam</value></data>
+  <data name="Seminars.Success.Heading" xml:space="preserve"><value>Kaydınız tamam</value></data>
+  <data name="Seminars.Success.Body" xml:space="preserve"><value>{0} oturumundaki yeriniz onaylandı. Kayıtlarınız için bir kopyayı e-postayla gönderdik.</value></data>
+  <data name="Seminars.Success.Open" xml:space="preserve"><value>Oturumu aç</value></data>
+  <data name="Seminars.Processing.Heading" xml:space="preserve"><value>Ödemeniz onaylanıyor</value></data>
+  <data name="Seminars.Processing.Body" xml:space="preserve"><value>Bu birkaç saniye sürer. Sayfa kendiliğinden yenilenecek — tekrar ödeme yapmanıza gerek yok.</value></data>
+  <data name="Seminars.Cancelled.Title" xml:space="preserve"><value>Kayıt iptal edildi</value></data>
+  <data name="Seminars.Cancelled.Heading" xml:space="preserve"><value>Herhangi bir ücret alınmadı</value></data>
+  <data name="Seminars.Cancelled.Body" xml:space="preserve"><value>Ödeme yapmadan çıktınız, bu yüzden yeriniz alınmadı. İstediğiniz zaman kaldığınız yerden devam edebilirsiniz.</value></data>
+  <data name="Seminars.Cancelled.TryAgain" xml:space="preserve"><value>Oturuma dön</value></data>
+  <data name="Seminar.Error.Unknown" xml:space="preserve"><value>Bir şeyler ters gitti. Lütfen tekrar deneyin.</value></data>
+  <data name="Seminar.Error.NotFound" xml:space="preserve"><value>Bu oturum artık mevcut değil.</value></data>
+  <data name="Seminar.Error.AlreadyEnrolled" xml:space="preserve"><value>Bu oturuma zaten kayıtlısınız.</value></data>
+  <data name="Seminar.Error.PaymentPending" xml:space="preserve"><value>Bu oturum için hâlâ süren bir ödeme var. Tekrar denemeden önce biraz bekleyin.</value></data>
+  <data name="Seminar.Error.SoldOut" xml:space="preserve"><value>Bu oturumdaki tüm yerler doldu.</value></data>
+  <data name="Seminar.Error.NotOpen" xml:space="preserve"><value>Bu oturum şu anda kayıt almıyor.</value></data>
+  <data name="Seminar.Error.PaymentRequired" xml:space="preserve"><value>Bu oturum ücretlidir — ödeme adımına gitmek için kaydol düğmesini kullanın.</value></data>
+  <data name="Seminar.Error.NoPaymentNeeded" xml:space="preserve"><value>Bu oturum için ödenecek bir şey yok.</value></data>
+  <data name="Seminar.Error.SignInRequired" xml:space="preserve"><value>Yerinizi almak için lütfen giriş yapın.</value></data>
+  <data name="Seminar.Error.AccountMissing" xml:space="preserve"><value>Hesabınızı bulamadık — lütfen tekrar giriş yapın.</value></data>
+  <data name="Seminar.Error.ProviderUnreachable" xml:space="preserve"><value>Ödeme sağlayıcısına ulaşamadık — lütfen birazdan tekrar deneyin.</value></data>
+  <data name="Seminar.Error.SlugTaken" xml:space="preserve"><value>Bu web adresini başka bir oturum kullanıyor. Farklı bir adres seçin.</value></data>
+  <data name="Seminar.Error.NeedsDefaultTranslation" xml:space="preserve"><value>Yayımlamadan önce İngilizce metni yazın — diğer tüm diller ona geri döner.</value></data>
+  <data name="Seminar.Error.CannotDeleteDefaultTranslation" xml:space="preserve"><value>İngilizce metin kaldırılamaz — diğer tüm dillerin geri döndüğü metin odur.</value></data>
+  <data name="Seminar.Error.HasEnrolments" xml:space="preserve"><value>Bu oturuma kayıt olanlar var, bu yüzden silinemez. Bunun yerine arşivleyin — kayıtlı herkes erişimini korur.</value></data>
+  <data name="Seminar.Error.MediaType" xml:space="preserve"><value>Bu dosya türü desteklenmiyor. JPG, PNG, WebP, AVIF, GIF, MP4, WebM, MOV, MP3, M4A veya PDF kullanın.</value></data>
+  <data name="Seminar.Error.MediaTooLarge" xml:space="preserve"><value>Bu dosya çok büyük. Video en fazla 512 MB, ses 128 MB, görseller 12 MB olabilir.</value></data>
+  <data name="Seminar.Error.MediaEmpty" xml:space="preserve"><value>Yüklemek için bir dosya seçin.</value></data>
+  <data name="Seminar.Error.MediaFailed" xml:space="preserve"><value>Bu dosya kaydedilemedi. Lütfen tekrar deneyin.</value></data>
+  <data name="Seminar.Error.MediaNotFound" xml:space="preserve"><value>Bu dosya artık bu oturuma bağlı değil.</value></data>
+  <data name="Seminar.Error.CoverMustBeImage" xml:space="preserve"><value>Kapak bir görsel olmalıdır.</value></data>
+  <data name="Seminar.Validation.Slug" xml:space="preserve"><value>Yalnızca küçük harf, rakam ve tire.</value></data>
+  <data name="Admin.Seminar.Slug" xml:space="preserve"><value>Web adresi</value></data>
+  <data name="Admin.Seminar.Visibility" xml:space="preserve"><value>Kimler görebilir</value></data>
+  <data name="Admin.Seminar.HostName" xml:space="preserve"><value>Sunan</value></data>
+  <data name="Admin.Seminar.HostTitle" xml:space="preserve"><value>Sunanın unvanı</value></data>
+  <data name="Admin.Seminar.IsOnline" xml:space="preserve"><value>Çevrim içi yapılıyor</value></data>
+  <data name="Admin.Seminar.Location" xml:space="preserve"><value>Nerede</value></data>
+  <data name="Admin.Seminar.TimeZone" xml:space="preserve"><value>Saat dilimi</value></data>
+  <data name="Admin.Seminar.StartAt" xml:space="preserve"><value>Başlangıç (UTC)</value></data>
+  <data name="Admin.Seminar.EndAt" xml:space="preserve"><value>Bitiş (UTC)</value></data>
+  <data name="Admin.Seminar.Capacity" xml:space="preserve"><value>Kontenjan</value></data>
+  <data name="Admin.Seminar.Price" xml:space="preserve"><value>Fiyat</value></data>
+  <data name="Admin.Seminar.Currency" xml:space="preserve"><value>Para birimi</value></data>
+  <data name="Admin.Seminar.IncludedWithMembership" xml:space="preserve"><value>Aktif üyeliği olan üyeler için ücretsiz</value></data>
+  <data name="Admin.Seminar.SortOrder" xml:space="preserve"><value>Sıralama</value></data>
+  <data name="Admin.Seminar.Title" xml:space="preserve"><value>Başlık</value></data>
+  <data name="Admin.Seminar.Summary" xml:space="preserve"><value>Özet</value></data>
+  <data name="Admin.Seminar.Body" xml:space="preserve"><value>Oturum içeriği</value></data>
+  <data name="Admin.Seminar.SeoTitle" xml:space="preserve"><value>SEO başlığı</value></data>
+  <data name="Admin.Seminar.SeoDescription" xml:space="preserve"><value>SEO açıklaması</value></data>
+  <data name="Admin.Seminar.Slug.Hint" xml:space="preserve"><value>Bağlantıda görünür: /sessions/adresiniz. Küçük harf, rakam ve tire.</value></data>
+  <data name="Admin.Seminar.Visibility.Hint" xml:space="preserve"><value>"Yalnızca üyeler" gizli ayardır: üye olarak giriş yapmamış herkes giriş istemi yerine 404 alır. "Listelenmemiş" bağlantıyla erişilebilir ama listede görünmez.</value></data>
+  <data name="Admin.Seminar.StartAt.Hint" xml:space="preserve"><value>İstediğiniz zaman izlenen içerik için ikisini de boş bırakın — katılınacak bir oturumu olmayan kayıt.</value></data>
+  <data name="Admin.Seminar.Capacity.Hint" xml:space="preserve"><value>0 sınırsız demektir; bir kayıt için genellikle doğru olan budur.</value></data>
+  <data name="Admin.Seminar.Location.Hint" xml:space="preserve"><value>Kartta ve sayfada gösterilir — örneğin "Zoom" veya mekân.</value></data>
+  <data name="Admin.Seminar.Price.Hint" xml:space="preserve"><value>Tam birim olarak, örneğin 49,00. Görebilen herkes için ücretsiz yapmak üzere 0 girin.</value></data>
+  <data name="Admin.Seminar.IncludedWithMembership.Hint" xml:space="preserve"><value>Bu açıkken, aktif üyeliği olan bir üye tek tıkla kaydolur ve hiçbir zaman ödeme adımına gönderilmez. Diğer herkes yukarıdaki fiyatı öder.</value></data>
+  <data name="Admin.Seminar.Summary.Hint" xml:space="preserve"><value>Kimse kaydolmadan önce okunur — oturumu tek başına satması gereken kısım budur.</value></data>
+  <data name="Admin.Seminar.Body.Hint" xml:space="preserve"><value>Bunu yalnızca kaydolanlar okuyabilir. Görselleri ve GIF'leri doğrudan editöre bırakın; video ve slaytları aşağıdaki medya kitaplığından yükleyin.</value></data>
+  <data name="Admin.Seminar.Index.Title" xml:space="preserve"><value>Oturumlar</value></data>
+  <data name="Admin.Seminar.Index.Empty" xml:space="preserve"><value>Henüz oturum yok.</value></data>
+  <data name="Admin.Seminar.New" xml:space="preserve"><value>Yeni oturum</value></data>
+  <data name="Admin.Seminar.Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Admin.Seminar.Languages" xml:space="preserve"><value>Diller</value></data>
+  <data name="Admin.Seminar.OnDemand" xml:space="preserve"><value>İstendiğinde</value></data>
+  <data name="Admin.Seminar.FreeForMembers" xml:space="preserve"><value>Üyelere ücretsiz</value></data>
+  <data name="Admin.Seminar.Enrolments" xml:space="preserve"><value>Kayıtlar</value></data>
+  <data name="Admin.Seminar.StatusName.Draft" xml:space="preserve"><value>Taslak</value></data>
+  <data name="Admin.Seminar.StatusName.Published" xml:space="preserve"><value>Yayımlandı</value></data>
+  <data name="Admin.Seminar.StatusName.Archived" xml:space="preserve"><value>Arşivlendi</value></data>
+  <data name="Admin.Seminar.VisibilityName.Public" xml:space="preserve"><value>Herkese açık</value></data>
+  <data name="Admin.Seminar.VisibilityName.Members" xml:space="preserve"><value>Yalnızca üyeler</value></data>
+  <data name="Admin.Seminar.VisibilityName.Unlisted" xml:space="preserve"><value>Listelenmemiş</value></data>
+  <data name="Admin.Seminar.Create.Title" xml:space="preserve"><value>Yeni oturum</value></data>
+  <data name="Admin.Seminar.Create.Lede" xml:space="preserve"><value>Önce {0} dilinde yazın — diğer tüm diller buna geri döner ve bu olmadan bir oturum yayımlanamaz. Diğer çeviriler, oturum oluşturulduktan sonra kendi sekmelerini alır.</value></data>
+  <data name="Admin.Seminar.CreateSubmit" xml:space="preserve"><value>Oturumu oluştur</value></data>
+  <data name="Admin.Seminar.Cancel" xml:space="preserve"><value>Vazgeç</value></data>
+  <data name="Admin.Seminar.Section.Copy" xml:space="preserve"><value>Metin — {0}</value></data>
+  <data name="Admin.Seminar.Section.Details" xml:space="preserve"><value>Program, fiyat ve görünürlük</value></data>
+  <data name="Admin.Seminar.Section.Media" xml:space="preserve"><value>Medya kitaplığı</value></data>
+  <data name="Admin.Seminar.Section.Danger" xml:space="preserve"><value>Bu oturumu sil</value></data>
+  <data name="Admin.Seminar.PublishedOn" xml:space="preserve"><value>{0} tarihinde yayımlandı</value></data>
+  <data name="Admin.Seminar.NeverPublished" xml:space="preserve"><value>Hiç yayımlanmadı</value></data>
+  <data name="Admin.Seminar.EnrolledCount" xml:space="preserve"><value>{0} kayıt</value></data>
+  <data name="Admin.Seminar.Publish" xml:space="preserve"><value>Yayımla</value></data>
+  <data name="Admin.Seminar.Unpublish" xml:space="preserve"><value>Taslağa döndür</value></data>
+  <data name="Admin.Seminar.Archive" xml:space="preserve"><value>Arşivle</value></data>
+  <data name="Admin.Seminar.Preview" xml:space="preserve"><value>Sayfayı gör</value></data>
+  <data name="Admin.Seminar.Status.Draft" xml:space="preserve"><value>Taslağa döndürüldü — herkese açık listeden kaldırıldı.</value></data>
+  <data name="Admin.Seminar.Status.Published" xml:space="preserve"><value>Yayımlandı. Artık canlıda.</value></data>
+  <data name="Admin.Seminar.Status.Archived" xml:space="preserve"><value>Arşivlendi. Kaydolan herkes erişimini koruyor.</value></data>
+  <data name="Admin.Seminar.DefaultLanguage" xml:space="preserve"><value>varsayılan</value></data>
+  <data name="Admin.Seminar.NotTranslated" xml:space="preserve"><value>yazılmadı</value></data>
+  <data name="Admin.Seminar.FallbackNotice" xml:space="preserve"><value>Burada henüz bir şey yazılmadı — bu dildeki okuyucular şu anda {0} sürümünü görüyor.</value></data>
+  <data name="Admin.Seminar.SaveCopy" xml:space="preserve"><value>{0} metnini kaydet</value></data>
+  <data name="Admin.Seminar.DeleteTranslation" xml:space="preserve"><value>Bu çeviriyi kaldır</value></data>
+  <data name="Admin.Seminar.DeleteTranslation.Confirm" xml:space="preserve"><value>{0} çevirisi kaldırılsın mı? Bu dildeki okuyucular varsayılan sürüme geri döner.</value></data>
+  <data name="Admin.Seminar.Media.Lede" xml:space="preserve"><value>Bu oturuma ait video, görsel ve slaytlar. Bunları yalnızca kaydolanlar açabilir — dosyalar uygulama üzerinden akışla sunulur, düz statik URL olarak asla sunulmaz.</value></data>
+  <data name="Admin.Seminar.Media.File" xml:space="preserve"><value>Dosya</value></data>
+  <data name="Admin.Seminar.Media.Caption" xml:space="preserve"><value>Açıklama</value></data>
+  <data name="Admin.Seminar.Media.Upload" xml:space="preserve"><value>Yükle</value></data>
+  <data name="Admin.Seminar.Media.Limits" xml:space="preserve"><value>JPG, PNG, WebP, AVIF, GIF, MP4, WebM, MOV, MP3, M4A, PDF. Video en fazla 512 MB, ses 128 MB, GIF 24 MB, görseller 12 MB.</value></data>
+  <data name="Admin.Seminar.Media.Empty" xml:space="preserve"><value>Henüz bir şey yüklenmedi.</value></data>
+  <data name="Admin.Seminar.Media.Inline" xml:space="preserve"><value>makale içinde</value></data>
+  <data name="Admin.Seminar.Media.IsCover" xml:space="preserve"><value>Kapak</value></data>
+  <data name="Admin.Seminar.Media.MakeCover" xml:space="preserve"><value>Kapak yap</value></data>
+  <data name="Admin.Seminar.Media.Remove" xml:space="preserve"><value>Kaldır</value></data>
+  <data name="Admin.Seminar.Media.Remove.Confirm" xml:space="preserve"><value>Bu dosya kaldırılsın mı? Oturumdan kaybolur ve diskten silinir.</value></data>
+  <data name="Admin.Seminar.MediaKind.Image" xml:space="preserve"><value>Görsel</value></data>
+  <data name="Admin.Seminar.MediaKind.Animation" xml:space="preserve"><value>Animasyon</value></data>
+  <data name="Admin.Seminar.MediaKind.Video" xml:space="preserve"><value>Video</value></data>
+  <data name="Admin.Seminar.MediaKind.Audio" xml:space="preserve"><value>Ses</value></data>
+  <data name="Admin.Seminar.MediaKind.Document" xml:space="preserve"><value>Belge</value></data>
+  <data name="Admin.Seminar.SaveDetails" xml:space="preserve"><value>Ayrıntıları kaydet</value></data>
+  <data name="Admin.Seminar.BackToList" xml:space="preserve"><value>Oturumlara dön</value></data>
+  <data name="Admin.Seminar.BackToSeminar" xml:space="preserve"><value>Oturuma dön</value></data>
+  <data name="Admin.Seminar.Delete" xml:space="preserve"><value>Kalıcı olarak sil</value></data>
+  <data name="Admin.Seminar.Delete.Hint" xml:space="preserve"><value>Yalnızca hiç kimse kaydolmadıysa mümkündür. Biri kaydolduysa bunun yerine arşivleyin — erişimlerini korurlar.</value></data>
+  <data name="Admin.Seminar.Delete.Confirm" xml:space="preserve"><value>Bu oturum, tüm dillerdeki metni ve yüklenen tüm dosyalar silinsin mi? Bu geri alınamaz.</value></data>
+  <data name="Admin.Seminar.Created" xml:space="preserve"><value>"{0}" oluşturuldu. Sonraki adımda medyayı ve diğer dilleri ekleyin.</value></data>
+  <data name="Admin.Seminar.Saved" xml:space="preserve"><value>Ayrıntılar kaydedildi.</value></data>
+  <data name="Admin.Seminar.TranslationSaved" xml:space="preserve"><value>{0} metni kaydedildi.</value></data>
+  <data name="Admin.Seminar.TranslationDeleted" xml:space="preserve"><value>{0} çevirisi kaldırıldı.</value></data>
+  <data name="Admin.Seminar.MediaAdded" xml:space="preserve"><value>"{0}" yüklendi.</value></data>
+  <data name="Admin.Seminar.MediaRemoved" xml:space="preserve"><value>Dosya kaldırıldı.</value></data>
+  <data name="Admin.Seminar.CoverSet" xml:space="preserve"><value>Kapak güncellendi.</value></data>
+  <data name="Admin.Seminar.Deleted" xml:space="preserve"><value>Oturum silindi.</value></data>
+  <data name="Admin.Seminar.Enrolments.Title" xml:space="preserve"><value>Kayıtlar — {0}</value></data>
+  <data name="Admin.Seminar.Enrolments.Empty" xml:space="preserve"><value>Henüz kimse kaydolmadı.</value></data>
+  <data name="Admin.Seminar.Enrolments.Member" xml:space="preserve"><value>Üye</value></data>
+  <data name="Admin.Seminar.Enrolments.Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Admin.Seminar.Enrolments.GrantedVia" xml:space="preserve"><value>Nasıl</value></data>
+  <data name="Admin.Seminar.Enrolments.Paid" xml:space="preserve"><value>Ödenen</value></data>
+  <data name="Admin.Seminar.Enrolments.Confirmed" xml:space="preserve"><value>Onaylandı</value></data>
+  <data name="Admin.Seminar.EnrolmentStatus.Pending" xml:space="preserve"><value>Ödeme bekliyor</value></data>
+  <data name="Admin.Seminar.EnrolmentStatus.Confirmed" xml:space="preserve"><value>Onaylandı</value></data>
+  <data name="Admin.Seminar.EnrolmentStatus.Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Admin.Seminar.Grant.Free" xml:space="preserve"><value>Ücretsiz oturum</value></data>
+  <data name="Admin.Seminar.Grant.Membership" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Admin.Seminar.Grant.Purchase" xml:space="preserve"><value>Satın alındı</value></data>
+  <data name="Admin.Seminar.Grant.Comped" xml:space="preserve"><value>Yönetici tarafından verildi</value></data>
+  <data name="Seminars.Preview.Heading" xml:space="preserve"><value>Yönetici önizlemesi.</value></data>
+  <data name="Seminars.Preview.Body" xml:space="preserve"><value>İçeriği, kaydolduğunuz için değil yönetici olarak giriş yaptığınız için görüyorsunuz. Aşağıdaki panel, bir ziyaretçinin karşılaşacağı şeydir.</value></data>
+  <data name="Account.NavSessions" xml:space="preserve"><value>Oturumlarım</value></data>
+  <data name="Account.SessionsTitle" xml:space="preserve"><value>Oturumlarım</value></data>
+  <data name="Account.NoSessions" xml:space="preserve"><value>Henüz hiçbir oturuma kaydolmadınız.</value></data>
+  <data name="Account.BrowseSessions" xml:space="preserve"><value>Oturumlara göz at</value></data>
 </root>

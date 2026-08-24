@@ -1,27 +1,42 @@
-@model List<string>
+@model RecoveryCodesViewModel
 
 <div class="onboarding">
     <div class="container onboarding__inner onboarding__inner--narrow">
-        <span class="onboarding__eyebrow">Almost done</span>
-        <h1>Save your recovery codes</h1>
-        <p class="onboarding__lede">
-            Two-factor authentication is on. These codes are your way back in if you lose your phone
-            — each one works once. <strong>This is the only time they're shown.</strong>
-        </p>
+        <span class="onboarding__eyebrow">@Loc["Onboarding.Codes.Eyebrow"]</span>
+        <h1>@Loc["Onboarding.Codes.Heading"]</h1>
+        <p class="onboarding__lede">@Loc["Onboarding.Codes.Lede"]</p>
 
-        <div class="onboarding__codes">
-            @foreach (var code in Model)
+        <div class="onboarding__codes" data-recovery-codes>
+            @foreach (var code in Model.Codes)
             {
                 <code>@code</code>
             }
         </div>
 
-        <p class="onboarding__hint">
-            Store them somewhere you'll still have access to without your phone — a password manager,
-            or printed and kept with your passport. Don't save them only on the phone that generates
-            your codes.
-        </p>
+        @* Saves the codes as a .txt from the codes already on the page — no round trip, so the
+           plaintext set is never handed out a second time by the server. The button is added by
+           script (see ClientApp modules/recoveryCodes.ts) rather than sitting in the markup, so it
+           is never shown dead to someone with JavaScript off; for them the codes are still on
+           screen to copy. *@
+        <div class="onboarding__codes-actions"
+             data-recovery-download="@Loc["Onboarding.Codes.Download"]"
+             data-recovery-filename="@Loc["Onboarding.Codes.Filename"]"></div>
 
-        <a class="btn btn--primary" asp-action="Index">I've saved them — continue</a>
+        <p class="onboarding__hint">@Loc["Onboarding.Codes.Hint"]</p>
+
+        <form asp-action="RecoveryCodes" method="post" class="onboarding__form">
+            <div class="onboarding__field onboarding__field--check">
+                <label>
+                    <input asp-for="Acknowledged" type="checkbox" />
+                    <span>@Loc["Onboarding.Codes.Ack"]</span>
+                </label>
+                <span asp-validation-for="Acknowledged" class="onboarding__field-error"></span>
+            </div>
+            <button type="submit" class="btn btn--primary">@Loc["Onboarding.Codes.Confirm"]</button>
+        </form>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

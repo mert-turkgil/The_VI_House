@@ -255,4 +255,275 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Notif.ViewAll" xml:space="preserve"><value>View all notifications</value></data>
 
   <data name="Nav.Journal" xml:space="preserve"><value>Journal</value></data>
+
+  <!-- Onboarding / two-factor enrolment (Controllers/OnboardingController.cs). -->
+  <data name="Onboarding.Title" xml:space="preserve"><value>Set up your account</value></data>
+  <data name="Onboarding.Eyebrow.Admin" xml:space="preserve"><value>Admin access</value></data>
+  <data name="Onboarding.Eyebrow.Member" xml:space="preserve"><value>Welcome to The VI House</value></data>
+  <data name="Onboarding.Heading" xml:space="preserve"><value>Two things left, {0}</value></data>
+  <data name="Onboarding.Lede.Admin" xml:space="preserve"><value>Your admin account is ready. Before the panel will open, we need to confirm your email address and turn on two-factor authentication — both are required for every account with admin access. It takes about two minutes.</value></data>
+  <data name="Onboarding.Lede.Member" xml:space="preserve"><value>Your payment went through and your account exists. Before you can use it, we need to confirm your email address and turn on two-factor authentication. It takes about two minutes.</value></data>
+  <data name="Onboarding.Progress.AriaLabel" xml:space="preserve"><value>Setup progress</value></data>
+  <data name="Onboarding.Progress.Label" xml:space="preserve"><value>{0} of {1} complete</value></data>
+  <data name="Onboarding.Step1.Title" xml:space="preserve"><value>Password set</value></data>
+  <data name="Onboarding.Step1.Body" xml:space="preserve"><value>You chose a password when you followed your welcome link. Nothing more to do here.</value></data>
+  <data name="Onboarding.Step2.Title" xml:space="preserve"><value>Confirm your email</value></data>
+  <data name="Onboarding.Step2.Done" xml:space="preserve"><value>{0} is confirmed.</value></data>
+  <data name="Onboarding.Step2.Body.Admin" xml:space="preserve"><value>We need to know we can reach you at {0} — it's where account and security notices go, and it's how you'd recover access. Send yourself a link, then click it.</value></data>
+  <data name="Onboarding.Step2.Body.Member" xml:space="preserve"><value>We need to know we can reach you at {0} — it's where your tickets, event details and receipts go. Send yourself a link, then click it.</value></data>
+  <data name="Onboarding.Step2.Hint" xml:space="preserve"><value>The link works for 24 hours. If it doesn't arrive within a few minutes, check your spam folder before sending another.</value></data>
+  <data name="Onboarding.Step2.Send" xml:space="preserve"><value>Send confirmation email</value></data>
+  <data name="Onboarding.Step3.Title" xml:space="preserve"><value>Turn on two-factor authentication</value></data>
+  <data name="Onboarding.Step3.Done" xml:space="preserve"><value>Two-factor authentication is on. Your account is protected.</value></data>
+  <data name="Onboarding.Step3.Body.Admin" xml:space="preserve"><value>Admin accounts can see every member's details and payment history, so this isn't optional. A stolen password alone won't be enough — you'll also need a 6-digit code from your phone. We'll show you a QR code to scan.</value></data>
+  <data name="Onboarding.Step3.Body.Member" xml:space="preserve"><value>The House is a private community. Two-factor means a stolen password alone isn't enough to get into your account — you'll also need a 6-digit code from your phone. We'll walk you through it.</value></data>
+  <data name="Onboarding.Step3.Cta" xml:space="preserve"><value>Set up two-factor</value></data>
+  <data name="Onboarding.Footnote" xml:space="preserve"><value>Stuck?</value></data>
+  <data name="Onboarding.Footnote.Link" xml:space="preserve"><value>Contact us and we'll sort it out with you.</value></data>
+  <data name="Onboarding.Confirm.Sent" xml:space="preserve"><value>Confirmation link sent to {0}. It's valid for 24 hours.</value></data>
+  <data name="Onboarding.Confirm.Success.Title" xml:space="preserve"><value>Email confirmed</value></data>
+  <data name="Onboarding.Confirm.Success.Eyebrow" xml:space="preserve"><value>Email confirmed</value></data>
+  <data name="Onboarding.Confirm.Success.Heading" xml:space="preserve"><value>That's your address verified</value></data>
+  <data name="Onboarding.Confirm.Success.Body" xml:space="preserve"><value>Thanks — we know we can reach you now. Head back to finish setting up your account.</value></data>
+  <data name="Onboarding.Confirm.Success.Cta" xml:space="preserve"><value>Continue setup</value></data>
+  <data name="Onboarding.Confirm.Fail.Title" xml:space="preserve"><value>Confirmation failed</value></data>
+  <data name="Onboarding.Confirm.Fail.Eyebrow" xml:space="preserve"><value>Something went wrong</value></data>
+  <data name="Onboarding.Confirm.Fail.Heading" xml:space="preserve"><value>We couldn't confirm that link</value></data>
+  <data name="Onboarding.Confirm.Fail.Cta" xml:space="preserve"><value>Back to setup</value></data>
+  <data name="Onboarding.Confirm.Error.Incomplete" xml:space="preserve"><value>That confirmation link is incomplete.</value></data>
+  <data name="Onboarding.Confirm.Error.NotFound" xml:space="preserve"><value>We couldn't find that account.</value></data>
+  <data name="Onboarding.Confirm.Error.Malformed" xml:space="preserve"><value>That confirmation link is malformed.</value></data>
+  <data name="Onboarding.Confirm.Error.Expired" xml:space="preserve"><value>That link has expired or has already been used. Sign in and request a new one.</value></data>
+  <data name="Onboarding.TwoFactor.Title" xml:space="preserve"><value>Set up two-factor authentication</value></data>
+  <data name="Onboarding.TwoFactor.Heading" xml:space="preserve"><value>Set up two-factor authentication</value></data>
+  <data name="Onboarding.TwoFactor.Back" xml:space="preserve"><value>Back to setup</value></data>
+  <data name="Onboarding.TwoFactor.Eyebrow" xml:space="preserve"><value>Step 3 of 3</value></data>
+  <data name="Onboarding.TwoFactor.Lede" xml:space="preserve"><value>You'll use a free authenticator app on your phone. It shows a 6-digit code that changes every 30 seconds — you'll enter one each time you sign in.</value></data>
+  <data name="Onboarding.TwoFactor.Step1.Title" xml:space="preserve"><value>Install an authenticator app</value></data>
+  <data name="Onboarding.TwoFactor.Step1.Body" xml:space="preserve"><value>If you don't already have one, install Google Authenticator, Microsoft Authenticator or 1Password from your phone's app store. Any of them work — pick whichever you prefer.</value></data>
+  <data name="Onboarding.TwoFactor.Step2.Title" xml:space="preserve"><value>Add The VI House to it</value></data>
+  <data name="Onboarding.TwoFactor.Step2.Body" xml:space="preserve"><value>Open the app, choose Scan a QR code, and point your phone at this:</value></data>
+  <data name="Onboarding.TwoFactor.Step2.CantScan" xml:space="preserve"><value>Can't scan it? Choose Enter a setup key instead and type this in. Spaces and capitalisation don't matter.</value></data>
+  <data name="Onboarding.TwoFactor.Step3.Title" xml:space="preserve"><value>Enter the code it shows you</value></data>
+  <data name="Onboarding.TwoFactor.Step3.Body" xml:space="preserve"><value>Your app will start showing a 6-digit code for The VI House. Type the current one here to prove it's working.</value></data>
+  <data name="Onboarding.TwoFactor.CodeLabel" xml:space="preserve"><value>Verification code</value></data>
+  <data name="Onboarding.TwoFactor.Submit" xml:space="preserve"><value>Verify and turn on</value></data>
+  <data name="Onboarding.TwoFactor.Footnote" xml:space="preserve"><value>Codes are tied to the clock, so if yours is rejected repeatedly, check your phone's date and time are set automatically.</value></data>
+  <data name="Onboarding.TwoFactor.QrLabel" xml:space="preserve"><value>QR code for your authenticator app</value></data>
+  <data name="Onboarding.TwoFactor.QrError" xml:space="preserve"><value>Couldn't draw the QR code — use the setup key below instead.</value></data>
+  <data name="Onboarding.TwoFactor.Error.Invalid" xml:space="preserve"><value>That code didn't match. Codes change every 30 seconds — wait for a fresh one and try again. If it keeps failing, check your phone's clock is set automatically.</value></data>
+  <data name="Onboarding.TwoFactor.Error.Required" xml:space="preserve"><value>Enter the 6-digit code from your authenticator app.</value></data>
+  <data name="Onboarding.TwoFactor.Error.Length" xml:space="preserve"><value>The code is 6 digits.</value></data>
+  <data name="Onboarding.Codes.Title" xml:space="preserve"><value>Save your recovery codes</value></data>
+  <data name="Onboarding.Codes.Eyebrow" xml:space="preserve"><value>Almost done</value></data>
+  <data name="Onboarding.Codes.Heading" xml:space="preserve"><value>Save your recovery codes</value></data>
+  <data name="Onboarding.Codes.Lede" xml:space="preserve"><value>Two-factor authentication is on. These codes are your way back in if you lose your phone — each one works once. This is the only time they're shown.</value></data>
+  <data name="Onboarding.Codes.Hint" xml:space="preserve"><value>Store them somewhere you'll still have access to without your phone — a password manager, or printed and kept with your passport. Don't save them only on the phone that generates your codes.</value></data>
+  <data name="Onboarding.Codes.Download" xml:space="preserve"><value>Download as a text file</value></data>
+  <data name="Onboarding.Codes.Filename" xml:space="preserve"><value>vi-house-recovery-codes.txt</value></data>
+  <data name="Onboarding.Codes.Ack" xml:space="preserve"><value>I've saved these codes somewhere I can reach without my phone.</value></data>
+  <data name="Onboarding.Codes.Confirm" xml:space="preserve"><value>Finish setup</value></data>
+  <data name="Onboarding.Codes.Error.MustAcknowledge" xml:space="preserve"><value>Tick the box to confirm you've saved your recovery codes — they can't be shown again.</value></data>
+  <data name="Onboarding.Done.Title" xml:space="preserve"><value>You're all set</value></data>
+  <data name="Onboarding.Done.Eyebrow" xml:space="preserve"><value>You're all set</value></data>
+  <data name="Onboarding.Done.Heading" xml:space="preserve"><value>Welcome to the House, {0}</value></data>
+  <data name="Onboarding.Done.Admin.Lede" xml:space="preserve"><value>Your account is secured and your admin access is active. From now on you'll be asked for a code from your authenticator app each time you sign in.</value></data>
+  <data name="Onboarding.Done.Admin.Cta" xml:space="preserve"><value>Open the admin panel</value></data>
+  <data name="Onboarding.Done.Admin.Footnote" xml:space="preserve"><value>Keep your recovery codes somewhere safe — without your phone they're the only way back into an admin account.</value></data>
+  <data name="Onboarding.Done.Member.Lede" xml:space="preserve"><value>Your account is secured and your {0} is active. The community is open to you.</value></data>
+  <data name="Onboarding.Done.Member.FallbackPlan" xml:space="preserve"><value>membership</value></data>
+  <data name="Onboarding.Done.Member.Cta1" xml:space="preserve"><value>Join the community</value></data>
+  <data name="Onboarding.Done.Member.Cta2" xml:space="preserve"><value>View your member card</value></data>
+  <data name="Onboarding.Done.Member.Footnote" xml:space="preserve"><value>The community page holds the Discord invite and any live broadcast links. They're members-only, so don't pass them on.</value></data>
+  <data name="Onboarding.Done.Ticket.Lede" xml:space="preserve"><value>Your account is secured and your ticket is confirmed. You'll find it, along with the event details, in your bookings.</value></data>
+  <data name="Onboarding.Done.Ticket.Cta1" xml:space="preserve"><value>View your ticket</value></data>
+  <data name="Onboarding.Done.Ticket.Cta2" xml:space="preserve"><value>Explore membership</value></data>
+  <data name="Onboarding.Done.Ticket.Footnote" xml:space="preserve"><value>You bought a ticket to a single experience. Full membership adds the member directory, the community Discord and access to every House gathering.</value></data>
+
+  <!-- The VI House Sessions: public pages, service-layer error keys, admin panel. -->
+  <data name="Nav.Sessions" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Seminars.Title" xml:space="preserve"><value>The VI House Sessions</value></data>
+  <data name="Seminars.Eyebrow" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Seminars.Heading" xml:space="preserve"><value>The VI House Sessions</value></data>
+  <data name="Seminars.Subheading" xml:space="preserve"><value>Workshops, founder sessions and seminars — held live for members, then kept here to return to.</value></data>
+  <data name="Seminars.Empty" xml:space="preserve"><value>No sessions have been published yet — check back shortly.</value></data>
+  <data name="Seminars.Past" xml:space="preserve"><value>Past session</value></data>
+  <data name="Seminars.OnDemand" xml:space="preserve"><value>On demand</value></data>
+  <data name="Seminars.Online" xml:space="preserve"><value>Online</value></data>
+  <data name="Seminars.InPerson" xml:space="preserve"><value>In person</value></data>
+  <data name="Seminars.Free" xml:space="preserve"><value>Free</value></data>
+  <data name="Seminars.IncludedWithMembership" xml:space="preserve"><value>Included with membership</value></data>
+  <data name="Seminars.Materials" xml:space="preserve"><value>Session materials</value></data>
+  <data name="Seminars.Download" xml:space="preserve"><value>Download</value></data>
+  <data name="Seminars.Enrol" xml:space="preserve"><value>Sign up</value></data>
+  <data name="Seminars.EnrolFree" xml:space="preserve"><value>Sign up — included</value></data>
+  <data name="Seminars.Buy" xml:space="preserve"><value>Sign up for {0}</value></data>
+  <data name="Seminars.SeeMembership" xml:space="preserve"><value>See membership</value></data>
+  <data name="Seminars.SeatsLeft" xml:space="preserve"><value>{0} places left.</value></data>
+  <data name="Seminars.BackToAll" xml:space="preserve"><value>All sessions</value></data>
+  <data name="Seminars.Enrolled" xml:space="preserve"><value>You're in. The session is open below.</value></data>
+  <data name="Seminars.Access.Enrolled" xml:space="preserve"><value>You're enrolled on this session.</value></data>
+  <data name="Seminars.Access.SignIn.Heading" xml:space="preserve"><value>Sign in to join</value></data>
+  <data name="Seminars.Access.SignIn.Body" xml:space="preserve"><value>Sessions are for members of the House. Sign in to take your place, or apply to join us.</value></data>
+  <data name="Seminars.Access.Free.Heading" xml:space="preserve"><value>This one's on us</value></data>
+  <data name="Seminars.Access.Free.Body" xml:space="preserve"><value>Sign up and the session opens straight away — no payment involved.</value></data>
+  <data name="Seminars.Access.Included.Heading" xml:space="preserve"><value>Included with your membership</value></data>
+  <data name="Seminars.Access.Included.Body" xml:space="preserve"><value>This session normally costs {0}. Your membership covers it — sign up and it opens straight away.</value></data>
+  <data name="Seminars.Access.Pay.Heading" xml:space="preserve"><value>Take your place — {0}</value></data>
+  <data name="Seminars.Access.Pay.Body" xml:space="preserve"><value>You'll get the full session and everything recorded with it, to return to whenever you like.</value></data>
+  <data name="Seminars.Access.Pay.MembershipHint" xml:space="preserve"><value>Members get this one at no extra cost.</value></data>
+  <data name="Seminars.Access.Pending.Heading" xml:space="preserve"><value>Payment in progress</value></data>
+  <data name="Seminars.Access.Pending.Body" xml:space="preserve"><value>We're waiting for your payment to be confirmed. This page will open as soon as it lands — it usually takes a moment.</value></data>
+  <data name="Seminars.Access.SoldOut.Heading" xml:space="preserve"><value>Fully booked</value></data>
+  <data name="Seminars.Access.SoldOut.Body" xml:space="preserve"><value>Every place on this session has gone. We run these regularly — the next one will appear here.</value></data>
+  <data name="Seminars.Access.Closed.Heading" xml:space="preserve"><value>Not open just now</value></data>
+  <data name="Seminars.Access.Closed.Body" xml:space="preserve"><value>This session isn't taking sign-ups at the moment.</value></data>
+  <data name="Seminars.Success.Title" xml:space="preserve"><value>You're enrolled</value></data>
+  <data name="Seminars.Success.Heading" xml:space="preserve"><value>You're enrolled</value></data>
+  <data name="Seminars.Success.Body" xml:space="preserve"><value>Your place on {0} is confirmed. We've emailed you a copy for your records.</value></data>
+  <data name="Seminars.Success.Open" xml:space="preserve"><value>Open the session</value></data>
+  <data name="Seminars.Processing.Heading" xml:space="preserve"><value>Confirming your payment</value></data>
+  <data name="Seminars.Processing.Body" xml:space="preserve"><value>This takes a few seconds. The page will refresh on its own — there's no need to pay again.</value></data>
+  <data name="Seminars.Cancelled.Title" xml:space="preserve"><value>Sign-up cancelled</value></data>
+  <data name="Seminars.Cancelled.Heading" xml:space="preserve"><value>Nothing was charged</value></data>
+  <data name="Seminars.Cancelled.Body" xml:space="preserve"><value>You stopped before paying, so your place wasn't taken. You can pick it up again whenever you like.</value></data>
+  <data name="Seminars.Cancelled.TryAgain" xml:space="preserve"><value>Back to the session</value></data>
+  <data name="Seminar.Error.Unknown" xml:space="preserve"><value>Something went wrong. Please try again.</value></data>
+  <data name="Seminar.Error.NotFound" xml:space="preserve"><value>That session no longer exists.</value></data>
+  <data name="Seminar.Error.AlreadyEnrolled" xml:space="preserve"><value>You're already enrolled on this session.</value></data>
+  <data name="Seminar.Error.PaymentPending" xml:space="preserve"><value>There's a payment for this session still going through. Give it a moment before trying again.</value></data>
+  <data name="Seminar.Error.SoldOut" xml:space="preserve"><value>Every place on this session has gone.</value></data>
+  <data name="Seminar.Error.NotOpen" xml:space="preserve"><value>This session isn't taking sign-ups at the moment.</value></data>
+  <data name="Seminar.Error.PaymentRequired" xml:space="preserve"><value>This session has to be paid for — use the sign-up button to go to checkout.</value></data>
+  <data name="Seminar.Error.NoPaymentNeeded" xml:space="preserve"><value>There's nothing to pay for this session.</value></data>
+  <data name="Seminar.Error.SignInRequired" xml:space="preserve"><value>Please sign in to take your place.</value></data>
+  <data name="Seminar.Error.AccountMissing" xml:space="preserve"><value>We couldn't find your account — please sign in again.</value></data>
+  <data name="Seminar.Error.ProviderUnreachable" xml:space="preserve"><value>We couldn't reach the payment provider — please try again in a moment.</value></data>
+  <data name="Seminar.Error.SlugTaken" xml:space="preserve"><value>Another session already uses that web address. Pick a different one.</value></data>
+  <data name="Seminar.Error.NeedsDefaultTranslation" xml:space="preserve"><value>Write the English copy before publishing — every other language falls back to it.</value></data>
+  <data name="Seminar.Error.CannotDeleteDefaultTranslation" xml:space="preserve"><value>The English copy can't be removed — it's what every other language falls back to.</value></data>
+  <data name="Seminar.Error.HasEnrolments" xml:space="preserve"><value>People have already signed up for this session, so it can't be deleted. Archive it instead — everyone who enrolled keeps their access.</value></data>
+  <data name="Seminar.Error.MediaType" xml:space="preserve"><value>That file type isn't supported. Use JPG, PNG, WebP, AVIF, GIF, MP4, WebM, MOV, MP3, M4A or PDF.</value></data>
+  <data name="Seminar.Error.MediaTooLarge" xml:space="preserve"><value>That file is too large. Video may be up to 512 MB, audio 128 MB, images 12 MB.</value></data>
+  <data name="Seminar.Error.MediaEmpty" xml:space="preserve"><value>Choose a file to upload.</value></data>
+  <data name="Seminar.Error.MediaFailed" xml:space="preserve"><value>That file couldn't be saved. Please try again.</value></data>
+  <data name="Seminar.Error.MediaNotFound" xml:space="preserve"><value>That file is no longer attached to this session.</value></data>
+  <data name="Seminar.Error.CoverMustBeImage" xml:space="preserve"><value>The cover has to be an image.</value></data>
+  <data name="Seminar.Validation.Slug" xml:space="preserve"><value>Lowercase letters, numbers and hyphens only.</value></data>
+  <data name="Admin.Seminar.Slug" xml:space="preserve"><value>Web address</value></data>
+  <data name="Admin.Seminar.Visibility" xml:space="preserve"><value>Who can see it</value></data>
+  <data name="Admin.Seminar.HostName" xml:space="preserve"><value>Host</value></data>
+  <data name="Admin.Seminar.HostTitle" xml:space="preserve"><value>Host's title</value></data>
+  <data name="Admin.Seminar.IsOnline" xml:space="preserve"><value>Held online</value></data>
+  <data name="Admin.Seminar.Location" xml:space="preserve"><value>Where</value></data>
+  <data name="Admin.Seminar.TimeZone" xml:space="preserve"><value>Time zone</value></data>
+  <data name="Admin.Seminar.StartAt" xml:space="preserve"><value>Starts (UTC)</value></data>
+  <data name="Admin.Seminar.EndAt" xml:space="preserve"><value>Ends (UTC)</value></data>
+  <data name="Admin.Seminar.Capacity" xml:space="preserve"><value>Places</value></data>
+  <data name="Admin.Seminar.Price" xml:space="preserve"><value>Price</value></data>
+  <data name="Admin.Seminar.Currency" xml:space="preserve"><value>Currency</value></data>
+  <data name="Admin.Seminar.IncludedWithMembership" xml:space="preserve"><value>Free for members with an active membership</value></data>
+  <data name="Admin.Seminar.SortOrder" xml:space="preserve"><value>Sort order</value></data>
+  <data name="Admin.Seminar.Title" xml:space="preserve"><value>Title</value></data>
+  <data name="Admin.Seminar.Summary" xml:space="preserve"><value>Summary</value></data>
+  <data name="Admin.Seminar.Body" xml:space="preserve"><value>Session content</value></data>
+  <data name="Admin.Seminar.SeoTitle" xml:space="preserve"><value>SEO title</value></data>
+  <data name="Admin.Seminar.SeoDescription" xml:space="preserve"><value>SEO description</value></data>
+  <data name="Admin.Seminar.Slug.Hint" xml:space="preserve"><value>Appears in the link: /sessions/your-address. Lowercase letters, numbers and hyphens.</value></data>
+  <data name="Admin.Seminar.Visibility.Hint" xml:space="preserve"><value>Members-only is the private setting: anyone not signed in as a member gets a 404 rather than a login prompt. Unlisted is reachable by link but hidden from the listing.</value></data>
+  <data name="Admin.Seminar.StartAt.Hint" xml:space="preserve"><value>Leave both empty for on-demand content — a recording with no sitting to attend.</value></data>
+  <data name="Admin.Seminar.Capacity.Hint" xml:space="preserve"><value>0 means no limit, which is usually right for a recording.</value></data>
+  <data name="Admin.Seminar.Location.Hint" xml:space="preserve"><value>Shown on the card and the page — e.g. "Zoom" or the venue.</value></data>
+  <data name="Admin.Seminar.Price.Hint" xml:space="preserve"><value>In whole units, e.g. 49.00. Set 0 to make it free for everyone who can see it.</value></data>
+  <data name="Admin.Seminar.IncludedWithMembership.Hint" xml:space="preserve"><value>With this on, a member with an active membership signs up in one click and is never sent to checkout. Everyone else pays the price above.</value></data>
+  <data name="Admin.Seminar.Summary.Hint" xml:space="preserve"><value>Read before anyone signs up — this is the part that has to sell the session on its own.</value></data>
+  <data name="Admin.Seminar.Body.Hint" xml:space="preserve"><value>Only people who have signed up can read this. Drop images and GIFs straight into the editor; upload video and slides in the media library below.</value></data>
+  <data name="Admin.Seminar.Index.Title" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Admin.Seminar.Index.Empty" xml:space="preserve"><value>No sessions yet.</value></data>
+  <data name="Admin.Seminar.New" xml:space="preserve"><value>New session</value></data>
+  <data name="Admin.Seminar.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Admin.Seminar.Languages" xml:space="preserve"><value>Languages</value></data>
+  <data name="Admin.Seminar.OnDemand" xml:space="preserve"><value>On demand</value></data>
+  <data name="Admin.Seminar.FreeForMembers" xml:space="preserve"><value>Free for members</value></data>
+  <data name="Admin.Seminar.Enrolments" xml:space="preserve"><value>Sign-ups</value></data>
+  <data name="Admin.Seminar.StatusName.Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="Admin.Seminar.StatusName.Published" xml:space="preserve"><value>Published</value></data>
+  <data name="Admin.Seminar.StatusName.Archived" xml:space="preserve"><value>Archived</value></data>
+  <data name="Admin.Seminar.VisibilityName.Public" xml:space="preserve"><value>Public</value></data>
+  <data name="Admin.Seminar.VisibilityName.Members" xml:space="preserve"><value>Members only</value></data>
+  <data name="Admin.Seminar.VisibilityName.Unlisted" xml:space="preserve"><value>Unlisted</value></data>
+  <data name="Admin.Seminar.Create.Title" xml:space="preserve"><value>New session</value></data>
+  <data name="Admin.Seminar.Create.Lede" xml:space="preserve"><value>Write it in {0} first — every other language falls back to this one, and a session can't be published without it. The other translations get their own tabs once it exists.</value></data>
+  <data name="Admin.Seminar.CreateSubmit" xml:space="preserve"><value>Create session</value></data>
+  <data name="Admin.Seminar.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Admin.Seminar.Section.Copy" xml:space="preserve"><value>Copy — {0}</value></data>
+  <data name="Admin.Seminar.Section.Details" xml:space="preserve"><value>Schedule, price and visibility</value></data>
+  <data name="Admin.Seminar.Section.Media" xml:space="preserve"><value>Media library</value></data>
+  <data name="Admin.Seminar.Section.Danger" xml:space="preserve"><value>Delete this session</value></data>
+  <data name="Admin.Seminar.PublishedOn" xml:space="preserve"><value>Published {0}</value></data>
+  <data name="Admin.Seminar.NeverPublished" xml:space="preserve"><value>Never published</value></data>
+  <data name="Admin.Seminar.EnrolledCount" xml:space="preserve"><value>{0} signed up</value></data>
+  <data name="Admin.Seminar.Publish" xml:space="preserve"><value>Publish</value></data>
+  <data name="Admin.Seminar.Unpublish" xml:space="preserve"><value>Back to draft</value></data>
+  <data name="Admin.Seminar.Archive" xml:space="preserve"><value>Archive</value></data>
+  <data name="Admin.Seminar.Preview" xml:space="preserve"><value>View page</value></data>
+  <data name="Admin.Seminar.Status.Draft" xml:space="preserve"><value>Back to draft — it's off the public listing.</value></data>
+  <data name="Admin.Seminar.Status.Published" xml:space="preserve"><value>Published. It's live now.</value></data>
+  <data name="Admin.Seminar.Status.Archived" xml:space="preserve"><value>Archived. Everyone who signed up keeps their access.</value></data>
+  <data name="Admin.Seminar.DefaultLanguage" xml:space="preserve"><value>default</value></data>
+  <data name="Admin.Seminar.NotTranslated" xml:space="preserve"><value>not written</value></data>
+  <data name="Admin.Seminar.FallbackNotice" xml:space="preserve"><value>Nothing written here yet — readers in this language currently see the {0} version.</value></data>
+  <data name="Admin.Seminar.SaveCopy" xml:space="preserve"><value>Save {0} copy</value></data>
+  <data name="Admin.Seminar.DeleteTranslation" xml:space="preserve"><value>Remove this translation</value></data>
+  <data name="Admin.Seminar.DeleteTranslation.Confirm" xml:space="preserve"><value>Remove the {0} translation? Readers in that language will fall back to the default one.</value></data>
+  <data name="Admin.Seminar.Media.Lede" xml:space="preserve"><value>Video, stills and slides for this session. Only people who have signed up can open them — files are streamed through the app, never served as plain static URLs.</value></data>
+  <data name="Admin.Seminar.Media.File" xml:space="preserve"><value>File</value></data>
+  <data name="Admin.Seminar.Media.Caption" xml:space="preserve"><value>Caption</value></data>
+  <data name="Admin.Seminar.Media.Upload" xml:space="preserve"><value>Upload</value></data>
+  <data name="Admin.Seminar.Media.Limits" xml:space="preserve"><value>JPG, PNG, WebP, AVIF, GIF, MP4, WebM, MOV, MP3, M4A, PDF. Video up to 512 MB, audio 128 MB, GIF 24 MB, images 12 MB.</value></data>
+  <data name="Admin.Seminar.Media.Empty" xml:space="preserve"><value>Nothing uploaded yet.</value></data>
+  <data name="Admin.Seminar.Media.Inline" xml:space="preserve"><value>in the article</value></data>
+  <data name="Admin.Seminar.Media.IsCover" xml:space="preserve"><value>Cover</value></data>
+  <data name="Admin.Seminar.Media.MakeCover" xml:space="preserve"><value>Use as cover</value></data>
+  <data name="Admin.Seminar.Media.Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="Admin.Seminar.Media.Remove.Confirm" xml:space="preserve"><value>Remove this file? It will disappear from the session and be deleted from disk.</value></data>
+  <data name="Admin.Seminar.MediaKind.Image" xml:space="preserve"><value>Image</value></data>
+  <data name="Admin.Seminar.MediaKind.Animation" xml:space="preserve"><value>Animation</value></data>
+  <data name="Admin.Seminar.MediaKind.Video" xml:space="preserve"><value>Video</value></data>
+  <data name="Admin.Seminar.MediaKind.Audio" xml:space="preserve"><value>Audio</value></data>
+  <data name="Admin.Seminar.MediaKind.Document" xml:space="preserve"><value>Document</value></data>
+  <data name="Admin.Seminar.SaveDetails" xml:space="preserve"><value>Save details</value></data>
+  <data name="Admin.Seminar.BackToList" xml:space="preserve"><value>Back to sessions</value></data>
+  <data name="Admin.Seminar.BackToSeminar" xml:space="preserve"><value>Back to the session</value></data>
+  <data name="Admin.Seminar.Delete" xml:space="preserve"><value>Delete permanently</value></data>
+  <data name="Admin.Seminar.Delete.Hint" xml:space="preserve"><value>Only possible while nobody has signed up. Once someone has, archive it instead — they keep their access.</value></data>
+  <data name="Admin.Seminar.Delete.Confirm" xml:space="preserve"><value>Delete this session, its copy in every language, and every uploaded file? This can't be undone.</value></data>
+  <data name="Admin.Seminar.Created" xml:space="preserve"><value>"{0}" created. Add the media and the other languages next.</value></data>
+  <data name="Admin.Seminar.Saved" xml:space="preserve"><value>Details saved.</value></data>
+  <data name="Admin.Seminar.TranslationSaved" xml:space="preserve"><value>{0} copy saved.</value></data>
+  <data name="Admin.Seminar.TranslationDeleted" xml:space="preserve"><value>{0} translation removed.</value></data>
+  <data name="Admin.Seminar.MediaAdded" xml:space="preserve"><value>"{0}" uploaded.</value></data>
+  <data name="Admin.Seminar.MediaRemoved" xml:space="preserve"><value>File removed.</value></data>
+  <data name="Admin.Seminar.CoverSet" xml:space="preserve"><value>Cover updated.</value></data>
+  <data name="Admin.Seminar.Deleted" xml:space="preserve"><value>Session deleted.</value></data>
+  <data name="Admin.Seminar.Enrolments.Title" xml:space="preserve"><value>Sign-ups — {0}</value></data>
+  <data name="Admin.Seminar.Enrolments.Empty" xml:space="preserve"><value>Nobody has signed up yet.</value></data>
+  <data name="Admin.Seminar.Enrolments.Member" xml:space="preserve"><value>Member</value></data>
+  <data name="Admin.Seminar.Enrolments.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Admin.Seminar.Enrolments.GrantedVia" xml:space="preserve"><value>How</value></data>
+  <data name="Admin.Seminar.Enrolments.Paid" xml:space="preserve"><value>Paid</value></data>
+  <data name="Admin.Seminar.Enrolments.Confirmed" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Admin.Seminar.EnrolmentStatus.Pending" xml:space="preserve"><value>Payment pending</value></data>
+  <data name="Admin.Seminar.EnrolmentStatus.Confirmed" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Admin.Seminar.EnrolmentStatus.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Admin.Seminar.Grant.Free" xml:space="preserve"><value>Free session</value></data>
+  <data name="Admin.Seminar.Grant.Membership" xml:space="preserve"><value>Membership</value></data>
+  <data name="Admin.Seminar.Grant.Purchase" xml:space="preserve"><value>Paid</value></data>
+  <data name="Admin.Seminar.Grant.Comped" xml:space="preserve"><value>Given by an admin</value></data>
+  <data name="Seminars.Preview.Heading" xml:space="preserve"><value>Staff preview.</value></data>
+  <data name="Seminars.Preview.Body" xml:space="preserve"><value>You are seeing the content because you are signed in as staff, not because you signed up. The panel below is what a visitor would meet.</value></data>
+  <data name="Account.NavSessions" xml:space="preserve"><value>My Sessions</value></data>
+  <data name="Account.SessionsTitle" xml:space="preserve"><value>My Sessions</value></data>
+  <data name="Account.NoSessions" xml:space="preserve"><value>You haven't signed up for any sessions yet.</value></data>
+  <data name="Account.BrowseSessions" xml:space="preserve"><value>Browse sessions</value></data>
 </root>

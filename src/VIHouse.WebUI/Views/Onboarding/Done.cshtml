@@ -2,58 +2,40 @@
 
 <div class="onboarding">
     <div class="container onboarding__inner onboarding__inner--narrow">
-        <span class="onboarding__eyebrow">You're all set</span>
-        <h1>Welcome to the House, @Model.FirstName</h1>
+        <span class="onboarding__eyebrow">@Loc["Onboarding.Done.Eyebrow"]</span>
+        <h1>@Loc["Onboarding.Done.Heading", Model.FirstName]</h1>
 
         @if (Model.IsStaff)
         {
-            <p class="onboarding__lede">
-                Your account is secured and your admin access is active. From now on you'll be asked
-                for a code from your authenticator app each time you sign in.
-            </p>
+            <p class="onboarding__lede">@Loc["Onboarding.Done.Admin.Lede"]</p>
 
             <div class="onboarding__next">
-                <a class="btn btn--primary" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">Open the admin panel</a>
+                <a class="btn btn--primary" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">@Loc["Onboarding.Done.Admin.Cta"]</a>
             </div>
 
-            <p class="onboarding__footnote">
-                Keep your recovery codes somewhere safe — without your phone they're the only way
-                back into an admin account.
-            </p>
+            <p class="onboarding__footnote">@Loc["Onboarding.Done.Admin.Footnote"]</p>
         }
         else if (Model.HasMembership)
         {
-            <p class="onboarding__lede">
-                Your account is secured and your @(Model.PlanName ?? "membership") is active. The
-                community is open to you.
-            </p>
+            <p class="onboarding__lede">@Loc["Onboarding.Done.Member.Lede", Model.PlanName ?? Loc["Onboarding.Done.Member.FallbackPlan"].Value]</p>
 
             <div class="onboarding__next">
-                <a class="btn btn--primary" asp-controller="Account" asp-action="Community">Join the community</a>
-                <a class="btn btn--ghost" asp-controller="Account" asp-action="Card">View your member card</a>
+                <a class="btn btn--primary" asp-controller="Account" asp-action="Community">@Loc["Onboarding.Done.Member.Cta1"]</a>
+                <a class="btn btn--ghost" asp-controller="Account" asp-action="Card">@Loc["Onboarding.Done.Member.Cta2"]</a>
             </div>
 
-            <p class="onboarding__footnote">
-                The community page holds the Discord invite and any live broadcast links. They're
-                members-only, so don't pass them on.
-            </p>
+            <p class="onboarding__footnote">@Loc["Onboarding.Done.Member.Footnote"]</p>
         }
         else
         {
-            <p class="onboarding__lede">
-                Your account is secured and your ticket is confirmed. You'll find it, along with the
-                event details, in your bookings.
-            </p>
+            <p class="onboarding__lede">@Loc["Onboarding.Done.Ticket.Lede"]</p>
 
             <div class="onboarding__next">
-                <a class="btn btn--primary" asp-controller="Account" asp-action="Bookings">View your ticket</a>
-                <a class="btn btn--ghost" asp-controller="Membership" asp-action="Index">Explore membership</a>
+                <a class="btn btn--primary" asp-controller="Account" asp-action="Bookings">@Loc["Onboarding.Done.Ticket.Cta1"]</a>
+                <a class="btn btn--ghost" asp-controller="Membership" asp-action="Index">@Loc["Onboarding.Done.Ticket.Cta2"]</a>
             </div>
 
-            <p class="onboarding__footnote">
-                You bought a ticket to a single experience. Full membership adds the member directory,
-                the community Discord and access to every House gathering.
-            </p>
+            <p class="onboarding__footnote">@Loc["Onboarding.Done.Ticket.Footnote"]</p>
         }
     </div>
 </div>

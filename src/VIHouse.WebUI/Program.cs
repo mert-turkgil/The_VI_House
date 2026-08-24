@@ -14,6 +14,7 @@ using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Concrete.EntityFramework;
 using VIHouse.DataAccess.Concrete.EntityFramework.Seed;
 using VIHouse.DataAccess.Identity;
+using VIHouse.WebUI;
 using VIHouse.WebUI.Filters;
 using VIHouse.WebUI.Services;
 
@@ -25,7 +26,10 @@ var defaultCulture = new CultureInfo("en-GB");
 CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
 CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
 
-var supportedCultures = new[] { "en-GB", "de-DE", "tr-TR", "et-EE" };
+// The list itself lives in Business/Options/SiteCultures, because the seminar layer resolves its
+// per-culture content against it and cannot reference this project. CultureController and the nav's
+// language switcher read the same table, so a fifth language is one entry, not four edits.
+var supportedCultures = SiteCultures.Names;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +55,19 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     .AddEntityFrameworkStores<VIHouseDbContext>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
+
+// How quickly a revoked account actually loses its session. The framework default is 30 minutes:
+// the auth cookie is taken at face value until then, so "reset this admin's two-factor" (see
+// AdminUsersController.ResetTwoFactor) or a role removal would leave the target's existing browser
+// session working for up to half an hour. On an invite-only platform where the panel exposes every
+// member's payment history, "revoke now" has to mean closer to now than that.
+//
+// The trade is one extra user lookup per session per interval, which is negligible next to the
+// per-request database reads the onboarding gate already does. Five minutes is the ceiling on the
+// cookie alone; the gate itself re-reads two-factor state from the database on every authorized
+// request, so the admin panel closes on the very next click regardless of this setting.
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+    options.ValidationInterval = TimeSpan.FromMinutes(5));
 
 // --- Data Protection ---------------------------------------------------------------------------
 // Without this the key ring lives wherever ASP.NET Core's default picks (often the app folder, or
@@ -132,6 +149,22 @@ if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(goo
         });
 }
 
+// --- Uploaded media ----------------------------------------------------------------------------
+// Seminar assets (recordings, stills, decks) live outside both wwwroot and the deployed app
+// directory, for the same two reasons the data-protection key ring does: publishing over the app
+// must not delete them, and nothing under this path may be reachable as a static file. They are
+// streamed by SeminarsController, which checks the viewer's enrolment first — a members-only
+// session's recording is not something to hand out to whoever receives the URL. MapStaticAssets
+// would not have served them anyway: it only knows about files that existed at build time.
+var mediaRoot = builder.Configuration["Media:RootPath"];
+if (string.IsNullOrWhiteSpace(mediaRoot))
+{
+    mediaRoot = Path.Combine(builder.Environment.ContentRootPath, "App_Media");
+}
+
+Directory.CreateDirectory(mediaRoot);
+builder.Services.Configure<MediaOptions>(options => options.RootPath = mediaRoot);
+
 // --- Repositories (DataAccess.Abstract -> Concrete.EntityFramework) -----------------------------
 // Open-generic fallback for entities that only ever need generic CRUD (no custom queries) — e.g.
 // ExperienceInclusion/ExperienceFaq, used directly by ExperienceService for unambiguous Added-state
@@ -156,6 +189,8 @@ builder.Services.AddScoped<IMembershipPaymentRepository, EfMembershipPaymentRepo
 builder.Services.AddScoped<IAmbassadorRepository, EfAmbassadorRepository>();
 builder.Services.AddScoped<INotificationRepository, EfNotificationRepository>();
 builder.Services.AddScoped<IJournalPostRepository, EfJournalPostRepository>();
+builder.Services.AddScoped<ISeminarRepository, EfSeminarRepository>();
+builder.Services.AddScoped<ISeminarEnrollmentRepository, EfSeminarEnrollmentRepository>();
 
 // --- Business services -------------------------------------------------------------------------
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
@@ -167,6 +202,10 @@ builder.Services.AddScoped<IMembershipService, MembershipService>();
 builder.Services.AddScoped<IAmbassadorService, AmbassadorService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
+builder.Services.AddScoped<ISeminarService, SeminarService>();
+
+// Local disk today; the interface exists so a move to blob storage/CDN is one new class.
+builder.Services.AddScoped<IMediaStorage, LocalMediaStorage>();
 
 // Stripe keys: user-secrets in Development, environment variables (or a real vault) in Production —
 // never a committed appsettings.*.json file, same policy as SeedAdmin's credentials.
@@ -199,7 +238,7 @@ builder.Services.AddHostedService<TicketHoldExpiryService>();
 builder.Services.AddLocalization();
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    options.SetDefaultCulture(supportedCultures[0]);
+    options.SetDefaultCulture(SiteCultures.Default);
     options.AddSupportedCultures(supportedCultures);
     options.AddSupportedUICultures(supportedCultures);
     options.RequestCultureProviders = [new CookieRequestCultureProvider { CookieName = CookieRequestCultureProvider.DefaultCookieName }];
@@ -210,8 +249,10 @@ builder.Services.AddControllersWithViews(options =>
 {
     // Global, but self-scoping: the filter only acts on endpoints that require authorization, so
     // the public site and the apply/join/checkout path are untouched. Members and admins alike must
-    // confirm their email and switch on 2FA before any signed-in page will render. See
-    // OnboardingRequirementFilter.
+    // confirm their email and switch on 2FA before any signed-in page will render — including the
+    // two bootstrap admin accounts on their very first sign-in after a deployment. Registered here
+    // rather than on AddRazorPages because it is an IAsyncResourceFilter, which MvcOptions applies
+    // to controllers and Razor Pages alike. See OnboardingRequirementFilter.
     options.Filters.Add(typeof(OnboardingRequirementFilter));
 
     // Defense-in-depth: every POST/PUT/DELETE/PATCH is antiforgery-checked by default now, not
@@ -219,7 +260,14 @@ builder.Services.AddControllersWithViews(options =>
     // exception is the Stripe webhook, which opts out explicitly via [IgnoreAntiforgeryToken]
     // (it's a server-to-server call with no browser cookie/form to carry a token).
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-});
+})
+    // Points [Required]/[StringLength]/[Display] at SharedResource, so a validation message can be
+    // a resource key instead of a hard-coded English literal (see TwoFactorSetupViewModel). Keys
+    // with no matching entry fall back to the key text itself, so every message already written as
+    // plain English elsewhere is untouched by this.
+    .AddDataAnnotationsLocalization(options =>
+        options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
+
 builder.Services.AddRazorPages();
 
 // --- Rate limiting (brief-adjacent hardening: brute-force/spam protection on sensitive endpoints) ---

@@ -1675,6 +1675,242 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("ReferralVisits", (string)null);
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Seminars.Seminar", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("CoverMediaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateTimeOffset?>("EndAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("HostName")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("HostTitle")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<bool>("IncludedWithMembership")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<long>("PriceMinor")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("StartAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TimeZoneId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("Status", "Visibility", "PublishedAt");
+
+                    b.ToTable("Seminars", (string)null);
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Seminars.SeminarEnrollment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("AmountMinor")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("ConfirmedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<int>("GrantedVia")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProviderReference")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("SeminarId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProviderReference")
+                        .IsUnique()
+                        .HasFilter("[ProviderReference] IS NOT NULL");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("SeminarId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("SeminarEnrollments", (string)null);
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Seminars.SeminarMedia", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsInline")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OriginalFileName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("SeminarId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StorageKey")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SeminarId", "SortOrder");
+
+                    b.ToTable("SeminarMedia", (string)null);
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Seminars.SeminarTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BodyHtml")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Culture")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<Guid>("SeminarId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SeoDescription")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("SeoTitle")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Summary")
+                        .HasMaxLength(600)
+                        .HasColumnType("nvarchar(600)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SeminarId", "Culture")
+                        .IsUnique();
+
+                    b.ToTable("SeminarTranslations", (string)null);
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Users.Profile", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -2041,6 +2277,39 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Seminars.SeminarEnrollment", b =>
+                {
+                    b.HasOne("VIHouse.Entities.Seminars.Seminar", null)
+                        .WithMany()
+                        .HasForeignKey("SeminarId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("VIHouse.DataAccess.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Seminars.SeminarMedia", b =>
+                {
+                    b.HasOne("VIHouse.Entities.Seminars.Seminar", null)
+                        .WithMany("Media")
+                        .HasForeignKey("SeminarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Seminars.SeminarTranslation", b =>
+                {
+                    b.HasOne("VIHouse.Entities.Seminars.Seminar", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("SeminarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Users.Profile", b =>
                 {
                     b.HasOne("VIHouse.DataAccess.Identity.ApplicationUser", null)
@@ -2076,6 +2345,13 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
             modelBuilder.Entity("VIHouse.Entities.Experiences.ExperienceProgramDay", b =>
                 {
                     b.Navigation("Sessions");
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Seminars.Seminar", b =>
+                {
+                    b.Navigation("Media");
+
+                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }

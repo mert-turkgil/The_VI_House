@@ -1,0 +1,241 @@
+@model AdminSeminarEditViewModel
+@{
+    var active = Model.Translations.First(t => t.Culture.Name == Model.ActiveCulture);
+    ViewData["Title"] = Model.Translations.First(t => t.IsDefault).Form.Title;
+    var seminarId = Model.Form.Id!.Value;
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+
+@* --- Publishing ------------------------------------------------------------------------------ *@
+<div class="admin-panel admin-panel--status">
+    <div>
+        <span class="@(Model.Status == SeminarStatus.Published ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")">
+            @Loc["Admin.Seminar.StatusName." + Model.Status]
+        </span>
+        <span class="admin-panel__note">
+            @if (Model.PublishedAt is not null)
+            {
+                @Loc["Admin.Seminar.PublishedOn", Model.PublishedAt.Value.ToString("d MMM yyyy")]
+            }
+            else
+            {
+                @Loc["Admin.Seminar.NeverPublished"]
+            }
+            &middot; @Loc["Admin.Seminar.EnrolledCount", Model.EnrolmentCount]
+        </span>
+    </div>
+
+    <div class="admin-panel__actions">
+        @if (Model.Status != SeminarStatus.Published)
+        {
+            <form asp-action="SetStatus" asp-route-id="@seminarId" method="post" class="admin-inline-form">
+                <input type="hidden" name="status" value="@SeminarStatus.Published" />
+                <button type="submit" class="admin-btn">@Loc["Admin.Seminar.Publish"]</button>
+            </form>
+        }
+        else
+        {
+            <form asp-action="SetStatus" asp-route-id="@seminarId" method="post" class="admin-inline-form">
+                <input type="hidden" name="status" value="@SeminarStatus.Draft" />
+                <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Seminar.Unpublish"]</button>
+            </form>
+            <form asp-action="SetStatus" asp-route-id="@seminarId" method="post" class="admin-inline-form">
+                <input type="hidden" name="status" value="@SeminarStatus.Archived" />
+                <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Seminar.Archive"]</button>
+            </form>
+        }
+        <a class="admin-btn admin-btn--ghost" asp-action="Enrolments" asp-route-id="@seminarId">@Loc["Admin.Seminar.Enrolments"]</a>
+        <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Seminars" asp-action="Details" asp-route-slug="@Model.Form.Slug" target="_blank" rel="noopener">@Loc["Admin.Seminar.Preview"]</a>
+    </div>
+</div>
+
+@* --- Copy, one language at a time -------------------------------------------------------------- *@
+@*  A page per language rather than tabbed panels on one page: a rich text editor initialised inside
+    a hidden container computes a zero height and comes back broken when it is revealed, and the URL
+    being ?culture=de-DE means an admin can bookmark or share the German draft.                     *@
+<h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Copy", active.Culture.NativeLabel]</h2>
+
+<nav class="admin-lang-tabs" aria-label="@Loc["Admin.Seminar.Languages"]">
+    @foreach (var tab in Model.Translations)
+    {
+        <a class="@(tab.Culture.Name == Model.ActiveCulture ? "admin-lang-tab active" : "admin-lang-tab")"
+           asp-action="Edit" asp-route-id="@seminarId" asp-route-culture="@tab.Culture.Name">
+            @tab.Culture.NativeLabel
+            @if (tab.IsDefault)
+            {
+                <span class="admin-lang-tab__flag">@Loc["Admin.Seminar.DefaultLanguage"]</span>
+            }
+            else if (!tab.IsWritten)
+            {
+                <span class="admin-lang-tab__flag admin-lang-tab__flag--missing">@Loc["Admin.Seminar.NotTranslated"]</span>
+            }
+        </a>
+    }
+</nav>
+
+@if (!active.IsDefault && !active.IsWritten)
+{
+    <p class="admin-notice">@Loc["Admin.Seminar.FallbackNotice", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</p>
+}
+
+<form asp-action="SaveTranslation" asp-route-id="@seminarId" method="post" class="admin-form">
+    @* Which language this form is editing. Posted rather than taken from the query string so a
+       stale tab cannot save English copy over the German row. *@
+    <input type="hidden" name="Culture" value="@active.Culture.Name" />
+
+    <div class="admin-field">
+        <label>@Loc["Admin.Seminar.Title"]</label>
+        <input name="Title" value="@active.Form.Title" maxlength="200" required />
+    </div>
+
+    <div class="admin-field">
+        <label>@Loc["Admin.Seminar.Summary"]</label>
+        <textarea name="Summary" rows="3" maxlength="600">@active.Form.Summary</textarea>
+        <p class="admin-field__hint">@Loc["Admin.Seminar.Summary.Hint"]</p>
+    </div>
+
+    <div class="admin-field">
+        <label>@Loc["Admin.Seminar.Body"]</label>
+        @* data-upload-url turns on drag-and-drop image/GIF upload inside the editor: files go
+           straight to UploadInline, which stores them like any other asset and hands back the
+           access-checked /sessions/media/{id} URL to insert. The antiforgery token travels as a
+           header because the editor posts its own request, outside any <form>. *@
+        <textarea name="BodyHtml" rows="20" data-ckeditor
+                  data-upload-url="@Url.Action("UploadInline", new { id = seminarId })"
+                  data-upload-token-field="__RequestVerificationToken">@active.Form.BodyHtml</textarea>
+        <p class="admin-field__hint">@Loc["Admin.Seminar.Body.Hint"]</p>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label>@Loc["Admin.Seminar.SeoTitle"]</label>
+            <input name="SeoTitle" value="@active.Form.SeoTitle" maxlength="200" />
+        </div>
+        <div class="admin-field">
+            <label>@Loc["Admin.Seminar.SeoDescription"]</label>
+            <input name="SeoDescription" value="@active.Form.SeoDescription" maxlength="400" />
+        </div>
+    </div>
+
+    <div>
+        <button type="submit" class="admin-btn">@Loc["Admin.Seminar.SaveCopy", active.Culture.NativeLabel]</button>
+    </div>
+</form>
+
+@if (!active.IsDefault && active.IsWritten)
+{
+    <form asp-action="DeleteTranslation" asp-route-id="@seminarId" method="post" class="admin-inline-form" style="margin-top:12px;"
+          onsubmit="return confirm('@Loc["Admin.Seminar.DeleteTranslation.Confirm", active.Culture.NativeLabel]');">
+        <input type="hidden" name="culture" value="@active.Culture.Name" />
+        <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">@Loc["Admin.Seminar.DeleteTranslation"]</button>
+    </form>
+}
+
+@* --- Media library ----------------------------------------------------------------------------- *@
+<h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Media"]</h2>
+<p class="admin-lede">@Loc["Admin.Seminar.Media.Lede"]</p>
+
+<form asp-action="UploadMedia" asp-route-id="@seminarId" method="post" enctype="multipart/form-data" class="admin-inline-form">
+    <div class="admin-field">
+        <label for="media-file">@Loc["Admin.Seminar.Media.File"]</label>
+        <input id="media-file" type="file" name="file" accept="@MediaPolicy.AcceptAttribute" required />
+    </div>
+    <div class="admin-field">
+        <label for="media-title">@Loc["Admin.Seminar.Media.Caption"]</label>
+        <input id="media-title" type="text" name="title" maxlength="200" />
+    </div>
+    <button type="submit" class="admin-btn">@Loc["Admin.Seminar.Media.Upload"]</button>
+</form>
+<p class="admin-field__hint">@Loc["Admin.Seminar.Media.Limits"]</p>
+
+@if (Model.Media.Count == 0)
+{
+    <p>@Loc["Admin.Seminar.Media.Empty"]</p>
+}
+else
+{
+    <div class="admin-media-grid">
+        @foreach (var media in Model.Media)
+        {
+            var mediaUrl = Url.Action("Media", "Seminars", new { area = "", id = media.Id });
+            <figure class="admin-media-card">
+                @switch (media.Kind)
+                {
+                    case SeminarMediaKind.Image:
+                    case SeminarMediaKind.Animation:
+                        <img src="@mediaUrl" alt="@media.Title" loading="lazy" />
+                        break;
+                    case SeminarMediaKind.Video:
+                        <video src="@mediaUrl" controls preload="metadata"></video>
+                        break;
+                    case SeminarMediaKind.Audio:
+                        <audio src="@mediaUrl" controls preload="metadata"></audio>
+                        break;
+                    default:
+                        <a class="admin-media-card__file" href="@mediaUrl" target="_blank" rel="noopener">@(media.OriginalFileName ?? media.StorageKey)</a>
+                        break;
+                }
+
+                <figcaption>
+                    <strong>@(media.Title ?? media.OriginalFileName ?? media.Kind.ToString())</strong>
+                    <span class="admin-media-card__meta">
+                        @Loc["Admin.Seminar.MediaKind." + media.Kind] &middot; @((media.SizeBytes / 1024 / 1024.0).ToString("0.0")) MB
+                        @if (media.IsInline)
+                        {
+                            <text>&middot; @Loc["Admin.Seminar.Media.Inline"]</text>
+                        }
+                    </span>
+
+                    <div class="admin-media-card__actions">
+                        @if (Model.CoverMediaId == media.Id)
+                        {
+                            <span class="admin-badge admin-badge--open">@Loc["Admin.Seminar.Media.IsCover"]</span>
+                        }
+                        else if (media.Kind is SeminarMediaKind.Image or SeminarMediaKind.Animation)
+                        {
+                            <form asp-action="SetCover" asp-route-id="@seminarId" method="post" class="admin-inline-form">
+                                <input type="hidden" name="mediaId" value="@media.Id" />
+                                <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">@Loc["Admin.Seminar.Media.MakeCover"]</button>
+                            </form>
+                        }
+
+                        <form asp-action="RemoveMedia" asp-route-id="@seminarId" method="post" class="admin-inline-form"
+                              onsubmit="return confirm('@Loc["Admin.Seminar.Media.Remove.Confirm"]');">
+                            <input type="hidden" name="mediaId" value="@media.Id" />
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">@Loc["Admin.Seminar.Media.Remove"]</button>
+                        </form>
+                    </div>
+                </figcaption>
+            </figure>
+        }
+    </div>
+}
+
+@* --- Core fields -------------------------------------------------------------------------------- *@
+<h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Details"]</h2>
+
+<form asp-action="Edit" asp-route-id="@seminarId" method="post" class="admin-form">
+    <partial name="_CoreFields" model="Model.Form" />
+    <div>
+        <button type="submit" class="admin-btn">@Loc["Admin.Seminar.SaveDetails"]</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Seminar.BackToList"]</a>
+    </div>
+</form>
+
+@* --- Delete -------------------------------------------------------------------------------------- *@
+<h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Danger"]</h2>
+<p class="admin-field__hint">@Loc["Admin.Seminar.Delete.Hint"]</p>
+<form asp-action="Delete" asp-route-id="@seminarId" method="post"
+      onsubmit="return confirm('@Loc["Admin.Seminar.Delete.Confirm"]');">
+    <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Seminar.Delete"]</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

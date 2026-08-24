@@ -1,0 +1,293 @@
+// The VI House Sessions — public listing, detail page and the enrolment gate.
+// Built on the same card/hero language as Journal and Experiences rather than a new one; the only
+// genuinely new component here is the access panel, which is the page's real subject.
+
+.seminar-empty {
+  text-align: center;
+  padding: 64px 0;
+  color: rgba(18, 22, 15, 0.55);
+}
+
+.seminar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+  padding: 48px 0 88px;
+
+  // Inside the account area the grid sits in a narrower column that already has its own padding.
+  &--compact {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 8px 0 0;
+  }
+}
+
+.seminar-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.35s var(--vih-ease), box-shadow 0.35s var(--vih-ease);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(0, 35, 10, 0.1);
+  }
+}
+
+.seminar-card__image {
+  position: relative;
+  height: 180px;
+  background-color: var(--vih-green-800);
+  background-size: cover;
+  background-position: center;
+}
+
+.seminar-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: var(--vih-radius-pill);
+  background: rgba(0, 26, 2, 0.82);
+  color: var(--vih-cream);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.seminar-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px 22px 22px;
+}
+
+.seminar-card__title {
+  font-family: var(--vih-font-serif);
+  font-size: 1.15rem;
+  color: var(--vih-green-900);
+  margin: 0 0 8px;
+}
+
+.seminar-card__summary {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: rgba(18, 22, 15, 0.7);
+  margin: 0 0 14px;
+}
+
+.seminar-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 0.75rem;
+  color: rgba(18, 22, 15, 0.5);
+  // Pushes the price to the bottom of the card whatever the summary length, so a row of cards
+  // lines up on its most important number.
+  margin-top: auto;
+}
+
+.seminar-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--vih-line-on-light);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--vih-green-900);
+}
+
+.seminar-card__free {
+  color: var(--vih-gold);
+}
+
+.seminar-card__included {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(18, 22, 15, 0.5);
+}
+
+// --- Detail ---------------------------------------------------------------------------------------
+.seminar-detail {
+  max-width: 780px;
+  padding: 40px 0 96px;
+}
+
+.seminar-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 20px;
+  margin-top: 14px;
+  font-size: 0.8rem;
+  color: var(--vih-cream-dim);
+}
+
+.seminar-detail__cover {
+  height: clamp(220px, 34vw, 400px);
+  background-size: cover;
+  background-position: center;
+  background-color: var(--vih-green-800);
+}
+
+.seminar-detail__summary {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: rgba(18, 22, 15, 0.8);
+  margin: 0 0 28px;
+}
+
+.seminar-detail__body {
+  padding-top: 8px;
+}
+
+.seminar-detail__back {
+  margin-top: 40px;
+  font-size: 0.85rem;
+
+  a {
+    color: rgba(18, 22, 15, 0.6);
+  }
+}
+
+.seminar-notice {
+  padding: 12px 16px;
+  border-left: 3px solid var(--vih-gold);
+  background: rgba(184, 149, 90, 0.12);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+
+  &--error {
+    border-left-color: #9a3324;
+    background: rgba(154, 51, 36, 0.08);
+    color: #7a2a1d;
+  }
+
+  // Staff preview: deliberately plain and grey rather than branded, so it never reads as part of
+  // the page an actual visitor is being shown.
+  &--preview {
+    border-left-color: rgba(18, 22, 15, 0.4);
+    background: rgba(18, 22, 15, 0.05);
+
+    strong {
+      margin-right: 6px;
+    }
+  }
+}
+
+// --- The gate --------------------------------------------------------------------------------------
+// Everything a non-enrolled reader sees below the summary. Deliberately the heaviest element on the
+// page: it is the one thing they are meant to act on.
+.seminar-access {
+  padding: 28px 30px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 12px;
+  background: var(--vih-cream);
+  margin-bottom: 36px;
+
+  h2 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.3rem;
+    color: var(--vih-green-900);
+    margin: 0 0 10px;
+  }
+
+  p {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: rgba(18, 22, 15, 0.72);
+    margin: 0 0 18px;
+  }
+
+  form {
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  &--granted {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: rgba(184, 149, 90, 0.1);
+
+    p {
+      margin: 0;
+      font-weight: 600;
+      color: var(--vih-green-900);
+    }
+  }
+}
+
+.seminar-access__mark {
+  font-size: 1.1rem;
+  color: var(--vih-gold);
+}
+
+.seminar-access__seats {
+  margin: 14px 0 0 !important;
+  font-size: 0.78rem !important;
+  color: rgba(18, 22, 15, 0.5) !important;
+}
+
+// --- Materials ---------------------------------------------------------------------------------------
+.seminar-media {
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--vih-line-on-light);
+
+  h2 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.25rem;
+    color: var(--vih-green-900);
+    margin: 0 0 20px;
+  }
+}
+
+.seminar-media__item {
+  margin: 0 0 28px;
+
+  img,
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    background: #f0eee8;
+  }
+
+  audio {
+    width: 100%;
+  }
+
+  figcaption {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: rgba(18, 22, 15, 0.55);
+  }
+}
+
+.seminar-media__download {
+  display: inline-block;
+  padding: 12px 18px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--vih-green-900);
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--vih-green-900);
+  }
+}

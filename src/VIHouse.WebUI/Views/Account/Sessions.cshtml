@@ -1,0 +1,53 @@
+@model List<SeminarCardViewModel>
+@{
+    ViewData["Title"] = Loc["Account.SessionsTitle"];
+}
+
+<div class="account-manage">
+    <partial name="_AccountNav" />
+    <div class="account-manage__content">
+        <h1>@Loc["Account.SessionsTitle"]</h1>
+
+        @if (Model.Count == 0)
+        {
+            <p>@Loc["Account.NoSessions"]</p>
+            <p><a class="btn btn--primary" asp-controller="Seminars" asp-action="Index">@Loc["Account.BrowseSessions"]</a></p>
+        }
+        else
+        {
+            @* The same card as the public listing: someone who enrolled should recognise what they
+               signed up for, and a second visual language for the same thing would only confuse. *@
+            <div class="seminar-grid seminar-grid--compact">
+                @foreach (var seminar in Model)
+                {
+                    <a class="seminar-card" asp-controller="Seminars" asp-action="Details" asp-route-slug="@seminar.Slug">
+                        <div class="seminar-card__image"
+                             style="@(seminar.HasCover ? $"background-image:url('{Url.Action("Media", "Seminars", new { id = seminar.CoverMediaId })}')" : "")">
+                            @if (seminar.IsArchived)
+                            {
+                                <span class="seminar-card__badge">@Loc["Seminars.Past"]</span>
+                            }
+                        </div>
+                        <div class="seminar-card__body">
+                            <h3 class="seminar-card__title">@seminar.Title</h3>
+                            @if (!string.IsNullOrWhiteSpace(seminar.Summary))
+                            {
+                                <p class="seminar-card__summary">@seminar.Summary</p>
+                            }
+                            <div class="seminar-card__meta">
+                                @if (seminar.StartAtUtc is not null)
+                                {
+                                    <span>@seminar.StartAtUtc.Value.ToString("d MMMM yyyy, HH:mm") UTC</span>
+                                }
+                                else
+                                {
+                                    <span>@Loc["Seminars.OnDemand"]</span>
+                                }
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>

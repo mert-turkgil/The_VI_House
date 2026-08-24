@@ -1,0 +1,54 @@
+@model AdminSeminarCreateViewModel
+@{
+    ViewData["Title"] = Loc["Admin.Seminar.Create.Title"].Value;
+}
+
+<p class="admin-lede">@Loc["Admin.Seminar.Create.Lede", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</p>
+
+<form asp-action="Create" method="post" class="admin-form">
+    <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+
+    <h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Copy", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</h2>
+
+    @* The default-language copy is created with the seminar: publishing is refused without it, so
+       asking for it up front is cheaper than a "you can't publish this yet" a week later. *@
+    <input type="hidden" asp-for="DefaultTranslation.Culture" value="@SiteCultures.Default" />
+
+    <div class="admin-field">
+        <label asp-for="DefaultTranslation.Title"></label>
+        <input asp-for="DefaultTranslation.Title" />
+        <span asp-validation-for="DefaultTranslation.Title" class="field-validation-error"></span>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="DefaultTranslation.Summary"></label>
+        <textarea asp-for="DefaultTranslation.Summary" rows="3"></textarea>
+        <span asp-validation-for="DefaultTranslation.Summary" class="field-validation-error"></span>
+        <p class="admin-field__hint">@Loc["Admin.Seminar.Summary.Hint"]</p>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="DefaultTranslation.BodyHtml"></label>
+        @* data-ckeditor upgrades this into a rich text editor (ClientApp modules/editor.ts). The
+           textarea stays the real form field and keeps working on its own if that script fails.
+           No upload URL here: there is no seminar to attach an asset to until this form is saved,
+           so images are added from the media library on the next screen. *@
+        <textarea asp-for="DefaultTranslation.BodyHtml" rows="14" data-ckeditor></textarea>
+        <span asp-validation-for="DefaultTranslation.BodyHtml" class="field-validation-error"></span>
+    </div>
+
+    <h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Details"]</h2>
+    @* The prefix has to be set explicitly: a partial starts with an empty HtmlFieldPrefix, so the
+       shared _CoreFields would render name="Slug" and bind to nothing on this nested model. *@
+    @await Html.PartialAsync("_CoreFields", Model.Seminar,
+        new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = "Seminar" } })
+
+    <div>
+        <button type="submit" class="admin-btn">@Loc["Admin.Seminar.CreateSubmit"]</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Seminar.Cancel"]</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

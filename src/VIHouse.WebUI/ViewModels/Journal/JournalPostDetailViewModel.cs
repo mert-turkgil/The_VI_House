@@ -14,7 +14,7 @@ public class JournalPostDetailViewModel
     public DateTimeOffset? PublishedAt { get; set; }
 
     /// <summary>Sanitised HTML from the admin's rich text editor, rendered with Html.Raw. Safe to
-    /// trust here because JournalService sanitises on every write — see JournalHtml.</summary>
+    /// trust here because JournalService sanitises on every write — see EditorHtml.</summary>
     public string BodyHtml { get; set; } = string.Empty;
 
     public string CategoryLabel => Category.ToDisplayLabel();
@@ -29,6 +29,6 @@ public class JournalPostDetailViewModel
         PublishedAt = p.PublishedAt,
         // EnsureHtml covers posts written before the editor existed, whose bodies are still stored
         // as blank-line-separated plain text and would otherwise render as one run-on paragraph.
-        BodyHtml = JournalHtml.EnsureHtml(p.Body),
+        BodyHtml = EditorHtml.EnsureHtml(p.Body),
     };
 }

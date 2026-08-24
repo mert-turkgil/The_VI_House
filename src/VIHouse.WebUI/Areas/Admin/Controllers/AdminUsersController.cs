@@ -126,6 +126,53 @@ public class AdminUsersController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
+    /// <summary>
+    /// Clears an account's authenticator pairing so the next sign-in runs the enrolment flow from
+    /// scratch (OnboardingRequirementFilter bounces it to /onboarding, which issues a fresh QR code
+    /// and a fresh set of recovery codes).
+    ///
+    /// The production case is a lost or wiped phone: 2FA is mandatory here, so without this the
+    /// only remaining way into an account whose recovery codes have also gone is a database edit.
+    /// It is equally what makes the first-login experience rehearsable — reset a test admin and the
+    /// next sign-in behaves exactly like a freshly seeded account on a brand-new deployment.
+    ///
+    /// SuperAdmin only, for the same reason UpdateRoles is: any admin who could strip another
+    /// admin's second factor could reduce a colleague's account to password-only and then work on
+    /// the password at leisure.
+    ///
+    /// The security stamp is rolled as part of the reset, which invalidates the target's outstanding
+    /// Identity tokens and retires their existing cookie at the next validation pass (five minutes —
+    /// see SecurityStampValidatorOptions in Program.cs). Their access to anything that matters ends
+    /// sooner than that: OnboardingRequirementFilter re-reads two-factor state from the database on
+    /// every authorized request, so the panel shuts on their very next click.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.SuperAdmin)]
+    public async Task<IActionResult> ResetTwoFactor(Guid id, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+
+        var wasEnabled = await userManager.GetTwoFactorEnabledAsync(user);
+
+        // Disable before resetting the key: SetTwoFactorEnabledAsync throws if the account has no
+        // authenticator key configured, and ResetAuthenticatorKeyAsync is what removes it.
+        await userManager.SetTwoFactorEnabledAsync(user, false);
+        await userManager.ResetAuthenticatorKeyAsync(user);
+        await userManager.UpdateSecurityStampAsync(user);
+
+        await LogAsync("UserTwoFactorReset", id,
+            new { user.Email, TwoFactorEnabled = wasEnabled },
+            new { user.Email, TwoFactorEnabled = false, ResetBy = User.Identity?.Name }, ct);
+        await auditLogs.SaveChangesAsync(ct);
+
+        TempData["StatusMessage"] =
+            $"Two-factor reset for {user.Email}. The panel is closed to them from their next click, their session ends within " +
+            "five minutes, and they'll pair a new authenticator app when they sign in again.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
     // --- Inviting a new admin -------------------------------------------------------------------
 
     [HttpGet]

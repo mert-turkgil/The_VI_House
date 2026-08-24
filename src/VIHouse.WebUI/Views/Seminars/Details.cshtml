@@ -1,0 +1,199 @@
+@model SeminarDetailViewModel
+@{
+    var access = Model.Access;
+}
+
+@section Styles {
+    @if (!string.IsNullOrWhiteSpace(Model.SeoDescription))
+    {
+        <meta name="description" content="@Model.SeoDescription" />
+    }
+}
+
+<div class="content-hero">
+    <div class="container">
+        <span class="content-hero__eyebrow">@Loc["Seminars.Eyebrow"]</span>
+        <h1>@Model.Title</h1>
+
+        <div class="seminar-detail__meta">
+            @if (Model.StartAtUtc is not null)
+            {
+                <span>@Model.StartAtUtc.Value.ToString("d MMMM yyyy, HH:mm") UTC</span>
+            }
+            else
+            {
+                <span>@Loc["Seminars.OnDemand"]</span>
+            }
+            <span>@(Model.IsOnline ? Loc["Seminars.Online"].Value : Model.Location ?? Loc["Seminars.InPerson"].Value)</span>
+            @if (!string.IsNullOrWhiteSpace(Model.HostName))
+            {
+                <span>@Model.HostName@(string.IsNullOrWhiteSpace(Model.HostTitle) ? "" : $" — {Model.HostTitle}")</span>
+            }
+        </div>
+    </div>
+</div>
+
+@if (Model.HasCover)
+{
+    <div class="seminar-detail__cover" style="background-image:url('@Url.Action("Media", new { id = Model.CoverMediaId })')"></div>
+}
+
+<div class="container seminar-detail">
+    @if (TempData["SeminarError"] is string error)
+    {
+        <div class="seminar-notice seminar-notice--error" role="alert">@error</div>
+    }
+    @if (TempData["SeminarMessage"] is string message)
+    {
+        <div class="seminar-notice" role="status">@message</div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Summary))
+    {
+        <p class="seminar-detail__summary">@Model.Summary</p>
+    }
+
+    @* --- The gate ------------------------------------------------------------------------------
+       Whether the body is here at all was decided in the view model, which is where the entitlement
+       check lives — this only chooses wording. A staff preview gets the content *and* the panel a
+       real visitor would meet, so an editor can check both halves at once.                        *@
+    @if (Model.IsStaffPreview)
+    {
+        <div class="seminar-notice seminar-notice--preview" role="status">
+            <strong>@Loc["Seminars.Preview.Heading"]</strong>
+            @Loc["Seminars.Preview.Body"]
+        </div>
+    }
+
+    @if (access.HasAccess)
+    {
+        <div class="seminar-access seminar-access--granted">
+            <span class="seminar-access__mark" aria-hidden="true">&#10003;</span>
+            <p>@Loc["Seminars.Access.Enrolled"]</p>
+        </div>
+    }
+
+    @if (Model.BodyHtml is not null)
+    {
+        <div class="content-body seminar-detail__body">
+            @* Sanitised on write by SeminarService (see EditorHtml), so the stored HTML is safe. *@
+            @Html.Raw(Model.BodyHtml)
+        </div>
+
+        @if (Model.Media.Count > 0)
+        {
+            <div class="seminar-media">
+                <h2>@Loc["Seminars.Materials"]</h2>
+
+                @foreach (var media in Model.Media)
+                {
+                    var mediaUrl = Url.Action("Media", new { id = media.Id });
+                    <figure class="seminar-media__item">
+                        @switch (media.Kind)
+                        {
+                            case SeminarMediaKind.Video:
+                                @* preload="metadata" so a page with three recordings on it doesn't
+                                   start pulling gigabytes before anyone presses play. *@
+                                <video src="@mediaUrl" controls preload="metadata" playsinline></video>
+                                break;
+                            case SeminarMediaKind.Audio:
+                                <audio src="@mediaUrl" controls preload="metadata"></audio>
+                                break;
+                            case SeminarMediaKind.Animation:
+                                <img src="@mediaUrl" alt="@(media.Title ?? "")" loading="lazy" />
+                                break;
+                            case SeminarMediaKind.Image:
+                                <img src="@mediaUrl" alt="@(media.Title ?? "")" loading="lazy" />
+                                break;
+                            default:
+                                <a class="seminar-media__download" href="@mediaUrl" target="_blank" rel="noopener">
+                                    @(media.Title ?? media.OriginalFileName ?? Loc["Seminars.Download"].Value)
+                                </a>
+                                break;
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(media.Title) && media.Kind != SeminarMediaKind.Document)
+                        {
+                            <figcaption>@media.Title</figcaption>
+                        }
+                    </figure>
+                }
+            </div>
+        }
+    }
+
+    @if (!access.HasAccess)
+    {
+        <div class="seminar-access">
+            @switch (access.Outcome)
+            {
+                case SeminarAccessOutcome.NeedsSignIn:
+                    <h2>@Loc["Seminars.Access.SignIn.Heading"]</h2>
+                    <p>@Loc["Seminars.Access.SignIn.Body"]</p>
+                    <a class="btn btn--primary" href="/Identity/Account/Login?returnUrl=@Uri.EscapeDataString($"/sessions/{Model.Slug}")">@Loc["Nav.LogIn"]</a>
+                    <a class="btn btn--ghost-dark" href="/join">@Loc["Nav.ApplyToJoin"]</a>
+                    break;
+
+                case SeminarAccessOutcome.FreeToEnrol:
+                    <h2>@Loc["Seminars.Access.Free.Heading"]</h2>
+                    <p>@Loc["Seminars.Access.Free.Body"]</p>
+                    <form asp-action="Enrol" asp-route-slug="@Model.Slug" method="post">
+                        <button type="submit" class="btn btn--primary">@Loc["Seminars.Enrol"]</button>
+                    </form>
+                    break;
+
+                case SeminarAccessOutcome.IncludedInMembership:
+                    <h2>@Loc["Seminars.Access.Included.Heading"]</h2>
+                    <p>@Loc["Seminars.Access.Included.Body", MoneyFormatter.Format(access.PriceMinor, access.Currency)]</p>
+                    <form asp-action="Enrol" asp-route-slug="@Model.Slug" method="post">
+                        <button type="submit" class="btn btn--primary">@Loc["Seminars.EnrolFree"]</button>
+                    </form>
+                    break;
+
+                case SeminarAccessOutcome.RequiresPayment:
+                    <h2>@Loc["Seminars.Access.Pay.Heading", MoneyFormatter.Format(access.PriceMinor, access.Currency)]</h2>
+                    <p>
+                        @Loc["Seminars.Access.Pay.Body"]
+                        @if (Model.IncludedWithMembership)
+                        {
+                            <text> @Loc["Seminars.Access.Pay.MembershipHint"]</text>
+                        }
+                    </p>
+                    <form asp-action="Enrol" asp-route-slug="@Model.Slug" method="post">
+                        <button type="submit" class="btn btn--primary">
+                            @Loc["Seminars.Buy", MoneyFormatter.Format(access.PriceMinor, access.Currency)]
+                        </button>
+                    </form>
+                    @if (Model.IncludedWithMembership)
+                    {
+                        <a class="btn btn--ghost-dark" asp-controller="Membership" asp-action="Index">@Loc["Seminars.SeeMembership"]</a>
+                    }
+                    break;
+
+                case SeminarAccessOutcome.PendingPayment:
+                    <h2>@Loc["Seminars.Access.Pending.Heading"]</h2>
+                    <p>@Loc["Seminars.Access.Pending.Body"]</p>
+                    break;
+
+                case SeminarAccessOutcome.SoldOut:
+                    <h2>@Loc["Seminars.Access.SoldOut.Heading"]</h2>
+                    <p>@Loc["Seminars.Access.SoldOut.Body"]</p>
+                    break;
+
+                default:
+                    <h2>@Loc["Seminars.Access.Closed.Heading"]</h2>
+                    <p>@Loc["Seminars.Access.Closed.Body"]</p>
+                    break;
+            }
+
+            @if (access.SeatsRemaining is int seats && seats > 0 && access.CanEnrolNow)
+            {
+                <p class="seminar-access__seats">@Loc["Seminars.SeatsLeft", seats]</p>
+            }
+        </div>
+    }
+
+    <p class="seminar-detail__back">
+        <a asp-action="Index">&larr; @Loc["Seminars.BackToAll"]</a>
+    </p>
+</div>

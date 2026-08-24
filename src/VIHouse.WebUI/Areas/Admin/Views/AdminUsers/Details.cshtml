@@ -132,11 +132,21 @@
                 <div>
                     <dt>Two-factor</dt>
                     <dd>
-                        @* 2FA is mandatory site-wide (TwoFactorRequirementFilter), so "Not set up"
+                        @* 2FA is mandatory site-wide (OnboardingRequirementFilter), so "Not set up"
                            is also the answer to "why is this member stuck on a setup page?" *@
                         <span class="@(Model.TwoFactorEnabled ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")">
                             @(Model.TwoFactorEnabled ? "Enabled" : "Not set up")
                         </span>
+                        @* SuperAdmin-only, and only worth offering once there is a pairing to clear.
+                           Covers the lost-phone case, and is what makes a first-login enrolment
+                           repeatable when rehearsing the flow before launch. *@
+                        @if (Model.TwoFactorEnabled && User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin))
+                        {
+                            <form asp-action="ResetTwoFactor" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
+                                  onsubmit="return confirm('Reset two-factor for @Model.Email? They will be signed out everywhere and must pair a new authenticator app on their next sign-in.');">
+                                <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Reset two-factor</button>
+                            </form>
+                        }
                     </dd>
                 </div>
                 <div>

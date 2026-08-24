@@ -9,6 +9,7 @@ using VIHouse.Entities.Experiences;
 using VIHouse.Entities.Journal;
 using VIHouse.Entities.Membership;
 using VIHouse.Entities.Referrals;
+using VIHouse.Entities.Seminars;
 
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Seed;
 
@@ -60,6 +61,7 @@ public static class DbSeeder
         await SeedApplicationsAsync(db);
         await SeedMembershipPlansAsync(db);
         await SeedJournalPostsAsync(db);
+        await SeedSeminarsAsync(db);
         await SeedCommunityLinksAsync(db);
         await db.SaveChangesAsync(); // commit before SeedAmbassadorsAsync, which needs Roles.Ambassador to already exist
 
@@ -183,6 +185,87 @@ public static class DbSeeder
                 Status = MembershipPlanStatus.Active,
                 SortOrder = 3,
             });
+    }
+
+    /// <summary>
+    /// Two demo sessions, Development only — one members-only and priced, one public and free, which
+    /// between them exercise every branch of the enrolment gate without anyone having to author
+    /// content first. Both carry English copy plus a Turkish translation, so the language fallback
+    /// is visible (German and Estonian are deliberately left unwritten: those readers should see
+    /// the English, and the admin index should show the gap).
+    ///
+    /// No media is seeded — those are real files on disk, and inventing rows pointing at storage
+    /// keys that do not exist would put broken players in front of whoever is testing.
+    /// </summary>
+    private static async Task SeedSeminarsAsync(VIHouseDbContext db)
+    {
+        if (await db.Seminars.AnyAsync())
+            return;
+
+        var now = DateTimeOffset.UtcNow;
+
+        var pricing = new Seminar
+        {
+            Slug = "pricing-for-founders",
+            Status = SeminarStatus.Published,
+            Visibility = SeminarVisibility.Members,
+            HostName = "Placeholder Host",
+            HostTitle = "Operator in residence",
+            IsOnline = true,
+            Location = "Online",
+            TimeZoneId = "Europe/London",
+            StartAtUtc = now.AddDays(12),
+            EndAtUtc = now.AddDays(12).AddHours(2),
+            Capacity = 40,
+            PriceMinor = 12000,
+            Currency = "GBP",
+            IncludedWithMembership = true,
+            PublishedAt = now.AddDays(-3),
+            SortOrder = 1,
+        };
+        pricing.Translations.Add(new SeminarTranslation
+        {
+            SeminarId = pricing.Id,
+            Culture = "en-GB",
+            Title = "Pricing For Founders",
+            Summary = "Two hours on how to set a price that reflects what you are actually worth, and how to raise one without losing the room.",
+            BodyHtml = "<h2>What we cover</h2><p>Placeholder content for local development. Replace it before this database is ever shown to anyone.</p><p>The session runs live, and the recording stays here afterwards for everyone who enrolled.</p>",
+        });
+        pricing.Translations.Add(new SeminarTranslation
+        {
+            SeminarId = pricing.Id,
+            Culture = "tr-TR",
+            Title = "Kurucular İçin Fiyatlandırma",
+            Summary = "Gerçekten ne değerde olduğunuzu yansıtan bir fiyat belirlemek ve odayı kaybetmeden fiyat yükseltmek üzerine iki saat.",
+            BodyHtml = "<h2>Neleri ele alıyoruz</h2><p>Yerel geliştirme için yer tutucu içerik. Bu veritabanı birine gösterilmeden önce değiştirin.</p>",
+        });
+
+        var intro = new Seminar
+        {
+            Slug = "how-the-house-works",
+            Status = SeminarStatus.Published,
+            Visibility = SeminarVisibility.Public,
+            HostName = "The VI House",
+            IsOnline = true,
+            TimeZoneId = "Europe/London",
+            // No start date: on-demand content, which is the other half of what a Session can be.
+            Capacity = 0,
+            PriceMinor = 0,
+            Currency = "GBP",
+            IncludedWithMembership = true,
+            PublishedAt = now.AddDays(-10),
+            SortOrder = 2,
+        };
+        intro.Translations.Add(new SeminarTranslation
+        {
+            SeminarId = intro.Id,
+            Culture = "en-GB",
+            Title = "How The House Works",
+            Summary = "A short introduction to the membership, the experiences and what the community is actually for.",
+            BodyHtml = "<p>Placeholder content for local development. Free to anyone with an account, which makes it the quickest way to exercise the one-click enrolment path.</p>",
+        });
+
+        db.Seminars.AddRange(pricing, intro);
     }
 
     private static async Task SeedJournalPostsAsync(VIHouseDbContext db)

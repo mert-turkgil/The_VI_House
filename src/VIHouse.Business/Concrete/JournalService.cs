@@ -25,7 +25,7 @@ public class JournalService(IJournalPostRepository posts, IAuditLogRepository au
         if (post.Status == JournalPostStatus.Published)
             post.PublishedAt = DateTimeOffset.UtcNow;
 
-        post.Body = JournalHtml.Sanitize(post.Body);
+        post.Body = EditorHtml.Sanitize(post.Body);
 
         await posts.AddAsync(post, ct);
         await LogAsync("JournalPostCreated", post.Id, adminUserId, ipAddress,
@@ -45,7 +45,7 @@ public class JournalService(IJournalPostRepository posts, IAuditLogRepository au
         existing.Slug = updated.Slug;
         existing.Category = updated.Category;
         existing.Excerpt = updated.Excerpt;
-        existing.Body = JournalHtml.Sanitize(updated.Body);
+        existing.Body = EditorHtml.Sanitize(updated.Body);
         existing.CoverImageUrl = updated.CoverImageUrl;
         existing.AuthorName = updated.AuthorName;
         existing.Status = updated.Status;

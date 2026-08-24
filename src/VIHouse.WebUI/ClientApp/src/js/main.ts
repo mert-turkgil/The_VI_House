@@ -4,6 +4,7 @@ import { initScrollReveal } from './modules/reveal';
 import { initStatCounters } from './modules/counter';
 import { initCarousels } from './modules/carousel';
 import { initAuthenticatorQr } from './modules/qr';
+import { initRecoveryCodeDownload } from './modules/recoveryCodes';
 
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initStatCounters();
   initCarousels();
   initAuthenticatorQr();
+  initRecoveryCodeDownload();
 });
 
 // PWA (brief §65) — registered on every page (Admin included, harmlessly; the service worker

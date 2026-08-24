@@ -1,12 +1,16 @@
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Localization;
 using VIHouse.Business.Abstract;
+using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
+using VIHouse.Entities.Audit;
 using VIHouse.WebUI.ViewModels.Onboarding;
 
 namespace VIHouse.WebUI.Controllers;
@@ -20,8 +24,18 @@ namespace VIHouse.WebUI.Controllers;
 /// something, not to configure security. The pages spell out each step in order, say why it's
 /// needed, and never present more than one thing to do at a time.
 ///
+/// This is also the enrolment path for the bootstrap admin accounts on a fresh deployment. They are
+/// seeded with a password and nothing else; OnboardingRequirementFilter bounces their first sign-in
+/// here, and the panel stays shut until the authenticator is paired and the recovery codes have
+/// been acknowledged. No manual step and no environment switch — the same code path runs in
+/// Development, so the flow can be rehearsed exactly as it will happen in Production.
+///
 /// [Authorize] throughout, but deliberately exempt from OnboardingRequirementFilter (which routes
 /// people *here*), so these pages stay reachable while the account is still incomplete.
+///
+/// Every user-facing string — status messages and validation errors included — resolves through
+/// IStringLocalizer against the culture cookie, so someone who set the site to Türkçe before
+/// signing in is not dropped into English at the one point where the instructions actually matter.
 /// </summary>
 [Authorize]
 [Route("onboarding")]
@@ -30,9 +44,16 @@ public class OnboardingController(
     SignInManager<ApplicationUser> signInManager,
     IEmailService emailService,
     IMembershipService membershipService,
+    IAuditLogRepository auditLogs,
+    IStringLocalizer<SharedResource> loc,
     UrlEncoder urlEncoder) : Controller
 {
     private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
+
+    /// <summary>Carries the freshly generated recovery codes from the verify POST to the page that
+    /// displays them. Held in TempData rather than regenerated on the next request, because
+    /// generating a second set silently invalidates the first.</summary>
+    private const string RecoveryCodesKey = "RecoveryCodes";
 
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -43,7 +64,7 @@ public class OnboardingController(
         var model = await BuildStatusAsync(user, ct);
         if (model.IsComplete) return RedirectToAction(nameof(Done));
 
-        ViewData["Title"] = "Set up your account";
+        ViewData["Title"] = loc["Onboarding.Title"].Value;
         return View(model);
     }
 
@@ -62,7 +83,7 @@ public class OnboardingController(
 
         await SendConfirmationEmailAsync(user, ct);
 
-        TempData["StatusMessage"] = $"Confirmation link sent to {user.Email}. It's valid for 24 hours.";
+        TempData["StatusMessage"] = loc["Onboarding.Confirm.Sent", user.Email!].Value;
         return RedirectToAction(nameof(Index));
     }
 
@@ -76,11 +97,11 @@ public class OnboardingController(
     public async Task<IActionResult> ConfirmEmail(string userId, string code, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(code))
-            return View("ConfirmEmailResult", new ConfirmEmailResultViewModel(false, "That confirmation link is incomplete."));
+            return ConfirmEmailFailed("Onboarding.Confirm.Error.Incomplete");
 
         var user = await userManager.FindByIdAsync(userId);
         if (user is null)
-            return View("ConfirmEmailResult", new ConfirmEmailResultViewModel(false, "We couldn't find that account."));
+            return ConfirmEmailFailed("Onboarding.Confirm.Error.NotFound");
 
         string token;
         try
@@ -89,15 +110,21 @@ public class OnboardingController(
         }
         catch (FormatException)
         {
-            return View("ConfirmEmailResult", new ConfirmEmailResultViewModel(false, "That confirmation link is malformed."));
+            return ConfirmEmailFailed("Onboarding.Confirm.Error.Malformed");
         }
 
         var result = await userManager.ConfirmEmailAsync(user, token);
-        ViewData["Title"] = result.Succeeded ? "Email confirmed" : "Confirmation failed";
+        if (!result.Succeeded)
+            return ConfirmEmailFailed("Onboarding.Confirm.Error.Expired");
 
-        return View("ConfirmEmailResult", result.Succeeded
-            ? new ConfirmEmailResultViewModel(true, null)
-            : new ConfirmEmailResultViewModel(false, "That link has expired or has already been used. Sign in and request a new one."));
+        ViewData["Title"] = loc["Onboarding.Confirm.Success.Title"].Value;
+        return View("ConfirmEmailResult", new ConfirmEmailResultViewModel(true, null));
+    }
+
+    private ViewResult ConfirmEmailFailed(string errorKey)
+    {
+        ViewData["Title"] = loc["Onboarding.Confirm.Fail.Title"].Value;
+        return View("ConfirmEmailResult", new ConfirmEmailResultViewModel(false, loc[errorKey].Value));
     }
 
     // --- Step: two-factor authentication -------------------------------------------------------
@@ -111,7 +138,7 @@ public class OnboardingController(
         if (await userManager.GetTwoFactorEnabledAsync(user))
             return RedirectToAction(nameof(Index));
 
-        ViewData["Title"] = "Set up two-factor authentication";
+        ViewData["Title"] = loc["Onboarding.TwoFactor.Title"].Value;
         return View(await BuildAuthenticatorModelAsync(user));
     }
 
@@ -123,17 +150,17 @@ public class OnboardingController(
         var user = await userManager.GetUserAsync(User);
         if (user is null) return Challenge();
 
+        // Authenticator apps display the code in groups, and people paste exactly what they see.
         var code = (form.VerificationCode ?? string.Empty).Replace(" ", string.Empty).Replace("-", string.Empty);
 
-        var isValid = await userManager.VerifyTwoFactorTokenAsync(
+        var isValid = code.Length > 0 && await userManager.VerifyTwoFactorTokenAsync(
             user, userManager.Options.Tokens.AuthenticatorTokenProvider, code);
 
         if (!isValid)
         {
-            ModelState.AddModelError(nameof(form.VerificationCode),
-                "That code didn't match. Codes change every 30 seconds — wait for a fresh one and try again. If it keeps failing, check your phone's clock is set automatically.");
+            ModelState.AddModelError(nameof(form.VerificationCode), loc["Onboarding.TwoFactor.Error.Invalid"].Value);
 
-            ViewData["Title"] = "Set up two-factor authentication";
+            ViewData["Title"] = loc["Onboarding.TwoFactor.Title"].Value;
             return View(await BuildAuthenticatorModelAsync(user));
         }
 
@@ -141,24 +168,63 @@ public class OnboardingController(
 
         // Regenerated here rather than shown from an earlier step: these are the only way back in if
         // the phone is lost, and they must be presented exactly once, at the point they become real.
-        var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
+        var recoveryCodes = await userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, RecoveryCodeCount);
 
         // Refresh the cookie so the new 2FA state is reflected without forcing a re-login.
         await signInManager.RefreshSignInAsync(user);
 
-        TempData["RecoveryCodes"] = string.Join(",", recoveryCodes ?? []);
+        await RecordTwoFactorEnabledAsync(user, ct);
+
+        TempData[RecoveryCodesKey] = string.Join(",", recoveryCodes ?? []);
         return RedirectToAction(nameof(RecoveryCodes));
     }
+
+    private const int RecoveryCodeCount = 10;
 
     [HttpGet("recovery-codes")]
     public IActionResult RecoveryCodes()
     {
-        if (TempData["RecoveryCodes"] is not string joined || string.IsNullOrWhiteSpace(joined))
-            return RedirectToAction(nameof(Index));
+        var codes = ReadRecoveryCodes();
+        if (codes.Count == 0) return RedirectToAction(nameof(Index));
 
-        ViewData["Title"] = "Save your recovery codes";
-        return View(joined.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
+        ViewData["Title"] = loc["Onboarding.Codes.Title"].Value;
+        return View(new RecoveryCodesViewModel { Codes = codes });
     }
+
+    /// <summary>
+    /// Gated behind an explicit acknowledgement rather than a plain "continue" link. The codes are
+    /// shown exactly once, and whoever clicks past them has locked themselves out of their own
+    /// account for the day they lose their phone — the tick box is the only thing standing between
+    /// "shown" and "actually read". For an admin account it is the difference between a lost phone
+    /// and a lost panel.
+    /// </summary>
+    [HttpPost("recovery-codes")]
+    [ValidateAntiForgeryToken]
+    public IActionResult RecoveryCodes(RecoveryCodesViewModel form)
+    {
+        var codes = ReadRecoveryCodes();
+        if (codes.Count == 0) return RedirectToAction(nameof(Index));
+
+        if (!form.Acknowledged)
+        {
+            ModelState.AddModelError(nameof(form.Acknowledged), loc["Onboarding.Codes.Error.MustAcknowledge"].Value);
+
+            ViewData["Title"] = loc["Onboarding.Codes.Title"].Value;
+            return View(new RecoveryCodesViewModel { Codes = codes });
+        }
+
+        // Acknowledged — drop them so a back-button press cannot re-display a set that now exists
+        // only as hashes against the account.
+        TempData.Remove(RecoveryCodesKey);
+        return RedirectToAction(nameof(Done));
+    }
+
+    /// <summary>Peeks rather than reads: the codes have to survive a failed acknowledgement POST,
+    /// and TempData is consumed by a normal read.</summary>
+    private List<string> ReadRecoveryCodes() =>
+        TempData.Peek(RecoveryCodesKey) is string joined && !string.IsNullOrWhiteSpace(joined)
+            ? joined.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+            : [];
 
     // --- Finish ---------------------------------------------------------------------------------
 
@@ -171,7 +237,7 @@ public class OnboardingController(
         var status = await BuildStatusAsync(user, ct);
         if (!status.IsComplete) return RedirectToAction(nameof(Index));
 
-        ViewData["Title"] = "You're all set";
+        ViewData["Title"] = loc["Onboarding.Done.Title"].Value;
         return View(status);
     }
 
@@ -215,6 +281,36 @@ public class OnboardingController(
                 urlEncoder.Encode(email),
                 key),
         };
+    }
+
+    /// <summary>
+    /// Switching two-factor on is a security-relevant state change, so it belongs in the same audit
+    /// trail as every admin mutation — it is the record of when a given account stopped being
+    /// password-only, and the counterpart to the AdminUsers "reset two-factor" entry. Written for
+    /// members too: the volume is one row per account, once.
+    /// </summary>
+    private async Task RecordTwoFactorEnabledAsync(ApplicationUser user, CancellationToken ct)
+    {
+        var roles = await userManager.GetRolesAsync(user);
+
+        await auditLogs.AddAsync(new AuditLogEntry
+        {
+            AdminUserId = user.Id,
+            Action = "TwoFactorEnabled",
+            EntityType = nameof(ApplicationUser),
+            EntityId = user.Id,
+            DataBefore = null,
+            DataAfter = JsonSerializer.Serialize(new
+            {
+                user.Email,
+                Roles = roles,
+                Method = "Authenticator",
+                RecoveryCodesIssued = RecoveryCodeCount,
+            }),
+            IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+        }, ct);
+
+        await auditLogs.SaveChangesAsync(ct);
     }
 
     private async Task SendConfirmationEmailAsync(ApplicationUser user, CancellationToken ct)

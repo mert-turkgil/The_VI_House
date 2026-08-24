@@ -19,6 +19,7 @@
 <nav class="account-manage__nav" aria-label="Account">
     <a class="@NavClass("Index")" asp-controller="Account" asp-action="Index">@Loc["Account.NavProfile"]</a>
     <a class="@NavClass("Bookings")" asp-controller="Account" asp-action="Bookings">@Loc["Account.NavBookings"]</a>
+    <a class="@NavClass("Sessions")" asp-controller="Account" asp-action="Sessions">@Loc["Account.NavSessions"]</a>
     @if (hasMembership)
     {
         <a class="@NavClass("Card")" asp-controller="Account" asp-action="Card">@Loc["Card.NavLabel"]</a>

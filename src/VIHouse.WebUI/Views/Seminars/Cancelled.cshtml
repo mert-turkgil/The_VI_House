@@ -1,0 +1,17 @@
+@{
+    var slug = ViewData["Slug"] as string;
+}
+
+<div class="apply-confirmation">
+    <div class="container apply-confirmation__inner">
+        <h1>@Loc["Seminars.Cancelled.Heading"]</h1>
+        <p>@Loc["Seminars.Cancelled.Body"]</p>
+        <div class="apply-confirmation__actions">
+            @if (!string.IsNullOrWhiteSpace(slug))
+            {
+                <a class="btn btn--primary" asp-action="Details" asp-route-slug="@slug">@Loc["Seminars.Cancelled.TryAgain"]</a>
+            }
+            <a class="btn btn--ghost-dark" asp-action="Index">@Loc["Seminars.BackToAll"]</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+@model AdminSeminarEnrolmentsViewModel
+@{
+    ViewData["Title"] = Loc["Admin.Seminar.Enrolments.Title", Model.SeminarTitle].Value;
+}
+
+<div class="admin-toolbar">
+    <a class="admin-btn admin-btn--ghost" asp-action="Edit" asp-route-id="@Model.SeminarId">&larr; @Loc["Admin.Seminar.BackToSeminar"]</a>
+</div>
+
+@if (Model.Rows.Count == 0)
+{
+    <p>@Loc["Admin.Seminar.Enrolments.Empty"]</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>@Loc["Admin.Seminar.Enrolments.Member"]</th>
+                <th>@Loc["Admin.Seminar.Enrolments.Status"]</th>
+                <th>@Loc["Admin.Seminar.Enrolments.GrantedVia"]</th>
+                <th>@Loc["Admin.Seminar.Enrolments.Paid"]</th>
+                <th>@Loc["Admin.Seminar.Enrolments.Confirmed"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model.Rows)
+            {
+                <tr>
+                    <td>
+                        @row.Name
+                        <div class="admin-table__sub">@row.Email</div>
+                    </td>
+                    <td>
+                        <span class="@(row.Status == SeminarEnrollmentStatus.Confirmed ? "admin-badge admin-badge--open" : row.Status == SeminarEnrollmentStatus.Pending ? "admin-badge admin-badge--draft" : "admin-badge admin-badge--closed")">
+                            @Loc["Admin.Seminar.EnrolmentStatus." + row.Status]
+                        </span>
+                    </td>
+                    <td>@Loc["Admin.Seminar.Grant." + row.GrantedVia]</td>
+                    <td>@(row.AmountMinor > 0 ? MoneyFormatter.Format(row.AmountMinor, row.Currency) : "—")</td>
+                    <td>@(row.ConfirmedAt?.ToString("d MMM yyyy, HH:mm") ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

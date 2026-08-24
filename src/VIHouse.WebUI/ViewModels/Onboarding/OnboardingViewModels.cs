@@ -37,10 +37,27 @@ public class TwoFactorSetupViewModel
     /// <summary>otpauth:// URI encoded into the QR code.</summary>
     public string AuthenticatorUri { get; set; } = "";
 
-    [Required(ErrorMessage = "Enter the 6-digit code from your authenticator app.")]
-    [StringLength(7, MinimumLength = 6, ErrorMessage = "The code is 6 digits.")]
-    [Display(Name = "Verification code")]
+    // ErrorMessage/Name are resource *keys*, not literals: Program.cs points the DataAnnotations
+    // localizer at SharedResource, so these resolve per-culture the same way the view strings do.
+    // A key with no translation falls back to the key itself, which is why every one used here has
+    // an entry in all four SharedResource.*.resx files.
+    [Required(ErrorMessage = "Onboarding.TwoFactor.Error.Required")]
+    [StringLength(7, MinimumLength = 6, ErrorMessage = "Onboarding.TwoFactor.Error.Length")]
+    [Display(Name = "Onboarding.TwoFactor.CodeLabel")]
     public string? VerificationCode { get; set; }
+}
+
+/// <summary>
+/// The one-time display of the recovery codes. Acknowledged is a posted tick box rather than a
+/// plain link, so finishing the flow requires an explicit "I have these saved" — see
+/// OnboardingController.RecoveryCodes.
+/// </summary>
+public class RecoveryCodesViewModel
+{
+    public List<string> Codes { get; set; } = [];
+
+    [Display(Name = "Onboarding.Codes.Ack")]
+    public bool Acknowledged { get; set; }
 }
 
 public record ConfirmEmailResultViewModel(bool Succeeded, string? Error);

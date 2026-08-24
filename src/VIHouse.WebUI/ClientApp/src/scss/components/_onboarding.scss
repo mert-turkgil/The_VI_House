@@ -312,6 +312,38 @@
   }
 }
 
+// Holds the "download as .txt" button, which is injected by script (modules/recoveryCodes.ts) —
+// empty in the markup, so it must collapse rather than leave a gap when that bundle never runs.
+.onboarding__codes-actions {
+  margin: -8px 0 20px;
+
+  &:empty {
+    display: none;
+  }
+}
+
+// The acknowledgement tick box reads as a sentence, not a form field, so it opts out of the
+// stacked label/control layout every other .onboarding__field uses.
+.onboarding__field--check {
+  label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  input[type='checkbox'] {
+    margin-top: 3px;
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--vih-green-900);
+  }
+}
+
 .onboarding__next {
   display: flex;
   flex-wrap: wrap;

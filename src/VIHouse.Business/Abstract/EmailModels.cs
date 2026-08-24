@@ -33,3 +33,8 @@ public record WelcomeSetupEmailModel(string FirstName, string SetupUrl, string? 
 /// new admin uses to set a password; no credential is ever emailed, and the account cannot be used
 /// until they also confirm the address and switch on two-factor.</summary>
 public record AdminInviteEmailModel(string FirstName, string SetupUrl, string InvitedBy, string RoleSummary);
+
+/// <summary>Sent the moment a seminar enrolment is confirmed — free, membership-covered or paid.
+/// StartAtUtc is null for on-demand content, which has nothing to turn up to.</summary>
+public record SeminarEnrolledEmailModel(
+    string FirstName, string SeminarTitle, DateTimeOffset? StartAtUtc, bool IsOnline, string? Location, string SeminarUrl);
