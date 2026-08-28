@@ -70,8 +70,8 @@
 }
 
 .journal-card__image {
-  aspect-ratio: 4 / 3;
-  background: var(--vih-green-900) center/cover no-repeat;
+  // Sizing moved to .cover (Views/Shared/_CoverImage.cshtml) so the box is reserved before
+  // the photograph loads. This is now only a positioning context for the badge.
   position: relative;
 }
 
@@ -116,8 +116,9 @@
 
 // --- Detail ----------------------------------------------------------------------------------------
 .journal-article__cover {
-  aspect-ratio: 21 / 9;
-  background: var(--vih-green-900) center/cover no-repeat;
+  // Sizing moved to .cover (Views/Shared/_CoverImage.cshtml) so the box is reserved before
+  // the photograph loads. This is now only a positioning context for the badge.
+  position: relative;
 }
 
 .journal-article__meta {

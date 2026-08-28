@@ -1,145 +1,363 @@
 @model ExperienceDetailViewModel
 @{
     ViewData["Title"] = Model.Title;
+
+    var hasProgramme = Model.ProgramDays.Count > 0;
+    var hasInclusions = Model.Included.Count > 0 || Model.NotIncluded.Count > 0;
+    var hasFaqs = Model.Faqs.Count > 0;
+    var hasGallery = Model.Gallery.Count > 0;
+    var hasAudience = Model.AudienceTags.Count > 0;
+
+    // Only sections that actually rendered get a sub-nav entry — a link to an anchor that is not on
+    // the page is worse than no link.
+    var navItems = new List<(string Id, string Key)> { ("about", "Experiences.Section.About") };
+    if (hasAudience) navItems.Add(("audience", "Experiences.Section.Audience"));
+    if (hasProgramme) navItems.Add(("programme", "Experiences.Section.Programme"));
+    if (hasInclusions) navItems.Add(("included", "Experiences.Section.Included"));
+    if (hasGallery) navItems.Add(("gallery", "Experiences.Section.Gallery"));
+    if (hasFaqs) navItems.Add(("faq", "Experiences.Section.Faq"));
+
+    // FAQPage structured data, serialised here rather than inline in the section below.
+    //
+    // Two reasons it cannot be an anonymous type: schema.org requires the literal keys "@context"
+    // and "@type", and C#'s @context is merely an escaped identifier that serialises as "context" —
+    // silently producing JSON that looks right and validates as nothing. A dictionary is the only
+    // way to emit a property name that starts with @.
+    string? faqJson = null;
+    if (hasFaqs)
+    {
+        faqJson = System.Text.Json.JsonSerializer.Serialize(new Dictionary<string, object>
+        {
+            ["@context"] = "https://schema.org",
+            ["@type"] = "FAQPage",
+            ["mainEntity"] = Model.Faqs.Select(f => new Dictionary<string, object>
+            {
+                ["@type"] = "Question",
+                ["name"] = f.Question,
+                ["acceptedAnswer"] = new Dictionary<string, object>
+                {
+                    ["@type"] = "Answer",
+                    ["text"] = f.Answer,
+                },
+            }).ToList(),
+        });
+    }
 }
 
-<section class="experience-hero" style="@(string.IsNullOrEmpty(Model.CoverImageUrl) ? "" : $"background-image:url('{Model.CoverImageUrl}')")">
+@section Styles {
+    @if (!string.IsNullOrWhiteSpace(Model.ShortSummary))
+    {
+        <meta name="description" content="@Model.ShortSummary" />
+    }
+}
+
+<section class="experience-hero">
+    <div class="experience-hero__media" data-motion="hero-parallax">
+        <partial name="_CoverImage" model="@(new CoverImageViewModel {
+            Url = Model.CoverImageUrl,
+            Alt = Model.CoverImageAlt,
+            Ratio = "hero",
+            Sizes = "100vw",
+            Eager = true,
+        })" />
+        <div class="experience-hero__scrim"></div>
+    </div>
+
     <div class="container experience-hero__inner">
-        <h1>@Model.Title</h1>
-        <div class="experience-hero__meta">
+        <div class="experience-hero__eyebrow">
+            <span class="experience-card__badge experience-card__badge--@Model.StatusModifier">@Loc[Model.StatusKey]</span>
             <span>@Model.City, @Model.Country</span>
-            <span>@Model.StartAtUtc.ToString("d MMM")–@Model.EndAtUtc.ToString("d MMM yyyy")</span>
-            <span>@Model.DurationLabel</span>
         </div>
-        @if (Model.CanApply)
-        {
-            <a class="btn btn--primary" href="/apply?experience=@Model.Slug">Request Access</a>
-        }
-        else
-        {
-            <span class="btn btn--ghost-dark" aria-disabled="true">@Model.ClosedStateLabel</span>
-        }
+
+        <h1>@Model.Title</h1>
+
+        <div class="experience-hero__meta">
+            <span>@Model.StartAtUtc.ToString("d MMMM")&ndash;@Model.EndAtUtc.ToString("d MMMM yyyy")</span>
+            <span>@Loc[Model.DurationKey, Model.DurationDays]</span>
+            @if (!string.IsNullOrWhiteSpace(Model.Venue))
+            {
+                <span>@Model.Venue</span>
+            }
+        </div>
+
+        <div class="experience-hero__actions">
+            @if (Model.CanApply)
+            {
+                <a class="btn btn--primary" href="/apply?experience=@Model.Slug">@Loc["Experiences.Apply"]</a>
+            }
+            else
+            {
+                <span class="btn btn--ghost-dark" aria-disabled="true">@Loc[Model.ClosedStateKey]</span>
+            }
+        </div>
     </div>
 </section>
 
-<div class="container experience-body">
-    <div>
-        @if (!string.IsNullOrWhiteSpace(Model.ShortSummary))
-        {
-            <section class="experience-section">
-                <h2>The Experience</h2>
-                <p>@Model.ShortSummary</p>
-                <p>@Model.Description</p>
-            </section>
-        }
-        else
-        {
-            <section class="experience-section">
-                <h2>The Experience</h2>
-                <p>@Model.Description</p>
-            </section>
-        }
+<div class="container">
+    <nav class="experience-subnav" aria-label="@Model.Title" data-subnav>
+        <ul class="experience-subnav__list">
+            @foreach (var item in navItems)
+            {
+                <li>
+                    <a class="experience-subnav__link" href="#@item.Id" data-subnav-link="@item.Id">
+                        @Loc[item.Key]
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
 
-        <section class="experience-section">
-            <h2>Who Is In The Room?</h2>
-            <div class="experience-room-tags">
-                <span>Founders</span>
-                <span>Operators</span>
-                <span>Investors</span>
-                <span>Creators</span>
-                <span>Builders</span>
-            </div>
-        </section>
-
-        @if (Model.ProgramDays.Count > 0)
-        {
-            <section class="experience-section">
-                <h2>What Happens</h2>
-                @foreach (var day in Model.ProgramDays)
+    <div class="experience-body">
+        <div>
+            <section class="experience-section" id="about" data-subnav-section="about">
+                <h2>@Loc["Experiences.Section.About"]</h2>
+                @if (!string.IsNullOrWhiteSpace(Model.ShortSummary))
                 {
-                    <div class="experience-program-day">
-                        <h3>@(day.DateLabel ?? $"Day {day.DayNumber}") — @day.Title</h3>
-                        @foreach (var session in day.Sessions.OrderBy(s => s.SortOrder))
+                    <p><strong>@Model.ShortSummary</strong></p>
+                }
+                <p>@Model.Description</p>
+            </section>
+
+            @if (hasAudience)
+            {
+                <section class="experience-section" id="audience" data-subnav-section="audience">
+                    <h2>@Loc["Experiences.Section.Audience"]</h2>
+                    @* Per-experience now (Experience.AudienceTags) rather than the same five words
+                       hardcoded onto every page, which quietly claimed every room draws the same
+                       people on a site whose whole proposition is curation. *@
+                    <ul class="experience-audience">
+                        @foreach (var tag in Model.AudienceTags)
                         {
-                            <div class="experience-session">
-                                <time>@session.StartTime.ToString(@"hh\:mm")</time>
-                                <span>@session.Title</span>
+                            <li class="experience-audience__tag">@tag</li>
+                        }
+                    </ul>
+                </section>
+            }
+
+            @if (hasProgramme)
+            {
+                <section class="experience-section" id="programme" data-subnav-section="programme">
+                    <h2>@Loc["Experiences.Section.Programme"]</h2>
+
+                    @foreach (var day in Model.ProgramDays)
+                    {
+                        <div class="experience-program__day">
+                            <div class="experience-program__day-head">
+                                <span class="experience-program__day-num">@Loc["Experiences.Programme.Day", day.DayNumber]</span>
+                                <h3 class="experience-program__day-title">@day.Title</h3>
+                            </div>
+
+                            <ul class="experience-program__sessions">
+                                @foreach (var session in day.Sessions.OrderBy(s => s.SortOrder))
+                                {
+                                    <li class="experience-program__session">
+                                        @* Rendered exactly as stored, in the experience's own zone —
+                                           see the note below the list. EndTime, SpeakerName and
+                                           Description are all on the entity and were previously
+                                           loaded and then thrown away. *@
+                                        <span class="experience-program__time">
+                                            @session.StartTime.ToString(@"hh\:mm")&ndash;@session.EndTime.ToString(@"hh\:mm")
+                                        </span>
+                                        <p class="experience-program__session-title">
+                                            @session.Title
+                                            @if (!string.IsNullOrWhiteSpace(session.SpeakerName))
+                                            {
+                                                <span class="experience-program__speaker"> &middot; @session.SpeakerName</span>
+                                            }
+                                        </p>
+                                        @if (!string.IsNullOrWhiteSpace(session.Description))
+                                        {
+                                            <p class="experience-program__session-desc">@session.Description</p>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    @* Sessions are bare TimeSpans understood to be in Experience.TimeZoneId. Saying
+                       so is the honest option: converting them to the visitor's browser timezone
+                       would show a Berlin reader "18:00" for a 19:00 Istanbul dinner. *@
+                    <p class="experience-program__tz-note">@Loc["Experiences.Programme.LocalTimes", Model.City]</p>
+                </section>
+            }
+
+            @if (hasInclusions)
+            {
+                <section class="experience-section" id="included" data-subnav-section="included">
+                    <h2>@Loc["Experiences.Section.Included"]</h2>
+
+                    <div class="experience-inclusions">
+                        @if (Model.Included.Count > 0)
+                        {
+                            <div class="experience-inclusions__col experience-inclusions__col--included">
+                                <h3 class="experience-inclusions__heading">@Loc["Experiences.Included"]</h3>
+                                <ul class="experience-inclusions__list">
+                                    @foreach (var item in Model.Included)
+                                    {
+                                        <li class="experience-inclusions__item">
+                                            @* Was a literal ✓, which a screen reader announces as
+                                               "check mark" on every single row. The heading above
+                                               already carries the meaning, so the icon is decorative. *@
+                                            <span class="experience-inclusions__mark"><partial name="_Icon" model="@("check")" /></span>
+                                            <span>@item.Text</span>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        @if (Model.NotIncluded.Count > 0)
+                        {
+                            <div class="experience-inclusions__col experience-inclusions__col--excluded">
+                                <h3 class="experience-inclusions__heading">@Loc["Experiences.NotIncluded"]</h3>
+                                <ul class="experience-inclusions__list">
+                                    @foreach (var item in Model.NotIncluded)
+                                    {
+                                        <li class="experience-inclusions__item">
+                                            <span class="experience-inclusions__mark"><partial name="_Icon" model="@("x")" /></span>
+                                            <span>@item.Text</span>
+                                        </li>
+                                    }
+                                </ul>
                             </div>
                         }
                     </div>
-                }
-            </section>
-        }
+                </section>
+            }
 
-        @if (Model.Included.Count > 0 || Model.NotIncluded.Count > 0)
-        {
-            <section class="experience-section">
-                <h2>What's Included</h2>
-                <div class="experience-inclusions">
-                    <div>
-                        <h4>Included</h4>
-                        <ul>
-                            @foreach (var i in Model.Included)
-                            {
-                                <li>✓ @i.Text</li>
-                            }
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>Not Included</h4>
-                        <ul>
-                            @foreach (var i in Model.NotIncluded)
-                            {
-                                <li>✗ @i.Text</li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </section>
-        }
+            @if (hasGallery)
+            {
+                <section class="experience-section" id="gallery" data-subnav-section="gallery">
+                    <h2>@Loc["Experiences.Section.Gallery"]</h2>
 
-        @if (Model.Faqs.Count > 0)
-        {
-            <section class="experience-section">
-                <h2>FAQ</h2>
-                @foreach (var faq in Model.Faqs)
+                    @* Model.Gallery was loaded by the repository and never rendered until now. Uses
+                       the Swiper instance the site already ships — no new library. *@
+                    <div class="experience-gallery swiper"
+                         data-swiper
+                         data-swiper-per-view="2"
+                         data-swiper-prev-label="@Loc["Experiences.Gallery.Prev"]"
+                         data-swiper-next-label="@Loc["Experiences.Gallery.Next"]">
+                        <div class="swiper-wrapper">
+                            @foreach (var image in Model.Gallery)
+                            {
+                                <div class="swiper-slide">
+                                    <figure class="experience-gallery__item">
+                                        @* Real alt here, unlike the covers: these sit away from any
+                                           heading that describes them. AltText is null-safe — a null
+                                           becomes alt="" (decorative), never the experience title,
+                                           which would make a screen reader read it six times. *@
+                                        <partial name="_CoverImage" model="@(new CoverImageViewModel {
+                                            Url = image.Url,
+                                            Alt = image.AltText,
+                                            Ratio = "4x3",
+                                            Sizes = "(min-width: 960px) 40vw, 90vw",
+                                        })" />
+                                    </figure>
+                                    @if (!string.IsNullOrWhiteSpace(image.AltText))
+                                    {
+                                        <figcaption class="experience-gallery__caption">@image.AltText</figcaption>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+                </section>
+            }
+
+            @if (hasFaqs)
+            {
+                <section class="experience-section" id="faq" data-subnav-section="faq">
+                    <h2>@Loc["Experiences.Section.Faq"]</h2>
+
+                    @* <details> rather than a JS accordion: it opens with no script, is keyboard
+                       operable for free, and is findable by the browser's own in-page search. *@
+                    @foreach (var faq in Model.Faqs)
+                    {
+                        <details class="experience-faq__item">
+                            <summary class="experience-faq__q">
+                                @faq.Question
+                                <span class="experience-faq__chevron"><partial name="_Icon" model="@("chevron-down")" /></span>
+                            </summary>
+                            <p class="experience-faq__a">@faq.Answer</p>
+                        </details>
+                    }
+                </section>
+            }
+        </div>
+
+        <aside class="experience-ticket-panel">
+            <h2 class="experience-ticket-panel__title">@Loc["Experiences.Tickets.Title"]</h2>
+
+            @if (Model.TicketTypes.Count == 0)
+            {
+                <p class="experience-ticket-panel__note">@Loc["Experiences.Tickets.None"]</p>
+            }
+            else
+            {
+                foreach (var ticket in Model.TicketTypes)
                 {
-                    <details class="experience-faq-item">
-                        <summary>@faq.Question</summary>
-                        <p>@faq.Answer</p>
-                    </details>
+                    <div class="experience-ticket">
+                        <p class="experience-ticket__title">@ticket.Title</p>
+                        <span class="experience-ticket__price">@MoneyFormatter.Format(ticket.PriceMinor, ticket.Currency)</span>
+
+                        @if (!string.IsNullOrWhiteSpace(ticket.PerksText))
+                        {
+                            <p class="experience-ticket__perks">@ticket.PerksText</p>
+                        }
+
+                        @* Genuine scarcity, from TicketType.Inventory, and only near the end. Never
+                           shown at zero — the status badge already says waitlist or closed there,
+                           and "0 places left" as a nudge would be invented urgency (brief §15). *@
+                        @if (ticket.Inventory > 0 && ticket.Inventory <= 5)
+                        {
+                            <span class="experience-ticket__inventory">@Loc["Experiences.Tickets.PlacesLeft", ticket.Inventory]</span>
+                        }
+                    </div>
                 }
-            </section>
-        }
+            }
+
+            @if (Model.CanApply)
+            {
+                <a class="btn btn--primary experience-ticket-panel__cta" href="/apply?experience=@Model.Slug">
+                    @Loc["Experiences.Apply"]
+                </a>
+            }
+
+            <p class="experience-ticket-panel__note">@Loc["Experiences.Tickets.Note"]</p>
+        </aside>
     </div>
 
-    <aside class="experience-ticket-panel">
-        <h2 style="font-family:var(--vih-font-serif); font-size:1.125rem; margin-top:0;">Experience Options</h2>
-        @if (Model.TicketTypes.Count == 0)
-        {
-            <p>Ticket details coming soon.</p>
-        }
-        @foreach (var ticket in Model.TicketTypes)
-        {
-            <div class="experience-ticket">
-                <div class="experience-ticket__title">@ticket.Title</div>
-                <div class="experience-ticket__price">@MoneyFormatter.Format(ticket.PriceMinor, ticket.Currency)</div>
-                @if (!string.IsNullOrWhiteSpace(ticket.PerksText))
-                {
-                    <p style="font-size:0.8125rem; color:#666; margin: 6px 0 0;">@ticket.PerksText</p>
-                }
-            </div>
-        }
-        @if (Model.CanApply)
-        {
-            <a class="btn btn--primary" style="width:100%; margin-top:16px;" href="/apply?experience=@Model.Slug">Request Access</a>
-        }
-    </aside>
+    <p class="seminar-detail__back">
+        <a asp-area="" asp-controller="Experiences" asp-action="Index">&larr; @Loc["Experiences.BackToAll"]</a>
+    </p>
 </div>
 
 @if (Model.CanApply)
 {
     <div class="experience-mobile-cta">
-        <a class="btn btn--primary" href="/apply?experience=@Model.Slug">Request Access</a>
+        <span class="experience-mobile-cta__price">
+            @if (Model.CheapestTicket is { } cheapest)
+            {
+                <text>@Loc["Experiences.From"]</text>
+                <strong>@MoneyFormatter.Format(cheapest.PriceMinor, cheapest.Currency)</strong>
+            }
+            else
+            {
+                <strong>@Model.City</strong>
+            }
+        </span>
+        <a class="btn btn--primary btn--sm" href="/apply?experience=@Model.Slug">@Loc["Experiences.Apply"]</a>
     </div>
+}
+
+@section Scripts {
+    @if (faqJson is not null)
+    {
+        @* Already serialised above — JsonSerializer escapes the values, so Html.Raw here is
+           emitting known-safe JSON rather than trusting model content. *@
+        <script type="application/ld+json">@Html.Raw(faqJson)</script>
+    }
 }

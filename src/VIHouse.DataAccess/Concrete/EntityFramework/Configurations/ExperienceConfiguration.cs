@@ -17,6 +17,8 @@ public class ExperienceConfiguration : IEntityTypeConfiguration<Experience>
         builder.Property(e => e.City).HasMaxLength(100).IsRequired();
         builder.Property(e => e.Country).HasMaxLength(2).IsRequired(); // ISO 3166-1 alpha-2
         builder.Property(e => e.TimeZoneId).HasMaxLength(100).IsRequired();
+        builder.Property(e => e.CoverImageAlt).HasMaxLength(300);
+        builder.Property(e => e.AudienceTags).HasMaxLength(300);
 
         // Owned collections of the Experience aggregate root — cascade delete is safe here since
         // this is the only FK path into each child table (no other entity FKs into these).

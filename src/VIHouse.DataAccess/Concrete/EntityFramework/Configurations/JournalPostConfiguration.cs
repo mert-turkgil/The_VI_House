@@ -17,5 +17,6 @@ public class JournalPostConfiguration : IEntityTypeConfiguration<JournalPost>
         builder.Property(p => p.Slug).HasMaxLength(200).IsRequired();
         builder.Property(p => p.Excerpt).HasMaxLength(500);
         builder.Property(p => p.AuthorName).HasMaxLength(150);
+        builder.Property(p => p.CoverImageAlt).HasMaxLength(300);
     }
 }

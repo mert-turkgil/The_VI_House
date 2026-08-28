@@ -11,6 +11,15 @@ public interface IExperienceRepository : IRepository<Experience>
     Task<Experience?> GetWithDetailsBySlugAsync(string slug, CancellationToken ct = default);
 
     Task<List<Experience>> GetPublicListingAsync(ExperienceFilter filter, CancellationToken ct = default);
+
+    /// <summary>
+    /// The distinct cities that currently have something publicly listed, alphabetically.
+    ///
+    /// Backs the listing page's city dropdown. A dropdown of real values is not a cosmetic upgrade
+    /// over the free-text box it replaces: a typed filter can only ever return nothing, and "no
+    /// experiences match" is indistinguishable to a visitor from "this site has no experiences".
+    /// </summary>
+    Task<List<string>> GetPublicCitiesAsync(CancellationToken ct = default);
     Task<List<Experience>> GetUpcomingAsync(int take, CancellationToken ct = default);
     Task<List<Experience>> GetSignatureAsync(int take, CancellationToken ct = default);
 }

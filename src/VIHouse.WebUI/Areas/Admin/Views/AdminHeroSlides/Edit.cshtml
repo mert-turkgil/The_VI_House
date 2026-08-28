@@ -1,0 +1,201 @@
+@model AdminHeroSlideEditViewModel
+@{
+    var active = Model.Translations.First(t => t.Culture.Name == Model.ActiveCulture);
+    var slideId = Model.Form.Id!.Value;
+    ViewData["Title"] = Model.Translations.First(t => t.IsDefault).Form.Heading;
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+
+<div class="admin-toolbar">
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; @Loc["Admin.HeroSlide.BackToList"]</a>
+    <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Home" asp-action="Index" target="_blank"
+       rel="noopener">@Loc["Admin.HeroSlide.Preview"]</a>
+</div>
+
+@* --- The photograph ---------------------------------------------------------------------------- *@
+<h2 class="admin-section-heading">@Loc["Admin.HeroSlide.Section.Image"]</h2>
+
+<div class="admin-panel">
+    @if (!string.IsNullOrWhiteSpace(Model.ImagePreviewUrl))
+    {
+        @* Decorative: this is the admin's own upload, sitting under a heading that says so. *@
+        <img src="@Model.ImagePreviewUrl" alt=""
+             style="max-width:420px; width:100%; border-radius:8px; display:block; margin-bottom:16px;" />
+    }
+    else
+    {
+        <p class="admin-panel__note">@Loc["Admin.HeroSlide.NoImageYet"]</p>
+    }
+
+    @* Its own form, and multipart: an upload posting through the fields form below would carry the
+       whole slide with it and re-save copy that may be mid-edit in another tab. *@
+    <form asp-action="UploadImage" asp-route-id="@slideId" method="post" enctype="multipart/form-data"
+          class="admin-inline-form">
+        <input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif" required />
+        <button type="submit" class="admin-btn">@Loc["Admin.HeroSlide.Upload"]</button>
+    </form>
+
+    @if (Model.HasUploadedImage || !string.IsNullOrWhiteSpace(Model.Form.ImageUrl))
+    {
+        <form asp-action="RemoveImage" asp-route-id="@slideId" method="post" class="admin-inline-form"
+              onsubmit="return confirm('@Loc["Admin.HeroSlide.ConfirmRemoveImage"].Value.Replace("'", "\\'")');">
+            <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.HeroSlide.RemoveImage"]</button>
+        </form>
+    }
+
+    <p class="admin-field__hint">@Loc["Admin.HeroSlide.UploadHint"]</p>
+</div>
+
+@* --- Slide settings ---------------------------------------------------------------------------- *@
+<h2 class="admin-section-heading">@Loc["Admin.HeroSlide.Section.Settings"]</h2>
+
+<form asp-action="Save" asp-route-id="@slideId" method="post" class="admin-form">
+    <input type="hidden" asp-for="Form.Id" />
+
+    <div class="admin-field">
+        <label asp-for="Form.ImageUrl">@Loc["Admin.HeroSlide.ImageUrl"]</label>
+        <input asp-for="Form.ImageUrl" placeholder="/img/hero/lounge-1600.jpg" disabled="@Model.HasUploadedImage" />
+        <span asp-validation-for="Form.ImageUrl" class="field-validation-error"></span>
+        <p class="admin-field__hint">
+            @(Model.HasUploadedImage ? Loc["Admin.HeroSlide.ImageUrlDisabled"] : Loc["Admin.HeroSlide.ImageUrlHint"])
+        </p>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Form.PrimaryCtaUrl">@Loc["Admin.HeroSlide.PrimaryCtaUrl"]</label>
+            <input asp-for="Form.PrimaryCtaUrl" placeholder="/apply" />
+            <span asp-validation-for="Form.PrimaryCtaUrl" class="field-validation-error"></span>
+        </div>
+        <div class="admin-field">
+            <label asp-for="Form.SecondaryCtaUrl">@Loc["Admin.HeroSlide.SecondaryCtaUrl"]</label>
+            <input asp-for="Form.SecondaryCtaUrl" placeholder="/experiences" />
+            <span asp-validation-for="Form.SecondaryCtaUrl" class="field-validation-error"></span>
+        </div>
+    </div>
+
+    <p class="admin-field__hint">@Loc["Admin.HeroSlide.CtaHint"]</p>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Form.VisibleFromUtc">@Loc["Admin.HeroSlide.VisibleFrom"]</label>
+            <input asp-for="Form.VisibleFromUtc" type="datetime-local" />
+        </div>
+        <div class="admin-field">
+            <label asp-for="Form.VisibleUntilUtc">@Loc["Admin.HeroSlide.VisibleUntil"]</label>
+            <input asp-for="Form.VisibleUntilUtc" type="datetime-local" />
+        </div>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Form.SortOrder">@Loc["Admin.HeroSlide.SortOrder"]</label>
+            <input asp-for="Form.SortOrder" type="number" />
+        </div>
+        <div class="admin-field">
+            <label style="display:flex; align-items:center; gap:8px;">
+                <input asp-for="Form.IsActive" type="checkbox" />
+                @Loc["Admin.HeroSlide.IsActive"]
+            </label>
+        </div>
+    </div>
+
+    <div>
+        <button type="submit" class="admin-btn">@Loc["Admin.HeroSlide.SaveSettings"]</button>
+    </div>
+</form>
+
+@* --- Copy, one language at a time ---------------------------------------------------------------- *@
+@* A page per language rather than four panels on one, matching the seminar editor: the URL carries
+    ?culture=de-DE, so a half-written German slide can be bookmarked and handed to whoever is
+    actually writing the German.                                                                     *@
+<h2 class="admin-section-heading">@Loc["Admin.HeroSlide.Section.Copy", active.Culture.NativeLabel]</h2>
+
+<nav class="admin-lang-tabs" aria-label="@Loc["Admin.HeroSlide.Languages"]">
+    @foreach (var tab in Model.Translations)
+    {
+        <a class="@(tab.Culture.Name == Model.ActiveCulture ? "admin-lang-tab active" : "admin-lang-tab")" asp-action="Edit"
+           asp-route-id="@slideId" asp-route-culture="@tab.Culture.Name">
+            @tab.Culture.NativeLabel
+            @if (tab.IsDefault)
+            {
+                <span class="admin-lang-tab__flag">@Loc["Admin.HeroSlide.DefaultLanguage"]</span>
+            }
+            else if (!tab.IsWritten)
+            {
+                <span class="admin-lang-tab__flag admin-lang-tab__flag--missing">@Loc["Admin.HeroSlide.NotTranslated"]</span>
+            }
+        </a>
+    }
+</nav>
+
+@if (!active.IsDefault && !active.IsWritten)
+{
+    <p class="admin-notice">@Loc["Admin.HeroSlide.FallbackNotice", SiteCultures.Describe(SiteCultures.Default).NativeLabel]
+    </p>
+}
+
+<form asp-action="SaveTranslation" asp-route-id="@slideId" method="post" class="admin-form">
+    @* Which language this form is editing. Posted rather than read back from the query string, so a
+       stale tab cannot save English words over the German row. *@
+    <input type="hidden" name="Culture" value="@active.Culture.Name" />
+
+    <div class="admin-field">
+        <label>@Loc["Admin.HeroSlide.Eyebrow"]</label>
+        <input name="Eyebrow" value="@active.Form.Eyebrow" maxlength="120" placeholder="The Sixth House" />
+        <p class="admin-field__hint">@Loc["Admin.HeroSlide.Eyebrow.Hint"]</p>
+    </div>
+
+    <div class="admin-field">
+        <label>@Loc["Admin.HeroSlide.Heading"]</label>
+        <input name="Heading" value="@active.Form.Heading" maxlength="200" required />
+    </div>
+
+    <div class="admin-field">
+        <label>@Loc["Admin.HeroSlide.Subheading"]</label>
+        <textarea name="Subheading" rows="3" maxlength="600">@active.Form.Subheading</textarea>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label>@Loc["Admin.HeroSlide.PrimaryCtaLabel"]</label>
+            <input name="PrimaryCtaLabel" value="@active.Form.PrimaryCtaLabel" maxlength="60"
+                   placeholder="Apply to Join" />
+        </div>
+        <div class="admin-field">
+            <label>@Loc["Admin.HeroSlide.SecondaryCtaLabel"]</label>
+            <input name="SecondaryCtaLabel" value="@active.Form.SecondaryCtaLabel" maxlength="60"
+                   placeholder="Explore Platform" />
+        </div>
+    </div>
+
+    <div class="admin-field">
+        <label>@Loc["Admin.HeroSlide.ImageAlt"]</label>
+        <input name="ImageAlt" value="@active.Form.ImageAlt" maxlength="300" />
+        <p class="admin-field__hint">@Loc["Admin.HeroSlide.ImageAlt.Hint"]</p>
+    </div>
+
+    <div>
+        <button type="submit" class="admin-btn">@Loc["Admin.HeroSlide.SaveCopy", active.Culture.NativeLabel]</button>
+    </div>
+</form>
+
+@if (!active.IsDefault && active.IsWritten)
+{
+    <form asp-action="DeleteTranslation" asp-route-id="@slideId" method="post" class="admin-form"
+          onsubmit="return confirm('@Loc["Admin.HeroSlide.ConfirmDeleteTranslation"].Value.Replace("'", "\\'")');">
+        <input type="hidden" name="culture" value="@active.Culture.Name" />
+        <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.HeroSlide.DeleteTranslation",
+                    active.Culture.NativeLabel]</button>
+        </form>
+    }
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }

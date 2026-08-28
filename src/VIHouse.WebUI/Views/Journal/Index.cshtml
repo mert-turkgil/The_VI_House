@@ -28,7 +28,12 @@
             @foreach (var post in Model)
             {
                 <a class="journal-card" href="/journal/@post.Slug">
-                    <div class="journal-card__image" style="@(string.IsNullOrEmpty(post.CoverImageUrl) ? "" : $"background-image:url('{post.CoverImageUrl}')")">
+                    <div class="journal-card__image">
+                        <partial name="_CoverImage" model="@(new CoverImageViewModel {
+                            Url = post.CoverImageUrl,
+                            Ratio = "4x3",
+                            Sizes = "(min-width: 960px) 33vw, (min-width: 560px) 50vw, 100vw",
+                        })" />
                         <span class="journal-card__badge">@post.CategoryLabel</span>
                     </div>
                     <div class="journal-card__body">

@@ -1,0 +1,51 @@
+@model ExperienceCardViewModel
+@*
+    One experience card. Extracted because this markup was previously duplicated verbatim in
+    Views/Application/ChooseExperience.cshtml, so every fix — the <img> conversion, the localized
+    status badge — had to be made twice or silently applied to only one of them.
+*@
+
+@{ var href = Model.Href ?? Url.Action("Details", "Experiences", new { area = "", slug = Model.Slug }); }
+<a class="experience-card" href="@href">
+    <div class="experience-card__media">
+        <partial name="_CoverImage" model="@(new CoverImageViewModel {
+            Url = Model.CoverImageUrl,
+            Alt = Model.CoverImageAlt,
+            Ratio = "4x3",
+            Sizes = "(min-width: 1200px) 30vw, (min-width: 720px) 45vw, 100vw",
+        })" />
+        <span class="experience-card__badge experience-card__badge--@Model.StatusModifier">
+            @Loc[Model.StatusKey]
+        </span>
+    </div>
+
+    <div class="experience-card__body">
+        <span class="experience-card__eyebrow">@Model.City, @Model.Country</span>
+        <h3 class="experience-card__title">@Model.Title</h3>
+
+        @if (!string.IsNullOrWhiteSpace(Model.ShortSummary))
+        {
+            <p class="experience-card__summary">@Model.ShortSummary</p>
+        }
+
+        <div class="experience-card__meta">
+            <span class="experience-card__meta-item">
+                @Model.StartAtUtc.ToString("d MMM")&ndash;@Model.EndAtUtc.ToString("d MMM yyyy")
+            </span>
+            <span class="experience-card__meta-item">@Loc[Model.DurationKey, Model.DurationDays]</span>
+        </div>
+
+        <div class="experience-card__foot">
+            @if (Model.FromPriceMinor is not null)
+            {
+                <span class="experience-card__price">
+                    <span class="experience-card__price-label">@Loc["Experiences.From"]</span>
+                    @MoneyFormatter.Format(Model.FromPriceMinor.Value, Model.Currency!)
+                </span>
+            }
+            @* Visual affordance only — the whole card is the link, so this must not be another
+               tab stop or another thing for a screen reader to announce. *@
+            <span class="experience-card__cta" aria-hidden="true">@Loc["Experiences.View"] &rarr;</span>
+        </div>
+    </div>
+</a>

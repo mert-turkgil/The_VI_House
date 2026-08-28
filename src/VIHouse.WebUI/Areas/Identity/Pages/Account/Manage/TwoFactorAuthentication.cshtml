@@ -1,67 +1,96 @@
-﻿@page
+@page
 @using Microsoft.AspNetCore.Http.Features
 @model TwoFactorAuthenticationModel
 @{
-    ViewData["Title"] = "Two-factor authentication (2FA)";
+    ViewData["Title"] = Loc["Manage.TwoFactor.Title"].Value;
     ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+
+    var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
+    var canTrack = consentFeature?.CanTrack ?? true;
 }
+
+@*
+    The two-factor hub. Rebuilt from the scaffold, which stated the account's status only implicitly
+    (by which buttons happened to be present), rendered every warning as unstyled body text because
+    .alert had no rule anywhere, and gave "Disable 2FA" exactly the same weight as "Add authenticator
+    app" — safe and destructive actions in one undifferentiated row of identical buttons.
+*@
 
 <partial name="_StatusMessage" for="StatusMessage" />
 <h3>@ViewData["Title"]</h3>
-@{
-    var consentFeature = HttpContext.Features.Get<ITrackingConsentFeature>();
-    @if (consentFeature?.CanTrack ?? true)
-    {
+
+@if (!canTrack)
+{
+    <div class="vih-alert vih-alert--danger" role="alert">
+        <strong>@Loc["Manage.TwoFactor.Off"]</strong>
+        <p>You must accept the privacy and cookie policy before two-step verification can be switched on.</p>
+    </div>
+}
+else
+{
+    <div class="auth-2fa-status">
+        <span class="auth-2fa-status__badge auth-2fa-status__badge--@(Model.Is2faEnabled ? "on" : "off")">
+            @(Model.Is2faEnabled ? Loc["Manage.TwoFactor.On"] : Loc["Manage.TwoFactor.Off"])
+        </span>
         @if (Model.Is2faEnabled)
         {
-            if (Model.RecoveryCodesLeft == 0)
-            {
-                <div class="alert alert-danger">
-                    <strong>You have no recovery codes left.</strong>
-                    <p>You must <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a> before you can log in with a recovery code.</p>
-                </div>
-            }
-            else if (Model.RecoveryCodesLeft == 1)
-            {
-                <div class="alert alert-danger">
-                    <strong>You have 1 recovery code left.</strong>
-                    <p>You can <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
-                </div>
-            }
-            else if (Model.RecoveryCodesLeft <= 3)
-            {
-                <div class="alert alert-warning">
-                    <strong>You have @Model.RecoveryCodesLeft recovery codes left.</strong>
-                    <p>You should <a asp-page="./GenerateRecoveryCodes">generate a new set of recovery codes</a>.</p>
-                </div>
-            }
-
-            if (Model.IsMachineRemembered)
-            {
-                <form method="post" style="display: inline-block">
-                    <button type="submit" class="btn btn-primary">Forget this browser</button>
-                </form>
-            }
-            <a asp-page="./Disable2fa" class="btn btn-primary">Disable 2FA</a>
-            <a asp-page="./GenerateRecoveryCodes" class="btn btn-primary">Reset recovery codes</a>
+            <span>@Loc["Manage.TwoFactor.OnBody"]</span>
+            <span class="auth-field__hint">@Loc["Manage.TwoFactor.CodesLeft", Model.RecoveryCodesLeft]</span>
         }
+    </div>
 
-        <h4>Authenticator app</h4>
+    @if (Model.Is2faEnabled)
+    {
+        @* Three thresholds collapsed to two. The scaffold distinguished 0 / 1 / ≤3 with almost
+           identical wording; what actually changes is whether recovery is still possible at all. *@
+        @if (Model.RecoveryCodesLeft == 0)
+        {
+            <div class="vih-alert vih-alert--danger" role="alert">
+                @Loc["Manage.TwoFactor.CodesNone"]
+            </div>
+        }
+        else if (Model.RecoveryCodesLeft <= 3)
+        {
+            <div class="vih-alert vih-alert--warning" role="alert">
+                @Loc["Manage.TwoFactor.CodesLow"]
+            </div>
+        }
+    }
+
+    <h4>@Loc["Onboarding.TwoFactor.Step1.Title"]</h4>
+    <div class="auth-form__submit-row">
         @if (!Model.HasAuthenticator)
         {
-            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">Add authenticator app</a>
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn--primary">
+                @Loc["Manage.TwoFactor.AddApp"]
+            </a>
         }
         else
         {
-            <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-primary">Set up authenticator app</a>
-            <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-primary">Reset authenticator app</a>
+            <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn--ghost">
+                @Loc["Manage.TwoFactor.ResetApp"]
+            </a>
+            <a asp-page="./GenerateRecoveryCodes" class="btn btn--ghost">
+                @Loc["Manage.TwoFactor.NewCodes"]
+            </a>
         }
-    }
-    else
+
+        @if (Model.IsMachineRemembered)
+        {
+            <form method="post">
+                <button type="submit" class="btn btn--ghost">@Loc["Manage.TwoFactor.Forget"]</button>
+            </form>
+        }
+    </div>
+
+    @if (Model.Is2faEnabled)
     {
-        <div class="alert alert-danger">
-            <strong>Privacy and cookie policy have not been accepted.</strong>
-            <p>You must accept the policy before you can enable two factor authentication.</p>
+        @* Separated deliberately. Turning two-step verification off is the one action on this page
+           that makes the account less safe, and it should not sit in the same row as the ones that
+           make it safer. *@
+        <div class="auth-danger-zone">
+            <h2>@Loc["Manage.Danger.Heading"]</h2>
+            <a asp-page="./Disable2fa" class="btn btn--danger btn--sm">@Loc["Manage.TwoFactor.Disable"]</a>
         </div>
     }
 }

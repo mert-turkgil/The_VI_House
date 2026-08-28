@@ -1,0 +1,42 @@
+@page
+@model RecoveryHelpModel
+
+@{
+    ViewData["Title"] = Loc["Auth.Lost.Title"].Value;
+}
+
+<div class="auth-card">
+    <div class="auth-card__head">
+        <span class="auth-card__eyebrow">@Loc["Auth.Lost.Title"]</span>
+        <h1 class="auth-card__title">@Loc["Auth.Lost.Heading"]</h1>
+        <p class="auth-card__lede">@Loc["Auth.Lost.Lede"]</p>
+    </div>
+
+    <ol class="auth-steps">
+        <li class="auth-steps__item">
+            <h2 class="auth-steps__title">@Loc["Auth.Lost.Step1.Title"]</h2>
+            <p class="auth-steps__body">@Loc["Auth.Lost.Step1.Body"]</p>
+        </li>
+        <li class="auth-steps__item">
+            <h2 class="auth-steps__title">@Loc["Auth.Lost.Step2.Title"]</h2>
+            <p class="auth-steps__body">@Loc["Auth.Lost.Step2.Body"]</p>
+        </li>
+        <li class="auth-steps__item">
+            <h2 class="auth-steps__title">@Loc["Auth.Lost.Step3.Title"]</h2>
+            <p class="auth-steps__body">@Loc["Auth.Lost.Step3.Body"]</p>
+        </li>
+    </ol>
+
+    @* Stated plainly on purpose. Telling people that nobody can reset this remotely and that nobody
+       will ever ask them for a code is itself a control: the most likely attack on an account with
+       two-step verification is not a technical one, it is someone phoning the account holder and
+       asking for the number on their screen. *@
+    <div class="vih-alert vih-alert--warning" role="note">
+        @Loc["Auth.Lost.Warning"]
+    </div>
+
+    <div class="auth-form__submit-row">
+        <a class="btn btn--primary" asp-area="" asp-controller="Contact" asp-action="Index">@Loc["Auth.Lost.ContactCta"]</a>
+        <a class="btn btn--ghost" asp-page="./Login">@Loc["Auth.Lost.BackToLogin"]</a>
+    </div>
+</div>

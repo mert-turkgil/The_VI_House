@@ -1,0 +1,71 @@
+// Cover photography — the shared frame behind Views/Shared/_CoverImage.cshtml.
+//
+// Written entirely on the tokens added in _tokens.scss; along with _experiences.scss this is a
+// reference for how new component files should look.
+
+.cover {
+  position: relative;
+  overflow: hidden;
+  background: var(--vih-green-900);
+  // The element owns the box, so the image cannot change the page's layout when it arrives.
+  aspect-ratio: 4 / 3;
+
+  &--4x3 { aspect-ratio: 4 / 3; }
+  &--16x9 { aspect-ratio: 16 / 9; }
+  &--21x9 { aspect-ratio: 21 / 9; }
+  &--square { aspect-ratio: 1 / 1; }
+
+  // Full-bleed hero. Height rather than ratio, because a 21:9 crop on a tall phone leaves a letterbox
+  // strip with nothing in it.
+  &--hero {
+    aspect-ratio: auto;
+    height: clamp(280px, 46vw, 520px);
+  }
+}
+
+.cover__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  // width/height on the tag are for layout reservation; this stops them fighting the CSS box.
+  display: block;
+}
+
+// Shown when no image is set. Deliberately quiet: a crest at low opacity on the brand green reads as
+// "nothing here yet", where a stock placeholder or a broken-image icon would read as a fault. Covers
+// are admin-entered free text and will often be empty, so this state is normal, not exceptional.
+.cover__fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at 70% 30%, var(--vih-green-800), var(--vih-green-950));
+  color: var(--vih-cream);
+
+  svg {
+    width: clamp(48px, 18%, 96px);
+    height: auto;
+    opacity: 0.12;
+  }
+}
+
+// Cards that are themselves links get a slow push-in on the photograph. Kept on the image rather
+// than the card so the text stays perfectly still — moving type is what makes hover effects feel
+// cheap.
+.cover--zoom .cover__img {
+  transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+}
+
+a:hover > .cover--zoom .cover__img,
+a:focus-visible > .cover--zoom .cover__img {
+  transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover--zoom .cover__img,
+  a:hover > .cover--zoom .cover__img,
+  a:focus-visible > .cover--zoom .cover__img {
+    transition: none;
+    transform: none;
+  }
+}

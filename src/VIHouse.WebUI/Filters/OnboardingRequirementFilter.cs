@@ -56,8 +56,10 @@ public class OnboardingRequirementFilter(UserManager<ApplicationUser> userManage
         "/Account/ResetPasswordConfirmation",
         "/Account/ConfirmEmail",
         "/Account/ConfirmEmailChange",
-        "/Account/RegisterConfirmation",
         "/Account/ResendEmailConfirmation",
+        // Whoever has lost both their authenticator and their recovery codes is, by definition,
+        // stuck at the gate — so the page explaining what to do next has to sit outside it.
+        "/Account/RecoveryHelp",
         "/Account/ExternalLogin",
         "/Error",
     };

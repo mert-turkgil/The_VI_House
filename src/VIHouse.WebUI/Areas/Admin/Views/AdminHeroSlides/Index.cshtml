@@ -1,0 +1,114 @@
+@model List<AdminHeroSlideListItemViewModel>
+@{
+    ViewData["Title"] = Loc["Admin.HeroSlide.Title"].Value;
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div class="admin-toolbar">
+    <a class="admin-btn" asp-action="Create">+ @Loc["Admin.HeroSlide.New"]</a>
+    <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Home" asp-action="Index" target="_blank" rel="noopener">@Loc["Admin.HeroSlide.Preview"]</a>
+</div>
+
+<p class="admin-hint">@Loc["Admin.HeroSlide.Hint"]</p>
+
+@if (Model.Count == 0)
+{
+    <p>@Loc["Admin.HeroSlide.Empty"]</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>@Loc["Admin.HeroSlide.Heading"]</th>
+                <th>@Loc["Admin.HeroSlide.Languages"]</th>
+                <th>@Loc["Admin.HeroSlide.Schedule"]</th>
+                <th>@Loc["Admin.HeroSlide.Status"]</th>
+                <th>@Loc["Admin.HeroSlide.Order"]</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var slide in Model)
+            {
+                <tr>
+                    <td style="width:96px;">
+                        @if (!string.IsNullOrWhiteSpace(slide.ImagePreviewUrl))
+                        {
+                            @* Decorative here: the heading in the next cell already names the slide. *@
+                            <img src="@slide.ImagePreviewUrl" alt="" width="80" height="45"
+                                 style="width:80px; height:45px; object-fit:cover; border-radius:4px; display:block;" />
+                        }
+                        else
+                        {
+                            <span class="admin-badge admin-badge--draft">@Loc["Admin.HeroSlide.NoImage"]</span>
+                        }
+                    </td>
+                    <td><a asp-action="Edit" asp-route-id="@slide.Id">@slide.Heading</a></td>
+                    <td>
+                        @* Which languages are written, in site order, so a slide that went live with
+                           three empty translations is visible at a glance rather than on inspection. *@
+                        @foreach (var culture in SiteCultures.All)
+                        {
+                            var written = slide.TranslatedCultures.Contains(culture.Name, StringComparer.OrdinalIgnoreCase);
+                            <span class="@(written ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")"
+                                  title="@culture.NativeLabel">@culture.ShortLabel</span>
+                        }
+                    </td>
+                    <td style="font-size:0.75rem;">
+                        @if (slide.VisibleFromUtc is null && slide.VisibleUntilUtc is null)
+                        {
+                            <span>@Loc["Admin.HeroSlide.Always"]</span>
+                        }
+                        else
+                        {
+                            <span>
+                                @(slide.VisibleFromUtc?.ToString("d MMM yyyy HH:mm") ?? "—")
+                                &rarr;
+                                @(slide.VisibleUntilUtc?.ToString("d MMM yyyy HH:mm") ?? "—")
+                            </span>
+                        }
+                    </td>
+                    <td>
+                        @if (!slide.IsActive)
+                        {
+                            <span class="admin-badge admin-badge--closed">@Loc["Admin.HeroSlide.Hidden"]</span>
+                        }
+                        else if (!slide.IsLiveNow)
+                        {
+                            @* Active but out of schedule — the one case where "Visible" alone would
+                               be a lie, and the first thing anyone asks about when a slide is missing. *@
+                            <span class="admin-badge admin-badge--draft">@Loc["Admin.HeroSlide.Scheduled"]</span>
+                        }
+                        else
+                        {
+                            <span class="admin-badge admin-badge--open">@Loc["Admin.HeroSlide.Live"]</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="Move" asp-route-id="@slide.Id" method="post" class="admin-inline-form">
+                            <input type="hidden" name="direction" value="-1" />
+                            <button type="submit" class="admin-btn admin-btn--ghost" aria-label="@Loc["Admin.HeroSlide.MoveUp"]">&uarr;</button>
+                        </form>
+                        <form asp-action="Move" asp-route-id="@slide.Id" method="post" class="admin-inline-form">
+                            <input type="hidden" name="direction" value="1" />
+                            <button type="submit" class="admin-btn admin-btn--ghost" aria-label="@Loc["Admin.HeroSlide.MoveDown"]">&darr;</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@slide.Id" method="post"
+                              onsubmit="return confirm('@Loc["Admin.HeroSlide.ConfirmDelete"].Value.Replace("'", "\\'")');"
+                              style="display:inline;">
+                            <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.HeroSlide.Delete"]</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

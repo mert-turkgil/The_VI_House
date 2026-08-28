@@ -197,6 +197,7 @@ builder.Services.AddScoped<IPromoCodeRepository, EfPromoCodeRepository>();
 builder.Services.AddScoped<ITicketHoldRepository, EfTicketHoldRepository>();
 builder.Services.AddScoped<IWaitlistRepository, EfWaitlistRepository>();
 builder.Services.AddScoped<IContentPageRepository, EfContentPageRepository>();
+builder.Services.AddScoped<IHeroSlideRepository, EfHeroSlideRepository>();
 builder.Services.AddScoped<IEmailLogRepository, EfEmailLogRepository>();
 builder.Services.AddScoped<IAuditLogRepository, EfAuditLogRepository>();
 builder.Services.AddScoped<IProfileRepository, EfProfileRepository>();
@@ -284,7 +285,12 @@ builder.Services.AddControllersWithViews(options =>
     .AddDataAnnotationsLocalization(options =>
         options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
 
-builder.Services.AddRazorPages();
+// The same DataAnnotations localizer the MVC pipeline gets. Easy to miss and silent when missed:
+// without it, @inject IStringLocalizer works in the Identity .cshtml files but every [Display] and
+// [Required] on their page models stays English, so half of each form localises and half does not.
+builder.Services.AddRazorPages()
+    .AddDataAnnotationsLocalization(options =>
+        options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
 
 // --- Rate limiting (brief-adjacent hardening: brute-force/spam protection on sensitive endpoints) ---
 // Fixed-window, partitioned per client IP. QueueLimit 0 means excess requests are rejected

@@ -1,4 +1,5 @@
 using VIHouse.Entities.Experiences;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.ViewModels.Experiences;
 
@@ -25,17 +26,35 @@ public class ExperienceDetailViewModel
     public List<ExperienceFaq> Faqs { get; set; } = [];
     public List<ExperienceImage> Gallery { get; set; } = [];
 
+    public string? CoverImageAlt { get; set; }
+
+    /// <summary>Parsed from Experience.AudienceTags. Empty when unset, and the section is then
+    /// hidden — an experience that has not said who is in the room should say nothing rather than
+    /// repeat a generic list, which is what the five hardcoded tags used to do on every page.</summary>
+    public List<string> AudienceTags { get; set; } = [];
+
     public int DurationDays => Math.Max(1, (EndAtUtc.Date - StartAtUtc.Date).Days + 1);
-    public string DurationLabel => DurationDays == 1 ? "1 Day" : $"{DurationDays} Days";
+
+    // Resource keys rather than English. Resolved by the view as @Loc[key, arg]; this keeps
+    // IStringLocalizer out of the view model, which has no business knowing about cultures.
+    public string DurationKey => DurationDays == 1 ? "Experiences.Duration.One" : "Experiences.Duration.Many";
+
+    public string StatusKey => Status.ToResourceKey();
+    public string StatusModifier => Status.ToBadgeModifier();
 
     public bool CanApply => Status is ExperienceStatus.ApplicationsOpen or ExperienceStatus.AlmostFull;
 
-    public string ClosedStateLabel => Status switch
+    public string ClosedStateKey => Status switch
     {
-        ExperienceStatus.ComingSoon => "Coming Soon",
-        ExperienceStatus.Waitlist => "Join Waitlist",
-        _ => "Applications Closed",
+        ExperienceStatus.ComingSoon => "Experiences.Closed.ComingSoon",
+        ExperienceStatus.Waitlist => "Experiences.Closed.Waitlist",
+        _ => "Experiences.Closed.Closed",
     };
+
+    /// <summary>
+    /// Cheapest ticket across all tiers, for the mobile bar. Null when no tiers are published yet.
+    /// </summary>
+    public TicketType? CheapestTicket => TicketTypes.Count == 0 ? null : TicketTypes.MinBy(t => t.PriceMinor);
 
     public static ExperienceDetailViewModel FromEntity(Experience e) => new()
     {
@@ -51,7 +70,11 @@ public class ExperienceDetailViewModel
         StartAtUtc = e.StartAtUtc,
         EndAtUtc = e.EndAtUtc,
         CoverImageUrl = e.CoverImageUrl,
+        CoverImageAlt = e.CoverImageAlt,
         Status = e.Status,
+        AudienceTags = string.IsNullOrWhiteSpace(e.AudienceTags)
+            ? []
+            : [.. e.AudienceTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)],
         TicketTypes = e.TicketTypes.OrderBy(t => t.SortOrder).ToList(),
         ProgramDays = e.ProgramDays.OrderBy(d => d.SortOrder).ToList(),
         Included = e.Inclusions.Where(i => i.IsIncluded).OrderBy(i => i.SortOrder).ToList(),

@@ -2,9 +2,11 @@ import '../scss/main.scss';
 import { initNav, initDismissableDropdown, initSiteSearch } from './modules/nav';
 import { initScrollReveal } from './modules/reveal';
 import { initStatCounters } from './modules/counter';
-import { initCarousels } from './modules/carousel';
+import { initCarousels, initHeroSlider } from './modules/carousel';
 import { initAuthenticatorQr } from './modules/qr';
 import { initRecoveryCodeDownload } from './modules/recoveryCodes';
+import { initExperienceFilters } from './modules/filters';
+import { initSubnav } from './modules/subnav';
 
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
@@ -15,8 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initStatCounters();
   initCarousels();
+  initHeroSlider();
   initAuthenticatorQr();
   initRecoveryCodeDownload();
+  initExperienceFilters();
+  initSubnav();
 });
 
 // PWA (brief §65) — registered on every page (Admin included, harmlessly; the service worker

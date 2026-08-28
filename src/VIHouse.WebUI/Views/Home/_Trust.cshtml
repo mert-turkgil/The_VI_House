@@ -5,26 +5,73 @@
     <section class="home-trust" data-reveal>
         <div class="container home-trust__inner">
             <div class="home-trust__intro">
+                @if (!string.IsNullOrWhiteSpace(Model.Eyebrow))
+                {
+                    <p class="home-trust__eyebrow">@Model.Eyebrow</p>
+                }
                 <h2>@Model.Heading</h2>
                 @if (!string.IsNullOrWhiteSpace(Model.Body))
                 {
                     <p>@Model.Body</p>
                 }
-                <a class="btn btn--primary" href="/apply">Become a Member</a>
+                <a class="home-trust__cta" href="@(Model.CtaUrl ?? "/membership")">
+                    @(Model.CtaLabel ?? Loc["Home.Trust.BecomeMember"].Value)
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </a>
             </div>
 
-            @if (Model.Testimonials.Count > 0)
-            {
-                <div class="home-trust__quotes">
-                    @foreach (var t in Model.Testimonials)
-                    {
-                        <blockquote class="home-trust__quote">
-                            <p>&ldquo;@t.Quote&rdquo;</p>
-                            <footer>@t.Author<span>@t.Role</span></footer>
-                        </blockquote>
-                    }
-                </div>
-            }
+            <div class="home-trust__proof">
+                @if (Model.Logos.Count > 0)
+                {
+                    <p class="home-trust__logos-heading">@(Model.LogosHeading ?? Loc["Home.Trust.LogosHeading"].Value)</p>
+
+                    @* The track is duplicated and marked aria-hidden so the marquee can loop without a
+                       seam — the copy exists for the eye only, and a screen reader reads the list once.
+                       On a narrow screen the animation is off and this simply wraps. *@
+                    <div class="home-trust__logos" data-marquee>
+                        <ul class="home-trust__logos-track">
+                            @foreach (var logo in Model.Logos)
+                            {
+                                <li>@await Html.PartialAsync("_TrustLogo", logo)</li>
+                            }
+                        </ul>
+                        <ul class="home-trust__logos-track" aria-hidden="true">
+                            @foreach (var logo in Model.Logos)
+                            {
+                                <li>@await Html.PartialAsync("_TrustLogo", logo)</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                @if (Model.Testimonials.Count > 0)
+                {
+                    <div class="home-trust__quotes">
+                        @{ var quoteIndex = 0; }
+                        @foreach (var t in Model.Testimonials)
+                        {
+                            <figure class="home-trust__quote" data-reveal data-reveal-delay="@(quoteIndex++ * 90)">
+                                <blockquote>@t.Quote</blockquote>
+                                <figcaption>
+                                    @if (!string.IsNullOrWhiteSpace(t.AvatarUrl))
+                                    {
+                                        @* Decorative: the name it sits beside is the information, and a
+                                           screen reader announcing "photo of Marco G." before "Marco G."
+                                           is noise. *@
+                                        <img class="home-trust__avatar" src="@t.AvatarUrl" alt="" width="40" height="40" loading="lazy" decoding="async" />
+                                    }
+                                    <span class="home-trust__attribution">
+                                        <span class="home-trust__author">@t.Author</span>
+                                        <span class="home-trust__role">@t.Role</span>
+                                    </span>
+                                </figcaption>
+                            </figure>
+                        }
+                    </div>
+                }
+            </div>
         </div>
     </section>
 }

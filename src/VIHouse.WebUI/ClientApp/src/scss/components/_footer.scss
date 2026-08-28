@@ -1,59 +1,116 @@
 .site-footer {
   background: var(--vih-green-950);
   color: var(--vih-cream-dim);
-  padding: 64px 0 0;
+  padding: var(--vih-section-y) 0 0;
+  border-top: 1px solid var(--vih-line-on-dark);
 }
 
+// Brand column first and wider than the rest, then four equal link columns, then the newsletter.
+// The four link columns are declared as one repeat() so a fifth would slot in without re-doing the
+// track list.
 .site-footer__grid {
   display: grid;
-  gap: 40px;
+  gap: var(--vih-space-lg);
   grid-template-columns: 1fr;
-  padding-bottom: 48px;
+  padding-bottom: var(--vih-space-xl);
   border-bottom: 1px solid var(--vih-line-on-dark);
 
-  @media (min-width: 720px) {
+  @media (min-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (min-width: 1080px) {
-    grid-template-columns: 1.4fr repeat(3, 1fr) 1.4fr;
+  @media (min-width: 1000px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (min-width: 1240px) {
+    grid-template-columns: 1.5fr repeat(4, 0.85fr) 1.5fr;
+    gap: var(--vih-space-md);
   }
 }
 
 .site-footer__brand {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  flex-direction: column;
+  gap: var(--vih-space-xs);
+
+  // The brand block spans the row on the middle breakpoints, where it would otherwise sit in a
+  // half-width column with its tagline broken across four lines.
+  @media (min-width: 640px) and (max-width: 1239px) {
+    grid-column: 1 / -1;
+  }
+}
+
+.site-footer__brand-head {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-2xs);
 
   svg {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     flex-shrink: 0;
     color: var(--vih-cream);
-  }
-
-  p {
-    margin: 8px 0 0;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: var(--vih-silver);
-    max-width: 32ch;
   }
 }
 
 .site-footer__wordmark {
   font-family: var(--vih-font-serif);
-  font-size: 0.9375rem;
-  letter-spacing: 0.12em;
+  font-size: 1rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--vih-cream);
 }
 
+.site-footer__tagline {
+  margin: 0;
+  font-size: var(--vih-text-base);
+  line-height: 1.7;
+  color: var(--vih-silver);
+  max-width: 32ch;
+}
+
+// --- Social ---------------------------------------------------------------------------------------
+.site-footer__social {
+  display: flex;
+  gap: var(--vih-space-2xs);
+  margin: var(--vih-space-2xs) 0 0;
+  padding: 0;
+  list-style: none;
+
+  a {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--vih-line-on-dark);
+    border-radius: var(--vih-radius-pill);
+    color: var(--vih-cream-dim);
+    transition:
+      color var(--vih-dur-base) var(--vih-ease-out),
+      border-color var(--vih-dur-base) var(--vih-ease-out),
+      transform var(--vih-dur-base) var(--vih-ease-out);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--vih-gold-light);
+      border-color: var(--vih-gold);
+      transform: translateY(-2px);
+    }
+  }
+
+  svg {
+    width: 17px;
+    height: 17px;
+  }
+}
+
+// --- Link columns ---------------------------------------------------------------------------------
 .site-footer__col h4 {
-  margin: 0 0 16px;
-  font-size: 0.75rem;
+  margin: 0 0 var(--vih-space-sm);
+  font-size: var(--vih-text-xs);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--vih-cream);
 }
@@ -67,75 +124,199 @@
   gap: 10px;
 }
 
+// The rule wipes in from the left on hover. A pseudo-element rather than text-decoration, because a
+// decoration cannot be animated across its own width — and because this keeps the link's box the
+// same size hovered as not, so nothing in the column shifts.
 .site-footer__col a {
-  font-size: 0.875rem;
+  position: relative;
+  display: inline-block;
+  font-size: var(--vih-text-base);
   color: var(--vih-cream-dim);
-  transition: color 0.2s var(--vih-ease);
+  text-decoration: none;
+  transition: color var(--vih-dur-base) var(--vih-ease-out);
 
-  &:hover {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 -3px 0;
+    height: 1px;
+    background: var(--vih-gold);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+  }
+
+  &:hover,
+  &:focus-visible {
     color: var(--vih-cream);
+
+    &::after {
+      transform: scaleX(1);
+    }
+  }
+}
+
+// --- Newsletter -------------------------------------------------------------------------------------
+.site-footer__newsletter {
+  @media (min-width: 640px) and (max-width: 999px) {
+    grid-column: 1 / -1;
   }
 }
 
 .site-footer__newsletter h4 {
-  margin: 0 0 12px;
-  font-size: 0.75rem;
+  margin: 0 0 var(--vih-space-2xs);
+  font-size: var(--vih-text-xs);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--vih-cream);
 }
 
+.site-footer__newsletter-lede {
+  margin: 0 0 var(--vih-space-xs);
+  font-size: var(--vih-text-sm);
+  line-height: 1.6;
+  color: var(--vih-silver);
+  max-width: 30ch;
+}
+
 .site-footer__newsletter-form {
   display: flex;
-  gap: 8px;
+  gap: var(--vih-space-2xs);
 }
 
 .site-footer__newsletter-form input[type='email'] {
   flex: 1;
   min-width: 0;
-  padding: 12px 14px;
-  border-radius: 999px;
+  padding: 12px 16px;
+  border-radius: var(--vih-radius-pill);
   border: 1px solid var(--vih-line-on-dark);
   background: transparent;
   color: var(--vih-cream);
-  font-size: 0.875rem;
+  font-family: inherit;
+  font-size: var(--vih-text-base);
+  transition: border-color var(--vih-dur-base) var(--vih-ease-out);
 
   &::placeholder {
     color: var(--vih-silver);
   }
 
+  &:hover {
+    border-color: rgba(184, 149, 90, 0.5);
+  }
+
   &:focus {
-    outline: 1px solid var(--vih-gold);
+    outline: none;
+    border-color: var(--vih-gold);
+    box-shadow: var(--vih-shadow-focus);
+  }
+}
+
+// Round gold button, matching the reference's arrow control rather than the site's pill .btn — a
+// full-width label would crowd the field it sits beside.
+.site-footer__newsletter-form button {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-gold);
+  color: var(--vih-green-950);
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    background var(--vih-dur-base) var(--vih-ease-out),
+    transform var(--vih-dur-base) var(--vih-ease-out);
+
+  &:hover {
+    background: var(--vih-gold-light);
+    transform: translateX(2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--vih-gold-light);
+    outline-offset: 3px;
   }
 }
 
 .site-footer__newsletter-note {
-  margin: 10px 0 0;
-  font-size: 0.75rem;
+  margin: var(--vih-space-2xs) 0 0;
+  font-size: var(--vih-text-xs);
   color: var(--vih-silver);
 }
 
+// --- Bottom bar ---------------------------------------------------------------------------------------
 .site-footer__bottom {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 24px 0;
-  font-size: 0.75rem;
+  gap: var(--vih-space-xs);
+  padding: var(--vih-space-md) 0;
+  font-size: var(--vih-text-xs);
   color: var(--vih-silver);
 }
 
 .site-footer__legal-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: var(--vih-space-sm);
   list-style: none;
   margin: 0;
   padding: 0;
 
-  a:hover {
+  a {
+    color: var(--vih-silver);
+    text-decoration: none;
+    transition: color var(--vih-dur-base) var(--vih-ease-out);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--vih-cream);
+    }
+  }
+}
+
+.site-footer__lang {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+  margin-left: auto;
+}
+
+.site-footer__lang-link {
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--vih-radius-xs);
+  color: var(--vih-silver);
+  text-decoration: none;
+  transition:
+    color var(--vih-dur-base) var(--vih-ease-out),
+    border-color var(--vih-dur-base) var(--vih-ease-out);
+
+  &:hover,
+  &:focus-visible {
     color: var(--vih-cream);
+    border-color: var(--vih-line-on-dark);
+  }
+
+  &.active {
+    color: var(--vih-gold);
+    border-color: var(--vih-line-on-dark);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-footer__social a,
+  .site-footer__col a,
+  .site-footer__col a::after,
+  .site-footer__newsletter-form button,
+  .site-footer__lang-link {
+    transition: none;
+  }
+
+  .site-footer__social a:hover,
+  .site-footer__newsletter-form button:hover {
+    transform: none;
   }
 }

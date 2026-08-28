@@ -27,4 +27,126 @@
   --vih-radius-pill: 999px;
 
   --vih-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  // ---------------------------------------------------------------------------------------------
+  // Scales added in the frontend overhaul. Everything below is ADDITIVE: the ~5,000 lines of
+  // component SCSS written before this point use literal values, so adding custom properties cannot
+  // change a single rendered byte. The proof is part of the workflow — after this block landed, the
+  // rebuilt main.css was byte-identical to the previous build except for these declarations.
+  //
+  // The rule going forward: never change a value above this line, and convert a component file to
+  // tokens either completely or not at all. A half-converted file is harder to reason about than an
+  // unconverted one. _experiences.scss and _auth.scss are the reference implementations.
+  //
+  // Breakpoints are deliberately absent — `@media (min-width: var(--x))` is invalid CSS, so those
+  // live in _breakpoints.scss as Sass variables instead.
+  // ---------------------------------------------------------------------------------------------
+
+  // --- Spacing -----------------------------------------------------------------------------------
+  // A 4px base, sized from what the existing partials actually use (values cluster at 4/8/12/16/24/
+  // 32/48/64/96). The strays — 6, 10, 14, 22 — are optical nudges and should stay literal; forcing
+  // them onto a scale would be worse than leaving them alone.
+  --vih-space-3xs: 4px;
+  --vih-space-2xs: 8px;
+  --vih-space-xs: 12px;
+  --vih-space-sm: 16px;
+  --vih-space-md: 24px;
+  --vih-space-lg: 32px;
+  --vih-space-xl: 48px;
+  --vih-space-2xl: 64px;
+  --vih-space-3xl: 96px;
+
+  // Vertical rhythm for a full-width section. Fluid so a phone doesn't get desktop-sized gaps.
+  --vih-section-y: clamp(56px, 8vw, 96px);
+  --vih-section-y-tight: clamp(40px, 6vw, 64px);
+
+  // --- Radii -------------------------------------------------------------------------------------
+  --vih-radius-xs: 4px;
+  --vih-radius-sm: 6px;
+  --vih-radius-md: 8px;
+  --vih-radius-lg: 10px;
+  --vih-radius-xl: 12px;
+  --vih-radius-2xl: 16px;
+
+  // --- Elevation ---------------------------------------------------------------------------------
+  // Restrained on purpose: this is an editorial brand, so depth comes from a hairline and a lift,
+  // not from a drop shadow doing the work.
+  --vih-shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --vih-shadow-md: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --vih-shadow-lg: 0 20px 48px rgba(0, 35, 10, 0.28);
+  --vih-shadow-gold: 0 6px 24px rgba(184, 149, 90, 0.16);
+  --vih-shadow-focus: 0 0 0 3px rgba(184, 149, 90, 0.45);
+
+  // --- Motion ------------------------------------------------------------------------------------
+  // Durations mirrored in ClientApp/src/js/modules/motion tokens if GSAP ever lands — GSAP cannot
+  // read CSS custom properties for its own eases, so that duplication has to be deliberate.
+  --vih-dur-fast: 150ms;
+  --vih-dur-base: 200ms;
+  --vih-dur-slow: 350ms;
+  --vih-dur-reveal: 700ms;
+  --vih-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --vih-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  // --- Stacking ----------------------------------------------------------------------------------
+  // Declared now, adopted in new code only. Migrating _nav.scss (99/100) and _base.scss (1000) onto
+  // these silently reorders the stack, so that belongs in its own commit with a manual check of:
+  // mobile menu over header, skip-link over everything, mobile CTA under the menu.
+  --vih-z-base: 1;
+  --vih-z-sticky: 10;
+  --vih-z-header: 100;
+  --vih-z-dropdown: 200;
+  --vih-z-overlay: 900;
+  --vih-z-modal: 1000;
+  --vih-z-skip-link: 1100;
+
+  // --- Type --------------------------------------------------------------------------------------
+  // Sized from the existing rem histogram: 0.8125 (51 uses), 0.875 (42), 0.75 (31) lead by a mile.
+  --vih-text-3xs: 0.625rem;
+  --vih-text-2xs: 0.6875rem;
+  --vih-text-xs: 0.75rem;
+  --vih-text-sm: 0.8125rem;
+  --vih-text-base: 0.875rem;
+  --vih-text-md: 0.9375rem;
+  --vih-text-lg: 1.0625rem;
+  --vih-text-xl: 1.25rem;
+  --vih-text-2xl: 1.5rem;
+  --vih-text-3xl: 1.75rem;
+
+  // Fluid display sizes for headings — these are the serif voice of the brand.
+  --vih-display-sm: clamp(1.75rem, 3.5vw, 2.25rem);
+  --vih-display-md: clamp(2rem, 4vw, 2.75rem);
+  --vih-display-lg: clamp(2rem, 5vw, 3.25rem);
+
+  // --- Semantic colour ---------------------------------------------------------------------------
+  // The real gap in the original set: #666 (22 uses), #555 (13), #888 (8) and #9a3324 (8) were all
+  // raw literals, so "muted body text" had no single definition and drifted between files.
+  --vih-text-secondary: #4a4f45;
+  --vih-text-muted: #63685c;
+
+  // Replaces #888, which is 3.54:1 on white and fails WCAG AA for text — it was being used for
+  // session times on the Experiences page, which is content, not decoration.
+  --vih-text-faint: #6f736a;
+
+  --vih-surface: var(--vih-white);
+  --vih-surface-tinted: #faf9f6;
+  --vih-surface-sunken: #f0eee8;
+
+  --vih-danger: #9a3324;
+  --vih-danger-strong: #7a2a1d;
+  --vih-danger-bg: rgba(154, 51, 36, 0.08);
+
+  --vih-success: #2e7d32;
+  --vih-success-bg: rgba(46, 125, 50, 0.14);
+
+  // New — there was no warning colour at all, which is why every two-factor warning box currently
+  // renders as ordinary body text.
+  --vih-warning: #8a6a1f;
+  --vih-warning-bg: rgba(184, 149, 90, 0.14);
+
+  // Scrims for text sitting over photography.
+  --vih-scrim-strong: rgba(18, 22, 15, 0.75);
+  --vih-scrim: rgba(18, 22, 15, 0.55);
+  --vih-scrim-soft: rgba(18, 22, 15, 0.4);
+
+  --vih-focus-ring: var(--vih-gold);
 }

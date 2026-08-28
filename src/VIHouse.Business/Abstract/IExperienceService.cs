@@ -11,6 +11,10 @@ public interface IExperienceService
     Task<List<Experience>> GetUpcomingAsync(int take, CancellationToken ct = default);
     Task<List<Experience>> GetSignatureAsync(int take, CancellationToken ct = default);
 
+    /// <summary>Cities that currently have something publicly listed — populates the listing
+    /// page's city filter with real values instead of a free-text box.</summary>
+    Task<List<string>> GetPublicCitiesAsync(CancellationToken ct = default);
+
     // --- Admin --- (adminUserId/ipAddress: every mutation here is audit-logged, brief §97)
     Task<List<Experience>> GetAllForAdminAsync(CancellationToken ct = default);
     Task<Experience?> GetForAdminEditAsync(Guid id, CancellationToken ct = default);

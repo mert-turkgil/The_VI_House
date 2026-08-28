@@ -55,9 +55,11 @@ public static class DbSeeder
 
         await SeedIdentityAsync(userManager, roleManager, admins);
         await SeedExperiencesAsync(db);
+        await BackfillDemoContentAsync(db);
         await db.SaveChangesAsync(); // commit Experiences first — SeedApplicationsAsync looks them up by slug
 
         await SeedHomepageContentAsync(db);
+        await SeedHeroSlidesAsync(db);
         await SeedApplicationsAsync(db);
         await SeedMembershipPlansAsync(db);
         await SeedJournalPostsAsync(db);
@@ -279,6 +281,7 @@ public static class DbSeeder
         {
             Title = "Why We Built The VI House",
             Slug = "why-we-built-the-vi-house",
+            CoverImageUrl = "/img/journal/why-we-built-the-vi-house-1600.jpg",
             Category = JournalCategory.FounderStories,
             Status = JournalPostStatus.Published,
             Excerpt = "Every room we curate starts from the same question: who actually belongs in it.",
@@ -295,6 +298,7 @@ public static class DbSeeder
         {
             Title = "The Quiet Signal: Reading Capital Before It Moves",
             Slug = "the-quiet-signal-reading-capital-before-it-moves",
+            CoverImageUrl = "/img/journal/the-quiet-signal-reading-capital-before-it-moves-1600.jpg",
             Category = JournalCategory.Capital,
             Status = JournalPostStatus.Published,
             Excerpt = "The founders who raise well are rarely the ones who pitch the loudest.",
@@ -310,6 +314,7 @@ public static class DbSeeder
         {
             Title = "Inside the Room: What Makes a Founder Session Work",
             Slug = "inside-the-room-what-makes-a-founder-session-work",
+            CoverImageUrl = "/img/journal/inside-the-room-what-makes-a-founder-session-work-1600.jpg",
             Category = JournalCategory.HouseNotes,
             Status = JournalPostStatus.Published,
             Excerpt = "Notes from the House on running a session that people still talk about a year later.",
@@ -326,6 +331,7 @@ public static class DbSeeder
         {
             Title = "Building in Public Without Burning Out",
             Slug = "building-in-public-without-burning-out",
+            CoverImageUrl = "/img/journal/building-in-public-without-burning-out-1600.jpg",
             Category = JournalCategory.Business,
             Status = JournalPostStatus.Draft,
             Excerpt = "Draft — still being written.",
@@ -370,6 +376,82 @@ public static class DbSeeder
             await userManager.AddToRolesAsync(admin, account.EffectiveRoles);
     }
 
+    /// <summary>
+    /// Fills in demo cover images and audience tags on rows that already exist.
+    ///
+    /// SeedExperiencesAsync and SeedJournalPostsAsync both early-return the moment their table has
+    /// any row in it, which is correct — they must never overwrite content someone has edited. The
+    /// side effect is that anyone with a development database created before the imagery landed sees
+    /// no photographs at all and reasonably concludes the work did not ship.
+    ///
+    /// This closes that gap without weakening the guard: it only ever writes where the field is
+    /// still null, so an admin who deliberately cleared a cover keeps it cleared, and it is safe to
+    /// run on every start. Development-only, like everything else reachable from SeedAsync.
+    /// </summary>
+    private static async Task BackfillDemoContentAsync(VIHouseDbContext db)
+    {
+        foreach (var experience in await db.Experiences.Where(e => e.CoverImageUrl == null).ToListAsync())
+            experience.CoverImageUrl = $"/img/experiences/{experience.Slug}-1600.jpg";
+
+        foreach (var post in await db.JournalPosts.Where(p => p.CoverImageUrl == null).ToListAsync())
+            post.CoverImageUrl = $"/img/journal/{post.Slug}-1600.jpg";
+
+        // Who each room is actually for. Deliberately different per city — the point of the section
+        // is that these rooms are curated differently, and repeating one generic list would say the
+        // opposite while looking like content.
+        var audiences = new Dictionary<string, string>
+        {
+            ["izmir-founder-experience-2026"] = "Founders, Operators, Investors",
+            ["london-growth-mastermind-2026"] = "Operators, Growth leads, Second-time founders",
+            ["zurich-founder-dinner-2026"] = "Founders, Family offices, Private investors",
+            ["lisbon-founder-retreat-2026"] = "Founders, Builders, Creators",
+            ["singapore-growth-summit-2026"] = "Founders, Operators, Regional investors",
+            ["miami-founder-weekend-2025"] = "Founders, Creators, Capital allocators",
+            ["berlin-founder-summit-2026"] = "Founders, Engineers, Product leads",
+        };
+
+        foreach (var experience in await db.Experiences.Where(e => e.AudienceTags == null).ToListAsync())
+        {
+            if (audiences.TryGetValue(experience.Slug, out var tags))
+                experience.AudienceTags = tags;
+        }
+
+        // Galleries too, for the same reason: the rows added in SeedExperiencesAsync never run on a
+        // database that already had experiences in it, so the Experiences detail page would have no
+        // gallery to render. Only fills experiences that have none — an experience someone has
+        // curated by hand is left exactly as it is.
+        if (await db.ExperienceImages.AnyAsync())
+            return;
+
+        var gallery = new (string AltText, string File)[]
+        {
+            ("An empty boardroom set for a small working session", "room-boardroom"),
+            ("A long table set for a private dinner", "dinner"),
+            ("A small group working through a problem on a whiteboard", "workshop"),
+            ("A speaker addressing a seated group in a bright room", "speaker"),
+        };
+
+        var signature = await db.Experiences
+            .Where(e => e.IsSignature)
+            .OrderBy(e => e.SortOrder)
+            .Take(2)
+            .ToListAsync();
+
+        foreach (var experience in signature)
+        {
+            for (var i = 0; i < gallery.Length; i++)
+            {
+                db.ExperienceImages.Add(new ExperienceImage
+                {
+                    ExperienceId = experience.Id,
+                    Url = $"/img/gallery/{gallery[i].File}-1600.jpg",
+                    AltText = gallery[i].AltText,
+                    SortOrder = i + 1,
+                });
+            }
+        }
+    }
+
     private static async Task SeedExperiencesAsync(VIHouseDbContext db)
     {
         if (await db.Experiences.AnyAsync())
@@ -380,6 +462,7 @@ public static class DbSeeder
         var izmir = new Experience
         {
             Slug = "izmir-founder-experience-2026",
+            CoverImageUrl = "/img/experiences/izmir-founder-experience-2026-1600.jpg",
             Title = "The VI House — Izmir",
             ShortSummary = "A five-day founder experience on the Aegean coast.",
             Description = "A curated gathering of founders, operators and investors for five days of sessions, workshops and private dinners.",
@@ -401,6 +484,13 @@ public static class DbSeeder
         izmir.Inclusions.Add(new ExperienceInclusion { ExperienceId = izmir.Id, Text = "All programme sessions and workshops", IsIncluded = true, SortOrder = 1 });
         izmir.Inclusions.Add(new ExperienceInclusion { ExperienceId = izmir.Id, Text = "Flights", IsIncluded = false, SortOrder = 2 });
 
+        // Gallery images carry real alt text — unlike a cover, these sit away from any heading that
+        // would describe them, so a blank alt would leave a screen reader with nothing at all.
+        izmir.Gallery.Add(new ExperienceImage { ExperienceId = izmir.Id, Url = "/img/gallery/room-boardroom-1600.jpg", AltText = "An empty boardroom set for a small working session", SortOrder = 1 });
+        izmir.Gallery.Add(new ExperienceImage { ExperienceId = izmir.Id, Url = "/img/gallery/dinner-1600.jpg", AltText = "A long table set for a private dinner", SortOrder = 2 });
+        izmir.Gallery.Add(new ExperienceImage { ExperienceId = izmir.Id, Url = "/img/gallery/workshop-1600.jpg", AltText = "A small group working through a problem on a whiteboard", SortOrder = 3 });
+        izmir.Gallery.Add(new ExperienceImage { ExperienceId = izmir.Id, Url = "/img/gallery/speaker-1600.jpg", AltText = "A speaker addressing a seated group in a bright room", SortOrder = 4 });
+
         var founderSession = new ExperienceProgramDay { ExperienceId = izmir.Id, DayNumber = 1, DateLabel = "Day 1", Title = "Arrival" };
         founderSession.Sessions.Add(new ExperienceSession { ProgramDayId = founderSession.Id, StartTime = new TimeSpan(19, 0, 0), EndTime = new TimeSpan(21, 0, 0), Title = "Welcome Dinner", SortOrder = 1 });
         izmir.ProgramDays.Add(founderSession);
@@ -408,6 +498,7 @@ public static class DbSeeder
         var london = new Experience
         {
             Slug = "london-growth-mastermind-2026",
+            CoverImageUrl = "/img/experiences/london-growth-mastermind-2026-1600.jpg",
             Title = "The VI House — London",
             ShortSummary = "A private growth mastermind session for operators scaling past seven figures.",
             Description = "A single-day, invite-shaped mastermind session with a small group of operators, hosted in central London.",
@@ -424,10 +515,13 @@ public static class DbSeeder
             SortOrder = 2,
         };
         london.TicketTypes.Add(new TicketType { ExperienceId = london.Id, Title = "Standard Experience", PriceMinor = 99900, Currency = "GBP", Inventory = 20, SortOrder = 1 });
+        london.Gallery.Add(new ExperienceImage { ExperienceId = london.Id, Url = "/img/gallery/room-roundtable-1600.jpg", AltText = "A roundtable laid out for a dozen people", SortOrder = 1 });
+        london.Gallery.Add(new ExperienceImage { ExperienceId = london.Id, Url = "/img/gallery/workshop-1600.jpg", AltText = "A small group working through a problem on a whiteboard", SortOrder = 2 });
 
         var zurich = new Experience
         {
             Slug = "zurich-founder-dinner-2026",
+            CoverImageUrl = "/img/experiences/zurich-founder-dinner-2026-1600.jpg",
             Title = "The VI House — Zurich",
             ShortSummary = "A private founder dinner in Zurich.",
             Description = "An intimate dinner session for founders across fintech, e-commerce and AI, hosted in Zurich.",
@@ -447,6 +541,7 @@ public static class DbSeeder
         var lisbon = new Experience
         {
             Slug = "lisbon-founder-retreat-2026",
+            CoverImageUrl = "/img/experiences/lisbon-founder-retreat-2026-1600.jpg",
             Title = "The VI House — Lisbon",
             ShortSummary = "A four-day founder retreat on the Portuguese coast.",
             Description = "A small-group retreat for founders navigating growth-stage decisions, hosted in Lisbon.",
@@ -466,6 +561,7 @@ public static class DbSeeder
         var singapore = new Experience
         {
             Slug = "singapore-growth-summit-2026",
+            CoverImageUrl = "/img/experiences/singapore-growth-summit-2026-1600.jpg",
             Title = "The VI House — Singapore",
             ShortSummary = "A growth-stage summit for founders building across Southeast Asia.",
             Description = "A two-day summit connecting founders and operators scaling across Southeast Asian markets.",
@@ -485,6 +581,7 @@ public static class DbSeeder
         var miami = new Experience
         {
             Slug = "miami-founder-weekend-2025",
+            CoverImageUrl = "/img/experiences/miami-founder-weekend-2025-1600.jpg",
             Title = "The VI House — Miami",
             ShortSummary = "A private founder weekend in Miami.",
             Description = "An intimate weekend gathering for founders across fintech and consumer, hosted in Miami.",
@@ -507,6 +604,7 @@ public static class DbSeeder
         var berlinDraft = new Experience
         {
             Slug = "berlin-founder-summit-2026",
+            CoverImageUrl = "/img/experiences/berlin-founder-summit-2026-1600.jpg",
             Title = "The VI House — Berlin",
             ShortSummary = "Draft — not yet ready for review.",
             Description = "Draft description, still being written by the events team.",
@@ -535,6 +633,97 @@ public static class DbSeeder
             MaxRedemptions = 25,
             IsActive = true,
         });
+    }
+
+    /// <summary>
+    /// Three panels for the homepage hero carousel, each written in all four site languages.
+    ///
+    /// Seeded in every language on purpose: a slide that exists only in English proves nothing about
+    /// the fallback, and the first thing anyone does with a new carousel is switch the language
+    /// picker to see whether it followed.
+    ///
+    /// The photographs are the ones media-manifest.json fetches into /img/hero — pasted as URLs
+    /// rather than uploaded, because a seeder cannot put bytes into the media root of a machine it
+    /// has never seen. Uploading through the panel replaces them.
+    /// </summary>
+    private static async Task SeedHeroSlidesAsync(VIHouseDbContext db)
+    {
+        if (await db.HeroSlides.AnyAsync())
+            return;
+
+        var slides = new List<HeroSlide>
+        {
+            new()
+            {
+                SortOrder = 0,
+                IsActive = true,
+                ImageUrl = "/img/hero/lounge-1600.jpg",
+                PrimaryCtaUrl = "/apply",
+                SecondaryCtaUrl = "/membership",
+            },
+            new()
+            {
+                SortOrder = 1,
+                IsActive = true,
+                ImageUrl = "/img/hero/skyline-1600.jpg",
+                PrimaryCtaUrl = "/experiences",
+                SecondaryCtaUrl = "/sessions",
+            },
+            new()
+            {
+                SortOrder = 2,
+                IsActive = true,
+                ImageUrl = "/img/hero/retreat-1600.jpg",
+                PrimaryCtaUrl = "/experiences",
+                SecondaryCtaUrl = "/journal",
+            },
+        };
+
+        // Culture, eyebrow, heading, subheading, primary label, secondary label, alt text.
+        var copy = new[]
+        {
+            new[]
+            {
+                new[] { "en-GB", "The Sixth House", "Where Ambition Meets Alignment.", "The VI House is a private global community for online founders, investors and operators. Access sessions, connect with peers, and join life-changing retreats.", "Apply to Join", "Explore Platform", "A low-lit lounge with city windows at dusk" },
+                new[] { "de-DE", "Das Sechste Haus", "Wo Ambition auf Haltung trifft.", "The VI House ist eine private globale Gemeinschaft für Online-Gründer, Investoren und Operator. Sessions besuchen, Gleichgesinnte treffen, an Retreats teilnehmen, die etwas verändern.", "Jetzt bewerben", "Plattform ansehen", "Eine gedämpft beleuchtete Lounge mit Stadtfenstern in der Dämmerung" },
+                new[] { "tr-TR", "Altıncı Ev", "Hırsın Hizaya Geldiği Yer.", "The VI House; online kurucular, yatırımcılar ve operatörler için özel ve küresel bir topluluktur. Oturumlara katılın, benzer kişilerle tanışın ve hayatınızı değiştiren inzivalarda yer alın.", "Başvur", "Platformu Keşfet", "Alacakaranlıkta şehre bakan pencereleri olan loş bir oturma salonu" },
+                new[] { "et-EE", "Kuues Koda", "Kus ambitsioon kohtub suunaga.", "The VI House on privaatne ülemaailmne kogukond veebiettevõtjatele, investoritele ja operaatoritele. Osale sessioonidel, kohtu omasugustega ja liitu retriitidega, mis midagi muudavad.", "Kandideeri", "Uuri platvormi", "Hämaralt valgustatud salong linnaakendega hämaruses" },
+            },
+            new[]
+            {
+                new[] { "en-GB", "Experiences", "Rooms Worth Flying For.", "Small, curated gatherings in the cities where the work is actually happening — reviewed by hand, capped by design.", "See Experiences", "Browse Sessions", "A city skyline seen from a high floor at night" },
+                new[] { "de-DE", "Experiences", "Räume, für die sich die Reise lohnt.", "Kleine, kuratierte Treffen in den Städten, in denen die Arbeit wirklich stattfindet — von Hand geprüft, bewusst begrenzt.", "Experiences ansehen", "Sessions durchsuchen", "Eine nächtliche Skyline aus einem der oberen Stockwerke" },
+                new[] { "tr-TR", "Deneyimler", "Uçmaya Değer Odalar.", "İşin gerçekten yapıldığı şehirlerde, küçük ve özenle seçilmiş buluşmalar — tek tek incelenir, bilinçli olarak sınırlı tutulur.", "Deneyimleri Gör", "Oturumlara Göz At", "Gece yüksek bir kattan görünen şehir silüeti" },
+                new[] { "et-EE", "Kogemused", "Ruumid, mille pärast tasub lennata.", "Väikesed, hoolikalt valitud kohtumised linnades, kus töö tegelikult toimub — käsitsi üle vaadatud, teadlikult piiratud.", "Vaata kogemusi", "Sirvi sessioone", "Öine linnasiluett kõrgelt korruselt" },
+            },
+            new[]
+            {
+                new[] { "en-GB", "Signature Retreats", "Step Away. Come Back Sharper.", "A week among people building at your level, somewhere that makes the thinking easier. Applications are reviewed one at a time.", "View Retreats", "Read the Journal", "A terrace and pool overlooking the sea at golden hour" },
+                new[] { "de-DE", "Signature Retreats", "Abstand nehmen. Klarer zurückkommen.", "Eine Woche unter Menschen, die auf Ihrem Niveau bauen — an einem Ort, der das Denken leichter macht. Bewerbungen werden einzeln geprüft.", "Retreats ansehen", "Journal lesen", "Eine Terrasse mit Pool mit Blick aufs Meer in der goldenen Stunde" },
+                new[] { "tr-TR", "İmza Retreat'ler", "Uzaklaş. Daha Keskin Dön.", "Sizinle aynı seviyede inşa eden insanlar arasında, düşünmeyi kolaylaştıran bir yerde bir hafta. Başvurular tek tek değerlendirilir.", "Retreat'leri Gör", "Journal'ı Oku", "Altın saatte denize bakan bir teras ve havuz" },
+                new[] { "et-EE", "Signature-retriidid", "Astu kõrvale. Tule teravamana tagasi.", "Nädal inimeste seas, kes ehitavad sinuga samal tasemel, kohas, kus mõtlemine on lihtsam. Avaldusi vaadatakse ükshaaval.", "Vaata retriite", "Loe ajakirja", "Terrass ja bassein merevaatega kuldsel tunnil" },
+            },
+        };
+
+        for (var i = 0; i < slides.Count; i++)
+        {
+            foreach (var row in copy[i])
+            {
+                slides[i].Translations.Add(new HeroSlideTranslation
+                {
+                    HeroSlideId = slides[i].Id,
+                    Culture = row[0],
+                    Eyebrow = row[1],
+                    Heading = row[2],
+                    Subheading = row[3],
+                    PrimaryCtaLabel = row[4],
+                    SecondaryCtaLabel = row[5],
+                    ImageAlt = row[6],
+                });
+            }
+        }
+
+        db.HeroSlides.AddRange(slides);
     }
 
     private static async Task SeedHomepageContentAsync(VIHouseDbContext db)
@@ -589,9 +778,10 @@ public static class DbSeeder
             CtaUrl = "/experiences",
             ExtraJson = """
             [
-              {"title":"Signature Experiences","description":"Small, curated in-person gatherings for founders, operators and investors across the world's most interesting cities."},
-              {"title":"Application-First Access","description":"Every room is reviewed by hand. No open checkout — access is earned through a short application."},
-              {"title":"A Private Member Portal","description":"Track applications, manage bookings and hold your profile in one private account, built to grow with the House."}
+              {"title":"Live & On-Demand Webinars","description":"Learn from top founders, investors and experts across business, finance, marketing and personal growth.","imageUrl":"/img/ecosystem/webinars-800.jpg","imageAlt":"A speaker on stage in front of a seated audience","linkLabel":"Browse Webinars","linkUrl":"/sessions"},
+              {"title":"Community & Networking","description":"Join private groups, meet like-minded peers and collaborate on the projects that matter.","imageUrl":"/img/ecosystem/community-800.jpg","imageAlt":"A group talking in a bright open workspace","linkLabel":"Enter Community","linkUrl":"/members"},
+              {"title":"Digital Marketplace","description":"Discover and purchase high-quality business programmes, templates, resources and tools.","imageUrl":"/img/ecosystem/marketplace-800.jpg","imageAlt":"A laptop and notebook on a desk by a window","linkLabel":"Browse Marketplace","linkUrl":"/experiences"},
+              {"title":"Signature Retreats","description":"Join transformative retreats in world-class locations that elevate your mind, network and business.","imageUrl":"/img/ecosystem/retreats-800.jpg","imageAlt":"A villa terrace and pool at sunset","linkLabel":"View Retreats","linkUrl":"/experiences"}
             ]
             """,
         });
@@ -619,9 +809,43 @@ public static class DbSeeder
             PageId = home.Id,
             SectionKey = "trust",
             SortOrder = 5,
-            Heading = "A community that builds legacy.",
-            BodyText = "Member stories will appear here as the first Experiences take place.",
-            ExtraJson = "[]",
+            Subheading = "A community that builds legacy",
+            Heading = "Serious builders find their people here.",
+            BodyText = "The VI House is where serious builders find their people and create the future together.",
+            CtaLabel = "Become a Member",
+            CtaUrl = "/membership",
+            // Placeholder voices for local development, with the portraits the fetch script pulls
+            // into /img/people. Replace them with real, attributable quotes before this database is
+            // ever shown to anyone — an invented testimonial is the one piece of placeholder content
+            // that is a problem rather than an eyesore.
+            ExtraJson = """
+            [
+              {"quote":"The connections I made at VI House changed my business and my life.","author":"Placeholder Member","role":"E-commerce Founder","avatarUrl":"/img/people/voice-a-800.jpg"},
+              {"quote":"Best community of high-level operators I have ever been part of.","author":"Placeholder Member","role":"Digital Creator","avatarUrl":"/img/people/voice-b-800.jpg"},
+              {"quote":"The retreats are unmatched. Pure transformation.","author":"Placeholder Member","role":"Investor & Entrepreneur","avatarUrl":"/img/people/voice-c-800.jpg"}
+            ]
+            """,
+        });
+
+        // A block of its own rather than more fields on "trust": a ContentBlock has exactly one
+        // ExtraJson and the testimonials already hold it. Names only — see Views/Home/_TrustLogo.cshtml
+        // on why no logo artwork is shipped.
+        home.Blocks.Add(new ContentBlock
+        {
+            PageId = home.Id,
+            SectionKey = "trust-logos",
+            SortOrder = 6,
+            Heading = "Trusted by founders from",
+            ExtraJson = """
+            [
+              {"name":"Shopify"},
+              {"name":"Skool"},
+              {"name":"Stripe"},
+              {"name":"Teachable"},
+              {"name":"Kajabi"},
+              {"name":"Zapier"}
+            ]
+            """,
         });
 
         db.ContentPages.Add(home);

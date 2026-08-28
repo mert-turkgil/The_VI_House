@@ -50,6 +50,8 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
 
     public DbSet<ContentPage> ContentPages => Set<ContentPage>();
     public DbSet<ContentBlock> ContentBlocks => Set<ContentBlock>();
+    public DbSet<HeroSlide> HeroSlides => Set<HeroSlide>();
+    public DbSet<HeroSlideTranslation> HeroSlideTranslations => Set<HeroSlideTranslation>();
 
     public DbSet<MembershipPlan> MembershipPlans => Set<MembershipPlan>();
     public DbSet<Membership> Memberships => Set<Membership>();

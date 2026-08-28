@@ -1,0 +1,48 @@
+@model ExperienceIndexViewModel
+@*
+    The results region on its own, so ExperiencesController.Results can return exactly this fragment
+    for the JS filter swap — the same "Razor renders, JS replaces innerHTML" arrangement the site
+    search already uses in modules/nav.ts. One renderer, so the enhanced and unenhanced paths can
+    never drift apart.
+*@
+
+@* aria-live so a filter change is announced rather than silently swapping under a screen reader.
+   polite, not assertive: this is a result count, not an alert. *@
+<p class="experience-filters__count" aria-live="polite">
+    @(Model.Cards.Count == 1
+        ? Loc["Experiences.Count.One"].Value
+        : Loc["Experiences.Count.Many", Model.Cards.Count].Value)
+</p>
+
+@if (Model.Cards.Count == 0)
+{
+    <div class="experience-empty">
+        <span class="experience-empty__mark" aria-hidden="true">
+            <partial name="_Crest" />
+        </span>
+
+        @if (Model.HasFilters)
+        {
+            <h2 class="experience-empty__title">@Loc["Experiences.Empty.Filtered.Title"]</h2>
+            <p class="experience-empty__body">@Loc["Experiences.Empty.Filtered.Body"]</p>
+            <a class="btn btn--ghost" href="@Url.Action("Index", "Experiences", new { area = "" })">
+                @Loc["Experiences.Filters.Clear"]
+            </a>
+        }
+        else
+        {
+            <h2 class="experience-empty__title">@Loc["Experiences.Empty.Title"]</h2>
+            <p class="experience-empty__body">@Loc["Experiences.Empty.Body"]</p>
+            <a class="btn btn--primary" href="/join">@Loc["Nav.ApplyToJoin"]</a>
+        }
+    </div>
+}
+else
+{
+    <div class="experience-grid">
+        @foreach (var card in Model.Cards)
+        {
+            <partial name="_ExperienceCard" model="card" />
+        }
+    </div>
+}

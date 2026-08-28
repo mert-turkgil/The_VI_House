@@ -21,18 +21,10 @@
         <div class="experience-grid">
             @foreach (var e in Model)
             {
-                <a class="experience-card" href="/apply?experience=@e.Slug">
-                    <div class="experience-card__image" style="@(string.IsNullOrEmpty(e.CoverImageUrl) ? "" : $"background-image:url('{e.CoverImageUrl}')")">
-                        <span class="experience-card__badge">@e.StatusLabel</span>
-                    </div>
-                    <div class="experience-card__body">
-                        <h3 class="experience-card__title">The VI House — @e.City</h3>
-                        <div class="experience-card__meta">
-                            <span>@e.StartAtUtc.ToString("d MMM")–@e.EndAtUtc.ToString("d MMM yyyy")</span>
-                            <span>@e.City, @e.Country</span>
-                        </div>
-                    </div>
-                </a>
+                @* Same card as the public listing, pointed at the application funnel instead of
+                   the detail page. This used to be a near-identical copy of that markup. *@
+                e.Href = Url.Action("Index", "Application", new { area = "", experience = e.Slug });
+                <partial name="/Views/Experiences/_ExperienceCard.cshtml" model="e" />
             }
         </div>
     }

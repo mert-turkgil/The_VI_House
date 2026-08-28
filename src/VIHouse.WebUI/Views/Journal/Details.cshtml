@@ -22,7 +22,16 @@
 
 @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
 {
-    <div class="journal-article__cover" style="background-image:url('@Model.CoverImageUrl')"></div>
+    @* Eager + full width: this is the article's lead image, above the fold on most screens, so it
+       should not be lazy-loaded. Decorative — the headline above it already carries the meaning. *@
+    <div class="journal-article__cover">
+        <partial name="_CoverImage" model="@(new CoverImageViewModel {
+            Url = Model.CoverImageUrl,
+            Ratio = "21x9",
+            Sizes = "100vw",
+            Eager = true,
+        })" />
+    </div>
 }
 
 @* Sanitised on write by JournalService (see EditorHtml), so the stored HTML is already safe. *@

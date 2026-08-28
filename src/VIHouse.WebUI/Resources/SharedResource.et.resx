@@ -526,4 +526,188 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Account.SessionsTitle" xml:space="preserve"><value>Minu sessioonid</value></data>
   <data name="Account.NoSessions" xml:space="preserve"><value>Sa pole veel ühelegi sessioonile registreerunud.</value></data>
   <data name="Account.BrowseSessions" xml:space="preserve"><value>Sirvi sessioone</value></data>
+
+  <!-- Experiences: listing, filters and detail page. -->
+  <data name="Experiences.Title" xml:space="preserve"><value>Elamused</value></data>
+  <data name="Experiences.Eyebrow" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Experiences.Heading" xml:space="preserve"><value>Elamused</value></data>
+  <data name="Experiences.Subheading" xml:space="preserve"><value>Hoolikalt valitud ruumid asutajatele, operaatoritele ja investoritele — mitte broneerimismootor, vaid võrgustik.</value></data>
+  <data name="Experiences.From" xml:space="preserve"><value>Alates</value></data>
+  <data name="Experiences.View" xml:space="preserve"><value>Vaata elamust</value></data>
+  <data name="Experiences.Duration.One" xml:space="preserve"><value>1 päev</value></data>
+  <data name="Experiences.Duration.Many" xml:space="preserve"><value>{0} päeva</value></data>
+  <data name="Experiences.Status.Draft" xml:space="preserve"><value>Mustand</value></data>
+  <data name="Experiences.Status.ApplicationsOpen" xml:space="preserve"><value>Kandideerimine avatud</value></data>
+  <data name="Experiences.Status.AlmostFull" xml:space="preserve"><value>Peaaegu täis</value></data>
+  <data name="Experiences.Status.Waitlist" xml:space="preserve"><value>Ootenimekiri</value></data>
+  <data name="Experiences.Status.ApplicationsClosed" xml:space="preserve"><value>Kandideerimine suletud</value></data>
+  <data name="Experiences.Status.Completed" xml:space="preserve"><value>Lõppenud</value></data>
+  <data name="Experiences.Status.ComingSoon" xml:space="preserve"><value>Tulekul</value></data>
+  <data name="Experiences.Filters.Label" xml:space="preserve"><value>Filtreeri elamusi</value></data>
+  <data name="Experiences.Filters.City" xml:space="preserve"><value>Linn</value></data>
+  <data name="Experiences.Filters.AnyCity" xml:space="preserve"><value>Kõik linnad</value></data>
+  <data name="Experiences.Filters.Status" xml:space="preserve"><value>Saadavus</value></data>
+  <data name="Experiences.Filters.AnyStatus" xml:space="preserve"><value>Kõik</value></data>
+  <data name="Experiences.Filters.Apply" xml:space="preserve"><value>Rakenda filter</value></data>
+  <data name="Experiences.Filters.Clear" xml:space="preserve"><value>Tühjenda filtrid</value></data>
+  <data name="Experiences.Count.One" xml:space="preserve"><value>1 elamus</value></data>
+  <data name="Experiences.Count.Many" xml:space="preserve"><value>{0} elamust</value></data>
+  <data name="Experiences.Empty.Title" xml:space="preserve"><value>Hetkel pole midagi avatud</value></data>
+  <data name="Experiences.Empty.Body" xml:space="preserve"><value>Korraldame aastas vaid mõne ruumi ja need kuulutatakse esmalt välja liikmetele. Kandideeri ja saad järgmisest teada enne, kui see avalikuks saab.</value></data>
+  <data name="Experiences.Empty.Filtered.Title" xml:space="preserve"><value>Nendele filtritele ei vasta midagi</value></data>
+  <data name="Experiences.Empty.Filtered.Body" xml:space="preserve"><value>Proovi teist linna või tühjenda filtrid, et näha kõike, mis on avatud.</value></data>
+  <data name="Experiences.Apply" xml:space="preserve"><value>Taotle ligipääsu</value></data>
+  <data name="Experiences.Section.About" xml:space="preserve"><value>Elamus</value></data>
+  <data name="Experiences.Section.Audience" xml:space="preserve"><value>Kes on ruumis?</value></data>
+  <data name="Experiences.Section.Programme" xml:space="preserve"><value>Mis toimub</value></data>
+  <data name="Experiences.Section.Included" xml:space="preserve"><value>Mis sisaldub</value></data>
+  <data name="Experiences.Section.Faq" xml:space="preserve"><value>Küsimused</value></data>
+  <data name="Experiences.Section.Gallery" xml:space="preserve"><value>Toimumispaik</value></data>
+  <data name="Experiences.Included" xml:space="preserve"><value>Sisaldub</value></data>
+  <data name="Experiences.NotIncluded" xml:space="preserve"><value>Ei sisaldu</value></data>
+  <data name="Experiences.Programme.Day" xml:space="preserve"><value>{0}. päev</value></data>
+  <data name="Experiences.Programme.LocalTimes" xml:space="preserve"><value>Kõik kellaajad on {0} kohaliku aja järgi.</value></data>
+  <data name="Experiences.Tickets.Title" xml:space="preserve"><value>Elamuse valikud</value></data>
+  <data name="Experiences.Tickets.None" xml:space="preserve"><value>Valikud kinnitatakse koos kutsega.</value></data>
+  <data name="Experiences.Tickets.PlacesLeft" xml:space="preserve"><value>Jäänud {0} kohta</value></data>
+  <data name="Experiences.Tickets.Note" xml:space="preserve"><value>Kandideerimisi vaadatakse käsitsi läbi. Sinult ei võeta tasu enne, kui koht on pakutud ja sa oled selle vastu võtnud.</value></data>
+  <data name="Experiences.Closed.ComingSoon" xml:space="preserve"><value>Tulekul</value></data>
+  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Liitu ootenimekirjaga</value></data>
+  <data name="Experiences.Closed.Closed" xml:space="preserve"><value>Kandideerimine suletud</value></data>
+  <data name="Experiences.Gallery.Prev" xml:space="preserve"><value>Eelmine foto</value></data>
+  <data name="Experiences.Gallery.Next" xml:space="preserve"><value>Järgmine foto</value></data>
+  <data name="Experiences.BackToAll" xml:space="preserve"><value>Kõik elamused</value></data>
+
+  <!-- Authentication, two-step verification and the account security screens. -->
+  <data name="Auth.Login.Title" xml:space="preserve"><value>Logi sisse</value></data>
+  <data name="Auth.Login.Heading" xml:space="preserve"><value>Tere tulemast tagasi.</value></data>
+  <data name="Auth.Login.Lede" xml:space="preserve"><value>House on ennekõike kutsepõhine. Logi sisse, et pääseda oma liikmesuse, sessioonide ja kataloogi juurde.</value></data>
+  <data name="Auth.Email" xml:space="preserve"><value>E-post</value></data>
+  <data name="Auth.Password" xml:space="preserve"><value>Parool</value></data>
+  <data name="Auth.RememberMe" xml:space="preserve"><value>Hoia mind sisse logituna</value></data>
+  <data name="Auth.Login.Submit" xml:space="preserve"><value>Logi sisse</value></data>
+  <data name="Auth.ForgotPassword" xml:space="preserve"><value>Unustasid parooli?</value></data>
+  <data name="Auth.NotAMember" xml:space="preserve"><value>Pole veel liige?</value></data>
+  <data name="Auth.RequestAccess" xml:space="preserve"><value>Taotle ligipääsu</value></data>
+  <data name="Auth.OrContinueWith" xml:space="preserve"><value>Või jätka teenusega</value></data>
+  <data name="Auth.Error.InvalidLogin" xml:space="preserve"><value>See e-post ja parool ei sobi ühegi kontoga.</value></data>
+  <data name="Auth.TwoFactor.Title" xml:space="preserve"><value>Kaheastmeline kinnitamine</value></data>
+  <data name="Auth.TwoFactor.Heading" xml:space="preserve"><value>Veel üks samm.</value></data>
+  <data name="Auth.TwoFactor.Lede" xml:space="preserve"><value>Ava oma autentimisrakendus ja sisesta 6-kohaline kood, mida see The VI House'i jaoks näitab.</value></data>
+  <data name="Auth.TwoFactor.CodeLabel" xml:space="preserve"><value>Autentimiskood</value></data>
+  <data name="Auth.TwoFactor.RememberMachine" xml:space="preserve"><value>Usalda seda seadet 30 päeva</value></data>
+  <data name="Auth.TwoFactor.RememberMachineHint" xml:space="preserve"><value>Märgi see ainult seadmes, mis kuulub ainult sulle — järgmisel korral jäetakse see samm vahele.</value></data>
+  <data name="Auth.TwoFactor.Submit" xml:space="preserve"><value>Kinnita</value></data>
+  <data name="Auth.TwoFactor.UseRecoveryCode" xml:space="preserve"><value>Kasuta selle asemel taastekoodi</value></data>
+  <data name="Auth.TwoFactor.LostEverything" xml:space="preserve"><value>Kaotasid telefoni ja koodid?</value></data>
+  <data name="Auth.Recovery.Title" xml:space="preserve"><value>Taastekood</value></data>
+  <data name="Auth.Recovery.Heading" xml:space="preserve"><value>Kasuta taastekoodi</value></data>
+  <data name="Auth.Recovery.Lede" xml:space="preserve"><value>Sisesta üks koodidest, mille salvestasid kaheastmelise kinnitamise sisselülitamisel. Iga kood toimib ühe korra.</value></data>
+  <data name="Auth.Recovery.CodeLabel" xml:space="preserve"><value>Taastekood</value></data>
+  <data name="Auth.Recovery.Submit" xml:space="preserve"><value>Logi sisse</value></data>
+  <data name="Auth.Recovery.Note" xml:space="preserve"><value>Sellist sisselogimist ei jäeta meelde — järgmisel korral küsitakse autentimiskoodi või saad oma kontos uue seadme seadistada.</value></data>
+  <data name="Auth.Lost.Title" xml:space="preserve"><value>Ligipääs suletud</value></data>
+  <data name="Auth.Lost.Heading" xml:space="preserve"><value>Kaotasid telefoni ja taastekoodid</value></data>
+  <data name="Auth.Lost.Lede" xml:space="preserve"><value>See on taastatav, kuid mitte automaatselt — ja see on tahtlik. Igaüks, kes saaks kaheastmelise kinnitamise lihtsalt küsides lähtestada, oleks sellest möödapääs.</value></data>
+  <data name="Auth.Lost.Step1.Title" xml:space="preserve"><value>Kirjuta meile oma konto aadressilt</value></data>
+  <data name="Auth.Lost.Step1.Body" xml:space="preserve"><value>Kasuta e-posti aadressi, millega sisse logid. See on esimene asi, mida kontrollime.</value></data>
+  <data name="Auth.Lost.Step2.Title" xml:space="preserve"><value>Kinnitame, et see oled sina</value></data>
+  <data name="Auth.Lost.Step2.Body" xml:space="preserve"><value>Küsime üksikasju, mida teab ainult konto omanik. Võime soovida sinuga otse rääkida.</value></data>
+  <data name="Auth.Lost.Step3.Title" xml:space="preserve"><value>Administraator lähtestab su teise teguri</value></data>
+  <data name="Auth.Lost.Step3.Body" xml:space="preserve"><value>Seejärel seadistad uue autentija ja saad järgmisel sisselogimisel uued taastekoodid. Iga lähtestamine logitakse.</value></data>
+  <data name="Auth.Lost.Warning" xml:space="preserve"><value>Keegi The VI House'is ei saa kaheastmelisest kinnitamisest eemalt mööda minna ja keegi ei küsi sinult kunagi koodi. Kui keegi küsib, pole see meie.</value></data>
+  <data name="Auth.Lost.ContactCta" xml:space="preserve"><value>Võta ühendust</value></data>
+  <data name="Auth.Lost.BackToLogin" xml:space="preserve"><value>Tagasi sisselogimisse</value></data>
+  <data name="Manage.TwoFactor.Title" xml:space="preserve"><value>Kaheastmeline kinnitamine</value></data>
+  <data name="Manage.TwoFactor.On" xml:space="preserve"><value>Kaheastmeline kinnitamine on sees</value></data>
+  <data name="Manage.TwoFactor.Off" xml:space="preserve"><value>Kaheastmeline kinnitamine on väljas</value></data>
+  <data name="Manage.TwoFactor.OnBody" xml:space="preserve"><value>Sinu konto küsib igal sisselogimisel koodi sinu autentimisrakendusest.</value></data>
+  <data name="Manage.TwoFactor.CodesLeft" xml:space="preserve"><value>Jäänud {0} taastekoodi</value></data>
+  <data name="Manage.TwoFactor.CodesLow" xml:space="preserve"><value>Sinu taastekoodid hakkavad otsa saama. Loo uus komplekt ja hoia neid kohas, kuhu pääsed ka ilma telefonita.</value></data>
+  <data name="Manage.TwoFactor.CodesNone" xml:space="preserve"><value>Sul pole ühtegi taastekoodi alles. Loo uus komplekt, enne kui kaotad ligipääsu oma autentimisrakendusele.</value></data>
+  <data name="Manage.TwoFactor.AddApp" xml:space="preserve"><value>Seadista autentimisrakendus</value></data>
+  <data name="Manage.TwoFactor.ResetApp" xml:space="preserve"><value>Seadista uus seade</value></data>
+  <data name="Manage.TwoFactor.NewCodes" xml:space="preserve"><value>Loo uued taastekoodid</value></data>
+  <data name="Manage.TwoFactor.Forget" xml:space="preserve"><value>Unusta see brauser</value></data>
+  <data name="Manage.TwoFactor.Disable" xml:space="preserve"><value>Lülita kaheastmeline kinnitamine välja</value></data>
+  <data name="Manage.Danger.Heading" xml:space="preserve"><value>Ole nendega ettevaatlik</value></data>
+
+  <data name="Home.Hero.Previous" xml:space="preserve"><value>Eelmine slaid</value></data>
+  <data name="Home.Hero.Next" xml:space="preserve"><value>Järgmine slaid</value></data>
+  <data name="Admin.HeroSlide.Title" xml:space="preserve"><value>Avaslaidid</value></data>
+  <data name="Admin.HeroSlide.New" xml:space="preserve"><value>Uus slaid</value></data>
+  <data name="Admin.HeroSlide.Preview" xml:space="preserve"><value>Vaata avalehte</value></data>
+  <data name="Admin.HeroSlide.Hint" xml:space="preserve"><value>Avalehe hero-karusselli paneelid allolevas järjekorras. Kui keel on tõlkimata, kuvatakse ingliskeelne tekst.</value></data>
+  <data name="Admin.HeroSlide.Empty" xml:space="preserve"><value>Slaide veel pole. Kuni lisad ühe, kuvab avaleht hero sisuplokki.</value></data>
+  <data name="Admin.HeroSlide.Heading" xml:space="preserve"><value>Pealkiri</value></data>
+  <data name="Admin.HeroSlide.Languages" xml:space="preserve"><value>Keeled</value></data>
+  <data name="Admin.HeroSlide.Schedule" xml:space="preserve"><value>Ajastus</value></data>
+  <data name="Admin.HeroSlide.Status" xml:space="preserve"><value>Olek</value></data>
+  <data name="Admin.HeroSlide.Order" xml:space="preserve"><value>Järjekord</value></data>
+  <data name="Admin.HeroSlide.NoImage" xml:space="preserve"><value>Pilt puudub</value></data>
+  <data name="Admin.HeroSlide.Always" xml:space="preserve"><value>Alati</value></data>
+  <data name="Admin.HeroSlide.Hidden" xml:space="preserve"><value>Peidetud</value></data>
+  <data name="Admin.HeroSlide.Scheduled" xml:space="preserve"><value>Ajastatud</value></data>
+  <data name="Admin.HeroSlide.Live" xml:space="preserve"><value>Eetris</value></data>
+  <data name="Admin.HeroSlide.MoveUp" xml:space="preserve"><value>Liiguta üles</value></data>
+  <data name="Admin.HeroSlide.MoveDown" xml:space="preserve"><value>Liiguta alla</value></data>
+  <data name="Admin.HeroSlide.ConfirmDelete" xml:space="preserve"><value>Kustutada see slaid ja kõik selle tõlked?</value></data>
+  <data name="Admin.HeroSlide.Delete" xml:space="preserve"><value>Kustuta</value></data>
+  <data name="Admin.HeroSlide.CreateHint" xml:space="preserve"><value>Alusta {0} pealkirjast — teised keeled saavad oma vahekaardid, kui slaid on loodud.</value></data>
+  <data name="Admin.HeroSlide.Subheading" xml:space="preserve"><value>Alapealkiri</value></data>
+  <data name="Admin.HeroSlide.SortOrder" xml:space="preserve"><value>Sortimisjärjekord</value></data>
+  <data name="Admin.HeroSlide.IsActive" xml:space="preserve"><value>Nähtav avalehel</value></data>
+  <data name="Admin.HeroSlide.ImageLaterHint" xml:space="preserve"><value>Foto lisatakse järgmisel ekraanil.</value></data>
+  <data name="Admin.HeroSlide.CreateSubmit" xml:space="preserve"><value>Loo slaid</value></data>
+  <data name="Admin.HeroSlide.Cancel" xml:space="preserve"><value>Loobu</value></data>
+  <data name="Admin.HeroSlide.BackToList" xml:space="preserve"><value>Kõik slaidid</value></data>
+  <data name="Admin.HeroSlide.Section.Image" xml:space="preserve"><value>Foto</value></data>
+  <data name="Admin.HeroSlide.NoImageYet" xml:space="preserve"><value>Fotot veel pole — slaid kuvatakse ühtlasel brändirohelisel.</value></data>
+  <data name="Admin.HeroSlide.Upload" xml:space="preserve"><value>Laadi üles</value></data>
+  <data name="Admin.HeroSlide.ConfirmRemoveImage" xml:space="preserve"><value>Eemaldada selle slaidi foto?</value></data>
+  <data name="Admin.HeroSlide.RemoveImage" xml:space="preserve"><value>Eemalda foto</value></data>
+  <data name="Admin.HeroSlide.UploadHint" xml:space="preserve"><value>JPEG, PNG, WebP või AVIF. Rõhtpaigutuses, vähemalt 1600 px lai — hero on üleulatuv.</value></data>
+  <data name="Admin.HeroSlide.Section.Settings" xml:space="preserve"><value>Slaidi seaded</value></data>
+  <data name="Admin.HeroSlide.ImageUrl" xml:space="preserve"><value>Pildi URL</value></data>
+  <data name="Admin.HeroSlide.ImageUrlDisabled" xml:space="preserve"><value>Kasutusel on üleslaaditud foto. URL-i sisestamiseks eemalda see.</value></data>
+  <data name="Admin.HeroSlide.ImageUrlHint" xml:space="preserve"><value>Saidi tee, näiteks /img/hero/lounge-1600.jpg, või https:// aadress.</value></data>
+  <data name="Admin.HeroSlide.PrimaryCtaUrl" xml:space="preserve"><value>Peamise nupu link</value></data>
+  <data name="Admin.HeroSlide.SecondaryCtaUrl" xml:space="preserve"><value>Teisese nupu link</value></data>
+  <data name="Admin.HeroSlide.CtaHint" xml:space="preserve"><value>Sihtkohad on kõigis keeltes samad; nuppude tekstid tõlgitakse allpool.</value></data>
+  <data name="Admin.HeroSlide.VisibleFrom" xml:space="preserve"><value>Nähtav alates (UTC)</value></data>
+  <data name="Admin.HeroSlide.VisibleUntil" xml:space="preserve"><value>Nähtav kuni (UTC)</value></data>
+  <data name="Admin.HeroSlide.SaveSettings" xml:space="preserve"><value>Salvesta seaded</value></data>
+  <data name="Admin.HeroSlide.Section.Copy" xml:space="preserve"><value>Tekst — {0}</value></data>
+  <data name="Admin.HeroSlide.DefaultLanguage" xml:space="preserve"><value>vaikimisi</value></data>
+  <data name="Admin.HeroSlide.NotTranslated" xml:space="preserve"><value>tõlkimata</value></data>
+  <data name="Admin.HeroSlide.FallbackNotice" xml:space="preserve"><value>Siia pole veel midagi kirjutatud — selle keele külastajad näevad praegu {0} teksti.</value></data>
+  <data name="Admin.HeroSlide.Eyebrow" xml:space="preserve"><value>Ülapealkiri</value></data>
+  <data name="Admin.HeroSlide.Eyebrow.Hint" xml:space="preserve"><value>Väike rida pealkirja kohal. Enamik slaide saab ilma.</value></data>
+  <data name="Admin.HeroSlide.PrimaryCtaLabel" xml:space="preserve"><value>Peamise nupu tekst</value></data>
+  <data name="Admin.HeroSlide.SecondaryCtaLabel" xml:space="preserve"><value>Teisese nupu tekst</value></data>
+  <data name="Admin.HeroSlide.ImageAlt" xml:space="preserve"><value>Pildi kirjeldus</value></data>
+  <data name="Admin.HeroSlide.ImageAlt.Hint" xml:space="preserve"><value>Ekraanilugejatele. Jäta tühjaks, kui foto on pealkirja taga puhtalt meeleolu loov.</value></data>
+  <data name="Admin.HeroSlide.SaveCopy" xml:space="preserve"><value>Salvesta {0} tekst</value></data>
+  <data name="Admin.HeroSlide.ConfirmDeleteTranslation" xml:space="preserve"><value>Eemaldada selle keele tekst slaidilt?</value></data>
+  <data name="Admin.HeroSlide.DeleteTranslation" xml:space="preserve"><value>Kustuta {0} tekst</value></data>
+  <data name="Admin.HeroSlide.Created" xml:space="preserve"><value>„{0}“ loodud. Järgmisena lisa foto ja teised keeled.</value></data>
+  <data name="Admin.HeroSlide.Saved" xml:space="preserve"><value>Seaded salvestatud.</value></data>
+  <data name="Admin.HeroSlide.TranslationSaved" xml:space="preserve"><value>{0} tekst salvestatud.</value></data>
+  <data name="Admin.HeroSlide.TranslationDeleted" xml:space="preserve"><value>{0} tekst eemaldatud.</value></data>
+  <data name="Admin.HeroSlide.UnknownCulture" xml:space="preserve"><value>See ei ole üks saidi keeltest.</value></data>
+  <data name="Admin.HeroSlide.CannotDeleteDefault" xml:space="preserve"><value>Vaikekeelt ei saa eemaldada — kõik teised keeled tuginevad sellele.</value></data>
+  <data name="Admin.HeroSlide.ImageTypeOnly" xml:space="preserve"><value>Hero-slaid võtab foto — JPEG, PNG, WebP või AVIF.</value></data>
+  <data name="Admin.HeroSlide.ImageUploaded" xml:space="preserve"><value>Foto uuendatud.</value></data>
+  <data name="Admin.HeroSlide.ImageRemoved" xml:space="preserve"><value>Foto eemaldatud.</value></data>
+  <data name="Admin.HeroSlide.AlreadyGone" xml:space="preserve"><value>Seda slaidi enam pole.</value></data>
+  <data name="Admin.HeroSlide.Deleted" xml:space="preserve"><value>„{0}“ kustutatud.</value></data>
+  <data name="Footer.Sessions" xml:space="preserve"><value>Sessioonid</value></data>
+  <data name="Footer.Journal" xml:space="preserve"><value>Ajakiri</value></data>
+  <data name="Footer.Community" xml:space="preserve"><value>Kogukond</value></data>
+  <data name="Footer.Membership" xml:space="preserve"><value>Liikmelisus</value></data>
+  <data name="Footer.Benefits" xml:space="preserve"><value>Hüved</value></data>
+  <data name="Footer.MemberLogin" xml:space="preserve"><value>Liikme sisselogimine</value></data>
+  <data name="Footer.NewsletterLede" xml:space="preserve"><value>Saa uudiseid sessioonide, uute materjalide ja retriitide kohta.</value></data>
+  <data name="Home.Trust.BecomeMember" xml:space="preserve"><value>Astu liikmeks</value></data>
+  <data name="Home.Trust.LogosHeading" xml:space="preserve"><value>Usaldavad asutajad ettevõtetest</value></data>
 </root>

@@ -22,9 +22,15 @@
         </li>
         <li>
             <p>Scan the QR Code or enter this key <kbd>@Model.SharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
-            <div class="alert alert-info">Learn how to <a href="https://go.microsoft.com/fwlink/?Linkid=852423">enable QR code generation</a>.</div>
-            <div id="qrCode"></div>
-            <div id="qrCodeData" data-url="@Model.AuthenticatorUri"></div>
+            @* Bound to [data-qr-uri], which is what ClientApp/src/js/modules/qr.ts actually looks
+               for — the scaffold's #qrCodeData[data-url] matched nothing, so this QR code was never
+               drawn on any deployment of this site. The label and error strings are passed in
+               because the bundle cannot read the .resx files. The setup key above stays visible
+               regardless, which is the fallback when the canvas cannot be drawn. *@
+            <div class="auth-qr"
+                 data-qr-uri="@Model.AuthenticatorUri"
+                 data-qr-label="@Loc["Onboarding.TwoFactor.QrLabel"]"
+                 data-qr-error="@Loc["Onboarding.TwoFactor.QrError"]"></div>
         </li>
         <li>
             <p>

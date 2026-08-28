@@ -526,4 +526,188 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Account.SessionsTitle" xml:space="preserve"><value>My Sessions</value></data>
   <data name="Account.NoSessions" xml:space="preserve"><value>You haven't signed up for any sessions yet.</value></data>
   <data name="Account.BrowseSessions" xml:space="preserve"><value>Browse sessions</value></data>
+
+  <!-- Experiences: listing, filters and detail page. -->
+  <data name="Experiences.Title" xml:space="preserve"><value>Experiences</value></data>
+  <data name="Experiences.Eyebrow" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Experiences.Heading" xml:space="preserve"><value>Experiences</value></data>
+  <data name="Experiences.Subheading" xml:space="preserve"><value>Curated rooms for founders, operators and investors — not a booking engine, a network.</value></data>
+  <data name="Experiences.From" xml:space="preserve"><value>From</value></data>
+  <data name="Experiences.View" xml:space="preserve"><value>View experience</value></data>
+  <data name="Experiences.Duration.One" xml:space="preserve"><value>1 day</value></data>
+  <data name="Experiences.Duration.Many" xml:space="preserve"><value>{0} days</value></data>
+  <data name="Experiences.Status.Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="Experiences.Status.ApplicationsOpen" xml:space="preserve"><value>Applications open</value></data>
+  <data name="Experiences.Status.AlmostFull" xml:space="preserve"><value>Almost full</value></data>
+  <data name="Experiences.Status.Waitlist" xml:space="preserve"><value>Waitlist</value></data>
+  <data name="Experiences.Status.ApplicationsClosed" xml:space="preserve"><value>Applications closed</value></data>
+  <data name="Experiences.Status.Completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="Experiences.Status.ComingSoon" xml:space="preserve"><value>Coming soon</value></data>
+  <data name="Experiences.Filters.Label" xml:space="preserve"><value>Filter experiences</value></data>
+  <data name="Experiences.Filters.City" xml:space="preserve"><value>City</value></data>
+  <data name="Experiences.Filters.AnyCity" xml:space="preserve"><value>Every city</value></data>
+  <data name="Experiences.Filters.Status" xml:space="preserve"><value>Availability</value></data>
+  <data name="Experiences.Filters.AnyStatus" xml:space="preserve"><value>All</value></data>
+  <data name="Experiences.Filters.Apply" xml:space="preserve"><value>Apply filter</value></data>
+  <data name="Experiences.Filters.Clear" xml:space="preserve"><value>Clear filters</value></data>
+  <data name="Experiences.Count.One" xml:space="preserve"><value>1 experience</value></data>
+  <data name="Experiences.Count.Many" xml:space="preserve"><value>{0} experiences</value></data>
+  <data name="Experiences.Empty.Title" xml:space="preserve"><value>Nothing open right now</value></data>
+  <data name="Experiences.Empty.Body" xml:space="preserve"><value>We run a small number of rooms each year and they are announced to members first. Apply and you will hear about the next one before it is public.</value></data>
+  <data name="Experiences.Empty.Filtered.Title" xml:space="preserve"><value>Nothing matches those filters</value></data>
+  <data name="Experiences.Empty.Filtered.Body" xml:space="preserve"><value>Try a different city, or clear the filters to see everything that is open.</value></data>
+  <data name="Experiences.Apply" xml:space="preserve"><value>Request access</value></data>
+  <data name="Experiences.Section.About" xml:space="preserve"><value>The experience</value></data>
+  <data name="Experiences.Section.Audience" xml:space="preserve"><value>Who is in the room?</value></data>
+  <data name="Experiences.Section.Programme" xml:space="preserve"><value>What happens</value></data>
+  <data name="Experiences.Section.Included" xml:space="preserve"><value>What's included</value></data>
+  <data name="Experiences.Section.Faq" xml:space="preserve"><value>Questions</value></data>
+  <data name="Experiences.Section.Gallery" xml:space="preserve"><value>The setting</value></data>
+  <data name="Experiences.Included" xml:space="preserve"><value>Included</value></data>
+  <data name="Experiences.NotIncluded" xml:space="preserve"><value>Not included</value></data>
+  <data name="Experiences.Programme.Day" xml:space="preserve"><value>Day {0}</value></data>
+  <data name="Experiences.Programme.LocalTimes" xml:space="preserve"><value>All times are local to {0}.</value></data>
+  <data name="Experiences.Tickets.Title" xml:space="preserve"><value>Experience options</value></data>
+  <data name="Experiences.Tickets.None" xml:space="preserve"><value>Options are confirmed with your invitation.</value></data>
+  <data name="Experiences.Tickets.PlacesLeft" xml:space="preserve"><value>{0} places left</value></data>
+  <data name="Experiences.Tickets.Note" xml:space="preserve"><value>Applications are reviewed by hand. You are not charged until a place is offered and you accept it.</value></data>
+  <data name="Experiences.Closed.ComingSoon" xml:space="preserve"><value>Coming soon</value></data>
+  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Join the waitlist</value></data>
+  <data name="Experiences.Closed.Closed" xml:space="preserve"><value>Applications closed</value></data>
+  <data name="Experiences.Gallery.Prev" xml:space="preserve"><value>Previous photograph</value></data>
+  <data name="Experiences.Gallery.Next" xml:space="preserve"><value>Next photograph</value></data>
+  <data name="Experiences.BackToAll" xml:space="preserve"><value>All experiences</value></data>
+
+  <!-- Authentication, two-step verification and the account security screens. -->
+  <data name="Auth.Login.Title" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Auth.Login.Heading" xml:space="preserve"><value>Welcome back.</value></data>
+  <data name="Auth.Login.Lede" xml:space="preserve"><value>The House is invitation-first. Sign in to reach your membership, your sessions and the directory.</value></data>
+  <data name="Auth.Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Auth.Password" xml:space="preserve"><value>Password</value></data>
+  <data name="Auth.RememberMe" xml:space="preserve"><value>Keep me signed in</value></data>
+  <data name="Auth.Login.Submit" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Auth.ForgotPassword" xml:space="preserve"><value>Forgot your password?</value></data>
+  <data name="Auth.NotAMember" xml:space="preserve"><value>Not a member yet?</value></data>
+  <data name="Auth.RequestAccess" xml:space="preserve"><value>Request access</value></data>
+  <data name="Auth.OrContinueWith" xml:space="preserve"><value>Or continue with</value></data>
+  <data name="Auth.Error.InvalidLogin" xml:space="preserve"><value>That email and password don't match an account.</value></data>
+  <data name="Auth.TwoFactor.Title" xml:space="preserve"><value>Two-step verification</value></data>
+  <data name="Auth.TwoFactor.Heading" xml:space="preserve"><value>One more step.</value></data>
+  <data name="Auth.TwoFactor.Lede" xml:space="preserve"><value>Open your authenticator app and enter the 6-digit code it is showing for The VI House.</value></data>
+  <data name="Auth.TwoFactor.CodeLabel" xml:space="preserve"><value>Authenticator code</value></data>
+  <data name="Auth.TwoFactor.RememberMachine" xml:space="preserve"><value>Trust this device for 30 days</value></data>
+  <data name="Auth.TwoFactor.RememberMachineHint" xml:space="preserve"><value>Only tick this on a device that is yours alone — it skips this step next time.</value></data>
+  <data name="Auth.TwoFactor.Submit" xml:space="preserve"><value>Verify</value></data>
+  <data name="Auth.TwoFactor.UseRecoveryCode" xml:space="preserve"><value>Use a recovery code instead</value></data>
+  <data name="Auth.TwoFactor.LostEverything" xml:space="preserve"><value>Lost your phone and your codes?</value></data>
+  <data name="Auth.Recovery.Title" xml:space="preserve"><value>Recovery code</value></data>
+  <data name="Auth.Recovery.Heading" xml:space="preserve"><value>Use a recovery code</value></data>
+  <data name="Auth.Recovery.Lede" xml:space="preserve"><value>Enter one of the codes you saved when two-step verification was switched on. Each code works once.</value></data>
+  <data name="Auth.Recovery.CodeLabel" xml:space="preserve"><value>Recovery code</value></data>
+  <data name="Auth.Recovery.Submit" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Auth.Recovery.Note" xml:space="preserve"><value>Signing in this way will not be remembered — you will be asked for an authenticator code next time, or you can set up a new device from your account.</value></data>
+  <data name="Auth.Lost.Title" xml:space="preserve"><value>Locked out</value></data>
+  <data name="Auth.Lost.Heading" xml:space="preserve"><value>Lost your phone and your recovery codes</value></data>
+  <data name="Auth.Lost.Lede" xml:space="preserve"><value>This is recoverable, but not automatically — and that is deliberate. Anyone who could reset two-step verification by asking would be a way around it.</value></data>
+  <data name="Auth.Lost.Step1.Title" xml:space="preserve"><value>Write to us from the address on your account</value></data>
+  <data name="Auth.Lost.Step1.Body" xml:space="preserve"><value>Use the email address you sign in with. It is the first thing we check.</value></data>
+  <data name="Auth.Lost.Step2.Title" xml:space="preserve"><value>We confirm it is you</value></data>
+  <data name="Auth.Lost.Step2.Body" xml:space="preserve"><value>Expect to be asked about details only the account holder would know. We may ask to speak to you directly.</value></data>
+  <data name="Auth.Lost.Step3.Title" xml:space="preserve"><value>An administrator resets your second factor</value></data>
+  <data name="Auth.Lost.Step3.Body" xml:space="preserve"><value>You then set up a fresh authenticator and receive a new set of recovery codes on your next sign-in. Every reset is logged.</value></data>
+  <data name="Auth.Lost.Warning" xml:space="preserve"><value>Nobody at The VI House can bypass two-step verification remotely, and nobody will ever ask you for a code. If someone does, it is not us.</value></data>
+  <data name="Auth.Lost.ContactCta" xml:space="preserve"><value>Contact us</value></data>
+  <data name="Auth.Lost.BackToLogin" xml:space="preserve"><value>Back to sign in</value></data>
+  <data name="Manage.TwoFactor.Title" xml:space="preserve"><value>Two-step verification</value></data>
+  <data name="Manage.TwoFactor.On" xml:space="preserve"><value>Two-step verification is on</value></data>
+  <data name="Manage.TwoFactor.Off" xml:space="preserve"><value>Two-step verification is off</value></data>
+  <data name="Manage.TwoFactor.OnBody" xml:space="preserve"><value>Your account asks for a code from your authenticator app every time you sign in.</value></data>
+  <data name="Manage.TwoFactor.CodesLeft" xml:space="preserve"><value>{0} recovery codes left</value></data>
+  <data name="Manage.TwoFactor.CodesLow" xml:space="preserve"><value>You are running low on recovery codes. Generate a new set and save them somewhere you can reach without your phone.</value></data>
+  <data name="Manage.TwoFactor.CodesNone" xml:space="preserve"><value>You have no recovery codes left. Generate a new set before you lose access to your authenticator app.</value></data>
+  <data name="Manage.TwoFactor.AddApp" xml:space="preserve"><value>Set up an authenticator app</value></data>
+  <data name="Manage.TwoFactor.ResetApp" xml:space="preserve"><value>Set up a new device</value></data>
+  <data name="Manage.TwoFactor.NewCodes" xml:space="preserve"><value>Generate new recovery codes</value></data>
+  <data name="Manage.TwoFactor.Forget" xml:space="preserve"><value>Forget this browser</value></data>
+  <data name="Manage.TwoFactor.Disable" xml:space="preserve"><value>Turn off two-step verification</value></data>
+  <data name="Manage.Danger.Heading" xml:space="preserve"><value>Careful with these</value></data>
+
+  <data name="Home.Hero.Previous" xml:space="preserve"><value>Previous slide</value></data>
+  <data name="Home.Hero.Next" xml:space="preserve"><value>Next slide</value></data>
+  <data name="Admin.HeroSlide.Title" xml:space="preserve"><value>Hero Slides</value></data>
+  <data name="Admin.HeroSlide.New" xml:space="preserve"><value>New Slide</value></data>
+  <data name="Admin.HeroSlide.Preview" xml:space="preserve"><value>View homepage</value></data>
+  <data name="Admin.HeroSlide.Hint" xml:space="preserve"><value>The panels of the homepage hero carousel, shown in the order below. A slide with no copy in a language falls back to English.</value></data>
+  <data name="Admin.HeroSlide.Empty" xml:space="preserve"><value>No slides yet. The homepage falls back to the hero content block until you add one.</value></data>
+  <data name="Admin.HeroSlide.Heading" xml:space="preserve"><value>Heading</value></data>
+  <data name="Admin.HeroSlide.Languages" xml:space="preserve"><value>Languages</value></data>
+  <data name="Admin.HeroSlide.Schedule" xml:space="preserve"><value>Schedule</value></data>
+  <data name="Admin.HeroSlide.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Admin.HeroSlide.Order" xml:space="preserve"><value>Order</value></data>
+  <data name="Admin.HeroSlide.NoImage" xml:space="preserve"><value>No image</value></data>
+  <data name="Admin.HeroSlide.Always" xml:space="preserve"><value>Always</value></data>
+  <data name="Admin.HeroSlide.Hidden" xml:space="preserve"><value>Hidden</value></data>
+  <data name="Admin.HeroSlide.Scheduled" xml:space="preserve"><value>Scheduled</value></data>
+  <data name="Admin.HeroSlide.Live" xml:space="preserve"><value>Live</value></data>
+  <data name="Admin.HeroSlide.MoveUp" xml:space="preserve"><value>Move up</value></data>
+  <data name="Admin.HeroSlide.MoveDown" xml:space="preserve"><value>Move down</value></data>
+  <data name="Admin.HeroSlide.ConfirmDelete" xml:space="preserve"><value>Delete this slide and all of its translations?</value></data>
+  <data name="Admin.HeroSlide.Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Admin.HeroSlide.CreateHint" xml:space="preserve"><value>Start with the {0} heading — the other languages get their own tabs once the slide exists.</value></data>
+  <data name="Admin.HeroSlide.Subheading" xml:space="preserve"><value>Subheading</value></data>
+  <data name="Admin.HeroSlide.SortOrder" xml:space="preserve"><value>Sort order</value></data>
+  <data name="Admin.HeroSlide.IsActive" xml:space="preserve"><value>Visible on the homepage</value></data>
+  <data name="Admin.HeroSlide.ImageLaterHint" xml:space="preserve"><value>The photograph is added on the next screen.</value></data>
+  <data name="Admin.HeroSlide.CreateSubmit" xml:space="preserve"><value>Create Slide</value></data>
+  <data name="Admin.HeroSlide.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Admin.HeroSlide.BackToList" xml:space="preserve"><value>All slides</value></data>
+  <data name="Admin.HeroSlide.Section.Image" xml:space="preserve"><value>Photograph</value></data>
+  <data name="Admin.HeroSlide.NoImageYet" xml:space="preserve"><value>No photograph yet — the slide renders on the plain brand green.</value></data>
+  <data name="Admin.HeroSlide.Upload" xml:space="preserve"><value>Upload</value></data>
+  <data name="Admin.HeroSlide.ConfirmRemoveImage" xml:space="preserve"><value>Remove this slide's photograph?</value></data>
+  <data name="Admin.HeroSlide.RemoveImage" xml:space="preserve"><value>Remove photograph</value></data>
+  <data name="Admin.HeroSlide.UploadHint" xml:space="preserve"><value>JPEG, PNG, WebP or AVIF. Landscape, at least 1600px wide — the hero runs full-bleed.</value></data>
+  <data name="Admin.HeroSlide.Section.Settings" xml:space="preserve"><value>Slide settings</value></data>
+  <data name="Admin.HeroSlide.ImageUrl" xml:space="preserve"><value>Image URL</value></data>
+  <data name="Admin.HeroSlide.ImageUrlDisabled" xml:space="preserve"><value>An uploaded photograph is in use. Remove it to paste a URL instead.</value></data>
+  <data name="Admin.HeroSlide.ImageUrlHint" xml:space="preserve"><value>A site path such as /img/hero/lounge-1600.jpg, or an https:// address.</value></data>
+  <data name="Admin.HeroSlide.PrimaryCtaUrl" xml:space="preserve"><value>Primary button link</value></data>
+  <data name="Admin.HeroSlide.SecondaryCtaUrl" xml:space="preserve"><value>Secondary button link</value></data>
+  <data name="Admin.HeroSlide.CtaHint" xml:space="preserve"><value>The destinations are the same in every language; the button labels are translated below.</value></data>
+  <data name="Admin.HeroSlide.VisibleFrom" xml:space="preserve"><value>Visible from (UTC)</value></data>
+  <data name="Admin.HeroSlide.VisibleUntil" xml:space="preserve"><value>Visible until (UTC)</value></data>
+  <data name="Admin.HeroSlide.SaveSettings" xml:space="preserve"><value>Save settings</value></data>
+  <data name="Admin.HeroSlide.Section.Copy" xml:space="preserve"><value>Copy — {0}</value></data>
+  <data name="Admin.HeroSlide.DefaultLanguage" xml:space="preserve"><value>default</value></data>
+  <data name="Admin.HeroSlide.NotTranslated" xml:space="preserve"><value>not translated</value></data>
+  <data name="Admin.HeroSlide.FallbackNotice" xml:space="preserve"><value>Nothing written here yet — visitors in this language currently see the {0} copy.</value></data>
+  <data name="Admin.HeroSlide.Eyebrow" xml:space="preserve"><value>Eyebrow</value></data>
+  <data name="Admin.HeroSlide.Eyebrow.Hint" xml:space="preserve"><value>Small line above the heading. Most slides do without one.</value></data>
+  <data name="Admin.HeroSlide.PrimaryCtaLabel" xml:space="preserve"><value>Primary button label</value></data>
+  <data name="Admin.HeroSlide.SecondaryCtaLabel" xml:space="preserve"><value>Secondary button label</value></data>
+  <data name="Admin.HeroSlide.ImageAlt" xml:space="preserve"><value>Image description</value></data>
+  <data name="Admin.HeroSlide.ImageAlt.Hint" xml:space="preserve"><value>For screen readers. Leave empty when the photograph is purely atmospheric behind the heading.</value></data>
+  <data name="Admin.HeroSlide.SaveCopy" xml:space="preserve"><value>Save {0} copy</value></data>
+  <data name="Admin.HeroSlide.ConfirmDeleteTranslation" xml:space="preserve"><value>Remove this language's copy from the slide?</value></data>
+  <data name="Admin.HeroSlide.DeleteTranslation" xml:space="preserve"><value>Delete {0} copy</value></data>
+  <data name="Admin.HeroSlide.Created" xml:space="preserve"><value>"{0}" created. Add the photograph and the other languages next.</value></data>
+  <data name="Admin.HeroSlide.Saved" xml:space="preserve"><value>Settings saved.</value></data>
+  <data name="Admin.HeroSlide.TranslationSaved" xml:space="preserve"><value>{0} copy saved.</value></data>
+  <data name="Admin.HeroSlide.TranslationDeleted" xml:space="preserve"><value>{0} copy removed.</value></data>
+  <data name="Admin.HeroSlide.UnknownCulture" xml:space="preserve"><value>That is not one of the site's languages.</value></data>
+  <data name="Admin.HeroSlide.CannotDeleteDefault" xml:space="preserve"><value>The default language cannot be removed — every other language falls back to it.</value></data>
+  <data name="Admin.HeroSlide.ImageTypeOnly" xml:space="preserve"><value>A hero slide takes a photograph — JPEG, PNG, WebP or AVIF.</value></data>
+  <data name="Admin.HeroSlide.ImageUploaded" xml:space="preserve"><value>Photograph updated.</value></data>
+  <data name="Admin.HeroSlide.ImageRemoved" xml:space="preserve"><value>Photograph removed.</value></data>
+  <data name="Admin.HeroSlide.AlreadyGone" xml:space="preserve"><value>That slide no longer exists.</value></data>
+  <data name="Admin.HeroSlide.Deleted" xml:space="preserve"><value>"{0}" deleted.</value></data>
+  <data name="Footer.Sessions" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Footer.Journal" xml:space="preserve"><value>Journal</value></data>
+  <data name="Footer.Community" xml:space="preserve"><value>Community</value></data>
+  <data name="Footer.Membership" xml:space="preserve"><value>Membership</value></data>
+  <data name="Footer.Benefits" xml:space="preserve"><value>Benefits</value></data>
+  <data name="Footer.MemberLogin" xml:space="preserve"><value>Member Login</value></data>
+  <data name="Footer.NewsletterLede" xml:space="preserve"><value>Get updates on sessions, new resources and retreats.</value></data>
+  <data name="Home.Trust.BecomeMember" xml:space="preserve"><value>Become a Member</value></data>
+  <data name="Home.Trust.LogosHeading" xml:space="preserve"><value>Trusted by founders from</value></data>
 </root>

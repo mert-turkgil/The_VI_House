@@ -15,11 +15,19 @@
         If you lose your device and don't have the recovery codes you will lose access to your account.
     </p>
 </div>
-<div class="row">
-    <div class="col-md-12">
-        @for (var row = 0; row < Model.RecoveryCodes.Length; row += 2)
-        {
-            <code class="recovery-code">@Model.RecoveryCodes[row]</code><text>&nbsp;</text><code class="recovery-code">@Model.RecoveryCodes[row + 1]</code><br />
-        }
-    </div>
+@* Was a two-at-a-time loop indexing [row + 1], which throws IndexOutOfRangeException the moment
+   an odd number of codes is generated — and GenerateNewTwoFactorRecoveryCodesAsync takes the count
+   as an argument, so that is a caller away, not a theoretical case. A single foreach into the grid
+   the onboarding flow already uses is correct and responsive at the same time. *@
+<div class="onboarding__codes" data-recovery-codes>
+    @foreach (var code in Model.RecoveryCodes)
+    {
+        <code>@code</code>
+    }
 </div>
+
+@* The onboarding flow offers a download; this page did not, for the same codes. modules/
+   recoveryCodes.ts injects the button here now, so the two paths behave the same. *@
+<div class="onboarding__codes-actions"
+     data-recovery-download="@Loc["Onboarding.Codes.Download"]"
+     data-recovery-filename="@Loc["Onboarding.Codes.Filename"]"></div>

@@ -19,8 +19,14 @@
             @foreach (var seminar in Model)
             {
                 <a class="seminar-card" asp-action="Details" asp-route-slug="@seminar.Slug">
-                    <div class="seminar-card__image"
-                         style="@(seminar.HasCover ? $"background-image:url('{Url.Action("Media", new { id = seminar.CoverMediaId })}')" : "")">
+                    <div class="seminar-card__image">
+                        @* Seminar covers stream through SeminarsController.Media rather than sitting
+                           on disk under /img, so there is no -800/-1600 pair and srcset stays empty. *@
+                        <partial name="_CoverImage" model="@(new CoverImageViewModel {
+                            Url = seminar.HasCover ? Url.Action("Media", new { id = seminar.CoverMediaId }) : null,
+                            Ratio = "16x9",
+                            Sizes = "(min-width: 960px) 33vw, (min-width: 560px) 50vw, 100vw",
+                        })" />
                         @if (seminar.IsArchived)
                         {
                             <span class="seminar-card__badge">@Loc["Seminars.Past"]</span>

@@ -1,0 +1,16 @@
+@model TrustLogo
+@*
+    One name in the "trusted by" strip.
+
+    A company's logo is its trademark, and we hold no artwork or permission for any of these, so the
+    default is a typographic wordmark rather than a hotlinked logo file. Once a real, cleared file
+    exists, giving the entry an imageUrl in the trust-logos block swaps it in with no code change.
+*@
+@if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+{
+    <img class="home-trust__logo-img" src="@Model.ImageUrl" alt="@Model.Name" height="24" loading="lazy" decoding="async" />
+}
+else
+{
+    <span class="home-trust__logo">@Model.Name</span>
+}

@@ -35,7 +35,16 @@
 
 @if (Model.HasCover)
 {
-    <div class="seminar-detail__cover" style="background-image:url('@Url.Action("Media", new { id = Model.CoverMediaId })')"></div>
+    @* Previously unguarded on CoverMediaId and emitted background-image:url('') when unset — the
+       HasCover check above is what makes that impossible now. *@
+    <div class="seminar-detail__cover">
+        <partial name="_CoverImage" model="@(new CoverImageViewModel {
+            Url = Url.Action("Media", new { id = Model.CoverMediaId }),
+            Ratio = "hero",
+            Sizes = "100vw",
+            Eager = true,
+        })" />
+    </div>
 }
 
 <div class="container seminar-detail">

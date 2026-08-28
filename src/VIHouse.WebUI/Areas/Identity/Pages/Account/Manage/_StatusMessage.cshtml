@@ -1,10 +1,29 @@
-﻿@model string
+@model string
 
-@if (!String.IsNullOrEmpty(Model))
+@*
+    Transient page-scoped feedback.
+
+    The scaffold's dismiss button is removed rather than wired up: it relied on Bootstrap's JS, which
+    this site does not load, so it rendered as a control that did nothing when clicked. The message
+    disappears on the next navigation anyway.
+
+    "Error" here is a sentinel prefix set by the page models, not copy — Identity's own convention.
+    It is stripped before display. The scaffold tested it with StartsWith on an English literal,
+    which meant the check would quietly stop working the day these messages were localised and every
+    failure would render styled as a success.
+*@
+@if (!string.IsNullOrEmpty(Model))
 {
-    var statusMessageClass = Model.StartsWith("Error") ? "danger" : "success";
-    <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        @Model
+    var isError = Model.StartsWith("Error", StringComparison.OrdinalIgnoreCase);
+
+    var text = Model;
+    if (isError)
+    {
+        var separator = Model.IndexOf(':');
+        text = separator >= 0 ? Model[(separator + 1)..].Trim() : Model["Error".Length..].Trim();
+    }
+
+    <div class="vih-alert vih-alert--@(isError ? "danger" : "success")" role="@(isError ? "alert" : "status")">
+        @text
     </div>
 }

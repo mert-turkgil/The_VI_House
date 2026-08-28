@@ -1,0 +1,74 @@
+@model ExperienceIndexViewModel
+@*
+    City select + status chips.
+
+    Everything here is a plain <form> and plain <a href>, so the page filters correctly with
+    JavaScript disabled. filters.ts upgrades it to fetch-and-swap on top; it is an enhancement, not
+    the mechanism.
+
+    The city control is a <select> of cities that actually exist rather than the free-text box it
+    replaces. A text box against an exact-match query could only ever produce an empty page for a
+    typo, and "no experiences match" reads to a visitor exactly like "this site has nothing on".
+*@
+
+<form class="experience-filters"
+      method="get"
+      asp-area=""
+      asp-controller="Experiences"
+      asp-action="Index"
+      data-experience-filters
+      aria-label="@Loc["Experiences.Filters.Label"]">
+
+    <div class="experience-filters__field">
+        <label class="experience-filters__label" for="filter-city">@Loc["Experiences.Filters.City"]</label>
+        <select class="experience-filters__select" id="filter-city" name="city">
+            <option value="">@Loc["Experiences.Filters.AnyCity"]</option>
+            @foreach (var city in Model.Cities)
+            {
+                <option value="@city" selected="@(string.Equals(city, Model.SelectedCity, StringComparison.OrdinalIgnoreCase))">@city</option>
+            }
+        </select>
+    </div>
+
+    @* Carries the current status through a city change, since this form only owns the select. *@
+    @if (Model.SelectedStatus is not null)
+    {
+        <input type="hidden" name="status" value="@Model.SelectedStatus" />
+    }
+
+    @* Shown only without JS — filters.ts hides it, because with the enhancement the select applies
+       on change and a submit button is then just a dead control sitting there. *@
+    <noscript>
+        <button type="submit" class="btn btn--ghost btn--sm">@Loc["Experiences.Filters.Apply"]</button>
+    </noscript>
+</form>
+
+<div class="experience-filters__chips" role="group" aria-label="@Loc["Experiences.Filters.Status"]">
+    @{
+        string ChipUrl(ExperienceStatus? status) =>
+            Url.Action("Index", "Experiences", new { area = "", city = Model.SelectedCity, status = status?.ToString() })!;
+    }
+
+    <a class="experience-filters__chip @(Model.SelectedStatus is null ? "experience-filters__chip--active" : "")"
+       href="@ChipUrl(null)"
+       aria-current="@(Model.SelectedStatus is null ? "true" : null)">
+        @Loc["Experiences.Filters.AnyStatus"]
+    </a>
+
+    @foreach (var status in ExperienceIndexViewModel.FilterableStatuses)
+    {
+        var isActive = Model.SelectedStatus == status;
+        <a class="experience-filters__chip @(isActive ? "experience-filters__chip--active" : "")"
+           href="@ChipUrl(status)"
+           aria-current="@(isActive ? "true" : null)">
+            @Loc[status.ToResourceKey()]
+        </a>
+    }
+
+    @if (Model.HasFilters)
+    {
+        <a class="experience-filters__clear" href="@Url.Action("Index", "Experiences", new { area = "" })">
+            @Loc["Experiences.Filters.Clear"]
+        </a>
+    }
+</div>

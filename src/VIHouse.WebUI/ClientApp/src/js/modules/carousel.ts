@@ -1,8 +1,9 @@
 import Swiper from 'swiper';
-import { Navigation, Pagination, A11y, Keyboard } from 'swiper/modules';
+import { Navigation, Pagination, A11y, Keyboard, Autoplay, EffectFade } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import 'swiper/css/effect-fade';
 
 /**
  * Turns any `[data-swiper]` element into a carousel.
@@ -42,10 +43,77 @@ export function initCarousels(): void {
         el: container.querySelector<HTMLElement>('.swiper-pagination'),
         clickable: true,
       },
+
       a11y: {
-        prevSlideMessage: 'Previous experience',
-        nextSlideMessage: 'Next experience',
+        // Read from data attributes rather than hardcoded, the same way qr.ts takes its localized
+        // strings — the bundle cannot see the .resx files, and this is a four-language site.
+        prevSlideMessage: container.dataset.swiperPrevLabel || 'Previous slide',
+        nextSlideMessage: container.dataset.swiperNextLabel || 'Next slide',
       },
     });
+  });
+}
+
+/**
+ * The homepage hero carousel — `[data-hero-swiper]`, rendered by Views/Home/_Hero.cshtml.
+ *
+ * Separate from initCarousels because almost nothing about it is the same: one full-bleed slide at
+ * a time rather than a row of cards, a cross-fade rather than a slide, autoplay, and its own
+ * controls. Sharing one initialiser between the two would mean a config object that is mostly
+ * branches.
+ *
+ * The attribute is only present when there is more than one slide, so a single-panel hero costs
+ * nothing here.
+ */
+export function initHeroSlider(): void {
+  const container = document.querySelector<HTMLElement>('[data-hero-swiper]');
+  if (!container) return;
+
+  // Autoplay moves the page under someone who did not ask it to. Anyone who has said they prefer
+  // reduced motion gets the carousel with its controls and no automatic advance — the content is
+  // all still reachable, it just waits to be asked.
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const delay = Number(container.dataset.heroAutoplay ?? '7000');
+
+  const swiper = new Swiper(container, {
+    modules: [Navigation, Pagination, A11y, Keyboard, Autoplay, EffectFade],
+    slidesPerView: 1,
+    loop: true,
+    effect: 'fade',
+    // Without this the outgoing slide stays fully opaque through the transition and the two
+    // photographs cross over as a bright flash.
+    fadeEffect: { crossFade: true },
+    speed: 700,
+    keyboard: { enabled: true },
+    autoplay: prefersReducedMotion || delay <= 0
+      ? false
+      : {
+          delay,
+          // A visitor who reaches for the arrows is reading, not watching — autoplay stops for
+          // good at that point rather than yanking the slide away mid-sentence.
+          disableOnInteraction: true,
+          pauseOnMouseEnter: true,
+        },
+    navigation: {
+      nextEl: container.querySelector<HTMLElement>('.home-hero__nav--next'),
+      prevEl: container.querySelector<HTMLElement>('.home-hero__nav--prev'),
+    },
+    pagination: {
+      el: container.querySelector<HTMLElement>('.home-hero__pagination'),
+      clickable: true,
+    },
+    a11y: {
+      prevSlideMessage: container.dataset.swiperPrevLabel || 'Previous slide',
+      nextSlideMessage: container.dataset.swiperNextLabel || 'Next slide',
+    },
+  });
+
+  // A backgrounded tab keeps firing timers, so a visitor who comes back after lunch would return
+  // to a hero that had cycled a hundred times and, with loop on, a stack of cloned slides worth of
+  // work done for nobody.
+  document.addEventListener('visibilitychange', () => {
+    if (!swiper.autoplay) return;
+    if (document.hidden) swiper.autoplay.stop();
+    else if (!prefersReducedMotion) swiper.autoplay.start();
   });
 }

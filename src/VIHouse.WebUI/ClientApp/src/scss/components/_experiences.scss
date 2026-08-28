@@ -1,258 +1,802 @@
-// --- Listing -------------------------------------------------------------------------------------
+@use '../breakpoints' as bp;
+
+// Experiences — the listing and the detail page.
+//
+// This file and _cover.scss are the reference implementations for the token system added in
+// _tokens.scss: no literal colours, no literal spacing, no literal breakpoints. When another
+// component partial is next touched for its own reasons, convert it the same way — completely, in
+// one commit, never half.
+//
+// One rule that outranks the styling: nothing here may set opacity: 0 or visibility: hidden on
+// content that JavaScript is expected to reveal. reveal.ts deliberately adds its hiding class from
+// script precisely so a failed bundle leaves the page readable, and a stray `opacity: 0` in CSS
+// would quietly undo that guarantee for everyone whose bundle 404s.
+
+// =================================================================================================
+// Listing
+// =================================================================================================
+
 .experiences-header {
-  padding: 64px 0 32px;
-  text-align: center;
+  // .content-hero already supplies the green ground and centred type; this only adjusts rhythm.
+  padding-bottom: var(--vih-space-lg);
+}
 
-  h1 {
-    font-family: var(--vih-font-serif);
-    font-size: clamp(2rem, 4vw, 2.75rem);
-    margin: 0 0 12px;
-  }
+.experiences-body {
+  padding: var(--vih-space-xl) 0 var(--vih-section-y);
+}
 
-  p {
-    color: #555;
-    max-width: 48ch;
-    margin: 0 auto;
+// --- Filters -------------------------------------------------------------------------------------
+
+.experience-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--vih-space-sm);
+  margin-bottom: var(--vih-space-sm);
+}
+
+.experience-filters__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-3xs);
+  min-width: 220px;
+}
+
+.experience-filters__label {
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+}
+
+.experience-filters__select {
+  appearance: none;
+  padding: 10px 40px 10px var(--vih-space-xs);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-sm);
+  background-color: var(--vih-surface);
+  font: inherit;
+  font-size: var(--vih-text-base);
+  color: var(--vih-ink);
+  cursor: pointer;
+
+  // Chevron drawn in CSS rather than pulled from an icon set — one glyph is not worth a dependency,
+  // and this way it inherits the border colour on focus for free.
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 20px) center, calc(100% - 15px) center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--vih-focus-ring);
+    box-shadow: var(--vih-shadow-focus);
   }
 }
+
+.experience-filters__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+  align-items: center;
+  margin-bottom: var(--vih-space-md);
+}
+
+.experience-filters__chip {
+  padding: 7px var(--vih-space-xs);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-pill);
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-secondary);
+  transition: border-color var(--vih-dur-base) var(--vih-ease),
+              color var(--vih-dur-base) var(--vih-ease),
+              background-color var(--vih-dur-base) var(--vih-ease);
+
+  &:hover {
+    border-color: var(--vih-ink);
+    color: var(--vih-ink);
+  }
+
+  &--active {
+    background: var(--vih-green-900);
+    border-color: var(--vih-green-900);
+    color: var(--vih-cream);
+
+    &:hover {
+      color: var(--vih-cream);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--vih-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.experience-filters__clear {
+  margin-left: var(--vih-space-3xs);
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover { color: var(--vih-ink); }
+}
+
+.experience-filters__count {
+  margin: 0 0 var(--vih-space-md);
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+// --- Grid + card ----------------------------------------------------------------------------------
 
 .experience-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 28px;
-  padding: 0 0 96px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--vih-space-lg);
 }
 
 .experience-card {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  background: var(--vih-surface);
   border: 1px solid var(--vih-line-on-light);
-  border-radius: 10px;
+  border-radius: var(--vih-radius-xl);
   overflow: hidden;
-  background: var(--vih-white);
-  transition: box-shadow 0.2s var(--vih-ease), transform 0.2s var(--vih-ease);
+  color: inherit;
+  transition: transform var(--vih-dur-slow) var(--vih-ease-out),
+              box-shadow var(--vih-dur-slow) var(--vih-ease-out),
+              border-color var(--vih-dur-base) var(--vih-ease);
 
-  &:hover {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: var(--vih-shadow-md);
+    border-color: transparent;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--vih-focus-ring);
+    outline-offset: 3px;
+  }
+
+  // The photograph pushes in on hover; the text stays perfectly still. Moving type is most of what
+  // makes a hover effect feel cheap.
+  .cover__img {
+    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+  }
+
+  &:hover .cover__img,
+  &:focus-visible .cover__img {
+    transform: scale(1.04);
   }
 }
 
-.experience-card__image {
-  aspect-ratio: 4 / 3;
-  background: var(--vih-green-900) center/cover no-repeat;
+.experience-card__media {
   position: relative;
 }
 
 .experience-card__badge {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgba(18, 22, 15, 0.72);
-  color: var(--vih-cream);
-  font-size: 0.6875rem;
+  top: var(--vih-space-xs);
+  left: var(--vih-space-xs);
+  padding: 5px var(--vih-space-2xs);
+  border-radius: var(--vih-radius-pill);
+  font-size: var(--vih-text-3xs);
   font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  background: var(--vih-scrim-strong);
+  color: var(--vih-cream);
+  backdrop-filter: blur(6px);
+
+  // Grouped by what the visitor can do, not one colour per enum value — see
+  // ExperienceStatusFormatter.ToBadgeModifier.
+  &--open { background: var(--vih-green-900); }
+  &--almost-full { background: var(--vih-gold); color: var(--vih-green-950); }
+  &--waitlist,
+  &--soon { background: var(--vih-scrim-strong); }
+  &--closed { background: var(--vih-scrim-soft); }
 }
 
 .experience-card__body {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--vih-space-md);
+}
+
+.experience-card__eyebrow {
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+  margin-bottom: var(--vih-space-2xs);
 }
 
 .experience-card__title {
   font-family: var(--vih-font-serif);
-  font-size: 1.25rem;
-  margin: 0 0 6px;
+  font-size: var(--vih-text-xl);
+  line-height: 1.25;
+  color: var(--vih-green-900);
+  margin: 0 0 var(--vih-space-2xs);
+}
+
+.experience-card__summary {
+  font-size: var(--vih-text-base);
+  line-height: 1.65;
+  color: var(--vih-text-secondary);
+  margin: 0 0 var(--vih-space-sm);
 }
 
 .experience-card__meta {
-  font-size: 0.8125rem;
-  color: #666;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 14px;
-  margin: 10px 0 14px;
+  gap: var(--vih-space-3xs) var(--vih-space-xs);
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+  // Pins the price row to the bottom whatever the summary length, so a row of cards lines up on the
+  // number that matters.
+  margin-top: auto;
+}
+
+.experience-card__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--vih-space-2xs);
+  margin-top: var(--vih-space-sm);
+  padding-top: var(--vih-space-sm);
+  border-top: 1px solid var(--vih-line-on-light);
 }
 
 .experience-card__price {
-  font-size: 0.875rem;
+  font-size: var(--vih-text-lg);
   font-weight: 600;
+  color: var(--vih-green-900);
 }
 
-// --- Detail --------------------------------------------------------------------------------------
-.experience-hero {
-  background: var(--vih-green-950) center/cover no-repeat;
-  color: var(--vih-cream);
-  padding: 120px 0 56px;
+.experience-card__price-label {
+  display: block;
+  font-size: var(--vih-text-3xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
 }
 
-.experience-hero__inner h1 {
+.experience-card__cta {
+  font-size: var(--vih-text-sm);
+  font-weight: 600;
+  color: var(--vih-gold);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity var(--vih-dur-base) var(--vih-ease),
+              transform var(--vih-dur-base) var(--vih-ease);
+
+  .experience-card:hover &,
+  .experience-card:focus-visible & {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// The CTA is decorative (aria-hidden) and duplicates the card's own link, so hiding it costs nothing
+// semantically — but it must still appear for anyone who cannot see the hover state.
+@media (hover: none) {
+  .experience-card__cta { opacity: 1; transform: none; }
+}
+
+// --- Empty state -------------------------------------------------------------------------------------
+
+.experience-empty {
+  text-align: center;
+  padding: var(--vih-space-3xl) var(--vih-space-md);
+  border: 1px dashed var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface-tinted);
+}
+
+.experience-empty__mark {
+  display: block;
+  margin: 0 auto var(--vih-space-sm);
+  color: var(--vih-green-900);
+
+  svg { width: 56px; height: auto; opacity: 0.35; }
+}
+
+.experience-empty__title {
   font-family: var(--vih-font-serif);
-  font-size: clamp(2rem, 5vw, 3.25rem);
-  margin: 0 0 12px;
+  font-size: var(--vih-text-2xl);
+  color: var(--vih-green-900);
+  margin: 0 0 var(--vih-space-2xs);
+}
+
+.experience-empty__body {
+  max-width: 46ch;
+  margin: 0 auto var(--vih-space-md);
+  font-size: var(--vih-text-md);
+  line-height: 1.7;
+  color: var(--vih-text-secondary);
+}
+
+// =================================================================================================
+// Detail
+// =================================================================================================
+
+.experience-hero {
+  position: relative;
+  color: var(--vih-cream);
+  background: var(--vih-green-950);
+}
+
+.experience-hero__media {
+  position: absolute;
+  inset: 0;
+
+  .cover { height: 100%; aspect-ratio: auto; }
+}
+
+.experience-hero__scrim {
+  position: absolute;
+  inset: 0;
+  // Weighted to the bottom, where the type sits, so the photograph stays legible up top.
+  background: linear-gradient(to top, var(--vih-scrim-strong) 0%, rgba(18, 22, 15, 0.45) 45%, rgba(18, 22, 15, 0.15) 100%);
+}
+
+.experience-hero__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: clamp(320px, 52vw, 560px);
+  padding: var(--vih-space-2xl) 0 var(--vih-space-xl);
+
+  h1 {
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-display-lg);
+    line-height: 1.1;
+    margin: 0 0 var(--vih-space-xs);
+    max-width: 18ch;
+  }
+}
+
+.experience-hero__eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+  margin-bottom: var(--vih-space-sm);
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-gold-light);
 }
 
 .experience-hero__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 20px;
-  font-size: 0.875rem;
+  gap: var(--vih-space-3xs) var(--vih-space-md);
+  font-size: var(--vih-text-md);
   color: var(--vih-cream-dim);
-  margin-bottom: 24px;
+  margin-bottom: var(--vih-space-md);
+}
+
+.experience-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+}
+
+// --- Sticky sub-nav ---------------------------------------------------------------------------------
+
+.experience-subnav {
+  position: sticky;
+  top: var(--vih-header-height);
+  z-index: var(--vih-z-sticky);
+  background: var(--vih-surface);
+  border-bottom: 1px solid var(--vih-line-on-light);
+  // Bleeds past .container so the rule spans the viewport while the links stay aligned to the grid.
+  margin-inline: calc(50% - 50vw);
+  padding-inline: calc(50vw - 50%);
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.experience-subnav__list {
+  display: flex;
+  gap: var(--vih-space-md);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+}
+
+.experience-subnav__link {
+  display: inline-block;
+  padding: var(--vih-space-xs) 0;
+  font-size: var(--vih-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--vih-text-muted);
+  border-bottom: 2px solid transparent;
+  transition: color var(--vih-dur-base) var(--vih-ease),
+              border-color var(--vih-dur-base) var(--vih-ease);
+
+  &:hover { color: var(--vih-ink); }
+
+  &--active {
+    color: var(--vih-green-900);
+    border-bottom-color: var(--vih-gold);
+  }
 }
 
 .experience-body {
   display: grid;
-  gap: 56px;
-  padding: 56px 0 96px;
+  gap: var(--vih-space-xl);
+  padding: var(--vih-space-xl) 0 var(--vih-section-y);
+  align-items: start;
 
-  @media (min-width: 960px) {
-    grid-template-columns: 1.6fr 1fr;
-    align-items: start;
+  @include bp.from(bp.$lg) {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: var(--vih-space-3xl);
   }
 }
 
 .experience-section {
-  margin-bottom: 48px;
+  scroll-margin-top: calc(var(--vih-header-height) + 64px);
 
-  h2 {
+  & + & { margin-top: var(--vih-space-2xl); }
+
+  > h2 {
     font-family: var(--vih-font-serif);
-    font-size: 1.5rem;
-    margin: 0 0 16px;
-  }
-}
-
-.experience-room-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-
-  span {
-    padding: 6px 14px;
-    border-radius: 999px;
-    border: 1px solid var(--vih-line-on-light);
-    font-size: 0.8125rem;
-  }
-}
-
-.experience-program-day {
-  border-left: 2px solid var(--vih-line-on-light);
-  padding-left: 20px;
-  margin-bottom: 24px;
-
-  h3 {
-    font-size: 1rem;
-    margin: 0 0 10px;
-  }
-}
-
-.experience-session {
-  display: flex;
-  gap: 12px;
-  font-size: 0.875rem;
-  padding: 6px 0;
-  color: #444;
-
-  time {
-    flex-shrink: 0;
-    color: #888;
-    width: 96px;
-  }
-}
-
-.experience-inclusions {
-  display: grid;
-  gap: 24px;
-
-  @media (min-width: 560px) {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 0.875rem;
-  }
-
-  h4 {
-    font-size: 0.8125rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #666;
-    margin: 0 0 10px;
-  }
-}
-
-.experience-faq-item {
-  border-bottom: 1px solid var(--vih-line-on-light);
-  padding: 16px 0;
-
-  summary {
-    cursor: pointer;
-    font-weight: 600;
-    list-style: none;
-
-    &::-webkit-details-marker {
-      display: none;
-    }
+    font-size: var(--vih-text-2xl);
+    color: var(--vih-green-900);
+    margin: 0 0 var(--vih-space-sm);
   }
 
   p {
-    margin: 12px 0 0;
-    color: #555;
+    font-size: var(--vih-text-md);
+    line-height: 1.75;
+    color: var(--vih-text-secondary);
   }
 }
 
-// --- Sticky ticket panel ---------------------------------------------------------------------------
+// --- Audience chips ------------------------------------------------------------------------------------
+
+.experience-audience {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.experience-audience__tag {
+  padding: 7px var(--vih-space-xs);
+  border: 1px solid var(--vih-gold);
+  border-radius: var(--vih-radius-pill);
+  font-size: var(--vih-text-sm);
+  color: var(--vih-green-900);
+  background: var(--vih-warning-bg);
+}
+
+// --- Programme -------------------------------------------------------------------------------------------
+
+.experience-program__day + .experience-program__day {
+  margin-top: var(--vih-space-lg);
+}
+
+.experience-program__day-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--vih-space-2xs);
+  margin-bottom: var(--vih-space-xs);
+}
+
+.experience-program__day-num {
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+}
+
+.experience-program__day-title {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-lg);
+  color: var(--vih-green-900);
+  margin: 0;
+}
+
+.experience-program__sessions {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--vih-space-md);
+  // The rail. A pseudo-element rather than a border so it can stop short of the last item's baseline
+  // instead of running past it.
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--vih-line-on-light);
+  }
+}
+
+.experience-program__session {
+  position: relative;
+  padding-bottom: var(--vih-space-sm);
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--vih-space-md) * -1);
+    top: 7px;
+    width: 7px;
+    height: 7px;
+    margin-left: -3px;
+    border-radius: 50%;
+    background: var(--vih-gold);
+  }
+
+  &:last-child { padding-bottom: 0; }
+}
+
+.experience-program__time {
+  display: block;
+  font-size: var(--vih-text-sm);
+  font-variant-numeric: tabular-nums;
+  // Was #888, which is 3.54:1 on white and fails WCAG AA. These are session times — content, not
+  // decoration — so they have to clear it.
+  color: var(--vih-text-muted);
+}
+
+.experience-program__session-title {
+  font-size: var(--vih-text-md);
+  font-weight: 600;
+  color: var(--vih-ink);
+  margin: 2px 0 0;
+}
+
+.experience-program__speaker {
+  font-size: var(--vih-text-sm);
+  color: var(--vih-gold);
+}
+
+.experience-program__session-desc {
+  margin: var(--vih-space-3xs) 0 0;
+  font-size: var(--vih-text-base) !important;
+  line-height: 1.6 !important;
+  color: var(--vih-text-muted) !important;
+}
+
+.experience-program__tz-note {
+  margin-top: var(--vih-space-sm);
+  font-size: var(--vih-text-sm) !important;
+  color: var(--vih-text-muted) !important;
+}
+
+// --- Inclusions -----------------------------------------------------------------------------------------------
+
+.experience-inclusions {
+  display: grid;
+  gap: var(--vih-space-md);
+
+  @include bp.from(bp.$sm) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.experience-inclusions__heading {
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+  margin: 0 0 var(--vih-space-2xs);
+}
+
+.experience-inclusions__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.experience-inclusions__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--vih-space-2xs);
+  padding: var(--vih-space-3xs) 0;
+  font-size: var(--vih-text-base);
+  line-height: 1.6;
+  color: var(--vih-text-secondary);
+}
+
+.experience-inclusions__mark {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+
+  .experience-inclusions__col--included & { color: var(--vih-success); }
+  .experience-inclusions__col--excluded & { color: var(--vih-text-faint); }
+}
+
+// --- FAQ --------------------------------------------------------------------------------------------------------
+
+.experience-faq__item {
+  border-bottom: 1px solid var(--vih-line-on-light);
+
+  &[open] .experience-faq__chevron { transform: rotate(180deg); }
+}
+
+.experience-faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vih-space-sm);
+  padding: var(--vih-space-sm) 0;
+  cursor: pointer;
+  font-size: var(--vih-text-md);
+  font-weight: 600;
+  color: var(--vih-green-900);
+  list-style: none;
+
+  &::-webkit-details-marker { display: none; }
+
+  &:focus-visible {
+    outline: 2px solid var(--vih-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.experience-faq__chevron {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  color: var(--vih-gold);
+  transition: transform var(--vih-dur-base) var(--vih-ease);
+}
+
+.experience-faq__a {
+  padding: 0 0 var(--vih-space-sm);
+  font-size: var(--vih-text-base) !important;
+  line-height: 1.7 !important;
+  color: var(--vih-text-secondary) !important;
+  margin: 0 !important;
+}
+
+// --- Gallery ----------------------------------------------------------------------------------------------------------
+
+.experience-gallery {
+  margin-top: var(--vih-space-md);
+
+  .swiper-slide { height: auto; }
+}
+
+.experience-gallery__item {
+  margin: 0;
+  border-radius: var(--vih-radius-lg);
+  overflow: hidden;
+}
+
+.experience-gallery__caption {
+  margin-top: var(--vih-space-3xs);
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+// --- Ticket panel --------------------------------------------------------------------------------------------------------
+
 .experience-ticket-panel {
-  border: 1px solid var(--vih-line-on-light);
-  border-radius: 10px;
-  padding: 24px;
   position: sticky;
-  top: calc(var(--vih-header-height) + 24px);
+  top: calc(var(--vih-header-height) + var(--vih-space-lg) + 48px);
+  padding: var(--vih-space-md);
+  background: var(--vih-surface-tinted);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+}
+
+.experience-ticket-panel__title {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-lg);
+  color: var(--vih-green-900);
+  margin: 0 0 var(--vih-space-sm);
 }
 
 .experience-ticket {
-  padding: 16px 0;
-  border-bottom: 1px solid var(--vih-line-on-light);
+  padding: var(--vih-space-xs) 0;
+  border-top: 1px solid var(--vih-line-on-light);
 
-  &:last-of-type {
-    border-bottom: none;
-  }
-
-  .experience-ticket__title {
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .experience-ticket__price {
-    font-family: var(--vih-font-serif);
-    font-size: 1.375rem;
-  }
+  &:first-of-type { border-top: 0; padding-top: 0; }
 }
+
+.experience-ticket__title {
+  font-size: var(--vih-text-base);
+  font-weight: 600;
+  color: var(--vih-ink);
+  margin: 0;
+}
+
+.experience-ticket__price {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-xl);
+  color: var(--vih-green-900);
+}
+
+.experience-ticket__perks {
+  margin: var(--vih-space-3xs) 0 0;
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+// Real scarcity from TicketType.Inventory, and only shown at five or fewer — never at zero, where
+// the status badge already says waitlist or closed. Brief §15: no invented urgency.
+.experience-ticket__inventory {
+  display: inline-block;
+  margin-top: var(--vih-space-3xs);
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vih-danger);
+}
+
+.experience-ticket-panel__note {
+  margin: var(--vih-space-sm) 0 0;
+  font-size: var(--vih-text-sm);
+  line-height: 1.6;
+  color: var(--vih-text-muted);
+}
+
+.experience-ticket-panel__cta {
+  width: 100%;
+  margin-top: var(--vih-space-sm);
+}
+
+// --- Mobile CTA ------------------------------------------------------------------------------------------------------------
 
 .experience-mobile-cta {
-  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--vih-z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vih-space-sm);
+  padding: var(--vih-space-2xs) var(--vih-space-sm);
+  background: var(--vih-green-950);
+  border-top: 1px solid var(--vih-line-on-dark);
+  padding-bottom: calc(var(--vih-space-2xs) + env(safe-area-inset-bottom, 0px));
+
+  @include bp.from(bp.$lg) {
+    display: none;
+  }
 }
 
-@media (max-width: 719px) {
-  .experience-mobile-cta {
-    display: block;
-    position: sticky;
-    bottom: 0;
-    background: var(--vih-white);
-    border-top: 1px solid var(--vih-line-on-light);
-    padding: 12px 16px;
-    z-index: 10;
+.experience-mobile-cta__price {
+  font-size: var(--vih-text-sm);
+  color: var(--vih-cream);
 
-    .btn {
-      width: 100%;
-    }
+  strong {
+    display: block;
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-lg);
   }
 }

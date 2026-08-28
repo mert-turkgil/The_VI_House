@@ -1,0 +1,92 @@
+@model string
+@*
+    Inline SVG icons, rendered server-side.
+
+    Chosen over an icon npm package (Lucide et al) deliberately: the whole site needs about eight
+    glyphs, a JS-injected icon is invisible to anyone whose bundle fails, and _Crest.cshtml already
+    establishes exactly this pattern. Cost here is 0 KB of JavaScript and it works with scripting
+    off. The path data is drawn in Lucide's style at the 1.5 stroke weight the header already uses,
+    so these sit with the existing hand-tuned nav icons rather than looking heavier than them.
+
+    Every icon is aria-hidden. They are decorative without exception — anywhere one appears next to
+    a control, that control carries its own accessible text. An icon that needs a label is a sign the
+    surrounding markup is missing one.
+
+    Usage:  <partial name="_Icon" model="check" />
+*@
+
+<svg class="icon icon--@Model" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true" focusable="false">
+    @switch (Model)
+    {
+        @* Social glyphs, drawn at the same stroke weight as the rest rather than dropped in as the
+           brands' filled marks — a filled logo beside these reads as a foreign object, and the
+           footer only needs to say "we are here", not reproduce anyone's trademark. *@
+        case "instagram":
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+            break;
+
+        case "linkedin":
+            <path d="M4.5 9.5v10M4.5 5.5v.01" />
+            <path d="M10 19.5v-10" />
+            <path d="M10 13.5a4 4 0 0 1 8 0v6" />
+            break;
+
+        case "twitter":
+            <path d="m4 4 7.5 9.5L4.5 20" />
+            <path d="M20 4h-3.5L4 20h3.5" />
+            <path d="M20 20 8.5 4" />
+            break;
+
+        case "youtube":
+            <rect x="2.5" y="6" width="19" height="12" rx="4" />
+            <path d="m10.5 9.75 5 2.25-5 2.25Z" />
+            break;
+
+        case "check":
+            <path d="M20 6 9 17l-5-5" />
+            break;
+
+        case "x":
+            <path d="M18 6 6 18M6 6l12 12" />
+            break;
+
+        case "chevron-down":
+            <path d="m6 9 6 6 6-6" />
+            break;
+
+        case "map-pin":
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+            <circle cx="12" cy="10" r="3" />
+            break;
+
+        case "calendar":
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <path d="M16 2v4M8 2v4M3 10h18" />
+            break;
+
+        case "clock":
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+            break;
+
+        case "users":
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            break;
+
+        case "ticket":
+            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+            <path d="M13 5v14" stroke-dasharray="2 3" />
+            break;
+
+        default:
+            @* An unknown name renders nothing rather than a broken glyph — a missing decorative icon
+               is invisible, which is the right failure for something with no semantic role. *@
+            break;
+    }
+</svg>

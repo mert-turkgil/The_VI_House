@@ -30,6 +30,25 @@ public class Experience : BaseEntity
 
     public string? CoverImageUrl { get; set; }
 
+    /// <summary>
+    /// Alt text for the cover. Almost always null, and that is correct: the cover sits directly
+    /// above the heading that names the experience, so describing it again is noise to a screen
+    /// reader. Set it only when the photograph carries something the surrounding copy does not.
+    /// </summary>
+    public string? CoverImageAlt { get; set; }
+
+    /// <summary>
+    /// Who this particular room is for — "Founders, Operators, Investors" — rendered as chips under
+    /// "Who Is In The Room?". Comma-separated free text rather than its own entity, matching the
+    /// convention <see cref="TicketType.PerksText"/> already sets on this aggregate: it is editorial
+    /// copy, not something anything queries or joins on.
+    ///
+    /// Replaces five tags that were hardcoded identically into the detail view, which quietly told
+    /// every visitor that every experience draws exactly the same room — on a site whose entire
+    /// proposition is curation.
+    /// </summary>
+    public string? AudienceTags { get; set; }
+
     public DateTimeOffset? ApplicationOpenAt { get; set; }
     public DateTimeOffset? ApplicationCloseAt { get; set; }
     public DateTimeOffset? SalesOpenAt { get; set; }

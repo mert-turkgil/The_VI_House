@@ -1,142 +1,475 @@
-// Baseline styling for the scaffolded ASP.NET Core Identity Razor Pages (Areas/Identity/Pages),
-// which emit Bootstrap-shaped class names (form-floating, btn-primary, row/col-md-4, text-danger)
-// regardless of whether Bootstrap itself is loaded. Rather than hand-restyle all ~40 scaffolded
-// pages, this gives every one of them a consistent, on-brand baseline; Login and the Manage shell
-// get a bespoke pass on top since they're the pages members actually see.
+@use '../breakpoints' as bp;
+
+// Authentication and account-security screens.
+//
+// Two halves, kept visibly apart:
+//
+//   1. A BESPOKE set (.auth-card, .auth-form, .auth-field, .auth-code-input, .auth-qr, .auth-steps)
+//      used by the pages members actually meet — sign in, two-step verification, recovery codes,
+//      the locked-out help page. These are written on the design tokens.
+//
+//   2. A BOOTSTRAP COMPATIBILITY LAYER at the bottom, for the ~22 scaffolded Identity pages that
+//      emit Bootstrap class names (form-floating, btn-primary, row/col-md-4, alert, text-danger)
+//      even though Bootstrap is not loaded. Restyling forty scaffolded pages by hand is not a good
+//      use of anyone's time; giving their class names a sane on-brand meaning is.
+//
+// The compatibility layer is a @mixin rather than a bare `.auth-page { ... }` block for one specific
+// reason: it also has to apply to .account-manage__content. Previously it did not, so every page
+// under Account/Manage — profile, email, password, two-factor, personal data — rendered with raw
+// browser inputs and unstyled buttons, and every 2FA warning box was indistinguishable from body
+// text. @mixin rather than @extend because @extend's output position across five thousand lines of
+// SCSS is not predictable enough to reason about.
+
+// =================================================================================================
+// Bespoke
+// =================================================================================================
+
 .auth-page {
-  max-width: 440px;
+  max-width: 460px;
   margin: 0 auto;
-  padding: 72px 24px 96px;
+  padding: var(--vih-space-3xl) var(--vih-space-md) var(--vih-section-y);
+}
 
-  h1,
-  h2 {
-    font-family: var(--vih-font-serif);
-    font-size: 1.75rem;
-    margin: 0 0 24px;
-  }
+.auth-card__head {
+  margin-bottom: var(--vih-space-lg);
+}
 
-  .row {
+.auth-card__eyebrow {
+  display: block;
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+  margin-bottom: var(--vih-space-2xs);
+}
+
+.auth-card__title {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-display-sm);
+  line-height: 1.15;
+  color: var(--vih-green-900);
+  margin: 0 0 var(--vih-space-2xs);
+}
+
+.auth-card__lede {
+  font-size: var(--vih-text-md);
+  line-height: 1.7;
+  color: var(--vih-text-secondary);
+  margin: 0;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-sm);
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-3xs);
+
+  // The tick-box variants read as a sentence, not as a labelled control.
+  &--check label {
     display: flex;
-    flex-wrap: wrap;
-    gap: 32px;
-  }
-
-  .col-md-4,
-  .col-md-6,
-  .col-md-8 {
-    flex: 1 1 100%;
-    min-width: 0;
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .form-floating {
-    position: relative;
-    display: flex;
-    flex-direction: column-reverse;
-  }
-
-  .form-control {
-    width: 100%;
-    padding: 14px 16px;
-    border: 1px solid var(--vih-line-on-light);
-    border-radius: 4px;
-    font-size: 0.9375rem;
-    font-family: var(--vih-font-sans);
-    background: var(--vih-white);
-    color: var(--vih-ink);
-
-    &:focus {
-      outline: none;
-      border-color: var(--vih-gold);
-    }
-  }
-
-  .form-floating > label {
-    font-size: 0.8125rem;
-    color: #666;
-    margin-bottom: 4px;
-  }
-
-  .checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.875rem;
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-  }
-
-  .btn,
-  button[type='submit'] {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 13px 24px;
-    border-radius: var(--vih-radius-pill);
-    background: var(--vih-green-900);
-    color: var(--vih-cream);
-    border: 1px solid transparent;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    align-items: flex-start;
+    gap: var(--vih-space-2xs);
+    font-size: var(--vih-text-base);
+    line-height: 1.5;
     cursor: pointer;
-    width: 100%;
-    transition: background-color 0.2s var(--vih-ease);
-
-    &:hover {
-      background: var(--vih-green-800);
-    }
   }
 
-  .btn-primary {
-    background: var(--vih-gold);
-    color: var(--vih-green-950);
-
-    &:hover {
-      background: var(--vih-gold-light);
-    }
+  &--check input[type='checkbox'] {
+    margin-top: 3px;
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--vih-green-900);
   }
+}
+
+.auth-field__label {
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+}
+
+.auth-field__input {
+  width: 100%;
+  padding: 13px var(--vih-space-xs);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-sm);
+  background: var(--vih-surface);
+  font: inherit;
+  font-size: var(--vih-text-md);
+  color: var(--vih-ink);
+  transition: border-color var(--vih-dur-base) var(--vih-ease),
+              box-shadow var(--vih-dur-base) var(--vih-ease);
+
+  &::placeholder { color: var(--vih-text-faint); }
+
+  &:focus {
+    outline: none;
+    border-color: var(--vih-focus-ring);
+    box-shadow: var(--vih-shadow-focus);
+  }
+
+  // Recovery codes: monospace and generously tracked, because these are transcribed by hand from a
+  // printout or a password manager and a misread character is a failed sign-in.
+  &--code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: 0.12em;
+  }
+}
+
+.auth-field__hint {
+  margin: 0;
+  font-size: var(--vih-text-xs);
+  line-height: 1.5;
+  color: var(--vih-text-muted);
+}
+
+.auth-field__error {
+  font-size: var(--vih-text-xs);
+  color: var(--vih-danger);
+
+  &:empty { display: none; }
+}
+
+// The six-digit input. Generalised from .onboarding__code-input so the settings screen and the
+// first-run flow present the same control — they are the same task.
+.auth-code-input {
+  width: 100%;
+  max-width: 240px;
+  padding: var(--vih-space-xs) var(--vih-space-sm);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-surface);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--vih-text-2xl);
+  letter-spacing: 0.32em;
+  text-align: center;
+  color: var(--vih-ink);
+
+  &::placeholder { color: var(--vih-text-faint); letter-spacing: 0.32em; }
+
+  &:focus {
+    outline: none;
+    border-color: var(--vih-focus-ring);
+    box-shadow: var(--vih-shadow-focus);
+  }
+}
+
+// QR target for modules/qr.ts. The canvas is injected, so this only reserves and centres the space.
+.auth-qr {
+  display: flex;
+  justify-content: center;
+  padding: var(--vih-space-sm);
+  margin: var(--vih-space-sm) 0;
+  background: var(--vih-surface);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-md);
+
+  canvas { display: block; }
+}
+
+.auth-form__submit {
+  align-self: flex-start;
+  min-width: 180px;
+}
+
+.auth-form__submit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+  margin-top: var(--vih-space-md);
+}
+
+.auth-alt {
+  margin-top: var(--vih-space-md);
+  padding-top: var(--vih-space-md);
+  border-top: 1px solid var(--vih-line-on-light);
+  font-size: var(--vih-text-base);
+  color: var(--vih-text-secondary);
+
+  p { margin: 0 0 var(--vih-space-2xs); }
 
   a {
     color: var(--vih-green-900);
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-underline-offset: 3px;
+
+    &:hover { color: var(--vih-gold); }
   }
+}
+
+.auth-alt__note {
+  font-size: var(--vih-text-xs);
+  color: var(--vih-text-muted);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-xs);
+  margin: var(--vih-space-md) 0;
+  font-size: var(--vih-text-2xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--vih-line-on-light);
+  }
+}
+
+.auth-external {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+}
+
+// Numbered steps on the locked-out help page.
+.auth-steps {
+  counter-reset: auth-step;
+  list-style: none;
+  margin: 0 0 var(--vih-space-md);
+  padding: 0;
+}
+
+.auth-steps__item {
+  counter-increment: auth-step;
+  position: relative;
+  padding: 0 0 var(--vih-space-sm) var(--vih-space-lg);
+
+  &::before {
+    content: counter(auth-step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--vih-green-900);
+    color: var(--vih-cream);
+    font-size: var(--vih-text-2xs);
+    font-weight: 700;
+  }
+}
+
+.auth-steps__title {
+  font-size: var(--vih-text-md);
+  font-weight: 600;
+  color: var(--vih-green-900);
+  margin: 0 0 var(--vih-space-3xs);
+}
+
+.auth-steps__body {
+  margin: 0;
+  font-size: var(--vih-text-base);
+  line-height: 1.65;
+  color: var(--vih-text-secondary);
+}
+
+// Two-factor status card on the settings screen.
+.auth-2fa-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs) var(--vih-space-sm);
+  padding: var(--vih-space-sm);
+  margin-bottom: var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface-tinted);
+}
+
+.auth-2fa-status__badge {
+  padding: 5px var(--vih-space-2xs);
+  border-radius: var(--vih-radius-pill);
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  &--on { background: var(--vih-success-bg); color: var(--vih-success); }
+  &--off { background: var(--vih-danger-bg); color: var(--vih-danger); }
+}
+
+.auth-danger-zone {
+  margin-top: var(--vih-space-xl);
+  padding-top: var(--vih-space-sm);
+  border-top: 1px solid var(--vih-line-on-light);
+
+  h2 {
+    font-size: var(--vih-text-2xs) !important;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--vih-text-muted);
+  }
+}
+
+// =================================================================================================
+// Bootstrap class compatibility layer
+//
+// Everything below exists only because the scaffolded pages emit these names. Do not use them in
+// new markup — use the bespoke classes above.
+// =================================================================================================
+
+@mixin identity-scaffold-compat {
+  h1, h2, h3, h4 {
+    font-family: var(--vih-font-serif);
+    color: var(--vih-green-900);
+  }
+
+  h3 { font-size: var(--vih-text-xl); margin: 0 0 var(--vih-space-sm); }
+  h4 { font-size: var(--vih-text-md); margin: var(--vih-space-md) 0 var(--vih-space-2xs); }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vih-space-sm);
+  }
+
+  [class^='col-md-'],
+  [class*=' col-md-'] { flex: 1 1 100%; min-width: 0; }
+
+  // form-floating fakes a floating label; reversing the order puts the label above the input, which
+  // is what the rest of the site does and what these pages actually need.
+  .form-floating {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--vih-space-3xs);
+    margin-bottom: var(--vih-space-sm);
+  }
+
+  .form-label,
+  .form-floating > label {
+    font-size: var(--vih-text-2xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vih-text-muted);
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 13px var(--vih-space-xs);
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: var(--vih-radius-sm);
+    background: var(--vih-surface);
+    font: inherit;
+    font-size: var(--vih-text-md);
+    color: var(--vih-ink);
+
+    &:focus {
+      outline: none;
+      border-color: var(--vih-focus-ring);
+      box-shadow: var(--vih-shadow-focus);
+    }
+  }
+
+  .form-check-input,
+  input[type='checkbox'] { accent-color: var(--vih-green-900); }
+
+  .checkbox label {
+    display: flex;
+    align-items: center;
+    gap: var(--vih-space-2xs);
+    font-size: var(--vih-text-base);
+    cursor: pointer;
+  }
+
+  // Scaffold buttons. .btn-danger previously had no rule at all, so "Disable 2FA", "Reset
+  // authenticator key" and "Delete personal data" looked identical to a primary action.
+  .btn-primary,
+  .btn-danger,
+  button[type='submit'] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px var(--vih-space-md);
+    border: 1px solid transparent;
+    border-radius: var(--vih-radius-pill);
+    font-size: var(--vih-text-sm);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: var(--vih-gold);
+    color: var(--vih-green-950);
+
+    &:hover { background: var(--vih-gold-light); }
+
+    &:focus-visible {
+      outline: 2px solid var(--vih-focus-ring);
+      outline-offset: 2px;
+    }
+  }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--vih-danger);
+    border-color: currentColor;
+
+    &:hover { background: var(--vih-danger-bg); }
+  }
+
+  a.btn-primary,
+  a.btn-danger { text-decoration: none; }
+
+  .w-100 { width: 100%; }
+  .mb-3 { margin-bottom: var(--vih-space-sm); }
 
   .text-danger,
   .validation-summary-errors {
-    color: #9a3324;
-    font-size: 0.8125rem;
-  }
+    color: var(--vih-danger);
+    font-size: var(--vih-text-xs);
 
-  ul.validation-summary-errors {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 8px;
+    ul { margin: 0; padding-left: var(--vih-space-sm); }
+    &:empty { display: none; }
   }
 
   hr {
-    border: none;
+    border: 0;
     border-top: 1px solid var(--vih-line-on-light);
-    margin: 24px 0;
+    margin: var(--vih-space-md) 0;
   }
 
-  section {
-    margin-top: 8px;
-    font-size: 0.875rem;
-    color: #555;
+  kbd {
+    display: inline-block;
+    padding: 4px var(--vih-space-2xs);
+    border-radius: var(--vih-radius-xs);
+    background: var(--vih-surface-sunken);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: var(--vih-text-base);
+    letter-spacing: 0.06em;
+    user-select: all;
+  }
+
+  // Referenced by ShowRecoveryCodes and styled nowhere until now.
+  .recovery-code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: 0.06em;
+    user-select: all;
   }
 }
+
+.auth-page { @include identity-scaffold-compat; }
+
+// The line that fixes the whole Account/Manage area. It renders inside .account-manage, never
+// .auth-page, so until now it received none of the above.
+.account-manage__content { @include identity-scaffold-compat; }
 
 // --- Member account "Manage" shell (2FA, password, profile) --------------------------------------
 .account-manage {

@@ -3,3 +3,9 @@
 @using VIHouse.WebUI.Areas.Identity.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @using VIHouse.DataAccess.Identity
+@using Microsoft.Extensions.Localization
+@using VIHouse.WebUI
+@* The Identity pages render inside the site layout and are the most security-sensitive screens on
+   the site, but until now every string on them was hardcoded English while the rest of the app
+   shipped in four languages. SharedResource lives in the VIHouse.WebUI root namespace. *@
+@inject IStringLocalizer<SharedResource> Loc

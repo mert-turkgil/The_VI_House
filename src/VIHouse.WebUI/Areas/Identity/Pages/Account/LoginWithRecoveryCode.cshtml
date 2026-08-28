@@ -1,26 +1,37 @@
-﻿@page
+@page
 @model LoginWithRecoveryCodeModel
+
 @{
-    ViewData["Title"] = "Recovery code verification";
+    ViewData["Title"] = Loc["Auth.Recovery.Title"].Value;
 }
 
-<h1>@ViewData["Title"]</h1>
-<hr />
-<p>
-    You have requested to log in with a recovery code. This login will not be remembered until you provide
-    an authenticator app code at log in or disable 2FA and log in again.
-</p>
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.RecoveryCode" class="form-control" autocomplete="off" placeholder="RecoveryCode" />
-                <label asp-for="Input.RecoveryCode" class="form-label"></label>
-                <span asp-validation-for="Input.RecoveryCode" class="text-danger"></span>
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-        </form>
+<div class="auth-card">
+    <div class="auth-card__head">
+        <span class="auth-card__eyebrow">@Loc["Auth.Recovery.Title"]</span>
+        <h1 class="auth-card__title">@Loc["Auth.Recovery.Heading"]</h1>
+        <p class="auth-card__lede">@Loc["Auth.Recovery.Lede"]</p>
+    </div>
+
+    <form method="post" class="auth-form">
+        <div asp-validation-summary="ModelOnly" class="vih-alert vih-alert--danger" role="alert"></div>
+
+        <div class="auth-field">
+            <label class="auth-field__label" asp-for="Input.RecoveryCode">@Loc["Auth.Recovery.CodeLabel"]</label>
+            @* Recovery codes are alphanumeric, so no numeric inputmode here — but autocomplete and
+               autocapitalize still matter: these are pasted from a password manager or typed off a
+               printout, and a phone capitalising the first character silently breaks the match. *@
+            <input class="auth-field__input auth-field__input--code" asp-for="Input.RecoveryCode"
+                   autocomplete="one-time-code" autocapitalize="none" autocorrect="off"
+                   spellcheck="false" autofocus />
+            <span class="auth-field__error" asp-validation-for="Input.RecoveryCode"></span>
+        </div>
+
+        <button type="submit" class="btn btn--primary auth-form__submit">@Loc["Auth.Recovery.Submit"]</button>
+    </form>
+
+    <div class="auth-alt">
+        <p class="auth-alt__note">@Loc["Auth.Recovery.Note"]</p>
+        <p><a asp-page="./RecoveryHelp">@Loc["Auth.TwoFactor.LostEverything"]</a></p>
     </div>
 </div>
 

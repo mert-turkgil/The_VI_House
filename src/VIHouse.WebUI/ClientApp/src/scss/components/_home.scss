@@ -62,17 +62,81 @@
 
 // --- Hero ------------------------------------------------------------------------------------
 .home-hero {
+  position: relative;
   background: radial-gradient(ellipse at 80% 20%, var(--vih-green-800) 0%, var(--vih-green-950) 65%);
   color: var(--vih-cream);
   overflow: hidden;
 }
 
+// Swiper measures its slides, so the height has to come from the slide content rather than from a
+// height on the container — every slide is min-height'd instead, and the tallest one wins.
+.home-hero__swiper {
+  width: 100%;
+}
+
+.home-hero__slide {
+  position: relative;
+  // Repeated from .home-hero because a slide paints its own ground: with fade + crossFade both
+  // slides are briefly visible at once, and a transparent one would show its neighbour through.
+  background: radial-gradient(ellipse at 80% 20%, var(--vih-green-800) 0%, var(--vih-green-950) 65%);
+
+  // Without JS the slides stack vertically as ordinary blocks; a hairline keeps the second one
+  // from reading as part of the first.
+  & + .home-hero__slide {
+    border-top: 1px solid var(--vih-line-on-dark);
+  }
+
+  // Once Swiper has initialised it lays the slides out itself and the border is meaningless.
+  .swiper-initialized & + .home-hero__slide {
+    border-top: 0;
+  }
+}
+
+// The photograph, and the two scrims that make cream text legible on top of whatever it happens to
+// be: a horizontal one so the copy side stays dark however bright the image is, and a vertical one
+// so the bottom edge meets the filter bar in the brand green rather than mid-photograph.
+.home-hero__media {
+  position: absolute;
+  inset: 0;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, var(--vih-green-950) 0%, rgba(0, 26, 2, 0.82) 42%, rgba(0, 26, 2, 0.25) 78%),
+      linear-gradient(180deg, rgba(0, 26, 2, 0.35) 0%, rgba(0, 26, 2, 0) 30%, rgba(0, 26, 2, 0.65) 100%);
+  }
+
+  // A phone shows the copy over the middle of the image rather than beside it, so the horizontal
+  // scrim is replaced by a flat one — a left-weighted gradient under centred text reads as a smear.
+  @media (max-width: 767px) {
+    &::after {
+      background: linear-gradient(180deg, rgba(0, 26, 2, 0.55) 0%, rgba(0, 26, 2, 0.78) 100%);
+    }
+  }
+}
+
+.home-hero__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  // Keeps faces and horizons in frame when a 16:9 photograph is cropped to a tall phone viewport.
+  object-position: center 40%;
+  display: block;
+}
+
 .home-hero__inner {
   position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   min-height: 480px;
   padding: 72px 0 96px;
+
+  @media (min-width: 900px) {
+    min-height: 560px;
+  }
 }
 
 .home-hero__content {
@@ -84,6 +148,7 @@
     font-family: var(--vih-font-serif);
     font-size: clamp(2.25rem, 5vw, 3.5rem);
     line-height: 1.12;
+    letter-spacing: 0.02em;
     margin: 0 0 20px;
   }
 
@@ -93,6 +158,19 @@
     max-width: 42ch;
     margin: 0 0 32px;
   }
+}
+
+// Scoped to .home-hero__content so it outweighs that block's `p` rule, which would otherwise give
+// the eyebrow the subheading's colour and its 32px gap.
+.home-hero__content .home-hero__eyebrow {
+  font-family: var(--vih-font-sans);
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--vih-gold);
+  max-width: none;
+  margin: 0 0 var(--vih-space-xs);
 }
 
 .home-hero__actions {
@@ -118,154 +196,637 @@
   }
 }
 
+// A slide with a photograph already has something on its right-hand side; the crest is there for
+// the plain-green hero, not to sit on top of a picture.
+.home-hero__slide:has(.home-hero__media) .home-hero__crest {
+  display: none;
+}
+
+// --- Hero carousel controls --------------------------------------------------------------------
+// Positioned over the bottom of the slides rather than below them, so the carousel keeps the hero's
+// full-bleed edge and the controls do not add height that shifts the fold.
+.home-hero__controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: var(--vih-space-md);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-sm);
+  pointer-events: none;
+
+  // Only the controls themselves take clicks — the bar spans the container width, and swallowing
+  // drags across it would break Swiper's own touch handling on the slide underneath.
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.home-hero__nav {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--vih-line-on-dark);
+  border-radius: var(--vih-radius-pill);
+  background: rgba(0, 26, 2, 0.45);
+  color: var(--vih-cream);
+  cursor: pointer;
+  position: relative;
+  transition:
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    background var(--vih-dur-base) var(--vih-ease-out);
+
+  // The arrowhead is drawn from two borders rather than shipped as an icon: it is two rules here
+  // against an SVG in the markup of every hero, and it inherits the button's colour for free.
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    border-top: 1.5px solid currentColor;
+    border-right: 1.5px solid currentColor;
+  }
+
+  &--next::before {
+    transform: translate(-65%, -50%) rotate(45deg);
+  }
+
+  &--prev::before {
+    transform: translate(-35%, -50%) rotate(-135deg);
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--vih-gold);
+    background: rgba(0, 26, 2, 0.75);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--vih-focus-ring);
+    outline-offset: 3px;
+  }
+
+  // Swiper adds this when a non-looping carousel reaches an end. The hero loops, so it should never
+  // appear — it is handled anyway because loop can be turned off in one line.
+  &.swiper-button-disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+}
+
+// Swiper writes its own .swiper-pagination-bullet elements in here, so these rules target its
+// classes rather than markup of ours.
+.home-hero__pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+
+  .swiper-pagination-bullet {
+    width: 28px;
+    height: 3px;
+    border-radius: 0;
+    background: rgba(244, 240, 230, 0.35);
+    opacity: 1;
+    cursor: pointer;
+    transition: background var(--vih-dur-base) var(--vih-ease-out);
+  }
+
+  .swiper-pagination-bullet-active {
+    background: var(--vih-gold);
+  }
+
+  .swiper-pagination-bullet:focus-visible {
+    outline: 2px solid var(--vih-focus-ring);
+    outline-offset: 3px;
+  }
+}
+
+@media (max-width: 559px) {
+  // Arrows are redundant next to a swipe on a touch screen, and at this width they crowd the
+  // second call to action.
+  .home-hero__nav {
+    display: none;
+  }
+
+  .home-hero__controls {
+    justify-content: center;
+  }
+}
+
 // --- Filter bar --------------------------------------------------------------------------------
+// Sits directly under the hero and continues its ground, so the two read as one dark band rather
+// than as a hero with a light tray bolted underneath.
 .home-filter {
-  background: var(--vih-cream);
-  border-bottom: 1px solid var(--vih-line-on-light);
+  background: var(--vih-green-950);
+  color: var(--vih-cream);
+  border-bottom: 1px solid var(--vih-line-on-dark);
+  padding: var(--vih-space-md) 0 var(--vih-space-lg);
+}
+
+.home-filter__eyebrow {
+  margin: 0 0 var(--vih-space-xs);
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--vih-cream-dim);
 }
 
 .home-filter__form {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: 16px;
-  padding: 24px 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--vih-space-xs);
+
+  @media (min-width: 720px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1040px) {
+    grid-template-columns: repeat(4, 1fr) auto;
+    align-items: end;
+  }
 }
 
 .home-filter__field {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  flex: 1 1 160px;
-  min-width: 140px;
+  gap: var(--vih-space-3xs);
+  min-width: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--vih-line-on-dark);
+  border-radius: var(--vih-radius-sm);
+  background: rgba(244, 240, 230, 0.04);
 
   label {
-    font-size: 0.6875rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #666;
+    font-size: var(--vih-text-2xs);
+    letter-spacing: 0.04em;
+    color: rgba(244, 240, 230, 0.6);
   }
 
-  input,
   select {
-    height: 44px;
-    padding: 0 14px;
-    border: 1px solid var(--vih-line-on-light);
-    border-radius: 6px;
-    background: var(--vih-white);
-    font-size: 0.875rem;
-    color: var(--vih-ink);
+    // The field itself is the visible control; the select only carries the value, so it drops its
+    // own chrome and inherits the band's colours instead of punching a white box into them.
+    appearance: none;
+    width: 100%;
+    border: 0;
+    padding: 0 20px 0 0;
+    background: transparent;
     font-family: inherit;
+    font-size: var(--vih-text-base);
+    color: var(--vih-cream);
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--vih-focus-ring);
+      outline-offset: 4px;
+    }
+
+    // A native dropdown list is painted by the OS, not the page, so its options need a ground of
+    // their own — cream-on-transparent would render as unreadable light-on-light.
+    option {
+      color: var(--vih-ink);
+      background: var(--vih-white);
+    }
+  }
+
+  // The caret, drawn on the wrapper because the select's own arrow is suppressed above.
+  &::after {
+    content: "";
+    position: absolute;
+    right: 14px;
+    bottom: 16px;
+    width: 8px;
+    height: 8px;
+    border-right: 1.5px solid rgba(244, 240, 230, 0.7);
+    border-bottom: 1.5px solid rgba(244, 240, 230, 0.7);
+    transform: rotate(45deg);
+    pointer-events: none;
   }
 }
 
 .home-filter__submit {
-  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--vih-space-2xs);
+  height: 100%;
+  min-height: 62px;
+  padding: 0 var(--vih-space-lg);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.home-filter__trending {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+  margin-top: var(--vih-space-sm);
+}
+
+.home-filter__trending-label {
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(244, 240, 230, 0.55);
+}
+
+.home-filter__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  a {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid var(--vih-line-on-dark);
+    border-radius: var(--vih-radius-xs);
+    font-size: var(--vih-text-xs);
+    color: var(--vih-cream-dim);
+    text-decoration: none;
+    transition:
+      border-color var(--vih-dur-base) var(--vih-ease-out),
+      color var(--vih-dur-base) var(--vih-ease-out);
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--vih-gold);
+      color: var(--vih-gold-light);
+    }
+  }
 }
 
 // --- Feature strip -------------------------------------------------------------------------------
 .home-features {
-  padding: 56px 0;
+  padding: var(--vih-section-y-tight) 0;
+  // Explicit rather than inherited, because the divider technique below depends on the items and
+  // the strip being the same colour — see .home-features__grid.
+  background: var(--vih-surface);
+  border-top: 1px solid var(--vih-line-on-light);
+  border-bottom: 1px solid var(--vih-line-on-light);
 }
 
+// The dividers ARE the grid gap.
+//
+// The grid is painted in the line colour and every item is painted in the strip colour, so the only
+// place the grid's own background shows through is the 1px gutter between cells. That is worth the
+// small indirection because it is the one approach that stays correct at every width and for any
+// number of items: side by side the gaps read as vertical rules, stacked they read as horizontal
+// ones, and a wrapped row gets both — with no nth-child arithmetic guessing where rows begin, and
+// nothing to revisit when the CMS gains a sixth feature.
 .home-features__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 32px 24px;
-  text-align: center;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--vih-line-on-light);
+
+  // Every cell is as tall as the tallest one in its row. This is the grid default, but it is stated
+  // because the strip depends on it: descriptions run to different lengths ("Learn" is one line,
+  // "Grow" is three) and a row of ragged-bottomed cells would leave the 1px dividers stopping at
+  // different heights, which is exactly the effect the divider technique exists to avoid.
+  align-items: stretch;
+
+  @media (min-width: 560px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }
 
 .home-features__item {
   display: flex;
   flex-direction: column;
+  gap: var(--vih-space-2xs);
+  // Covers the grid's line-coloured background; only the 1px gutters escape.
+  background: var(--vih-surface);
+  // The gap is a hairline, so the breathing room has to come from inside each cell.
+  padding: var(--vih-space-md) var(--vih-space-sm);
+  text-align: left;
+  // Fills the stretched grid area so the background reaches the full row height rather than only as
+  // far as the content does — without this the divider would break where a short cell ends.
+  height: 100%;
+  // Anchors the ::before accent rule.
+  position: relative;
+  transition: background var(--vih-dur-base) var(--vih-ease-out);
+
+  // The accent rule that wipes in along the top edge on hover. A pseudo-element rather than a real
+  // border, so it costs no layout: a border would change the cell's height on hover and shove the
+  // whole row down by a pixel.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    background: var(--vih-green-800);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+  }
+
+  // :focus-within alongside :hover so the strip still responds when a description contains a link
+  // and someone is tabbing rather than pointing. The cells themselves are not focusable.
+  &:hover,
+  &:focus-within {
+    background: var(--vih-surface-tinted);
+
+    &::before {
+      transform: scaleX(1);
+    }
+  }
+}
+
+// Icon left, label right, on one row.
+//
+// min-height pins the row to the icon's height so that the description below it starts at the same
+// y in every cell, whatever the label. Without it a cell whose label wrapped would push its
+// description down and the strip would lose its shared baseline.
+.home-features__head {
+  display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--vih-space-xs);
+  min-height: 46px;
 }
 
 .home-features__icon {
-  width: 44px;
-  height: 44px;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
+  border-radius: var(--vih-radius-pill);
   border: 1px solid var(--vih-line-on-light);
   color: var(--vih-green-800);
 
+  transition:
+    background var(--vih-dur-base) var(--vih-ease-out),
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    color var(--vih-dur-base) var(--vih-ease-out),
+    transform var(--vih-dur-slow) var(--vih-ease-out);
+
+  // One size for every glyph. The icons are drawn to a shared optical box inside the 24 viewBox
+  // (see _FeatureStrip.cshtml), so a fixed box here is enough to keep them visually equal.
   svg {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
+    overflow: visible; // stops the ring clipping the stroke mid-draw
+  }
+
+}
+
+// The ring fills and the glyph redraws itself. Both are cheap: transform, colour and a dash offset,
+// no layout, no paint of anything outside the 46px ring.
+.home-features__item:hover .home-features__icon,
+.home-features__item:focus-within .home-features__icon {
+  background: var(--vih-green-900);
+  border-color: var(--vih-green-900);
+  color: var(--vih-cream);
+  transform: translateY(-3px);
+}
+
+.home-features__item:hover .home-features__icon svg > *,
+.home-features__item:focus-within .home-features__icon svg > * {
+  animation: vih-feature-draw var(--vih-dur-reveal) var(--vih-ease-out);
+}
+
+// stroke-dasharray lives in the keyframes rather than on the shape, so it applies only while the
+// animation is running. Every shape carries pathLength="1" (see _FeatureStrip.cshtml), so a dash of
+// length 1 covers the whole outline exactly and offsetting it by 1 hides the shape completely.
+// Setting it as a resting style instead would leave a permanent butt-cap seam where a closed
+// outline — the gift box, the two circles in "connect" — begins and ends.
+@keyframes vih-feature-draw {
+  from {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
   }
 }
 
 .home-features__label {
   font-weight: 600;
-  font-size: 0.875rem;
-  letter-spacing: 0.02em;
+  font-size: var(--vih-text-sm);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-green-900);
+  // translate, not letter-spacing: widening the tracking on hover can push a long label onto a
+  // second line, which would move the description and change the cell's height mid-interaction.
+  transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+}
+
+.home-features__item:hover .home-features__label,
+.home-features__item:focus-within .home-features__label {
+  transform: translateX(2px);
 }
 
 .home-features__desc {
-  font-size: 0.8125rem;
-  color: #666;
-  max-width: 22ch;
+  margin: 0;
+  // Takes the slack in the stretched cell, so the text block itself grows rather than leaving a gap
+  // of unexplained whitespace under a short description.
+  flex: 1 1 auto;
+  font-size: var(--vih-text-sm);
+  line-height: 1.6;
+  // Was #666 as a literal; --vih-text-muted is the same intent with a name.
+  color: var(--vih-text-muted);
+  transition: color var(--vih-dur-base) var(--vih-ease-out);
+}
+
+.home-features__item:hover .home-features__desc,
+.home-features__item:focus-within .home-features__desc {
+  color: var(--vih-text-secondary);
+}
+
+// Motion is decoration here, so all of it goes. The colour changes stay: they are the part that
+// tells you which cell you are pointing at, and removing them would cost feedback rather than
+// motion. The accent rule is kept too, snapped to full width instead of wiping in.
+@media (prefers-reduced-motion: reduce) {
+  .home-features__item,
+  .home-features__item::before,
+  .home-features__icon,
+  .home-features__label,
+  .home-features__desc {
+    transition: none;
+    animation: none;
+  }
+
+  // These have to repeat the hover selectors, not just the bare class. `.home-features__label` alone
+  // loses to `.home-features__item:hover .home-features__label` on specificity and the translate
+  // would survive the media query.
+  .home-features__item:hover .home-features__label,
+  .home-features__item:focus-within .home-features__label,
+  .home-features__item:hover .home-features__icon,
+  .home-features__item:focus-within .home-features__icon {
+    transform: none;
+  }
+
+  .home-features__item:hover::before,
+  .home-features__item:focus-within::before {
+    transform: scaleX(1);
+  }
+
+  .home-features__item:hover .home-features__icon svg > *,
+  .home-features__item:focus-within .home-features__icon svg > * {
+    animation: none;
+  }
 }
 
 // --- Ecosystem -------------------------------------------------------------------------------
 .home-ecosystem {
   background: var(--vih-green-950);
   color: var(--vih-cream);
-  padding: 72px 0;
+  padding: var(--vih-section-y) 0;
 }
 
 .home-ecosystem__inner {
   display: grid;
-  gap: 40px;
+  gap: var(--vih-space-lg);
 
-  @media (min-width: 900px) {
-    grid-template-columns: 0.85fr 1.15fr;
+  // The intro column is deliberately narrow — the cards are the subject here, and a 50/50 split
+  // would leave the copy running to an uncomfortable measure.
+  @media (min-width: 1100px) {
+    grid-template-columns: minmax(240px, 0.7fr) 2.3fr;
+    gap: var(--vih-space-xl);
     align-items: start;
   }
+}
+
+.home-ecosystem__eyebrow {
+  margin: 0 0 var(--vih-space-xs);
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--vih-gold);
 }
 
 .home-ecosystem__intro {
   h2 {
     font-family: var(--vih-font-serif);
-    font-size: clamp(1.75rem, 3vw, 2.25rem);
-    margin: 0 0 16px;
+    font-size: var(--vih-display-sm);
+    line-height: 1.2;
+    margin: 0 0 var(--vih-space-sm);
   }
 
   p {
     color: var(--vih-cream-dim);
-    margin: 0 0 24px;
-    max-width: 40ch;
+    font-size: var(--vih-text-base);
+    margin: 0 0 var(--vih-space-md);
+    max-width: 34ch;
   }
 }
 
+// One column on a phone, two on a tablet, all four across on a wide screen — the same progression
+// the cards' own `sizes` attribute assumes, so the browser never downloads a width it cannot use.
 .home-ecosystem__grid {
   display: grid;
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: var(--vih-space-sm);
 
   @media (min-width: 560px) {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  @media (min-width: 1100px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .home-ecosystem__card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border: 1px solid var(--vih-line-on-dark);
-  border-radius: 10px;
-  padding: 24px;
+  border-radius: var(--vih-radius-lg);
+  background: rgba(244, 240, 230, 0.02);
+  transition:
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    transform var(--vih-dur-slow) var(--vih-ease-out);
+
+  &:hover {
+    border-color: rgba(184, 149, 90, 0.5);
+    transform: translateY(-3px);
+  }
+
+  // Every card in a row shows the same amount of photograph regardless of how long its copy runs,
+  // so the images line up across the row instead of drifting with the text.
+  .cover {
+    flex: none;
+    margin: var(--vih-space-xs) var(--vih-space-xs) 0;
+    border-radius: var(--vih-radius-sm);
+    overflow: hidden;
+  }
+}
+
+.home-ecosystem__card-body {
+  // Fills the rest of the card so the link can be pushed to the bottom edge — see margin-top: auto.
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--vih-space-sm);
 
   h3 {
     font-family: var(--vih-font-serif);
-    font-size: 1.0625rem;
-    margin: 0 0 10px;
+    font-size: var(--vih-text-lg);
+    line-height: 1.25;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 var(--vih-space-2xs);
   }
 
   p {
     color: var(--vih-cream-dim);
-    font-size: 0.875rem;
-    margin: 0;
+    font-size: var(--vih-text-sm);
+    line-height: 1.6;
+    margin: 0 0 var(--vih-space-sm);
+  }
+}
+
+// Bottom-aligned across the row, so the links read as one horizontal line even though the
+// descriptions above them are different lengths.
+.home-ecosystem__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+  margin-top: auto;
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--vih-gold);
+  text-decoration: none;
+
+  svg {
+    transition: transform var(--vih-dur-base) var(--vih-ease-out);
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--vih-gold-light);
+
+    svg {
+      transform: translateX(3px);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-ecosystem__card,
+  .home-ecosystem__link svg {
+    transition: none;
+  }
+
+  .home-ecosystem__card:hover {
+    transform: none;
   }
 }
 
@@ -436,8 +997,8 @@
 }
 
 .home-upcoming__image {
-  aspect-ratio: 4 / 3;
-  background: var(--vih-green-900) center/cover no-repeat;
+  // Sizing moved to .cover (Views/Shared/_CoverImage.cshtml) so the box is reserved before
+  // the photograph loads. This is now only a positioning context for the badge.
   position: relative;
 }
 
@@ -498,8 +1059,8 @@
 }
 
 .home-signature__image {
-  aspect-ratio: 16 / 10;
-  background: var(--vih-green-900) center/cover no-repeat;
+  // Sizing moved to .cover (Views/Shared/_CoverImage.cshtml) so the box is reserved before
+  // the photograph loads. This is now only a positioning context for the badge.
   position: relative;
 }
 
@@ -545,64 +1106,295 @@
 .home-trust {
   background: var(--vih-green-950);
   color: var(--vih-cream);
-  padding: 72px 0;
+  padding: var(--vih-section-y) 0;
+  border-top: 1px solid var(--vih-line-on-dark);
 }
 
 .home-trust__inner {
   display: grid;
-  gap: 40px;
+  gap: var(--vih-space-lg);
 
   @media (min-width: 900px) {
-    grid-template-columns: 0.8fr 1.2fr;
+    grid-template-columns: minmax(240px, 0.75fr) 2.25fr;
+    gap: var(--vih-space-xl);
+    align-items: start;
   }
+}
+
+.home-trust__eyebrow {
+  margin: 0 0 var(--vih-space-xs);
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--vih-gold);
 }
 
 .home-trust__intro {
   h2 {
     font-family: var(--vih-font-serif);
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    margin: 0 0 14px;
+    font-size: var(--vih-display-sm);
+    line-height: 1.2;
+    margin: 0 0 var(--vih-space-sm);
   }
 
   p {
     color: var(--vih-cream-dim);
-    margin: 0 0 24px;
-    max-width: 40ch;
+    font-size: var(--vih-text-base);
+    line-height: 1.7;
+    margin: 0 0 var(--vih-space-md);
+    max-width: 34ch;
   }
 }
 
+// A gold link with a rule that draws itself in on hover, rather than the filled button that used to
+// sit here — the filled one competed with the hero's call to action three sections above it.
+.home-trust__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+  position: relative;
+  padding-bottom: 4px;
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--vih-gold);
+  text-decoration: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+  }
+
+  svg {
+    transition: transform var(--vih-dur-base) var(--vih-ease-out);
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: var(--vih-gold-light);
+
+    &::after {
+      transform: scaleX(1);
+    }
+
+    svg {
+      transform: translateX(4px);
+    }
+  }
+}
+
+.home-trust__proof {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-md);
+  // Grid children default to min-width:auto, which lets the marquee's very wide track stretch the
+  // column instead of scrolling inside it — the one line that keeps the whole section from
+  // overflowing sideways on a narrow screen.
+  min-width: 0;
+}
+
+.home-trust__logos-heading {
+  margin: 0;
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(244, 240, 230, 0.55);
+}
+
+// --- The logo marquee ---------------------------------------------------------------------------
+// Two identical tracks scrolling as one: the first is exactly the width the second starts at, so
+// translating the pair by -50% and looping puts the copy where the original was — a seamless cycle
+// with no JS, no cloning at runtime and no measuring.
+.home-trust__logos {
+  position: relative;
+  display: flex;
+  gap: var(--vih-space-xl);
+  overflow: hidden;
+  padding: var(--vih-space-2xs) 0;
+
+  // The strip fades out at both edges rather than being cut off, so a name entering the frame does
+  // not appear to be sliced in half by the container.
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.home-trust__logos-track {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-xl);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: none;
+  animation: home-trust-marquee 32s linear infinite;
+}
+
+@keyframes home-trust-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    // -100% of one track plus the gap that follows it, which is what puts the second track exactly
+    // where the first began. Without the gap the loop jumps by one gap width every cycle.
+    transform: translateX(calc(-100% - var(--vih-space-xl)));
+  }
+}
+
+// Pausing on hover is what makes the strip readable — a name someone wants to read stops moving
+// under the pointer instead of sliding away from it.
+.home-trust__logos:hover .home-trust__logos-track {
+  animation-play-state: paused;
+}
+
+.home-trust__logo {
+  font-family: var(--vih-font-serif);
+  font-size: 1.125rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: rgba(244, 240, 230, 0.75);
+  transition: color var(--vih-dur-base) var(--vih-ease-out);
+
+  &:hover {
+    color: var(--vih-cream);
+  }
+}
+
+.home-trust__logo-img {
+  display: block;
+  height: 24px;
+  width: auto;
+  // Real logo artwork arrives in every colour there is; this flattens it to the strip's cream and
+  // lets it come back on hover.
+  filter: grayscale(1) brightness(1.6);
+  opacity: 0.75;
+  transition:
+    filter var(--vih-dur-base) var(--vih-ease-out),
+    opacity var(--vih-dur-base) var(--vih-ease-out);
+
+  &:hover {
+    filter: none;
+    opacity: 1;
+  }
+}
+
+// --- Testimonials --------------------------------------------------------------------------------
 .home-trust__quotes {
   display: grid;
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: var(--vih-space-sm);
+  padding-top: var(--vih-space-md);
+  border-top: 1px solid var(--vih-line-on-dark);
 
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  @media (min-width: 720px) {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 .home-trust__quote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-sm);
   margin: 0;
-  padding: 20px;
+  padding: var(--vih-space-sm);
   border: 1px solid var(--vih-line-on-dark);
-  border-radius: 10px;
+  border-radius: var(--vih-radius-lg);
+  background: rgba(244, 240, 230, 0.02);
+  transition:
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    transform var(--vih-dur-slow) var(--vih-ease-out),
+    background var(--vih-dur-base) var(--vih-ease-out);
 
-  p {
-    margin: 0 0 12px;
-    font-family: var(--vih-font-serif);
-    font-size: 1rem;
-    line-height: 1.5;
+  &:hover {
+    border-color: rgba(184, 149, 90, 0.45);
+    background: rgba(244, 240, 230, 0.05);
+    transform: translateY(-3px);
   }
 
-  footer {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  blockquote {
+    margin: 0;
+    font-size: var(--vih-text-md);
+    line-height: 1.6;
+    color: var(--vih-cream);
 
-    span {
-      font-weight: 400;
-      color: var(--vih-cream-dim);
+    // Typographic quotes drawn by CSS rather than typed into the content, so an admin writing a
+    // testimonial cannot end up with two sets of them.
+    &::before {
+      content: open-quote;
     }
+
+    &::after {
+      content: close-quote;
+    }
+  }
+
+  figcaption {
+    display: flex;
+    align-items: center;
+    gap: var(--vih-space-2xs);
+    // Pins the attribution to the bottom of a stretched card so the three line up across the row
+    // however long the quotes above them run.
+    margin-top: auto;
+  }
+}
+
+.home-trust__avatar {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: var(--vih-radius-pill);
+  object-fit: cover;
+  border: 1px solid var(--vih-line-on-dark);
+}
+
+.home-trust__attribution {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.home-trust__author {
+  font-size: var(--vih-text-sm);
+  font-weight: 600;
+  color: var(--vih-cream);
+}
+
+.home-trust__role {
+  font-size: var(--vih-text-xs);
+  color: var(--vih-cream-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  // The marquee is the one piece of motion on this page that never stops on its own, so it is the
+  // one that most needs turning off. Static, it is simply a wrapping row of names.
+  .home-trust__logos-track {
+    animation: none;
+  }
+
+  .home-trust__logos {
+    flex-wrap: wrap;
+    row-gap: var(--vih-space-sm);
+  }
+
+  .home-trust__logos-track[aria-hidden="true"] {
+    display: none;
+  }
+
+  .home-trust__quote,
+  .home-trust__cta::after,
+  .home-trust__cta svg {
+    transition: none;
+  }
+
+  .home-trust__quote:hover {
+    transform: none;
   }
 }

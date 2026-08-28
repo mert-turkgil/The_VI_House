@@ -1,0 +1,72 @@
+// Inline notices — the one shared component the codebase kept needing and never had.
+//
+// Two audiences, one implementation:
+//
+//   .vih-alert          what new markup should use.
+//   .alert / .alert-*   aliases for the scaffolded ASP.NET Core Identity pages, which emit
+//                       Bootstrap class names whether or not Bootstrap is loaded (it is not).
+//                       Before this file existed, every two-factor warning — "You have no recovery
+//                       codes left", "If you lose your device and don't have the recovery codes you
+//                       will lose access to your account" — rendered as ordinary body text,
+//                       indistinguishable from the paragraph above it. On a security page that is
+//                       not a cosmetic problem.
+//
+// Deliberately a left-rule and a tint rather than a filled box with an icon: the brand is editorial,
+// and a saturated alert bar would be the loudest thing on an otherwise very quiet page.
+
+.vih-alert,
+.alert {
+  display: block;
+  padding: var(--vih-space-xs) var(--vih-space-sm);
+  margin-bottom: var(--vih-space-sm);
+  border-left: 3px solid var(--vih-text-muted);
+  border-radius: var(--vih-radius-xs);
+  background: var(--vih-surface-sunken);
+  color: var(--vih-ink);
+  font-size: var(--vih-text-base);
+  line-height: 1.6;
+
+  // The scaffold nests <p>/<ul> inside these; without this they inherit page margins and the box
+  // ends up with a large gap at top and bottom.
+  > :first-child { margin-top: 0; }
+  > :last-child { margin-bottom: 0; }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+.vih-alert--info,
+.alert-info {
+  border-left-color: var(--vih-gold);
+  background: var(--vih-warning-bg);
+}
+
+.vih-alert--success,
+.alert-success {
+  border-left-color: var(--vih-success);
+  background: var(--vih-success-bg);
+}
+
+.vih-alert--warning,
+.alert-warning {
+  border-left-color: var(--vih-warning);
+  background: var(--vih-warning-bg);
+}
+
+.vih-alert--danger,
+.alert-danger {
+  border-left-color: var(--vih-danger);
+  background: var(--vih-danger-bg);
+  color: var(--vih-danger-strong);
+}
+
+// Bootstrap's dismissible variant reserves space on the right for a close button. The scaffold's
+// close button is inert here (it relies on Bootstrap's JS, which is not loaded), so the buttons are
+// being removed from the markup rather than styled — this rule only stops the reserved padding from
+// looking like a mistake on any that survive.
+.alert-dismissible {
+  padding-right: var(--vih-space-lg);
+}

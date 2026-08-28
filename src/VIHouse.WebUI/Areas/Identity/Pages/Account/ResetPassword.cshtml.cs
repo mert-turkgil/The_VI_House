@@ -10,11 +10,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
 using VIHouse.DataAccess.Identity;
 
 namespace VIHouse.WebUI.Areas.Identity.Pages.Account
 {
+    // Brute-force protection, matching Login/LoginWith2fa/ForgotPassword. This page takes a
+    // token and sets a password, so leaving it unlimited was the one gap in that set.
+    [EnableRateLimiting("auth")]
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;

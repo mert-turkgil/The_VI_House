@@ -1,0 +1,45 @@
+// Breakpoints, as Sass rather than custom properties.
+//
+// This file exists because `@media (min-width: var(--vih-bp-lg))` is not valid CSS — media queries
+// are evaluated before custom properties resolve. So unlike everything in _tokens.scss, these have
+// to be compile-time values.
+//
+// Usage, only in files being rewritten (do NOT retrofit `@use` into all sixteen partials — sixteen
+// edits for no user-visible change):
+//
+//   @use '../breakpoints' as bp;
+//   .thing { ... @include bp.from(bp.$md) { ... } }
+//
+// The existing partials use seventeen different literal breakpoints (400/440/520/560/599/620/640/
+// 719/720/760/767/780/820/880/900/960/1080). That is not a system, it is accretion. These four are
+// the ones worth standardising on; anything else stays a literal where it is.
+
+$sm: 560px;
+$md: 720px;
+$lg: 960px;
+$xl: 1200px;
+
+/// Mobile-first: styles apply at this width and above.
+@mixin from($bp) {
+  @media (min-width: $bp) {
+    @content;
+  }
+}
+
+/// The inverse, and deliberately `$bp - 1px` rather than `$bp`.
+///
+/// The codebase currently has both `min-width: 720px` and `max-width: 720px` rules, which means at
+/// exactly 720px they BOTH apply — the desktop rule wins or loses depending on source order, which
+/// is not something anyone chose. Subtracting a pixel makes the two halves genuinely exclusive.
+@mixin until($bp) {
+  @media (max-width: $bp - 1px) {
+    @content;
+  }
+}
+
+/// Both bounds, for the rare style that belongs only to one band.
+@mixin between($from, $to) {
+  @media (min-width: $from) and (max-width: $to - 1px) {
+    @content;
+  }
+}

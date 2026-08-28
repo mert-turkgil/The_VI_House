@@ -21,8 +21,12 @@
                 @foreach (var seminar in Model)
                 {
                     <a class="seminar-card" asp-controller="Seminars" asp-action="Details" asp-route-slug="@seminar.Slug">
-                        <div class="seminar-card__image"
-                             style="@(seminar.HasCover ? $"background-image:url('{Url.Action("Media", "Seminars", new { id = seminar.CoverMediaId })}')" : "")">
+                        <div class="seminar-card__image">
+                            <partial name="_CoverImage" model="@(new CoverImageViewModel {
+                                Url = seminar.HasCover ? Url.Action("Media", "Seminars", new { id = seminar.CoverMediaId }) : null,
+                                Ratio = "16x9",
+                                Sizes = "(min-width: 960px) 25vw, (min-width: 560px) 50vw, 100vw",
+                            })" />
                             @if (seminar.IsArchived)
                             {
                                 <span class="seminar-card__badge">@Loc["Seminars.Past"]</span>

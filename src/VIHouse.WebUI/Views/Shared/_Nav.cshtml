@@ -32,9 +32,20 @@
         recentNotifications = (await NotificationService.GetForUserAsync(currentUserId)).Take(6).ToList();
     }
 }
+@* Every asp-controller link below carries asp-area="" — do not remove it.
+   This partial is rendered by the Identity area too (Areas/Identity/Pages/_ViewStart.cshtml points
+   at this same /Views/Shared/_Layout.cshtml), so on /Identity/Account/* the ambient area route value
+   is "Identity". Link generation matches an endpoint's required values against supplied *and*
+   ambient route values, and naming asp-controller does not clear an ambient area — so without the
+   explicit empty area these resolve against area="Identity", match nothing (every public controller
+   is attribute-routed with no area), and the tag helper emits href="". That silently kills the whole
+   header on the login and two-factor pages. Areas/Admin/Views/Shared/_AdminLayout.cshtml does the
+   same thing for the same reason.
+
+   The two logout forms are the exception: they legitimately target asp-area="Identity". *@
 <header class="site-header">
     <div class="container site-header__inner">
-        <a class="site-brand" asp-controller="Home" asp-action="Index" aria-label="The VI House — Home">
+        <a class="site-brand" asp-area="" asp-controller="Home" asp-action="Index" aria-label="The VI House — Home">
             <span class="site-brand__crest">
                 <partial name="_Crest" />
             </span>
@@ -43,15 +54,15 @@
 
         <nav class="site-nav" aria-label="Primary">
             <ul class="site-nav__list">
-                <li><a class="@NavLinkClass("Home")" asp-controller="Home" asp-action="Index" aria-current="@AriaCurrent("Home")">@Loc["Nav.Home"]</a></li>
-                <li><a class="@NavLinkClass("Experiences")" asp-controller="Experiences" asp-action="Index" aria-current="@AriaCurrent("Experiences")">@Loc["Nav.Experiences"]</a></li>
-                <li><a class="@NavLinkClass("Membership")" asp-controller="Membership" asp-action="Index" aria-current="@AriaCurrent("Membership")">@Loc["Nav.Membership"]</a></li>
-                <li><a class="@NavLinkClass("About")" asp-controller="About" asp-action="Index" aria-current="@AriaCurrent("About")">@Loc["Nav.About"]</a></li>
-                <li><a class="@NavLinkClass("Seminars")" asp-controller="Seminars" asp-action="Index" aria-current="@AriaCurrent("Seminars")">@Loc["Nav.Sessions"]</a></li>
-                <li><a class="@NavLinkClass("Journal")" asp-controller="Journal" asp-action="Index" aria-current="@AriaCurrent("Journal")">@Loc["Nav.Journal"]</a></li>
+                <li><a class="@NavLinkClass("Home")" asp-area="" asp-controller="Home" asp-action="Index" aria-current="@AriaCurrent("Home")">@Loc["Nav.Home"]</a></li>
+                <li><a class="@NavLinkClass("Experiences")" asp-area="" asp-controller="Experiences" asp-action="Index" aria-current="@AriaCurrent("Experiences")">@Loc["Nav.Experiences"]</a></li>
+                <li><a class="@NavLinkClass("Membership")" asp-area="" asp-controller="Membership" asp-action="Index" aria-current="@AriaCurrent("Membership")">@Loc["Nav.Membership"]</a></li>
+                <li><a class="@NavLinkClass("About")" asp-area="" asp-controller="About" asp-action="Index" aria-current="@AriaCurrent("About")">@Loc["Nav.About"]</a></li>
+                <li><a class="@NavLinkClass("Seminars")" asp-area="" asp-controller="Seminars" asp-action="Index" aria-current="@AriaCurrent("Seminars")">@Loc["Nav.Sessions"]</a></li>
+                <li><a class="@NavLinkClass("Journal")" asp-area="" asp-controller="Journal" asp-action="Index" aria-current="@AriaCurrent("Journal")">@Loc["Nav.Journal"]</a></li>
                 @if (isMember)
                 {
-                    <li><a class="@NavLinkClass("MemberDirectory")" asp-controller="MemberDirectory" asp-action="Index" aria-current="@AriaCurrent("MemberDirectory")">@Loc["Nav.Members"]</a></li>
+                    <li><a class="@NavLinkClass("MemberDirectory")" asp-area="" asp-controller="MemberDirectory" asp-action="Index" aria-current="@AriaCurrent("MemberDirectory")">@Loc["Nav.Members"]</a></li>
                 }
             </ul>
         </nav>
@@ -118,7 +129,7 @@
                             <span>@Loc["Notif.Title"]</span>
                             @if (unreadCount > 0)
                             {
-                                <form asp-controller="Account" asp-action="MarkAllNotificationsRead" method="post">
+                                <form asp-area="" asp-controller="Account" asp-action="MarkAllNotificationsRead" method="post">
                                     <input type="hidden" name="returnUrl" value="@currentPath" />
                                     <button type="submit" class="notif-bell__mark-all">@Loc["Notif.MarkAllRead"]</button>
                                 </form>
@@ -132,21 +143,21 @@
                         {
                             @foreach (var n in recentNotifications)
                             {
-                                <a class="@(n.IsRead ? "notif-bell__item" : "notif-bell__item notif-bell__item--unread")" asp-controller="Account" asp-action="OpenNotification" asp-route-id="@n.Id">
+                                <a class="@(n.IsRead ? "notif-bell__item" : "notif-bell__item notif-bell__item--unread")" asp-area="" asp-controller="Account" asp-action="OpenNotification" asp-route-id="@n.Id">
                                     <span class="notif-bell__item-title">@n.Title</span>
                                     <span class="notif-bell__item-text">@n.Body</span>
                                 </a>
                             }
                         }
-                        <a class="notif-bell__view-all" asp-controller="Account" asp-action="Notifications">@Loc["Notif.ViewAll"]</a>
+                        <a class="notif-bell__view-all" asp-area="" asp-controller="Account" asp-action="Notifications">@Loc["Notif.ViewAll"]</a>
                     </div>
                 </details>
 
                 @if (isAmbassador)
                 {
-                    <a class="site-header__login" asp-controller="Ambassador" asp-action="Index">@Loc["Nav.AmbassadorDashboard"]</a>
+                    <a class="site-header__login" asp-area="" asp-controller="Ambassador" asp-action="Index">@Loc["Nav.AmbassadorDashboard"]</a>
                 }
-                <a class="site-header__login" asp-controller="Account" asp-action="Index">@Loc["Nav.MyAccount"]</a>
+                <a class="site-header__login" asp-area="" asp-controller="Account" asp-action="Index">@Loc["Nav.MyAccount"]</a>
                 <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" class="site-header__logout-form">
                     <button type="submit" class="btn btn--primary site-header__cta">@Loc["Nav.LogOut"]</button>
                 </form>
@@ -166,15 +177,15 @@
 <div class="site-mobile-nav" id="mobile-nav" data-nav-panel data-open="false">
     <nav aria-label="Mobile">
         <ul class="site-mobile-nav__list">
-            <li><a class="@MobileNavLinkClass("Home")" asp-controller="Home" asp-action="Index" aria-current="@AriaCurrent("Home")">@Loc["Nav.Home"]</a></li>
-            <li><a class="@MobileNavLinkClass("Experiences")" asp-controller="Experiences" asp-action="Index" aria-current="@AriaCurrent("Experiences")">@Loc["Nav.Experiences"]</a></li>
-            <li><a class="@MobileNavLinkClass("Membership")" asp-controller="Membership" asp-action="Index" aria-current="@AriaCurrent("Membership")">@Loc["Nav.Membership"]</a></li>
-            <li><a class="@MobileNavLinkClass("About")" asp-controller="About" asp-action="Index" aria-current="@AriaCurrent("About")">@Loc["Nav.About"]</a></li>
-            <li><a class="@MobileNavLinkClass("Seminars")" asp-controller="Seminars" asp-action="Index" aria-current="@AriaCurrent("Seminars")">@Loc["Nav.Sessions"]</a></li>
-            <li><a class="@MobileNavLinkClass("Journal")" asp-controller="Journal" asp-action="Index" aria-current="@AriaCurrent("Journal")">@Loc["Nav.Journal"]</a></li>
+            <li><a class="@MobileNavLinkClass("Home")" asp-area="" asp-controller="Home" asp-action="Index" aria-current="@AriaCurrent("Home")">@Loc["Nav.Home"]</a></li>
+            <li><a class="@MobileNavLinkClass("Experiences")" asp-area="" asp-controller="Experiences" asp-action="Index" aria-current="@AriaCurrent("Experiences")">@Loc["Nav.Experiences"]</a></li>
+            <li><a class="@MobileNavLinkClass("Membership")" asp-area="" asp-controller="Membership" asp-action="Index" aria-current="@AriaCurrent("Membership")">@Loc["Nav.Membership"]</a></li>
+            <li><a class="@MobileNavLinkClass("About")" asp-area="" asp-controller="About" asp-action="Index" aria-current="@AriaCurrent("About")">@Loc["Nav.About"]</a></li>
+            <li><a class="@MobileNavLinkClass("Seminars")" asp-area="" asp-controller="Seminars" asp-action="Index" aria-current="@AriaCurrent("Seminars")">@Loc["Nav.Sessions"]</a></li>
+            <li><a class="@MobileNavLinkClass("Journal")" asp-area="" asp-controller="Journal" asp-action="Index" aria-current="@AriaCurrent("Journal")">@Loc["Nav.Journal"]</a></li>
             @if (isMember)
             {
-                <li><a class="@MobileNavLinkClass("MemberDirectory")" asp-controller="MemberDirectory" asp-action="Index" aria-current="@AriaCurrent("MemberDirectory")">@Loc["Nav.Members"]</a></li>
+                <li><a class="@MobileNavLinkClass("MemberDirectory")" asp-area="" asp-controller="MemberDirectory" asp-action="Index" aria-current="@AriaCurrent("MemberDirectory")">@Loc["Nav.Members"]</a></li>
             }
         </ul>
     </nav>
@@ -196,9 +207,9 @@
         {
             @if (isAmbassador)
             {
-                <a class="btn btn--ghost-dark" asp-controller="Ambassador" asp-action="Index">@Loc["Nav.AmbassadorDashboard"]</a>
+                <a class="btn btn--ghost-dark" asp-area="" asp-controller="Ambassador" asp-action="Index">@Loc["Nav.AmbassadorDashboard"]</a>
             }
-            <a class="btn btn--primary" asp-controller="Account" asp-action="Index">@Loc["Nav.MyAccount"]</a>
+            <a class="btn btn--primary" asp-area="" asp-controller="Account" asp-action="Index">@Loc["Nav.MyAccount"]</a>
             <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
                 <button type="submit" class="btn btn--ghost-dark" style="width:100%;">@Loc["Nav.LogOut"]</button>
             </form>

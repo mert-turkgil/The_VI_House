@@ -23,6 +23,10 @@ public class JournalPost : BaseEntity
     public string Body { get; set; } = default!;
 
     public string? CoverImageUrl { get; set; }
+
+    /// <summary>Alt text for the cover. Usually null — the headline above it already carries the
+    /// meaning, and a described lead image just repeats it. See Experience.CoverImageAlt.</summary>
+    public string? CoverImageAlt { get; set; }
     public string? AuthorName { get; set; }
 
     /// <summary>Set once, the first time Status flips to Published. Drives "newest first"

@@ -26,6 +26,9 @@ public class ExperienceService(
     public Task<List<Experience>> GetSignatureAsync(int take, CancellationToken ct = default) =>
         experiences.GetSignatureAsync(take, ct);
 
+    public Task<List<string>> GetPublicCitiesAsync(CancellationToken ct = default) =>
+        experiences.GetPublicCitiesAsync(ct);
+
     public Task<List<Experience>> GetAllForAdminAsync(CancellationToken ct = default) =>
         experiences.GetAllAsync(ct);
 

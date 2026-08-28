@@ -1,0 +1,46 @@
+@model AdminHeroSlideCreateViewModel
+@{
+    ViewData["Title"] = Loc["Admin.HeroSlide.New"].Value;
+}
+
+<div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+
+<p class="admin-hint">@Loc["Admin.HeroSlide.CreateHint", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</p>
+
+<form asp-action="Create" method="post" class="admin-form">
+    <div class="admin-field">
+        <label asp-for="DefaultTranslation.Heading">@Loc["Admin.HeroSlide.Heading"]</label>
+        <input asp-for="DefaultTranslation.Heading" maxlength="200" required placeholder="Where Ambition Meets Alignment." />
+        <span asp-validation-for="DefaultTranslation.Heading" class="field-validation-error"></span>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="DefaultTranslation.Subheading">@Loc["Admin.HeroSlide.Subheading"]</label>
+        <textarea asp-for="DefaultTranslation.Subheading" rows="3" maxlength="600"></textarea>
+        <span asp-validation-for="DefaultTranslation.Subheading" class="field-validation-error"></span>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Form.SortOrder">@Loc["Admin.HeroSlide.SortOrder"]</label>
+            <input asp-for="Form.SortOrder" type="number" />
+        </div>
+        <div class="admin-field">
+            <label style="display:flex; align-items:center; gap:8px;">
+                <input asp-for="Form.IsActive" type="checkbox" />
+                @Loc["Admin.HeroSlide.IsActive"]
+            </label>
+        </div>
+    </div>
+
+    <p class="admin-field__hint">@Loc["Admin.HeroSlide.ImageLaterHint"]</p>
+
+    <div>
+        <button type="submit" class="admin-btn">@Loc["Admin.HeroSlide.CreateSubmit"]</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.HeroSlide.Cancel"]</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

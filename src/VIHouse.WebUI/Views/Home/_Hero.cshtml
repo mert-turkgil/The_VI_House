@@ -1,22 +1,109 @@
 @model HeroContent
+@{
+    var panels = Model.Panels;
 
-<section class="home-hero">
-    <div class="container home-hero__inner">
-        @* The hero is above the fold, so it animates on load rather than on scroll — hence CSS
-           keyframes here instead of the data-reveal/IntersectionObserver used further down. *@
-        <div class="home-hero__content home-hero__content--enter">
-            <h1>@Model.Heading</h1>
-            @if (!string.IsNullOrWhiteSpace(Model.Subheading))
+    // One panel is not a carousel: no autoplay, no dots, no arrows, no Swiper at all. The markup is
+    // otherwise identical, so the single-slide hero and the first slide of a carousel are the same
+    // thing to the eye — and the JS bundle has nothing to do on a homepage with one slide.
+    var isCarousel = panels.Count > 1;
+}
+
+<section class="home-hero @(isCarousel ? "home-hero--carousel" : null)">
+    @* Without JS the wrapper is a plain block and the slides stack — every heading, image and call
+       to action still reachable. Swiper's own classes only take effect once it initialises, which
+       is why the classes are on the markup from the start but the behaviour is not. *@
+    <div class="swiper home-hero__swiper"
+         @(isCarousel ? "data-hero-swiper" : null)
+         data-hero-autoplay="7000"
+         data-swiper-prev-label="@Loc["Home.Hero.Previous"]"
+         data-swiper-next-label="@Loc["Home.Hero.Next"]">
+        <div class="swiper-wrapper">
+            @{ var index = 0; }
+            @foreach (var panel in panels)
             {
-                <p>@Model.Subheading</p>
+                var isFirst = index++ == 0;
+                <div class="swiper-slide home-hero__slide">
+                    @if (!string.IsNullOrWhiteSpace(panel.ImageUrl))
+                    {
+                        <div class="home-hero__media">
+                            @* The first slide is the largest thing above the fold, so it loads
+                               eagerly at high priority; the rest wait, because a visitor who never
+                               reaches slide three should never pay for its photograph. *@
+                            <img class="home-hero__image"
+                                 src="@panel.ImageUrl"
+                                 srcset="@HeroSrcSet(panel.ImageUrl)"
+                                 sizes="100vw"
+                                 alt="@(panel.ImageAlt ?? string.Empty)"
+                                 loading="@(isFirst ? "eager" : "lazy")"
+                                 decoding="async"
+                                 @(isFirst ? "fetchpriority=high" : "") />
+                        </div>
+                    }
+
+                    <div class="container home-hero__inner">
+                        <div class="home-hero__content @(isFirst ? "home-hero__content--enter" : null)">
+                            @if (!string.IsNullOrWhiteSpace(panel.Eyebrow))
+                            {
+                                <p class="home-hero__eyebrow">@panel.Eyebrow</p>
+                            }
+                            <h1>@panel.Heading</h1>
+                            @if (!string.IsNullOrWhiteSpace(panel.Subheading))
+                            {
+                                <p>@panel.Subheading</p>
+                            }
+                            @if (panel.HasPrimaryCta || panel.HasSecondaryCta)
+                            {
+                                <div class="home-hero__actions">
+                                    @if (panel.HasPrimaryCta)
+                                    {
+                                        <a class="btn btn--primary" href="@panel.PrimaryCtaUrl">@panel.PrimaryCtaLabel</a>
+                                    }
+                                    @if (panel.HasSecondaryCta)
+                                    {
+                                        <a class="btn btn--ghost-dark" href="@panel.SecondaryCtaUrl">@panel.SecondaryCtaLabel</a>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="home-hero__crest" aria-hidden="true">
+                            <partial name="_Crest" />
+                        </div>
+                    </div>
+                </div>
             }
-            <div class="home-hero__actions">
-                <a class="btn btn--primary" href="@Model.CtaUrl">@Model.CtaLabel</a>
-                <a class="btn btn--ghost-dark" href="/experiences">Explore Experiences</a>
+        </div>
+
+        @if (isCarousel)
+        {
+            <div class="container home-hero__controls">
+                <button type="button" class="home-hero__nav home-hero__nav--prev" aria-label="@Loc["Home.Hero.Previous"]"></button>
+                <div class="home-hero__pagination"></div>
+                <button type="button" class="home-hero__nav home-hero__nav--next" aria-label="@Loc["Home.Hero.Next"]"></button>
             </div>
-        </div>
-        <div class="home-hero__crest" aria-hidden="true">
-            <partial name="_Crest" />
-        </div>
+        }
     </div>
 </section>
+
+@functions {
+    // The fetch script writes every photograph at 800 and 1600 (media-manifest.json), so a URL that
+    // ends in one of those widths can offer both. Anything else — an uploaded image streamed by
+    // MediaController, or an absolute URL an admin pasted — gets no srcset, which browsers ignore
+    // in favour of the plain src. Same rule as CoverImageViewModel.SrcSet, applied to a raw string
+    // because the hero renders its own <img> at full-bleed rather than through _CoverImage.
+    private static string HeroSrcSet(string? url)
+    {
+        if (string.IsNullOrWhiteSpace(url)) return string.Empty;
+
+        var marker = url.LastIndexOf('-');
+        var dot = url.LastIndexOf('.');
+        if (marker < 0 || dot < marker) return string.Empty;
+
+        if (!int.TryParse(url[(marker + 1)..dot], out var width) || (width != 800 && width != 1600))
+            return string.Empty;
+
+        var stem = url[..marker];
+        var extension = url[dot..];
+
+        return $"{stem}-800{extension} 800w, {stem}-1600{extension} 1600w";
+    }
+}

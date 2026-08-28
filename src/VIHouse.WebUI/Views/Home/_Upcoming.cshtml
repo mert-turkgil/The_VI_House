@@ -14,8 +14,15 @@
                     {
                         <div class="swiper-slide">
                             <a class="home-upcoming__card" href="/experiences/@e.Slug">
-                                <div class="home-upcoming__image" style="@(string.IsNullOrEmpty(e.CoverImageUrl) ? "" : $"background-image:url('{e.CoverImageUrl}')")">
-                                    <span class="home-upcoming__badge">@e.StatusLabel</span>
+                                <div class="home-upcoming__image">
+                                    @* Decorative: the card's own heading names the experience, so a
+                                       described image would just repeat it to a screen reader. *@
+                                    <partial name="_CoverImage" model="@(new CoverImageViewModel {
+                                        Url = e.CoverImageUrl,
+                                        Ratio = "4x3",
+                                        Sizes = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw",
+                                    })" />
+                                    <span class="home-upcoming__badge">@Loc[e.StatusKey]</span>
                                 </div>
                                 <div class="home-upcoming__body">
                                     <span class="home-upcoming__date">@e.StartAtUtc.ToString("d MMM")–@e.EndAtUtc.ToString("d MMM yyyy")</span>

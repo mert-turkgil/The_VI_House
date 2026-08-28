@@ -526,4 +526,188 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Account.SessionsTitle" xml:space="preserve"><value>Oturumlarım</value></data>
   <data name="Account.NoSessions" xml:space="preserve"><value>Henüz hiçbir oturuma kaydolmadınız.</value></data>
   <data name="Account.BrowseSessions" xml:space="preserve"><value>Oturumlara göz at</value></data>
+
+  <!-- Experiences: listing, filters and detail page. -->
+  <data name="Experiences.Title" xml:space="preserve"><value>Deneyimler</value></data>
+  <data name="Experiences.Eyebrow" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Experiences.Heading" xml:space="preserve"><value>Deneyimler</value></data>
+  <data name="Experiences.Subheading" xml:space="preserve"><value>Kurucular, operatörler ve yatırımcılar için özenle seçilmiş odalar — bir rezervasyon motoru değil, bir ağ.</value></data>
+  <data name="Experiences.From" xml:space="preserve"><value>Başlangıç</value></data>
+  <data name="Experiences.View" xml:space="preserve"><value>Deneyimi görüntüle</value></data>
+  <data name="Experiences.Duration.One" xml:space="preserve"><value>1 gün</value></data>
+  <data name="Experiences.Duration.Many" xml:space="preserve"><value>{0} gün</value></data>
+  <data name="Experiences.Status.Draft" xml:space="preserve"><value>Taslak</value></data>
+  <data name="Experiences.Status.ApplicationsOpen" xml:space="preserve"><value>Başvurular açık</value></data>
+  <data name="Experiences.Status.AlmostFull" xml:space="preserve"><value>Neredeyse dolu</value></data>
+  <data name="Experiences.Status.Waitlist" xml:space="preserve"><value>Bekleme listesi</value></data>
+  <data name="Experiences.Status.ApplicationsClosed" xml:space="preserve"><value>Başvurular kapalı</value></data>
+  <data name="Experiences.Status.Completed" xml:space="preserve"><value>Tamamlandı</value></data>
+  <data name="Experiences.Status.ComingSoon" xml:space="preserve"><value>Yakında</value></data>
+  <data name="Experiences.Filters.Label" xml:space="preserve"><value>Deneyimleri filtrele</value></data>
+  <data name="Experiences.Filters.City" xml:space="preserve"><value>Şehir</value></data>
+  <data name="Experiences.Filters.AnyCity" xml:space="preserve"><value>Tüm şehirler</value></data>
+  <data name="Experiences.Filters.Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Experiences.Filters.AnyStatus" xml:space="preserve"><value>Tümü</value></data>
+  <data name="Experiences.Filters.Apply" xml:space="preserve"><value>Filtreyi uygula</value></data>
+  <data name="Experiences.Filters.Clear" xml:space="preserve"><value>Filtreleri temizle</value></data>
+  <data name="Experiences.Count.One" xml:space="preserve"><value>1 deneyim</value></data>
+  <data name="Experiences.Count.Many" xml:space="preserve"><value>{0} deneyim</value></data>
+  <data name="Experiences.Empty.Title" xml:space="preserve"><value>Şu anda açık bir şey yok</value></data>
+  <data name="Experiences.Empty.Body" xml:space="preserve"><value>Yılda yalnızca birkaç oda düzenliyoruz ve bunlar önce üyelere duyurulur. Başvurun; bir sonrakini herkese açılmadan önce öğrenin.</value></data>
+  <data name="Experiences.Empty.Filtered.Title" xml:space="preserve"><value>Bu filtrelerle eşleşen bir şey yok</value></data>
+  <data name="Experiences.Empty.Filtered.Body" xml:space="preserve"><value>Farklı bir şehir deneyin veya açık olan her şeyi görmek için filtreleri temizleyin.</value></data>
+  <data name="Experiences.Apply" xml:space="preserve"><value>Erişim talep et</value></data>
+  <data name="Experiences.Section.About" xml:space="preserve"><value>Deneyim</value></data>
+  <data name="Experiences.Section.Audience" xml:space="preserve"><value>Odada kimler var?</value></data>
+  <data name="Experiences.Section.Programme" xml:space="preserve"><value>Neler oluyor</value></data>
+  <data name="Experiences.Section.Included" xml:space="preserve"><value>Neler dahil</value></data>
+  <data name="Experiences.Section.Faq" xml:space="preserve"><value>Sorular</value></data>
+  <data name="Experiences.Section.Gallery" xml:space="preserve"><value>Mekân</value></data>
+  <data name="Experiences.Included" xml:space="preserve"><value>Dahil</value></data>
+  <data name="Experiences.NotIncluded" xml:space="preserve"><value>Dahil değil</value></data>
+  <data name="Experiences.Programme.Day" xml:space="preserve"><value>{0}. gün</value></data>
+  <data name="Experiences.Programme.LocalTimes" xml:space="preserve"><value>Tüm saatler {0} yerel saatidir.</value></data>
+  <data name="Experiences.Tickets.Title" xml:space="preserve"><value>Deneyim seçenekleri</value></data>
+  <data name="Experiences.Tickets.None" xml:space="preserve"><value>Seçenekler davetinizle birlikte kesinleşir.</value></data>
+  <data name="Experiences.Tickets.PlacesLeft" xml:space="preserve"><value>{0} yer kaldı</value></data>
+  <data name="Experiences.Tickets.Note" xml:space="preserve"><value>Başvurular elle incelenir. Size bir yer teklif edilip kabul etmediğiniz sürece ücret alınmaz.</value></data>
+  <data name="Experiences.Closed.ComingSoon" xml:space="preserve"><value>Yakında</value></data>
+  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Bekleme listesine katıl</value></data>
+  <data name="Experiences.Closed.Closed" xml:space="preserve"><value>Başvurular kapalı</value></data>
+  <data name="Experiences.Gallery.Prev" xml:space="preserve"><value>Önceki fotoğraf</value></data>
+  <data name="Experiences.Gallery.Next" xml:space="preserve"><value>Sonraki fotoğraf</value></data>
+  <data name="Experiences.BackToAll" xml:space="preserve"><value>Tüm deneyimler</value></data>
+
+  <!-- Authentication, two-step verification and the account security screens. -->
+  <data name="Auth.Login.Title" xml:space="preserve"><value>Giriş yap</value></data>
+  <data name="Auth.Login.Heading" xml:space="preserve"><value>Tekrar hoş geldiniz.</value></data>
+  <data name="Auth.Login.Lede" xml:space="preserve"><value>House önce davetle çalışır. Üyeliğinize, oturumlarınıza ve rehbere ulaşmak için giriş yapın.</value></data>
+  <data name="Auth.Email" xml:space="preserve"><value>E-posta</value></data>
+  <data name="Auth.Password" xml:space="preserve"><value>Parola</value></data>
+  <data name="Auth.RememberMe" xml:space="preserve"><value>Oturumumu açık tut</value></data>
+  <data name="Auth.Login.Submit" xml:space="preserve"><value>Giriş yap</value></data>
+  <data name="Auth.ForgotPassword" xml:space="preserve"><value>Parolanızı mı unuttunuz?</value></data>
+  <data name="Auth.NotAMember" xml:space="preserve"><value>Henüz üye değil misiniz?</value></data>
+  <data name="Auth.RequestAccess" xml:space="preserve"><value>Erişim talep et</value></data>
+  <data name="Auth.OrContinueWith" xml:space="preserve"><value>Veya şununla devam edin</value></data>
+  <data name="Auth.Error.InvalidLogin" xml:space="preserve"><value>Bu e-posta ve parola hiçbir hesapla eşleşmiyor.</value></data>
+  <data name="Auth.TwoFactor.Title" xml:space="preserve"><value>İki adımlı doğrulama</value></data>
+  <data name="Auth.TwoFactor.Heading" xml:space="preserve"><value>Bir adım daha.</value></data>
+  <data name="Auth.TwoFactor.Lede" xml:space="preserve"><value>Kimlik doğrulayıcı uygulamanızı açın ve The VI House için gösterdiği 6 haneli kodu girin.</value></data>
+  <data name="Auth.TwoFactor.CodeLabel" xml:space="preserve"><value>Doğrulama kodu</value></data>
+  <data name="Auth.TwoFactor.RememberMachine" xml:space="preserve"><value>Bu cihaza 30 gün güven</value></data>
+  <data name="Auth.TwoFactor.RememberMachineHint" xml:space="preserve"><value>Bunu yalnızca size ait olan bir cihazda işaretleyin — bir dahaki sefere bu adım atlanır.</value></data>
+  <data name="Auth.TwoFactor.Submit" xml:space="preserve"><value>Doğrula</value></data>
+  <data name="Auth.TwoFactor.UseRecoveryCode" xml:space="preserve"><value>Bunun yerine kurtarma kodu kullan</value></data>
+  <data name="Auth.TwoFactor.LostEverything" xml:space="preserve"><value>Telefonunuzu ve kodlarınızı mı kaybettiniz?</value></data>
+  <data name="Auth.Recovery.Title" xml:space="preserve"><value>Kurtarma kodu</value></data>
+  <data name="Auth.Recovery.Heading" xml:space="preserve"><value>Kurtarma kodu kullan</value></data>
+  <data name="Auth.Recovery.Lede" xml:space="preserve"><value>İki adımlı doğrulamayı açtığınızda kaydettiğiniz kodlardan birini girin. Her kod bir kez çalışır.</value></data>
+  <data name="Auth.Recovery.CodeLabel" xml:space="preserve"><value>Kurtarma kodu</value></data>
+  <data name="Auth.Recovery.Submit" xml:space="preserve"><value>Giriş yap</value></data>
+  <data name="Auth.Recovery.Note" xml:space="preserve"><value>Bu şekilde giriş yapmak hatırlanmaz — bir dahaki sefere doğrulama kodu istenir veya hesabınızdan yeni bir cihaz kurabilirsiniz.</value></data>
+  <data name="Auth.Lost.Title" xml:space="preserve"><value>Erişim kapalı</value></data>
+  <data name="Auth.Lost.Heading" xml:space="preserve"><value>Telefonunuzu ve kurtarma kodlarınızı kaybettiniz</value></data>
+  <data name="Auth.Lost.Lede" xml:space="preserve"><value>Bu durum düzeltilebilir ama otomatik olarak değil — ve bu bilinçli bir tercih. Sadece isteyerek iki adımlı doğrulamayı sıfırlatabilen biri, onu aşmanın bir yolu olurdu.</value></data>
+  <data name="Auth.Lost.Step1.Title" xml:space="preserve"><value>Hesabınızdaki adresten bize yazın</value></data>
+  <data name="Auth.Lost.Step1.Body" xml:space="preserve"><value>Giriş yaptığınız e-posta adresini kullanın. İlk kontrol ettiğimiz şey budur.</value></data>
+  <data name="Auth.Lost.Step2.Title" xml:space="preserve"><value>Sizin olduğunuzu doğrularız</value></data>
+  <data name="Auth.Lost.Step2.Body" xml:space="preserve"><value>Yalnızca hesap sahibinin bilebileceği ayrıntılar sorulacaktır. Sizinle doğrudan görüşmek isteyebiliriz.</value></data>
+  <data name="Auth.Lost.Step3.Title" xml:space="preserve"><value>Bir yönetici ikinci faktörünüzü sıfırlar</value></data>
+  <data name="Auth.Lost.Step3.Body" xml:space="preserve"><value>Ardından yeni bir kimlik doğrulayıcı kurar ve bir sonraki girişinizde yeni kurtarma kodları alırsınız. Her sıfırlama kaydedilir.</value></data>
+  <data name="Auth.Lost.Warning" xml:space="preserve"><value>The VI House'ta hiç kimse iki adımlı doğrulamayı uzaktan aşamaz ve kimse sizden kod istemez. İsteyen olursa, o biz değiliz.</value></data>
+  <data name="Auth.Lost.ContactCta" xml:space="preserve"><value>Bize ulaşın</value></data>
+  <data name="Auth.Lost.BackToLogin" xml:space="preserve"><value>Girişe dön</value></data>
+  <data name="Manage.TwoFactor.Title" xml:space="preserve"><value>İki adımlı doğrulama</value></data>
+  <data name="Manage.TwoFactor.On" xml:space="preserve"><value>İki adımlı doğrulama açık</value></data>
+  <data name="Manage.TwoFactor.Off" xml:space="preserve"><value>İki adımlı doğrulama kapalı</value></data>
+  <data name="Manage.TwoFactor.OnBody" xml:space="preserve"><value>Hesabınız her girişte kimlik doğrulayıcı uygulamanızdan bir kod ister.</value></data>
+  <data name="Manage.TwoFactor.CodesLeft" xml:space="preserve"><value>{0} kurtarma kodu kaldı</value></data>
+  <data name="Manage.TwoFactor.CodesLow" xml:space="preserve"><value>Kurtarma kodlarınız azalıyor. Yeni bir set oluşturun ve telefonunuz olmadan erişebileceğiniz bir yerde saklayın.</value></data>
+  <data name="Manage.TwoFactor.CodesNone" xml:space="preserve"><value>Hiç kurtarma kodunuz kalmadı. Kimlik doğrulayıcı uygulamanıza erişimi kaybetmeden yeni bir set oluşturun.</value></data>
+  <data name="Manage.TwoFactor.AddApp" xml:space="preserve"><value>Kimlik doğrulayıcı uygulama kur</value></data>
+  <data name="Manage.TwoFactor.ResetApp" xml:space="preserve"><value>Yeni cihaz kur</value></data>
+  <data name="Manage.TwoFactor.NewCodes" xml:space="preserve"><value>Yeni kurtarma kodları oluştur</value></data>
+  <data name="Manage.TwoFactor.Forget" xml:space="preserve"><value>Bu tarayıcıyı unut</value></data>
+  <data name="Manage.TwoFactor.Disable" xml:space="preserve"><value>İki adımlı doğrulamayı kapat</value></data>
+  <data name="Manage.Danger.Heading" xml:space="preserve"><value>Bunlara dikkat</value></data>
+
+  <data name="Home.Hero.Previous" xml:space="preserve"><value>Önceki slayt</value></data>
+  <data name="Home.Hero.Next" xml:space="preserve"><value>Sonraki slayt</value></data>
+  <data name="Admin.HeroSlide.Title" xml:space="preserve"><value>Ana Görsel Slaytları</value></data>
+  <data name="Admin.HeroSlide.New" xml:space="preserve"><value>Yeni Slayt</value></data>
+  <data name="Admin.HeroSlide.Preview" xml:space="preserve"><value>Ana sayfayı gör</value></data>
+  <data name="Admin.HeroSlide.Hint" xml:space="preserve"><value>Ana sayfadaki hero karusel panelleri, aşağıdaki sırayla gösterilir. Bir dilde metni olmayan slayt İngilizce gösterilir.</value></data>
+  <data name="Admin.HeroSlide.Empty" xml:space="preserve"><value>Henüz slayt yok. Siz ekleyene kadar ana sayfa hero içerik bloğunu gösterir.</value></data>
+  <data name="Admin.HeroSlide.Heading" xml:space="preserve"><value>Başlık</value></data>
+  <data name="Admin.HeroSlide.Languages" xml:space="preserve"><value>Diller</value></data>
+  <data name="Admin.HeroSlide.Schedule" xml:space="preserve"><value>Zamanlama</value></data>
+  <data name="Admin.HeroSlide.Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Admin.HeroSlide.Order" xml:space="preserve"><value>Sıra</value></data>
+  <data name="Admin.HeroSlide.NoImage" xml:space="preserve"><value>Görsel yok</value></data>
+  <data name="Admin.HeroSlide.Always" xml:space="preserve"><value>Her zaman</value></data>
+  <data name="Admin.HeroSlide.Hidden" xml:space="preserve"><value>Gizli</value></data>
+  <data name="Admin.HeroSlide.Scheduled" xml:space="preserve"><value>Zamanlanmış</value></data>
+  <data name="Admin.HeroSlide.Live" xml:space="preserve"><value>Yayında</value></data>
+  <data name="Admin.HeroSlide.MoveUp" xml:space="preserve"><value>Yukarı taşı</value></data>
+  <data name="Admin.HeroSlide.MoveDown" xml:space="preserve"><value>Aşağı taşı</value></data>
+  <data name="Admin.HeroSlide.ConfirmDelete" xml:space="preserve"><value>Bu slayt ve tüm çevirileri silinsin mi?</value></data>
+  <data name="Admin.HeroSlide.Delete" xml:space="preserve"><value>Sil</value></data>
+  <data name="Admin.HeroSlide.CreateHint" xml:space="preserve"><value>{0} başlığıyla başlayın — slayt oluşturulduktan sonra diğer diller kendi sekmelerini alır.</value></data>
+  <data name="Admin.HeroSlide.Subheading" xml:space="preserve"><value>Alt başlık</value></data>
+  <data name="Admin.HeroSlide.SortOrder" xml:space="preserve"><value>Sıra numarası</value></data>
+  <data name="Admin.HeroSlide.IsActive" xml:space="preserve"><value>Ana sayfada görünür</value></data>
+  <data name="Admin.HeroSlide.ImageLaterHint" xml:space="preserve"><value>Fotoğraf bir sonraki ekranda eklenir.</value></data>
+  <data name="Admin.HeroSlide.CreateSubmit" xml:space="preserve"><value>Slayt Oluştur</value></data>
+  <data name="Admin.HeroSlide.Cancel" xml:space="preserve"><value>Vazgeç</value></data>
+  <data name="Admin.HeroSlide.BackToList" xml:space="preserve"><value>Tüm slaytlar</value></data>
+  <data name="Admin.HeroSlide.Section.Image" xml:space="preserve"><value>Fotoğraf</value></data>
+  <data name="Admin.HeroSlide.NoImageYet" xml:space="preserve"><value>Henüz fotoğraf yok — slayt düz marka yeşili üzerinde görünür.</value></data>
+  <data name="Admin.HeroSlide.Upload" xml:space="preserve"><value>Yükle</value></data>
+  <data name="Admin.HeroSlide.ConfirmRemoveImage" xml:space="preserve"><value>Bu slaydın fotoğrafı kaldırılsın mı?</value></data>
+  <data name="Admin.HeroSlide.RemoveImage" xml:space="preserve"><value>Fotoğrafı kaldır</value></data>
+  <data name="Admin.HeroSlide.UploadHint" xml:space="preserve"><value>JPEG, PNG, WebP veya AVIF. Yatay ve en az 1600 piksel genişliğinde — hero tam genişlikte görünür.</value></data>
+  <data name="Admin.HeroSlide.Section.Settings" xml:space="preserve"><value>Slayt ayarları</value></data>
+  <data name="Admin.HeroSlide.ImageUrl" xml:space="preserve"><value>Görsel URL'si</value></data>
+  <data name="Admin.HeroSlide.ImageUrlDisabled" xml:space="preserve"><value>Yüklenmiş bir fotoğraf kullanılıyor. Bunun yerine URL yapıştırmak için önce onu kaldırın.</value></data>
+  <data name="Admin.HeroSlide.ImageUrlHint" xml:space="preserve"><value>/img/hero/lounge-1600.jpg gibi bir site yolu ya da https:// adresi.</value></data>
+  <data name="Admin.HeroSlide.PrimaryCtaUrl" xml:space="preserve"><value>Birincil buton bağlantısı</value></data>
+  <data name="Admin.HeroSlide.SecondaryCtaUrl" xml:space="preserve"><value>İkincil buton bağlantısı</value></data>
+  <data name="Admin.HeroSlide.CtaHint" xml:space="preserve"><value>Bağlantı hedefleri tüm dillerde aynıdır; buton metinleri aşağıda çevrilir.</value></data>
+  <data name="Admin.HeroSlide.VisibleFrom" xml:space="preserve"><value>Başlangıç (UTC)</value></data>
+  <data name="Admin.HeroSlide.VisibleUntil" xml:space="preserve"><value>Bitiş (UTC)</value></data>
+  <data name="Admin.HeroSlide.SaveSettings" xml:space="preserve"><value>Ayarları kaydet</value></data>
+  <data name="Admin.HeroSlide.Section.Copy" xml:space="preserve"><value>Metin — {0}</value></data>
+  <data name="Admin.HeroSlide.DefaultLanguage" xml:space="preserve"><value>varsayılan</value></data>
+  <data name="Admin.HeroSlide.NotTranslated" xml:space="preserve"><value>çevrilmedi</value></data>
+  <data name="Admin.HeroSlide.FallbackNotice" xml:space="preserve"><value>Burada henüz metin yok — bu dildeki ziyaretçiler şu anda {0} metnini görüyor.</value></data>
+  <data name="Admin.HeroSlide.Eyebrow" xml:space="preserve"><value>Üst başlık</value></data>
+  <data name="Admin.HeroSlide.Eyebrow.Hint" xml:space="preserve"><value>Başlığın üzerindeki küçük satır. Çoğu slayt bunu kullanmaz.</value></data>
+  <data name="Admin.HeroSlide.PrimaryCtaLabel" xml:space="preserve"><value>Birincil buton metni</value></data>
+  <data name="Admin.HeroSlide.SecondaryCtaLabel" xml:space="preserve"><value>İkincil buton metni</value></data>
+  <data name="Admin.HeroSlide.ImageAlt" xml:space="preserve"><value>Görsel açıklaması</value></data>
+  <data name="Admin.HeroSlide.ImageAlt.Hint" xml:space="preserve"><value>Ekran okuyucular için. Fotoğraf yalnızca başlığın arkasında atmosfer oluşturuyorsa boş bırakın.</value></data>
+  <data name="Admin.HeroSlide.SaveCopy" xml:space="preserve"><value>{0} metnini kaydet</value></data>
+  <data name="Admin.HeroSlide.ConfirmDeleteTranslation" xml:space="preserve"><value>Bu dildeki metin slayttan kaldırılsın mı?</value></data>
+  <data name="Admin.HeroSlide.DeleteTranslation" xml:space="preserve"><value>{0} metnini sil</value></data>
+  <data name="Admin.HeroSlide.Created" xml:space="preserve"><value>"{0}" oluşturuldu. Sonraki adımda fotoğrafı ve diğer dilleri ekleyin.</value></data>
+  <data name="Admin.HeroSlide.Saved" xml:space="preserve"><value>Ayarlar kaydedildi.</value></data>
+  <data name="Admin.HeroSlide.TranslationSaved" xml:space="preserve"><value>{0} metni kaydedildi.</value></data>
+  <data name="Admin.HeroSlide.TranslationDeleted" xml:space="preserve"><value>{0} metni kaldırıldı.</value></data>
+  <data name="Admin.HeroSlide.UnknownCulture" xml:space="preserve"><value>Bu, sitenin dillerinden biri değil.</value></data>
+  <data name="Admin.HeroSlide.CannotDeleteDefault" xml:space="preserve"><value>Varsayılan dil kaldırılamaz — diğer tüm diller ona geri döner.</value></data>
+  <data name="Admin.HeroSlide.ImageTypeOnly" xml:space="preserve"><value>Hero slaydı bir fotoğraf alır — JPEG, PNG, WebP veya AVIF.</value></data>
+  <data name="Admin.HeroSlide.ImageUploaded" xml:space="preserve"><value>Fotoğraf güncellendi.</value></data>
+  <data name="Admin.HeroSlide.ImageRemoved" xml:space="preserve"><value>Fotoğraf kaldırıldı.</value></data>
+  <data name="Admin.HeroSlide.AlreadyGone" xml:space="preserve"><value>Bu slayt artık mevcut değil.</value></data>
+  <data name="Admin.HeroSlide.Deleted" xml:space="preserve"><value>"{0}" silindi.</value></data>
+  <data name="Footer.Sessions" xml:space="preserve"><value>Oturumlar</value></data>
+  <data name="Footer.Journal" xml:space="preserve"><value>Journal</value></data>
+  <data name="Footer.Community" xml:space="preserve"><value>Topluluk</value></data>
+  <data name="Footer.Membership" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Footer.Benefits" xml:space="preserve"><value>Ayrıcalıklar</value></data>
+  <data name="Footer.MemberLogin" xml:space="preserve"><value>Üye Girişi</value></data>
+  <data name="Footer.NewsletterLede" xml:space="preserve"><value>Oturumlar, yeni kaynaklar ve retreat'ler hakkında güncellemeler alın.</value></data>
+  <data name="Home.Trust.BecomeMember" xml:space="preserve"><value>Üye Ol</value></data>
+  <data name="Home.Trust.LogosHeading" xml:space="preserve"><value>Şu şirketlerden kurucuların güvendiği yer</value></data>
 </root>

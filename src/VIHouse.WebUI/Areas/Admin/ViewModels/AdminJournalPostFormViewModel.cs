@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using VIHouse.Entities.Journal;
+using VIHouse.WebUI.Validation;
 
 namespace VIHouse.WebUI.Areas.Admin.ViewModels;
 
@@ -26,6 +27,7 @@ public class AdminJournalPostFormViewModel
     [Required]
     public string Body { get; set; } = default!;
 
+    [SiteImageUrl]
     [Display(Name = "Cover image URL")]
     public string? CoverImageUrl { get; set; }
 

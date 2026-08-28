@@ -1,38 +1,60 @@
-﻿@page
+@page
 @model LoginWith2faModel
+
 @{
-    ViewData["Title"] = "Two-factor authentication";
+    ViewData["Title"] = Loc["Auth.TwoFactor.Title"].Value;
 }
 
-<h1>@ViewData["Title"]</h1>
-<hr />
-<p>Your login is protected with an authenticator app. Enter your authenticator code below.</p>
-<div class="row">
-    <div class="col-md-4">
-        <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
-            <input asp-for="RememberMe" type="hidden" />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.TwoFactorCode" class="form-control" autocomplete="off" />
-                <label asp-for="Input.TwoFactorCode" class="form-label"></label>
-                <span asp-validation-for="Input.TwoFactorCode" class="text-danger"></span>
-            </div>
-            <div class="checkbox mb-3">
-                <label asp-for="Input.RememberMachine" class="form-label">
-                    <input asp-for="Input.RememberMachine" />
-                    @Html.DisplayNameFor(m => m.Input.RememberMachine)
-                </label>
-            </div>
-            <div>
-                <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-            </div>
-        </form>
+@*
+    Rebuilt from the stock scaffold, whose code input had no inputmode, no autocomplete, no autofocus
+    and no placeholder — so on a phone it opened a full QWERTY keyboard and never offered the code
+    the OS had just read out of the SMS or clipboard. Views/Onboarding/TwoFactor.cshtml already got
+    this right; this is the same input, and the two screens now behave identically.
+
+    The page model already strips spaces and dashes from the submitted value, so pasting "123 456"
+    works.
+*@
+<div class="auth-card">
+    <div class="auth-card__head">
+        <span class="auth-card__eyebrow">@Loc["Auth.TwoFactor.Title"]</span>
+        <h1 class="auth-card__title">@Loc["Auth.TwoFactor.Heading"]</h1>
+        <p class="auth-card__lede">@Loc["Auth.TwoFactor.Lede"]</p>
+    </div>
+
+    <form method="post" asp-route-returnUrl="@Model.ReturnUrl" class="auth-form">
+        <input asp-for="RememberMe" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="vih-alert vih-alert--danger" role="alert"></div>
+
+        <div class="auth-field">
+            <label class="auth-field__label" asp-for="Input.TwoFactorCode">@Loc["Auth.TwoFactor.CodeLabel"]</label>
+            <input class="auth-code-input" asp-for="Input.TwoFactorCode"
+                   autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*"
+                   placeholder="000000" autofocus />
+            <span class="auth-field__error" asp-validation-for="Input.TwoFactorCode"></span>
+        </div>
+
+        <div class="auth-field auth-field--check">
+            <label>
+                <input asp-for="Input.RememberMachine" />
+                <span>@Loc["Auth.TwoFactor.RememberMachine"]</span>
+            </label>
+            <p class="auth-field__hint">@Loc["Auth.TwoFactor.RememberMachineHint"]</p>
+        </div>
+
+        <button type="submit" class="btn btn--primary auth-form__submit">@Loc["Auth.TwoFactor.Submit"]</button>
+    </form>
+
+    <div class="auth-alt">
+        <p>
+            <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">
+                @Loc["Auth.TwoFactor.UseRecoveryCode"]
+            </a>
+        </p>
+        @* The path that did not exist at all before this pass. Someone who has lost both the phone
+           and the codes previously reached a dead end with nothing to do next. *@
+        <p><a asp-page="./RecoveryHelp">@Loc["Auth.TwoFactor.LostEverything"]</a></p>
     </div>
 </div>
-<p>
-    Don't have access to your authenticator device? You can
-    <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">log in with a recovery code</a>.
-</p>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

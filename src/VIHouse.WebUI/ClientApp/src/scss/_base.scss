@@ -96,4 +96,45 @@ a {
       border-color: var(--vih-cream);
     }
   }
+
+  // The light-ground counterpart to --ghost-dark. This was referenced from five places
+  // (Account/Ticket, Join/Index, Onboarding/Done, Account/Bookings, and hardcoded in
+  // modules/recoveryCodes.ts) but never defined anywhere — .admin-btn--ghost in _admin.scss is a
+  // different class on a different base. Until now every one of those rendered as bare .btn:
+  // transparent, `border: 1px solid transparent`, no background. The recovery-codes download button
+  // was effectively invisible.
+  &--ghost {
+    background: transparent;
+    color: var(--vih-ink);
+    border-color: var(--vih-line-on-light);
+
+    &:hover {
+      border-color: var(--vih-ink);
+    }
+  }
+
+  // Destructive actions — "Disable 2FA", "Reset authenticator key", "Delete personal data". These
+  // currently look identical to a primary action, which is exactly backwards for what they do.
+  &--danger {
+    background: transparent;
+    color: var(--vih-danger);
+    border-color: currentColor;
+
+    &:hover {
+      background: var(--vih-danger-bg);
+    }
+  }
+
+  // For buttons sitting inline with body copy rather than in a toolbar.
+  &--sm {
+    padding: 8px 16px;
+    font-size: var(--vih-text-2xs);
+  }
+
+  // Keyboard users need to see where they are on both the cream and the green grounds, and the
+  // default UA ring disappears against dark green.
+  &:focus-visible {
+    outline: 2px solid var(--vih-focus-ring);
+    outline-offset: 2px;
+  }
 }

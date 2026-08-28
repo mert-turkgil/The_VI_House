@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using VIHouse.Entities.Experiences;
+using VIHouse.WebUI.Validation;
 
 namespace VIHouse.WebUI.Areas.Admin.ViewModels;
 
@@ -55,6 +56,7 @@ public class AdminExperienceFormViewModel
     public ExperienceVisibility Visibility { get; set; } = ExperienceVisibility.Public;
 
     [StringLength(1000)]
+    [SiteImageUrl]
     [Display(Name = "Cover Image URL")]
     public string? CoverImageUrl { get; set; }
 

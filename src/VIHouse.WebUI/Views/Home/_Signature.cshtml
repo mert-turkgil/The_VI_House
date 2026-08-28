@@ -14,12 +14,17 @@
                     {
                         <div class="swiper-slide">
                             <a class="home-signature__card" href="/experiences/@e.Slug">
-                                <div class="home-signature__image" style="@(string.IsNullOrEmpty(e.CoverImageUrl) ? "" : $"background-image:url('{e.CoverImageUrl}')")">
+                                <div class="home-signature__image">
+                                    <partial name="_CoverImage" model="@(new CoverImageViewModel {
+                                        Url = e.CoverImageUrl,
+                                        Ratio = "16x9",
+                                        Sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+                                    })" />
                                     <span class="home-signature__badge">Signature</span>
                                 </div>
                                 <div class="home-signature__body">
                                     <h3>The VI House — @e.City</h3>
-                                    <span class="home-signature__meta">@e.City, @e.Country &middot; @e.DurationLabel</span>
+                                    <span class="home-signature__meta">@e.City, @e.Country &middot; @Loc[e.DurationKey, e.DurationDays]</span>
                                     @if (e.FromPriceMinor is not null)
                                     {
                                         <span class="home-signature__price">From @MoneyFormatter.Format(e.FromPriceMinor.Value, e.Currency!)</span>

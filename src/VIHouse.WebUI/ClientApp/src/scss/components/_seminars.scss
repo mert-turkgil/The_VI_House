@@ -40,11 +40,9 @@
 }
 
 .seminar-card__image {
+  // Sizing moved to .cover (Views/Shared/_CoverImage.cshtml) so the box is reserved before
+  // the photograph loads. This is now only a positioning context for the badge.
   position: relative;
-  height: 180px;
-  background-color: var(--vih-green-800);
-  background-size: cover;
-  background-position: center;
 }
 
 .seminar-card__badge {
@@ -135,10 +133,9 @@
 }
 
 .seminar-detail__cover {
-  height: clamp(220px, 34vw, 400px);
-  background-size: cover;
-  background-position: center;
-  background-color: var(--vih-green-800);
+  // Sizing moved to .cover (Views/Shared/_CoverImage.cshtml) so the box is reserved before
+  // the photograph loads. This is now only a positioning context for the badge.
+  position: relative;
 }
 
 .seminar-detail__summary {

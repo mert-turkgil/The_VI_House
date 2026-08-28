@@ -1,45 +1,99 @@
+@using System.Globalization
+@inject IConfiguration Configuration
+@*
+    asp-area="" on every link below is required, not decorative — see the comment in _Nav.cshtml.
+    This footer renders inside the Identity area as well, where an ambient area="Identity" would
+    otherwise make every one of these resolve to nothing and emit href="".
+*@
+@{
+    var currentPath = Context.Request.Path + Context.Request.QueryString;
+    string CultureUrl(string culture) => Url.Action("Set", "Culture", new { culture, returnUrl = currentPath })!;
+    var currentCulture = SiteCultures.Describe(CultureInfo.CurrentUICulture.Name);
+
+    // Social profiles come from configuration rather than being hardcoded here, and each icon is
+    // rendered only if its URL is actually set. An icon linking to a profile that does not exist yet
+    // is worse than no icon: it looks live, and it 404s the first person who clicks it.
+    var social = new (string Icon, string Key, string Label)[]
+    {
+        ("instagram", "Site:Social:Instagram", "Instagram"),
+        ("linkedin", "Site:Social:LinkedIn", "LinkedIn"),
+        ("twitter", "Site:Social:X", "X"),
+        ("youtube", "Site:Social:YouTube", "YouTube"),
+    }
+    .Select(s => (s.Icon, s.Label, Url: Configuration[s.Key]))
+    .Where(s => !string.IsNullOrWhiteSpace(s.Url))
+    .ToList();
+}
+
 <footer class="site-footer">
     <div class="container">
         <div class="site-footer__grid">
             <div class="site-footer__brand">
-                <partial name="_Crest" />
-                <div>
+                <div class="site-footer__brand-head">
+                    <partial name="_Crest" />
                     <div class="site-footer__wordmark">The VI House</div>
-                    <p>@Loc["Footer.Tagline"]</p>
                 </div>
+                <p class="site-footer__tagline">@Loc["Footer.Tagline"]</p>
+
+                @if (social.Count > 0)
+                {
+                    <ul class="site-footer__social">
+                        @foreach (var link in social)
+                        {
+                            <li>
+                                @* The icon is aria-hidden by definition (see _Icon.cshtml), so the
+                                   accessible name has to live on the link itself. *@
+                                <a href="@link.Url" target="_blank" rel="noopener me" aria-label="@link.Label">
+                                    <partial name="_Icon" model="@link.Icon" />
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }
             </div>
 
             <div class="site-footer__col">
                 <h4>@Loc["Footer.Explore"]</h4>
                 <ul>
-                    <li><a asp-controller="Experiences" asp-action="Index">@Loc["Nav.Experiences"]</a></li>
-                    <li><a asp-controller="Membership" asp-action="Index">@Loc["Nav.Membership"]</a></li>
-                    <li><a asp-controller="About" asp-action="Index">@Loc["Nav.About"]</a></li>
+                    <li><a asp-area="" asp-controller="Experiences" asp-action="Index">@Loc["Nav.Experiences"]</a></li>
+                    <li><a asp-area="" asp-controller="Seminars" asp-action="Index">@Loc["Footer.Sessions"]</a></li>
+                    <li><a asp-area="" asp-controller="Journal" asp-action="Index">@Loc["Footer.Journal"]</a></li>
+                    <li><a asp-area="" asp-controller="MemberDirectory" asp-action="Index">@Loc["Footer.Community"]</a></li>
+                </ul>
+            </div>
+
+            <div class="site-footer__col">
+                <h4>@Loc["Footer.Membership"]</h4>
+                <ul>
+                    <li><a asp-area="" asp-controller="Membership" asp-action="Index">@Loc["Footer.Benefits"]</a></li>
+                    <li><a asp-area="" asp-controller="Application" asp-action="Index">@Loc["Nav.ApplyToJoin"]</a></li>
+                    <li><a asp-area="Identity" asp-page="/Account/Login">@Loc["Footer.MemberLogin"]</a></li>
                 </ul>
             </div>
 
             <div class="site-footer__col">
                 <h4>@Loc["Footer.Company"]</h4>
                 <ul>
-                    <li><a asp-controller="About" asp-action="Index">@Loc["Footer.AboutUs"]</a></li>
-                    <li><a asp-controller="Contact" asp-action="Index">@Loc["Footer.Contact"]</a></li>
+                    <li><a asp-area="" asp-controller="About" asp-action="Index">@Loc["Footer.AboutUs"]</a></li>
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">@Loc["Footer.Contact"]</a></li>
                 </ul>
             </div>
 
             <div class="site-footer__col">
                 <h4>@Loc["Footer.Support"]</h4>
                 <ul>
-                    <li><a asp-controller="Faq" asp-action="Index">@Loc["Footer.Faq"]</a></li>
-                    <li><a asp-controller="Contact" asp-action="Index">@Loc["Footer.ContactUs"]</a></li>
+                    <li><a asp-area="" asp-controller="Faq" asp-action="Index">@Loc["Footer.Faq"]</a></li>
+                    <li><a asp-area="" asp-controller="Contact" asp-action="Index">@Loc["Footer.ContactUs"]</a></li>
                 </ul>
             </div>
 
             <div class="site-footer__newsletter">
                 <h4>@Loc["Footer.NewsletterHeading"]</h4>
+                <p class="site-footer__newsletter-lede">@Loc["Footer.NewsletterLede"]</p>
                 @* TODO: wire to a real newsletter endpoint once a mailing-list provider is chosen — inert for now rather than a dead POST. *@
                 <form class="site-footer__newsletter-form" onsubmit="return false;">
                     <input type="email" placeholder="@Loc["Footer.NewsletterPlaceholder"]" aria-label="@Loc["Footer.NewsletterPlaceholder"]" required />
-                    <button type="submit" class="btn btn--primary" aria-label="@Loc["Footer.NewsletterSubmit"]">&rarr;</button>
+                    <button type="submit" aria-label="@Loc["Footer.NewsletterSubmit"]">&rarr;</button>
                 </form>
                 <p class="site-footer__newsletter-note">@Loc["Footer.NewsletterNote"]</p>
             </div>
@@ -47,12 +101,26 @@
 
         <div class="site-footer__bottom">
             <span>&copy; @DateTime.UtcNow.Year The VI House Group Ltd. @Loc["Footer.RightsReserved"]</span>
+
             <ul class="site-footer__legal-links">
-                <li><a asp-controller="Legal" asp-action="Terms">@Loc["Footer.Terms"]</a></li>
-                <li><a asp-controller="Legal" asp-action="Privacy">@Loc["Footer.Privacy"]</a></li>
-                <li><a asp-controller="Legal" asp-action="Cookies">@Loc["Footer.Cookies"]</a></li>
-                <li><a asp-controller="Legal" asp-action="Refund">@Loc["Footer.RefundPolicy"]</a></li>
+                <li><a asp-area="" asp-controller="Legal" asp-action="Terms">@Loc["Footer.Terms"]</a></li>
+                <li><a asp-area="" asp-controller="Legal" asp-action="Privacy">@Loc["Footer.Privacy"]</a></li>
+                <li><a asp-area="" asp-controller="Legal" asp-action="Cookies">@Loc["Footer.Cookies"]</a></li>
+                <li><a asp-area="" asp-controller="Legal" asp-action="Refund">@Loc["Footer.RefundPolicy"]</a></li>
             </ul>
+
+            @* A second language switcher, where the reference design puts it. Plain links to the same
+               CultureController action the header uses — no JS, and it works as a right-click-open
+               like any other link. *@
+            <nav class="site-footer__lang" aria-label="@Loc["Nav.LanguageLabel"]">
+                @foreach (var lang in SiteCultures.All)
+                {
+                    <a class="@(lang.Name == currentCulture.Name ? "site-footer__lang-link active" : "site-footer__lang-link")"
+                       href="@CultureUrl(lang.Name)"
+                       lang="@lang.Name"
+                       aria-current="@(lang.Name == currentCulture.Name ? "true" : null)">@lang.NativeLabel</a>
+                }
+            </nav>
         </div>
     </div>
 </footer>

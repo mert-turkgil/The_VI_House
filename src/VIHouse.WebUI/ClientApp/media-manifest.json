@@ -1,0 +1,228 @@
+{
+  "_readme": [
+    "Source of truth for the site's photography. The image files themselves are NOT in the repository",
+    "(wwwroot/img/ is gitignored) — this manifest plus scripts/fetch-media.mjs is what makes them",
+    "reproducible. Run `npm run fetch:media` from ClientApp/ after a fresh clone.",
+    "",
+    "DEPLOYMENT: a clean CI checkout has no images. `npm run fetch:media` must run before",
+    "`dotnet publish`, or wwwroot/img must be populated on the server. This is the same class of trap",
+    "as the untracked appsettings.Development.json — the build will succeed and the site will render",
+    "empty covers rather than failing loudly.",
+    "",
+    "LICENSING: Unsplash and Pexels both permit commercial use with no attribution required. Credit is",
+    "recorded here anyway, because knowing where an asset came from is worth more than the licence",
+    "strictly demands — and because if a photo is ever pulled, this is the only record of what it was.",
+    "",
+    "Resizing is done by the Unsplash CDN via the w= parameter at fetch time, which is why this needs",
+    "no sharp/ImageSharp dependency. Two widths only: 800 for cards, 1600 for heroes."
+  ],
+
+  "outputRoot": "../wwwroot/img",
+  "widths": [800, 1600],
+  "quality": 78,
+
+  "assets": [
+    {
+      "target": "experiences/izmir-founder-experience-2026",
+      "source": "unsplash",
+      "id": "photo-1533105079780-92b9be482077",
+      "credit": "Unsplash — Aegean coastline",
+      "alt": "Whitewashed terraces stepping down to the Aegean at dusk"
+    },
+    {
+      "target": "experiences/london-growth-mastermind-2026",
+      "source": "unsplash",
+      "id": "photo-1513635269975-59663e0ac1ad",
+      "credit": "Unsplash — London rooftops",
+      "alt": "London skyline in low winter light"
+    },
+    {
+      "target": "experiences/zurich-founder-dinner-2026",
+      "source": "unsplash",
+      "id": "photo-1515488764276-beab7607c1e6",
+      "credit": "Unsplash — Zurich lakeside",
+      "alt": "Lake Zurich at blue hour with the old town beyond"
+    },
+    {
+      "target": "experiences/lisbon-founder-retreat-2026",
+      "source": "unsplash",
+      "id": "photo-1585208798174-6cedd86e019a",
+      "credit": "Unsplash — Lisbon",
+      "alt": "Tiled Lisbon façades on a steep street"
+    },
+    {
+      "target": "experiences/singapore-growth-summit-2026",
+      "source": "unsplash",
+      "id": "photo-1525625293386-3f8f99389edd",
+      "credit": "Unsplash — Singapore",
+      "alt": "Singapore's waterfront towers reflected at night"
+    },
+    {
+      "target": "experiences/miami-founder-weekend-2025",
+      "source": "unsplash",
+      "id": "photo-1506966953602-c20cc11f75e3",
+      "credit": "Unsplash — Miami",
+      "alt": "Palms against a pale Miami sky"
+    },
+    {
+      "target": "experiences/berlin-founder-summit-2026",
+      "source": "unsplash",
+      "id": "photo-1560969184-10fe8719e047",
+      "credit": "Unsplash — Berlin",
+      "alt": "Berlin architecture in flat morning light"
+    },
+
+    {
+      "target": "gallery/room-boardroom",
+      "source": "unsplash",
+      "id": "photo-1497366754035-f200968a6e72",
+      "credit": "Unsplash — meeting room",
+      "alt": "An empty boardroom set for a small working session"
+    },
+    {
+      "target": "gallery/room-roundtable",
+      "source": "unsplash",
+      "id": "photo-1524758631624-e2822e304c36",
+      "credit": "Unsplash — roundtable",
+      "alt": "A roundtable laid out for a dozen people"
+    },
+    {
+      "target": "gallery/dinner",
+      "source": "unsplash",
+      "id": "photo-1414235077428-338989a2e8c0",
+      "credit": "Unsplash — private dinner",
+      "alt": "A long table set for a private dinner"
+    },
+    {
+      "target": "gallery/workshop",
+      "source": "unsplash",
+      "id": "photo-1552664730-d307ca884978",
+      "credit": "Unsplash — workshop",
+      "alt": "A small group working through a problem on a whiteboard"
+    },
+    {
+      "target": "gallery/speaker",
+      "source": "unsplash",
+      "id": "photo-1475721027785-f74eccf877e2",
+      "credit": "Unsplash — speaker",
+      "alt": "A speaker addressing a seated group in a bright room"
+    },
+
+    {
+      "target": "journal/why-we-built-the-vi-house",
+      "source": "unsplash",
+      "id": "photo-1499750310107-5fef28a66643",
+      "credit": "Unsplash — writing desk",
+      "alt": ""
+    },
+    {
+      "target": "journal/the-quiet-signal-reading-capital-before-it-moves",
+      "source": "unsplash",
+      "id": "photo-1454165804606-c3d57bc86b40",
+      "credit": "Unsplash — charts on a desk",
+      "alt": ""
+    },
+    {
+      "target": "journal/inside-the-room-what-makes-a-founder-session-work",
+      "source": "unsplash",
+      "id": "photo-1521737711867-e3b97375f902",
+      "credit": "Unsplash — group in discussion",
+      "alt": ""
+    },
+    {
+      "target": "journal/building-in-public-without-burning-out",
+      "source": "unsplash",
+      "id": "photo-1434030216411-0b793f4b4173",
+      "credit": "Unsplash — quiet workspace",
+      "alt": ""
+    },
+
+    {
+      "target": "hero/lounge",
+      "source": "unsplash",
+      "id": "photo-1600585154340-be6161a56a0c",
+      "credit": "Unsplash — lounge at dusk",
+      "alt": "A low-lit lounge with city windows at dusk"
+    },
+    {
+      "target": "hero/skyline",
+      "source": "unsplash",
+      "id": "photo-1519671482749-fd09be7ccebf",
+      "credit": "Unsplash — city skyline at night",
+      "alt": "A city skyline seen from a high floor at night"
+    },
+    {
+      "target": "hero/retreat",
+      "source": "unsplash",
+      "id": "photo-1568084680786-a84f91d1153c",
+      "credit": "Unsplash — retreat terrace",
+      "alt": "A terrace and pool overlooking the sea at golden hour"
+    },
+
+    {
+      "target": "ecosystem/webinars",
+      "source": "unsplash",
+      "id": "photo-1540575467063-178a50c2df87",
+      "credit": "Unsplash — conference speaker",
+      "alt": "A speaker on stage in front of a seated audience"
+    },
+    {
+      "target": "ecosystem/community",
+      "source": "unsplash",
+      "id": "photo-1522071820081-009f0129c71c",
+      "credit": "Unsplash — networking",
+      "alt": "A group talking in a bright open workspace"
+    },
+    {
+      "target": "ecosystem/marketplace",
+      "source": "unsplash",
+      "id": "photo-1531482615713-2afd69097998",
+      "credit": "Unsplash — working at a laptop",
+      "alt": "A laptop and notebook on a desk by a window"
+    },
+    {
+      "target": "ecosystem/retreats",
+      "source": "unsplash",
+      "id": "photo-1571896349842-33c89424de2d",
+      "credit": "Unsplash — retreat villa",
+      "alt": "A villa terrace and pool at sunset"
+    },
+
+    {
+      "target": "people/voice-a",
+      "source": "unsplash",
+      "id": "photo-1507003211169-0a1dd7228f2d",
+      "credit": "Unsplash — portrait",
+      "alt": ""
+    },
+    {
+      "target": "people/voice-b",
+      "source": "unsplash",
+      "id": "photo-1573496359142-b8d87734a5a2",
+      "credit": "Unsplash — portrait",
+      "alt": ""
+    },
+    {
+      "target": "people/voice-c",
+      "source": "unsplash",
+      "id": "photo-1500648767791-00dcc994a43e",
+      "credit": "Unsplash — portrait",
+      "alt": ""
+    },
+
+    {
+      "target": "people/member-a",
+      "source": "unsplash",
+      "id": "photo-1472099645785-5658abf4ff4e",
+      "credit": "Unsplash — portrait",
+      "alt": ""
+    },
+    {
+      "target": "people/member-b",
+      "source": "unsplash",
+      "id": "photo-1494790108377-be9c29b29330",
+      "credit": "Unsplash — portrait",
+      "alt": ""
+    }
+  ]
+}

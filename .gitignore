@@ -27,6 +27,11 @@ efbundle*
 ## and in backups, never in the repository. ##
 **/App_Media/
 
+## Site photography. The binaries are fetched, not committed — ClientApp/media-manifest.json is the
+## committed source of truth and `npm run fetch:media` reproduces this folder. Must be run before
+## `dotnet publish` on a clean checkout, or every cover falls back to the crest placeholder. ##
+**/wwwroot/img/
+
 ## Node / npm / Vite (src/VIHouse.WebUI/ClientApp) ##
 node_modules/
 npm-debug.log*

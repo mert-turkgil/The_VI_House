@@ -1,0 +1,49 @@
+@*
+    The one place a cover photograph is rendered. Replaces the inline
+    style="background-image:url('@x')" that was repeated at ten call sites.
+
+    Three reasons it is a real <img> and not a background:
+
+    1. A background image cannot carry alt text, cannot be lazy-loaded, cannot declare its own
+       dimensions, and cannot offer a srcset. All four of those are free here.
+    2. width/height are set from the aspect ratio so the browser reserves the box before the bytes
+       arrive. Without that, every late-loading photo shifts the page under the reader — and it
+       would also invalidate any scroll-linked animation's trigger positions.
+    3. Security. `style="background-image:url('@x')"` HTML-encodes the value, but the browser
+       HTML-*decodes* before the CSS parser runs, so a quote in an admin-authored URL round-trips
+       and can break out of url() into arbitrary CSS declarations. There is no CSP on this site yet,
+       which makes that a stored CSS-injection primitive. <img src="@x"> has no equivalent escape.
+
+    ALT TEXT. Pass Alt: null for a decorative cover — one sitting directly above the heading that
+    already names it. That is the common case and it is correct: a screen reader announcing the same
+    phrase twice is worse than silence. Pass real Alt only when the image carries information the
+    surrounding text does not (gallery photographs, for instance, where ExperienceImage.AltText
+    exists precisely for this). Never auto-fill Alt from a title.
+
+    Model: (string? Url, string? Alt, string Ratio, string Sizes, bool Eager)
+*@
+@model VIHouse.WebUI.ViewModels.Shared.CoverImageViewModel
+
+<div class="cover cover--@Model.Ratio">
+    @if (string.IsNullOrWhiteSpace(Model.Url))
+    {
+        @* No image set. A crest on the brand green reads as a deliberate placeholder rather than a
+           broken box, which matters because covers are admin-entered and will often be empty. *@
+        <div class="cover__fallback" aria-hidden="true">
+            <partial name="_Crest" />
+        </div>
+    }
+    else
+    {
+        <img class="cover__img"
+             src="@Model.Src"
+             srcset="@Model.SrcSet"
+             sizes="@Model.Sizes"
+             alt="@(Model.Alt ?? string.Empty)"
+             width="@Model.Width"
+             height="@Model.Height"
+             loading="@(Model.Eager ? "eager" : "lazy")"
+             decoding="async"
+             @(Model.Eager ? "fetchpriority=high" : "") />
+    }
+</div>

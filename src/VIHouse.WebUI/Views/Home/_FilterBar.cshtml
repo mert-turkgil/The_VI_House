@@ -1,9 +1,23 @@
+@{
+    // Trending topics are presentational for now: the public listing filters on city and status
+    // only (see ExperiencesController.Index), so each chip carries the city/status it can actually
+    // act on and its label is the editorial hook. Swap this array for a view model the day the
+    // listing learns about topics.
+    var trending = new[] { "E-commerce", "Brand Building", "AI Tools", "Copywriting", "Paid Ads", "Trading", "Funding" };
+}
+
 <section class="home-filter">
     <div class="container">
+        <p class="home-filter__eyebrow">Find what matters to you</p>
         <form class="home-filter__form" method="get" action="/experiences">
             <div class="home-filter__field">
-                <label for="filter-city">City</label>
-                <input type="text" id="filter-city" name="city" placeholder="Any City" autocomplete="off" />
+                <label for="filter-city">I'm looking for…</label>
+                <select id="filter-city" name="city">
+                    <option value="">All Cities</option>
+                    <option value="London">London</option>
+                    <option value="Istanbul">Istanbul</option>
+                    <option value="Dubai">Dubai</option>
+                </select>
             </div>
             <div class="home-filter__field">
                 <label for="filter-status">Status</label>
@@ -15,7 +29,40 @@
                     <option value="ComingSoon">Coming Soon</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn--primary home-filter__submit">Search</button>
+            <div class="home-filter__field">
+                <label for="filter-format">Format</label>
+                <select id="filter-format" name="format">
+                    <option value="">All Formats</option>
+                    <option value="Retreat">Retreat</option>
+                    <option value="Seminar">Seminar</option>
+                    <option value="Dinner">Dinner</option>
+                </select>
+            </div>
+            <div class="home-filter__field">
+                <label for="filter-price">Price</label>
+                <select id="filter-price" name="price">
+                    <option value="">Any Price</option>
+                    <option value="0-1000">Up to £1,000</option>
+                    <option value="1000-5000">£1,000 – £5,000</option>
+                    <option value="5000-">£5,000+</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn--primary home-filter__submit">
+                Search
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m20 20-3.5-3.5" stroke-linecap="round" />
+                </svg>
+            </button>
         </form>
+        <div class="home-filter__trending">
+            <span class="home-filter__trending-label">Trending:</span>
+            <ul class="home-filter__chips">
+                @foreach (var topic in trending)
+                {
+                    <li><a href="/experiences?topic=@Uri.EscapeDataString(topic)">@topic</a></li>
+                }
+            </ul>
+        </div>
     </div>
 </section>

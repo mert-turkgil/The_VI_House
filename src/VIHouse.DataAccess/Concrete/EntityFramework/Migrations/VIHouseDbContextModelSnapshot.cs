@@ -1008,6 +1008,106 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("ContentPages", (string)null);
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Content.HeroSlide", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("ImageStorageKey")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PrimaryCtaUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("SecondaryCtaUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("VisibleFromUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("VisibleUntilUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive", "SortOrder");
+
+                    b.ToTable("HeroSlides", (string)null);
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Content.HeroSlideTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Culture")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Eyebrow")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("Heading")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("HeroSlideId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ImageAlt")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("PrimaryCtaLabel")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("SecondaryCtaLabel")
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("Subheading")
+                        .HasMaxLength(600)
+                        .HasColumnType("nvarchar(600)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HeroSlideId", "Culture")
+                        .IsUnique();
+
+                    b.ToTable("HeroSlideTranslations", (string)null);
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Experiences.Experience", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1019,6 +1119,10 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.Property<DateTimeOffset?>("ApplicationOpenAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("AudienceTags")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
@@ -1032,6 +1136,10 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .IsRequired()
                         .HasMaxLength(2)
                         .HasColumnType("nvarchar(2)");
+
+                    b.Property<string>("CoverImageAlt")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("CoverImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -1369,6 +1477,10 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.Property<int>("Category")
                         .HasColumnType("int");
+
+                    b.Property<string>("CoverImageAlt")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("CoverImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -2161,6 +2273,15 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Content.HeroSlideTranslation", b =>
+                {
+                    b.HasOne("VIHouse.Entities.Content.HeroSlide", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("HeroSlideId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Experiences.ExperienceFaq", b =>
                 {
                     b.HasOne("VIHouse.Entities.Experiences.Experience", null)
@@ -2327,6 +2448,11 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
             modelBuilder.Entity("VIHouse.Entities.Content.ContentPage", b =>
                 {
                     b.Navigation("Blocks");
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Content.HeroSlide", b =>
+                {
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("VIHouse.Entities.Experiences.Experience", b =>
