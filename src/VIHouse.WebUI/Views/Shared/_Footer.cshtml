@@ -1,5 +1,8 @@
 @using System.Globalization
+@using VIHouse.Business.Options
+@using Microsoft.Extensions.Options
 @inject IConfiguration Configuration
+@inject IOptions<FeatureOptions> Features
 @*
     asp-area="" on every link below is required, not decorative — see the comment in _Nav.cshtml.
     This footer renders inside the Identity area as well, where an ambient area="Identity" would
@@ -58,7 +61,12 @@
                     <li><a asp-area="" asp-controller="Experiences" asp-action="Index">@Loc["Nav.Experiences"]</a></li>
                     <li><a asp-area="" asp-controller="Seminars" asp-action="Index">@Loc["Footer.Sessions"]</a></li>
                     <li><a asp-area="" asp-controller="Journal" asp-action="Index">@Loc["Footer.Journal"]</a></li>
-                    <li><a asp-area="" asp-controller="MemberDirectory" asp-action="Index">@Loc["Footer.Community"]</a></li>
+                    @* Only while the directory is open. A footer link to a page that answers 404 is
+                       worse than a shorter footer — see FeatureOptions. *@
+                    @if (Features.Value.MemberDirectory)
+                    {
+                        <li><a asp-area="" asp-controller="MemberDirectory" asp-action="Index">@Loc["Footer.Community"]</a></li>
+                    }
                 </ul>
             </div>
 

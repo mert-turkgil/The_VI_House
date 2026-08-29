@@ -1,4 +1,6 @@
+using System.Buffers.Text;
 using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
@@ -7,6 +9,7 @@ using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Applications;
 using VIHouse.Entities.Commerce;
+using VIHouse.Entities.Experiences;
 using VIHouse.Entities.Notifications;
 using VIHouse.Entities.Users;
 
@@ -26,6 +29,7 @@ public class PaymentService(
     ICapacityService capacity,
     IPaymentProvider paymentProvider,
     IEmailService emailService,
+    ISmsService smsService,
     INotificationService notificationService,
     IOptions<SiteOptions> siteOptions,
     UserManager<ApplicationUser> userManager) : IPaymentService
@@ -236,17 +240,15 @@ public class PaymentService(
         }
 
         await applicationService.MarkPaidAsync(payment.ApplicationId, ct);
-
-        if (await userManager.FindByIdAsync(payment.UserId!.Value.ToString()) is { } user && user.MemberStatus != MemberStatus.Active)
-        {
-            user.MemberStatus = MemberStatus.Active;
-            await userManager.UpdateAsync(user);
-        }
-
         await payments.SaveChangesAsync(ct);
 
         var confirmedApplication = await applications.GetByIdAsync(payment.ApplicationId, ct);
         var confirmedExperience = await experiences.GetByIdAsync(payment.ExperienceId, ct);
+
+        // The money has landed — this is the moment the account becomes one its owner can use.
+        if (await userManager.FindByIdAsync(payment.UserId!.Value.ToString()) is { } member)
+            await OpenAccountAsync(member, booking, confirmedApplication, confirmedExperience, ct);
+
         if (confirmedApplication is not null && confirmedExperience is not null)
         {
             await emailService.SendAsync(
@@ -291,7 +293,67 @@ public class PaymentService(
                 "PaymentFailed", application.Email, "We couldn't complete your payment",
                 new PaymentFailedEmailModel(application.FirstName, experience.Title, invitationUrl),
                 nameof(Payment), payment.Id, ct);
+
+            // Their seat went back into inventory when the checkout expired, so this is time-sensitive
+            // in a way the approval email isn't — worth the second channel.
+            await smsService.SendAsync(
+                "PaymentFailed", application.Phone,
+                $"The VI House: your payment for {experience.City} didn't complete. Your invitation is still open: {invitationUrl}",
+                nameof(Payment), payment.Id, ct);
         }
+    }
+
+    /// <summary>
+    /// Payment landed — turn the placeholder created at checkout into an account its owner can use.
+    ///
+    /// Everything here is deliberately on this side of the payment. The account itself has to exist
+    /// earlier (Stripe needs someone to attach the charge to), but the Member role, the Active status
+    /// and the only link that lets them choose a password are granted by money arriving, not by
+    /// starting a checkout — so an abandoned attempt leaves nothing behind that looks like a member.
+    ///
+    /// Runs from the webhook rather than the browser redirect because this is the path that always
+    /// runs, even when the tab is closed at the bank's 3-D Secure page.
+    /// </summary>
+    private async Task OpenAccountAsync(
+        ApplicationUser user, Booking booking, Application? application, Experience? experience, CancellationToken ct)
+    {
+        if (!await userManager.IsInRoleAsync(user, Roles.Member))
+            await userManager.AddToRoleAsync(user, Roles.Member);
+
+        if (user.MemberStatus != MemberStatus.Active)
+        {
+            user.MemberStatus = MemberStatus.Active;
+            await userManager.UpdateAsync(user);
+        }
+
+        if (!await userManager.HasPasswordAsync(user))
+        {
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            // Same unpadded URL-safe alphabet WebEncoders.Base64UrlEncode produces, which is what the
+            // ResetPassword page decodes with — using the framework primitive here would drag
+            // ASP.NET Core into the Business layer. MembershipService does the same, for the same reason.
+            var encoded = Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
+            var setupUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/Identity/Account/ResetPassword?code={encoded}";
+
+            // The success page shows this link too, but that tab is easily lost — closed at the bank,
+            // opened on a phone that then rang. Without this email a paid-up member's only way in is
+            // to work out for themselves that they should use "forgot password" on an account they
+            // never knowingly created.
+            await emailService.SendAsync(
+                "WelcomeSetup", user.Email!, "Set up your VI House account",
+                new WelcomeSetupEmailModel(user.FirstName, setupUrl, null),
+                nameof(ApplicationUser), user.Id, ct);
+        }
+
+        // The text carries the booking reference, not the setup link: a password token stays on the
+        // one channel we already treat as the account's own, and the reference is the part somebody
+        // actually wants on their phone.
+        await smsService.SendAsync(
+            "BookingConfirmed", application?.Phone,
+            $"The VI House: payment received. Booking {booking.BookingReference}"
+                + (experience is null ? "" : $" for {experience.City}")
+                + ". Your account is open — check your email to set a password.",
+            nameof(Booking), booking.Id, ct);
     }
 
     private async Task<(long AmountMinor, string? Error)> TryApplyPromoAsync(string code, Guid experienceId, long baseAmountMinor, CancellationToken ct)
@@ -342,8 +404,10 @@ public class PaymentService(
         if (!result.Succeeded)
             throw new InvalidOperationException($"Could not provision member account for {application.Email}: {string.Join("; ", result.Errors.Select(e => e.Description))}");
 
-        await userManager.AddToRoleAsync(user, Roles.Member);
-
+        // No role and no Active status here on purpose. This account exists only because Stripe needs
+        // something to attach the charge to; it is opened for real in OpenAccountAsync, when the
+        // payment actually lands. Someone who reaches the card form and walks away leaves a shell
+        // behind, not a member.
         application.UserId = user.Id;
         await applications.SaveChangesAsync(ct);
 

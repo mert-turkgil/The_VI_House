@@ -784,4 +784,17 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Beitrag gelöscht.</value></data>
   <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>Dieser Beitrag existiert nicht mehr.</value></data>
   <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>Das konnte nicht gespeichert werden.</value></data>
+  <data name="Membership.HowItWorks" xml:space="preserve"><value>So werden Sie Mitglied</value></data>
+  <data name="Membership.Step1.Title" xml:space="preserve"><value>Bewerben</value></data>
+  <data name="Membership.Step1.Body" xml:space="preserve"><value>Erzählen Sie uns, wer Sie sind und was Sie aufbauen. Jede Bewerbung wird von Hand gelesen.</value></data>
+  <data name="Membership.Step2.Title" xml:space="preserve"><value>Wir prüfen</value></data>
+  <data name="Membership.Step2.Body" xml:space="preserve"><value>Wir schauen, wer bereits im Raum ist — und ob der Raum der richtige für Sie ist.</value></data>
+  <data name="Membership.Step3.Title" xml:space="preserve"><value>Ein privater Zahlungslink</value></data>
+  <data name="Membership.Step3.Body" xml:space="preserve"><value>Werden Sie angenommen, senden wir Ihnen einen eigenen Link. Er gilt nur für Sie und läuft ab.</value></data>
+  <data name="Membership.Step4.Title" xml:space="preserve"><value>Sie sind dabei</value></data>
+  <data name="Membership.Step4.Body" xml:space="preserve"><value>Ihr Konto entsteht mit der Zahlung. Ihre Tickets und alles Weitere zur Experience warten darin.</value></data>
+  <data name="Membership.SeeExperiences" xml:space="preserve"><value>Experiences ansehen</value></data>
+  <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Mitgliedschaft wird nicht verkauft. Sie kommt mit dem Raum, in den Sie aufgenommen werden.</value></data>
+  <data name="Account.NavJoinTheHouse" xml:space="preserve"><value>Dem House beitreten</value></data>
+  <data name="Account.NavCommunity" xml:space="preserve"><value>Community</value></data>
 </root>

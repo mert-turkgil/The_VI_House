@@ -784,4 +784,17 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Yazı silindi.</value></data>
   <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>Bu yazı artık mevcut değil.</value></data>
   <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>Bu kaydedilemedi.</value></data>
+  <data name="Membership.HowItWorks" xml:space="preserve"><value>Nasıl katılırsınız</value></data>
+  <data name="Membership.Step1.Title" xml:space="preserve"><value>Başvurun</value></data>
+  <data name="Membership.Step1.Body" xml:space="preserve"><value>Kim olduğunuzu ve ne inşa ettiğinizi anlatın. Her başvuru tek tek okunur.</value></data>
+  <data name="Membership.Step2.Title" xml:space="preserve"><value>Değerlendiririz</value></data>
+  <data name="Membership.Step2.Body" xml:space="preserve"><value>Odada kimlerin olduğuna ve odanın size uygun olup olmadığına bakarız.</value></data>
+  <data name="Membership.Step3.Title" xml:space="preserve"><value>Özel ödeme bağlantısı</value></data>
+  <data name="Membership.Step3.Body" xml:space="preserve"><value>Kabul edilirseniz size özel bir bağlantı göndeririz. Yalnızca size aittir ve süresi dolar.</value></data>
+  <data name="Membership.Step4.Title" xml:space="preserve"><value>Aramıza katılırsınız</value></data>
+  <data name="Membership.Step4.Body" xml:space="preserve"><value>Hesabınız ödemeyle birlikte oluşturulur. Biletleriniz ve deneyim için gereken her şey içinde sizi bekler.</value></data>
+  <data name="Membership.SeeExperiences" xml:space="preserve"><value>Deneyimleri gör</value></data>
+  <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Üyelik satılmaz. Kabul edildiğiniz odayla birlikte gelir.</value></data>
+  <data name="Account.NavJoinTheHouse" xml:space="preserve"><value>House'a katıl</value></data>
+  <data name="Account.NavCommunity" xml:space="preserve"><value>Topluluk</value></data>
 </root>

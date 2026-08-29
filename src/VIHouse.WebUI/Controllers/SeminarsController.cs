@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Localization;
+using Microsoft.AspNetCore.Identity;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
+using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.ViewModels.Seminars;
 
 namespace VIHouse.WebUI.Controllers;
@@ -23,6 +25,8 @@ namespace VIHouse.WebUI.Controllers;
 [Route("sessions")]
 public class SeminarsController(
     ISeminarService seminarService,
+    IMembershipService membershipService,
+    UserManager<ApplicationUser> userManager,
     IStringLocalizer<SharedResource> loc) : Controller
 {
     [HttpGet("")]
@@ -33,7 +37,7 @@ public class SeminarsController(
             // Staff are included alongside members so the listing an editor sees matches the one
             // they are publishing into. Drafts stay out of it for everybody — the admin index is
             // where unfinished work belongs.
-            IncludeMembersOnly = ViewerIsMember || ViewerIsStaff,
+            IncludeMembersOnly = ViewerIsStaff || await ViewerIsMemberAsync(ct),
             Take = 60,
         }, ct);
 
@@ -46,7 +50,7 @@ public class SeminarsController(
     [HttpGet("{slug}")]
     public async Task<IActionResult> Details(string slug, CancellationToken ct)
     {
-        var seminar = await seminarService.GetPublicDetailBySlugAsync(slug, ViewerIsMember, ViewerIsStaff, ct);
+        var seminar = await seminarService.GetPublicDetailBySlugAsync(slug, await ViewerIsMemberAsync(ct), ViewerIsStaff, ct);
         if (seminar is null) return NotFound();
 
         var access = await seminarService.GetAccessAsync(seminar, CurrentUserId, ct);
@@ -68,7 +72,7 @@ public class SeminarsController(
     [EnableRateLimiting("checkout")]
     public async Task<IActionResult> Enrol(string slug, CancellationToken ct)
     {
-        var seminar = await seminarService.GetPublicDetailBySlugAsync(slug, ViewerIsMember, ViewerIsStaff, ct);
+        var seminar = await seminarService.GetPublicDetailBySlugAsync(slug, await ViewerIsMemberAsync(ct), ViewerIsStaff, ct);
         if (seminar is null) return NotFound();
 
         var userId = CurrentUserId;
@@ -142,7 +146,7 @@ public class SeminarsController(
     [HttpGet("media/{id:guid}")]
     public async Task<IActionResult> Media(Guid id, CancellationToken ct)
     {
-        var file = await seminarService.OpenMediaAsync(id, CurrentUserId, ViewerIsMember, ViewerIsStaff, ct);
+        var file = await seminarService.OpenMediaAsync(id, CurrentUserId, await ViewerIsMemberAsync(ct), ViewerIsStaff, ct);
         if (file is null) return NotFound();
 
         return PhysicalFile(file.PhysicalPath, file.ContentType, enableRangeProcessing: true);
@@ -153,7 +157,13 @@ public class SeminarsController(
     private Guid? CurrentUserId =>
         Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
 
-    private bool ViewerIsMember => User.IsInRole(Roles.Member);
+    /// <summary>
+    /// Membership, not the Member role. The role is granted to anyone who pays — a single-ticket
+    /// holder included — so checking it here let a ticket-holder into every members-only session.
+    /// See MemberAccess for the distinction.
+    /// </summary>
+    private Task<bool> ViewerIsMemberAsync(CancellationToken ct) =>
+        MemberAccess.HasActiveMembershipAsync(User, membershipService, userManager, ct);
 
     /// <summary>Any admin-side role. Staff read seminar media without enrolling, so an editor can
     /// preview the article they just wrote instead of seeing their own images as broken links.</summary>

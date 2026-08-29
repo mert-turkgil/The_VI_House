@@ -51,6 +51,7 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
     public DbSet<ContentPage> ContentPages => Set<ContentPage>();
     public DbSet<ContentBlock> ContentBlocks => Set<ContentBlock>();
     public DbSet<HeroSlide> HeroSlides => Set<HeroSlide>();
+    public DbSet<MediaAsset> MediaAssets => Set<MediaAsset>();
     public DbSet<HeroSlideTranslation> HeroSlideTranslations => Set<HeroSlideTranslation>();
 
     public DbSet<MembershipPlan> MembershipPlans => Set<MembershipPlan>();
@@ -72,6 +73,7 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
     public DbSet<CommunityLink> CommunityLinks => Set<CommunityLink>();
 
     public DbSet<EmailLog> EmailLogs => Set<EmailLog>();
+    public DbSet<SmsLog> SmsLogs => Set<SmsLog>();
     public DbSet<AuditLogEntry> AuditLogEntries => Set<AuditLogEntry>();
     public DbSet<ConsentRecord> ConsentRecords => Set<ConsentRecord>();
 

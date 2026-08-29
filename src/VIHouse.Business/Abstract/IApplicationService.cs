@@ -13,10 +13,25 @@ public interface IApplicationService
     Task MarkUnderReviewAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
     Task ShortlistAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 
-    /// <summary>Shortlisted -> Approved. Issues a 14-day single-use Invitation and sends the approval email, all in one save (brief §28-29).</summary>
-    Task ApproveAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+    /// <summary>
+    /// Shortlisted (or Waitlisted) -> Approved. Issues a 14-day single-use Invitation and sends the
+    /// private payment link by email and text message, all in one save (brief §28-29).
+    /// </summary>
+    Task<InvitationDeliveryResult> ApproveAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>
+    /// Sends the payment link again — for the applicant who deleted the email, changed address, or
+    /// let it run out. An expired link is replaced with a fresh one rather than resent; a link that
+    /// has already been paid with is refused.
+    /// </summary>
+    Task<InvitationDeliveryResult> ResendInvitationAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 
     Task RejectAsync(Guid id, Guid adminUserId, string? reason, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>
+    /// Shortlisted -> Waitlisted. Not a verdict: a waitlisted application can still be approved or
+    /// rejected later, which is the whole point of the state (see ApplicationService's transition table).
+    /// </summary>
     Task WaitlistAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 
     // --- System-triggered (Stripe checkout flow, not an admin action — see PaymentService) ---
@@ -28,3 +43,10 @@ public interface IApplicationService
     Task AddTagAsync(Guid applicationId, string label, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
     Task RemoveTagAsync(Guid applicationId, Guid tagId, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 }
+
+/// <summary>
+/// What happened when the payment link was sent, in words an admin can act on.
+/// </summary>
+/// <param name="Sent">True if it reached the applicant by at least one channel. False means they have
+/// no way to pay yet, which is worth noticing before the seat is counted as filled.</param>
+public record InvitationDeliveryResult(bool Sent, string Message);

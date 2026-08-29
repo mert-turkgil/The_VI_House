@@ -1,4 +1,4 @@
-@model ContentPage
+@model AdminContentPageViewModel
 @{
     ViewData["Title"] = Model.Title;
 }
@@ -8,95 +8,245 @@
     <div class="admin-status-message">@status</div>
 }
 
-<p style="color:#666; font-size:0.875rem; margin-top:-16px; margin-bottom:24px;">
-    SectionKey must match what the page's view expects (e.g. "hero", "feature-strip", "ecosystem", "stats", "trust" for the homepage) — this screen edits content, not layout.
+<div class="admin-toolbar">
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; All pages</a>
+    <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Home" asp-action="Index" target="_blank" rel="noopener">View the page</a>
+</div>
+
+<p class="admin-hint">
+    The words on the homepage. Each section below is the one directly above it on the site, in the
+    same order. Leave a row's first field empty to remove that row; the blank row at the end of each
+    list is how you add one.
 </p>
 
-@foreach (var block in Model.Blocks)
+@foreach (var block in Model.Sections)
 {
-    <div class="admin-card" style="margin-bottom:16px;">
-        <h2>@block.SectionKey</h2>
-        <form asp-action="UpdateBlock" method="post" class="admin-form">
+    var schema = block.Schema;
+    <div class="admin-card" style="margin-bottom:20px;">
+        <h2>@(schema?.Title ?? block.SectionKey)</h2>
+        @if (schema is not null)
+        {
+            <p class="admin-hint" style="margin-top:-8px;">@schema.Description</p>
+        }
+        else
+        {
+            <p class="admin-hint" style="margin-top:-8px;">
+                This panel has no form for <code>@block.SectionKey</code>, so it is edited as raw JSON below.
+            </p>
+        }
+
+        @if (block.ParseError is not null)
+        {
+            @* Never silently show an empty editor over content that is still live: saving it would
+               replace a working section with nothing. *@
+            <div class="admin-notice">
+                The stored content for this section could not be read (@block.ParseError). Fix it in
+                the raw JSON below — saving the form above would overwrite it.
+            </div>
+        }
+
+        <form asp-action="UpdateSection" method="post" class="admin-form">
             <input type="hidden" name="Id" value="@block.Id" />
+            <input type="hidden" name="PageId" value="@Model.PageId" />
             <input type="hidden" name="PageSlug" value="@Model.Slug" />
-            <div class="admin-form__grid">
-                <div class="admin-field">
-                    <label>Section Key</label>
-                    <input name="SectionKey" value="@block.SectionKey" required />
-                </div>
-                <div class="admin-field">
-                    <label>Sort Order</label>
-                    <input name="SortOrder" type="number" value="@block.SortOrder" />
-                </div>
+            <input type="hidden" name="SectionKey" value="@block.SectionKey" />
+            <input type="hidden" name="SortOrder" value="@block.SortOrder" />
+
+            @if (schema is null || schema.UsesHeading)
+            {
                 <div class="admin-field">
                     <label>Heading</label>
                     <input name="Heading" value="@block.Heading" />
                 </div>
+            }
+
+            @if (schema is null || schema.UsesSubheading)
+            {
                 <div class="admin-field">
-                    <label>Subheading</label>
+                    <label>@(block.SectionKey == "trust" ? "Eyebrow" : "Subheading")</label>
                     <input name="Subheading" value="@block.Subheading" />
                 </div>
+            }
+
+            @if (schema is null || schema.UsesBody)
+            {
                 <div class="admin-field">
-                    <label>CTA Label</label>
-                    <input name="CtaLabel" value="@block.CtaLabel" />
+                    <label>Body</label>
+                    <textarea name="BodyText" rows="3">@block.BodyText</textarea>
                 </div>
+            }
+
+            @if (schema is null || schema.UsesCta)
+            {
+                <div class="admin-form__grid">
+                    <div class="admin-field">
+                        <label>Button label</label>
+                        <input name="CtaLabel" value="@block.CtaLabel" />
+                    </div>
+                    <div class="admin-field">
+                        <label>Button link</label>
+                        <input name="CtaUrl" value="@block.CtaUrl" placeholder="/experiences" />
+                    </div>
+                </div>
+            }
+
+            @if (schema?.Rows is { } rows)
+            {
+                <h3 class="admin-section-heading" style="font-size:0.9rem;">@rows.RowLabel@(block.Rows.Count == 1 ? "" : "s")</h3>
+
+                @* Existing rows, then one blank one. The blank row is the "add" button: fill it in
+                   and save. No JavaScript, and nothing to go wrong with client-side row indexes. *@
+                @for (var i = 0; i <= block.Rows.Count; i++)
+                {
+                    var row = i < block.Rows.Count ? block.Rows[i] : new AdminContentRowViewModel();
+                    var isBlank = i == block.Rows.Count;
+
+                    <div class="admin-panel" style="margin-bottom:12px;">
+                        <div class="admin-form__grid">
+                            @foreach (var field in rows.Fields)
+                            {
+                                var label = field switch
+                                {
+                                    "imageUrl" => "Image",
+                                    "imageAlt" => "Image description",
+                                    "avatarUrl" => "Photograph",
+                                    "linkLabel" => "Link label",
+                                    "linkUrl" => "Link",
+                                    _ => char.ToUpperInvariant(field[0]) + field[1..],
+                                };
+                                var isLong = field is "description" or "quote";
+
+                                <div class="admin-field" style="@(isLong ? "grid-column:1 / -1;" : null)">
+                                    <label>@label</label>
+                                    @if (isLong)
+                                    {
+                                        <textarea name="Rows[@i][@field]" rows="2">@row[field]</textarea>
+                                    }
+                                    else
+                                    {
+                                        <input name="Rows[@i][@field]" value="@row[field]"
+                                               placeholder="@(isBlank && field == rows.Fields[0] ? $"New {rows.RowLabel.ToLowerInvariant()}…" : null)" />
+                                    }
+                                </div>
+                            }
+                        </div>
+                        @if (!isBlank && row[rows.Fields[0]] is { Length: > 0 } primary)
+                        {
+                            <p class="admin-field__hint">Clear "@primary" from the @rows.Fields[0] field to remove this @rows.RowLabel.ToLowerInvariant().</p>
+                        }
+                    </div>
+                }
+            }
+
+            @if (schema?.Rows is null)
+            {
                 <div class="admin-field">
-                    <label>CTA URL</label>
-                    <input name="CtaUrl" value="@block.CtaUrl" />
+                    <label>Extra JSON</label>
+                    <textarea name="ExtraJson" rows="6" style="font-family:monospace; font-size:0.8125rem;">@block.ExtraJson</textarea>
+                    <p class="admin-field__hint">Checked before saving — invalid JSON is refused rather than blanking the section.</p>
                 </div>
-                <div class="admin-field">
-                    <label>Image URL</label>
-                    <input name="ImageUrl" value="@block.ImageUrl" />
-                </div>
-            </div>
-            <div class="admin-field">
-                <label>Body Text</label>
-                <textarea name="BodyText" rows="3">@block.BodyText</textarea>
-            </div>
-            <div class="admin-field">
-                <label>Extra JSON (structured content — e.g. feature/stat/testimonial lists)</label>
-                <textarea name="ExtraJson" rows="5" style="font-family:monospace; font-size:0.8125rem;">@block.ExtraJson</textarea>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button type="submit" class="admin-btn">Save Block</button>
+            }
+
+            <div style="display:flex; gap:10px; align-items:center;">
+                <button type="submit" class="admin-btn">Save @(schema?.Title ?? block.SectionKey)</button>
             </div>
         </form>
-        <form asp-action="RemoveBlock" method="post" style="margin-top:10px;" onsubmit="return confirm('Remove this block?');">
-            <input type="hidden" name="pageId" value="@Model.Id" />
+
+        @if (schema?.Rows is not null && !string.IsNullOrWhiteSpace(block.ExtraJson))
+        {
+            @* Kept for the moments a form cannot help with: reordering a long list, or pasting a
+               section wholesale from somewhere else. Read-only here — the form is the way in. *@
+            <details style="margin-top:12px;">
+                <summary style="cursor:pointer; font-size:0.8125rem; color:#666;">Stored JSON</summary>
+                <pre style="font-size:0.75rem; overflow:auto; background:#f6f5f1; padding:12px; border-radius:6px;">@block.ExtraJson</pre>
+            </details>
+        }
+
+        <form asp-action="RemoveBlock" method="post" style="margin-top:12px;"
+              onsubmit="return confirm('Remove the @(schema?.Title ?? block.SectionKey) section? The homepage will stop rendering it.');">
+            <input type="hidden" name="pageId" value="@Model.PageId" />
             <input type="hidden" name="blockId" value="@block.Id" />
             <input type="hidden" name="pageSlug" value="@Model.Slug" />
-            <button type="submit" class="admin-btn admin-btn--danger">Remove Block</button>
+            <button type="submit" class="admin-btn admin-btn--danger">Remove section</button>
         </form>
     </div>
 }
 
+@* --- Add a section ------------------------------------------------------------------------------ *@
+@{
+    var present = Model.Sections.Select(s => s.SectionKey).ToHashSet(StringComparer.OrdinalIgnoreCase);
+    var missing = ContentSectionSchema.All.Where(s => !present.Contains(s.SectionKey)).ToList();
+}
+
+@if (missing.Count > 0)
+{
+    <div class="admin-card" style="margin-bottom:20px;">
+        <h2>Add a section</h2>
+        <p class="admin-hint" style="margin-top:-8px;">Sections the homepage can render that this page does not have yet.</p>
+        @foreach (var candidate in missing)
+        {
+            <form asp-action="AddBlock" method="post" class="admin-inline-form">
+                <input type="hidden" name="PageId" value="@Model.PageId" />
+                <input type="hidden" name="PageSlug" value="@Model.Slug" />
+                <input type="hidden" name="SectionKey" value="@candidate.SectionKey" />
+                <input type="hidden" name="SortOrder" value="@(Model.Sections.Count + 1)" />
+                <button type="submit" class="admin-btn admin-btn--ghost">+ @candidate.Title</button>
+            </form>
+        }
+    </div>
+}
+
+@* --- Images ------------------------------------------------------------------------------------- *@
 <div class="admin-card">
-    <h2>Add Block</h2>
-    <form asp-action="AddBlock" method="post" class="admin-form">
-        <input type="hidden" name="PageId" value="@Model.Id" />
-        <input type="hidden" name="PageSlug" value="@Model.Slug" />
-        <div class="admin-form__grid">
-            <div class="admin-field">
-                <label>Section Key</label>
-                <input name="SectionKey" required />
-            </div>
-            <div class="admin-field">
-                <label>Sort Order</label>
-                <input name="SortOrder" type="number" value="0" />
-            </div>
-            <div class="admin-field">
-                <label>Heading</label>
-                <input name="Heading" />
-            </div>
-            <div class="admin-field">
-                <label>Subheading</label>
-                <input name="Subheading" />
-            </div>
-        </div>
-        <div class="admin-field">
-            <label>Body Text</label>
-            <textarea name="BodyText" rows="3"></textarea>
-        </div>
-        <button type="submit" class="admin-btn">Add Block</button>
+    <h2>Images</h2>
+    <p class="admin-hint" style="margin-top:-8px;">
+        Upload once, then paste the address into any section's image field. Stored outside the site's
+        static files, so an image added here works in production as well as locally.
+    </p>
+
+    <form asp-action="UploadAsset" method="post" enctype="multipart/form-data" class="admin-inline-form">
+        <input type="hidden" name="pageSlug" value="@Model.Slug" />
+        <input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif,image/gif" required />
+        <input type="text" name="title" maxlength="200" placeholder="Label (optional)" />
+        <button type="submit" class="admin-btn">Upload</button>
     </form>
+
+    @if (Model.Assets.Count > 0)
+    {
+        <table class="admin-table" style="margin-top:16px;">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Image</th>
+                    <th>Address</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var asset in Model.Assets)
+                {
+                    var url = $"/media/asset/{asset.Id}";
+                    <tr>
+                        <td style="width:90px;">
+                            <img src="@url" alt="" width="72" height="48"
+                                 style="width:72px; height:48px; object-fit:cover; border-radius:4px; display:block;" />
+                        </td>
+                        <td>
+                            @(asset.Title ?? asset.OriginalFileName)
+                            <div style="font-size:0.72rem; opacity:0.6;">@((asset.SizeBytes / 1024).ToString("N0")) KB · @asset.CreatedAt.ToString("d MMM yyyy")</div>
+                        </td>
+                        <td><input value="@url" readonly onclick="this.select();" style="font-family:monospace; font-size:0.75rem;" /></td>
+                        <td>
+                            <form asp-action="DeleteAsset" method="post"
+                                  onsubmit="return confirm('Delete this image? Any section still using it will show a broken image — this panel cannot tell which sections point at it.');">
+                                <input type="hidden" name="id" value="@asset.Id" />
+                                <input type="hidden" name="pageSlug" value="@Model.Slug" />
+                                <button type="submit" class="admin-btn admin-btn--danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>

@@ -8,7 +8,9 @@ namespace VIHouse.Business.Abstract;
 /// </summary>
 public interface IEmailService
 {
-    Task SendAsync<TModel>(
+    /// <returns>True only if the message actually went out. Most callers ignore this — the log is the
+    /// record — but the ones that tell an admin what just happened need to know which it was.</returns>
+    Task<bool> SendAsync<TModel>(
         string templateKey, string recipientEmail, string subject, TModel model,
         string? relatedEntityType = null, Guid? relatedEntityId = null, CancellationToken ct = default);
 }

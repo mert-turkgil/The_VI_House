@@ -11,7 +11,7 @@ public class EmailService(
     IEmailLogRepository emailLogs,
     ILogger<EmailService> logger) : IEmailService
 {
-    public async Task SendAsync<TModel>(
+    public async Task<bool> SendAsync<TModel>(
         string templateKey, string recipientEmail, string subject, TModel model,
         string? relatedEntityType = null, Guid? relatedEntityId = null, CancellationToken ct = default)
     {
@@ -44,5 +44,6 @@ public class EmailService(
         }
 
         await emailLogs.SaveChangesAsync(ct);
+        return log.Status == EmailStatus.Sent;
     }
 }

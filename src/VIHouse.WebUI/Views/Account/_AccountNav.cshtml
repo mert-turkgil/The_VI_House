@@ -1,8 +1,11 @@
 @using VIHouse.DataAccess.Identity
 @using VIHouse.Business.Abstract
+@using VIHouse.Business.Options
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Options
 @inject IMembershipService MembershipService
 @inject UserManager<ApplicationUser> UserManager
+@inject IOptions<FeatureOptions> Features
 @{
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     string NavClass(string action) => string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase) ? "active" : "";
@@ -10,11 +13,7 @@
     // The Member role is granted to anyone who pays — including a single-event ticket holder — so it
     // can't decide whether to show the members-only links. Only an active Membership can. Showing a
     // link that immediately bounces the visitor back is worse than not showing it.
-    var hasMembership = false;
-    if (User.Identity?.IsAuthenticated == true && UserManager.GetUserId(User) is { } id && Guid.TryParse(id, out var userId))
-    {
-        hasMembership = await MembershipService.GetCurrentMembershipAsync(userId) is not null;
-    }
+    var hasMembership = await MemberAccess.HasActiveMembershipAsync(User, MembershipService, UserManager);
 }
 <nav class="account-manage__nav" aria-label="Account">
     <a class="@NavClass("Index")" asp-controller="Account" asp-action="Index">@Loc["Account.NavProfile"]</a>
@@ -23,13 +22,21 @@
     @if (hasMembership)
     {
         <a class="@NavClass("Card")" asp-controller="Account" asp-action="Card">@Loc["Card.NavLabel"]</a>
-        <a class="@NavClass("Community")" asp-controller="Account" asp-action="Community">Community</a>
-        <a asp-controller="MemberDirectory" asp-action="Index">@Loc["Nav.Members"]</a>
+        @if (Features.Value.Community)
+        {
+            <a class="@NavClass("Community")" asp-controller="Account" asp-action="Community">@Loc["Account.NavCommunity"]</a>
+        }
+        @if (Features.Value.MemberDirectory)
+        {
+            <a asp-controller="MemberDirectory" asp-action="Index">@Loc["Nav.Members"]</a>
+        }
     }
     <a class="@NavClass("Notifications")" asp-controller="Account" asp-action="Notifications">@Loc["Notif.Title"]</a>
     @if (!hasMembership)
     {
-        <a asp-controller="Membership" asp-action="Index">Become a member</a>
+        @* Membership is not sold; it is applied for. This points at the application rather than at a
+           plan list — see Controllers/MembershipController and FeatureOptions.MembershipSales. *@
+        <a asp-controller="Application" asp-action="Index">@Loc["Account.NavJoinTheHouse"]</a>
     }
     <a asp-area="Identity" asp-page="/Account/Manage/Index">@Loc["Account.NavSecurity"]</a>
 </nav>

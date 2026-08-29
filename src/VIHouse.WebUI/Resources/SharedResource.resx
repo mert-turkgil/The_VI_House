@@ -784,4 +784,17 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Post deleted.</value></data>
   <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>That post no longer exists.</value></data>
   <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>That could not be saved.</value></data>
+  <data name="Membership.HowItWorks" xml:space="preserve"><value>How you join</value></data>
+  <data name="Membership.Step1.Title" xml:space="preserve"><value>Apply</value></data>
+  <data name="Membership.Step1.Body" xml:space="preserve"><value>Tell us who you are and what you are building. Every application is read by hand.</value></data>
+  <data name="Membership.Step2.Title" xml:space="preserve"><value>We review</value></data>
+  <data name="Membership.Step2.Body" xml:space="preserve"><value>We look at who is already in the room, and whether the room is right for you.</value></data>
+  <data name="Membership.Step3.Title" xml:space="preserve"><value>A private payment link</value></data>
+  <data name="Membership.Step3.Body" xml:space="preserve"><value>If you are accepted we send you a link of your own. It is yours alone and it expires.</value></data>
+  <data name="Membership.Step4.Title" xml:space="preserve"><value>You are in</value></data>
+  <data name="Membership.Step4.Body" xml:space="preserve"><value>Your account is created with your payment. Your tickets and everything you need for the experience are waiting in it.</value></data>
+  <data name="Membership.SeeExperiences" xml:space="preserve"><value>See the experiences</value></data>
+  <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Membership is not sold. It comes with the room you are accepted into.</value></data>
+  <data name="Account.NavJoinTheHouse" xml:space="preserve"><value>Join the House</value></data>
+  <data name="Account.NavCommunity" xml:space="preserve"><value>Community</value></data>
 </root>

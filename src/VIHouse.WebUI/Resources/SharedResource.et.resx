@@ -784,4 +784,17 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Postitus kustutatud.</value></data>
   <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>Seda postitust enam pole.</value></data>
   <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>Seda ei õnnestunud salvestada.</value></data>
+  <data name="Membership.HowItWorks" xml:space="preserve"><value>Kuidas liituda</value></data>
+  <data name="Membership.Step1.Title" xml:space="preserve"><value>Kandideeri</value></data>
+  <data name="Membership.Step1.Body" xml:space="preserve"><value>Räägi meile, kes sa oled ja mida ehitad. Iga avaldus loetakse käsitsi läbi.</value></data>
+  <data name="Membership.Step2.Title" xml:space="preserve"><value>Me vaatame üle</value></data>
+  <data name="Membership.Step2.Body" xml:space="preserve"><value>Vaatame, kes juba ruumis on ja kas see ruum sobib sinule.</value></data>
+  <data name="Membership.Step3.Title" xml:space="preserve"><value>Privaatne makselink</value></data>
+  <data name="Membership.Step3.Body" xml:space="preserve"><value>Kui sind vastu võetakse, saadame sulle isikliku lingi. See kehtib ainult sulle ja aegub.</value></data>
+  <data name="Membership.Step4.Title" xml:space="preserve"><value>Sa oled sees</value></data>
+  <data name="Membership.Step4.Body" xml:space="preserve"><value>Sinu konto luuakse koos maksega. Piletid ja kõik kogemuseks vajalik ootavad seal.</value></data>
+  <data name="Membership.SeeExperiences" xml:space="preserve"><value>Vaata kogemusi</value></data>
+  <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Liikmelisust ei müüda. See tuleb koos ruumiga, kuhu sind vastu võetakse.</value></data>
+  <data name="Account.NavJoinTheHouse" xml:space="preserve"><value>Liitu Housega</value></data>
+  <data name="Account.NavCommunity" xml:space="preserve"><value>Kogukond</value></data>
 </root>

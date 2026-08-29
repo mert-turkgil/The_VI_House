@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Community;
@@ -24,7 +26,8 @@ public class AccountController(
     ISeminarService seminarService,
     IMembershipService membershipService,
     INotificationService notificationService,
-    IRepository<CommunityLink> communityLinks) : Controller
+    IRepository<CommunityLink> communityLinks,
+    IOptions<FeatureOptions> features) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -103,6 +106,11 @@ public class AccountController(
     [HttpGet("community")]
     public async Task<IActionResult> Community(CancellationToken ct)
     {
+        // The community layer is a later chapter of the brief and is switched off at the moment.
+        // A 404 rather than the "open to members" message below, because while the flag is off it
+        // is not open to members either — telling someone to buy their way in would be a lie.
+        if (!features.Value.Community) return NotFound();
+
         var userId = CurrentUserId();
         var membership = await membershipService.GetCurrentMembershipAsync(userId, ct);
         if (membership is null)

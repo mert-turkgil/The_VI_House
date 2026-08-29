@@ -1,0 +1,80 @@
+@using VIHouse.Entities.Commerce
+@model List<AdminPromoCodeListItemViewModel>
+@{
+    ViewData["Title"] = "Promo Codes";
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<div class="admin-toolbar">
+    <a class="admin-btn" asp-action="Create">+ New Code</a>
+</div>
+
+<p class="admin-hint">
+    Applied at checkout against the ticket price. A code that has been redeemed is switched off
+    rather than deleted, so the discount behind an old booking stays explainable.
+</p>
+
+@if (Model.Count == 0)
+{
+    <p>No promo codes yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Discount</th>
+                <th>Applies to</th>
+                <th>Used</th>
+                <th>Expires</th>
+                <th>State</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var code in Model)
+            {
+                <tr>
+                    <td><a asp-action="Edit" asp-route-id="@code.Id"><code>@code.Code</code></a></td>
+                    <td>@code.ValueLabel</td>
+                    <td>@(code.ExperienceTitle ?? "Any experience")</td>
+                    <td>@code.RedemptionCount@(code.MaxRedemptions is null ? "" : $" / {code.MaxRedemptions}")</td>
+                    <td style="font-size:0.75rem;">@(code.ExpiresAt?.ToString("d MMM yyyy") ?? "—")</td>
+                    <td>
+                        @* "Usable" rather than "Active": a code can be ticked active and still be
+                           refused because it expired or ran out, and that is exactly the case
+                           somebody is trying to understand when they open this screen. *@
+                        @if (code.IsUsable)
+                        {
+                            <span class="admin-badge admin-badge--open">Usable</span>
+                        }
+                        else if (!code.IsActive)
+                        {
+                            <span class="admin-badge admin-badge--closed">Off</span>
+                        }
+                        else if (code.ExpiresAt is not null && code.ExpiresAt <= DateTimeOffset.UtcNow)
+                        {
+                            <span class="admin-badge admin-badge--draft">Expired</span>
+                        }
+                        else
+                        {
+                            <span class="admin-badge admin-badge--draft">Fully redeemed</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@code.Id" method="post"
+                              onsubmit="return confirm('Delete &quot;@code.Code&quot;? A code that has already been redeemed is switched off instead.');"
+                              style="display:inline;">
+                            <button type="submit" class="admin-btn admin-btn--danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

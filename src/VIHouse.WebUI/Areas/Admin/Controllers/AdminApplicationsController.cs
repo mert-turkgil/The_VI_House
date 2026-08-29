@@ -15,6 +15,9 @@ public class AdminApplicationsController(
     IInvitationRepository invitations,
     IPaymentRepository payments,
     IPaymentProvider paymentProvider,
+    IEmailLogRepository emailLogs,
+    ISmsLogRepository smsLogs,
+    ISmsService smsService,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
     public async Task<IActionResult> Index(ApplicationStatus? status, CancellationToken ct)
@@ -70,6 +73,9 @@ public class AdminApplicationsController(
             Invitation = invitation,
             Payment = payment,
             LivePaymentDetails = liveDetails,
+            Emails = await emailLogs.GetForEntityAsync(nameof(Application), id, ct),
+            TextMessages = await smsLogs.GetForEntityAsync(nameof(Application), id, ct),
+            SmsConfigured = smsService.IsConfigured,
         };
 
         return View(model);
@@ -95,8 +101,39 @@ public class AdminApplicationsController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Approve(Guid id, CancellationToken ct)
     {
-        await RunTransitionAsync(id, (adminId, ip, c) => applicationService.ApproveAsync(id, adminId, ip, c), ct);
-        TempData["StatusMessage"] = "Application approved — an invitation has been issued.";
+        var (adminId, ip) = CurrentActor();
+
+        try
+        {
+            // Reported rather than assumed: an approval whose payment link silently failed to send
+            // looks identical to one that worked, right up until the seat goes unsold.
+            var result = await applicationService.ApproveAsync(id, adminId, ip, ct);
+            TempData["StatusMessage"] = "Application approved. " + result.Message;
+        }
+        catch (InvalidOperationException ex)
+        {
+            TempData["StatusMessage"] = ex.Message;
+        }
+
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendInvitation(Guid id, CancellationToken ct)
+    {
+        var (adminId, ip) = CurrentActor();
+
+        try
+        {
+            var result = await applicationService.ResendInvitationAsync(id, adminId, ip, ct);
+            TempData["StatusMessage"] = result.Message;
+        }
+        catch (InvalidOperationException ex)
+        {
+            TempData["StatusMessage"] = ex.Message;
+        }
+
         return RedirectToAction(nameof(Details), new { id });
     }
 

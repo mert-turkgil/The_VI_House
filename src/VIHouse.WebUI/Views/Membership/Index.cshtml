@@ -27,7 +27,37 @@
 
     @if (Model.Count == 0)
     {
-        <p style="text-align:center; padding:48px 0;">@Loc["Membership.NoPlans"]</p>
+        @* No plans means membership is not on sale — the ordinary state while the House is
+           application-only (see FeatureOptions.MembershipSales). This is the page's real job in
+           Phase 1: say what membership is, and point at the one way to get it. *@
+        <div class="membership-route">
+            <h2>@Loc["Membership.HowItWorks"]</h2>
+            <ol class="membership-route__steps">
+                <li>
+                    <span class="membership-route__step">@Loc["Membership.Step1.Title"]</span>
+                    <p>@Loc["Membership.Step1.Body"]</p>
+                </li>
+                <li>
+                    <span class="membership-route__step">@Loc["Membership.Step2.Title"]</span>
+                    <p>@Loc["Membership.Step2.Body"]</p>
+                </li>
+                <li>
+                    <span class="membership-route__step">@Loc["Membership.Step3.Title"]</span>
+                    <p>@Loc["Membership.Step3.Body"]</p>
+                </li>
+                <li>
+                    <span class="membership-route__step">@Loc["Membership.Step4.Title"]</span>
+                    <p>@Loc["Membership.Step4.Body"]</p>
+                </li>
+            </ol>
+
+            <div class="membership-route__actions">
+                <a class="btn btn--primary" asp-controller="Application" asp-action="Index">@Loc["Nav.ApplyToJoin"]</a>
+                <a class="btn btn--ghost" asp-controller="Experiences" asp-action="Index">@Loc["Membership.SeeExperiences"]</a>
+            </div>
+
+            <p class="membership-route__note">@Loc["Membership.ApplicationOnlyNote"]</p>
+        </div>
     }
     else
     {

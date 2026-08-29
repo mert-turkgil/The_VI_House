@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VIHouse.DataAccess.Concrete.EntityFramework;
 
@@ -11,9 +12,11 @@ using VIHouse.DataAccess.Concrete.EntityFramework;
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 {
     [DbContext(typeof(VIHouseDbContext))]
-    partial class VIHouseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260829145806_AddMediaAssets")]
+    partial class AddMediaAssets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -829,52 +832,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.HasIndex("RelatedEntityType", "RelatedEntityId");
 
                     b.ToTable("EmailLogs", (string)null);
-                });
-
-            modelBuilder.Entity("VIHouse.Entities.Communication.SmsLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("ErrorMessage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RecipientPhone")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
-                    b.Property<Guid?>("RelatedEntityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("RelatedEntityType")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTimeOffset?>("SentAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TemplateKey")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RecipientPhone");
-
-                    b.HasIndex("RelatedEntityType", "RelatedEntityId");
-
-                    b.ToTable("SmsLogs", (string)null);
                 });
 
             modelBuilder.Entity("VIHouse.Entities.Community.CommunityLink", b =>

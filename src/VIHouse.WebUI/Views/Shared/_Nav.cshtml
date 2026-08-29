@@ -1,13 +1,25 @@
 @using System.Globalization
 @using System.Security.Claims
 @using VIHouse.DataAccess.Identity
+@using VIHouse.Business.Options
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Options
 @inject INotificationService NotificationService
+@inject IMembershipService MembershipService
+@inject UserManager<ApplicationUser> UserManager
+@inject IOptions<FeatureOptions> Features
 @{
     var currentCulture = CultureInfo.CurrentUICulture.Name;
     var currentPath = Context.Request.Path + Context.Request.QueryString;
     string CultureUrl(string culture) => Url.Action("Set", "Culture", new { culture, returnUrl = currentPath })!;
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
-    var isMember = User.IsInRole(Roles.Member);
+
+    // Membership, not the Member role. The role is granted to anyone who completes a payment —
+    // including a single-ticket holder — so it cannot decide whether to offer members-only
+    // destinations. Views/Account/_AccountNav.cshtml has made this distinction all along; the top
+    // nav had not, which is how a ticket-holder ended up being shown the member directory.
+    var hasMembership = await MemberAccess.HasActiveMembershipAsync(User, MembershipService, UserManager);
+    var showDirectory = Features.Value.MemberDirectory && hasMembership;
     var isAmbassador = User.IsInRole(Roles.Ambassador);
 
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
@@ -60,7 +72,7 @@
                 <li><a class="@NavLinkClass("About")" asp-area="" asp-controller="About" asp-action="Index" aria-current="@AriaCurrent("About")">@Loc["Nav.About"]</a></li>
                 <li><a class="@NavLinkClass("Seminars")" asp-area="" asp-controller="Seminars" asp-action="Index" aria-current="@AriaCurrent("Seminars")">@Loc["Nav.Sessions"]</a></li>
                 <li><a class="@NavLinkClass("Journal")" asp-area="" asp-controller="Journal" asp-action="Index" aria-current="@AriaCurrent("Journal")">@Loc["Nav.Journal"]</a></li>
-                @if (isMember)
+                @if (showDirectory)
                 {
                     <li><a class="@NavLinkClass("MemberDirectory")" asp-area="" asp-controller="MemberDirectory" asp-action="Index" aria-current="@AriaCurrent("MemberDirectory")">@Loc["Nav.Members"]</a></li>
                 }
@@ -183,7 +195,7 @@
             <li><a class="@MobileNavLinkClass("About")" asp-area="" asp-controller="About" asp-action="Index" aria-current="@AriaCurrent("About")">@Loc["Nav.About"]</a></li>
             <li><a class="@MobileNavLinkClass("Seminars")" asp-area="" asp-controller="Seminars" asp-action="Index" aria-current="@AriaCurrent("Seminars")">@Loc["Nav.Sessions"]</a></li>
             <li><a class="@MobileNavLinkClass("Journal")" asp-area="" asp-controller="Journal" asp-action="Index" aria-current="@AriaCurrent("Journal")">@Loc["Nav.Journal"]</a></li>
-            @if (isMember)
+            @if (showDirectory)
             {
                 <li><a class="@MobileNavLinkClass("MemberDirectory")" asp-area="" asp-controller="MemberDirectory" asp-action="Index" aria-current="@AriaCurrent("MemberDirectory")">@Loc["Nav.Members"]</a></li>
             }

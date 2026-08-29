@@ -42,8 +42,11 @@
                     <span asp-validation-for="Email" class="apply-field__error"></span>
                 </div>
                 <div class="apply-field">
+                    @* Asked for with a country code because this is where the payment link is sent if
+                       they're accepted. A national number reaches no gateway, and the applicant is the
+                       only person who can tell us which country it belongs to. *@
                     <label asp-for="Phone">Phone</label>
-                    <input asp-for="Phone" />
+                    <input asp-for="Phone" type="tel" placeholder="+44 7700 900123" />
                     <span asp-validation-for="Phone" class="apply-field__error"></span>
                 </div>
                 <div class="apply-field">

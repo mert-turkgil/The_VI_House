@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Localization;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Options;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Services;
 using VIHouse.WebUI.ViewModels.Membership;
@@ -18,14 +20,27 @@ namespace VIHouse.WebUI.Controllers;
 public class MembershipController(
     IMembershipService membershipService,
     UserManager<ApplicationUser> userManager,
+    IOptions<FeatureOptions> features,
     IStringLocalizer<SharedResource> loc) : Controller
 {
+    /// <summary>
+    /// What membership is and how it is granted.
+    ///
+    /// While <see cref="FeatureOptions.MembershipSales"/> is off — the brief's Phase 1 — the page
+    /// carries no plan cards and no checkout, because there is one way into the House and it starts
+    /// with an application (§25). The plans are still loaded when sales are open, so switching the
+    /// flag restores the storefront without touching this code.
+    /// </summary>
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        var plans = await membershipService.GetActivePlansAsync(ct);
         ViewData["Title"] = loc["Membership.Title"];
-        return View(plans.Select(MembershipPlanCardViewModel.FromEntity).ToList());
+
+        var plans = features.Value.MembershipSales
+            ? (await membershipService.GetActivePlansAsync(ct)).Select(MembershipPlanCardViewModel.FromEntity).ToList()
+            : [];
+
+        return View(plans);
     }
 
     [Authorize]
@@ -34,6 +49,11 @@ public class MembershipController(
     [EnableRateLimiting("checkout")]
     public async Task<IActionResult> Checkout(Guid planId, CancellationToken ct)
     {
+        // Closed alongside the plan cards. A form that is not rendered can still be posted, and a
+        // subscription bought while the House is application-only would be a real charge for a
+        // product nobody meant to sell.
+        if (!features.Value.MembershipSales) return NotFound();
+
         var userId = Guid.Parse(userManager.GetUserId(User)!);
 
         var successUrl = Url.Action(nameof(Success), "Membership", null, Request.Scheme)!;

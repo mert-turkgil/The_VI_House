@@ -842,7 +842,7 @@ public static class DbSeeder
             ExtraJson = """
             [
               {"title":"Live & On-Demand Webinars","description":"Learn from top founders, investors and experts across business, finance, marketing and personal growth.","imageUrl":"/img/ecosystem/webinars-800.jpg","imageAlt":"A speaker on stage in front of a seated audience","linkLabel":"Browse Webinars","linkUrl":"/sessions"},
-              {"title":"Community & Networking","description":"Join private groups, meet like-minded peers and collaborate on the projects that matter.","imageUrl":"/img/ecosystem/community-800.jpg","imageAlt":"A group talking in a bright open workspace","linkLabel":"Enter Community","linkUrl":"/members"},
+              {"title":"Community & Networking","description":"Join private groups, meet like-minded peers and collaborate on the projects that matter.","imageUrl":"/img/ecosystem/community-800.jpg","imageAlt":"A group talking in a bright open workspace","linkLabel":"Enter Community","linkUrl":"/membership"},
               {"title":"Digital Marketplace","description":"Discover and purchase high-quality business programmes, templates, resources and tools.","imageUrl":"/img/ecosystem/marketplace-800.jpg","imageAlt":"A laptop and notebook on a desk by a window","linkLabel":"Browse Marketplace","linkUrl":"/experiences"},
               {"title":"Signature Retreats","description":"Join transformative retreats in world-class locations that elevate your mind, network and business.","imageUrl":"/img/ecosystem/retreats-800.jpg","imageAlt":"A villa terrace and pool at sunset","linkLabel":"View Retreats","linkUrl":"/experiences"}
             ]

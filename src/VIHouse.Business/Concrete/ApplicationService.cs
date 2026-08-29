@@ -27,6 +27,7 @@ public class ApplicationService(
     IRepository<ConsentRecord> consentRecords,
     IRepository<ApplicationTag> tags,
     IEmailService emailService,
+    ISmsService smsService,
     INotificationService notificationService,
     IOptions<SiteOptions> siteOptions) : IApplicationService
 {
@@ -40,6 +41,14 @@ public class ApplicationService(
         [ApplicationStatus.Submitted] = [ApplicationStatus.UnderReview],
         [ApplicationStatus.UnderReview] = [ApplicationStatus.Shortlisted],
         [ApplicationStatus.Shortlisted] = [ApplicationStatus.Approved, ApplicationStatus.Rejected, ApplicationStatus.Waitlisted],
+
+        // The waitlist is a holding pattern, not a verdict — it exists precisely because the room was
+        // full, and the answer changes when a seat opens or the next cohort is announced. So it stays
+        // decidable: approve or reject, as many times as it takes. (Waitlisting an already-waitlisted
+        // application is left out on purpose — it would send a second "you're on the waitlist" email
+        // saying nothing new.)
+        [ApplicationStatus.Waitlisted] = [ApplicationStatus.Approved, ApplicationStatus.Rejected],
+
         [ApplicationStatus.Approved] = [ApplicationStatus.PaymentPending],
         [ApplicationStatus.PaymentPending] = [ApplicationStatus.Paid, ApplicationStatus.Approved],
     };
@@ -90,7 +99,7 @@ public class ApplicationService(
     public Task ShortlistAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default) =>
         TransitionAsync(id, ApplicationStatus.Shortlisted, adminUserId, "ApplicationShortlisted", ipAddress, ct: ct);
 
-    public async Task ApproveAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    public async Task<InvitationDeliveryResult> ApproveAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
         var application = await TransitionAsync(id, ApplicationStatus.Approved, adminUserId, "ApplicationApproved", ipAddress, save: false, ct: ct);
 
@@ -105,22 +114,108 @@ public class ApplicationService(
         await applications.SaveChangesAsync(ct);
 
         var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
-        if (experience is not null)
-        {
-            var invitationUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/invitation/{invitation.Code}";
-            await emailService.SendAsync(
-                "ApplicationApproved", application.Email, "You're approved — complete your booking",
-                new ApplicationApprovedEmailModel(application.FirstName, experience.Title, experience.City, invitationUrl, invitation.ExpiresAt),
-                nameof(Application), application.Id, ct);
+        if (experience is null)
+            return new InvitationDeliveryResult(false, "The experience behind this application no longer exists, so no payment link was sent.");
 
-            // No-ops silently if this applicant has no account yet (the common case — accounts are
-            // only provisioned at checkout). Only ever fires for an existing member re-applying.
-            await notificationService.CreateForEmailAsync(
-                application.Email, NotificationType.ApplicationApproved,
-                "Application Approved", $"Your application for The VI House — {experience.City} was approved.",
-                invitationUrl, ct);
-        }
+        return await SendInvitationAsync(application, experience, invitation, ct);
     }
+
+    public async Task<InvitationDeliveryResult> ResendInvitationAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var application = await applications.GetByIdAsync(id, ct)
+            ?? throw new InvalidOperationException($"Application {id} not found.");
+
+        if (application.Status is not (ApplicationStatus.Approved or ApplicationStatus.PaymentPending))
+            return new InvitationDeliveryResult(false, "Only an approved application has a payment link to send.");
+
+        var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
+        if (experience is null)
+            return new InvitationDeliveryResult(false, "The experience behind this application no longer exists.");
+
+        var invitation = await invitations.GetLatestByApplicationAsync(id, ct);
+
+        if (invitation is { IsUsed: true })
+            return new InvitationDeliveryResult(false, "That invitation has already been used — they have paid, so there is nothing left to send.");
+
+        // An expired link cannot be un-expired, and resending one only walks them into the "this
+        // invitation has expired" page. Issue a fresh code instead, on the same 14-day window.
+        var reissued = invitation is null || invitation.ExpiresAt < DateTimeOffset.UtcNow;
+        if (reissued)
+        {
+            invitation = new Invitation
+            {
+                Code = GenerateInvitationCode(),
+                ApplicationId = application.Id,
+                UserEmail = application.Email,
+                ExpiresAt = DateTimeOffset.UtcNow.AddDays(14),
+            };
+            await invitations.AddAsync(invitation, ct);
+        }
+
+        await auditLogs.AddAsync(new AuditLogEntry
+        {
+            AdminUserId = adminUserId,
+            Action = reissued ? "InvitationReissued" : "InvitationResent",
+            EntityType = nameof(Application),
+            EntityId = application.Id,
+            IpAddress = ipAddress,
+        }, ct);
+        await applications.SaveChangesAsync(ct);
+
+        var result = await SendInvitationAsync(application, experience, invitation!, ct);
+        return reissued
+            ? result with { Message = "The old link had expired, so a new one was issued. " + result.Message }
+            : result;
+    }
+
+    /// <summary>
+    /// The private payment link, out over both channels the applicant gave us.
+    ///
+    /// Two channels for one link is deliberate rather than belt-and-braces: this is the only door into
+    /// the booking, it expires in 14 days, and an approval that lands in a spam folder is an empty
+    /// seat nobody finds out about until the room is smaller than it should have been.
+    /// </summary>
+    private async Task<InvitationDeliveryResult> SendInvitationAsync(
+        Application application, Experience experience, Invitation invitation, CancellationToken ct)
+    {
+        var invitationUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/invitation/{invitation.Code}";
+
+        var emailed = await emailService.SendAsync(
+            "ApplicationApproved", application.Email, "You're approved — complete your booking",
+            new ApplicationApprovedEmailModel(application.FirstName, experience.Title, experience.City, invitationUrl, invitation.ExpiresAt),
+            nameof(Application), application.Id, ct);
+
+        var texted = await smsService.SendAsync(
+            "ApplicationApproved", application.Phone,
+            $"The VI House: you're approved for {experience.City}. Complete your booking: {invitationUrl} "
+                + $"— the link expires {invitation.ExpiresAt:d MMM}.",
+            nameof(Application), application.Id, ct);
+
+        // No-ops silently if this applicant has no account yet (the common case — accounts are
+        // only provisioned at checkout). Only ever fires for an existing member re-applying.
+        await notificationService.CreateForEmailAsync(
+            application.Email, NotificationType.ApplicationApproved,
+            "Application Approved", $"Your application for The VI House — {experience.City} was approved.",
+            invitationUrl, ct);
+
+        return new InvitationDeliveryResult(emailed || texted, DescribeDelivery(emailed, texted, application.Phone));
+    }
+
+    /// <summary>
+    /// What to tell the admin who just pressed the button. The distinction that matters is between a
+    /// message that failed and one that was never attempted — "no SMS gateway is configured" is a
+    /// setup task, "the gateway refused it" is a phone number problem, and both look identical if
+    /// they're reported as "not sent".
+    /// </summary>
+    private string DescribeDelivery(bool emailed, bool texted, string? phone) => (emailed, texted) switch
+    {
+        (true, true) => "The payment link went out by email and text message.",
+        (true, false) when !smsService.IsConfigured => "The payment link was emailed. No SMS gateway is configured, so nothing was texted.",
+        (true, false) when string.IsNullOrWhiteSpace(phone) => "The payment link was emailed. This application has no phone number on it.",
+        (true, false) => "The payment link was emailed, but the text message didn't go out — Emails & SMS has the reason.",
+        (false, true) => "The payment link went out by text message, but the email failed — Emails & SMS has the reason.",
+        _ => "Neither the email nor the text message went out — Emails & SMS has the reason.",
+    };
 
     public Task RejectAsync(Guid id, Guid adminUserId, string? reason, string? ipAddress, CancellationToken ct = default) =>
         TransitionAsync(id, ApplicationStatus.Rejected, adminUserId, "ApplicationRejected", ipAddress, reason, ct: ct);

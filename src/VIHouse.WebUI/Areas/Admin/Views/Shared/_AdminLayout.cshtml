@@ -2,6 +2,7 @@
 @inject SignInManager<VIHouse.DataAccess.Identity.ApplicationUser> SignInManager
 @inject UserManager<VIHouse.DataAccess.Identity.ApplicationUser> UserManager
 @inject IConfiguration Configuration
+@inject Microsoft.Extensions.Options.IOptions<VIHouse.Business.Options.FeatureOptions> Features
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentUser = User.Identity?.IsAuthenticated == true ? await UserManager.GetUserAsync(User) : null;
@@ -45,19 +46,27 @@
         </a>
 
         <nav class="admin-sidebar__nav" aria-label="Admin">
+            @* Order follows the brief's admin menu (§57). Membership Plans appears only when
+               memberships are actually on sale — while the House is application-only there is
+               nothing to price. *@
             <a class="@NavClass("AdminDashboard")" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">Dashboard</a>
             <a class="@NavClass("AdminApplications")" asp-area="Admin" asp-controller="AdminApplications" asp-action="Index">Applications</a>
+            <a class="@NavClass("AdminUsers")" asp-area="Admin" asp-controller="AdminUsers" asp-action="Index">Customers</a>
             <a class="@NavClass("AdminExperiences")" asp-area="Admin" asp-controller="AdminExperiences" asp-action="Index">Experiences</a>
-            <a class="@NavClass("AdminMembershipPlans")" asp-area="Admin" asp-controller="AdminMembershipPlans" asp-action="Index">Membership Plans</a>
-            <a class="@NavClass("AdminAmbassadors")" asp-area="Admin" asp-controller="AdminAmbassadors" asp-action="Index">Ambassadors</a>
             <a class="@NavClass("AdminBookings")" asp-area="Admin" asp-controller="AdminBookings" asp-action="Index">Bookings</a>
             <a class="@NavClass("AdminPayments")" asp-area="Admin" asp-controller="AdminPayments" asp-action="Index">Payments</a>
+            <a class="@NavClass("AdminPromoCodes")" asp-area="Admin" asp-controller="AdminPromoCodes" asp-action="Index">Promo Codes</a>
+            <a class="@NavClass("AdminAmbassadors")" asp-area="Admin" asp-controller="AdminAmbassadors" asp-action="Index">Ambassadors</a>
+            @if (Features.Value.MembershipSales)
+            {
+                <a class="@NavClass("AdminMembershipPlans")" asp-area="Admin" asp-controller="AdminMembershipPlans" asp-action="Index">Membership Plans</a>
+            }
             <a class="@NavClass("AdminCms")" asp-area="Admin" asp-controller="AdminCms" asp-action="Index">Content</a>
             <a class="@NavClass("AdminHeroSlides")" asp-area="Admin" asp-controller="AdminHeroSlides" asp-action="Index">Hero Slides</a>
             <a class="@NavClass("AdminSeminars")" asp-area="Admin" asp-controller="AdminSeminars" asp-action="Index">Sessions</a>
             <a class="@NavClass("AdminJournal")" asp-area="Admin" asp-controller="AdminJournal" asp-action="Index">Journal</a>
             <a class="@NavClass("AdminCommunity")" asp-area="Admin" asp-controller="AdminCommunity" asp-action="Index">Community</a>
-            <a class="@NavClass("AdminUsers")" asp-area="Admin" asp-controller="AdminUsers" asp-action="Index">Customers</a>
+            <a class="@NavClass("AdminEmails")" asp-area="Admin" asp-controller="AdminEmails" asp-action="Index">Emails &amp; SMS</a>
         </nav>
 
         <div class="admin-sidebar__footer">

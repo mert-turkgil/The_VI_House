@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
+using VIHouse.Entities.Content;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -21,6 +22,7 @@ namespace VIHouse.WebUI.Controllers;
 public class MediaController(
     IHeroSlideRepository heroSlides,
     IJournalService journalService,
+    IRepository<MediaAsset> assets,
     IMediaStorage mediaStorage) : Controller
 {
     /// <summary>
@@ -51,6 +53,24 @@ public class MediaController(
     /// these are not stamped), and only for as long as the row exists — a deleted asset 404s
     /// immediately at the origin.
     /// </summary>
+    /// <summary>
+    /// An unowned asset — the images admins upload for homepage content. Cached for a day, like
+    /// journal media: the URL carries no version stamp, and an asset that is replaced is a new
+    /// upload with a new id rather than the same id with new bytes.
+    /// </summary>
+    [HttpGet("asset/{id:guid}")]
+    [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any)]
+    public async Task<IActionResult> Asset(Guid id, CancellationToken ct)
+    {
+        var asset = await assets.GetByIdAsync(id, ct);
+        if (asset is null) return NotFound();
+
+        var file = await mediaStorage.GetAsync(asset.StorageKey, ct);
+        if (file is null) return NotFound();
+
+        return PhysicalFile(file.PhysicalPath, file.ContentType);
+    }
+
     [HttpGet("journal/{mediaId:guid}")]
     [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any)]
     public async Task<IActionResult> JournalMedia(Guid mediaId, CancellationToken ct)

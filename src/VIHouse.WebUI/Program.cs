@@ -199,6 +199,7 @@ builder.Services.AddScoped<IWaitlistRepository, EfWaitlistRepository>();
 builder.Services.AddScoped<IContentPageRepository, EfContentPageRepository>();
 builder.Services.AddScoped<IHeroSlideRepository, EfHeroSlideRepository>();
 builder.Services.AddScoped<IEmailLogRepository, EfEmailLogRepository>();
+builder.Services.AddScoped<ISmsLogRepository, EfSmsLogRepository>();
 builder.Services.AddScoped<IAuditLogRepository, EfAuditLogRepository>();
 builder.Services.AddScoped<IProfileRepository, EfProfileRepository>();
 builder.Services.AddScoped<IWebhookEventRepository, EfWebhookEventRepository>();
@@ -234,9 +235,22 @@ builder.Services.AddScoped<IPaymentProvider, StripePaymentProvider>();
 // are secret and come from user-secrets/environment variables only — see SmtpOptions.
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.Configure<SiteOptions>(builder.Configuration.GetSection("Site"));
+
+// What is open and what is still behind the curtain — see FeatureOptions. Everything defaults to
+// off, so a deployment that forgets the section launches with the application route only, which is
+// the brief's Phase 1 rather than an accident.
+builder.Services.Configure<FeatureOptions>(builder.Configuration.GetSection("Features"));
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IEmailTemplateRenderer, RazorEmailTemplateRenderer>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// SMS carries the private payment link alongside the email (brief §25's "Private Payment Link" —
+// one link, two ways to reach it, because an approval lost to a spam folder is an empty seat).
+// Endpoint and field names are plain config; Sms__Username/Sms__Password are secret, like SMTP's.
+// Nothing is texted until Sms:Enabled is on with an endpoint behind it — see SmsOptions.
+builder.Services.Configure<SmsOptions>(builder.Configuration.GetSection("Sms"));
+builder.Services.AddHttpClient<ISmsSender, HttpSmsSender>(c => c.Timeout = TimeSpan.FromSeconds(15));
+builder.Services.AddScoped<ISmsService, SmsService>();
 
 // Releases abandoned TicketHolds back to inventory every 60s (brief §177-179) — a safety net
 // alongside the immediate release on checkout failure/expiry in PaymentService.

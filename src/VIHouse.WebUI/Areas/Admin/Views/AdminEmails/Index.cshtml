@@ -1,0 +1,163 @@
+@model AdminEmailLogViewModel
+@{
+    ViewData["Title"] = "Emails & SMS";
+
+    var channel = Model.ShowSms ? "sms" : null;
+
+    string FilterClass(EmailStatus? status) =>
+        Model.Status == status ? "admin-btn" : "admin-btn admin-btn--ghost";
+
+    string ChannelClass(bool sms) =>
+        Model.ShowSms == sms ? "admin-btn" : "admin-btn admin-btn--ghost";
+
+    string StatusBadge(EmailStatus status) => status switch
+    {
+        EmailStatus.Sent => "admin-badge admin-badge--open",
+        EmailStatus.Failed => "admin-badge admin-badge--closed",
+        _ => "admin-badge admin-badge--draft",
+    };
+}
+
+<p class="admin-hint">
+    Every transactional message the system has attempted — approvals, payment links, booking
+    confirmations. Recipient and subject only; the body is never stored, so the single-use invitation
+    URL inside a message is not on this screen. Read-only: this is the record of what was sent.
+</p>
+
+<div class="admin-toolbar">
+    <a class="@ChannelClass(false)" asp-action="Index">Email</a>
+    <a class="@ChannelClass(true)" asp-action="Index" asp-route-channel="sms">Text messages</a>
+</div>
+
+@if (Model.FailedCount > 0)
+{
+    <div class="admin-status-message">
+        @Model.FailedCount @(Model.ShowSms ? "text message(s)" : "email(s)") failed to send.
+        <a asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Failed">Show them</a>.
+    </div>
+}
+
+@if (Model.OtherChannelFailedCount > 0)
+{
+    @* A failure on the tab you are not looking at is still a failure — say so from either side. *@
+    <div class="admin-status-message">
+        @Model.OtherChannelFailedCount failure(s) on the @(Model.ShowSms ? "email" : "text message") side.
+        <a asp-action="Index" asp-route-channel="@(Model.ShowSms ? null : "sms")" asp-route-status="@EmailStatus.Failed">Show them</a>.
+    </div>
+}
+
+<div class="admin-toolbar">
+    <a class="@FilterClass(null)" asp-action="Index" asp-route-channel="@channel">All</a>
+    <a class="@FilterClass(EmailStatus.Sent)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Sent">Sent</a>
+    <a class="@FilterClass(EmailStatus.Queued)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Queued">Queued</a>
+    <a class="@FilterClass(EmailStatus.Failed)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Failed">Failed</a>
+</div>
+
+@if (Model.ShowSms && !Model.SmsConfigured)
+{
+    <p class="admin-hint">
+        No SMS gateway is configured, so nothing is being texted — payment links go out by email only.
+        Switch it on with <code>Sms:Enabled</code> and an endpoint; credentials belong in user-secrets
+        or the <code>Sms__Username</code> / <code>Sms__Password</code> environment variables.
+    </p>
+}
+
+@if (Model.ShowSms)
+{
+    @if (Model.SmsRows.Count == 0)
+    {
+        <p>No text messages logged@(Model.Status is null ? "" : $" with status {Model.Status}").</p>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>When</th>
+                    <th>To</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.SmsRows)
+                {
+                    <tr>
+                        <td style="font-size:0.75rem; white-space:nowrap;">@row.CreatedAt.ToString("d MMM yyyy HH:mm")</td>
+                        <td style="font-family:monospace; font-size:0.78rem;">@row.RecipientPhone</td>
+                        <td>
+                            <code style="font-size:0.75rem;">@row.TemplateKey</code>
+                            @if (row.Status == EmailStatus.Failed && !string.IsNullOrWhiteSpace(row.ErrorMessage))
+                            {
+                                @* The gateway's own words. "Not a mobile number", "insufficient
+                                   balance" and "unverified sender id" are all the same 400, and this
+                                   is the only thing that tells them apart. *@
+                                <div style="font-size:0.72rem; color:var(--vih-danger); margin-top:2px;">@row.ErrorMessage</div>
+                            }
+                        </td>
+                        <td><span class="@StatusBadge(row.Status)">@row.Status</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+else
+{
+    @if (Model.Rows.Count == 0)
+    {
+        <p>No emails logged@(Model.Status is null ? "" : $" with status {Model.Status}").</p>
+    }
+    else
+    {
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>When</th>
+                    <th>To</th>
+                    <th>Subject</th>
+                    <th>Template</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td style="font-size:0.75rem; white-space:nowrap;">@row.CreatedAt.ToString("d MMM yyyy HH:mm")</td>
+                        <td>@row.RecipientEmail</td>
+                        <td>
+                            @row.Subject
+                            @if (row.Status == EmailStatus.Failed && !string.IsNullOrWhiteSpace(row.ErrorMessage))
+                            {
+                                @* The provider's own words. Vague enough to be useless when paraphrased,
+                                   and it is the only thing that says whether this was a bad address or a
+                                   dead SMTP host. *@
+                                <div style="font-size:0.72rem; color:var(--vih-danger); margin-top:2px;">@row.ErrorMessage</div>
+                            }
+                        </td>
+                        <td style="font-size:0.75rem;"><code>@row.TemplateKey</code></td>
+                        <td><span class="@StatusBadge(row.Status)">@row.Status</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@if (Model.TotalCount > 0)
+{
+    <div class="admin-toolbar" style="margin-top:16px;">
+        @if (Model.HasPrevious)
+        {
+            <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-channel="@channel" asp-route-status="@Model.Status" asp-route-page="@(Model.Page - 1)">&larr; Newer</a>
+        }
+        <span class="admin-hint" style="margin:0;">
+            Page @Model.Page of @Model.TotalPages · @Model.TotalCount @(Model.ShowSms ? "text message(s)" : "email(s)")
+        </span>
+        @if (Model.HasNext)
+        {
+            <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-channel="@channel" asp-route-status="@Model.Status" asp-route-page="@(Model.Page + 1)">Older &rarr;</a>
+        }
+    </div>
+}
