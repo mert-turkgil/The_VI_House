@@ -1,6 +1,6 @@
-@model List<JournalPost>
+@model List<AdminJournalListItemViewModel>
 @{
-    ViewData["Title"] = "Journal";
+    ViewData["Title"] = Loc["Admin.Journal.Title"].Value;
 }
 
 @if (TempData["StatusMessage"] is string status)
@@ -9,22 +9,24 @@
 }
 
 <div class="admin-toolbar">
-    <a class="admin-btn" asp-action="Create">+ New Post</a>
+    <a class="admin-btn" asp-action="Create">+ @Loc["Admin.Journal.New"]</a>
+    <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Journal" asp-action="Index" target="_blank" rel="noopener">@Loc["Admin.Journal.ViewJournal"]</a>
 </div>
 
 @if (Model.Count == 0)
 {
-    <p>No journal posts yet.</p>
+    <p>@Loc["Admin.Journal.Empty"]</p>
 }
 else
 {
     <table class="admin-table">
         <thead>
             <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Published</th>
+                <th>@Loc["Admin.Journal.Title.Column"]</th>
+                <th>@Loc["Admin.Journal.Category"]</th>
+                <th>@Loc["Admin.Journal.Languages"]</th>
+                <th>@Loc["Admin.Journal.Status"]</th>
+                <th>@Loc["Admin.Journal.Published"]</th>
                 <th></th>
             </tr>
         </thead>
@@ -32,13 +34,32 @@ else
             @foreach (var post in Model)
             {
                 <tr>
-                    <td><a asp-action="Edit" asp-route-id="@post.Id">@post.Title</a></td>
-                    <td>@post.Category.ToDisplayLabel()</td>
-                    <td><span class="@(post.Status == JournalPostStatus.Published ? "admin-badge admin-badge--open" : "admin-badge admin-badge--closed")">@post.Status</span></td>
-                    <td>@(post.PublishedAt?.ToString("d MMM yyyy") ?? "—")</td>
                     <td>
-                        <form asp-action="Delete" asp-route-id="@post.Id" method="post" onsubmit="return confirm('Delete &quot;@post.Title&quot;? This can\'t be undone.');" style="display:inline;">
-                            <button type="submit" class="admin-btn admin-btn--danger">Delete</button>
+                        <a asp-action="Edit" asp-route-id="@post.Id">@post.Title</a>
+                        <div style="font-size:0.72rem; opacity:0.6;">/journal/@post.Slug</div>
+                    </td>
+                    <td>@post.Category.ToDisplayLabel()</td>
+                    <td>
+                        @* Which languages are written, in site order, so a post that went live with
+                           three empty translations is visible at a glance rather than on inspection. *@
+                        @foreach (var culture in SiteCultures.All)
+                        {
+                            var written = post.TranslatedCultures.Contains(culture.Name, StringComparer.OrdinalIgnoreCase);
+                            <span class="@(written ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")"
+                                  title="@culture.NativeLabel">@culture.ShortLabel</span>
+                        }
+                    </td>
+                    <td>
+                        <span class="@(post.Status == JournalPostStatus.Published ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")">
+                            @post.Status
+                        </span>
+                    </td>
+                    <td style="font-size:0.75rem;">@(post.PublishedAt?.ToString("d MMM yyyy") ?? "—")</td>
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@post.Id" method="post"
+                              onsubmit="return confirm('@Loc["Admin.Journal.ConfirmDelete"].Value.Replace("'", "\\'")');"
+                              style="display:inline;">
+                            <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Journal.Delete"]</button>
                         </form>
                     </td>
                 </tr>

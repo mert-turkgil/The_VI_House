@@ -1,6 +1,13 @@
-@model AdminJournalPostFormViewModel
+@model AdminJournalEditViewModel
 @{
-    ViewData["Title"] = Model.Title;
+    var active = Model.Translations.First(t => t.Culture.Name == Model.ActiveCulture);
+    var postId = Model.Form.Id!.Value;
+    ViewData["Title"] = Model.Translations.First(t => t.IsDefault).Form.Title;
+
+    // The id of the body textarea for the language on screen. The media library's Insert buttons
+    // address the editor through it (see ClientApp modules/editor.ts), and it has to be per-culture
+    // so switching tabs cannot leave a button pointing at a textarea that is no longer there.
+    var bodyFieldId = $"journal-body-{active.Culture.Name}";
 }
 
 @if (TempData["StatusMessage"] is string status)
@@ -8,14 +15,236 @@
     <div class="admin-status-message">@status</div>
 }
 
-<form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
-    <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
-    <partial name="_FormFields" model="Model" />
+<div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+
+<div class="admin-toolbar">
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; @Loc["Admin.Journal.BackToList"]</a>
+    <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Journal" asp-action="Details" asp-route-slug="@Model.Form.Slug" target="_blank" rel="noopener">@Loc["Admin.Journal.Preview"]</a>
+</div>
+
+@* --- Cover ------------------------------------------------------------------------------------- *@
+<h2 class="admin-section-heading">@Loc["Admin.Journal.Section.Cover"]</h2>
+
+<div class="admin-panel">
+    @if (!string.IsNullOrWhiteSpace(Model.CoverPreviewUrl))
+    {
+        @* Decorative: the article's headline names it, and this sits under a heading that says what it is. *@
+        <img src="@Model.CoverPreviewUrl" alt="" style="max-width:420px; width:100%; border-radius:8px; display:block; margin-bottom:16px;" />
+    }
+    else
+    {
+        <p class="admin-panel__note">@Loc["Admin.Journal.NoCoverYet"]</p>
+    }
+
+    @* Uploading a cover replaces the previous one outright — the file it replaces is deleted rather
+       than left in the library as a copy of a picture nothing shows. *@
+    <form asp-action="UploadCover" asp-route-id="@postId" method="post" enctype="multipart/form-data" class="admin-inline-form">
+        <input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif" required />
+        <button type="submit" class="admin-btn">@Loc["Admin.Journal.UploadCover"]</button>
+    </form>
+
+    @if (Model.CoverMediaId is not null || !string.IsNullOrWhiteSpace(Model.Form.CoverImageUrl))
+    {
+        <form asp-action="RemoveCover" asp-route-id="@postId" method="post" class="admin-inline-form"
+              onsubmit="return confirm('@Loc["Admin.Journal.ConfirmRemoveCover"].Value.Replace("'", "\\'")');">
+            <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Journal.RemoveCover"]</button>
+        </form>
+    }
+
+    <p class="admin-field__hint">@Loc["Admin.Journal.CoverHint"]</p>
+</div>
+
+@* --- Post settings ------------------------------------------------------------------------------ *@
+<h2 class="admin-section-heading">@Loc["Admin.Journal.Section.Settings"]</h2>
+
+<form asp-action="Edit" asp-route-id="@postId" method="post" class="admin-form">
+    <input type="hidden" asp-for="Form.Id" />
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Form.Slug">@Loc["Admin.Journal.Slug"]</label>
+            <input asp-for="Form.Slug" />
+            <span asp-validation-for="Form.Slug" class="field-validation-error"></span>
+        </div>
+        <div class="admin-field">
+            <label asp-for="Form.Category">@Loc["Admin.Journal.Category"]</label>
+            <select asp-for="Form.Category" asp-items="Html.GetEnumSelectList<JournalCategory>()"></select>
+        </div>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Form.Status">@Loc["Admin.Journal.Status"]</label>
+            <select asp-for="Form.Status" asp-items="Html.GetEnumSelectList<JournalPostStatus>()"></select>
+            <p class="admin-field__hint">@Loc["Admin.Journal.PublishHint", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</p>
+        </div>
+        <div class="admin-field">
+            <label asp-for="Form.AuthorName">@Loc["Admin.Journal.AuthorName"]</label>
+            <input asp-for="Form.AuthorName" />
+        </div>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Form.CoverImageUrl">@Loc["Admin.Journal.CoverImageUrl"]</label>
+            <input asp-for="Form.CoverImageUrl" placeholder="/img/journal/why-we-built-the-vi-house-1600.jpg"
+                   disabled="@(Model.CoverMediaId is not null)" />
+            <span asp-validation-for="Form.CoverImageUrl" class="field-validation-error"></span>
+            <p class="admin-field__hint">
+                @(Model.CoverMediaId is not null ? Loc["Admin.Journal.CoverUrlDisabled"] : Loc["Admin.Journal.CoverUrlHint"])
+            </p>
+        </div>
+        <div class="admin-field">
+            <label asp-for="Form.CoverImageAlt">@Loc["Admin.Journal.CoverImageAlt"]</label>
+            <input asp-for="Form.CoverImageAlt" />
+            <p class="admin-field__hint">@Loc["Admin.Journal.CoverImageAlt.Hint"]</p>
+        </div>
+    </div>
+
     <div>
-        <button type="submit" class="admin-btn">Save Changes</button>
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">Back to Journal</a>
+        <button type="submit" class="admin-btn">@Loc["Admin.Journal.SaveSettings"]</button>
     </div>
 </form>
+
+@* --- Copy, one language at a time ---------------------------------------------------------------- *@
+@*  A page per language rather than tabbed panels on one page: a rich text editor initialised inside
+    a hidden container computes a zero height and comes back broken when it is revealed, and the URL
+    being ?culture=de-DE means an admin can bookmark or share the German draft.                      *@
+<h2 class="admin-section-heading">@Loc["Admin.Journal.Section.Copy", active.Culture.NativeLabel]</h2>
+
+<nav class="admin-lang-tabs" aria-label="@Loc["Admin.Journal.Languages"]">
+    @foreach (var tab in Model.Translations)
+    {
+        <a class="@(tab.Culture.Name == Model.ActiveCulture ? "admin-lang-tab active" : "admin-lang-tab")"
+           asp-action="Edit" asp-route-id="@postId" asp-route-culture="@tab.Culture.Name">
+            @tab.Culture.NativeLabel
+            @if (tab.IsDefault)
+            {
+                <span class="admin-lang-tab__flag">@Loc["Admin.Journal.DefaultLanguage"]</span>
+            }
+            else if (!tab.IsWritten)
+            {
+                <span class="admin-lang-tab__flag admin-lang-tab__flag--missing">@Loc["Admin.Journal.NotTranslated"]</span>
+            }
+        </a>
+    }
+</nav>
+
+@if (!active.IsDefault && !active.IsWritten)
+{
+    <p class="admin-notice">@Loc["Admin.Journal.FallbackNotice", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</p>
+}
+
+<form asp-action="SaveTranslation" asp-route-id="@postId" method="post" class="admin-form">
+    @* Which language this form is editing. Posted rather than taken from the query string so a
+       stale tab cannot save English copy over the German row. *@
+    <input type="hidden" name="Culture" value="@active.Culture.Name" />
+
+    <div class="admin-field">
+        <label>@Loc["Admin.Journal.Title.Column"]</label>
+        <input name="Title" value="@active.Form.Title" maxlength="200" required />
+    </div>
+
+    <div class="admin-field">
+        <label>@Loc["Admin.Journal.Excerpt"]</label>
+        <textarea name="Excerpt" rows="2" maxlength="500">@active.Form.Excerpt</textarea>
+        <p class="admin-field__hint">@Loc["Admin.Journal.Excerpt.Hint"]</p>
+    </div>
+
+    <div class="admin-field">
+        <label>@Loc["Admin.Journal.Body"]</label>
+        @* data-upload-url turns on drag-and-drop image/GIF upload inside the editor: files go
+           straight to UploadInline, which stores them like any other asset and hands back the
+           /media/journal/{id} URL to insert. The antiforgery token travels as a header because the
+           editor posts its own request, outside any <form>. *@
+        <textarea id="@bodyFieldId" name="Body" rows="20" data-ckeditor
+                  data-upload-url="@Url.Action("UploadInline", new { id = postId })"
+                  data-upload-token-field="__RequestVerificationToken">@active.Form.Body</textarea>
+        <p class="admin-field__hint">@Loc["Admin.Journal.Body.Hint"]</p>
+    </div>
+
+    <div>
+        <button type="submit" class="admin-btn">@Loc["Admin.Journal.SaveCopy", active.Culture.NativeLabel]</button>
+    </div>
+</form>
+
+@if (!active.IsDefault && active.IsWritten)
+{
+    <form asp-action="DeleteTranslation" asp-route-id="@postId" method="post" class="admin-form"
+          onsubmit="return confirm('@Loc["Admin.Journal.ConfirmDeleteTranslation"].Value.Replace("'", "\\'")');">
+        <input type="hidden" name="culture" value="@active.Culture.Name" />
+        <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Journal.DeleteTranslation", active.Culture.NativeLabel]</button>
+    </form>
+}
+
+@* --- Media library -------------------------------------------------------------------------------- *@
+<h2 class="admin-section-heading">@Loc["Admin.Journal.Section.Media"]</h2>
+
+<div class="admin-panel">
+    <form asp-action="UploadMedia" asp-route-id="@postId" method="post" enctype="multipart/form-data" class="admin-inline-form">
+        <input type="file" name="file" accept="@MediaPolicy.AcceptAttribute" required />
+        <input type="text" name="title" maxlength="200" placeholder="@Loc["Admin.Journal.MediaTitlePlaceholder"]" />
+        <button type="submit" class="admin-btn">@Loc["Admin.Journal.UploadMedia"]</button>
+    </form>
+    <p class="admin-field__hint">@Loc["Admin.Journal.MediaHint"]</p>
+</div>
+
+@if (Model.Media.Count > 0)
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>@Loc["Admin.Journal.MediaFile"]</th>
+                <th>@Loc["Admin.Journal.MediaKind"]</th>
+                <th>@Loc["Admin.Journal.MediaSize"]</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var media in Model.Media)
+            {
+                var url = $"/media/journal/{media.Id}";
+                // What the Insert button drops into the article. Images go in as <img>, audio as a
+                // player: CKEditor has no audio plugin, so the markup it will finally be is what
+                // gets inserted, and GeneralHtmlSupport keeps it intact through the model.
+                var insertHtml = media.Kind == SeminarMediaKind.Audio
+                    ? $"<p><audio controls src=\"{url}\"></audio></p>"
+                    : $"<figure class=\"image\"><img src=\"{url}\" alt=\"\"></figure>";
+                <tr>
+                    <td>
+                        <a href="@url" target="_blank" rel="noopener">@(media.Title ?? media.OriginalFileName ?? url)</a>
+                        @if (media.Id == Model.CoverMediaId)
+                        {
+                            <span class="admin-badge admin-badge--open">@Loc["Admin.Journal.IsCover"]</span>
+                        }
+                    </td>
+                    <td>@media.Kind</td>
+                    <td style="font-size:0.75rem;">@((media.SizeBytes / 1024).ToString("N0")) KB</td>
+                    <td>
+                        @if (media.Kind is SeminarMediaKind.Image or SeminarMediaKind.Animation or SeminarMediaKind.Audio)
+                        {
+                            <button type="button" class="admin-btn admin-btn--ghost"
+                                    data-insert-html="@insertHtml"
+                                    data-insert-target="@bodyFieldId">@Loc["Admin.Journal.Insert"]</button>
+                        }
+                        @if (media.Kind == SeminarMediaKind.Image && media.Id != Model.CoverMediaId)
+                        {
+                            <form asp-action="SetCover" asp-route-id="@postId" method="post" class="admin-inline-form">
+                                <input type="hidden" name="mediaId" value="@media.Id" />
+                                <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Journal.UseAsCover"]</button>
+                            </form>
+                        }
+                        <form asp-action="RemoveMedia" asp-route-id="@postId" method="post" class="admin-inline-form"
+                              onsubmit="return confirm('@Loc["Admin.Journal.ConfirmRemoveMedia"].Value.Replace("'", "\\'")');">
+                            <input type="hidden" name="mediaId" value="@media.Id" />
+                            <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Journal.Delete"]</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

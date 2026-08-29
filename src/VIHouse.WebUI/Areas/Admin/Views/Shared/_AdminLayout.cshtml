@@ -21,6 +21,9 @@
     @* main.css carries the design tokens and the shared .admin-* component styles; admin.css adds
        only what the panel alone needs (rich text editor chrome, dashboard charts). *@
     <link rel="stylesheet" href="~/dist/main.css" asp-append-version="true" />
+    @* CKEditor's own theme, from the same CDN as its script below. The .ck-* overrides in
+       ClientApp/src/scss/admin.scss are custom-property assignments and apply to it unchanged. *@
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/48.4.0/ckeditor5.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="~/dist/admin.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -28,7 +31,12 @@
    than a compiled-in constant. It lives in appsettings.Development.json locally and in
    appsettings.Production.json on the server — both gitignored and untracked, so neither reaches the
    repository. Absent (a GPL deployment, or Production before a commercial key is bought) the editor
-   falls back to "GPL" on its own — see ClientApp modules/editor.ts. *@
+   falls back to "GPL" on its own — see ClientApp modules/editor.ts.
+
+   The key is also issued for a distribution *channel*, which is why the editor is loaded from
+   CKEditor's CDN below rather than bundled from npm. A key for the "cloud" channel is rejected by
+   the npm build (which reports itself as "sh") and the editor goes read-only with a licence error
+   while looking, at a glance, like it simply will not accept typing. *@
 <body class="admin-shell" data-ckeditor-license="@Configuration["CkEditor:LicenseKey"]">
     <aside class="admin-sidebar">
         <a class="admin-sidebar__brand" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">
@@ -72,6 +80,14 @@
     </main>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* CKEditor, from the CDN — see the comment above <body> for why it is not in admin.js, and
+       ClientApp modules/editor.ts for how it is picked up (window.CKEDITOR).
+
+       Version pinned here and nowhere else: an upgrade is these two URLs. A classic (non-module)
+       script runs during parsing while admin.js is a module and therefore deferred, so CKEDITOR is
+       always defined by the time the bundle looks for it. If the CDN is unreachable the panel still
+       works — every editor stays a plain textarea. *@
+    <script src="https://cdn.ckeditor.com/ckeditor5/48.4.0/ckeditor5.umd.js" crossorigin="anonymous"></script>
     <script type="module" src="~/dist/admin.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,4 +1,6 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Journal;
@@ -7,7 +9,7 @@ using VIHouse.WebUI.ViewModels.Journal;
 namespace VIHouse.WebUI.Controllers;
 
 [Route("journal")]
-public class JournalController(IJournalService journalService) : Controller
+public class JournalController(IJournalService journalService, IStringLocalizer<SharedResource> loc) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(string? category, CancellationToken ct)
@@ -16,7 +18,8 @@ public class JournalController(IJournalService journalService) : Controller
         var filter = new JournalPostFilter { Category = parsedCategory, Take = 50 };
         var posts = await journalService.GetPublicListingAsync(filter, ct);
 
-        var model = posts.Select(JournalPostCardViewModel.FromEntity).ToList();
+        var culture = CultureInfo.CurrentUICulture.Name;
+        var model = posts.Select(p => JournalPostCardViewModel.FromEntity(p, culture)).ToList();
         return View(model);
     }
 
@@ -27,6 +30,7 @@ public class JournalController(IJournalService journalService) : Controller
         if (post is null || post.Status != JournalPostStatus.Published)
             return NotFound();
 
-        return View(JournalPostDetailViewModel.FromEntity(post));
+        return View(JournalPostDetailViewModel.FromEntity(
+            post, CultureInfo.CurrentUICulture.Name, loc["Journal.Video.Play"].Value));
     }
 }

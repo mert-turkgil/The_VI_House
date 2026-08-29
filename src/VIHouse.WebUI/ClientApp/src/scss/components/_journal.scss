@@ -140,3 +140,112 @@
     color: var(--vih-green-900);
   }
 }
+
+// --- Video embeds ------------------------------------------------------------------------------
+// Rendered by ArticleHtml as a poster and a button; modules/video.ts replaces the button with the
+// real player on click. Both states occupy the same 16:9 box, so swapping one for the other does
+// not move the paragraph underneath.
+.video-embed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  margin: var(--vih-space-lg) 0;
+  border-radius: var(--vih-radius-lg);
+  overflow: hidden;
+  background: var(--vih-green-950);
+}
+
+.video-embed__play {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--vih-focus-ring);
+    outline-offset: -4px;
+  }
+}
+
+.video-embed__poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--vih-dur-slow) var(--vih-ease-out), opacity var(--vih-dur-base) var(--vih-ease-out);
+}
+
+// The play badge. Drawn from a border triangle rather than an icon file: it is three declarations,
+// it inherits its colour, and it cannot fail to load.
+.video-embed__icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 72px;
+  height: 72px;
+  border-radius: var(--vih-radius-pill);
+  background: rgba(0, 26, 2, 0.72);
+  border: 1px solid var(--vih-gold);
+  transition: background var(--vih-dur-base) var(--vih-ease-out), transform var(--vih-dur-base) var(--vih-ease-out);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 54%;
+    transform: translate(-50%, -50%);
+    border-style: solid;
+    border-width: 11px 0 11px 18px;
+    border-color: transparent transparent transparent var(--vih-gold-light);
+  }
+}
+
+.video-embed__play:hover,
+.video-embed__play:focus-visible {
+  .video-embed__poster {
+    transform: scale(1.03);
+    opacity: 0.85;
+  }
+
+  .video-embed__icon {
+    background: rgba(0, 26, 2, 0.88);
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+}
+
+.video-embed__frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+// --- Inline audio ------------------------------------------------------------------------------
+// Inserted from the media library as a plain <audio controls>. The player itself is the browser's,
+// which is the right call for one file in an article: it is keyboard accessible, it is what the
+// reader already knows, and it costs nothing.
+.journal-article__body audio {
+  display: block;
+  width: 100%;
+  margin: var(--vih-space-md) 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-embed__poster,
+  .video-embed__icon {
+    transition: none;
+  }
+
+  .video-embed__play:hover .video-embed__poster,
+  .video-embed__play:focus-visible .video-embed__poster {
+    transform: none;
+  }
+
+  .video-embed__play:hover .video-embed__icon,
+  .video-embed__play:focus-visible .video-embed__icon {
+    transform: translate(-50%, -50%);
+  }
+}

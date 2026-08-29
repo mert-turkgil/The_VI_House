@@ -710,4 +710,78 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Footer.NewsletterLede" xml:space="preserve"><value>Saa uudiseid sessioonide, uute materjalide ja retriitide kohta.</value></data>
   <data name="Home.Trust.BecomeMember" xml:space="preserve"><value>Astu liikmeks</value></data>
   <data name="Home.Trust.LogosHeading" xml:space="preserve"><value>Usaldavad asutajad ettevõtetest</value></data>
+  <data name="Journal.Video.Play" xml:space="preserve"><value>Esita video</value></data>
+  <data name="Journal.Error.NotFound" xml:space="preserve"><value>Seda postitust enam pole.</value></data>
+  <data name="Journal.Error.BodyRequiredToPublish" xml:space="preserve"><value>Enne avaldamist kirjuta ingliskeelne artikkel — kõik teised keeled tuginevad sellele.</value></data>
+  <data name="Journal.Error.UnknownCulture" xml:space="preserve"><value>See ei ole üks saidi keeltest.</value></data>
+  <data name="Journal.Error.CannotDeleteDefaultCulture" xml:space="preserve"><value>Vaikekeelt ei saa eemaldada — kõik teised keeled tuginevad sellele.</value></data>
+  <data name="Journal.Error.MediaNotFound" xml:space="preserve"><value>See fail ei kuulu enam selle postituse juurde.</value></data>
+  <data name="Journal.Error.CoverMustBeImage" xml:space="preserve"><value>Kaanepilt peab olema pilt — JPEG, PNG, WebP või AVIF.</value></data>
+  <data name="Journal.Validation.Slug" xml:space="preserve"><value>Slug võib sisaldada ainult väiketähti, numbreid ja sidekriipse.</value></data>
+  <data name="Admin.Journal.Title" xml:space="preserve"><value>Ajakiri</value></data>
+  <data name="Admin.Journal.New" xml:space="preserve"><value>Uus postitus</value></data>
+  <data name="Admin.Journal.ViewJournal" xml:space="preserve"><value>Vaata ajakirja</value></data>
+  <data name="Admin.Journal.Empty" xml:space="preserve"><value>Postitusi veel pole.</value></data>
+  <data name="Admin.Journal.Title.Column" xml:space="preserve"><value>Pealkiri</value></data>
+  <data name="Admin.Journal.Slug" xml:space="preserve"><value>Slug</value></data>
+  <data name="Admin.Journal.Category" xml:space="preserve"><value>Kategooria</value></data>
+  <data name="Admin.Journal.Status" xml:space="preserve"><value>Olek</value></data>
+  <data name="Admin.Journal.Published" xml:space="preserve"><value>Avaldatud</value></data>
+  <data name="Admin.Journal.Languages" xml:space="preserve"><value>Keeled</value></data>
+  <data name="Admin.Journal.Excerpt" xml:space="preserve"><value>Väljavõte</value></data>
+  <data name="Admin.Journal.Excerpt.Hint" xml:space="preserve"><value>Kuvatakse loendikaardil ja otsingutulemustes.</value></data>
+  <data name="Admin.Journal.Body" xml:space="preserve"><value>Artikkel</value></data>
+  <data name="Admin.Journal.Body.Hint" xml:space="preserve"><value>Pildi või GIF-i üleslaadimiseks lohista see otse siia. Video lisamiseks kleebi YouTube'i link omaette reale; heli lisatakse allolevast meediakogust.</value></data>
+  <data name="Admin.Journal.AuthorName" xml:space="preserve"><value>Autor</value></data>
+  <data name="Admin.Journal.CoverImageUrl" xml:space="preserve"><value>Kaanepildi URL</value></data>
+  <data name="Admin.Journal.CoverImageAlt" xml:space="preserve"><value>Kaanepildi kirjeldus</value></data>
+  <data name="Admin.Journal.CoverImageAlt.Hint" xml:space="preserve"><value>Ekraanilugejatele. Jäta tühjaks, kui pealkiri ütleb juba, mida pilt näitab.</value></data>
+  <data name="Admin.Journal.CoverUrlHint" xml:space="preserve"><value>Saidi tee, näiteks /img/journal/name-1600.jpg, või https:// aadress.</value></data>
+  <data name="Admin.Journal.CoverUrlDisabled" xml:space="preserve"><value>Kasutusel on üleslaaditud kaanepilt. URL-i sisestamiseks eemalda see.</value></data>
+  <data name="Admin.Journal.Section.Cover" xml:space="preserve"><value>Kaanepilt</value></data>
+  <data name="Admin.Journal.Section.Settings" xml:space="preserve"><value>Postituse seaded</value></data>
+  <data name="Admin.Journal.Section.Copy" xml:space="preserve"><value>Artikkel — {0}</value></data>
+  <data name="Admin.Journal.Section.Media" xml:space="preserve"><value>Meediakogu</value></data>
+  <data name="Admin.Journal.NoCoverYet" xml:space="preserve"><value>Kaanepilti veel pole — artikkel kuvatakse vapi kohatäitega.</value></data>
+  <data name="Admin.Journal.UploadCover" xml:space="preserve"><value>Laadi kaanepilt üles</value></data>
+  <data name="Admin.Journal.RemoveCover" xml:space="preserve"><value>Eemalda kaanepilt</value></data>
+  <data name="Admin.Journal.ConfirmRemoveCover" xml:space="preserve"><value>Eemaldada kaanepilt? Fail kustutatakse koos sellega.</value></data>
+  <data name="Admin.Journal.CoverHint" xml:space="preserve"><value>Üleslaadimine asendab praeguse kaanepildi ja kustutab asendatud faili. Rõhtpaigutuses, vähemalt 1600 px lai.</value></data>
+  <data name="Admin.Journal.UploadMedia" xml:space="preserve"><value>Laadi üles</value></data>
+  <data name="Admin.Journal.MediaTitlePlaceholder" xml:space="preserve"><value>Silt (valikuline)</value></data>
+  <data name="Admin.Journal.MediaHint" xml:space="preserve"><value>Pildid, GIF-id ja MP3-d. Siia lisatud failid lisatakse artiklisse kõrvaloleva nupuga ja kustutamisel kustub ka fail.</value></data>
+  <data name="Admin.Journal.MediaFile" xml:space="preserve"><value>Fail</value></data>
+  <data name="Admin.Journal.MediaKind" xml:space="preserve"><value>Tüüp</value></data>
+  <data name="Admin.Journal.MediaSize" xml:space="preserve"><value>Suurus</value></data>
+  <data name="Admin.Journal.Insert" xml:space="preserve"><value>Lisa</value></data>
+  <data name="Admin.Journal.UseAsCover" xml:space="preserve"><value>Kasuta kaanena</value></data>
+  <data name="Admin.Journal.IsCover" xml:space="preserve"><value>Kaanepilt</value></data>
+  <data name="Admin.Journal.ConfirmRemoveMedia" xml:space="preserve"><value>Kustutada see fail? See eemaldatakse kettalt ja iga artikkel, mis seda kasutab, kaotab selle.</value></data>
+  <data name="Admin.Journal.MediaLaterHint" xml:space="preserve"><value>Fotod, heli ja video lisatakse järgmisel ekraanil, kui postitus on loodud.</value></data>
+  <data name="Admin.Journal.CreateHint" xml:space="preserve"><value>Alusta {0} artiklist — teised keeled saavad oma vahekaardid, kui postitus on loodud.</value></data>
+  <data name="Admin.Journal.CreateSubmit" xml:space="preserve"><value>Loo postitus</value></data>
+  <data name="Admin.Journal.Cancel" xml:space="preserve"><value>Loobu</value></data>
+  <data name="Admin.Journal.BackToList" xml:space="preserve"><value>Kõik postitused</value></data>
+  <data name="Admin.Journal.Preview" xml:space="preserve"><value>Eelvaade</value></data>
+  <data name="Admin.Journal.SaveSettings" xml:space="preserve"><value>Salvesta seaded</value></data>
+  <data name="Admin.Journal.SaveCopy" xml:space="preserve"><value>Salvesta {0} artikkel</value></data>
+  <data name="Admin.Journal.DefaultLanguage" xml:space="preserve"><value>vaikimisi</value></data>
+  <data name="Admin.Journal.NotTranslated" xml:space="preserve"><value>tõlkimata</value></data>
+  <data name="Admin.Journal.FallbackNotice" xml:space="preserve"><value>Siia pole veel midagi kirjutatud — selle keele lugejad näevad praegu {0} artiklit.</value></data>
+  <data name="Admin.Journal.PublishHint" xml:space="preserve"><value>Postitust saab avaldada alles siis, kui {0} artikkel on kirjutatud.</value></data>
+  <data name="Admin.Journal.ConfirmDelete" xml:space="preserve"><value>Kustutada see postitus, selle tõlked ja kõik selle failid?</value></data>
+  <data name="Admin.Journal.ConfirmDeleteTranslation" xml:space="preserve"><value>Eemaldada selle keele artikkel postituselt?</value></data>
+  <data name="Admin.Journal.DeleteTranslation" xml:space="preserve"><value>Kustuta {0} artikkel</value></data>
+  <data name="Admin.Journal.Delete" xml:space="preserve"><value>Kustuta</value></data>
+  <data name="Admin.Journal.Created" xml:space="preserve"><value>„{0}“ loodud. Järgmisena lisa meedia ja teised keeled.</value></data>
+  <data name="Admin.Journal.Saved" xml:space="preserve"><value>Seaded salvestatud.</value></data>
+  <data name="Admin.Journal.TranslationSaved" xml:space="preserve"><value>{0} artikkel salvestatud.</value></data>
+  <data name="Admin.Journal.TranslationDeleted" xml:space="preserve"><value>{0} artikkel eemaldatud.</value></data>
+  <data name="Admin.Journal.MediaAdded" xml:space="preserve"><value>{0} üles laaditud.</value></data>
+  <data name="Admin.Journal.MediaRemoved" xml:space="preserve"><value>Fail kustutatud.</value></data>
+  <data name="Admin.Journal.CoverChanged" xml:space="preserve"><value>Kaanepilt uuendatud.</value></data>
+  <data name="Admin.Journal.CoverRemoved" xml:space="preserve"><value>Kaanepilt eemaldatud.</value></data>
+  <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Postitus kustutatud.</value></data>
+  <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>Seda postitust enam pole.</value></data>
+  <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>Seda ei õnnestunud salvestada.</value></data>
 </root>

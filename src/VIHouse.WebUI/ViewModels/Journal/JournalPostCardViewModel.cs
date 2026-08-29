@@ -1,3 +1,4 @@
+using VIHouse.Business.Concrete;
 using VIHouse.Entities.Journal;
 using VIHouse.WebUI.Helpers;
 
@@ -15,14 +16,21 @@ public class JournalPostCardViewModel
 
     public string CategoryLabel => Category.ToDisplayLabel();
 
-    public static JournalPostCardViewModel FromEntity(JournalPost p) => new()
+    /// <param name="culture">The reader's culture. A post with no copy in it falls back through
+    /// JournalContent rather than rendering a card with no headline.</param>
+    public static JournalPostCardViewModel FromEntity(JournalPost p, string? culture)
     {
-        Title = p.Title,
-        Slug = p.Slug,
-        Category = p.Category,
-        Excerpt = p.Excerpt,
-        CoverImageUrl = p.CoverImageUrl,
-        AuthorName = p.AuthorName,
-        PublishedAt = p.PublishedAt,
-    };
+        var copy = JournalContent.Resolve(p, culture);
+
+        return new JournalPostCardViewModel
+        {
+            Title = copy?.Title ?? p.Slug,
+            Slug = p.Slug,
+            Category = p.Category,
+            Excerpt = copy?.Excerpt,
+            CoverImageUrl = JournalPostDetailViewModel.CoverUrl(p),
+            AuthorName = p.AuthorName,
+            PublishedAt = p.PublishedAt,
+        };
+    }
 }

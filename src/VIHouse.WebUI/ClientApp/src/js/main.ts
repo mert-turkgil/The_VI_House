@@ -7,6 +7,7 @@ import { initAuthenticatorQr } from './modules/qr';
 import { initRecoveryCodeDownload } from './modules/recoveryCodes';
 import { initExperienceFilters } from './modules/filters';
 import { initSubnav } from './modules/subnav';
+import { initVideoEmbeds } from './modules/video';
 
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRecoveryCodeDownload();
   initExperienceFilters();
   initSubnav();
+  initVideoEmbeds();
 });
 
 // PWA (brief §65) — registered on every page (Admin included, harmlessly; the service worker

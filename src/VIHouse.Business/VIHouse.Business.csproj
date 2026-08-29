@@ -6,6 +6,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Already here transitively, via HtmlSanitizer. Referenced explicitly because EditorHtml and
+         ArticleHtml parse markup with it directly, and an indirect dependency that our own code
+         calls is one HtmlSanitizer upgrade away from disappearing. -->
+    <PackageReference Include="AngleSharp" Version="1.7.1" />
     <PackageReference Include="HtmlSanitizer" Version="9.2.995" />
     <PackageReference Include="MailKit" Version="4.17.0" />
     <PackageReference Include="Stripe.net" Version="52.3.0" />

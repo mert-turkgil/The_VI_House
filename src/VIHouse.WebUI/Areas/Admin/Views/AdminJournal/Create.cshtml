@@ -1,14 +1,57 @@
-@model AdminJournalPostFormViewModel
+@model AdminJournalCreateViewModel
 @{
-    ViewData["Title"] = "New Journal Post";
+    ViewData["Title"] = Loc["Admin.Journal.New"].Value;
 }
 
+<div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+
+<p class="admin-hint">@Loc["Admin.Journal.CreateHint", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</p>
+
 <form asp-action="Create" method="post" class="admin-form">
-    <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
-    <partial name="_FormFields" model="Model" />
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="DefaultTranslation.Title">@Loc["Admin.Journal.Title.Column"]</label>
+            <input asp-for="DefaultTranslation.Title" maxlength="200" required />
+            <span asp-validation-for="DefaultTranslation.Title" class="field-validation-error"></span>
+        </div>
+        <div class="admin-field">
+            <label asp-for="Post.Slug">@Loc["Admin.Journal.Slug"]</label>
+            <input asp-for="Post.Slug" placeholder="why-we-built-the-vi-house" />
+            <span asp-validation-for="Post.Slug" class="field-validation-error"></span>
+        </div>
+    </div>
+
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="Post.Category">@Loc["Admin.Journal.Category"]</label>
+            <select asp-for="Post.Category" asp-items="Html.GetEnumSelectList<JournalCategory>()"></select>
+        </div>
+        <div class="admin-field">
+            <label asp-for="Post.AuthorName">@Loc["Admin.Journal.AuthorName"]</label>
+            <input asp-for="Post.AuthorName" maxlength="150" />
+        </div>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="DefaultTranslation.Excerpt">@Loc["Admin.Journal.Excerpt"]</label>
+        <textarea asp-for="DefaultTranslation.Excerpt" rows="2" maxlength="500"></textarea>
+        <span asp-validation-for="DefaultTranslation.Excerpt" class="field-validation-error"></span>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="DefaultTranslation.Body">@Loc["Admin.Journal.Body"]</label>
+        @* No data-upload-url here, unlike the edit screen: there is no post row yet for an uploaded
+           file to belong to, and a file owned by nothing is the one thing this design does not
+           allow. Images, audio and video are added on the next screen. *@
+        <textarea asp-for="DefaultTranslation.Body" rows="16" data-ckeditor></textarea>
+        <span asp-validation-for="DefaultTranslation.Body" class="field-validation-error"></span>
+    </div>
+
+    <p class="admin-field__hint">@Loc["Admin.Journal.MediaLaterHint"]</p>
+
     <div>
-        <button type="submit" class="admin-btn">Create Post</button>
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
+        <button type="submit" class="admin-btn">@Loc["Admin.Journal.CreateSubmit"]</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Journal.Cancel"]</a>
     </div>
 </form>
 

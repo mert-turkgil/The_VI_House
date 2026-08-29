@@ -3,10 +3,11 @@
 // Journal posts and seminar bodies, Chart.js for the dashboard. Keeping it out of main.ts is the whole point of the
 // two-entry Vite build — a homepage visitor should never download an editor they can't open.
 import '../scss/admin.scss';
-import { initRichTextEditors } from './modules/editor';
+import { initRichTextEditors, initMediaInsert } from './modules/editor';
 import { initAdminCharts } from './modules/charts';
 
 document.addEventListener('DOMContentLoaded', () => {
   initRichTextEditors();
+  initMediaInsert();
   initAdminCharts();
 });

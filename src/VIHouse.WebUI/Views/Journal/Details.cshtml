@@ -27,6 +27,7 @@
     <div class="journal-article__cover">
         <partial name="_CoverImage" model="@(new CoverImageViewModel {
             Url = Model.CoverImageUrl,
+            Alt = Model.CoverImageAlt,
             Ratio = "21x9",
             Sizes = "100vw",
             Eager = true,
@@ -34,7 +35,9 @@
     </div>
 }
 
-@* Sanitised on write by JournalService (see EditorHtml), so the stored HTML is already safe. *@
+@* Sanitised on write by JournalService (see EditorHtml), so the stored HTML is already safe. Video
+   markers were turned into click-to-play facades on the way here by ArticleHtml — the player itself
+   is built in the browser by modules/video.ts, only once a reader asks for it. *@
 <div class="container content-body journal-article__body">
     @Html.Raw(Model.BodyHtml)
 </div>

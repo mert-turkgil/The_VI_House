@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Experiences;
+using VIHouse.Business.Concrete;
 using VIHouse.Entities.Journal;
 using VIHouse.WebUI.ViewModels.Search;
 
@@ -46,10 +47,11 @@ public class SearchController(IExperienceRepository experiences, IJournalPostRep
              EF.Functions.Collate(e.City, ci).Contains(term) ||
              EF.Functions.Collate(e.Country, ci).Contains(term)), ct);
 
-        var matchedPosts = await journalPosts.FindAsync(p =>
-            p.Status == JournalPostStatus.Published &&
-            (EF.Functions.Collate(p.Title, ci).Contains(term) ||
-             (p.Excerpt != null && EF.Functions.Collate(p.Excerpt, ci).Contains(term))), ct);
+        // Journal copy lives one table further out (JournalPostTranslations), and the match runs
+        // across every language rather than only the reader's: someone searching a German phrase
+        // should find the article even while reading the site in English. The repository owns the
+        // query because the collation trick above has to be applied there too.
+        var matchedPosts = await journalPosts.SearchPublishedAsync(term, ct);
 
         var results = new List<SearchResultItemViewModel>();
         results.AddRange(matchedExperiences.Select(e => new SearchResultItemViewModel
@@ -59,12 +61,19 @@ public class SearchController(IExperienceRepository experiences, IJournalPostRep
             Subtitle = $"{e.City}, {e.Country}",
             Url = $"/experiences/{e.Slug}",
         }));
-        results.AddRange(matchedPosts.Select(p => new SearchResultItemViewModel
+        // Displayed in the reader's own language even when the match came from another one — the
+        // result they click leads to a page they can read.
+        var culture = System.Globalization.CultureInfo.CurrentUICulture.Name;
+        results.AddRange(matchedPosts.Select(p =>
         {
-            Type = "Journal",
-            Title = p.Title,
-            Subtitle = p.Excerpt,
-            Url = $"/journal/{p.Slug}",
+            var copy = JournalContent.Resolve(p, culture);
+            return new SearchResultItemViewModel
+            {
+                Type = "Journal",
+                Title = copy?.Title ?? p.Slug,
+                Subtitle = copy?.Excerpt,
+                Url = $"/journal/{p.Slug}",
+            };
         }));
 
         return results.Take(take).ToList();

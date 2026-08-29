@@ -710,4 +710,78 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Footer.NewsletterLede" xml:space="preserve"><value>Updates zu Sessions, neuen Ressourcen und Retreats.</value></data>
   <data name="Home.Trust.BecomeMember" xml:space="preserve"><value>Mitglied werden</value></data>
   <data name="Home.Trust.LogosHeading" xml:space="preserve"><value>Vertraut von Gründern bei</value></data>
+  <data name="Journal.Video.Play" xml:space="preserve"><value>Video abspielen</value></data>
+  <data name="Journal.Error.NotFound" xml:space="preserve"><value>Dieser Beitrag existiert nicht mehr.</value></data>
+  <data name="Journal.Error.BodyRequiredToPublish" xml:space="preserve"><value>Schreiben Sie den englischen Artikel, bevor Sie veröffentlichen — alle anderen Sprachen greifen darauf zurück.</value></data>
+  <data name="Journal.Error.UnknownCulture" xml:space="preserve"><value>Das ist keine der Sprachen dieser Website.</value></data>
+  <data name="Journal.Error.CannotDeleteDefaultCulture" xml:space="preserve"><value>Die Standardsprache kann nicht entfernt werden — alle anderen Sprachen greifen darauf zurück.</value></data>
+  <data name="Journal.Error.MediaNotFound" xml:space="preserve"><value>Diese Datei gehört nicht mehr zu diesem Beitrag.</value></data>
+  <data name="Journal.Error.CoverMustBeImage" xml:space="preserve"><value>Ein Titelbild muss ein Bild sein — JPEG, PNG, WebP oder AVIF.</value></data>
+  <data name="Journal.Validation.Slug" xml:space="preserve"><value>Der Slug darf nur Kleinbuchstaben, Ziffern und Bindestriche enthalten.</value></data>
+  <data name="Admin.Journal.Title" xml:space="preserve"><value>Journal</value></data>
+  <data name="Admin.Journal.New" xml:space="preserve"><value>Neuer Beitrag</value></data>
+  <data name="Admin.Journal.ViewJournal" xml:space="preserve"><value>Journal ansehen</value></data>
+  <data name="Admin.Journal.Empty" xml:space="preserve"><value>Noch keine Beiträge.</value></data>
+  <data name="Admin.Journal.Title.Column" xml:space="preserve"><value>Titel</value></data>
+  <data name="Admin.Journal.Slug" xml:space="preserve"><value>Slug</value></data>
+  <data name="Admin.Journal.Category" xml:space="preserve"><value>Kategorie</value></data>
+  <data name="Admin.Journal.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Admin.Journal.Published" xml:space="preserve"><value>Veröffentlicht</value></data>
+  <data name="Admin.Journal.Languages" xml:space="preserve"><value>Sprachen</value></data>
+  <data name="Admin.Journal.Excerpt" xml:space="preserve"><value>Teaser</value></data>
+  <data name="Admin.Journal.Excerpt.Hint" xml:space="preserve"><value>Erscheint auf der Übersichtskarte und in den Suchergebnissen.</value></data>
+  <data name="Admin.Journal.Body" xml:space="preserve"><value>Artikel</value></data>
+  <data name="Admin.Journal.Body.Hint" xml:space="preserve"><value>Bild oder GIF einfach hineinziehen, um es hochzuladen. Einen YouTube-Link in eine eigene Zeile einfügen, um das Video einzubetten; Audio wird unten aus der Mediathek eingefügt.</value></data>
+  <data name="Admin.Journal.AuthorName" xml:space="preserve"><value>Autor</value></data>
+  <data name="Admin.Journal.CoverImageUrl" xml:space="preserve"><value>URL des Titelbilds</value></data>
+  <data name="Admin.Journal.CoverImageAlt" xml:space="preserve"><value>Bildbeschreibung</value></data>
+  <data name="Admin.Journal.CoverImageAlt.Hint" xml:space="preserve"><value>Für Screenreader. Leer lassen, wenn die Überschrift darüber bereits sagt, was zu sehen ist.</value></data>
+  <data name="Admin.Journal.CoverUrlHint" xml:space="preserve"><value>Ein Site-Pfad wie /img/journal/name-1600.jpg oder eine https://-Adresse.</value></data>
+  <data name="Admin.Journal.CoverUrlDisabled" xml:space="preserve"><value>Es wird ein hochgeladenes Titelbild verwendet. Entfernen Sie es, um stattdessen eine URL einzufügen.</value></data>
+  <data name="Admin.Journal.Section.Cover" xml:space="preserve"><value>Titelbild</value></data>
+  <data name="Admin.Journal.Section.Settings" xml:space="preserve"><value>Beitragseinstellungen</value></data>
+  <data name="Admin.Journal.Section.Copy" xml:space="preserve"><value>Artikel — {0}</value></data>
+  <data name="Admin.Journal.Section.Media" xml:space="preserve"><value>Mediathek</value></data>
+  <data name="Admin.Journal.NoCoverYet" xml:space="preserve"><value>Noch kein Titelbild — der Artikel erscheint mit dem Wappen-Platzhalter.</value></data>
+  <data name="Admin.Journal.UploadCover" xml:space="preserve"><value>Titelbild hochladen</value></data>
+  <data name="Admin.Journal.RemoveCover" xml:space="preserve"><value>Titelbild entfernen</value></data>
+  <data name="Admin.Journal.ConfirmRemoveCover" xml:space="preserve"><value>Titelbild entfernen? Die Datei wird mit gelöscht.</value></data>
+  <data name="Admin.Journal.CoverHint" xml:space="preserve"><value>Ein Upload ersetzt das aktuelle Titelbild und löscht die ersetzte Datei. Querformat, mindestens 1600 px breit.</value></data>
+  <data name="Admin.Journal.UploadMedia" xml:space="preserve"><value>Hochladen</value></data>
+  <data name="Admin.Journal.MediaTitlePlaceholder" xml:space="preserve"><value>Bezeichnung (optional)</value></data>
+  <data name="Admin.Journal.MediaHint" xml:space="preserve"><value>Bilder, GIFs und MP3s. Hier hinzugefügte Dateien werden mit dem Button daneben in den Artikel eingefügt; wird eine gelöscht, wird auch die Datei gelöscht.</value></data>
+  <data name="Admin.Journal.MediaFile" xml:space="preserve"><value>Datei</value></data>
+  <data name="Admin.Journal.MediaKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Admin.Journal.MediaSize" xml:space="preserve"><value>Größe</value></data>
+  <data name="Admin.Journal.Insert" xml:space="preserve"><value>Einfügen</value></data>
+  <data name="Admin.Journal.UseAsCover" xml:space="preserve"><value>Als Titelbild</value></data>
+  <data name="Admin.Journal.IsCover" xml:space="preserve"><value>Titelbild</value></data>
+  <data name="Admin.Journal.ConfirmRemoveMedia" xml:space="preserve"><value>Diese Datei löschen? Sie wird von der Festplatte entfernt, und jeder Artikel, der sie nutzt, verliert sie.</value></data>
+  <data name="Admin.Journal.MediaLaterHint" xml:space="preserve"><value>Fotos, Audio und Video werden im nächsten Schritt hinzugefügt, sobald der Beitrag existiert.</value></data>
+  <data name="Admin.Journal.CreateHint" xml:space="preserve"><value>Beginnen Sie mit dem Artikel auf {0} — die anderen Sprachen erhalten eigene Reiter, sobald der Beitrag existiert.</value></data>
+  <data name="Admin.Journal.CreateSubmit" xml:space="preserve"><value>Beitrag erstellen</value></data>
+  <data name="Admin.Journal.Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Admin.Journal.BackToList" xml:space="preserve"><value>Alle Beiträge</value></data>
+  <data name="Admin.Journal.Preview" xml:space="preserve"><value>Vorschau</value></data>
+  <data name="Admin.Journal.SaveSettings" xml:space="preserve"><value>Einstellungen speichern</value></data>
+  <data name="Admin.Journal.SaveCopy" xml:space="preserve"><value>{0} Artikel speichern</value></data>
+  <data name="Admin.Journal.DefaultLanguage" xml:space="preserve"><value>Standard</value></data>
+  <data name="Admin.Journal.NotTranslated" xml:space="preserve"><value>nicht übersetzt</value></data>
+  <data name="Admin.Journal.FallbackNotice" xml:space="preserve"><value>Hier steht noch nichts — Leser in dieser Sprache sehen derzeit den Artikel auf {0}.</value></data>
+  <data name="Admin.Journal.PublishHint" xml:space="preserve"><value>Ein Beitrag kann erst veröffentlicht werden, wenn der Artikel auf {0} geschrieben ist.</value></data>
+  <data name="Admin.Journal.ConfirmDelete" xml:space="preserve"><value>Diesen Beitrag, seine Übersetzungen und alle zugehörigen Dateien löschen?</value></data>
+  <data name="Admin.Journal.ConfirmDeleteTranslation" xml:space="preserve"><value>Den Artikel dieser Sprache vom Beitrag entfernen?</value></data>
+  <data name="Admin.Journal.DeleteTranslation" xml:space="preserve"><value>{0} Artikel löschen</value></data>
+  <data name="Admin.Journal.Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="Admin.Journal.Created" xml:space="preserve"><value>„{0}“ erstellt. Fügen Sie als Nächstes die Medien und die anderen Sprachen hinzu.</value></data>
+  <data name="Admin.Journal.Saved" xml:space="preserve"><value>Einstellungen gespeichert.</value></data>
+  <data name="Admin.Journal.TranslationSaved" xml:space="preserve"><value>{0} Artikel gespeichert.</value></data>
+  <data name="Admin.Journal.TranslationDeleted" xml:space="preserve"><value>{0} Artikel entfernt.</value></data>
+  <data name="Admin.Journal.MediaAdded" xml:space="preserve"><value>{0} hochgeladen.</value></data>
+  <data name="Admin.Journal.MediaRemoved" xml:space="preserve"><value>Datei gelöscht.</value></data>
+  <data name="Admin.Journal.CoverChanged" xml:space="preserve"><value>Titelbild aktualisiert.</value></data>
+  <data name="Admin.Journal.CoverRemoved" xml:space="preserve"><value>Titelbild entfernt.</value></data>
+  <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Beitrag gelöscht.</value></data>
+  <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>Dieser Beitrag existiert nicht mehr.</value></data>
+  <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>Das konnte nicht gespeichert werden.</value></data>
 </root>

@@ -277,67 +277,130 @@ public static class DbSeeder
 
         var now = DateTimeOffset.UtcNow;
 
-        db.JournalPosts.Add(new JournalPost
+        // Copy is per culture (JournalPostTranslation). The first post is written in all four
+        // languages on purpose: a seeded article that exists only in English proves nothing about
+        // the fallback, and switching the language picker is the first thing anyone does with it.
+        var why = new JournalPost
         {
-            Title = "Why We Built The VI House",
             Slug = "why-we-built-the-vi-house",
             CoverImageUrl = "/img/journal/why-we-built-the-vi-house-1600.jpg",
             Category = JournalCategory.FounderStories,
             Status = JournalPostStatus.Published,
-            Excerpt = "Every room we curate starts from the same question: who actually belongs in it.",
-            Body = "The best opportunities rarely happen by accident. They happen in rooms where the right " +
-                   "people are already in the same place, at the same time, with enough trust between them to " +
-                   "say what they actually think.\n\n" +
-                   "The VI House exists to build those rooms deliberately — not at conference scale, and not " +
-                   "through a payment form. Every experience starts with an application, reviewed by hand.",
             AuthorName = "The VI House",
             PublishedAt = now.AddDays(-30),
-        });
-
-        db.JournalPosts.Add(new JournalPost
+        };
+        why.Translations.Add(new JournalPostTranslation
         {
-            Title = "The Quiet Signal: Reading Capital Before It Moves",
+            JournalPostId = why.Id,
+            Culture = "en-GB",
+            Title = "Why We Built The VI House",
+            Excerpt = "Every room we curate starts from the same question: who actually belongs in it.",
+            Body = "<p>The best opportunities rarely happen by accident. They happen in rooms where the right " +
+                   "people are already in the same place, at the same time, with enough trust between them to " +
+                   "say what they actually think.</p>" +
+                   "<p>The VI House exists to build those rooms deliberately — not at conference scale, and not " +
+                   "through a payment form. Every experience starts with an application, reviewed by hand.</p>",
+        });
+        why.Translations.Add(new JournalPostTranslation
+        {
+            JournalPostId = why.Id,
+            Culture = "de-DE",
+            Title = "Warum wir The VI House gebaut haben",
+            Excerpt = "Jeder Raum, den wir kuratieren, beginnt mit derselben Frage: Wer gehört wirklich hinein?",
+            Body = "<p>Die besten Gelegenheiten entstehen selten zufällig. Sie entstehen in Räumen, in denen die " +
+                   "richtigen Menschen bereits am selben Ort sind, zur selben Zeit, mit genug Vertrauen, um zu " +
+                   "sagen, was sie wirklich denken.</p>" +
+                   "<p>The VI House baut diese Räume bewusst — nicht in Konferenzgröße und nicht über ein " +
+                   "Zahlungsformular. Jede Experience beginnt mit einer Bewerbung, von Hand geprüft.</p>",
+        });
+        why.Translations.Add(new JournalPostTranslation
+        {
+            JournalPostId = why.Id,
+            Culture = "tr-TR",
+            Title = "The VI House'u Neden Kurduk",
+            Excerpt = "Kurduğumuz her oda aynı soruyla başlar: bu odada gerçekten kim olmalı?",
+            Body = "<p>En iyi fırsatlar nadiren tesadüfen ortaya çıkar. Doğru insanların aynı anda aynı yerde " +
+                   "olduğu ve aralarında gerçekten düşündüklerini söyleyecek kadar güven bulunan odalarda " +
+                   "ortaya çıkar.</p>" +
+                   "<p>The VI House bu odaları bilinçli olarak kurmak için var — konferans ölçeğinde değil ve bir " +
+                   "ödeme formu üzerinden değil. Her deneyim, tek tek incelenen bir başvuruyla başlar.</p>",
+        });
+        why.Translations.Add(new JournalPostTranslation
+        {
+            JournalPostId = why.Id,
+            Culture = "et-EE",
+            Title = "Miks me The VI House'i lõime",
+            Excerpt = "Iga ruum, mille kokku paneme, algab samast küsimusest: kes sinna tegelikult kuulub?",
+            Body = "<p>Parimad võimalused ei sünni juhuslikult. Need sünnivad ruumides, kus õiged inimesed on " +
+                   "juba samal ajal samas kohas ja usaldavad üksteist piisavalt, et öelda, mida nad tegelikult " +
+                   "mõtlevad.</p>" +
+                   "<p>The VI House ehitab neid ruume teadlikult — mitte konverentsi mõõtmes ja mitte " +
+                   "maksevormi kaudu. Iga kogemus algab avaldusest, mis vaadatakse käsitsi üle.</p>",
+        });
+        db.JournalPosts.Add(why);
+
+        var signal = new JournalPost
+        {
             Slug = "the-quiet-signal-reading-capital-before-it-moves",
             CoverImageUrl = "/img/journal/the-quiet-signal-reading-capital-before-it-moves-1600.jpg",
             Category = JournalCategory.Capital,
             Status = JournalPostStatus.Published,
-            Excerpt = "The founders who raise well are rarely the ones who pitch the loudest.",
-            Body = "Capital rarely announces itself before it moves. By the time a raise is public, the " +
-                   "relationship that made it possible has usually existed for months.\n\n" +
-                   "That's the case for rooms, not cold outreach — the founders who raise well are usually " +
-                   "the ones who were already known, in person, before they needed anything.",
             AuthorName = "The VI House",
             PublishedAt = now.AddDays(-14),
-        });
-
-        db.JournalPosts.Add(new JournalPost
+        };
+        signal.Translations.Add(new JournalPostTranslation
         {
-            Title = "Inside the Room: What Makes a Founder Session Work",
+            JournalPostId = signal.Id,
+            Culture = "en-GB",
+            Title = "The Quiet Signal: Reading Capital Before It Moves",
+            Excerpt = "The founders who raise well are rarely the ones who pitch the loudest.",
+            Body = "<p>Capital rarely announces itself before it moves. By the time a raise is public, the " +
+                   "relationship that made it possible has usually existed for months.</p>" +
+                   "<p>That is the case for rooms, not cold outreach — the founders who raise well are usually " +
+                   "the ones who were already known, in person, before they needed anything.</p>",
+        });
+        db.JournalPosts.Add(signal);
+
+        var inside = new JournalPost
+        {
             Slug = "inside-the-room-what-makes-a-founder-session-work",
             CoverImageUrl = "/img/journal/inside-the-room-what-makes-a-founder-session-work-1600.jpg",
             Category = JournalCategory.HouseNotes,
             Status = JournalPostStatus.Published,
-            Excerpt = "Notes from the House on running a session that people still talk about a year later.",
-            Body = "A good founder session has almost nothing to do with the agenda.\n\n" +
-                   "It has everything to do with who's in the room, how small it stays, and whether people " +
-                   "feel able to say the thing they actually came to say.",
             AuthorName = "The VI House",
             PublishedAt = now.AddDays(-3),
+        };
+        inside.Translations.Add(new JournalPostTranslation
+        {
+            JournalPostId = inside.Id,
+            Culture = "en-GB",
+            Title = "Inside the Room: What Makes a Founder Session Work",
+            Excerpt = "Notes from the House on running a session that people still talk about a year later.",
+            Body = "<p>A good founder session has almost nothing to do with the agenda.</p>" +
+                   "<p>It has everything to do with who is in the room, how small it stays, and whether people " +
+                   "feel able to say the thing they actually came to say.</p>",
         });
+        db.JournalPosts.Add(inside);
 
         // Deliberately Draft — proves the public /journal listing and /journal/{slug} both hide it
         // while it still appears in the admin Index.
-        db.JournalPosts.Add(new JournalPost
+        var draft = new JournalPost
         {
-            Title = "Building in Public Without Burning Out",
             Slug = "building-in-public-without-burning-out",
             CoverImageUrl = "/img/journal/building-in-public-without-burning-out-1600.jpg",
             Category = JournalCategory.Business,
             Status = JournalPostStatus.Draft,
-            Excerpt = "Draft — still being written.",
-            Body = "Draft body, still being written by the team.",
             AuthorName = "The VI House",
+        };
+        draft.Translations.Add(new JournalPostTranslation
+        {
+            JournalPostId = draft.Id,
+            Culture = "en-GB",
+            Title = "Building in Public Without Burning Out",
+            Excerpt = "Draft — still being written.",
+            Body = "<p>Draft body, still being written by the team.</p>",
         });
+        db.JournalPosts.Add(draft);
     }
 
     private static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)

@@ -67,6 +67,8 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
 
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<JournalPost> JournalPosts => Set<JournalPost>();
+    public DbSet<JournalPostTranslation> JournalPostTranslations => Set<JournalPostTranslation>();
+    public DbSet<JournalPostMedia> JournalPostMedia => Set<JournalPostMedia>();
     public DbSet<CommunityLink> CommunityLinks => Set<CommunityLink>();
 
     public DbSet<EmailLog> EmailLogs => Set<EmailLog>();

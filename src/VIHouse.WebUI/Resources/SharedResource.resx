@@ -710,4 +710,78 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Footer.NewsletterLede" xml:space="preserve"><value>Get updates on sessions, new resources and retreats.</value></data>
   <data name="Home.Trust.BecomeMember" xml:space="preserve"><value>Become a Member</value></data>
   <data name="Home.Trust.LogosHeading" xml:space="preserve"><value>Trusted by founders from</value></data>
+  <data name="Journal.Video.Play" xml:space="preserve"><value>Play video</value></data>
+  <data name="Journal.Error.NotFound" xml:space="preserve"><value>That post no longer exists.</value></data>
+  <data name="Journal.Error.BodyRequiredToPublish" xml:space="preserve"><value>Write the English article before publishing — every other language falls back to it.</value></data>
+  <data name="Journal.Error.UnknownCulture" xml:space="preserve"><value>That is not one of the site's languages.</value></data>
+  <data name="Journal.Error.CannotDeleteDefaultCulture" xml:space="preserve"><value>The default language cannot be removed — every other language falls back to it.</value></data>
+  <data name="Journal.Error.MediaNotFound" xml:space="preserve"><value>That file is no longer attached to this post.</value></data>
+  <data name="Journal.Error.CoverMustBeImage" xml:space="preserve"><value>A cover has to be an image — JPEG, PNG, WebP or AVIF.</value></data>
+  <data name="Journal.Validation.Slug" xml:space="preserve"><value>The slug may contain lowercase letters, numbers and hyphens only.</value></data>
+  <data name="Admin.Journal.Title" xml:space="preserve"><value>Journal</value></data>
+  <data name="Admin.Journal.New" xml:space="preserve"><value>New Post</value></data>
+  <data name="Admin.Journal.ViewJournal" xml:space="preserve"><value>View the Journal</value></data>
+  <data name="Admin.Journal.Empty" xml:space="preserve"><value>No posts yet.</value></data>
+  <data name="Admin.Journal.Title.Column" xml:space="preserve"><value>Title</value></data>
+  <data name="Admin.Journal.Slug" xml:space="preserve"><value>Slug</value></data>
+  <data name="Admin.Journal.Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Admin.Journal.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Admin.Journal.Published" xml:space="preserve"><value>Published</value></data>
+  <data name="Admin.Journal.Languages" xml:space="preserve"><value>Languages</value></data>
+  <data name="Admin.Journal.Excerpt" xml:space="preserve"><value>Excerpt</value></data>
+  <data name="Admin.Journal.Excerpt.Hint" xml:space="preserve"><value>Shown on the listing card and in search results.</value></data>
+  <data name="Admin.Journal.Body" xml:space="preserve"><value>Article</value></data>
+  <data name="Admin.Journal.Body.Hint" xml:space="preserve"><value>Drag an image or GIF straight in to upload it. Paste a YouTube link on its own line to embed the video; audio is inserted from the media library below.</value></data>
+  <data name="Admin.Journal.AuthorName" xml:space="preserve"><value>Author</value></data>
+  <data name="Admin.Journal.CoverImageUrl" xml:space="preserve"><value>Cover image URL</value></data>
+  <data name="Admin.Journal.CoverImageAlt" xml:space="preserve"><value>Cover description</value></data>
+  <data name="Admin.Journal.CoverImageAlt.Hint" xml:space="preserve"><value>For screen readers. Leave empty when the headline above already says what the picture shows.</value></data>
+  <data name="Admin.Journal.CoverUrlHint" xml:space="preserve"><value>A site path such as /img/journal/name-1600.jpg, or an https:// address.</value></data>
+  <data name="Admin.Journal.CoverUrlDisabled" xml:space="preserve"><value>An uploaded cover is in use. Remove it to paste a URL instead.</value></data>
+  <data name="Admin.Journal.Section.Cover" xml:space="preserve"><value>Cover</value></data>
+  <data name="Admin.Journal.Section.Settings" xml:space="preserve"><value>Post settings</value></data>
+  <data name="Admin.Journal.Section.Copy" xml:space="preserve"><value>Article — {0}</value></data>
+  <data name="Admin.Journal.Section.Media" xml:space="preserve"><value>Media library</value></data>
+  <data name="Admin.Journal.NoCoverYet" xml:space="preserve"><value>No cover yet — the article renders with the crest placeholder.</value></data>
+  <data name="Admin.Journal.UploadCover" xml:space="preserve"><value>Upload cover</value></data>
+  <data name="Admin.Journal.RemoveCover" xml:space="preserve"><value>Remove cover</value></data>
+  <data name="Admin.Journal.ConfirmRemoveCover" xml:space="preserve"><value>Remove the cover? The file is deleted with it.</value></data>
+  <data name="Admin.Journal.CoverHint" xml:space="preserve"><value>Uploading replaces the current cover and deletes the file it replaces. Landscape, at least 1600px wide.</value></data>
+  <data name="Admin.Journal.UploadMedia" xml:space="preserve"><value>Upload</value></data>
+  <data name="Admin.Journal.MediaTitlePlaceholder" xml:space="preserve"><value>Label (optional)</value></data>
+  <data name="Admin.Journal.MediaHint" xml:space="preserve"><value>Images, GIFs and MP3s. Files added here are inserted into the article with the button beside them, and deleting one deletes the file.</value></data>
+  <data name="Admin.Journal.MediaFile" xml:space="preserve"><value>File</value></data>
+  <data name="Admin.Journal.MediaKind" xml:space="preserve"><value>Kind</value></data>
+  <data name="Admin.Journal.MediaSize" xml:space="preserve"><value>Size</value></data>
+  <data name="Admin.Journal.Insert" xml:space="preserve"><value>Insert</value></data>
+  <data name="Admin.Journal.UseAsCover" xml:space="preserve"><value>Use as cover</value></data>
+  <data name="Admin.Journal.IsCover" xml:space="preserve"><value>Cover</value></data>
+  <data name="Admin.Journal.ConfirmRemoveMedia" xml:space="preserve"><value>Delete this file? It is removed from disk, and any article that uses it will lose it.</value></data>
+  <data name="Admin.Journal.MediaLaterHint" xml:space="preserve"><value>Photography, audio and video are added on the next screen, once the post exists.</value></data>
+  <data name="Admin.Journal.CreateHint" xml:space="preserve"><value>Start with the {0} article — the other languages get their own tabs once the post exists.</value></data>
+  <data name="Admin.Journal.CreateSubmit" xml:space="preserve"><value>Create Post</value></data>
+  <data name="Admin.Journal.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Admin.Journal.BackToList" xml:space="preserve"><value>All posts</value></data>
+  <data name="Admin.Journal.Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Admin.Journal.SaveSettings" xml:space="preserve"><value>Save settings</value></data>
+  <data name="Admin.Journal.SaveCopy" xml:space="preserve"><value>Save {0} article</value></data>
+  <data name="Admin.Journal.DefaultLanguage" xml:space="preserve"><value>default</value></data>
+  <data name="Admin.Journal.NotTranslated" xml:space="preserve"><value>not translated</value></data>
+  <data name="Admin.Journal.FallbackNotice" xml:space="preserve"><value>Nothing written here yet — readers in this language currently see the {0} article.</value></data>
+  <data name="Admin.Journal.PublishHint" xml:space="preserve"><value>A post can only be published once the {0} article is written.</value></data>
+  <data name="Admin.Journal.ConfirmDelete" xml:space="preserve"><value>Delete this post, its translations and every file it owns?</value></data>
+  <data name="Admin.Journal.ConfirmDeleteTranslation" xml:space="preserve"><value>Remove this language's article from the post?</value></data>
+  <data name="Admin.Journal.DeleteTranslation" xml:space="preserve"><value>Delete {0} article</value></data>
+  <data name="Admin.Journal.Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Admin.Journal.Created" xml:space="preserve"><value>"{0}" created. Add the media and the other languages next.</value></data>
+  <data name="Admin.Journal.Saved" xml:space="preserve"><value>Settings saved.</value></data>
+  <data name="Admin.Journal.TranslationSaved" xml:space="preserve"><value>{0} article saved.</value></data>
+  <data name="Admin.Journal.TranslationDeleted" xml:space="preserve"><value>{0} article removed.</value></data>
+  <data name="Admin.Journal.MediaAdded" xml:space="preserve"><value>{0} uploaded.</value></data>
+  <data name="Admin.Journal.MediaRemoved" xml:space="preserve"><value>File deleted.</value></data>
+  <data name="Admin.Journal.CoverChanged" xml:space="preserve"><value>Cover updated.</value></data>
+  <data name="Admin.Journal.CoverRemoved" xml:space="preserve"><value>Cover removed.</value></data>
+  <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Post deleted.</value></data>
+  <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>That post no longer exists.</value></data>
+  <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>That could not be saved.</value></data>
 </root>

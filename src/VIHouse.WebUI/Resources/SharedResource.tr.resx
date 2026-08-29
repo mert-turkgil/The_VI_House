@@ -710,4 +710,78 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Footer.NewsletterLede" xml:space="preserve"><value>Oturumlar, yeni kaynaklar ve retreat'ler hakkında güncellemeler alın.</value></data>
   <data name="Home.Trust.BecomeMember" xml:space="preserve"><value>Üye Ol</value></data>
   <data name="Home.Trust.LogosHeading" xml:space="preserve"><value>Şu şirketlerden kurucuların güvendiği yer</value></data>
+  <data name="Journal.Video.Play" xml:space="preserve"><value>Videoyu oynat</value></data>
+  <data name="Journal.Error.NotFound" xml:space="preserve"><value>Bu yazı artık mevcut değil.</value></data>
+  <data name="Journal.Error.BodyRequiredToPublish" xml:space="preserve"><value>Yayımlamadan önce İngilizce metni yazın — diğer tüm diller ona geri döner.</value></data>
+  <data name="Journal.Error.UnknownCulture" xml:space="preserve"><value>Bu, sitenin dillerinden biri değil.</value></data>
+  <data name="Journal.Error.CannotDeleteDefaultCulture" xml:space="preserve"><value>Varsayılan dil kaldırılamaz — diğer tüm diller ona geri döner.</value></data>
+  <data name="Journal.Error.MediaNotFound" xml:space="preserve"><value>Bu dosya artık bu yazıya ekli değil.</value></data>
+  <data name="Journal.Error.CoverMustBeImage" xml:space="preserve"><value>Kapak görseli bir resim olmalı — JPEG, PNG, WebP veya AVIF.</value></data>
+  <data name="Journal.Validation.Slug" xml:space="preserve"><value>Slug yalnızca küçük harf, rakam ve tire içerebilir.</value></data>
+  <data name="Admin.Journal.Title" xml:space="preserve"><value>Journal</value></data>
+  <data name="Admin.Journal.New" xml:space="preserve"><value>Yeni Yazı</value></data>
+  <data name="Admin.Journal.ViewJournal" xml:space="preserve"><value>Journal'ı gör</value></data>
+  <data name="Admin.Journal.Empty" xml:space="preserve"><value>Henüz yazı yok.</value></data>
+  <data name="Admin.Journal.Title.Column" xml:space="preserve"><value>Başlık</value></data>
+  <data name="Admin.Journal.Slug" xml:space="preserve"><value>Slug</value></data>
+  <data name="Admin.Journal.Category" xml:space="preserve"><value>Kategori</value></data>
+  <data name="Admin.Journal.Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Admin.Journal.Published" xml:space="preserve"><value>Yayımlandı</value></data>
+  <data name="Admin.Journal.Languages" xml:space="preserve"><value>Diller</value></data>
+  <data name="Admin.Journal.Excerpt" xml:space="preserve"><value>Özet</value></data>
+  <data name="Admin.Journal.Excerpt.Hint" xml:space="preserve"><value>Liste kartında ve arama sonuçlarında görünür.</value></data>
+  <data name="Admin.Journal.Body" xml:space="preserve"><value>Metin</value></data>
+  <data name="Admin.Journal.Body.Hint" xml:space="preserve"><value>Görsel veya GIF'i doğrudan sürükleyip bırakarak yükleyin. Videoyu gömmek için YouTube bağlantısını kendi satırına yapıştırın; ses dosyaları aşağıdaki medya kitaplığından eklenir.</value></data>
+  <data name="Admin.Journal.AuthorName" xml:space="preserve"><value>Yazar</value></data>
+  <data name="Admin.Journal.CoverImageUrl" xml:space="preserve"><value>Kapak görseli URL'si</value></data>
+  <data name="Admin.Journal.CoverImageAlt" xml:space="preserve"><value>Kapak açıklaması</value></data>
+  <data name="Admin.Journal.CoverImageAlt.Hint" xml:space="preserve"><value>Ekran okuyucular için. Üstteki başlık görselin ne olduğunu zaten söylüyorsa boş bırakın.</value></data>
+  <data name="Admin.Journal.CoverUrlHint" xml:space="preserve"><value>/img/journal/name-1600.jpg gibi bir site yolu ya da https:// adresi.</value></data>
+  <data name="Admin.Journal.CoverUrlDisabled" xml:space="preserve"><value>Yüklenmiş bir kapak görseli kullanılıyor. URL yapıştırmak için önce onu kaldırın.</value></data>
+  <data name="Admin.Journal.Section.Cover" xml:space="preserve"><value>Kapak görseli</value></data>
+  <data name="Admin.Journal.Section.Settings" xml:space="preserve"><value>Yazı ayarları</value></data>
+  <data name="Admin.Journal.Section.Copy" xml:space="preserve"><value>Metin — {0}</value></data>
+  <data name="Admin.Journal.Section.Media" xml:space="preserve"><value>Medya kitaplığı</value></data>
+  <data name="Admin.Journal.NoCoverYet" xml:space="preserve"><value>Henüz kapak görseli yok — yazı arma yer tutucusuyla görünür.</value></data>
+  <data name="Admin.Journal.UploadCover" xml:space="preserve"><value>Kapak görseli yükle</value></data>
+  <data name="Admin.Journal.RemoveCover" xml:space="preserve"><value>Kapak görselini kaldır</value></data>
+  <data name="Admin.Journal.ConfirmRemoveCover" xml:space="preserve"><value>Kapak görseli kaldırılsın mı? Dosya da silinir.</value></data>
+  <data name="Admin.Journal.CoverHint" xml:space="preserve"><value>Yükleme mevcut kapağın yerini alır ve eski dosyayı siler. Yatay, en az 1600 piksel genişliğinde.</value></data>
+  <data name="Admin.Journal.UploadMedia" xml:space="preserve"><value>Yükle</value></data>
+  <data name="Admin.Journal.MediaTitlePlaceholder" xml:space="preserve"><value>Etiket (isteğe bağlı)</value></data>
+  <data name="Admin.Journal.MediaHint" xml:space="preserve"><value>Görseller, GIF'ler ve MP3'ler. Buraya eklenen dosyalar yanındaki düğmeyle metne eklenir; silindiğinde dosya da silinir.</value></data>
+  <data name="Admin.Journal.MediaFile" xml:space="preserve"><value>Dosya</value></data>
+  <data name="Admin.Journal.MediaKind" xml:space="preserve"><value>Tür</value></data>
+  <data name="Admin.Journal.MediaSize" xml:space="preserve"><value>Boyut</value></data>
+  <data name="Admin.Journal.Insert" xml:space="preserve"><value>Ekle</value></data>
+  <data name="Admin.Journal.UseAsCover" xml:space="preserve"><value>Kapak yap</value></data>
+  <data name="Admin.Journal.IsCover" xml:space="preserve"><value>Kapak</value></data>
+  <data name="Admin.Journal.ConfirmRemoveMedia" xml:space="preserve"><value>Bu dosya silinsin mi? Diskten kaldırılır ve onu kullanan her yazı onu kaybeder.</value></data>
+  <data name="Admin.Journal.MediaLaterHint" xml:space="preserve"><value>Fotoğraf, ses ve video bir sonraki ekranda, yazı oluşturulduktan sonra eklenir.</value></data>
+  <data name="Admin.Journal.CreateHint" xml:space="preserve"><value>{0} metniyle başlayın — yazı oluşturulduktan sonra diğer diller kendi sekmelerini alır.</value></data>
+  <data name="Admin.Journal.CreateSubmit" xml:space="preserve"><value>Yazı Oluştur</value></data>
+  <data name="Admin.Journal.Cancel" xml:space="preserve"><value>Vazgeç</value></data>
+  <data name="Admin.Journal.BackToList" xml:space="preserve"><value>Tüm yazılar</value></data>
+  <data name="Admin.Journal.Preview" xml:space="preserve"><value>Önizle</value></data>
+  <data name="Admin.Journal.SaveSettings" xml:space="preserve"><value>Ayarları kaydet</value></data>
+  <data name="Admin.Journal.SaveCopy" xml:space="preserve"><value>{0} metnini kaydet</value></data>
+  <data name="Admin.Journal.DefaultLanguage" xml:space="preserve"><value>varsayılan</value></data>
+  <data name="Admin.Journal.NotTranslated" xml:space="preserve"><value>çevrilmedi</value></data>
+  <data name="Admin.Journal.FallbackNotice" xml:space="preserve"><value>Burada henüz metin yok — bu dildeki okuyucular şu anda {0} metnini görüyor.</value></data>
+  <data name="Admin.Journal.PublishHint" xml:space="preserve"><value>Bir yazı ancak {0} metni yazıldıktan sonra yayımlanabilir.</value></data>
+  <data name="Admin.Journal.ConfirmDelete" xml:space="preserve"><value>Bu yazı, çevirileri ve sahip olduğu tüm dosyalar silinsin mi?</value></data>
+  <data name="Admin.Journal.ConfirmDeleteTranslation" xml:space="preserve"><value>Bu dildeki metin yazıdan kaldırılsın mı?</value></data>
+  <data name="Admin.Journal.DeleteTranslation" xml:space="preserve"><value>{0} metnini sil</value></data>
+  <data name="Admin.Journal.Delete" xml:space="preserve"><value>Sil</value></data>
+  <data name="Admin.Journal.Created" xml:space="preserve"><value>"{0}" oluşturuldu. Sonraki adımda medyayı ve diğer dilleri ekleyin.</value></data>
+  <data name="Admin.Journal.Saved" xml:space="preserve"><value>Ayarlar kaydedildi.</value></data>
+  <data name="Admin.Journal.TranslationSaved" xml:space="preserve"><value>{0} metni kaydedildi.</value></data>
+  <data name="Admin.Journal.TranslationDeleted" xml:space="preserve"><value>{0} metni kaldırıldı.</value></data>
+  <data name="Admin.Journal.MediaAdded" xml:space="preserve"><value>{0} yüklendi.</value></data>
+  <data name="Admin.Journal.MediaRemoved" xml:space="preserve"><value>Dosya silindi.</value></data>
+  <data name="Admin.Journal.CoverChanged" xml:space="preserve"><value>Kapak görseli güncellendi.</value></data>
+  <data name="Admin.Journal.CoverRemoved" xml:space="preserve"><value>Kapak görseli kaldırıldı.</value></data>
+  <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Yazı silindi.</value></data>
+  <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>Bu yazı artık mevcut değil.</value></data>
+  <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>Bu kaydedilemedi.</value></data>
 </root>

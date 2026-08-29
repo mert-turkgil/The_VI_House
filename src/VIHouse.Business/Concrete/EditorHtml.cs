@@ -1,3 +1,6 @@
+using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
+using AngleSharp.Html.Parser;
 using Ganss.Xss;
 
 namespace VIHouse.Business.Concrete;
@@ -22,6 +25,9 @@ public static class EditorHtml
     // rebuild the whole allow-list on every save.
     private static readonly HtmlSanitizer Sanitizer = CreateSanitizer();
 
+    /// <summary>Also built once: an HtmlParser holds no per-document state and is safe to share.</summary>
+    private static readonly HtmlParser Parser = new();
+
     private static HtmlSanitizer CreateSanitizer()
     {
         var sanitizer = new HtmlSanitizer();
@@ -32,12 +38,24 @@ public static class EditorHtml
         sanitizer.AllowedAttributes.Add("target");
         sanitizer.AllowedAttributes.Add("rel");
 
-        // Seminar bodies carry uploaded footage and animated stills inline, which the default
-        // allow-list has no tags for. Self-hosted playback only: <iframe> stays out, so a pasted
-        // "embed code" from anywhere can never execute in a member's session — the media library
-        // (SeminarMedia) is the supported way to add video, and it uploads rather than embeds.
+        // Seminar and journal bodies carry uploaded footage and animated stills inline, which the
+        // default allow-list has no tags for. Self-hosted playback only: <iframe> stays out, so a
+        // pasted "embed code" from anywhere can never execute in a member's session — the media
+        // library is the supported way to add video, and it uploads rather than embeds.
         foreach (var tag in new[] { "video", "audio", "source", "track", "figure", "figcaption", "picture" })
             sanitizer.AllowedTags.Add(tag);
+
+        // The one exception to "no embeds", and it is not really an exception: <oembed url="..."> is
+        // what CKEditor stores for a video when previewsInData is off. It is inert markup — no
+        // request, no script, nothing third-party — and the public page decides what to build from
+        // it (see ArticleHtml). NormaliseEmbeds below then throws away any that is not YouTube, so
+        // the tag cannot be used to smuggle an arbitrary URL into an article.
+        sanitizer.AllowedTags.Add("oembed");
+        sanitizer.AllowedAttributes.Add("url");
+
+        // Treated as a URI attribute so it goes through the scheme allow-list below like href and
+        // src do, rather than being copied through as opaque text.
+        sanitizer.UriAttributes.Add("url");
 
         foreach (var attribute in new[]
                  {
@@ -64,7 +82,42 @@ public static class EditorHtml
     {
         if (string.IsNullOrWhiteSpace(body)) return string.Empty;
 
-        return Sanitizer.Sanitize(EnsureHtml(body));
+        return NormaliseEmbeds(Sanitizer.Sanitize(EnsureHtml(body)));
+    }
+
+    /// <summary>
+    /// Second pass over the sanitised markup: every &lt;oembed&gt; either names a YouTube video or
+    /// does not survive.
+    ///
+    /// The allow-list cannot express this on its own — it can permit the tag and check the scheme,
+    /// but not that the URL points somewhere we are willing to render a player for. Done on write
+    /// rather than on read so the database holds only embeds that are already known-good, and the
+    /// URL is rewritten to its canonical watch form so the same video pasted from a share sheet, an
+    /// embed code or the address bar is stored as one string.
+    /// </summary>
+    private static string NormaliseEmbeds(string html)
+    {
+        // Cheap bail-out: parsing every article body to look for a tag that is absent from almost
+        // all of them would be the most expensive part of saving a post.
+        if (!html.Contains("<oembed", StringComparison.OrdinalIgnoreCase)) return html;
+
+        var document = Parser.ParseDocument($"<body>{html}</body>");
+
+        foreach (var embed in document.Body!.QuerySelectorAll("oembed").ToList())
+        {
+            if (YouTubeUrl.TryParseId(embed.GetAttribute("url"), out var id))
+            {
+                embed.SetAttribute("url", YouTubeUrl.WatchUrl(id));
+                continue;
+            }
+
+            // Take the wrapping <figure class="media"> with it — CKEditor emits the pair, and a
+            // figure left behind renders as an empty box with a caption slot and no content.
+            var container = embed.ParentElement is IHtmlElement { LocalName: "figure" } figure ? figure : (IElement)embed;
+            container.Remove();
+        }
+
+        return document.Body.InnerHtml;
     }
 
     /// <summary>
