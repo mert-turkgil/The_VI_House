@@ -5,7 +5,7 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
 
-  <data name="Nav.Home" xml:space="preserve"><value>Ana Sayfa</value></data>
+  <data name="Nav.Home" xml:space="preserve"><value>Ana Sayfaa</value></data>
   <data name="Nav.Experiences" xml:space="preserve"><value>Deneyimler</value></data>
   <data name="Nav.Membership" xml:space="preserve"><value>Üyelik</value></data>
   <data name="Nav.About" xml:space="preserve"><value>Hakkımızda</value></data>
@@ -173,6 +173,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Account.NavProfile" xml:space="preserve"><value>Profil</value></data>
   <data name="Account.NavBookings" xml:space="preserve"><value>Rezervasyonlarım</value></data>
   <data name="Account.NavSecurity" xml:space="preserve"><value>Güvenlik ve Giriş</value></data>
+  <data name="Account.NavAdminPanel" xml:space="preserve"><value>Yönetim Paneli</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>Profilim</value></data>
   <data name="Account.CompanyLabel" xml:space="preserve"><value>Şirket</value></data>
   <data name="Account.RoleLabel" xml:space="preserve"><value>Unvan</value></data>

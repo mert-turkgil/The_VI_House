@@ -27,12 +27,41 @@
 
 // --- Filters -------------------------------------------------------------------------------------
 
+// One panel rather than three orphaned controls on white. The city select and the status chips are
+// the same decision made twice, so they read as one group; the tinted ground separates them from
+// the results below without needing a rule between.
+.experience-filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--vih-space-sm) var(--vih-space-md);
+  padding: var(--vih-space-sm) var(--vih-space-md);
+  margin-bottom: var(--vih-space-md);
+  background: var(--vih-surface-tinted);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-2xl);
+
+  @include bp.until(bp.$md) {
+    // Stacked, and edge to edge. Stacking is what makes the chip rail's negative margin safe: it
+    // only bleeds correctly on a row of its own, and side by side with the select that -24px would
+    // eat the gap between them instead of the container's padding.
+    //
+    // Edge to edge because a panel inset inside an already-padded container spends ~48px of a 360px
+    // screen on nothing, and the chips need every pixel there is.
+    flex-direction: column;
+    align-items: stretch;
+    margin-inline: calc(var(--vih-space-md) * -1);
+    border-radius: 0;
+    border-inline: 0;
+  }
+}
+
 .experience-filters {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   gap: var(--vih-space-sm);
-  margin-bottom: var(--vih-space-sm);
+  margin: 0;
 }
 
 .experience-filters__field {
@@ -40,6 +69,13 @@
   flex-direction: column;
   gap: var(--vih-space-3xs);
   min-width: 220px;
+
+  @include bp.until(bp.$md) {
+    // min-width would otherwise hold the select at 220px inside a ~290px panel and stop it filling
+    // its row, leaving a stranded gap beside it.
+    min-width: 0;
+    width: 100%;
+  }
 }
 
 .experience-filters__label {
@@ -50,25 +86,26 @@
   color: var(--vih-text-muted);
 }
 
+.experience-filters__select-wrap {
+  position: relative;
+  display: flex;
+}
+
 .experience-filters__select {
   appearance: none;
-  padding: 10px 40px 10px var(--vih-space-xs);
+  width: 100%;
+  padding: 11px 42px 11px var(--vih-space-sm);
   border: 1px solid var(--vih-line-on-light);
-  border-radius: var(--vih-radius-sm);
+  border-radius: var(--vih-radius-pill);
   background-color: var(--vih-surface);
   font: inherit;
   font-size: var(--vih-text-base);
   color: var(--vih-ink);
   cursor: pointer;
+  transition: border-color var(--vih-dur-base) var(--vih-ease),
+              box-shadow var(--vih-dur-base) var(--vih-ease);
 
-  // Chevron drawn in CSS rather than pulled from an icon set — one glyph is not worth a dependency,
-  // and this way it inherits the border colour on focus for free.
-  background-image:
-    linear-gradient(45deg, transparent 50%, currentColor 50%),
-    linear-gradient(135deg, currentColor 50%, transparent 50%);
-  background-position: calc(100% - 20px) center, calc(100% - 15px) center;
-  background-size: 5px 5px, 5px 5px;
-  background-repeat: no-repeat;
+  &:hover { border-color: var(--vih-green-900); }
 
   &:focus-visible {
     outline: none;
@@ -77,27 +114,61 @@
   }
 }
 
+.experience-filters__chevron {
+  position: absolute;
+  right: var(--vih-space-sm);
+  top: 50%;
+  translate: 0 -50%;
+  color: var(--vih-gold);
+  pointer-events: none; // the click belongs to the select underneath
+}
+
+// The rail, so a narrow screen scrolls the chips sideways instead of stacking them into rows.
+.experience-filters__chips-scroll {
+  flex: 1 1 auto;
+  min-width: 0;
+
+  @include bp.until(bp.$md) {
+    overflow-x: auto;
+    scrollbar-width: none;
+    // Bleeds the scroll area to the panel edge so the last chip does not look clipped mid-word.
+    margin-inline: calc(var(--vih-space-md) * -1);
+    padding-inline: var(--vih-space-md);
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+}
+
 .experience-filters__chips {
   display: flex;
-  flex-wrap: wrap;
   gap: var(--vih-space-2xs);
   align-items: center;
-  margin-bottom: var(--vih-space-md);
+  flex-wrap: wrap;
+
+  @include bp.until(bp.$md) {
+    flex-wrap: nowrap;
+    // Without this the flex line collapses to the container width and the chips squash rather than
+    // overflow, which is what makes them scrollable in the first place.
+    width: max-content;
+  }
 }
 
 .experience-filters__chip {
-  padding: 7px var(--vih-space-xs);
+  padding: 8px var(--vih-space-sm);
   border: 1px solid var(--vih-line-on-light);
   border-radius: var(--vih-radius-pill);
+  background: var(--vih-surface);
   font-size: var(--vih-text-sm);
   color: var(--vih-text-secondary);
+  white-space: nowrap;
   transition: border-color var(--vih-dur-base) var(--vih-ease),
               color var(--vih-dur-base) var(--vih-ease),
               background-color var(--vih-dur-base) var(--vih-ease);
 
   &:hover {
-    border-color: var(--vih-ink);
-    color: var(--vih-ink);
+    border-color: var(--vih-green-900);
+    color: var(--vih-green-900);
   }
 
   &--active {
@@ -106,6 +177,7 @@
     color: var(--vih-cream);
 
     &:hover {
+      background: var(--vih-green-900);
       color: var(--vih-cream);
     }
   }
@@ -117,11 +189,16 @@
 }
 
 .experience-filters__clear {
-  margin-left: var(--vih-space-3xs);
+  align-self: center;
   font-size: var(--vih-text-sm);
   color: var(--vih-text-muted);
   text-decoration: underline;
   text-underline-offset: 3px;
+  white-space: nowrap;
+
+  @include bp.until(bp.$md) {
+    align-self: flex-start; // centre means the cross axis, which is horizontal once stacked
+  }
 
   &:hover { color: var(--vih-ink); }
 }
@@ -136,8 +213,16 @@
 
 .experience-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  // min() is load-bearing, not a flourish. A bare minmax(320px, 1fr) makes 320px a floor the track
+  // cannot go under, so on a 360px phone — 312px of content once .container's 24px sides are taken
+  // off — every card overflowed its column and the page scrolled sideways. min(320px, 100%) lets
+  // the track collapse to the width that actually exists.
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: var(--vih-space-lg);
+
+  @include bp.until(bp.$md) {
+    gap: var(--vih-space-md);
+  }
 }
 
 .experience-card {
@@ -247,6 +332,9 @@
 
 .experience-card__foot {
   display: flex;
+  // Wraps because a long localised price and "Deneyimi gör →" together overflow a single-column
+  // card on a narrow phone, and squashing the price is the worst of the available outcomes.
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--vih-space-2xs);

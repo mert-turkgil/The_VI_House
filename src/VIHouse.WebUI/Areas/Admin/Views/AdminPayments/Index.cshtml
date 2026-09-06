@@ -27,7 +27,8 @@
 }
 else
 {
-    <table class="admin-table">
+    <div class="admin-table-scroll">
+    <table class="admin-table" data-admin-table>
         <thead>
             <tr>
                 <th>Customer</th>
@@ -35,6 +36,7 @@ else
                 <th>Status</th>
                 <th>Amount</th>
                 <th>Created</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -46,8 +48,12 @@ else
                     <td><span class="@BadgeClass(p.Status)">@p.Status</span></td>
                     <td>@MoneyFormatter.Format(p.AmountMinor, p.Currency)</td>
                     <td>@p.CreatedAt.ToString("dd MMM yyyy")</td>
+                    <td class="admin-table__actions">
+                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@p.Id">Open</a>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+    </div>
 }

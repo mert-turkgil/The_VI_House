@@ -10,6 +10,19 @@
     string ChannelClass(bool sms) =>
         Model.ShowSms == sms ? "admin-btn" : "admin-btn admin-btn--ghost";
 
+    @* Every log row already records what it was about — this turns a dead-end table into a way
+       into the record itself. 17 of the 19 rows on this deployment resolve; a Membership has no
+       admin page of its own, so those stay plain text rather than linking somewhere useless. *@
+    string? RelatedHref(string? entityType, Guid? entityId) =>
+        entityId is not { } id ? null : entityType switch
+        {
+            "Application" => Url.Action("Details", "AdminApplications", new { id }),
+            "ApplicationUser" => Url.Action("Details", "AdminUsers", new { id }),
+            "Booking" => Url.Action("Details", "AdminBookings", new { id }),
+            "Seminar" => Url.Action("Edit", "AdminSeminars", new { id }),
+            _ => null,
+        };
+
     string StatusBadge(EmailStatus status) => status switch
     {
         EmailStatus.Sent => "admin-badge admin-badge--open",
@@ -70,7 +83,8 @@
     }
     else
     {
-        <table class="admin-table">
+        <div class="admin-table-scroll">
+            <table class="admin-table">
             <thead>
                 <tr>
                     <th>When</th>
@@ -100,6 +114,7 @@
                 }
             </tbody>
         </table>
+    </div>
     }
 }
 else
@@ -110,7 +125,8 @@ else
     }
     else
     {
-        <table class="admin-table">
+        <div class="admin-table-scroll">
+            <table class="admin-table">
             <thead>
                 <tr>
                     <th>When</th>
@@ -118,6 +134,7 @@ else
                     <th>Subject</th>
                     <th>Template</th>
                     <th>Status</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -138,10 +155,17 @@ else
                         </td>
                         <td style="font-size:0.75rem;"><code>@row.TemplateKey</code></td>
                         <td><span class="@StatusBadge(row.Status)">@row.Status</span></td>
+                        <td class="admin-table__actions">
+                            @if (RelatedHref(row.RelatedEntityType, row.RelatedEntityId) is { } href)
+                            {
+                                <a class="admin-icon-btn" href="@href">Open @row.RelatedEntityType&rarr;</a>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
+        </div>
     }
 }
 

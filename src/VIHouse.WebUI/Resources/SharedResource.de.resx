@@ -173,6 +173,7 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Account.NavProfile" xml:space="preserve"><value>Profil</value></data>
   <data name="Account.NavBookings" xml:space="preserve"><value>Meine Buchungen</value></data>
   <data name="Account.NavSecurity" xml:space="preserve"><value>Sicherheit &amp; Anmeldung</value></data>
+  <data name="Account.NavAdminPanel" xml:space="preserve"><value>Admin-Bereich</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>Mein Profil</value></data>
   <data name="Account.CompanyLabel" xml:space="preserve"><value>Unternehmen</value></data>
   <data name="Account.RoleLabel" xml:space="preserve"><value>Rolle</value></data>

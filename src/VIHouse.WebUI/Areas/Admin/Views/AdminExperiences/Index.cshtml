@@ -18,7 +18,8 @@
 }
 else
 {
-    <table class="admin-table">
+    <div class="admin-table-scroll">
+    <table class="admin-table" data-admin-table>
         <thead>
             <tr>
                 <th>Title</th>
@@ -37,7 +38,8 @@ else
                     VIHouse.Entities.Experiences.ExperienceStatus.ApplicationsOpen => "admin-badge admin-badge--open",
                     VIHouse.Entities.Experiences.ExperienceStatus.Draft => "admin-badge admin-badge--draft",
                     VIHouse.Entities.Experiences.ExperienceStatus.ApplicationsClosed or VIHouse.Entities.Experiences.ExperienceStatus.Completed => "admin-badge admin-badge--closed",
-                    _ => "admin-badge",
+                    VIHouse.Entities.Experiences.ExperienceStatus.AlmostFull or VIHouse.Entities.Experiences.ExperienceStatus.Waitlist => "admin-badge admin-badge--pending",
+                    _ => "admin-badge admin-badge--info",
                 };
                 <tr>
                     <td><a asp-action="Edit" asp-route-id="@e.Id">@e.Title</a></td>
@@ -45,13 +47,16 @@ else
                     <td>@e.StartAtUtc.ToString("dd MMM yyyy")</td>
                     <td><span class="@badgeClass">@e.Status.ToDisplayLabel()</span></td>
                     <td>@e.TicketTypeCount</td>
-                    <td>
+                    <td class="admin-table__actions">
+                        <a class="admin-icon-btn" asp-area="" asp-controller="Experiences" asp-action="Details" asp-route-slug="@e.Slug" target="_blank" rel="noopener">View</a>
+                        <a class="admin-icon-btn" asp-action="Edit" asp-route-id="@e.Id">Edit</a>
                         <form asp-action="Delete" asp-route-id="@e.Id" method="post" onsubmit="return confirm('Delete this experience?');" style="display:inline;">
-                            <button type="submit" class="admin-btn admin-btn--danger">Delete</button>
+                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Delete</button>
                         </form>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    </div>
 }

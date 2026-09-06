@@ -9,7 +9,8 @@
 }
 else
 {
-    <table class="admin-table">
+    <div class="admin-table-scroll">
+    <table class="admin-table" data-admin-table>
         <thead><tr><th>Page</th><th>Slug</th><th>Blocks</th><th>Published</th></tr></thead>
         <tbody>
             @foreach (var cmsPage in Model)
@@ -23,4 +24,5 @@ else
             }
         </tbody>
     </table>
+    </div>
 }

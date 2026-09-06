@@ -890,26 +890,11 @@ public static class DbSeeder
             """,
         });
 
-        // A block of its own rather than more fields on "trust": a ContentBlock has exactly one
-        // ExtraJson and the testimonials already hold it. Names only — see Views/Home/_TrustLogo.cshtml
-        // on why no logo artwork is shipped.
-        home.Blocks.Add(new ContentBlock
-        {
-            PageId = home.Id,
-            SectionKey = "trust-logos",
-            SortOrder = 6,
-            Heading = "Trusted by founders from",
-            ExtraJson = """
-            [
-              {"name":"Shopify"},
-              {"name":"Skool"},
-              {"name":"Stripe"},
-              {"name":"Teachable"},
-              {"name":"Kajabi"},
-              {"name":"Zapier"}
-            ]
-            """,
-        });
+        // No "trusted by" block is seeded. It named real companies — Stripe, Shopify, Skool — that
+        // have not endorsed anything here, which is a claim the site cannot make with placeholder
+        // data. _Trust.cshtml renders nothing when the list is empty, so its absence is simply a
+        // shorter section; Admin -> Content -> Add a section brings it back once there are names
+        // the House has actually earned.
 
         db.ContentPages.Add(home);
         await Task.CompletedTask;

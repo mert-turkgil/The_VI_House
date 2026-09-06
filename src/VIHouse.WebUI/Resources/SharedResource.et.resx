@@ -173,6 +173,7 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Account.NavProfile" xml:space="preserve"><value>Profiil</value></data>
   <data name="Account.NavBookings" xml:space="preserve"><value>Minu broneeringud</value></data>
   <data name="Account.NavSecurity" xml:space="preserve"><value>Turvalisus ja sisselogimine</value></data>
+  <data name="Account.NavAdminPanel" xml:space="preserve"><value>Halduspaneel</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>Minu profiil</value></data>
   <data name="Account.CompanyLabel" xml:space="preserve"><value>Ettevõte</value></data>
   <data name="Account.RoleLabel" xml:space="preserve"><value>Roll</value></data>

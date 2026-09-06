@@ -28,7 +28,8 @@
 }
 else
 {
-    <table class="admin-table">
+    <div class="admin-table-scroll">
+    <table class="admin-table" data-admin-table>
         <thead>
             <tr>
                 <th>Reference</th>
@@ -37,6 +38,7 @@ else
                 <th>Status</th>
                 <th>Amount</th>
                 <th>Created</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -49,8 +51,15 @@ else
                     <td><span class="@BadgeClass(b.Status)">@b.Status</span></td>
                     <td>@MoneyFormatter.Format(b.AmountMinor, b.Currency)</td>
                     <td>@b.CreatedAt.ToString("dd MMM yyyy")</td>
+                    @* Reaching the payment behind a booking previously meant opening the booking,
+                       reading the reference, then searching Payments for it. *@
+                    <td class="admin-table__actions">
+                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@b.Id">Open</a>
+                        <a class="admin-icon-btn" asp-controller="AdminPayments" asp-action="Index">Payments</a>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+    </div>
 }

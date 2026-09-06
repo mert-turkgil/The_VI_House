@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using VIHouse.Business.Abstract;
@@ -17,6 +19,7 @@ using VIHouse.DataAccess.Concrete.EntityFramework.Seed;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI;
 using VIHouse.WebUI.Filters;
+using VIHouse.WebUI.Localization;
 using VIHouse.WebUI.Services;
 
 // Process-wide fallback only (background services like TicketHoldExpiryService run with no HTTP
@@ -267,6 +270,20 @@ builder.Services.AddHostedService<TicketHoldExpiryService>();
 // resource after the .cs file's namespace (VIHouse.WebUI.SharedResource.resources) rather than
 // the folder path — so the lookup base name must match that, not "Resources.SharedResource".
 builder.Services.AddLocalization();
+
+// Strings are read from the .resx XML on disk rather than from the compiled satellite assemblies,
+// so a translation edited in Admin -> Translations is live on the next request instead of at the
+// next deployment. Replacing the factory is enough to cover everything: IStringLocalizer<T> is
+// resolved through StringLocalizer<T>, which takes IStringLocalizerFactory — so all 673 Loc[...]
+// call sites, all three _ViewImports and both DataAnnotations registrations below go through it.
+//
+// ResourceManagerStringLocalizerFactory stays registered as the fallback. If the .resx files are
+// not on disk, the site renders from the compiled resources exactly as it did before this existed.
+builder.Services.Configure<ResxOptions>(builder.Configuration.GetSection("Localization"));
+builder.Services.AddSingleton<ResxCatalog>();
+builder.Services.AddSingleton<ResourceManagerStringLocalizerFactory>();
+builder.Services.Replace(ServiceDescriptor.Singleton<IStringLocalizerFactory, ResxStringLocalizerFactory>());
+
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     options.SetDefaultCulture(SiteCultures.Default);

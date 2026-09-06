@@ -15,8 +15,11 @@
     "vite": "^8.2.1"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.10.0",
     "chart.js": "^4.5.1",
+    "notyf": "^3.10.0",
     "qrcode": "^1.5.4",
+    "simple-datatables": "^10.3.0",
     "swiper": "^14.1.0"
   }
 }

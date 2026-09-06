@@ -29,6 +29,19 @@
     <None Remove="ClientApp/**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!--
+      The .resx files are read at runtime as well as compiled, because Admin -> Translations edits
+      the XML directly and ResxCatalog reads it back (see Localization/ResxCatalog.cs for why the
+      compiled satellites cannot be used for that).
+
+      Update rather than Include: the Web SDK already picks these up as EmbeddedResource, so this
+      only adds the copy-to-output without disturbing the embedding. Both matter — the embedded
+      copies stay as the fallback the localizer factory drops back to if the files are ever missing.
+    -->
+    <EmbeddedResource Update="Resources\*.resx" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <Target Name="NpmInstall" BeforeTargets="Build" Condition="!Exists('ClientApp/node_modules')">
     <Exec Command="npm install" WorkingDirectory="ClientApp" />
   </Target>

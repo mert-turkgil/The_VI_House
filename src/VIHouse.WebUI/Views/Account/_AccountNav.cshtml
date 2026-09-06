@@ -14,8 +14,13 @@
     // can't decide whether to show the members-only links. Only an active Membership can. Showing a
     // link that immediately bounces the visitor back is worse than not showing it.
     var hasMembership = await MemberAccess.HasActiveMembershipAsync(User, MembershipService, UserManager);
+    var isAdmin = Roles.AdminRoles.Any(User.IsInRole);
 }
 <nav class="account-manage__nav" aria-label="Account">
+    @if (isAdmin)
+    {
+        <a asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">@Loc["Account.NavAdminPanel"]</a>
+    }
     <a class="@NavClass("Index")" asp-controller="Account" asp-action="Index">@Loc["Account.NavProfile"]</a>
     <a class="@NavClass("Bookings")" asp-controller="Account" asp-action="Bookings">@Loc["Account.NavBookings"]</a>
     <a class="@NavClass("Sessions")" asp-controller="Account" asp-action="Sessions">@Loc["Account.NavSessions"]</a>

@@ -131,7 +131,7 @@
 @if (!active.IsDefault && active.IsWritten)
 {
     <form asp-action="DeleteTranslation" asp-route-id="@seminarId" method="post" class="admin-inline-form" style="margin-top:12px;"
-          onsubmit="return confirm('@Loc["Admin.Seminar.DeleteTranslation.Confirm", active.Culture.NativeLabel]');">
+          onsubmit="return confirm('@Loc["Admin.Seminar.DeleteTranslation.Confirm", active.Culture.NativeLabel].Value.Replace("'", "\\'")');">
         <input type="hidden" name="culture" value="@active.Culture.Name" />
         <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">@Loc["Admin.Seminar.DeleteTranslation"]</button>
     </form>
@@ -206,7 +206,7 @@ else
                         }
 
                         <form asp-action="RemoveMedia" asp-route-id="@seminarId" method="post" class="admin-inline-form"
-                              onsubmit="return confirm('@Loc["Admin.Seminar.Media.Remove.Confirm"]');">
+                              onsubmit="return confirm('@Loc["Admin.Seminar.Media.Remove.Confirm"].Value.Replace("'", "\\'")');">
                             <input type="hidden" name="mediaId" value="@media.Id" />
                             <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">@Loc["Admin.Seminar.Media.Remove"]</button>
                         </form>
@@ -232,7 +232,7 @@ else
 <h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Danger"]</h2>
 <p class="admin-field__hint">@Loc["Admin.Seminar.Delete.Hint"]</p>
 <form asp-action="Delete" asp-route-id="@seminarId" method="post"
-      onsubmit="return confirm('@Loc["Admin.Seminar.Delete.Confirm"]');">
+      onsubmit="return confirm('@Loc["Admin.Seminar.Delete.Confirm"].Value.Replace("'", "\\'")');">
     <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Seminar.Delete"]</button>
 </form>
 

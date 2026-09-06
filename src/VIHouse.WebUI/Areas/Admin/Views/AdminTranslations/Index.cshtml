@@ -1,0 +1,147 @@
+@model AdminTranslationsViewModel
+@{
+    ViewData["Title"] = "Translations";
+}
+
+<p class="admin-hint">
+    Every string on the site, in all four languages. Click any value to edit it — changes are written
+    straight to the resource files and are live on the next page load, with no rebuild.
+</p>
+
+@if (!Model.IsEditable)
+{
+    <div class="admin-notice">
+        <strong>Read-only.</strong> No resource files were found at <code>@Model.ResourcesPath</code>,
+        so the site is reading its strings from the compiled copies inside the application and nothing
+        here can be saved. Set <code>Localization:ResourcesPath</code> to the folder holding
+        <code>SharedResource.resx</code>.
+    </div>
+}
+
+<div class="admin-stat-row">
+    <div class="admin-stat">
+        <span class="admin-stat__value">@Model.TotalKeys</span>
+        <span class="admin-stat__label">Translation keys</span>
+    </div>
+    <div class="admin-stat">
+        <span class="admin-stat__value">@Model.Cultures.Count</span>
+        <span class="admin-stat__label">Languages</span>
+    </div>
+    <a class="admin-stat @(Model.UntranslatedOnly ? "admin-stat--active" : "")"
+       asp-action="Index" asp-route-section="@Model.Section" asp-route-q="@Model.Query"
+       asp-route-untranslated="@(!Model.UntranslatedOnly)">
+        <span class="admin-stat__value">@Model.NeedsAttention</span>
+        <span class="admin-stat__label">Still reading as English</span>
+    </a>
+</div>
+
+@* A real GET form, so a filtered view is a URL you can send someone, and it works with scripting
+   off. It searches the key and all four languages at once, ignoring case and accents — so "sehir"
+   finds "şehir" and "uber" finds "über", which matters when nobody is on that language's keyboard. *@
+<form class="admin-filter-bar" method="get" asp-action="Index">
+    <div class="admin-field">
+        <label for="section">Section</label>
+        <select id="section" name="section" onchange="this.form.submit()">
+            <option value="">All sections</option>
+            @foreach (var s in Model.Sections)
+            {
+                <option value="@s" selected="@(string.Equals(s, Model.Section, StringComparison.OrdinalIgnoreCase))">@s</option>
+            }
+        </select>
+    </div>
+
+    <div class="admin-field admin-field--grow">
+        <label for="q">Search</label>
+        <input id="q" name="q" value="@Model.Query"
+               placeholder="Key, or text in English, German, Turkish or Estonian…" />
+    </div>
+
+    @if (Model.UntranslatedOnly)
+    {
+        <input type="hidden" name="untranslated" value="true" />
+    }
+
+    <button type="submit" class="admin-btn">Search</button>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Query) || !string.IsNullOrWhiteSpace(Model.Section) || Model.UntranslatedOnly)
+    {
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">Clear</a>
+    }
+
+    @if (User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin))
+    {
+        @* The way an edit made here gets back into git — see the controller's Export summary. *@
+        <a class="admin-btn admin-btn--ghost" asp-action="Export" download>Download .resx files</a>
+    }
+</form>
+
+<p class="admin-hint">
+    Showing @Model.MatchedKeys of @Model.TotalKeys keys.
+    Click a value to edit it &middot; <kbd>Enter</kbd> saves &middot; <kbd>Shift</kbd>+<kbd>Enter</kbd>
+    starts a new line &middot; <kbd>Esc</kbd> cancels.
+</p>
+
+@if (Model.Rows.Count == 0)
+{
+    <div class="admin-empty">
+        <p class="admin-empty__title">Nothing matches that.</p>
+        <p>Try a different section, or clear the search.</p>
+    </div>
+}
+else
+{
+    <div class="admin-table-scroll">
+        <table class="admin-table admin-table--translations"
+               data-translations
+               data-save-url="@Url.Action("Save")">
+            <thead>
+                <tr>
+                    <th scope="col">Key</th>
+                    @foreach (var culture in Model.Cultures)
+                    {
+                        <th scope="col">
+                            <span class="admin-lang-chip admin-lang-chip--on">@culture.ShortLabel</span>
+                            @culture.NativeLabel
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr class="@(row.NeedsAttention ? "is-untranslated" : null)">
+                        <th scope="row" class="admin-table__key">
+                            <code>@row.Key</code>
+                            @if (row.HasPlaceholders)
+                            {
+                                @* A translator needs to know before they start typing, not after
+                                   the save is refused. *@
+                                <span class="admin-table__flag" title="Uses {0}-style placeholders that every language must keep">{ }</span>
+                            }
+                        </th>
+
+                        @foreach (var culture in Model.Cultures)
+                        {
+                            var value = row.Values.GetValueOrDefault(culture.Name, "");
+                            @* No data-original: HTML collapses newlines in an attribute value, so
+                               a multi-line string would come back altered and every save would be
+                               refused as a conflict. The editor reads the cell's text node instead. *@
+                            <td class="admin-cell-edit"
+                                data-key="@row.Key"
+                                data-culture="@culture.Name"
+                                tabindex="0"
+                                role="button"
+                                aria-label="Edit @culture.NativeLabel for @row.Key">@value</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    @* The antiforgery token for the fetch-based saves. AutoValidateAntiforgeryToken is global, so
+       the POST is rejected without it. *@
+    @Html.AntiForgeryToken()
+}

@@ -28,7 +28,8 @@
 }
 else
 {
-    <table class="admin-table">
+    <div class="admin-table-scroll">
+    <table class="admin-table" data-admin-table>
         <thead>
             <tr>
                 <th>Applicant</th>
@@ -36,6 +37,7 @@ else
                 <th>Experience</th>
                 <th>Status</th>
                 <th>Submitted</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -44,8 +46,11 @@ else
                 var badgeClass = a.Status switch
                 {
                     ApplicationStatus.Approved => "admin-badge admin-badge--open",
+                    ApplicationStatus.Paid => "admin-badge admin-badge--paid",
                     ApplicationStatus.Rejected => "admin-badge admin-badge--closed",
                     ApplicationStatus.Submitted => "admin-badge admin-badge--draft",
+                    ApplicationStatus.Waitlisted or ApplicationStatus.PaymentPending => "admin-badge admin-badge--pending",
+                    ApplicationStatus.UnderReview or ApplicationStatus.Shortlisted => "admin-badge admin-badge--info",
                     _ => "admin-badge",
                 };
                 <tr>
@@ -54,8 +59,15 @@ else
                     <td>@a.ExperienceLabel</td>
                     <td><span class="@badgeClass">@a.Status.ToDisplayLabel()</span></td>
                     <td>@(a.SubmittedAt?.ToString("dd MMM yyyy") ?? "—")</td>
+                    @* The row itself opens the review page; these are the destinations that
+                       otherwise need opening it first. *@
+                    <td class="admin-table__actions">
+                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@a.Id">Review</a>
+                        <a class="admin-icon-btn" href="mailto:@a.Email">Email</a>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+    </div>
 }

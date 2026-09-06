@@ -3,7 +3,7 @@
 .admin-shell {
   min-height: 100vh;
   display: flex;
-  background: #faf9f6;
+  background: var(--vih-surface-tinted);
   color: var(--vih-ink);
 }
 
@@ -130,7 +130,7 @@
 
   .admin-kpi-card__label {
     font-size: 0.8125rem;
-    color: #666;
+    color: var(--vih-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
@@ -149,7 +149,7 @@
   align-items: center;
   gap: 7px;
   padding: 7px 13px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--vih-line-on-light);
   border-radius: 999px;
   font-size: 0.8125rem;
   cursor: pointer;
@@ -168,6 +168,9 @@
 
 .admin-toolbar {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs);
   justify-content: flex-end;
   margin-bottom: 20px;
 }
@@ -185,18 +188,29 @@
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
+  transition: background-color var(--vih-dur-base) var(--vih-ease),
+              border-color var(--vih-dur-base) var(--vih-ease),
+              transform var(--vih-dur-fast) var(--vih-ease-out);
 
   &:hover {
     background: var(--vih-green-800);
   }
 
+  &:active { transform: translateY(1px); }
+
+  // There was no focus indicator on any admin button at all, despite the ring token existing.
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--vih-shadow-focus);
+  }
+
   &--danger {
     background: transparent;
-    color: #9a3324;
+    color: var(--vih-danger);
     border-color: currentColor;
 
     &:hover {
-      background: rgba(154, 51, 36, 0.08);
+      background: var(--vih-danger-bg);
     }
   }
 
@@ -248,8 +262,8 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #666;
-    background: #faf9f6;
+    color: var(--vih-text-secondary);
+    background: var(--vih-surface-tinted);
   }
 
   tr:last-child td {
@@ -270,22 +284,22 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  background: #eee;
-  color: #555;
+  background: var(--vih-surface-sunken);
+  color: var(--vih-text-secondary);
 
   &--open {
-    background: rgba(46, 125, 50, 0.14);
-    color: #2e7d32;
+    background: var(--vih-success-bg);
+    color: var(--vih-success);
   }
 
   &--draft {
-    background: #eee;
-    color: #777;
+    background: var(--vih-surface-sunken);
+    color: var(--vih-text-muted);
   }
 
   &--closed {
-    background: rgba(154, 51, 36, 0.12);
-    color: #9a3324;
+    background: var(--vih-danger-bg);
+    color: var(--vih-danger);
   }
 }
 
@@ -311,7 +325,7 @@
   label {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: #444;
+    color: var(--vih-text-secondary);
   }
 
   input,
@@ -325,9 +339,12 @@
     background: var(--vih-white);
     color: var(--vih-ink);
 
-    &:focus {
+    // A border-colour change alone is too weak to satisfy WCAG's focus-visible contrast
+    // requirement, and the ring token was sitting unused.
+    &:focus-visible {
       outline: none;
-      border-color: var(--vih-gold);
+      border-color: var(--vih-focus-ring);
+      box-shadow: var(--vih-shadow-focus);
     }
   }
 
@@ -337,7 +354,7 @@
   }
 
   .field-validation-error {
-    color: #9a3324;
+    color: var(--vih-danger);
     font-size: 0.75rem;
   }
 
@@ -396,7 +413,7 @@
   padding: 10px 14px;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #666;
+  color: var(--vih-text-secondary);
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
 
@@ -443,7 +460,7 @@
     font-size: 0.6875rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #999;
+    color: var(--vih-text-muted);
     margin-bottom: 2px;
   }
 
@@ -481,7 +498,7 @@
 .admin-lede {
   font-size: 0.875rem;
   line-height: 1.6;
-  color: rgba(18, 22, 15, 0.7);
+  color: var(--vih-text-secondary);
   max-width: 68ch;
   margin: 0 0 16px;
 }
@@ -498,12 +515,12 @@
   margin: 6px 0 0;
   font-size: 0.75rem;
   line-height: 1.5;
-  color: rgba(18, 22, 15, 0.55);
+  color: var(--vih-text-muted);
 }
 
 .admin-table__sub {
   font-size: 0.75rem;
-  color: rgba(18, 22, 15, 0.5);
+  color: var(--vih-text-muted);
   margin-top: 2px;
 }
 
@@ -524,7 +541,7 @@
 .admin-panel__note {
   margin-left: 10px;
   font-size: 0.78rem;
-  color: rgba(18, 22, 15, 0.55);
+  color: var(--vih-text-muted);
 }
 
 .admin-panel__actions {
@@ -546,7 +563,7 @@
   border: 1px solid var(--vih-line-on-light);
   font-size: 0.68rem;
   font-weight: 600;
-  color: rgba(18, 22, 15, 0.4);
+  color: var(--vih-text-faint);
 
   &--on {
     border-color: var(--vih-green-900);
@@ -569,7 +586,7 @@
   padding: 9px 14px;
   font-size: 0.82rem;
   font-weight: 600;
-  color: rgba(18, 22, 15, 0.6);
+  color: var(--vih-text-secondary);
   text-decoration: none;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
@@ -591,10 +608,10 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(18, 22, 15, 0.4);
+  color: var(--vih-text-faint);
 
   &--missing {
-    color: #9a3324;
+    color: var(--vih-danger);
   }
 }
 
@@ -620,7 +637,7 @@
     // Fixed frame so a portrait still and a landscape recording don't produce a ragged grid.
     height: 150px;
     object-fit: cover;
-    background: #f0eee8;
+    background: var(--vih-surface-sunken);
   }
 
   audio {
@@ -654,7 +671,7 @@
   display: block;
   margin-top: 3px;
   font-size: 0.7rem;
-  color: rgba(18, 22, 15, 0.5);
+  color: var(--vih-text-muted);
 }
 
 .admin-media-card__actions {
@@ -662,4 +679,469 @@
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 10px;
+}
+
+// =================================================================================================
+// Additions: the pieces the panel was missing
+// =================================================================================================
+
+// --- .admin-hint --------------------------------------------------------------------------------
+// Used in seventeen places across the admin views and defined nowhere until now — it has been
+// rendering as an unstyled <p> on the Promo Codes, Hero Slides, Community, Emails and Content
+// screens the whole time.
+.admin-hint {
+  margin: 0 0 var(--vih-space-sm);
+  max-width: 78ch;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--vih-text-muted);
+
+  code {
+    padding: 1px 5px;
+    border-radius: var(--vih-radius-xs);
+    background: var(--vih-surface-sunken);
+    font-size: 0.95em;
+  }
+}
+
+// --- Tables -------------------------------------------------------------------------------------
+// A horizontal scroller, because seven-column tables clipped off the edge below ~900px with no way
+// to reach the last column.
+.admin-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-table {
+  tbody tr {
+    transition: background-color var(--vih-dur-fast) var(--vih-ease);
+
+    &:hover { background: var(--vih-surface-tinted); }
+  }
+
+  // Set by adminRows.ts only once a row actually has somewhere to go, so the Emails list — which
+  // has no detail page — never claims to be clickable.
+  &__body--linked tr:hover { cursor: pointer; }
+
+  &__actions {
+    width: 1%;
+    white-space: nowrap;
+    text-align: right;
+
+    > * + * { margin-left: 6px; }
+  }
+}
+
+// Compact secondary destinations in an actions cell: an icon-sized button that does not compete
+// with the row's own link.
+.admin-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-white);
+  color: var(--vih-text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color var(--vih-dur-base) var(--vih-ease),
+              color var(--vih-dur-base) var(--vih-ease);
+
+  &:hover {
+    border-color: var(--vih-green-900);
+    color: var(--vih-green-900);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--vih-shadow-focus);
+  }
+}
+
+// --- Badges -------------------------------------------------------------------------------------
+// There were only --open, --draft and --closed, so every list's status switch ended in a bare
+// "admin-badge" and Waitlisted, PaymentPending and Refunded all rendered as the same grey pill.
+.admin-badge {
+  &--pending {
+    background: var(--vih-warning-bg);
+    color: var(--vih-green-950);
+  }
+
+  &--info {
+    background: rgba(184, 149, 90, 0.16);
+    color: var(--vih-green-900);
+  }
+
+  &--paid {
+    background: var(--vih-success-bg);
+    color: var(--vih-success);
+  }
+}
+
+// --- Stat cards ---------------------------------------------------------------------------------
+.admin-stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: var(--vih-space-sm);
+  margin-bottom: var(--vih-space-md);
+}
+
+.admin-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--vih-space-sm) var(--vih-space-md);
+  background: var(--vih-white);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--vih-dur-base) var(--vih-ease),
+              box-shadow var(--vih-dur-base) var(--vih-ease);
+
+  &__value {
+    font-family: var(--vih-font-serif);
+    font-size: 1.75rem;
+    line-height: 1.1;
+    color: var(--vih-green-900);
+  }
+
+  &__label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vih-text-muted);
+  }
+
+  // Only the ones that filter something are links; those get the affordance.
+  &:is(a):hover {
+    border-color: var(--vih-gold);
+    box-shadow: var(--vih-shadow-sm);
+  }
+
+  &--active {
+    border-color: var(--vih-gold);
+    background: var(--vih-warning-bg);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--vih-shadow-focus);
+  }
+}
+
+// --- Filter bar ---------------------------------------------------------------------------------
+.admin-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--vih-space-sm);
+  padding: var(--vih-space-sm) var(--vih-space-md);
+  margin-bottom: var(--vih-space-sm);
+  background: var(--vih-surface-tinted);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+
+  .admin-field { margin: 0; }
+  .admin-field--grow { flex: 1 1 240px; }
+}
+
+// --- Empty state --------------------------------------------------------------------------------
+.admin-empty {
+  padding: var(--vih-space-2xl) var(--vih-space-md);
+  text-align: center;
+  border: 1px dashed var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface-tinted);
+  color: var(--vih-text-muted);
+
+  &__title {
+    margin: 0 0 4px;
+    font-family: var(--vih-font-serif);
+    font-size: 1.1rem;
+    color: var(--vih-green-900);
+  }
+
+  p { margin: 0; font-size: 0.875rem; }
+}
+
+// --- Translations editor ------------------------------------------------------------------------
+.admin-table--translations {
+  table-layout: fixed;
+
+  th, td { vertical-align: top; }
+
+  // The key column is the reference; the four language columns share what is left equally.
+  th:first-child { width: 22%; }
+}
+
+.admin-table__key {
+  font-weight: 400;
+  text-align: left;
+
+  code {
+    font-size: 0.72rem;
+    color: var(--vih-text-secondary);
+    word-break: break-all;
+  }
+}
+
+.admin-table__flag {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 4px;
+  border-radius: var(--vih-radius-xs);
+  background: var(--vih-warning-bg);
+  color: var(--vih-green-950);
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: help;
+}
+
+// A cell that becomes a textarea when clicked. Rendering 2,884 textareas up front would be
+// unusable, and paging on the server would stop the search covering the whole set.
+.admin-cell-edit {
+  position: relative;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  cursor: text;
+  border-radius: var(--vih-radius-xs);
+  transition: background-color var(--vih-dur-fast) var(--vih-ease),
+              box-shadow var(--vih-dur-fast) var(--vih-ease);
+
+  &:hover { background: var(--vih-surface-tinted); }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--vih-shadow-focus);
+  }
+
+  &.is-editing {
+    padding: 0;
+    background: transparent;
+  }
+
+  &.is-saving { opacity: 0.55; }
+
+  // A quiet confirmation on the cell itself. The toast says what happened; this says where.
+  &.is-saved {
+    background: var(--vih-success-bg);
+    box-shadow: inset 0 0 0 1px var(--vih-success);
+  }
+
+  &__input {
+    width: 100%;
+    min-height: 64px;
+    padding: 8px 10px;
+    border: 1px solid var(--vih-focus-ring);
+    border-radius: var(--vih-radius-xs);
+    background: var(--vih-white);
+    color: var(--vih-ink);
+    font: inherit;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    resize: vertical;
+
+    &:focus { outline: none; box-shadow: var(--vih-shadow-focus); }
+  }
+}
+
+// Still identical to the English. A left rule rather than a background, so it does not fight the
+// row hover or the saved-cell flash.
+tr.is-untranslated .admin-table__key {
+  box-shadow: inset 3px 0 0 var(--vih-gold);
+}
+
+// --- simple-datatables chrome -------------------------------------------------------------------
+// The library ships its own stylesheet; this replaces it rather than overriding it, so the search
+// box and pager read as part of the panel instead of as a bolted-on widget.
+.admin-dt {
+  &__top,
+  &__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--vih-space-2xs);
+    margin-bottom: var(--vih-space-2xs);
+    font-size: 0.78rem;
+    color: var(--vih-text-muted);
+  }
+
+  &__bottom {
+    margin: var(--vih-space-sm) 0 0;
+  }
+
+  &__input {
+    min-width: 240px;
+    padding: 8px 12px;
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: var(--vih-radius-pill);
+    background: var(--vih-white);
+    font: inherit;
+    font-size: 0.8125rem;
+
+    &:focus-visible {
+      outline: none;
+      border-color: var(--vih-focus-ring);
+      box-shadow: var(--vih-shadow-focus);
+    }
+  }
+
+  &__selector {
+    padding: 5px 8px;
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: var(--vih-radius-xs);
+    background: var(--vih-white);
+    font: inherit;
+    font-size: 0.78rem;
+  }
+
+  &__pages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li a {
+      display: inline-block;
+      padding: 5px 10px;
+      border: 1px solid var(--vih-line-on-light);
+      border-radius: var(--vih-radius-xs);
+      color: var(--vih-text-secondary);
+      font-size: 0.78rem;
+      text-decoration: none;
+
+      &:hover { border-color: var(--vih-green-900); color: var(--vih-green-900); }
+    }
+
+    li.active a {
+      background: var(--vih-green-900);
+      border-color: var(--vih-green-900);
+      color: var(--vih-cream);
+    }
+  }
+}
+
+// The sortable-column affordance, which the table never had.
+.admin-table thead th[data-sortable] button,
+.admin-table thead th .datatable-sorter {
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+
+.admin-table thead th.asc::after { content: ' \2191'; color: var(--vih-gold); }
+.admin-table thead th.desc::after { content: ' \2193'; color: var(--vih-gold); }
+
+// --- Responsive: the sidebar becomes a drawer ---------------------------------------------------
+// The panel had no responsive story at all — a fixed 248px sidebar and tables with no overflow
+// wrapper, so on a phone the nav ate a third of the viewport and the last columns were unreachable.
+.admin-burger {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: calc(var(--vih-z-sticky) + 2);
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  border: 1px solid var(--vih-line-on-dark);
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-green-950);
+  cursor: pointer;
+
+  span {
+    display: block;
+    height: 2px;
+    background: var(--vih-cream);
+    border-radius: 2px;
+
+    + span { margin-top: 4px; }
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--vih-shadow-focus);
+  }
+}
+
+.admin-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--vih-z-sticky) - 1);
+  background: var(--vih-scrim-strong);
+}
+
+@media (max-width: 959px) {
+  .admin-burger { display: block; }
+
+  .admin-shell--nav-open .admin-scrim { display: block; }
+
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: calc(var(--vih-z-sticky) + 1);
+    transform: translateX(-100%);
+    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+  }
+
+  .admin-shell--nav-open .admin-sidebar { transform: none; }
+
+  .admin-main {
+    padding: 64px var(--vih-space-sm) var(--vih-space-2xl);
+  }
+
+  // Every table gets the scroller on a narrow screen, not only the ones that opted in.
+  .admin-table { min-width: 640px; }
+
+  .admin-table-scroll,
+  .admin-dt { overflow-x: auto; }
+}
+
+// --- Reduced motion -----------------------------------------------------------------------------
+// The first such block in the admin. The house rule from reveal.ts is that the animation never
+// starts rather than running faster, so these are removed outright rather than shortened.
+@media (prefers-reduced-motion: reduce) {
+  .admin-btn,
+  .admin-icon-btn,
+  .admin-stat,
+  .admin-cell-edit,
+  .admin-table tbody tr,
+  .admin-sidebar {
+    transition: none !important;
+  }
+
+  .admin-btn:active { transform: none; }
+}
+
+// A cell whose save was refused. The text stays in the editor to be corrected, so the cell needs to
+// say why it is still open.
+.admin-cell-edit.is-invalid .admin-cell-edit__input {
+  border-color: var(--vih-danger);
+  box-shadow: 0 0 0 3px var(--vih-danger-bg);
+}
+
+kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  border: 1px solid var(--vih-line-on-light);
+  border-bottom-width: 2px;
+  border-radius: var(--vih-radius-xs);
+  background: var(--vih-white);
+  font-family: var(--vih-font-sans);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--vih-text-secondary);
 }

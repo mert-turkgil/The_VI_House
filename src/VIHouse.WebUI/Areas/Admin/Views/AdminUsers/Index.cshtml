@@ -24,7 +24,8 @@
 }
 else
 {
-    <table class="admin-table">
+    <div class="admin-table-scroll">
+    <table class="admin-table" data-admin-table>
         <thead>
             <tr>
                 <th>Email</th>
@@ -32,6 +33,7 @@ else
                 <th>Roles</th>
                 <th>Applications</th>
                 <th>Bookings</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -43,8 +45,13 @@ else
                     <td>@(u.Roles.Count == 0 ? "—" : string.Join(", ", u.Roles))</td>
                     <td>@u.ApplicationCount</td>
                     <td>@u.BookingCount</td>
+                    <td class="admin-table__actions">
+                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@u.UserId">Open</a>
+                        <a class="admin-icon-btn" href="mailto:@u.Email">Email</a>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+    </div>
 }

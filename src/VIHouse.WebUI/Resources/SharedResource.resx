@@ -173,6 +173,7 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Account.NavProfile" xml:space="preserve"><value>Profile</value></data>
   <data name="Account.NavBookings" xml:space="preserve"><value>My Bookings</value></data>
   <data name="Account.NavSecurity" xml:space="preserve"><value>Security &amp; Login</value></data>
+  <data name="Account.NavAdminPanel" xml:space="preserve"><value>Admin Panel</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>My Profile</value></data>
   <data name="Account.CompanyLabel" xml:space="preserve"><value>Company</value></data>
   <data name="Account.RoleLabel" xml:space="preserve"><value>Role</value></data>
