@@ -55,10 +55,27 @@ public class AdminExperienceFormViewModel
     public ExperienceStatus Status { get; set; } = ExperienceStatus.Draft;
     public ExperienceVisibility Visibility { get; set; } = ExperienceVisibility.Public;
 
+    [Display(Name = "How can it be attended?")]
+    public ExperienceAttendanceMode AttendanceMode { get; set; } = ExperienceAttendanceMode.InPerson;
+
     [StringLength(1000)]
     [SiteImageUrl]
-    [Display(Name = "Cover Image URL")]
+    [Display(Name = "Cover image URL")]
     public string? CoverImageUrl { get; set; }
+
+    /// <summary>
+    /// Usually left empty, and that is right: the cover sits directly above the heading that names
+    /// the experience, so describing it again is noise to a screen reader. Fill it only when the
+    /// photograph carries something the surrounding copy does not.
+    /// </summary>
+    [StringLength(300)]
+    [Display(Name = "Cover image description")]
+    public string? CoverImageAlt { get; set; }
+
+    /// <summary>Comma-separated, rendered as the chips under "Who is in the room?".</summary>
+    [StringLength(300)]
+    [Display(Name = "Who is in the room? (comma separated)")]
+    public string? AudienceTags { get; set; }
 
     [Display(Name = "Application Opens")]
     public DateTime? ApplicationOpenAt { get; set; }
@@ -79,6 +96,13 @@ public class AdminExperienceFormViewModel
     [StringLength(400)]
     [Display(Name = "SEO Description")]
     public string? SeoDescription { get; set; }
+
+    /// <summary>The image a link to this experience shows when pasted into a chat or a social post.
+    /// Falls back to the cover when empty.</summary>
+    [StringLength(1000)]
+    [SiteImageUrl]
+    [Display(Name = "Social preview image URL")]
+    public string? SeoOgImageUrl { get; set; }
 
     [Display(Name = "Show in homepage Signature grid")]
     public bool IsSignature { get; set; }
@@ -101,13 +125,17 @@ public class AdminExperienceFormViewModel
         Capacity = Capacity,
         Status = Status,
         Visibility = Visibility,
+        AttendanceMode = AttendanceMode,
         CoverImageUrl = CoverImageUrl,
+        CoverImageAlt = CoverImageAlt,
+        AudienceTags = AudienceTags,
         ApplicationOpenAt = ToUtcOffset(ApplicationOpenAt),
         ApplicationCloseAt = ToUtcOffset(ApplicationCloseAt),
         SalesOpenAt = ToUtcOffset(SalesOpenAt),
         SalesCloseAt = ToUtcOffset(SalesCloseAt),
         SeoTitle = SeoTitle,
         SeoDescription = SeoDescription,
+        SeoOgImageUrl = SeoOgImageUrl,
         IsSignature = IsSignature,
         SortOrder = SortOrder,
     };
@@ -128,13 +156,17 @@ public class AdminExperienceFormViewModel
         Capacity = e.Capacity,
         Status = e.Status,
         Visibility = e.Visibility,
+        AttendanceMode = e.AttendanceMode,
         CoverImageUrl = e.CoverImageUrl,
+        CoverImageAlt = e.CoverImageAlt,
+        AudienceTags = e.AudienceTags,
         ApplicationOpenAt = e.ApplicationOpenAt?.UtcDateTime,
         ApplicationCloseAt = e.ApplicationCloseAt?.UtcDateTime,
         SalesOpenAt = e.SalesOpenAt?.UtcDateTime,
         SalesCloseAt = e.SalesCloseAt?.UtcDateTime,
         SeoTitle = e.SeoTitle,
         SeoDescription = e.SeoDescription,
+        SeoOgImageUrl = e.SeoOgImageUrl,
         IsSignature = e.IsSignature,
         SortOrder = e.SortOrder,
     };

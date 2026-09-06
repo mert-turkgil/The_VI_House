@@ -83,11 +83,28 @@ public class MembershipService(
         await plans.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// The membership that currently entitles someone to anything, or null.
+    ///
+    /// This is the single entitlement primitive in the application — the member directory, the member
+    /// card, the community links, members-only seminars and now joining an experience all resolve
+    /// through it, so what it counts as "current" is worth being exact about.
+    ///
+    /// The ExpiresAt check is not redundant with the status. Nothing in the codebase ever writes
+    /// MembershipStatus.Expired — there is no background sweep and no webhook that does it — so
+    /// filtering on Status alone meant a membership that lapsed a year ago still opened every one of
+    /// those doors, permanently. Expiry is therefore derived from the date rather than trusted to a
+    /// column somebody has to remember to update.
+    /// </summary>
     public async Task<Membership?> GetCurrentMembershipAsync(Guid userId, CancellationToken ct = default)
     {
+        var now = DateTimeOffset.UtcNow;
         var mine = await memberships.FindAsync(m => m.UserId == userId, ct);
+
         return mine
             .Where(m => m.Status == MembershipStatus.Active)
+            // A null ExpiresAt is a one-time membership that does not lapse, not an expired one.
+            .Where(m => m.ExpiresAt is null || m.ExpiresAt > now)
             .OrderByDescending(m => m.StartAt)
             .FirstOrDefault();
     }

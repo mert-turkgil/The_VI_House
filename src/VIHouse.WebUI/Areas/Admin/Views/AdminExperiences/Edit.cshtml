@@ -9,40 +9,284 @@
     <div class="admin-status-message">@status</div>
 }
 
+<div class="admin-toolbar">
+    <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Experiences" asp-action="Details"
+       asp-route-slug="@Model.Form.Slug" target="_blank" rel="noopener">View on the site</a>
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">All experiences</a>
+</div>
+
+@* --- Cover -------------------------------------------------------------------------------------- *@
+@* Its own multipart form, separate from Details below: a file input inside that form would make
+   every save a multipart post, and saving the text fields would then silently re-submit whatever
+   file was sitting in the picker. Same arrangement as the hero slide editor. *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <h2>Cover image</h2>
+    <p class="admin-hint">
+        Shown at the top of the experience page and on its card. Landscape, at least 1600px wide.
+    </p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.CoverPreviewUrl))
+    {
+        <img src="@Model.CoverPreviewUrl" alt=""
+             style="max-width:420px; width:100%; border-radius:8px; display:block; margin-bottom:12px;" />
+    }
+    else
+    {
+        <div class="admin-empty" style="margin-bottom:12px;">
+            <p class="admin-empty__title">No cover yet</p>
+            <p>Upload one below, or type a path in Details.</p>
+        </div>
+    }
+
+    <form asp-action="UploadCover" asp-route-id="@experienceId" method="post"
+          enctype="multipart/form-data" class="admin-inline-form">
+        <div class="admin-field">
+            <label for="cover-file">Upload a cover</label>
+            <input id="cover-file" type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif" required />
+        </div>
+        <button type="submit" class="admin-btn">Upload</button>
+    </form>
+
+    @if (Model.HasUploadedCover)
+    {
+        <form asp-action="RemoveCover" asp-route-id="@experienceId" method="post" style="margin-top:10px;"
+              onsubmit="return confirm('Remove the uploaded cover? The file is deleted.');">
+            <button type="submit" class="admin-btn admin-btn--danger">Remove uploaded cover</button>
+        </form>
+    }
+</div>
+
+@* --- Details ------------------------------------------------------------------------------------ *@
 <div class="admin-card" style="margin-bottom:24px;">
     <h2>Details</h2>
     <form asp-action="Edit" asp-route-id="@experienceId" method="post" class="admin-form">
         <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
-        <partial name="_FormFields" model="Model.Form" />
+        @{ ViewData["HasUploadedCover"] = Model.HasUploadedCover; }
+        <partial name="_FormFields" model="Model.Form" view-data="ViewData" />
         <div>
-            <button type="submit" class="admin-btn">Save Changes</button>
-            <a class="admin-btn admin-btn--ghost" asp-action="Index">Back to List</a>
+            <button type="submit" class="admin-btn">Save changes</button>
+            <a class="admin-btn admin-btn--ghost" asp-action="Index">Back to list</a>
         </div>
     </form>
 </div>
 
+@* --- Member access ------------------------------------------------------------------------------ *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2>Ticket Types</h2>
-    <div class="admin-inline-list">
-        @if (Model.TicketTypes.Count == 0)
-        {
-            <p>No ticket types yet — add one below.</p>
-        }
-        @foreach (var t in Model.TicketTypes)
-        {
-            <div class="admin-inline-list__row">
-                <span>
-                    <strong>@t.Title</strong> — @((t.PriceMinor / 100m).ToString("0.00")) @t.Currency ·
-                    @t.Inventory remaining
-                </span>
-                <form asp-action="RemoveTicketType" method="post" onsubmit="return confirm('Remove this ticket type?');">
-                    <input type="hidden" name="experienceId" value="@experienceId" />
-                    <input type="hidden" name="ticketTypeId" value="@t.Id" />
-                    <button type="submit" class="admin-btn admin-btn--danger">Remove</button>
-                </form>
+    <h2>Member access</h2>
+    <p class="admin-hint">
+        Members on a ticked plan join this experience in one click — no application form, no payment,
+        because their membership already paid for it. Everyone else applies as usual.
+        Tick nothing and this experience is application-only, which is how every experience worked
+        before this existed.
+    </p>
+
+    @if (Model.MemberAccess.Count == 0)
+    {
+        <div class="admin-empty">
+            <p class="admin-empty__title">No membership plans yet</p>
+            <p>Create one under Membership Plans first.</p>
+        </div>
+    }
+    else
+    {
+        <form asp-action="SetMemberAccess" asp-route-id="@experienceId" method="post" class="admin-form">
+            <div class="admin-role-list">
+                @foreach (var plan in Model.MemberAccess)
+                {
+                    <label class="admin-role-option">
+                        <input type="checkbox" name="planIds" value="@plan.PlanId" checked="@plan.Admitted" />
+                        <span>@plan.Name <span class="admin-table__sub">@plan.PriceLabel</span></span>
+                    </label>
+                }
             </div>
-        }
-    </div>
+            <div>
+                <button type="submit" class="admin-btn">Save member access</button>
+            </div>
+        </form>
+    }
+</div>
+
+@* --- Gallery ------------------------------------------------------------------------------------ *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <h2>Gallery</h2>
+    <p class="admin-hint">
+        The photographs under "Venue" on the experience page. The description is read aloud by screen
+        readers <em>and</em> shown as the caption, so write it as a sentence.
+    </p>
+
+    @if (Model.Gallery.Count == 0)
+    {
+        <div class="admin-empty"><p class="admin-empty__title">No photographs yet</p></div>
+    }
+    else
+    {
+        <div class="admin-media-grid">
+            @foreach (var image in Model.Gallery)
+            {
+                var src = image.StorageKey is null
+                    ? image.Url
+                    : Url.Action("ExperienceGalleryImage", "Media", new { area = "", id = image.Id, v = (image.UpdatedAt ?? image.CreatedAt).ToUnixTimeSeconds() });
+
+                <figure class="admin-media-card">
+                    <img class="admin-media-card__file" src="@src" alt="" loading="lazy" />
+
+                    <form asp-action="UpdateGalleryImage" asp-route-id="@experienceId" method="post" class="admin-form" style="gap:8px;">
+                        <input type="hidden" name="imageId" value="@image.Id" />
+                        <div class="admin-field">
+                            <label>Caption</label>
+                            <input name="altText" value="@image.AltText" maxlength="300" />
+                        </div>
+                        <div class="admin-media-card__actions">
+                            <button type="submit" class="admin-icon-btn">Save</button>
+                        </div>
+                    </form>
+
+                    <div class="admin-media-card__actions">
+                        @* Two single-button forms in a flex row: each is a POST of its own, and left
+                           to themselves they would stack because .admin-inline-form is block-level. *@
+                        <form asp-action="MoveGalleryImage" asp-route-id="@experienceId" method="post">
+                            <input type="hidden" name="imageId" value="@image.Id" />
+                            <input type="hidden" name="delta" value="-1" />
+                            <button type="submit" class="admin-icon-btn" aria-label="Move earlier">&uarr;</button>
+                        </form>
+                        <form asp-action="MoveGalleryImage" asp-route-id="@experienceId" method="post">
+                            <input type="hidden" name="imageId" value="@image.Id" />
+                            <input type="hidden" name="delta" value="1" />
+                            <button type="submit" class="admin-icon-btn" aria-label="Move later">&darr;</button>
+                        </form>
+                        <form asp-action="RemoveGalleryImage" asp-route-id="@experienceId" method="post"
+                              onsubmit="return confirm('Remove this photograph?');">
+                            <input type="hidden" name="imageId" value="@image.Id" />
+                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                        </form>
+                    </div>
+                </figure>
+            }
+        </div>
+    }
+
+    <form asp-action="AddGalleryImage" asp-route-id="@experienceId" method="post"
+          enctype="multipart/form-data" class="admin-inline-form" style="margin-top:16px;">
+        <div class="admin-field">
+            <label for="gallery-file">Upload</label>
+            <input id="gallery-file" type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif" />
+        </div>
+        <div class="admin-field">
+            <label for="gallery-url">…or a path already on the site</label>
+            <input id="gallery-url" name="url" placeholder="/img/gallery/dinner-1600.jpg" />
+        </div>
+        <div class="admin-field" style="flex:2;">
+            <label for="gallery-alt">Caption</label>
+            <input id="gallery-alt" name="altText" maxlength="300" placeholder="A long table set for a private dinner" />
+        </div>
+        <button type="submit" class="admin-btn">Add</button>
+    </form>
+</div>
+
+@* --- Programme ---------------------------------------------------------------------------------- *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <h2>Programme</h2>
+    <p class="admin-hint">
+        The day-by-day agenda. Times are shown in the experience's own timezone (@Model.Form.TimeZoneId).
+    </p>
+
+    @foreach (var day in Model.ProgramDays)
+    {
+        <div class="admin-panel" style="margin-bottom:16px;">
+            <div class="admin-panel__note">
+                <strong>Day @day.DayNumber</strong> — @day.Title
+                @if (!string.IsNullOrWhiteSpace(day.DateLabel))
+                {
+                    <span class="admin-table__sub">@day.DateLabel</span>
+                }
+            </div>
+
+            <div class="admin-inline-list">
+                @foreach (var session in day.Sessions.OrderBy(s => s.StartTime))
+                {
+                    <div class="admin-inline-list__row">
+                        <span>
+                            <strong>@session.StartTime.ToString(@"hh\:mm")–@session.EndTime.ToString(@"hh\:mm")</strong>
+                            @session.Title
+                            @if (!string.IsNullOrWhiteSpace(session.SpeakerName))
+                            {
+                                <span class="admin-table__sub">@session.SpeakerName</span>
+                            }
+                        </span>
+                        <form asp-action="RemoveSession" asp-route-id="@experienceId" method="post">
+                            <input type="hidden" name="sessionId" value="@session.Id" />
+                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                        </form>
+                    </div>
+                }
+            </div>
+
+            <form asp-action="AddSession" asp-route-id="@experienceId" method="post" class="admin-inline-form">
+                <input type="hidden" name="dayId" value="@day.Id" />
+                <div class="admin-field"><label>From</label><input type="time" name="startTime" required /></div>
+                <div class="admin-field"><label>To</label><input type="time" name="endTime" required /></div>
+                <div class="admin-field" style="flex:2;"><label>Session</label><input name="title" required /></div>
+                <div class="admin-field"><label>Speaker</label><input name="speakerName" /></div>
+                <button type="submit" class="admin-btn">Add session</button>
+            </form>
+
+            <form asp-action="RemoveProgramDay" asp-route-id="@experienceId" method="post" style="margin-top:10px;"
+                  onsubmit="return confirm('Remove this day and all of its sessions?');">
+                <input type="hidden" name="dayId" value="@day.Id" />
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove day @day.DayNumber</button>
+            </form>
+        </div>
+    }
+
+    <form asp-action="AddProgramDay" asp-route-id="@experienceId" method="post" class="admin-inline-form">
+        <div class="admin-field"><label>Day number</label><input type="number" name="dayNumber" min="1" value="@(Model.ProgramDays.Count + 1)" required /></div>
+        <div class="admin-field" style="flex:2;"><label>Title</label><input name="title" placeholder="Arrival and opening dinner" required /></div>
+        <div class="admin-field"><label>Date label</label><input name="dateLabel" placeholder="Thursday 17 September" /></div>
+        <button type="submit" class="admin-btn">Add day</button>
+    </form>
+</div>
+
+@* --- Ticket types ------------------------------------------------------------------------------- *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <h2>Ticket types</h2>
+
+    @if (Model.TicketTypes.Count == 0)
+    {
+        <div class="admin-empty"><p class="admin-empty__title">No ticket types yet</p></div>
+    }
+
+    @foreach (var t in Model.TicketTypes)
+    {
+        <div class="admin-panel" style="margin-bottom:12px;">
+            <form asp-action="UpdateTicketType" asp-route-id="@experienceId" method="post" class="admin-form">
+                <input type="hidden" name="Id" value="@t.Id" />
+                <div class="admin-form__grid">
+                    <div class="admin-field"><label>Title</label><input name="Title" value="@t.Title" required /></div>
+                    <div class="admin-field"><label>Price (minor units)</label><input name="PriceMinor" type="number" min="0" value="@t.PriceMinor" required /></div>
+                    <div class="admin-field"><label>Currency</label><input name="Currency" value="@t.Currency" maxlength="3" required /></div>
+                    <div class="admin-field"><label>Max per order</label><input name="MaxQuantityPerOrder" type="number" min="1" value="@t.MaxQuantityPerOrder" /></div>
+                    <div class="admin-field"><label>Order</label><input name="SortOrder" type="number" value="@t.SortOrder" /></div>
+                </div>
+                <div class="admin-field"><label>Description</label><input name="Description" value="@t.Description" /></div>
+                <div class="admin-field"><label>Perks</label><textarea name="PerksText" rows="2">@t.PerksText</textarea></div>
+
+                @* Inventory is shown but not editable: it is the no-oversell counter, moved only by
+                   the atomic reservation. A number typed here from a stale page would undo sales. *@
+                <p class="admin-field__hint">@t.Inventory place(s) left — inventory moves only as tickets are sold or released.</p>
+
+                <div class="admin-panel__actions">
+                    <button type="submit" class="admin-btn">Save ticket type</button>
+                </div>
+            </form>
+
+            <form asp-action="RemoveTicketType" method="post" onsubmit="return confirm('Remove this ticket type?');">
+                <input type="hidden" name="experienceId" value="@experienceId" />
+                <input type="hidden" name="ticketTypeId" value="@t.Id" />
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+            </form>
+        </div>
+    }
+
     <form asp-action="AddTicketType" method="post" class="admin-inline-form">
         <input type="hidden" name="ExperienceId" value="@experienceId" />
         <div class="admin-field"><label>Title</label><input name="Title" placeholder="Standard Experience" required /></div>
@@ -53,21 +297,29 @@
     </form>
 </div>
 
+@* --- Included / Not included -------------------------------------------------------------------- *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2>Included / Not Included</h2>
-    <div class="admin-inline-list">
-        @foreach (var i in Model.Inclusions)
-        {
-            <div class="admin-inline-list__row">
-                <span>@(i.IsIncluded ? "✓" : "✗") @i.Text</span>
-                <form asp-action="RemoveInclusion" method="post">
-                    <input type="hidden" name="experienceId" value="@experienceId" />
-                    <input type="hidden" name="inclusionId" value="@i.Id" />
-                    <button type="submit" class="admin-btn admin-btn--danger">Remove</button>
-                </form>
+    <h2>Included / not included</h2>
+
+    @foreach (var i in Model.Inclusions)
+    {
+        <form asp-action="UpdateInclusion" asp-route-id="@experienceId" method="post" class="admin-inline-form">
+            <input type="hidden" name="inclusionId" value="@i.Id" />
+            <div class="admin-field" style="flex:3;"><label>Text</label><input name="text" value="@i.Text" required /></div>
+            <div class="admin-field admin-field--checkbox">
+                <input type="checkbox" name="isIncluded" value="true" checked="@i.IsIncluded" />
+                <label>Included</label>
             </div>
-        }
-    </div>
+            <div class="admin-field"><label>Order</label><input name="sortOrder" type="number" value="@i.SortOrder" /></div>
+            <button type="submit" class="admin-icon-btn">Save</button>
+        </form>
+        <form asp-action="RemoveInclusion" method="post" style="margin:-8px 0 12px;">
+            <input type="hidden" name="experienceId" value="@experienceId" />
+            <input type="hidden" name="inclusionId" value="@i.Id" />
+            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+        </form>
+    }
+
     <form asp-action="AddInclusion" method="post" class="admin-inline-form">
         <input type="hidden" name="ExperienceId" value="@experienceId" />
         <div class="admin-field" style="flex:3;"><label>Text</label><input name="Text" required /></div>
@@ -76,21 +328,30 @@
     </form>
 </div>
 
-<div class="admin-card">
+@* --- FAQ ---------------------------------------------------------------------------------------- *@
+<div class="admin-card" style="margin-bottom:24px;">
     <h2>FAQ</h2>
-    <div class="admin-inline-list">
-        @foreach (var f in Model.Faqs)
-        {
-            <div class="admin-inline-list__row">
-                <span><strong>@f.Question</strong> — @f.Answer</span>
-                <form asp-action="RemoveFaq" method="post">
-                    <input type="hidden" name="experienceId" value="@experienceId" />
-                    <input type="hidden" name="faqId" value="@f.Id" />
-                    <button type="submit" class="admin-btn admin-btn--danger">Remove</button>
-                </form>
-            </div>
-        }
-    </div>
+
+    @foreach (var f in Model.Faqs)
+    {
+        <div class="admin-panel" style="margin-bottom:12px;">
+            <form asp-action="UpdateFaq" asp-route-id="@experienceId" method="post" class="admin-form">
+                <input type="hidden" name="faqId" value="@f.Id" />
+                <div class="admin-field"><label>Question</label><input name="question" value="@f.Question" required /></div>
+                <div class="admin-field"><label>Answer</label><textarea name="answer" rows="3" required>@f.Answer</textarea></div>
+                <div class="admin-field"><label>Order</label><input name="sortOrder" type="number" value="@f.SortOrder" /></div>
+                <div class="admin-panel__actions">
+                    <button type="submit" class="admin-btn">Save</button>
+                </div>
+            </form>
+            <form asp-action="RemoveFaq" method="post">
+                <input type="hidden" name="experienceId" value="@experienceId" />
+                <input type="hidden" name="faqId" value="@f.Id" />
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+            </form>
+        </div>
+    }
+
     <form asp-action="AddFaq" method="post" class="admin-inline-form">
         <input type="hidden" name="ExperienceId" value="@experienceId" />
         <div class="admin-field" style="flex:2;"><label>Question</label><input name="Question" required /></div>
@@ -99,9 +360,10 @@
     </form>
 </div>
 
-<div class="admin-card" style="margin-top:24px;">
-    <h2>Notify Attendees</h2>
-    <p>Sends an in-portal notification to everyone with a confirmed booking on this experience.</p>
+@* --- Notify ------------------------------------------------------------------------------------- *@
+<div class="admin-card">
+    <h2>Notify attendees</h2>
+    <p class="admin-hint">Sends an in-portal notification to everyone with a confirmed booking on this experience.</p>
     <form asp-action="NotifyAttendees" method="post" class="admin-form">
         <input type="hidden" name="ExperienceId" value="@experienceId" />
         <div class="admin-form__grid">
@@ -121,7 +383,7 @@
             <label>Body</label>
             <textarea name="Body" rows="3" maxlength="1000" required></textarea>
         </div>
-        <button type="submit" class="admin-btn">Notify Attendees</button>
+        <button type="submit" class="admin-btn">Notify attendees</button>
     </form>
 </div>
 

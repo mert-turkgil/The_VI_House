@@ -93,6 +93,16 @@
     </div>
 </section>
 
+@if (TempData["StatusMessage"] is string joinStatus)
+{
+    @* The join POST redirects back here with its result. Without this the outcome — confirmed,
+       already booked, or no longer entitled — was set and silently dropped, so a refused join looked
+       identical to nothing happening. *@
+    <div class="container">
+        <p class="alert alert-info" role="status">@joinStatus</p>
+    </div>
+}
+
 <div class="container">
     <nav class="experience-subnav" aria-label="@Model.Title" data-subnav>
         <ul class="experience-subnav__list">
@@ -247,8 +257,10 @@
                                            heading that describes them. AltText is null-safe — a null
                                            becomes alt="" (decorative), never the experience title,
                                            which would make a screen reader read it six times. *@
+                                        @* Resolved, not the raw column: an uploaded photograph has no
+                                           Url and is streamed by MediaController instead. *@
                                         <partial name="_CoverImage" model="@(new CoverImageViewModel {
-                                            Url = image.Url,
+                                            Url = ExperienceService.GalleryImageUrl(image),
                                             Alt = image.AltText,
                                             Ratio = "4x3",
                                             Sizes = "(min-width: 960px) 40vw, 90vw",
@@ -319,11 +331,61 @@
                 }
             }
 
-            @if (Model.CanApply)
+            @* One panel, four outcomes, decided entirely by the server — see
+               ExperienceService.GetAccessAsync. Nothing about the entitlement is posted from here. *@
+            @switch (Model.Access?.Outcome)
             {
-                <a class="btn btn--primary experience-ticket-panel__cta" href="/apply?experience=@Model.Slug">
-                    @Loc["Experiences.Apply"]
-                </a>
+                case ExperienceAccessOutcome.AlreadyBooked:
+                    <p class="experience-ticket-panel__note">
+                        <strong>@Loc["Experiences.Join.Booked", Model.Access.BookingReference ?? ""]</strong>
+                    </p>
+                    <a class="btn btn--ghost experience-ticket-panel__cta"
+                       asp-controller="Account" asp-action="Bookings">@Loc["Account.NavBookings"]</a>
+                    break;
+
+                case ExperienceAccessOutcome.IncludedInMembership:
+                    <p class="experience-ticket-panel__note">
+                        <strong>@Loc["Experiences.Join.Heading"]</strong><br />
+                        @Loc["Experiences.Join.Body"]
+                    </p>
+                    <form asp-action="Join" asp-route-slug="@Model.Slug" method="post">
+                        @if (Model.AttendanceMode == ExperienceAttendanceMode.Both)
+                        {
+                            <fieldset class="experience-join__attendance">
+                                <legend>@Loc["Experiences.Join.Attendance"]</legend>
+                                <label>
+                                    <input type="radio" name="attendance" value="@BookingAttendance.InPerson" checked />
+                                    @Loc["Experiences.Join.InPerson"]
+                                </label>
+                                <label>
+                                    <input type="radio" name="attendance" value="@BookingAttendance.Online" />
+                                    @Loc["Experiences.Join.Online"]
+                                </label>
+                            </fieldset>
+                        }
+                        <button type="submit" class="btn btn--primary experience-ticket-panel__cta">
+                            @Loc["Experiences.Join.Button"]
+                        </button>
+                    </form>
+                    break;
+
+                case ExperienceAccessOutcome.NeedsSignIn:
+                    <a class="btn btn--primary experience-ticket-panel__cta"
+                       asp-area="Identity" asp-page="/Account/Login"
+                       asp-route-returnUrl="@Url.Action("Details", "Experiences", new { area = "", slug = Model.Slug })">
+                        @Loc["Experiences.Join.SignIn"]
+                    </a>
+                    break;
+
+                default:
+                    @* The route every experience took before memberships could join one. *@
+                    if (Model.CanApply)
+                    {
+                        <a class="btn btn--primary experience-ticket-panel__cta" href="/apply?experience=@Model.Slug">
+                            @Loc["Experiences.Apply"]
+                        </a>
+                    }
+                    break;
             }
 
             <p class="experience-ticket-panel__note">@Loc["Experiences.Tickets.Note"]</p>

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using VIHouse.Business.Abstract;
@@ -25,7 +26,8 @@ public class ApplicationController(IExperienceService experienceService, IApplic
             var open = await experienceService.GetPublicListingAsync(
                 new ExperienceFilter { Status = ExperienceStatus.ApplicationsOpen, Take = 20 }, ct);
             ViewData["Title"] = "Request Access";
-            return View("ChooseExperience", open.Select(ExperienceCardViewModel.FromEntity).ToList());
+            var culture = CultureInfo.CurrentUICulture.Name;
+            return View("ChooseExperience", open.Select(e => ExperienceCardViewModel.FromEntity(e, culture)).ToList());
         }
 
         var form = BuildForm(exp);

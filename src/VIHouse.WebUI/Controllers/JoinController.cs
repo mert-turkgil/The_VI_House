@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -61,7 +62,8 @@ public class JoinController(
         var open = await experienceService.GetPublicListingAsync(
             new ExperienceFilter { Status = ExperienceStatus.ApplicationsOpen, Take = 6 }, ct);
 
-        return open.Select(ExperienceCardViewModel.FromEntity).ToList();
+            var culture = CultureInfo.CurrentUICulture.Name;
+        return open.Select(e => ExperienceCardViewModel.FromEntity(e, culture)).ToList();
     }
 
     [HttpPost("")]

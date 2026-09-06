@@ -798,4 +798,26 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Liikmelisust ei müüda. See tuleb koos ruumiga, kuhu sind vastu võetakse.</value></data>
   <data name="Account.NavJoinTheHouse" xml:space="preserve"><value>Liitu Housega</value></data>
   <data name="Account.NavCommunity" xml:space="preserve"><value>Kogukond</value></data>
+  <data name="Admin.Experience.NoFile" xml:space="preserve"><value>Vali fail või kleebi asukoht.</value></data>
+  <data name="Admin.Experience.CoverUploaded" xml:space="preserve"><value>Kaanepilt üles laaditud.</value></data>
+  <data name="Admin.Experience.CoverRemoved" xml:space="preserve"><value>Kaanepilt eemaldatud.</value></data>
+  <data name="Admin.Experience.GalleryAdded" xml:space="preserve"><value>Pilt lisati galeriisse.</value></data>
+  <data name="Admin.Experience.ImageTypeOnly" xml:space="preserve"><value>See fail pole pilt — kasuta JPG, PNG, WebP või AVIF.</value></data>
+  <data name="Admin.Experience.NotFound" xml:space="preserve"><value>Seda kogemust enam pole.</value></data>
+  <data name="Admin.Experience.TicketTypeNotFound" xml:space="preserve"><value>See piletitüüp ei kuulu selle kogemuse juurde.</value></data>
+  <data name="Admin.Experience.RowNotFound" xml:space="preserve"><value>See kirje ei kuulu selle kogemuse juurde.</value></data>
+  <data name="Admin.Experience.MemberAccessSaved" xml:space="preserve"><value>Liikmete juurdepääs salvestatud.</value></data>
+  <data name="Experiences.Join.Heading" xml:space="preserve"><value>Sinu liikmelisus katab selle</value></data>
+  <data name="Experiences.Join.Body" xml:space="preserve"><value>Saad oma koha võtta ilma avaldust esitamata — maksta pole midagi.</value></data>
+  <data name="Experiences.Join.Button" xml:space="preserve"><value>Liitu selle kogemusega</value></data>
+  <data name="Experiences.Join.Attendance" xml:space="preserve"><value>Kuidas sa liitud?</value></data>
+  <data name="Experiences.Join.InPerson" xml:space="preserve"><value>Kohapeal</value></data>
+  <data name="Experiences.Join.Online" xml:space="preserve"><value>Veebis</value></data>
+  <data name="Experiences.Join.SignIn" xml:space="preserve"><value>Logi sisse, et oma koht võtta</value></data>
+  <data name="Experiences.Join.Booked" xml:space="preserve"><value>Sul on koht. Broneering {0}.</value></data>
+  <data name="Experiences.Join.Confirmed" xml:space="preserve"><value>Oled sees. Sinu broneeringu number on {0}.</value></data>
+  <data name="Experiences.Join.AlreadyBooked" xml:space="preserve"><value>Sul on juba koht selles kogemuses.</value></data>
+  <data name="Experiences.Join.NotEntitled" xml:space="preserve"><value>Sinu liikmelisus ei kata seda kogemust — palun esita avaldus.</value></data>
+  <data name="Experiences.Join.NotFound" xml:space="preserve"><value>Seda kogemust enam pole.</value></data>
+  <data name="Experiences.MembersOnly" xml:space="preserve"><value>Ainult liikmetele</value></data>
 </root>

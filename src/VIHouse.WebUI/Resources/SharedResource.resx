@@ -798,4 +798,26 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Membership is not sold. It comes with the room you are accepted into.</value></data>
   <data name="Account.NavJoinTheHouse" xml:space="preserve"><value>Join the House</value></data>
   <data name="Account.NavCommunity" xml:space="preserve"><value>Community</value></data>
+  <data name="Admin.Experience.NoFile" xml:space="preserve"><value>Choose a file, or paste a path.</value></data>
+  <data name="Admin.Experience.CoverUploaded" xml:space="preserve"><value>Cover image uploaded.</value></data>
+  <data name="Admin.Experience.CoverRemoved" xml:space="preserve"><value>Cover image removed.</value></data>
+  <data name="Admin.Experience.GalleryAdded" xml:space="preserve"><value>Image added to the gallery.</value></data>
+  <data name="Admin.Experience.ImageTypeOnly" xml:space="preserve"><value>That file isn't an image — use JPG, PNG, WebP or AVIF.</value></data>
+  <data name="Admin.Experience.NotFound" xml:space="preserve"><value>That experience no longer exists.</value></data>
+  <data name="Admin.Experience.TicketTypeNotFound" xml:space="preserve"><value>That ticket type isn't part of this experience.</value></data>
+  <data name="Admin.Experience.RowNotFound" xml:space="preserve"><value>That entry isn't part of this experience.</value></data>
+  <data name="Admin.Experience.MemberAccessSaved" xml:space="preserve"><value>Member access saved.</value></data>
+  <data name="Experiences.Join.Heading" xml:space="preserve"><value>Your membership includes this</value></data>
+  <data name="Experiences.Join.Body" xml:space="preserve"><value>You can take your place without applying — there is nothing to pay.</value></data>
+  <data name="Experiences.Join.Button" xml:space="preserve"><value>Join this experience</value></data>
+  <data name="Experiences.Join.Attendance" xml:space="preserve"><value>How will you join?</value></data>
+  <data name="Experiences.Join.InPerson" xml:space="preserve"><value>In person</value></data>
+  <data name="Experiences.Join.Online" xml:space="preserve"><value>Online</value></data>
+  <data name="Experiences.Join.SignIn" xml:space="preserve"><value>Sign in to take your place</value></data>
+  <data name="Experiences.Join.Booked" xml:space="preserve"><value>You have a place. Booking {0}.</value></data>
+  <data name="Experiences.Join.Confirmed" xml:space="preserve"><value>You're in. Your booking reference is {0}.</value></data>
+  <data name="Experiences.Join.AlreadyBooked" xml:space="preserve"><value>You already have a place on this experience.</value></data>
+  <data name="Experiences.Join.NotEntitled" xml:space="preserve"><value>Your membership doesn't cover this experience — please apply instead.</value></data>
+  <data name="Experiences.Join.NotFound" xml:space="preserve"><value>That experience no longer exists.</value></data>
+  <data name="Experiences.MembersOnly" xml:space="preserve"><value>Members only</value></data>
 </root>

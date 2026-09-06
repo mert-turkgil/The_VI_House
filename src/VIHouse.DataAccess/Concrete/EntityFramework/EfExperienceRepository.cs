@@ -21,7 +21,7 @@ public class EfExperienceRepository(VIHouseDbContext db) : EfRepository<Experien
 
     public async Task<List<Experience>> GetPublicListingAsync(ExperienceFilter filter, CancellationToken ct = default)
     {
-        var query = Set.Include(e => e.TicketTypes).AsQueryable();
+        var query = Set.Include(e => e.TicketTypes).Include(e => e.Translations).AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filter.City))
         {
@@ -61,6 +61,7 @@ public class EfExperienceRepository(VIHouseDbContext db) : EfRepository<Experien
 
     public Task<List<Experience>> GetUpcomingAsync(int take, CancellationToken ct = default) =>
         Set.Include(e => e.TicketTypes)
+            .Include(e => e.Translations)
             .Where(e => e.Visibility == ExperienceVisibility.Public
                         && e.Status != ExperienceStatus.Completed
                         && e.Status != ExperienceStatus.Draft
@@ -71,6 +72,7 @@ public class EfExperienceRepository(VIHouseDbContext db) : EfRepository<Experien
 
     public Task<List<Experience>> GetSignatureAsync(int take, CancellationToken ct = default) =>
         Set.Include(e => e.TicketTypes)
+            .Include(e => e.Translations)
             .Where(e => e.Visibility == ExperienceVisibility.Public && e.IsSignature && e.Status != ExperienceStatus.Draft)
             .OrderBy(e => e.SortOrder)
             .Take(take)
@@ -81,5 +83,10 @@ public class EfExperienceRepository(VIHouseDbContext db) : EfRepository<Experien
             .Include(e => e.ProgramDays).ThenInclude(d => d.Sessions)
             .Include(e => e.Inclusions)
             .Include(e => e.Faqs)
-            .Include(e => e.Gallery);
+            .Include(e => e.Gallery)
+            // Without this the resolver sees an empty Translations list and silently serves the
+            // English columns in every language — a failure that looks exactly like "not translated
+            // yet", which is why it is worth stating rather than leaving to be noticed.
+            .Include(e => e.Translations)
+            .Include(e => e.MembershipAccess);
 }

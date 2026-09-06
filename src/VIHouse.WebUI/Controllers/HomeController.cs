@@ -30,6 +30,9 @@ public class HomeController(
         blocks.TryGetValue("trust", out var trust);
         blocks.TryGetValue("trust-logos", out var trustLogos);
 
+        // The reader's language, for the experience cards further down — see ExperienceContent.
+        var culture = CultureInfo.CurrentUICulture.Name;
+
         var model = new HomeViewModel
         {
             Hero = new HeroContent
@@ -62,8 +65,8 @@ public class HomeController(
                 Logos = ParseJsonList<TrustLogo>(trustLogos?.ExtraJson),
                 Testimonials = ParseJsonList<Testimonial>(trust?.ExtraJson),
             },
-            Upcoming = (await experienceService.GetUpcomingAsync(6, ct)).Select(ExperienceCardViewModel.FromEntity).ToList(),
-            Signature = (await experienceService.GetSignatureAsync(4, ct)).Select(ExperienceCardViewModel.FromEntity).ToList(),
+            Upcoming = (await experienceService.GetUpcomingAsync(6, ct)).Select(e => ExperienceCardViewModel.FromEntity(e, culture)).ToList(),
+            Signature = (await experienceService.GetSignatureAsync(4, ct)).Select(e => ExperienceCardViewModel.FromEntity(e, culture)).ToList(),
         };
 
         return View(model);

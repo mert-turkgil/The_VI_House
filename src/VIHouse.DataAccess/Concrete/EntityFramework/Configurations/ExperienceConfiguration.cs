@@ -19,6 +19,7 @@ public class ExperienceConfiguration : IEntityTypeConfiguration<Experience>
         builder.Property(e => e.TimeZoneId).HasMaxLength(100).IsRequired();
         builder.Property(e => e.CoverImageAlt).HasMaxLength(300);
         builder.Property(e => e.AudienceTags).HasMaxLength(300);
+        builder.Property(e => e.CoverImageStorageKey).HasMaxLength(400);
 
         // Owned collections of the Experience aggregate root — cascade delete is safe here since
         // this is the only FK path into each child table (no other entity FKs into these).
@@ -45,6 +46,18 @@ public class ExperienceConfiguration : IEntityTypeConfiguration<Experience>
         builder.HasMany(e => e.Gallery)
             .WithOne()
             .HasForeignKey(g => g.ExperienceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(e => e.Translations)
+            .WithOne()
+            .HasForeignKey(t => t.ExperienceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configured from this side only for the collection navigation; the plan side of the
+        // relationship (and its Restrict) lives in ExperienceMembershipAccessConfiguration.
+        builder.HasMany(e => e.MembershipAccess)
+            .WithOne()
+            .HasForeignKey(a => a.ExperienceId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

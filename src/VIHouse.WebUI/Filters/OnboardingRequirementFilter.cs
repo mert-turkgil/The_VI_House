@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Options;
+using VIHouse.Business.Options;
 using VIHouse.DataAccess.Identity;
 
 namespace VIHouse.WebUI.Filters;
@@ -13,6 +15,12 @@ namespace VIHouse.WebUI.Filters;
 /// invites and someone's payment history is worth protecting properly. For the two bootstrap admin
 /// accounts on a fresh deployment this is the *only* thing standing between a leaked seed password
 /// and the whole panel, so it has to hold on the very first sign-in with no manual setup step.
+///
+/// The two-factor half is switchable by configuration — <c>Features:RequireTwoFactor</c>, defaulting
+/// to true. It is turned off in Development only, so the panel can be worked on without pairing an
+/// authenticator against every fresh database. Nothing relaxes in Production, where the paragraph
+/// above holds in full: the setting is stated explicitly as true there rather than inherited, so the
+/// intent survives someone reading only that file. Email confirmation is never relaxed.
 ///
 /// The gate reads each endpoint's own <see cref="AuthorizeAttribute"/> metadata rather than a
 /// hand-maintained list of controllers, so anything written later is covered the moment it requires
@@ -27,7 +35,9 @@ namespace VIHouse.WebUI.Filters;
 /// had not switched two-factor on yet. Resource filters run for both pipelines, so one registration
 /// now covers MVC controllers and Identity's pages alike.
 /// </summary>
-public class OnboardingRequirementFilter(UserManager<ApplicationUser> userManager) : IAsyncResourceFilter
+public class OnboardingRequirementFilter(
+    UserManager<ApplicationUser> userManager,
+    IOptions<FeatureOptions> features) : IAsyncResourceFilter
 {
     /// <summary>
     /// The Identity pages that must stay reachable while an account is still incomplete. Everything
@@ -90,9 +100,16 @@ public class OnboardingRequirementFilter(UserManager<ApplicationUser> userManage
         if (appUser is not null)
         {
             var emailConfirmed = await userManager.IsEmailConfirmedAsync(appUser);
-            var twoFactorEnabled = await userManager.GetTwoFactorEnabledAsync(appUser);
 
-            if (!emailConfirmed || !twoFactorEnabled)
+            // Defaults to true, so a missing or mistyped Features section leaves the gate shut
+            // rather than open — see FeatureOptions. IOptions is a snapshot taken at startup, so
+            // changing the setting needs a restart; that is fine for something set once per
+            // environment, and it is deliberately not IOptionsMonitor because a security gate that
+            // can be relaxed by editing a file on a running server is a worse trade than a restart.
+            var twoFactorSatisfied = !features.Value.RequireTwoFactor
+                || await userManager.GetTwoFactorEnabledAsync(appUser);
+
+            if (!emailConfirmed || !twoFactorSatisfied)
             {
                 context.Result = new RedirectToActionResult("Index", "Onboarding", new { area = "" });
                 return;

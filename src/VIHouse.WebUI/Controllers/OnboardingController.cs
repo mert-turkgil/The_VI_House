@@ -27,8 +27,14 @@ namespace VIHouse.WebUI.Controllers;
 /// This is also the enrolment path for the bootstrap admin accounts on a fresh deployment. They are
 /// seeded with a password and nothing else; OnboardingRequirementFilter bounces their first sign-in
 /// here, and the panel stays shut until the authenticator is paired and the recovery codes have
-/// been acknowledged. No manual step and no environment switch — the same code path runs in
-/// Development, so the flow can be rehearsed exactly as it will happen in Production.
+/// been acknowledged.
+///
+/// That bounce is switchable in one place only — <c>Features:RequireTwoFactor</c>, off in
+/// Development so the panel can be built against a fresh database without pairing an authenticator
+/// each time. These pages do not change with it: the checklist still offers two-factor and still
+/// works, it simply stops being a wall. Rehearsing the real Production flow locally is therefore a
+/// matter of setting that one value back to true, which is worth doing before a release rather than
+/// discovering the difference in Production.
 ///
 /// [Authorize] throughout, but deliberately exempt from OnboardingRequirementFilter (which routes
 /// people *here*), so these pages stay reachable while the account is still incomplete.

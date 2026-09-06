@@ -1,3 +1,5 @@
+using VIHouse.Business.Abstract;
+using VIHouse.Business.Concrete;
 using VIHouse.Entities.Experiences;
 using VIHouse.WebUI.Helpers;
 
@@ -25,6 +27,15 @@ public class ExperienceDetailViewModel
     public List<ExperienceInclusion> NotIncluded { get; set; } = [];
     public List<ExperienceFaq> Faqs { get; set; } = [];
     public List<ExperienceImage> Gallery { get; set; } = [];
+
+    /// <summary>
+    /// What this visitor can do — apply, join on their membership, or nothing. Set by the controller
+    /// after FromEntity, because it needs the signed-in user and a database read that a static
+    /// mapper has no business doing.
+    /// </summary>
+    public ExperienceAccessInfo? Access { get; set; }
+
+    public ExperienceAttendanceMode AttendanceMode { get; set; } = ExperienceAttendanceMode.InPerson;
 
     public string? CoverImageAlt { get; set; }
 
@@ -56,30 +67,36 @@ public class ExperienceDetailViewModel
     /// </summary>
     public TicketType? CheapestTicket => TicketTypes.Count == 0 ? null : TicketTypes.MinBy(t => t.PriceMinor);
 
-    public static ExperienceDetailViewModel FromEntity(Experience e) => new()
+    /// <summary>
+    /// <paramref name="culture"/> selects the copy. Every field falls back to the experience's own
+    /// English column, so a half-written translation shows what has been translated and the original
+    /// for the rest rather than blanks — see ExperienceContent.
+    /// </summary>
+    public static ExperienceDetailViewModel FromEntity(Experience e, string? culture = null) => new()
     {
         Id = e.Id,
-        Title = e.Title,
+        Title = ExperienceContent.Title(e, culture),
         Slug = e.Slug,
-        ShortSummary = e.ShortSummary,
-        Description = e.Description,
+        ShortSummary = ExperienceContent.ShortSummary(e, culture),
+        Description = ExperienceContent.Description(e, culture),
         City = e.City,
         Country = e.Country,
-        Venue = e.Venue,
+        Venue = ExperienceContent.Venue(e, culture),
         TimeZoneId = e.TimeZoneId,
         StartAtUtc = e.StartAtUtc,
         EndAtUtc = e.EndAtUtc,
-        CoverImageUrl = e.CoverImageUrl,
-        CoverImageAlt = e.CoverImageAlt,
+        CoverImageUrl = ExperienceService.CoverUrl(e),
+        CoverImageAlt = ExperienceContent.CoverImageAlt(e, culture),
         Status = e.Status,
-        AudienceTags = string.IsNullOrWhiteSpace(e.AudienceTags)
-            ? []
-            : [.. e.AudienceTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)],
+        AudienceTags = ExperienceContent.AudienceTags(e, culture) is { } tags && !string.IsNullOrWhiteSpace(tags)
+            ? [.. tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)]
+            : [],
         TicketTypes = e.TicketTypes.OrderBy(t => t.SortOrder).ToList(),
-        ProgramDays = e.ProgramDays.OrderBy(d => d.SortOrder).ToList(),
-        Included = e.Inclusions.Where(i => i.IsIncluded).OrderBy(i => i.SortOrder).ToList(),
-        NotIncluded = e.Inclusions.Where(i => !i.IsIncluded).OrderBy(i => i.SortOrder).ToList(),
-        Faqs = e.Faqs.OrderBy(f => f.SortOrder).ToList(),
+        ProgramDays = [.. ExperienceContent.ForCulture(e.ProgramDays, culture, d => d.Culture).OrderBy(d => d.SortOrder)],
+        // The whole list in the reader's language, or the default's — never a mix.
+        Included = [.. ExperienceContent.ForCulture(e.Inclusions, culture, i => i.Culture).Where(i => i.IsIncluded).OrderBy(i => i.SortOrder)],
+        NotIncluded = [.. ExperienceContent.ForCulture(e.Inclusions, culture, i => i.Culture).Where(i => !i.IsIncluded).OrderBy(i => i.SortOrder)],
+        Faqs = [.. ExperienceContent.ForCulture(e.Faqs, culture, f => f.Culture).OrderBy(f => f.SortOrder)],
         Gallery = e.Gallery.OrderBy(g => g.SortOrder).ToList(),
     };
 }

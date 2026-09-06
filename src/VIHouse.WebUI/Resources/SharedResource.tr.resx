@@ -5,7 +5,7 @@
   <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
 
-  <data name="Nav.Home" xml:space="preserve"><value>Ana Sayfaa</value></data>
+  <data name="Nav.Home" xml:space="preserve"><value>Ana Sayfa</value></data>
   <data name="Nav.Experiences" xml:space="preserve"><value>Deneyimler</value></data>
   <data name="Nav.Membership" xml:space="preserve"><value>Üyelik</value></data>
   <data name="Nav.About" xml:space="preserve"><value>Hakkımızda</value></data>
@@ -798,4 +798,26 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Üyelik satılmaz. Kabul edildiğiniz odayla birlikte gelir.</value></data>
   <data name="Account.NavJoinTheHouse" xml:space="preserve"><value>House'a katıl</value></data>
   <data name="Account.NavCommunity" xml:space="preserve"><value>Topluluk</value></data>
+  <data name="Admin.Experience.NoFile" xml:space="preserve"><value>Bir dosya seçin veya bir yol yapıştırın.</value></data>
+  <data name="Admin.Experience.CoverUploaded" xml:space="preserve"><value>Kapak görseli yüklendi.</value></data>
+  <data name="Admin.Experience.CoverRemoved" xml:space="preserve"><value>Kapak görseli kaldırıldı.</value></data>
+  <data name="Admin.Experience.GalleryAdded" xml:space="preserve"><value>Görsel galeriye eklendi.</value></data>
+  <data name="Admin.Experience.ImageTypeOnly" xml:space="preserve"><value>Bu dosya bir görsel değil — JPG, PNG, WebP veya AVIF kullanın.</value></data>
+  <data name="Admin.Experience.NotFound" xml:space="preserve"><value>Bu deneyim artık mevcut değil.</value></data>
+  <data name="Admin.Experience.TicketTypeNotFound" xml:space="preserve"><value>Bu bilet türü bu deneyime ait değil.</value></data>
+  <data name="Admin.Experience.RowNotFound" xml:space="preserve"><value>Bu kayıt bu deneyime ait değil.</value></data>
+  <data name="Admin.Experience.MemberAccessSaved" xml:space="preserve"><value>Üye erişimi kaydedildi.</value></data>
+  <data name="Experiences.Join.Heading" xml:space="preserve"><value>Üyeliğiniz bunu kapsıyor</value></data>
+  <data name="Experiences.Join.Body" xml:space="preserve"><value>Başvuru yapmadan yerinizi alabilirsiniz — ödenecek bir şey yok.</value></data>
+  <data name="Experiences.Join.Button" xml:space="preserve"><value>Bu deneyime katıl</value></data>
+  <data name="Experiences.Join.Attendance" xml:space="preserve"><value>Nasıl katılacaksınız?</value></data>
+  <data name="Experiences.Join.InPerson" xml:space="preserve"><value>Yüz yüze</value></data>
+  <data name="Experiences.Join.Online" xml:space="preserve"><value>Çevrim içi</value></data>
+  <data name="Experiences.Join.SignIn" xml:space="preserve"><value>Yerinizi almak için giriş yapın</value></data>
+  <data name="Experiences.Join.Booked" xml:space="preserve"><value>Yeriniz ayrıldı. Rezervasyon {0}.</value></data>
+  <data name="Experiences.Join.Confirmed" xml:space="preserve"><value>Aramızdasınız. Rezervasyon numaranız {0}.</value></data>
+  <data name="Experiences.Join.AlreadyBooked" xml:space="preserve"><value>Bu deneyimde zaten yeriniz var.</value></data>
+  <data name="Experiences.Join.NotEntitled" xml:space="preserve"><value>Üyeliğiniz bu deneyimi kapsamıyor — lütfen bunun yerine başvurun.</value></data>
+  <data name="Experiences.Join.NotFound" xml:space="preserve"><value>Bu deneyim artık mevcut değil.</value></data>
+  <data name="Experiences.MembersOnly" xml:space="preserve"><value>Yalnızca üyeler</value></data>
 </root>

@@ -28,7 +28,34 @@ public class Experience : BaseEntity
     public ExperienceStatus Status { get; set; } = ExperienceStatus.Draft;
     public ExperienceVisibility Visibility { get; set; } = ExperienceVisibility.Public;
 
+    /// <summary>
+    /// Whether this can be attended in the room, online, or either. Defaults to in person, which is
+    /// what every experience written before this field existed actually was.
+    /// </summary>
+    public ExperienceAttendanceMode AttendanceMode { get; set; } = ExperienceAttendanceMode.InPerson;
+
+    /// <summary>
+    /// The membership plans that may join this experience without applying. Empty — the state every
+    /// existing experience is in — means everyone goes through the application form.
+    /// </summary>
+    public List<ExperienceMembershipAccess> MembershipAccess { get; set; } = [];
+
+    /// <summary>
+    /// A site-relative path typed into the admin, for a file committed under wwwroot at build time.
+    /// Superseded by <see cref="CoverImageStorageKey"/> the moment something is uploaded.
+    /// </summary>
     public string? CoverImageUrl { get; set; }
+
+    /// <summary>
+    /// Set when the cover was uploaded rather than typed. The pair works the same way as
+    /// <c>HeroSlide.ImageUrl</c>/<c>ImageStorageKey</c>: an upload wins outright and nulls the URL,
+    /// so there is never a question of which of the two is showing.
+    ///
+    /// The file lives under the media root, outside wwwroot — MapStaticAssets only serves files that
+    /// existed at build time, so an uploaded cover under wwwroot would work locally and 404 in
+    /// Production. It is streamed by MediaController instead.
+    /// </summary>
+    public string? CoverImageStorageKey { get; set; }
 
     /// <summary>
     /// Alt text for the cover. Almost always null, and that is correct: the cover sits directly
@@ -67,4 +94,7 @@ public class Experience : BaseEntity
     public List<ExperienceInclusion> Inclusions { get; set; } = [];
     public List<ExperienceFaq> Faqs { get; set; } = [];
     public List<ExperienceImage> Gallery { get; set; } = [];
+
+    /// <summary>Per-language copy overlaying the English columns above — see ExperienceTranslation.</summary>
+    public List<ExperienceTranslation> Translations { get; set; } = [];
 }

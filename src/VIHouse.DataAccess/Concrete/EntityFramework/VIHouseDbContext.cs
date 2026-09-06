@@ -35,6 +35,8 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
     public DbSet<ExperienceSession> ExperienceSessions => Set<ExperienceSession>();
     public DbSet<ExperienceInclusion> ExperienceInclusions => Set<ExperienceInclusion>();
     public DbSet<ExperienceFaq> ExperienceFaqs => Set<ExperienceFaq>();
+    public DbSet<ExperienceMembershipAccess> ExperienceMembershipAccess => Set<ExperienceMembershipAccess>();
+    public DbSet<ExperienceTranslation> ExperienceTranslations => Set<ExperienceTranslation>();
     public DbSet<ExperienceImage> ExperienceImages => Set<ExperienceImage>();
 
     public DbSet<Application> Applications => Set<Application>();

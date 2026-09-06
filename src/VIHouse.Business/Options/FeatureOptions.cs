@@ -28,4 +28,21 @@ public class FeatureOptions
 
     /// <summary>The members' community destinations under /account/community.</summary>
     public bool Community { get; set; }
+
+    /// <summary>
+    /// Whether a signed-in account must have two-factor switched on before any authorized page will
+    /// render. Enforced in one place — <c>OnboardingRequirementFilter</c>.
+    ///
+    /// The odd one out in this file, and deliberately so: every other flag defaults to false because
+    /// a missing configuration section must not open a feature by accident. This one defaults to
+    /// <b>true</b> for exactly the same reason — the safe value is "enforced", so a deployment whose
+    /// config is missing or mistyped keeps the panel shut rather than throwing it open. Note that
+    /// appsettings.json is committed while both environment files are gitignored, so a fresh
+    /// checkout has only the committed default to fall back on.
+    ///
+    /// Off in Development so the panel can be worked on without pairing an authenticator on every
+    /// fresh database. It relaxes the two-factor half only: email confirmation is still required,
+    /// which costs nothing because seeded admins are created already confirmed.
+    /// </summary>
+    public bool RequireTwoFactor { get; set; } = true;
 }

@@ -10,6 +10,12 @@ public class ExperienceImageConfiguration : IEntityTypeConfiguration<ExperienceI
     {
         builder.ToTable("ExperienceImages");
         builder.HasIndex(g => new { g.ExperienceId, g.SortOrder });
-        builder.Property(g => g.Url).HasMaxLength(1000).IsRequired();
+
+        // Url is no longer required: an uploaded image carries a StorageKey instead, and exactly one
+        // of the two is set. Enforcing "at least one" in the database would need a check constraint
+        // that EF cannot express portably; the service is the one writer and sets them as a pair.
+        builder.Property(g => g.Url).HasMaxLength(1000);
+        builder.Property(g => g.StorageKey).HasMaxLength(400);
+        builder.Property(g => g.AltText).HasMaxLength(300);
     }
 }

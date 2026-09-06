@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VIHouse.DataAccess.Concrete.EntityFramework;
 
@@ -11,9 +12,11 @@ using VIHouse.DataAccess.Concrete.EntityFramework;
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 {
     [DbContext(typeof(VIHouseDbContext))]
-    partial class VIHouseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260906201732_AddExperienceImageUploads")]
+    partial class AddExperienceImageUploads
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -449,9 +452,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<Guid?>("ApplicationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("Attendance")
-                        .HasColumnType("int");
-
                     b.Property<string>("BookingReference")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -474,16 +474,13 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<Guid>("ExperienceId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("GrantedVia")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TicketTypeId")
+                    b.Property<Guid>("TicketTypeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
@@ -499,13 +496,11 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.HasIndex("BookingReference")
                         .IsUnique();
 
+                    b.HasIndex("ExperienceId");
+
                     b.HasIndex("TicketTypeId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("ExperienceId", "UserId")
-                        .IsUnique()
-                        .HasFilter("[Status] <> 2");
 
                     b.ToTable("Bookings", (string)null);
                 });
@@ -1214,9 +1209,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<DateTimeOffset?>("ApplicationOpenAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("AttendanceMode")
-                        .HasColumnType("int");
-
                     b.Property<string>("AudienceTags")
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
@@ -1332,10 +1324,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Culture")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("ExperienceId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1403,10 +1391,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Culture")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("ExperienceId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1431,34 +1415,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("ExperienceInclusions", (string)null);
                 });
 
-            modelBuilder.Entity("VIHouse.Entities.Experiences.ExperienceMembershipAccess", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("ExperienceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MembershipPlanId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MembershipPlanId");
-
-                    b.HasIndex("ExperienceId", "MembershipPlanId")
-                        .IsUnique();
-
-                    b.ToTable("ExperienceMembershipAccess", (string)null);
-                });
-
             modelBuilder.Entity("VIHouse.Entities.Experiences.ExperienceProgramDay", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1467,10 +1423,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Culture")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DateLabel")
                         .HasColumnType("nvarchar(max)");
@@ -1540,66 +1492,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.HasIndex("ProgramDayId", "SortOrder");
 
                     b.ToTable("ExperienceSessions", (string)null);
-                });
-
-            modelBuilder.Entity("VIHouse.Entities.Experiences.ExperienceTranslation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AudienceTags")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("CoverImageAlt")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Culture")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ExperienceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("SeoDescription")
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
-
-                    b.Property<string>("SeoTitle")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("ShortSummary")
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Venue")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExperienceId", "Culture")
-                        .IsUnique();
-
-                    b.ToTable("ExperienceTranslations", (string)null);
                 });
 
             modelBuilder.Entity("VIHouse.Entities.Experiences.TicketType", b =>
@@ -2452,7 +2344,8 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.HasOne("VIHouse.Entities.Experiences.TicketType", null)
                         .WithMany()
                         .HasForeignKey("TicketTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("VIHouse.DataAccess.Identity.ApplicationUser", null)
                         .WithMany()
@@ -2597,21 +2490,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("VIHouse.Entities.Experiences.ExperienceMembershipAccess", b =>
-                {
-                    b.HasOne("VIHouse.Entities.Experiences.Experience", null)
-                        .WithMany("MembershipAccess")
-                        .HasForeignKey("ExperienceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VIHouse.Entities.Membership.MembershipPlan", null)
-                        .WithMany()
-                        .HasForeignKey("MembershipPlanId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("VIHouse.Entities.Experiences.ExperienceProgramDay", b =>
                 {
                     b.HasOne("VIHouse.Entities.Experiences.Experience", null)
@@ -2626,15 +2504,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.HasOne("VIHouse.Entities.Experiences.ExperienceProgramDay", null)
                         .WithMany("Sessions")
                         .HasForeignKey("ProgramDayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("VIHouse.Entities.Experiences.ExperienceTranslation", b =>
-                {
-                    b.HasOne("VIHouse.Entities.Experiences.Experience", null)
-                        .WithMany("Translations")
-                        .HasForeignKey("ExperienceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -2793,13 +2662,9 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.Navigation("Inclusions");
 
-                    b.Navigation("MembershipAccess");
-
                     b.Navigation("ProgramDays");
 
                     b.Navigation("TicketTypes");
-
-                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("VIHouse.Entities.Experiences.ExperienceProgramDay", b =>

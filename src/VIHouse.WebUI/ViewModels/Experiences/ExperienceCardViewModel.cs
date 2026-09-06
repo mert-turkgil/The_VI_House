@@ -1,3 +1,4 @@
+using VIHouse.Business.Concrete;
 using VIHouse.Entities.Experiences;
 using VIHouse.WebUI.Helpers;
 
@@ -37,16 +38,18 @@ public class ExperienceCardViewModel
     public string StatusKey => Status.ToResourceKey();
     public string StatusModifier => Status.ToBadgeModifier();
 
-    public static ExperienceCardViewModel FromEntity(Experience e) => new()
+    public static ExperienceCardViewModel FromEntity(Experience e, string? culture = null) => new()
     {
-        Title = e.Title,
+        Title = ExperienceContent.Title(e, culture),
         Slug = e.Slug,
-        ShortSummary = e.ShortSummary,
+        ShortSummary = ExperienceContent.ShortSummary(e, culture),
         City = e.City,
         Country = e.Country,
         StartAtUtc = e.StartAtUtc,
         EndAtUtc = e.EndAtUtc,
-        CoverImageUrl = e.CoverImageUrl,
+        // Resolved rather than copied: an uploaded cover lives in CoverImageStorageKey and is
+        // streamed by MediaController, so the raw column is null for it.
+        CoverImageUrl = ExperienceService.CoverUrl(e),
         CoverImageAlt = e.CoverImageAlt,
         Status = e.Status,
         FromPriceMinor = e.TicketTypes.Count > 0 ? e.TicketTypes.Min(t => t.PriceMinor) : null,
