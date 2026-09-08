@@ -55,11 +55,57 @@ public class ExperienceDetailViewModel
 
     public bool CanApply => Status is ExperienceStatus.ApplicationsOpen or ExperienceStatus.AlmostFull;
 
-    public string ClosedStateKey => Status switch
+    /// <summary>
+    /// When applications open, if that is known and has not already happened. Feeds the countdown
+    /// in the gate; null is the common case, because the admin field is optional and nothing filled
+    /// it in before now.
+    /// </summary>
+    public DateTimeOffset? ApplicationOpenAt { get; set; }
+
+    /// <summary>Their place in the waitlist queue, when signed in and already on it. Set by the
+    /// controller — it needs a database read, which a static mapper has no business doing.</summary>
+    public int? WaitlistPosition { get; set; }
+
+    public string? PrefillName { get; set; }
+    public string? PrefillEmail { get; set; }
+
+    public ExperienceGateMode GateMode => ExperienceGateViewModel.ModeFor(Status);
+
+    /// <summary>
+    /// The "you cannot buy this yet" indicator, built once per place it appears. The three CTA sites
+    /// used to render three separate inline branches of the same idea; the ClosedStateKey switch
+    /// this replaces produced one disabled grey pill for all of them.
+    /// </summary>
+    public ExperienceGateViewModel Gate(ExperienceGateVariant variant) => new()
     {
-        ExperienceStatus.ComingSoon => "Experiences.Closed.ComingSoon",
-        ExperienceStatus.Waitlist => "Experiences.Closed.Waitlist",
-        _ => "Experiences.Closed.Closed",
+        Mode = GateMode,
+        Variant = variant,
+        Slug = Slug,
+        LabelKey = GateMode switch
+        {
+            ExperienceGateMode.Soon => "Experiences.Closed.ComingSoon",
+            ExperienceGateMode.Waitlist => "Experiences.Closed.Waitlist",
+            _ => "Experiences.Closed.Closed",
+        },
+        // No note on the mobile bar: it is one line tall and a second line would push the button
+        // off it.
+        NoteKey = variant == ExperienceGateVariant.Mobile ? null : GateMode switch
+        {
+            ExperienceGateMode.Soon => "Experiences.Gate.Soon.Note",
+            ExperienceGateMode.Waitlist => "Experiences.Gate.Waitlist.Note",
+            _ => "Experiences.Gate.Closed.Note",
+        },
+        // A date in the past means the admin moved the opening and never changed the status. Show
+        // nothing rather than "opens in -3 days".
+        OpensAt = GateMode == ExperienceGateMode.Soon && ApplicationOpenAt > DateTimeOffset.UtcNow
+            ? ApplicationOpenAt
+            : null,
+        ShowWaitlistForm = GateMode == ExperienceGateMode.Waitlist
+            && variant == ExperienceGateVariant.Panel
+            && WaitlistPosition is null,
+        PrefillName = PrefillName,
+        PrefillEmail = PrefillEmail,
+        Position = WaitlistPosition,
     };
 
     /// <summary>
@@ -88,6 +134,7 @@ public class ExperienceDetailViewModel
         CoverImageUrl = ExperienceService.CoverUrl(e),
         CoverImageAlt = ExperienceContent.CoverImageAlt(e, culture),
         Status = e.Status,
+        ApplicationOpenAt = e.ApplicationOpenAt,
         AudienceTags = ExperienceContent.AudienceTags(e, culture) is { } tags && !string.IsNullOrWhiteSpace(tags)
             ? [.. tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)]
             : [],

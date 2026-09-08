@@ -79,7 +79,58 @@ public class ExperiencesController(
         model.Access = await experienceService.GetAccessAsync(experience, userId, ct);
         model.AttendanceMode = experience.AttendanceMode;
 
+        // Only for a waitlisted experience, and only when there is someone to look up — one indexed
+        // read, so that a person already in the queue is told their number instead of being offered
+        // the form they already filled in.
+        if (experience.Status == ExperienceStatus.Waitlist && userId is { } signedIn)
+        {
+            var user = await userManager.FindByIdAsync(signedIn.ToString());
+            if (user?.Email is { } email)
+            {
+                model.PrefillName = $"{user.FirstName} {user.LastName}".Trim();
+                model.PrefillEmail = email;
+                model.WaitlistPosition = await experienceService.FindWaitlistPositionAsync(experience.Id, email, ct);
+            }
+        }
+
         return View(model);
+    }
+
+    /// <summary>
+    /// Takes a place in the queue for an experience that is full.
+    ///
+    /// Deliberately not [Authorize]: the people most worth capturing here are the ones who do not
+    /// have an account yet, which is the whole reason the waitlist exists. The status is re-read
+    /// inside the service, so a form rendered while this was waitlisted cannot be posted after it
+    /// closed. Rate-limited with the same policy as the other anonymous public forms.
+    /// </summary>
+    [HttpPost("{slug}/waitlist")]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("application-submit")]
+    public async Task<IActionResult> JoinWaitlist(string slug, string? fullName, string? email, CancellationToken ct)
+    {
+        var experience = await experienceService.GetPublicDetailBySlugAsync(slug, ct);
+        if (experience is null) return NotFound();
+
+        var userId = CurrentUserId();
+        if (!await CanSeeAsync(experience, userId, ct)) return NotFound();
+
+        if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(email))
+        {
+            TempData["StatusMessage"] = loc["Experiences.Waitlist.Incomplete"].Value;
+            return RedirectToAction(nameof(Details), new { slug });
+        }
+
+        var (error, position) = await experienceService.JoinWaitlistAsync(
+            experience.Id, fullName, email, userId, ct);
+
+        // "Already on the list" arrives as an error key but is not a failure — it carries the
+        // position they already hold, which is the answer they were looking for.
+        TempData["StatusMessage"] = error is null
+            ? loc["Experiences.Waitlist.Confirmed", position].Value
+            : loc[error, position].Value;
+
+        return RedirectToAction(nameof(Details), new { slug });
     }
 
     /// <summary>

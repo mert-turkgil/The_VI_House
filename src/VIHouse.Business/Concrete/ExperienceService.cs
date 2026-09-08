@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Commerce;
@@ -18,9 +19,12 @@ public class ExperienceService(
     IRepository<ExperienceProgramDay> programDays,
     IRepository<ExperienceSession> sessions,
     IRepository<ExperienceMembershipAccess> membershipAccess,
+    IRepository<ExperienceTranslation> translations,
     IBookingRepository bookings,
+    IWaitlistRepository waitlist,
     IMembershipService membershipService,
     IMediaStorage mediaStorage,
+    IEmailService emailService,
     IAuditLogRepository auditLogs) : IExperienceService
 {
     /// <summary>Uploaded files are grouped per experience, matching JournalService's journal/{id:N}.</summary>
@@ -629,6 +633,157 @@ public class ExperienceService(
         }
 
         return (null, booking.BookingReference);
+    }
+
+    // --- Waitlist ----------------------------------------------------------------------------------
+
+    public async Task<(string? Error, int Position)> JoinWaitlistAsync(
+        Guid experienceId, string fullName, string email, Guid? userId, CancellationToken ct = default)
+    {
+        var experience = await experiences.GetByIdAsync(experienceId, ct);
+        if (experience is null) return ("Experiences.Waitlist.NotFound", 0);
+
+        // Re-derived here, never trusted from the form — the same rule JoinAsMemberAsync follows.
+        // A page rendered while this was waitlisted can otherwise be submitted an hour after it
+        // closed, and the visitor would be told they are in a queue that no longer exists.
+        if (experience.Status != ExperienceStatus.Waitlist)
+            return ("Experiences.Waitlist.NotOpen", 0);
+
+        // Stored lower case so the unique index means what it says. See EfWaitlistRepository —
+        // under the Turkish collation the address is not otherwise reliably comparable.
+        var normalised = email.Trim().ToLowerInvariant();
+
+        var existing = await waitlist.FindByEmailAsync(experienceId, normalised, ct);
+        if (existing is not null) return ("Experiences.Waitlist.Already", existing.Position);
+
+        var entry = new WaitlistEntry
+        {
+            ExperienceId = experienceId,
+            UserId = userId,
+            Email = normalised,
+            FullName = fullName.Trim(),
+            Position = await waitlist.GetNextPositionAsync(experienceId, ct),
+        };
+
+        await waitlist.AddAsync(entry, ct);
+
+        try
+        {
+            await waitlist.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException)
+        {
+            // The unique index caught a double submit between the Find above and this write. Read
+            // back what actually landed rather than reporting a failure — they are on the list
+            // either way, and which of the two racing requests won is not their problem.
+            var raced = await waitlist.FindByEmailAsync(experienceId, normalised, ct);
+            return raced is null ? ("Experiences.Waitlist.Failed", 0) : ("Experiences.Waitlist.Already", raced.Position);
+        }
+
+        // Swallowed and logged by IEmailService — a dead SMTP connection must not undo a place in
+        // the queue that has already been committed.
+        await emailService.SendAsync(
+            "ExperienceWaitlist", entry.Email, "You're on the waitlist",
+            new ExperienceWaitlistEmailModel(FirstNameOf(entry.FullName), experience.Title, experience.City, entry.Position),
+            nameof(WaitlistEntry), entry.Id, ct);
+
+        return (null, entry.Position);
+    }
+
+    /// <summary>
+    /// The public form asks for one name, but the emails all greet by first name. Splitting on the
+    /// first space is wrong for some names and right for most; the whole string is the fallback, so
+    /// a mononym greets correctly rather than as an empty string.
+    /// </summary>
+    private static string FirstNameOf(string fullName)
+    {
+        var trimmed = fullName.Trim();
+        var space = trimmed.IndexOf(' ');
+        return space > 0 ? trimmed[..space] : trimmed;
+    }
+
+    public async Task<int?> FindWaitlistPositionAsync(Guid experienceId, string email, CancellationToken ct = default) =>
+        (await waitlist.FindByEmailAsync(experienceId, email, ct))?.Position;
+
+    public Task<List<WaitlistEntry>> GetWaitlistAsync(Guid experienceId, CancellationToken ct = default) =>
+        waitlist.GetByExperienceOrderedAsync(experienceId, ct);
+
+    public async Task RemoveWaitlistEntryAsync(Guid experienceId, Guid entryId, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var entry = await waitlist.GetByIdAsync(entryId, ct);
+        if (entry is null || entry.ExperienceId != experienceId) return;
+
+        waitlist.Remove(entry);
+
+        // Positions are deliberately not resequenced. They record arrival order, and renumbering
+        // after a removal would silently move everyone up a place in a record support may later be
+        // asked to explain.
+        await LogAsync("WaitlistEntryRemoved", nameof(WaitlistEntry), entryId, adminUserId, ipAddress,
+            before: new { entry.Email, entry.Position, ExperienceId = experienceId }, after: null, ct);
+        await waitlist.SaveChangesAsync(ct);
+    }
+
+    // --- Translations ------------------------------------------------------------------------------
+
+    public async Task<string?> SaveTranslationAsync(Guid experienceId, ExperienceTranslation form, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var experience = await experiences.GetWithDetailsAsync(experienceId, ct);
+        if (experience is null) return "Admin.Experience.NotFound";
+
+        // The culture is posted, so it can be anything. Anything not on the site's list is refused
+        // rather than written: a hand-edited form would otherwise create an "xx-XX" row that no
+        // reader can be served and no tab can edit.
+        if (!SiteCultures.IsSupported(form.Culture))
+            return "Admin.Experience.UnknownCulture";
+
+        var culture = SiteCultures.Normalise(form.Culture);
+        var existing = ExperienceContent.Find(experience, culture);
+
+        if (existing is null)
+        {
+            existing = new ExperienceTranslation { ExperienceId = experienceId, Culture = culture };
+            await translations.AddAsync(existing, ct);
+        }
+        else
+        {
+            existing.UpdatedAt = DateTimeOffset.UtcNow;
+        }
+
+        existing.Title = form.Title;
+        existing.ShortSummary = form.ShortSummary;
+        existing.Description = form.Description;
+        existing.Venue = form.Venue;
+        existing.AudienceTags = form.AudienceTags;
+        existing.SeoTitle = form.SeoTitle;
+        existing.SeoDescription = form.SeoDescription;
+        existing.CoverImageAlt = form.CoverImageAlt;
+
+        await LogAsync("ExperienceTranslationSaved", nameof(ExperienceTranslation), existing.Id, adminUserId, ipAddress,
+            before: null, after: new { ExperienceId = experienceId, Culture = culture }, ct);
+        await translations.SaveChangesAsync(ct);
+        return null;
+    }
+
+    public async Task<string?> DeleteTranslationAsync(Guid experienceId, string culture, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var normalised = SiteCultures.Normalise(culture);
+
+        // The default culture is not a translation — it is the English on the experience itself, and
+        // what every other language falls back to. There is no row to remove and nothing sensible to
+        // do if there were.
+        if (string.Equals(normalised, SiteCultures.Default, StringComparison.OrdinalIgnoreCase))
+            return "Admin.Experience.CannotDeleteDefault";
+
+        var experience = await experiences.GetWithDetailsAsync(experienceId, ct);
+        if (experience is null) return "Admin.Experience.NotFound";
+
+        if (ExperienceContent.Find(experience, normalised) is not { } existing) return null;
+
+        translations.Remove(existing);
+        await LogAsync("ExperienceTranslationDeleted", nameof(ExperienceTranslation), existing.Id, adminUserId, ipAddress,
+            before: new { ExperienceId = experienceId, Culture = normalised }, after: null, ct);
+        await translations.SaveChangesAsync(ct);
+        return null;
     }
 
     /// <summary>Open to be joined or applied for at all — the same test the Apply button uses.</summary>

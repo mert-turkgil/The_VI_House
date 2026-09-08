@@ -573,8 +573,30 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Experiences.Tickets.PlacesLeft" xml:space="preserve"><value>{0} yer kaldı</value></data>
   <data name="Experiences.Tickets.Note" xml:space="preserve"><value>Başvurular elle incelenir. Size bir yer teklif edilip kabul etmediğiniz sürece ücret alınmaz.</value></data>
   <data name="Experiences.Closed.ComingSoon" xml:space="preserve"><value>Yakında</value></data>
-  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Bekleme listesine katıl</value></data>
+  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Bekleme listesi</value></data>
   <data name="Experiences.Closed.Closed" xml:space="preserve"><value>Başvurular kapalı</value></data>
+  <data name="Experiences.Gate.Soon.Note" xml:space="preserve"><value>Başvurular yakında açılıyor</value></data>
+  <data name="Experiences.Gate.Waitlist.Note" xml:space="preserve"><value>Bu tur doldu</value></data>
+  <data name="Experiences.Gate.Closed.Note" xml:space="preserve"><value>Başvurular artık alınmıyor</value></data>
+  <data name="Experiences.Gate.OpensOn" xml:space="preserve"><value>Başvurular {0} tarihinde açılıyor</value></data>
+  <data name="Experiences.Gate.OpensIn" xml:space="preserve"><value>Başvuruların açılmasına {0} kaldı</value></data>
+  <data name="Experiences.Gate.Imminent" xml:space="preserve"><value>Başvurular birazdan açılıyor</value></data>
+  <data name="Experiences.Gate.Unit.Day" xml:space="preserve"><value>gün</value></data>
+  <data name="Experiences.Gate.Unit.Days" xml:space="preserve"><value>gün</value></data>
+  <data name="Experiences.Gate.Unit.Hour" xml:space="preserve"><value>saat</value></data>
+  <data name="Experiences.Gate.Unit.Hours" xml:space="preserve"><value>saat</value></data>
+  <data name="Experiences.Gate.Unit.Minute" xml:space="preserve"><value>dakika</value></data>
+  <data name="Experiences.Gate.Unit.Minutes" xml:space="preserve"><value>dakika</value></data>
+  <data name="Experiences.Waitlist.Name" xml:space="preserve"><value>Adınız</value></data>
+  <data name="Experiences.Waitlist.Email" xml:space="preserve"><value>E-posta</value></data>
+  <data name="Experiences.Waitlist.Join" xml:space="preserve"><value>Bekleme listesine katıl</value></data>
+  <data name="Experiences.Waitlist.YourPosition" xml:space="preserve"><value>Sıradaki numaranız: {0}</value></data>
+  <data name="Experiences.Waitlist.Confirmed" xml:space="preserve"><value>Listedesiniz — {0}. sıradasınız. Bir yer açılır açılmaz size e-posta göndereceğiz.</value></data>
+  <data name="Experiences.Waitlist.Already" xml:space="preserve"><value>Bu bekleme listesinde zaten {0}. sıradasınız.</value></data>
+  <data name="Experiences.Waitlist.NotOpen" xml:space="preserve"><value>Bu deneyim için artık bekleme listesi kaydı alınmıyor.</value></data>
+  <data name="Experiences.Waitlist.NotFound" xml:space="preserve"><value>Bu deneyim bulunamadı.</value></data>
+  <data name="Experiences.Waitlist.Failed" xml:space="preserve"><value>Kaydedilemedi. Lütfen tekrar deneyin.</value></data>
+  <data name="Experiences.Waitlist.Incomplete" xml:space="preserve"><value>Lütfen bir ad ve e-posta adresi girin.</value></data>
   <data name="Experiences.Gallery.Prev" xml:space="preserve"><value>Önceki fotoğraf</value></data>
   <data name="Experiences.Gallery.Next" xml:space="preserve"><value>Sonraki fotoğraf</value></data>
   <data name="Experiences.BackToAll" xml:space="preserve"><value>Tüm deneyimler</value></data>
@@ -820,4 +842,8 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Experiences.Join.NotEntitled" xml:space="preserve"><value>Üyeliğiniz bu deneyimi kapsamıyor — lütfen bunun yerine başvurun.</value></data>
   <data name="Experiences.Join.NotFound" xml:space="preserve"><value>Bu deneyim artık mevcut değil.</value></data>
   <data name="Experiences.MembersOnly" xml:space="preserve"><value>Yalnızca üyeler</value></data>
+  <data name="Admin.Experience.TranslationSaved" xml:space="preserve"><value>{0} metni kaydedildi.</value></data>
+  <data name="Admin.Experience.TranslationDeleted" xml:space="preserve"><value>{0} metni kaldırıldı.</value></data>
+  <data name="Admin.Experience.UnknownCulture" xml:space="preserve"><value>Bu, sitenin dillerinden biri değil.</value></data>
+  <data name="Admin.Experience.CannotDeleteDefault" xml:space="preserve"><value>İngilizce metin kaldırılamaz — diğer tüm diller ona geri döner.</value></data>
 </root>

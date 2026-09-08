@@ -87,6 +87,32 @@ public interface IExperienceService
     Task<(string? Error, string? BookingReference)> JoinAsMemberAsync(
         Guid experienceId, Guid userId, BookingAttendance? attendance, CancellationToken ct = default);
 
+    // --- Waitlist -------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Puts someone in the queue for an experience that is at capacity. Anonymous — the whole point
+    /// is to capture people who do not have an account yet — so the name and email are the form's,
+    /// but the entitlement is not: the status is re-read here and a non-waitlisted experience is
+    /// refused, exactly as <see cref="JoinAsMemberAsync"/> re-derives its own.
+    /// </summary>
+    /// <returns>
+    /// A resource key and the position. Both are set for <c>Experiences.Waitlist.Already</c>, which
+    /// is not a failure — it is "you are already number 7", which is the answer they wanted.
+    /// </returns>
+    Task<(string? Error, int Position)> JoinWaitlistAsync(
+        Guid experienceId, string fullName, string email, Guid? userId, CancellationToken ct = default);
+
+    /// <summary>
+    /// The place this address already holds, or null. Lets the detail page tell a signed-in visitor
+    /// their number instead of offering them a form they have already filled in.
+    /// </summary>
+    Task<int?> FindWaitlistPositionAsync(Guid experienceId, string email, CancellationToken ct = default);
+
+    /// <summary>Who is queued, in arrival order. For the admin panel.</summary>
+    Task<List<WaitlistEntry>> GetWaitlistAsync(Guid experienceId, CancellationToken ct = default);
+
+    Task RemoveWaitlistEntryAsync(Guid experienceId, Guid entryId, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
     // --- Translations ---------------------------------------------------------------------------------
 
     /// <summary>Writes or updates one language's copy. Returns a resource key on failure.</summary>

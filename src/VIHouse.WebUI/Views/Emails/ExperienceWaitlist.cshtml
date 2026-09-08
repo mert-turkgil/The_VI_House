@@ -1,0 +1,14 @@
+@model ExperienceWaitlistEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">You're On The List</h1>
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    <strong>@Model.ExperienceTitle</strong> in @Model.ExperienceCity is full for this round, but
+    you're on the waitlist.
+</p>
+<p style="margin:0 0 16px;">
+    You're number <strong style="font-size:20px;">@Model.Position</strong> in line. If a place opens
+    up &mdash; and it often does &mdash; we'll email you before anyone else hears about it.
+</p>
+<p style="margin:0 0 16px;">Nothing to do now. We'll come to you.</p>
+<p style="margin:0;">&mdash; The VI House</p>

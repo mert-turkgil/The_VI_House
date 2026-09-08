@@ -5,6 +5,8 @@ using VIHouse.Business.Abstract;
 using VIHouse.Entities.Notifications;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Experiences;
+using VIHouse.Business.Concrete;
+using VIHouse.Business.Options;
 using VIHouse.Entities.Membership;
 using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
@@ -58,10 +60,12 @@ public class AdminExperiencesController(
     }
 
     [HttpGet]
-    public async Task<IActionResult> Edit(Guid id, CancellationToken ct)
+    public async Task<IActionResult> Edit(Guid id, string? culture, CancellationToken ct)
     {
         var experience = await experienceService.GetForAdminEditAsync(id, ct);
         if (experience is null) return NotFound();
+
+        var active = SiteCultures.IsSupported(culture) ? SiteCultures.Normalise(culture) : SiteCultures.Default;
 
         var model = new AdminExperienceEditViewModel
         {
@@ -72,6 +76,9 @@ public class AdminExperiencesController(
             Gallery = experience.Gallery.OrderBy(g => g.SortOrder).ThenBy(g => g.CreatedAt).ToList(),
             ProgramDays = experience.ProgramDays.OrderBy(d => d.SortOrder).ThenBy(d => d.DayNumber).ToList(),
             MemberAccess = await BuildMemberAccessAsync(id, ct),
+            Waitlist = await experienceService.GetWaitlistAsync(id, ct),
+            ActiveCulture = active,
+            Translations = BuildTranslationTabs(experience),
             CoverPreviewUrl = CoverUrl(experience),
             HasUploadedCover = experience.CoverImageStorageKey is not null,
         };
@@ -162,10 +169,11 @@ public class AdminExperiencesController(
             {
                 Text = input.Text,
                 IsIncluded = input.IsIncluded,
+                Culture = SiteCultures.Normalise(input.Culture),
             }, adminId, ip, ct);
         }
 
-        return RedirectToAction(nameof(Edit), new { id = input.ExperienceId });
+        return RedirectToAction(nameof(Edit), new { id = input.ExperienceId, culture = input.Culture });
     }
 
     [HttpPost]
@@ -188,10 +196,11 @@ public class AdminExperiencesController(
             {
                 Question = input.Question,
                 Answer = input.Answer,
+                Culture = SiteCultures.Normalise(input.Culture),
             }, adminId, ip, ct);
         }
 
-        return RedirectToAction(nameof(Edit), new { id = input.ExperienceId });
+        return RedirectToAction(nameof(Edit), new { id = input.ExperienceId, culture = input.Culture });
     }
 
     [HttpPost]
@@ -200,6 +209,15 @@ public class AdminExperiencesController(
     {
         var (adminId, ip) = CurrentActor();
         await experienceService.RemoveFaqAsync(experienceId, faqId, adminId, ip, ct);
+        return RedirectToAction(nameof(Edit), new { id = experienceId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveWaitlistEntry(Guid experienceId, Guid entryId, CancellationToken ct)
+    {
+        var (adminId, ip) = CurrentActor();
+        await experienceService.RemoveWaitlistEntryAsync(experienceId, entryId, adminId, ip, ct);
         return RedirectToAction(nameof(Edit), new { id = experienceId });
     }
 
@@ -320,7 +338,7 @@ public class AdminExperiencesController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddProgramDay(Guid id, int dayNumber, string title, string? dateLabel, CancellationToken ct)
+    public async Task<IActionResult> AddProgramDay(Guid id, int dayNumber, string title, string? dateLabel, string? culture, CancellationToken ct)
     {
         if (!string.IsNullOrWhiteSpace(title))
         {
@@ -331,10 +349,12 @@ public class AdminExperiencesController(
                 Title = title.Trim(),
                 DateLabel = dateLabel,
                 SortOrder = dayNumber,
+                Culture = SiteCultures.Normalise(culture),
             }, adminId, ip, ct);
         }
 
-        return RedirectToAction(nameof(Edit), new { id });
+        // Back to the tab it was added from, not to English.
+        return RedirectToAction(nameof(Edit), new { id, culture });
     }
 
     [HttpPost]
@@ -420,6 +440,101 @@ public class AdminExperiencesController(
         TempData["StatusMessage"] = loc["Admin.Experience.MemberAccessSaved"].Value;
         return RedirectToAction(nameof(Edit), new { id });
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveTranslation(Guid id, AdminExperienceTranslationForm form, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+        {
+            // Re-render with the posted copy in place of the stored version, so nothing typed is lost.
+            var experience = await experienceService.GetForAdminEditAsync(id, ct);
+            if (experience is null) return NotFound();
+
+            var invalid = new AdminExperienceEditViewModel
+            {
+                Form = AdminExperienceFormViewModel.FromEntity(experience),
+                TicketTypes = [.. experience.TicketTypes.OrderBy(t => t.SortOrder)],
+                Inclusions = [.. experience.Inclusions.OrderBy(i => i.SortOrder)],
+                Faqs = [.. experience.Faqs.OrderBy(f => f.SortOrder)],
+                Gallery = [.. experience.Gallery.OrderBy(g => g.SortOrder)],
+                ProgramDays = [.. experience.ProgramDays.OrderBy(d => d.SortOrder)],
+                MemberAccess = await BuildMemberAccessAsync(id, ct),
+                ActiveCulture = form.Culture,
+                CoverPreviewUrl = CoverUrl(experience),
+                HasUploadedCover = experience.CoverImageStorageKey is not null,
+                Translations = [.. BuildTranslationTabs(experience)
+                    .Select(tab => tab.Culture.Name == form.Culture ? tab with { Form = form } : tab)],
+            };
+            return View(nameof(Edit), invalid);
+        }
+
+        var (adminId, ip) = CurrentActor();
+
+        // The English copy is the experience's own columns, not a translation row — writing it as one
+        // would leave two English titles with nothing deciding which wins.
+        if (string.Equals(form.Culture, SiteCultures.Default, StringComparison.OrdinalIgnoreCase))
+        {
+            var experience = await experienceService.GetForAdminEditAsync(id, ct);
+            if (experience is null) return NotFound();
+
+            var updated = AdminExperienceFormViewModel.FromEntity(experience).ToEntity();
+            updated.Title = form.Title;
+            updated.ShortSummary = form.ShortSummary;
+            updated.Description = form.Description ?? experience.Description;
+            updated.Venue = form.Venue;
+            updated.AudienceTags = form.AudienceTags;
+            updated.SeoTitle = form.SeoTitle;
+            updated.SeoDescription = form.SeoDescription;
+            updated.CoverImageAlt = form.CoverImageAlt;
+
+            await experienceService.UpdateCoreFieldsAsync(updated, adminId, ip, ct);
+            TempData["StatusMessage"] = loc["Admin.Experience.TranslationSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value;
+            return RedirectToAction(nameof(Edit), new { id, culture = form.Culture });
+        }
+
+        var error = await experienceService.SaveTranslationAsync(id, form.ToEntity(), adminId, ip, ct);
+        TempData["StatusMessage"] = error is null
+            ? loc["Admin.Experience.TranslationSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value
+            : loc[error].Value;
+
+        return RedirectToAction(nameof(Edit), new { id, culture = form.Culture });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteTranslation(Guid id, string culture, CancellationToken ct)
+    {
+        var (adminId, ip) = CurrentActor();
+        var error = await experienceService.DeleteTranslationAsync(id, culture, adminId, ip, ct);
+        TempData["StatusMessage"] = error is null
+            ? loc["Admin.Experience.TranslationDeleted", SiteCultures.Describe(culture).NativeLabel].Value
+            : loc[error].Value;
+
+        return RedirectToAction(nameof(Edit), new { id, culture = SiteCultures.Default });
+    }
+
+    /// <summary>
+    /// One tab per site language. The English tab is prefilled from the experience's own columns,
+    /// because that copy is real; the others show their translation row, or an empty form flagged as
+    /// not yet written.
+    /// </summary>
+    private static List<ExperienceTranslationTab> BuildTranslationTabs(Experience experience) =>
+        [.. SiteCultures.All.Select(site =>
+        {
+            var isDefault = site.Name == SiteCultures.Default;
+            var existing = ExperienceContent.Find(experience, site.Name);
+
+            return new ExperienceTranslationTab(
+                site,
+                IsWritten: isDefault || existing is not null,
+                IsDefault: isDefault,
+                Form: isDefault
+                    ? AdminExperienceTranslationForm.FromExperience(experience, site.Name)
+                    : existing is null
+                        ? AdminExperienceTranslationForm.Empty(experience.Id, site.Name)
+                        : AdminExperienceTranslationForm.FromEntity(existing));
+        })];
 
     /// <summary>
     /// Every plan that exists, flagged with whether this experience admits it. Archived plans are

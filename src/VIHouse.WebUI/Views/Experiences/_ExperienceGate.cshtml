@@ -1,0 +1,119 @@
+@model ExperienceGateViewModel
+@*
+    The "you can't buy this yet" indicator, in place of the Apply button.
+
+    Extracted for the same reason _ExperienceCard.cshtml was: this appears in three places on the
+    detail page (hero, ticket panel, sticky mobile bar) and they used to be three separate inline
+    branches rendering the same disabled grey pill — so any fix had to be made three times, or
+    silently applied to one of them.
+
+    The animation is CSS-only and lives in _experiences.scss. Everything here is real content: the
+    label, the note, and — when it is known — the actual date applications open, formatted by the
+    server. modules/gate.ts upgrades that date to a live countdown, but with the bundle missing the
+    page still tells the visitor exactly when to come back.
+*@
+
+@{
+    var isCompact = Model.Variant == ExperienceGateVariant.Mobile;
+}
+
+<div class="experience-gate experience-gate--@Model.Modifier experience-gate--@Model.Variant.ToString().ToLowerInvariant()">
+    @*
+        The indicator. aria-hidden because it carries no information the text does not: a screen
+        reader announcing "busy" here would be wrong — nothing is loading, and the label already
+        says what the state is.
+    *@
+    <span class="experience-gate__mark" aria-hidden="true">
+        @if (Model.Mode == ExperienceGateMode.Waitlist)
+        {
+            @* Three bars filling in sequence — a queue, not a spinner. Nothing is counting down. *@
+            <span class="experience-gate__queue">
+                <i></i><i></i><i></i>
+            </span>
+        }
+        else
+        {
+            @* Closed gets the same ring, but the stylesheet never starts its animation. *@
+            <span class="experience-gate__ring"></span>
+        }
+    </span>
+
+    <span class="experience-gate__text">
+        <span class="experience-gate__label">@Loc[Model.LabelKey]</span>
+
+        @if (Model.Position is { } position)
+        {
+            <span class="experience-gate__note experience-gate__note--strong">
+                @Loc["Experiences.Waitlist.YourPosition", position]
+            </span>
+        }
+        else if (Model.OpensAt is { } opensAt)
+        {
+            @*
+                The round-trip "O" format is what gate.ts parses; the visible text is the formatted
+                date in the reader's culture. Both are correct on their own, which is the point —
+                one is for the script, the other is for the person.
+            *@
+            @*
+                The plural forms travel with the element rather than living in the module: the site
+                runs in four languages, and a "days" hardcoded in TypeScript would be English on
+                three of them.
+            *@
+            @*
+                Seconds precision and a literal Z, rather than "O".
+
+                "O" emits seven fractional digits and a "+00:00" offset. The ECMAScript Date Time
+                String Format specifies exactly three fractional digits, so anything else falls
+                through to each engine's own parser — V8 copes, but Date.parse is entitled to return
+                NaN, and a countdown that silently does not start on one browser is exactly the kind
+                of bug nobody reports. This format is the spec's, exactly.
+            *@
+            <time class="experience-gate__countdown"
+                  datetime="@opensAt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss'Z'")"
+                  data-gate-countdown
+                  data-gate-in="@Loc["Experiences.Gate.OpensIn"]"
+                  data-gate-imminent="@Loc["Experiences.Gate.Imminent"]"
+                  data-gate-day="@Loc["Experiences.Gate.Unit.Day"]"
+                  data-gate-days="@Loc["Experiences.Gate.Unit.Days"]"
+                  data-gate-hour="@Loc["Experiences.Gate.Unit.Hour"]"
+                  data-gate-hours="@Loc["Experiences.Gate.Unit.Hours"]"
+                  data-gate-minute="@Loc["Experiences.Gate.Unit.Minute"]"
+                  data-gate-minutes="@Loc["Experiences.Gate.Unit.Minutes"]">
+                @Loc["Experiences.Gate.OpensOn", opensAt.ToLocalTime().ToString("d MMMM yyyy")]
+            </time>
+        }
+        else if (Model.NoteKey is not null)
+        {
+            <span class="experience-gate__note">@Loc[Model.NoteKey]</span>
+        }
+    </span>
+
+    @if (Model.ShowWaitlistForm)
+    {
+        @*
+            Anonymous by design — the people worth capturing here are precisely the ones without an
+            account. Signed-in visitors get both fields prefilled and normally just press the button.
+        *@
+        <form class="experience-gate__form" method="post"
+              asp-controller="Experiences" asp-action="JoinWaitlist" asp-route-slug="@Model.Slug">
+            <label class="experience-gate__field">
+                <span>@Loc["Experiences.Waitlist.Name"]</span>
+                <input type="text" name="fullName" value="@Model.PrefillName"
+                       required maxlength="200" autocomplete="name" />
+            </label>
+            <label class="experience-gate__field">
+                <span>@Loc["Experiences.Waitlist.Email"]</span>
+                <input type="email" name="email" value="@Model.PrefillEmail"
+                       required maxlength="320" autocomplete="email" />
+            </label>
+            <button type="submit" class="btn btn--primary experience-gate__submit">
+                @Loc["Experiences.Waitlist.Join"]
+            </button>
+        </form>
+    }
+    else if (isCompact && Model.Mode == ExperienceGateMode.Waitlist && Model.Position is null)
+    {
+        @* No room for a form down here, so send them to the one in the panel. *@
+        <a class="btn btn--primary btn--sm" href="#tickets">@Loc["Experiences.Waitlist.Join"]</a>
+    }
+</div>

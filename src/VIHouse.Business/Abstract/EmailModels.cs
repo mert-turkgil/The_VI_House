@@ -10,6 +10,14 @@ public record ApplicationApprovedEmailModel(string FirstName, string ExperienceT
 
 public record ApplicationWaitlistedEmailModel(string FirstName, string ExperienceTitle);
 
+/// <summary>
+/// Sent when someone puts themselves on the public waitlist for a full experience — distinct from
+/// <see cref="ApplicationWaitlistedEmailModel"/>, which is an admin moving an existing application
+/// sideways. This one goes to people who may have no account at all, so it carries the position:
+/// "you're 7th" is the only thing they have to hold on to.
+/// </summary>
+public record ExperienceWaitlistEmailModel(string FirstName, string ExperienceTitle, string ExperienceCity, int Position);
+
 public record BookingConfirmedEmailModel(
     string FirstName, string BookingReference, string ExperienceTitle, string ExperienceCity,
     DateTimeOffset StartAtUtc, DateTimeOffset EndAtUtc, long AmountMinor, string Currency);

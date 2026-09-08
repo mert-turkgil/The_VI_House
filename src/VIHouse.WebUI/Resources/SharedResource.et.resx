@@ -573,8 +573,30 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Experiences.Tickets.PlacesLeft" xml:space="preserve"><value>Jäänud {0} kohta</value></data>
   <data name="Experiences.Tickets.Note" xml:space="preserve"><value>Kandideerimisi vaadatakse käsitsi läbi. Sinult ei võeta tasu enne, kui koht on pakutud ja sa oled selle vastu võtnud.</value></data>
   <data name="Experiences.Closed.ComingSoon" xml:space="preserve"><value>Tulekul</value></data>
-  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Liitu ootenimekirjaga</value></data>
+  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Ootenimekiri</value></data>
   <data name="Experiences.Closed.Closed" xml:space="preserve"><value>Kandideerimine suletud</value></data>
+  <data name="Experiences.Gate.Soon.Note" xml:space="preserve"><value>Kandideerimine avaneb peagi</value></data>
+  <data name="Experiences.Gate.Waitlist.Note" xml:space="preserve"><value>See voor on täis</value></data>
+  <data name="Experiences.Gate.Closed.Note" xml:space="preserve"><value>Kandideerimine on lõppenud</value></data>
+  <data name="Experiences.Gate.OpensOn" xml:space="preserve"><value>Kandideerimine avaneb {0}</value></data>
+  <data name="Experiences.Gate.OpensIn" xml:space="preserve"><value>Kandideerimiseni on jäänud {0}</value></data>
+  <data name="Experiences.Gate.Imminent" xml:space="preserve"><value>Kandideerimine avaneb iga hetk</value></data>
+  <data name="Experiences.Gate.Unit.Day" xml:space="preserve"><value>päev</value></data>
+  <data name="Experiences.Gate.Unit.Days" xml:space="preserve"><value>päeva</value></data>
+  <data name="Experiences.Gate.Unit.Hour" xml:space="preserve"><value>tund</value></data>
+  <data name="Experiences.Gate.Unit.Hours" xml:space="preserve"><value>tundi</value></data>
+  <data name="Experiences.Gate.Unit.Minute" xml:space="preserve"><value>minut</value></data>
+  <data name="Experiences.Gate.Unit.Minutes" xml:space="preserve"><value>minutit</value></data>
+  <data name="Experiences.Waitlist.Name" xml:space="preserve"><value>Teie nimi</value></data>
+  <data name="Experiences.Waitlist.Email" xml:space="preserve"><value>E-post</value></data>
+  <data name="Experiences.Waitlist.Join" xml:space="preserve"><value>Liitu ootenimekirjaga</value></data>
+  <data name="Experiences.Waitlist.YourPosition" xml:space="preserve"><value>Olete järjekorras {0}.</value></data>
+  <data name="Experiences.Waitlist.Confirmed" xml:space="preserve"><value>Olete nimekirjas — number {0}. Anname teada niipea, kui koht vabaneb.</value></data>
+  <data name="Experiences.Waitlist.Already" xml:space="preserve"><value>Olete juba selles ootenimekirjas, kohal {0}.</value></data>
+  <data name="Experiences.Waitlist.NotOpen" xml:space="preserve"><value>See kogemus ei võta enam ootenimekirja kandeid vastu.</value></data>
+  <data name="Experiences.Waitlist.NotFound" xml:space="preserve"><value>Sellist kogemust ei leitud.</value></data>
+  <data name="Experiences.Waitlist.Failed" xml:space="preserve"><value>Salvestamine ebaõnnestus. Palun proovige uuesti.</value></data>
+  <data name="Experiences.Waitlist.Incomplete" xml:space="preserve"><value>Palun sisestage nimi ja e-posti aadress.</value></data>
   <data name="Experiences.Gallery.Prev" xml:space="preserve"><value>Eelmine foto</value></data>
   <data name="Experiences.Gallery.Next" xml:space="preserve"><value>Järgmine foto</value></data>
   <data name="Experiences.BackToAll" xml:space="preserve"><value>Kõik elamused</value></data>
@@ -820,4 +842,8 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Experiences.Join.NotEntitled" xml:space="preserve"><value>Sinu liikmelisus ei kata seda kogemust — palun esita avaldus.</value></data>
   <data name="Experiences.Join.NotFound" xml:space="preserve"><value>Seda kogemust enam pole.</value></data>
   <data name="Experiences.MembersOnly" xml:space="preserve"><value>Ainult liikmetele</value></data>
+  <data name="Admin.Experience.TranslationSaved" xml:space="preserve"><value>{0} tekst salvestatud.</value></data>
+  <data name="Admin.Experience.TranslationDeleted" xml:space="preserve"><value>{0} tekst eemaldatud.</value></data>
+  <data name="Admin.Experience.UnknownCulture" xml:space="preserve"><value>See pole üks saidi keeltest.</value></data>
+  <data name="Admin.Experience.CannotDeleteDefault" xml:space="preserve"><value>Ingliskeelset teksti ei saa eemaldada — kõik teised keeled taanduvad sellele.</value></data>
 </root>

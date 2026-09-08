@@ -888,3 +888,357 @@
     font-size: var(--vih-text-lg);
   }
 }
+
+// =================================================================================================
+// The gate — "you can't buy this yet"
+// =================================================================================================
+//
+// This replaced a disabled grey pill (.btn.btn--ghost-dark[aria-disabled]) that stood in for every
+// non-open status. It read as a broken button, and it said exactly the same thing about an
+// experience opening next month as about one that finished last year.
+//
+// Three modes, and the difference between them is the whole point:
+//
+//   --soon      a gold arc turns and a shimmer crosses the panel. Something is coming.
+//   --waitlist  three bars fill in sequence — a queue, not a spinner. Nothing is counting down.
+//   --closed    nothing moves at all. Closed and Completed are not loading, and an animation here
+//               would promise an opening that is never going to arrive.
+//
+// Everything is CSS. There is no hidden markup and nothing here sets opacity: 0 on content the
+// script reveals — the countdown's date is rendered by the server and readable with the bundle
+// missing; gate.ts only rewrites its text.
+
+.experience-gate {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-xs);
+  position: relative;
+  overflow: hidden;
+  padding: var(--vih-space-xs) var(--vih-space-sm);
+  border: 1px solid var(--vih-line-on-dark);
+  border-radius: var(--vih-radius-pill);
+  color: var(--vih-cream);
+  // Transparent rather than a filled ground, matching .btn--ghost-dark: this sits over the hero
+  // photograph and a solid pill would punch a hole in it.
+  background: transparent;
+
+  // The shimmer. A gold-tinted band travelling left to right under the text, at an alpha low
+  // enough that it reads as light moving across a surface rather than as a highlight sweeping a
+  // skeleton loader. Slow — 2.8s — because the point is patience, not activity.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      100deg,
+      transparent 20%,
+      color-mix(in srgb, var(--vih-gold-light) 14%, transparent) 50%,
+      transparent 80%
+    );
+    background-size: 220% 100%;
+    background-repeat: no-repeat;
+    animation: vih-gate-shimmer 2800ms var(--vih-ease-in-out) infinite;
+  }
+}
+
+// --- The indicator -------------------------------------------------------------------------------
+
+.experience-gate__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+// A ring with one lit quarter, turning once every 1.6s. Deliberately slower than a UI spinner,
+// which is the difference between "we are working on it" and "this is on its way".
+.experience-gate__ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--vih-gold) 25%, transparent);
+  border-top-color: var(--vih-gold);
+  animation: vih-gate-spin 1600ms linear infinite;
+}
+
+// Three bars lighting in sequence: a line of people, read left to right. The stagger is what makes
+// it a queue rather than three blinking dots.
+.experience-gate__queue {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+
+  i {
+    flex: 1;
+    border-radius: 1px;
+    background: color-mix(in srgb, var(--vih-gold) 30%, transparent);
+    animation: vih-gate-queue 1800ms var(--vih-ease-in-out) infinite;
+  }
+
+  i:nth-child(1) { height: 55%; animation-delay: 0ms; }
+  i:nth-child(2) { height: 80%; animation-delay: 220ms; }
+  i:nth-child(3) { height: 100%; animation-delay: 440ms; }
+}
+
+// --- The words -----------------------------------------------------------------------------------
+
+.experience-gate__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.experience-gate__label {
+  font-size: var(--vih-text-3xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-gold-light);
+}
+
+.experience-gate__note,
+.experience-gate__countdown {
+  font-size: var(--vih-text-xs);
+  color: var(--vih-cream);
+}
+
+.experience-gate__note--strong {
+  font-weight: 600;
+  color: var(--vih-gold-light);
+}
+
+// Tabular figures so a ticking countdown does not shuffle its own width every second, which is the
+// single most distracting thing a live counter can do.
+.experience-gate__countdown {
+  font-variant-numeric: tabular-nums;
+}
+
+// --- Modes ---------------------------------------------------------------------------------------
+
+// Nothing is coming, so nothing moves. Both animations are cancelled rather than slowed.
+.experience-gate--closed {
+  color: color-mix(in srgb, var(--vih-cream) 65%, transparent);
+
+  &::after {
+    animation: none;
+    background: none;
+  }
+
+  .experience-gate__ring {
+    border-color: var(--vih-line-on-dark);
+    border-top-color: var(--vih-line-on-dark);
+    animation: none;
+  }
+
+  .experience-gate__label {
+    color: color-mix(in srgb, var(--vih-cream) 55%, transparent);
+  }
+}
+
+// --- Variants ------------------------------------------------------------------------------------
+
+// The ticket sidebar sits on white, so the pill becomes a panel: squared off, tinted ground, and
+// the text colours flip to the light-ground set.
+.experience-gate--panel {
+  flex-wrap: wrap;
+  width: 100%;
+  padding: var(--vih-space-sm);
+  border-radius: var(--vih-radius-lg);
+  border-color: var(--vih-line-on-light);
+  background: var(--vih-surface-tinted);
+  // The base sets cream for the dark hero. Reset it here rather than relying on every child to
+  // override: anything added to this panel later would otherwise arrive invisible.
+  color: var(--vih-ink);
+
+  .experience-gate__note,
+  .experience-gate__countdown {
+    color: var(--vih-text-secondary);
+  }
+
+  .experience-gate__label {
+    color: var(--vih-gold);
+  }
+
+  // Ink, not gold-light. This line is "you are number 7", which is the single most important
+  // sentence on the panel, and gold-light on a near-white ground is barely legible — gold is
+  // fine for a small uppercase eyebrow and wrong for something a person needs to read.
+  .experience-gate__note--strong {
+    color: var(--vih-ink);
+  }
+
+  &.experience-gate--closed {
+    color: var(--vih-text-muted);
+
+    .experience-gate__label {
+      color: var(--vih-text-muted);
+    }
+  }
+
+  // The form is the third child and takes the full width beneath the indicator and the text.
+  .experience-gate__form {
+    flex: 1 0 100%;
+  }
+}
+
+// The sticky bar is one line tall. No border of its own — the bar already has one — and no wrap.
+.experience-gate--mobile {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+
+  &::after {
+    display: none;
+  }
+
+  .experience-gate__note,
+  .experience-gate__countdown {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// --- The waitlist form ---------------------------------------------------------------------------
+
+.experience-gate__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-2xs);
+  margin-top: var(--vih-space-2xs);
+}
+
+.experience-gate__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-3xs);
+
+  span {
+    font-size: var(--vih-text-2xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--vih-text-muted);
+  }
+
+  input {
+    width: 100%;
+    padding: var(--vih-space-2xs) var(--vih-space-xs);
+    font: inherit;
+    font-size: var(--vih-text-sm);
+    color: var(--vih-ink);
+    background: var(--vih-surface);
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: var(--vih-radius-sm);
+
+    &:focus-visible {
+      outline: 2px solid var(--vih-focus-ring);
+      outline-offset: 1px;
+    }
+  }
+}
+
+.experience-gate__submit {
+  width: 100%;
+  margin-top: var(--vih-space-3xs);
+}
+
+// --- Keyframes -----------------------------------------------------------------------------------
+
+@keyframes vih-gate-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes vih-gate-shimmer {
+  from {
+    background-position: -110% 0;
+  }
+  to {
+    background-position: 210% 0;
+  }
+}
+
+@keyframes vih-gate-queue {
+  0%,
+  100% {
+    background: color-mix(in srgb, var(--vih-gold) 22%, transparent);
+  }
+  40% {
+    background: var(--vih-gold);
+  }
+}
+
+// The listing badges, so a card and the page it links to agree about how alive a state is. Same
+// shimmer, and closed cards get none for the same reason .experience-gate--closed has none.
+.experience-card__badge {
+  &--soon,
+  &--waitlist {
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        100deg,
+        transparent 20%,
+        color-mix(in srgb, var(--vih-gold-light) 20%, transparent) 50%,
+        transparent 80%
+      );
+      background-size: 220% 100%;
+      background-repeat: no-repeat;
+      animation: vih-gate-shimmer 2800ms var(--vih-ease-in-out) infinite;
+    }
+  }
+}
+
+// The animation never starts, rather than running fast or being paused — the convention every other
+// reduced-motion block in this codebase follows.
+//
+// The ring is swapped, not stopped: a border-top-color arc frozen at a random angle looks like a
+// rendering fault, so it becomes a complete hairline circle with one solid gold dot at the top,
+// which reads as a deliberate mark. The countdown is handled in gate.ts, which skips its interval
+// and prints day granularity once.
+@media (prefers-reduced-motion: reduce) {
+  .experience-gate::after,
+  .experience-card__badge--soon::after,
+  .experience-card__badge--waitlist::after {
+    animation: none;
+    background: none;
+  }
+
+  .experience-gate__ring {
+    position: relative;
+    animation: none;
+    border-color: color-mix(in srgb, var(--vih-gold) 30%, transparent);
+    border-top-color: color-mix(in srgb, var(--vih-gold) 30%, transparent);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2.5px;
+      left: 50%;
+      width: 3.5px;
+      height: 3.5px;
+      margin-left: -1.75px;
+      border-radius: 50%;
+      background: var(--vih-gold);
+    }
+  }
+
+  .experience-gate__queue i {
+    animation: none;
+    background: color-mix(in srgb, var(--vih-gold) 45%, transparent);
+  }
+}

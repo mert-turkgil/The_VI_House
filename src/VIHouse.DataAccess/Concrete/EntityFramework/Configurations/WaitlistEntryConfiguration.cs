@@ -12,6 +12,13 @@ public class WaitlistEntryConfiguration : IEntityTypeConfiguration<WaitlistEntry
     {
         builder.ToTable("WaitlistEntries");
         builder.HasIndex(w => new { w.ExperienceId, w.Position });
+
+        // One place in the queue per person per experience. Without this, ten refreshes of the
+        // public sign-up form are ten rows, and the position the tenth is told is a lie about how
+        // many people are actually ahead of them. The service reads this back and reports the
+        // existing position instead of failing — a duplicate is not an error, it is an answer.
+        builder.HasIndex(w => new { w.ExperienceId, w.Email }).IsUnique();
+
         builder.Property(w => w.Email).HasMaxLength(320).IsRequired();
         builder.Property(w => w.FullName).HasMaxLength(200).IsRequired();
 

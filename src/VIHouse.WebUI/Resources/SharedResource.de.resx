@@ -573,8 +573,30 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Experiences.Tickets.PlacesLeft" xml:space="preserve"><value>Noch {0} Plätze</value></data>
   <data name="Experiences.Tickets.Note" xml:space="preserve"><value>Bewerbungen werden von Hand geprüft. Ihnen wird nichts berechnet, bevor Ihnen ein Platz angeboten und von Ihnen angenommen wurde.</value></data>
   <data name="Experiences.Closed.ComingSoon" xml:space="preserve"><value>Demnächst</value></data>
-  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Auf die Warteliste</value></data>
+  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Warteliste</value></data>
   <data name="Experiences.Closed.Closed" xml:space="preserve"><value>Bewerbungen geschlossen</value></data>
+  <data name="Experiences.Gate.Soon.Note" xml:space="preserve"><value>Bewerbungen öffnen bald</value></data>
+  <data name="Experiences.Gate.Waitlist.Note" xml:space="preserve"><value>Diese Runde ist ausgebucht</value></data>
+  <data name="Experiences.Gate.Closed.Note" xml:space="preserve"><value>Bewerbungen sind nicht mehr möglich</value></data>
+  <data name="Experiences.Gate.OpensOn" xml:space="preserve"><value>Bewerbungen öffnen am {0}</value></data>
+  <data name="Experiences.Gate.OpensIn" xml:space="preserve"><value>Bewerbungen öffnen in {0}</value></data>
+  <data name="Experiences.Gate.Imminent" xml:space="preserve"><value>Bewerbungen öffnen jeden Moment</value></data>
+  <data name="Experiences.Gate.Unit.Day" xml:space="preserve"><value>Tag</value></data>
+  <data name="Experiences.Gate.Unit.Days" xml:space="preserve"><value>Tagen</value></data>
+  <data name="Experiences.Gate.Unit.Hour" xml:space="preserve"><value>Stunde</value></data>
+  <data name="Experiences.Gate.Unit.Hours" xml:space="preserve"><value>Stunden</value></data>
+  <data name="Experiences.Gate.Unit.Minute" xml:space="preserve"><value>Minute</value></data>
+  <data name="Experiences.Gate.Unit.Minutes" xml:space="preserve"><value>Minuten</value></data>
+  <data name="Experiences.Waitlist.Name" xml:space="preserve"><value>Ihr Name</value></data>
+  <data name="Experiences.Waitlist.Email" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="Experiences.Waitlist.Join" xml:space="preserve"><value>Auf die Warteliste</value></data>
+  <data name="Experiences.Waitlist.YourPosition" xml:space="preserve"><value>Sie sind Nummer {0} in der Schlange</value></data>
+  <data name="Experiences.Waitlist.Confirmed" xml:space="preserve"><value>Sie stehen auf der Liste – Nummer {0}. Wir melden uns, sobald ein Platz frei wird.</value></data>
+  <data name="Experiences.Waitlist.Already" xml:space="preserve"><value>Sie stehen bereits auf dieser Warteliste, auf Platz {0}.</value></data>
+  <data name="Experiences.Waitlist.NotOpen" xml:space="preserve"><value>Für diese Experience werden keine Wartelisten-Einträge mehr angenommen.</value></data>
+  <data name="Experiences.Waitlist.NotFound" xml:space="preserve"><value>Diese Experience wurde nicht gefunden.</value></data>
+  <data name="Experiences.Waitlist.Failed" xml:space="preserve"><value>Das konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.</value></data>
+  <data name="Experiences.Waitlist.Incomplete" xml:space="preserve"><value>Bitte geben Sie einen Namen und eine E-Mail-Adresse an.</value></data>
   <data name="Experiences.Gallery.Prev" xml:space="preserve"><value>Vorheriges Foto</value></data>
   <data name="Experiences.Gallery.Next" xml:space="preserve"><value>Nächstes Foto</value></data>
   <data name="Experiences.BackToAll" xml:space="preserve"><value>Alle Experiences</value></data>
@@ -820,4 +842,8 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Experiences.Join.NotEntitled" xml:space="preserve"><value>Ihre Mitgliedschaft deckt diese Experience nicht ab — bitte bewerben Sie sich stattdessen.</value></data>
   <data name="Experiences.Join.NotFound" xml:space="preserve"><value>Diese Experience existiert nicht mehr.</value></data>
   <data name="Experiences.MembersOnly" xml:space="preserve"><value>Nur für Mitglieder</value></data>
+  <data name="Admin.Experience.TranslationSaved" xml:space="preserve"><value>{0}-Text gespeichert.</value></data>
+  <data name="Admin.Experience.TranslationDeleted" xml:space="preserve"><value>{0}-Text entfernt.</value></data>
+  <data name="Admin.Experience.UnknownCulture" xml:space="preserve"><value>Das ist keine der Sprachen dieser Website.</value></data>
+  <data name="Admin.Experience.CannotDeleteDefault" xml:space="preserve"><value>Der englische Text kann nicht entfernt werden — auf ihn greift jede andere Sprache zurück.</value></data>
 </root>

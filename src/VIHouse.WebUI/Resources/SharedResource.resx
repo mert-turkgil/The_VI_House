@@ -573,8 +573,30 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Experiences.Tickets.PlacesLeft" xml:space="preserve"><value>{0} places left</value></data>
   <data name="Experiences.Tickets.Note" xml:space="preserve"><value>Applications are reviewed by hand. You are not charged until a place is offered and you accept it.</value></data>
   <data name="Experiences.Closed.ComingSoon" xml:space="preserve"><value>Coming soon</value></data>
-  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Join the waitlist</value></data>
+  <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Waitlist</value></data>
   <data name="Experiences.Closed.Closed" xml:space="preserve"><value>Applications closed</value></data>
+  <data name="Experiences.Gate.Soon.Note" xml:space="preserve"><value>Applications open soon</value></data>
+  <data name="Experiences.Gate.Waitlist.Note" xml:space="preserve"><value>This round is full</value></data>
+  <data name="Experiences.Gate.Closed.Note" xml:space="preserve"><value>Applications are no longer open</value></data>
+  <data name="Experiences.Gate.OpensOn" xml:space="preserve"><value>Applications open {0}</value></data>
+  <data name="Experiences.Gate.OpensIn" xml:space="preserve"><value>Applications open in {0}</value></data>
+  <data name="Experiences.Gate.Imminent" xml:space="preserve"><value>Applications open any moment</value></data>
+  <data name="Experiences.Gate.Unit.Day" xml:space="preserve"><value>day</value></data>
+  <data name="Experiences.Gate.Unit.Days" xml:space="preserve"><value>days</value></data>
+  <data name="Experiences.Gate.Unit.Hour" xml:space="preserve"><value>hour</value></data>
+  <data name="Experiences.Gate.Unit.Hours" xml:space="preserve"><value>hours</value></data>
+  <data name="Experiences.Gate.Unit.Minute" xml:space="preserve"><value>minute</value></data>
+  <data name="Experiences.Gate.Unit.Minutes" xml:space="preserve"><value>minutes</value></data>
+  <data name="Experiences.Waitlist.Name" xml:space="preserve"><value>Your name</value></data>
+  <data name="Experiences.Waitlist.Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Experiences.Waitlist.Join" xml:space="preserve"><value>Join the waitlist</value></data>
+  <data name="Experiences.Waitlist.YourPosition" xml:space="preserve"><value>You are number {0} in line</value></data>
+  <data name="Experiences.Waitlist.Confirmed" xml:space="preserve"><value>You are on the list — number {0}. We will email you the moment a place opens.</value></data>
+  <data name="Experiences.Waitlist.Already" xml:space="preserve"><value>You are already on this waitlist, at number {0}.</value></data>
+  <data name="Experiences.Waitlist.NotOpen" xml:space="preserve"><value>This experience is no longer taking waitlist entries.</value></data>
+  <data name="Experiences.Waitlist.NotFound" xml:space="preserve"><value>That experience could not be found.</value></data>
+  <data name="Experiences.Waitlist.Failed" xml:space="preserve"><value>That could not be saved. Please try again.</value></data>
+  <data name="Experiences.Waitlist.Incomplete" xml:space="preserve"><value>Please give us a name and an email address.</value></data>
   <data name="Experiences.Gallery.Prev" xml:space="preserve"><value>Previous photograph</value></data>
   <data name="Experiences.Gallery.Next" xml:space="preserve"><value>Next photograph</value></data>
   <data name="Experiences.BackToAll" xml:space="preserve"><value>All experiences</value></data>
@@ -820,4 +842,8 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Experiences.Join.NotEntitled" xml:space="preserve"><value>Your membership doesn't cover this experience — please apply instead.</value></data>
   <data name="Experiences.Join.NotFound" xml:space="preserve"><value>That experience no longer exists.</value></data>
   <data name="Experiences.MembersOnly" xml:space="preserve"><value>Members only</value></data>
+  <data name="Admin.Experience.TranslationSaved" xml:space="preserve"><value>{0} copy saved.</value></data>
+  <data name="Admin.Experience.TranslationDeleted" xml:space="preserve"><value>{0} copy removed.</value></data>
+  <data name="Admin.Experience.UnknownCulture" xml:space="preserve"><value>That isn't one of the site's languages.</value></data>
+  <data name="Admin.Experience.CannotDeleteDefault" xml:space="preserve"><value>The English copy can't be removed — it's what every other language falls back to.</value></data>
 </root>

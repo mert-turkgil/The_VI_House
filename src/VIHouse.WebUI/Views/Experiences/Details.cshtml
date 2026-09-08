@@ -87,7 +87,7 @@
             }
             else
             {
-                <span class="btn btn--ghost-dark" aria-disabled="true">@Loc[Model.ClosedStateKey]</span>
+                <partial name="_ExperienceGate" model="@Model.Gate(ExperienceGateVariant.Hero)" />
             }
         </div>
     </div>
@@ -300,7 +300,9 @@
             }
         </div>
 
-        <aside class="experience-ticket-panel">
+        @* id so the sticky mobile bar can send someone to the waitlist form, which is too tall to
+           render inside the bar itself. *@
+        <aside class="experience-ticket-panel" id="tickets">
             <h2 class="experience-ticket-panel__title">@Loc["Experiences.Tickets.Title"]</h2>
 
             @if (Model.TicketTypes.Count == 0)
@@ -385,6 +387,12 @@
                             @Loc["Experiences.Apply"]
                         </a>
                     }
+                    else
+                    {
+                        @* Not open. Until now this branch rendered nothing at all, so the sidebar
+                           listed prices under a heading and then simply stopped. *@
+                        <partial name="_ExperienceGate" model="@Model.Gate(ExperienceGateVariant.Panel)" />
+                    }
                     break;
             }
 
@@ -397,9 +405,14 @@
     </p>
 </div>
 
-@if (Model.CanApply)
-{
-    <div class="experience-mobile-cta">
+@*
+    The sticky bar. This used to be wrapped in @if (Model.CanApply), so a Coming Soon experience had
+    no bottom bar at all — on a phone you scrolled the entire page and arrived at nothing. It now
+    renders in both cases and carries the gate when there is nothing to buy.
+*@
+<div class="experience-mobile-cta">
+    @if (Model.CanApply)
+    {
         <span class="experience-mobile-cta__price">
             @if (Model.CheapestTicket is { } cheapest)
             {
@@ -412,8 +425,12 @@
             }
         </span>
         <a class="btn btn--primary btn--sm" href="/apply?experience=@Model.Slug">@Loc["Experiences.Apply"]</a>
-    </div>
-}
+    }
+    else
+    {
+        <partial name="_ExperienceGate" model="@Model.Gate(ExperienceGateVariant.Mobile)" />
+    }
+</div>
 
 @section Scripts {
     @if (faqJson is not null)
