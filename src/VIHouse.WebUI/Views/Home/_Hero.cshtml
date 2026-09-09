@@ -56,11 +56,11 @@
                                 <div class="home-hero__actions">
                                     @if (panel.HasPrimaryCta)
                                     {
-                                        <a class="btn btn--primary" href="@panel.PrimaryCtaUrl">@panel.PrimaryCtaLabel</a>
+                                        <a class="btn btn--primary" href="@(VIHouse.WebUI.Localization.CultureUrlHelper.Localise(panel.PrimaryCtaUrl))">@panel.PrimaryCtaLabel</a>
                                     }
                                     @if (panel.HasSecondaryCta)
                                     {
-                                        <a class="btn btn--ghost-dark" href="@panel.SecondaryCtaUrl">@panel.SecondaryCtaLabel</a>
+                                        <a class="btn btn--ghost-dark" href="@(VIHouse.WebUI.Localization.CultureUrlHelper.Localise(panel.SecondaryCtaUrl))">@panel.SecondaryCtaLabel</a>
                                     }
                                 </div>
                             }

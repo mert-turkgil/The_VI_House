@@ -73,7 +73,7 @@
                 <h4>@Loc["Footer.Membership"]</h4>
                 <ul>
                     <li><a asp-area="" asp-controller="Membership" asp-action="Index">@Loc["Footer.Benefits"]</a></li>
-                    <li><a asp-area="" asp-controller="Application" asp-action="Index">@Loc["Nav.ApplyToJoin"]</a></li>
+                    <li><a asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Nav.ApplyToJoin"]</a></li>
                     <li><a asp-area="Identity" asp-page="/Account/Login">@Loc["Footer.MemberLogin"]</a></li>
                 </ul>
             </div>

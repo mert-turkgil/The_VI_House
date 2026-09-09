@@ -211,7 +211,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Membership.Title" xml:space="preserve"><value>Üyelik</value></data>
   <data name="Membership.Eyebrow" xml:space="preserve"><value>Eve Katılın</value></data>
   <data name="Membership.Heading" xml:space="preserve"><value>Üyelik</value></data>
-  <data name="Membership.Subheading" xml:space="preserve"><value>Tek bir deneyimin ötesinde — The VI House topluluğuna yıl boyu erişim.</value></data>
+  <data name="Membership.Subheading" xml:space="preserve"><value>Ciddi işler kuran insanlar için özel bir ağ. Topluluk, seçilmiş tanıştırmalar, üye oturumları ve VI House deneyimlerine öncelikli erişim — yıl boyunca.</value></data>
   <data name="Membership.PerMonth" xml:space="preserve"><value>/ ay</value></data>
   <data name="Membership.PerYear" xml:space="preserve"><value>/ yıl</value></data>
   <data name="Membership.OneTime" xml:space="preserve"><value>tek seferlik</value></data>
@@ -847,6 +847,59 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Yazı silindi.</value></data>
   <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>Bu yazı artık mevcut değil.</value></data>
   <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>Bu kaydedilemedi.</value></data>
+  <data name="Membership.ExploreBenefits" xml:space="preserve"><value>Ayrıcalıkları keşfedin</value></data>
+  <data name="Membership.Unlocks.Heading" xml:space="preserve"><value>Üyelik neleri açar</value></data>
+  <data name="Membership.Unlocks.Network.Title" xml:space="preserve"><value>Özel üye ağı</value></data>
+  <data name="Membership.Unlocks.Network.Body" xml:space="preserve"><value>Özel VI House topluluğuna, üye profillerine ve kurucular, operatörler, üreticiler ve uzmanlar için ayrılmış dijital alanlara erişin.</value></data>
+  <data name="Membership.Unlocks.Intros.Title" xml:space="preserve"><value>Seçilmiş tanıştırmalar</value></data>
+  <data name="Membership.Unlocks.Intros.Body" xml:space="preserve"><value>Ne inşa ettiğinize, neye katkı sunabileceğinize ve kiminle tanışmanın size fayda sağlayacağına göre düşünülmüş tanıştırmalar.</value></data>
+  <data name="Membership.Unlocks.Sessions.Title" xml:space="preserve"><value>Üye oturumları</value></data>
+  <data name="Membership.Unlocks.Sessions.Body" xml:space="preserve"><value>Yalnızca üyelere açık özel kurucu yuvarlak masaları, uzman oturumları, atölyeler, soru-cevaplar ve pratik sohbetler.</value></data>
+  <data name="Membership.Unlocks.Library.Title" xml:space="preserve"><value>Üye kütüphanesi</value></data>
+  <data name="Membership.Unlocks.Library.Body" xml:space="preserve"><value>The VI House ve onaylanmış üyelerin katkıda bulunduğu seçilmiş oturum kayıtları, yöntemler, rehberler ve kaynaklar.</value></data>
+  <data name="Membership.Unlocks.Marketplace.Title" xml:space="preserve"><value>Pazar yeri ve iş ortağı ayrıcalıkları</value></data>
+  <data name="Membership.Unlocks.Marketplace.Body" xml:space="preserve"><value>VI House topluluğu için seçilmiş, doğrulanmış hizmetleri, programları ve iş ortaklarını keşfedin — üyelere özel teklifler dahil.</value></data>
+  <data name="Membership.Unlocks.Priority.Title" xml:space="preserve"><value>Öncelikli deneyimler</value></data>
+  <data name="Membership.Unlocks.Priority.Body" xml:space="preserve"><value>Seçilmiş VI House inzivaları, yemekleri, özel buluşmaları ve sınırlı kontenjanlı deneyimleri için öncelikli erişim ve üye ayrıcalıkları.</value></data>
+  <data name="Membership.Month.Heading" xml:space="preserve"><value>House'ta bir ay</value></data>
+  <data name="Membership.Month.Lede" xml:space="preserve"><value>İki ay birbirinin aynı değildir. Ritim aynıdır.</value></data>
+  <data name="Membership.Month.Session.Title" xml:space="preserve"><value>Üye oturumu</value></data>
+  <data name="Membership.Month.Session.Body" xml:space="preserve"><value>Ciddi işler kurmak, yürütmek ve büyütmek üzerine canlı bir sohbet, atölye ya da uzman rehberliğinde bir oturum.</value></data>
+  <data name="Membership.Month.Roundtable.Title" xml:space="preserve"><value>Özel yuvarlak masa</value></data>
+  <data name="Membership.Month.Roundtable.Body" xml:space="preserve"><value>Üyelerin deneyim, soru ve fikirlerini seyirci olmadan paylaştığı daha küçük odalar.</value></data>
+  <data name="Membership.Month.Connections.Title" xml:space="preserve"><value>Seçilmiş bağlantılar</value></data>
+  <data name="Membership.Month.Connections.Body" xml:space="preserve"><value>Nicelikten çok yerindeliğe göre kurgulanmış tanıştırmalar ve üye keşfi.</value></data>
+  <data name="Membership.Month.Always.Title" xml:space="preserve"><value>Her zaman açık House</value></data>
+  <data name="Membership.Month.Always.Body" xml:space="preserve"><value>Ay boyunca özel topluluk odaları, kaynaklar, sohbetler, fırsatlar ve yaklaşan deneyimler.</value></data>
+  <data name="Membership.Privileges.Heading" xml:space="preserve"><value>Üye ayrıcalıkları</value></data>
+  <data name="Membership.Privileges.Body" xml:space="preserve"><value>Üyelik, VI House ekosisteminin tamamını içinde kaldıkça daha da faydalı hale getirecek şekilde tasarlandı.</value></data>
+  <data name="Membership.Privileges.Item1" xml:space="preserve"><value>Özel VI House üye profili</value></data>
+  <data name="Membership.Privileges.Item2" xml:space="preserve"><value>Özel topluluk alanlarına erişim</value></data>
+  <data name="Membership.Privileges.Item3" xml:space="preserve"><value>Yalnızca üyelere açık oturumlar ve yuvarlak masalar</value></data>
+  <data name="Membership.Privileges.Item4" xml:space="preserve"><value>Seçilmiş üye tanıştırmaları</value></data>
+  <data name="Membership.Privileges.Item5" xml:space="preserve"><value>Oturum arşivi ve kaynak kütüphanesi</value></data>
+  <data name="Membership.Privileges.Item6" xml:space="preserve"><value>Doğrulanmış pazar yeri programlarına erişim</value></data>
+  <data name="Membership.Privileges.Item7" xml:space="preserve"><value>Üyelere özel seçilmiş iş ortağı ayrıcalıkları</value></data>
+  <data name="Membership.Privileges.Item8" xml:space="preserve"><value>Sınırlı kontenjanlı deneyimlere erken erişim</value></data>
+  <data name="Membership.Privileges.Item9" xml:space="preserve"><value>Seçilmiş etkinliklerde üyeye özel fiyat</value></data>
+  <data name="Membership.Privileges.Item10" xml:space="preserve"><value>Bir oturuma katkı sunmak veya ev sahipliği yapmak için başvurabilme</value></data>
+  <data name="Membership.Privileges.Item11" xml:space="preserve"><value>Aday üye önerebilme</value></data>
+  <data name="Membership.Privileges.Item12" xml:space="preserve"><value>Seçilmiş özel buluşmalara davetler</value></data>
+  <data name="Membership.Standard.Heading" xml:space="preserve"><value>House standardı</value></data>
+  <data name="Membership.Standard.Lede" xml:space="preserve"><value>Bir odanın değeri, içeri kimin alındığına bağlıdır.</value></data>
+  <data name="Membership.Standard.NoPitch.Title" xml:space="preserve"><value>Soğuk satış yok</value></data>
+  <data name="Membership.Standard.NoPitch.Body" xml:space="preserve"><value>Topluluk bir müşteri listesi değildir.</value></data>
+  <data name="Membership.Standard.NoBlast.Title" xml:space="preserve"><value>Toplu mesaj yok</value></data>
+  <data name="Membership.Standard.NoBlast.Body" xml:space="preserve"><value>İlişkiler nicelikle değil, yerindelikle başlar.</value></data>
+  <data name="Membership.Standard.Curated.Title" xml:space="preserve"><value>Seçilmiş katkılar</value></data>
+  <data name="Membership.Standard.Curated.Body" xml:space="preserve"><value>Ticari teklifler, programlar ve tanıtımlar onay gerektirir.</value></data>
+  <data name="Membership.Standard.Confidential.Title" xml:space="preserve"><value>Varsayılan olarak gizli</value></data>
+  <data name="Membership.Standard.Confidential.Body" xml:space="preserve"><value>Özel konuşmalar özel kalır.</value></data>
+  <data name="Membership.Standard.Closing" xml:space="preserve"><value>İnsanların güvendiği küçük bir odayı, görmezden geldikleri büyük bir odaya tercih ederiz.</value></data>
+  <data name="Membership.Cta.Eyebrow" xml:space="preserve"><value>House'taki yeriniz</value></data>
+  <data name="Membership.Cta.Heading" xml:space="preserve"><value>Doğru oda her şeyi değiştirir.</value></data>
+  <data name="Membership.Cta.Body" xml:space="preserve"><value>Öz, hırs ve yol boyunca tanımaya değer insanlar üzerine kurulu özel bir topluluğa katılmak için başvurun.</value></data>
+  <data name="Membership.Cta.Note" xml:space="preserve"><value>Her başvuru tek tek değerlendirilir.</value></data>
   <data name="Membership.HowItWorks" xml:space="preserve"><value>Nasıl katılırsınız</value></data>
   <data name="Membership.Step1.Title" xml:space="preserve"><value>Başvurun</value></data>
   <data name="Membership.Step1.Body" xml:space="preserve"><value>Kim olduğunuzu ve ne inşa ettiğinizi anlatın. Her başvuru tek tek okunur.</value></data>
@@ -855,9 +908,9 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Membership.Step3.Title" xml:space="preserve"><value>Özel ödeme bağlantısı</value></data>
   <data name="Membership.Step3.Body" xml:space="preserve"><value>Kabul edilirseniz size özel bir bağlantı göndeririz. Yalnızca size aittir ve süresi dolar.</value></data>
   <data name="Membership.Step4.Title" xml:space="preserve"><value>Aramıza katılırsınız</value></data>
-  <data name="Membership.Step4.Body" xml:space="preserve"><value>Hesabınız ödemeyle birlikte oluşturulur. Biletleriniz ve deneyim için gereken her şey içinde sizi bekler.</value></data>
+  <data name="Membership.Step4.Body" xml:space="preserve"><value>Üyeliğiniz ödemenizle birlikte etkinleşir. Üye profiliniz, özel topluluk erişiminiz, oturumlar, kaynaklar ve ayrıcalıklar hesabınızda sizi bekliyor.</value></data>
   <data name="Membership.SeeExperiences" xml:space="preserve"><value>Deneyimleri gör</value></data>
-  <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Üyelik satılmaz. Kabul edildiğiniz odayla birlikte gelir.</value></data>
+  <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Üyelik yalnızca başvuruyla. Erişim, House'a kabul edildiğinizde başlar.</value></data>
   <data name="Account.NavJoinTheHouse" xml:space="preserve"><value>House'a katıl</value></data>
   <data name="Account.NavCommunity" xml:space="preserve"><value>Topluluk</value></data>
   <data name="Admin.Experience.NoFile" xml:space="preserve"><value>Bir dosya seçin veya bir yol yapıştırın.</value></data>

@@ -211,7 +211,7 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Membership.Title" xml:space="preserve"><value>Liikmelisus</value></data>
   <data name="Membership.Eyebrow" xml:space="preserve"><value>Liitu majaga</value></data>
   <data name="Membership.Heading" xml:space="preserve"><value>Liikmelisus</value></data>
-  <data name="Membership.Subheading" xml:space="preserve"><value>Rohkem kui üks elamus — aastaringne juurdepääs The VI House kogukonnale.</value></data>
+  <data name="Membership.Subheading" xml:space="preserve"><value>Privaatne võrgustik inimestele, kes ehitavad midagi tõsist. Kogukond, valitud tutvustused, liikmesessioonid ja eelisligipääs VI House'i elamustele — aasta ringi.</value></data>
   <data name="Membership.PerMonth" xml:space="preserve"><value>/ kuu</value></data>
   <data name="Membership.PerYear" xml:space="preserve"><value>/ aasta</value></data>
   <data name="Membership.OneTime" xml:space="preserve"><value>ühekordne</value></data>
@@ -847,6 +847,59 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Postitus kustutatud.</value></data>
   <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>Seda postitust enam pole.</value></data>
   <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>Seda ei õnnestunud salvestada.</value></data>
+  <data name="Membership.ExploreBenefits" xml:space="preserve"><value>Vaadake hüvesid</value></data>
+  <data name="Membership.Unlocks.Heading" xml:space="preserve"><value>Mida liikmesus avab</value></data>
+  <data name="Membership.Unlocks.Network.Title" xml:space="preserve"><value>Privaatne liikmevõrgustik</value></data>
+  <data name="Membership.Unlocks.Network.Body" xml:space="preserve"><value>Ligipääs privaatsele VI House'i kogukonnale, liikmeprofiilidele ja eraldi digiruumidele asutajatele, juhtidele, loojatele ja spetsialistidele.</value></data>
+  <data name="Membership.Unlocks.Intros.Title" xml:space="preserve"><value>Valitud tutvustused</value></data>
+  <data name="Membership.Unlocks.Intros.Body" xml:space="preserve"><value>Läbimõeldud tutvustused selle järgi, mida te ehitate, mida saate panustada ja kellega kohtumisest oleks teile kasu.</value></data>
+  <data name="Membership.Unlocks.Sessions.Title" xml:space="preserve"><value>Liikmesessioonid</value></data>
+  <data name="Membership.Unlocks.Sessions.Body" xml:space="preserve"><value>Privaatsed asutajate ümarlauad, ekspertsessioonid, töötoad, küsimused-vastused ja praktilised arutelud ainult liikmetele.</value></data>
+  <data name="Membership.Unlocks.Library.Title" xml:space="preserve"><value>Liikmeraamatukogu</value></data>
+  <data name="Membership.Unlocks.Library.Body" xml:space="preserve"><value>Valitud sessioonisalvestused, raamistikud, juhendid, materjalid ja tähelepanekud The VI House'ilt ja heakskiidetud liikmetelt.</value></data>
+  <data name="Membership.Unlocks.Marketplace.Title" xml:space="preserve"><value>Turuplats ja partnerihüved</value></data>
+  <data name="Membership.Unlocks.Marketplace.Body" xml:space="preserve"><value>Avastage VI House'i kogukonnale valitud kontrollitud teenuseid, programme ja partnereid, sealhulgas ainult liikmetele mõeldud pakkumisi.</value></data>
+  <data name="Membership.Unlocks.Priority.Title" xml:space="preserve"><value>Eelisligipääs elamustele</value></data>
+  <data name="Membership.Unlocks.Priority.Body" xml:space="preserve"><value>Eelisligipääs ja liikmehüved valitud VI House'i retriitidele, õhtusöökidele, privaatsetele kohtumistele ja piiratud kohtade arvuga elamustele.</value></data>
+  <data name="Membership.Month.Heading" xml:space="preserve"><value>Üks kuu House'is</value></data>
+  <data name="Membership.Month.Lede" xml:space="preserve"><value>Kaks kuud ei ole kunagi ühesugused. Rütm on.</value></data>
+  <data name="Membership.Month.Session.Title" xml:space="preserve"><value>Liikmesessioon</value></data>
+  <data name="Membership.Month.Session.Body" xml:space="preserve"><value>Otsevestlus, töötuba või eksperdi juhitud sessioon tõsiste äride ehitamisest, juhtimisest ja kasvatamisest.</value></data>
+  <data name="Membership.Month.Roundtable.Title" xml:space="preserve"><value>Privaatne ümarlaud</value></data>
+  <data name="Membership.Month.Roundtable.Body" xml:space="preserve"><value>Väiksemad ruumid, kus liikmed vahetavad kogemusi, küsimusi ja ideid ilma publikuta.</value></data>
+  <data name="Membership.Month.Connections.Title" xml:space="preserve"><value>Valitud sidemed</value></data>
+  <data name="Membership.Month.Connections.Body" xml:space="preserve"><value>Läbimõeldud tutvustused ja liikmete avastamine, mis lähtub asjakohasusest, mitte mahust.</value></data>
+  <data name="Membership.Month.Always.Title" xml:space="preserve"><value>Alati avatud House</value></data>
+  <data name="Membership.Month.Always.Body" xml:space="preserve"><value>Privaatsed kogukonnaruumid, materjalid, vestlused, võimalused ja tulevased elamused kogu kuu vältel.</value></data>
+  <data name="Membership.Privileges.Heading" xml:space="preserve"><value>Liikmehüved</value></data>
+  <data name="Membership.Privileges.Body" xml:space="preserve"><value>Liikmesus on üles ehitatud nii, et kogu VI House'i ökosüsteem muutub seda kasulikumaks, mida kauem te sellesse kuulute.</value></data>
+  <data name="Membership.Privileges.Item1" xml:space="preserve"><value>Privaatne VI House'i liikmeprofiil</value></data>
+  <data name="Membership.Privileges.Item2" xml:space="preserve"><value>Ligipääs privaatsetele kogukonnaruumidele</value></data>
+  <data name="Membership.Privileges.Item3" xml:space="preserve"><value>Ainult liikmetele mõeldud sessioonid ja ümarlauad</value></data>
+  <data name="Membership.Privileges.Item4" xml:space="preserve"><value>Valitud tutvustused liikmete vahel</value></data>
+  <data name="Membership.Privileges.Item5" xml:space="preserve"><value>Sessioonide arhiiv ja materjalikogu</value></data>
+  <data name="Membership.Privileges.Item6" xml:space="preserve"><value>Ligipääs kontrollitud turuplatsi programmidele</value></data>
+  <data name="Membership.Privileges.Item7" xml:space="preserve"><value>Valitud partnerihüved ainult liikmetele</value></data>
+  <data name="Membership.Privileges.Item8" xml:space="preserve"><value>Varajane ligipääs piiratud kohtade arvuga elamustele</value></data>
+  <data name="Membership.Privileges.Item9" xml:space="preserve"><value>Liikmehind valitud sündmustel</value></data>
+  <data name="Membership.Privileges.Item10" xml:space="preserve"><value>Võimalus kandideerida sessiooni panustama või seda juhtima</value></data>
+  <data name="Membership.Privileges.Item11" xml:space="preserve"><value>Võimalus soovitada tulevasi liikmeid</value></data>
+  <data name="Membership.Privileges.Item12" xml:space="preserve"><value>Kutsed valitud privaatsetele kohtumistele</value></data>
+  <data name="Membership.Standard.Heading" xml:space="preserve"><value>House'i standard</value></data>
+  <data name="Membership.Standard.Lede" xml:space="preserve"><value>Ruumi väärtus sõltub sellest, keda sinna sisse lastakse.</value></data>
+  <data name="Membership.Standard.NoPitch.Title" xml:space="preserve"><value>Ei külmmüügile</value></data>
+  <data name="Membership.Standard.NoPitch.Body" xml:space="preserve"><value>Kogukond ei ole müüginimekiri.</value></data>
+  <data name="Membership.Standard.NoBlast.Title" xml:space="preserve"><value>Ei massisõnumitele</value></data>
+  <data name="Membership.Standard.NoBlast.Body" xml:space="preserve"><value>Suhted algavad asjakohasusest, mitte mahust.</value></data>
+  <data name="Membership.Standard.Curated.Title" xml:space="preserve"><value>Valitud panused</value></data>
+  <data name="Membership.Standard.Curated.Body" xml:space="preserve"><value>Äripakkumised, programmid ja reklaam vajavad heakskiitu.</value></data>
+  <data name="Membership.Standard.Confidential.Title" xml:space="preserve"><value>Vaikimisi konfidentsiaalne</value></data>
+  <data name="Membership.Standard.Confidential.Body" xml:space="preserve"><value>Privaatsed vestlused jäävad privaatseks.</value></data>
+  <data name="Membership.Standard.Closing" xml:space="preserve"><value>Pigem väiksem ruum, mida inimesed usaldavad, kui suurem, mida nad eiravad.</value></data>
+  <data name="Membership.Cta.Eyebrow" xml:space="preserve"><value>Teie koht House'is</value></data>
+  <data name="Membership.Cta.Heading" xml:space="preserve"><value>Õige ruum muudab kõike.</value></data>
+  <data name="Membership.Cta.Body" xml:space="preserve"><value>Kandideerige privaatsesse kogukonda, mis on ehitatud sisu, ambitsiooni ja teel kohatavate inimeste ümber.</value></data>
+  <data name="Membership.Cta.Note" xml:space="preserve"><value>Iga avaldus vaadatakse eraldi läbi.</value></data>
   <data name="Membership.HowItWorks" xml:space="preserve"><value>Kuidas liituda</value></data>
   <data name="Membership.Step1.Title" xml:space="preserve"><value>Kandideeri</value></data>
   <data name="Membership.Step1.Body" xml:space="preserve"><value>Räägi meile, kes sa oled ja mida ehitad. Iga avaldus loetakse käsitsi läbi.</value></data>
@@ -855,9 +908,9 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Membership.Step3.Title" xml:space="preserve"><value>Privaatne makselink</value></data>
   <data name="Membership.Step3.Body" xml:space="preserve"><value>Kui sind vastu võetakse, saadame sulle isikliku lingi. See kehtib ainult sulle ja aegub.</value></data>
   <data name="Membership.Step4.Title" xml:space="preserve"><value>Sa oled sees</value></data>
-  <data name="Membership.Step4.Body" xml:space="preserve"><value>Sinu konto luuakse koos maksega. Piletid ja kõik kogemuseks vajalik ootavad seal.</value></data>
+  <data name="Membership.Step4.Body" xml:space="preserve"><value>Teie liikmesus aktiveerub maksega. Teie liikmeprofiil, privaatne kogukonnaligipääs, sessioonid, materjalid ja hüved ootavad teid kontol.</value></data>
   <data name="Membership.SeeExperiences" xml:space="preserve"><value>Vaata kogemusi</value></data>
-  <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Liikmelisust ei müüda. See tuleb koos ruumiga, kuhu sind vastu võetakse.</value></data>
+  <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Liikmesus on ainult kandideerimise teel. Ligipääs algab siis, kui teid on House'i vastu võetud.</value></data>
   <data name="Account.NavJoinTheHouse" xml:space="preserve"><value>Liitu Housega</value></data>
   <data name="Account.NavCommunity" xml:space="preserve"><value>Kogukond</value></data>
   <data name="Admin.Experience.NoFile" xml:space="preserve"><value>Vali fail või kleebi asukoht.</value></data>

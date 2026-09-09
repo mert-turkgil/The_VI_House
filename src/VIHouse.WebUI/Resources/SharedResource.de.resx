@@ -211,7 +211,7 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Membership.Title" xml:space="preserve"><value>Mitgliedschaft</value></data>
   <data name="Membership.Eyebrow" xml:space="preserve"><value>Dem Haus beitreten</value></data>
   <data name="Membership.Heading" xml:space="preserve"><value>Mitgliedschaft</value></data>
-  <data name="Membership.Subheading" xml:space="preserve"><value>Über ein einzelnes Erlebnis hinaus — ganzjähriger Zugang zur The-VI-House-Community.</value></data>
+  <data name="Membership.Subheading" xml:space="preserve"><value>Ein privates Netzwerk für Menschen, die etwas Ernsthaftes aufbauen. Gemeinschaft, kuratierte Vorstellungen, Member Sessions und bevorzugter Zugang zu den Experiences — das ganze Jahr über.</value></data>
   <data name="Membership.PerMonth" xml:space="preserve"><value>/ Monat</value></data>
   <data name="Membership.PerYear" xml:space="preserve"><value>/ Jahr</value></data>
   <data name="Membership.OneTime" xml:space="preserve"><value>einmalig</value></data>
@@ -847,6 +847,59 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Admin.Journal.Deleted" xml:space="preserve"><value>Beitrag gelöscht.</value></data>
   <data name="Admin.Journal.AlreadyGone" xml:space="preserve"><value>Dieser Beitrag existiert nicht mehr.</value></data>
   <data name="Admin.Journal.SaveFailed" xml:space="preserve"><value>Das konnte nicht gespeichert werden.</value></data>
+  <data name="Membership.ExploreBenefits" xml:space="preserve"><value>Vorteile entdecken</value></data>
+  <data name="Membership.Unlocks.Heading" xml:space="preserve"><value>Was die Mitgliedschaft öffnet</value></data>
+  <data name="Membership.Unlocks.Network.Title" xml:space="preserve"><value>Privates Mitgliedernetzwerk</value></data>
+  <data name="Membership.Unlocks.Network.Body" xml:space="preserve"><value>Zugang zur privaten VI House Community, zu Mitgliedsprofilen und eigenen digitalen Räumen für Gründer, Operators, Kreative und Fachleute.</value></data>
+  <data name="Membership.Unlocks.Intros.Title" xml:space="preserve"><value>Kuratierte Vorstellungen</value></data>
+  <data name="Membership.Unlocks.Intros.Body" xml:space="preserve"><value>Durchdachte Vorstellungen — danach, was Sie aufbauen, was Sie beitragen können und wen kennenzulernen Ihnen wirklich hilft.</value></data>
+  <data name="Membership.Unlocks.Sessions.Title" xml:space="preserve"><value>Member Sessions</value></data>
+  <data name="Membership.Unlocks.Sessions.Body" xml:space="preserve"><value>Private Gründer-Roundtables, Expertensessions, Workshops, Q&amp;As und praktische Gespräche, ausschließlich für Mitglieder.</value></data>
+  <data name="Membership.Unlocks.Library.Title" xml:space="preserve"><value>Mitglieder-Bibliothek</value></data>
+  <data name="Membership.Unlocks.Library.Body" xml:space="preserve"><value>Ausgewählte Session-Aufzeichnungen, Frameworks, Leitfäden, Ressourcen und Erkenntnisse von The VI House und geprüften Mitgliedern.</value></data>
+  <data name="Membership.Unlocks.Marketplace.Title" xml:space="preserve"><value>Marktplatz &amp; Partnervorteile</value></data>
+  <data name="Membership.Unlocks.Marketplace.Body" xml:space="preserve"><value>Entdecken Sie geprüfte Dienstleistungen, Programme und Partner für die VI House Community, inklusive Angeboten nur für Mitglieder.</value></data>
+  <data name="Membership.Unlocks.Priority.Title" xml:space="preserve"><value>Bevorzugte Experiences</value></data>
+  <data name="Membership.Unlocks.Priority.Body" xml:space="preserve"><value>Bevorzugter Zugang und Mitgliedervorteile für ausgewählte VI House Retreats, Dinner, private Treffen und Experiences mit begrenzter Platzzahl.</value></data>
+  <data name="Membership.Month.Heading" xml:space="preserve"><value>Ein Monat im House</value></data>
+  <data name="Membership.Month.Lede" xml:space="preserve"><value>Keine zwei Monate sind gleich. Der Rhythmus schon.</value></data>
+  <data name="Membership.Month.Session.Title" xml:space="preserve"><value>Member Session</value></data>
+  <data name="Membership.Month.Session.Body" xml:space="preserve"><value>Ein Live-Gespräch, ein Workshop oder eine von Fachleuten geführte Session zum Aufbauen, Betreiben und Wachsen ernsthafter Unternehmen.</value></data>
+  <data name="Membership.Month.Roundtable.Title" xml:space="preserve"><value>Privater Roundtable</value></data>
+  <data name="Membership.Month.Roundtable.Body" xml:space="preserve"><value>Kleinere Räume, in denen Mitglieder Erfahrungen, Fragen und Ideen ohne Publikum austauschen.</value></data>
+  <data name="Membership.Month.Connections.Title" xml:space="preserve"><value>Kuratierte Verbindungen</value></data>
+  <data name="Membership.Month.Connections.Body" xml:space="preserve"><value>Durchdachte Vorstellungen und Mitgliederentdeckung — nach Relevanz statt nach Menge.</value></data>
+  <data name="Membership.Month.Always.Title" xml:space="preserve"><value>Das House, immer offen</value></data>
+  <data name="Membership.Month.Always.Body" xml:space="preserve"><value>Private Community-Räume, Ressourcen, Gespräche, Gelegenheiten und kommende Experiences — den ganzen Monat über.</value></data>
+  <data name="Membership.Privileges.Heading" xml:space="preserve"><value>Mitgliedervorteile</value></data>
+  <data name="Membership.Privileges.Body" xml:space="preserve"><value>Die Mitgliedschaft ist so angelegt, dass das gesamte VI House Ökosystem mit der Zeit immer nützlicher für Sie wird.</value></data>
+  <data name="Membership.Privileges.Item1" xml:space="preserve"><value>Privates VI House Mitgliedsprofil</value></data>
+  <data name="Membership.Privileges.Item2" xml:space="preserve"><value>Zugang zu privaten Community-Räumen</value></data>
+  <data name="Membership.Privileges.Item3" xml:space="preserve"><value>Sessions und Roundtables nur für Mitglieder</value></data>
+  <data name="Membership.Privileges.Item4" xml:space="preserve"><value>Kuratierte Vorstellungen unter Mitgliedern</value></data>
+  <data name="Membership.Privileges.Item5" xml:space="preserve"><value>Session-Archiv und Ressourcenbibliothek</value></data>
+  <data name="Membership.Privileges.Item6" xml:space="preserve"><value>Zugang zu geprüften Marktplatz-Programmen</value></data>
+  <data name="Membership.Privileges.Item7" xml:space="preserve"><value>Ausgewählte Partnervorteile nur für Mitglieder</value></data>
+  <data name="Membership.Privileges.Item8" xml:space="preserve"><value>Früher Zugang zu Experiences mit begrenzter Platzzahl</value></data>
+  <data name="Membership.Privileges.Item9" xml:space="preserve"><value>Vorzugspreise für Mitglieder bei ausgewählten Veranstaltungen</value></data>
+  <data name="Membership.Privileges.Item10" xml:space="preserve"><value>Möglichkeit, eine Session beizutragen oder zu leiten</value></data>
+  <data name="Membership.Privileges.Item11" xml:space="preserve"><value>Möglichkeit, künftige Mitglieder vorzuschlagen</value></data>
+  <data name="Membership.Privileges.Item12" xml:space="preserve"><value>Einladungen zu ausgewählten privaten Zusammenkünften</value></data>
+  <data name="Membership.Standard.Heading" xml:space="preserve"><value>Der House-Standard</value></data>
+  <data name="Membership.Standard.Lede" xml:space="preserve"><value>Der Wert des Raums hängt davon ab, wer hinein darf.</value></data>
+  <data name="Membership.Standard.NoPitch.Title" xml:space="preserve"><value>Keine Kaltakquise</value></data>
+  <data name="Membership.Standard.NoPitch.Body" xml:space="preserve"><value>Die Community ist keine Leadliste.</value></data>
+  <data name="Membership.Standard.NoBlast.Title" xml:space="preserve"><value>Keine Massennachrichten</value></data>
+  <data name="Membership.Standard.NoBlast.Body" xml:space="preserve"><value>Beziehungen beginnen mit Relevanz, nicht mit Menge.</value></data>
+  <data name="Membership.Standard.Curated.Title" xml:space="preserve"><value>Kuratierte Beiträge</value></data>
+  <data name="Membership.Standard.Curated.Body" xml:space="preserve"><value>Kommerzielle Angebote, Programme und Werbung brauchen eine Freigabe.</value></data>
+  <data name="Membership.Standard.Confidential.Title" xml:space="preserve"><value>Vertraulich als Standard</value></data>
+  <data name="Membership.Standard.Confidential.Body" xml:space="preserve"><value>Private Gespräche bleiben privat.</value></data>
+  <data name="Membership.Standard.Closing" xml:space="preserve"><value>Lieber ein kleinerer Raum, dem Menschen vertrauen, als ein größerer, den sie ignorieren.</value></data>
+  <data name="Membership.Cta.Eyebrow" xml:space="preserve"><value>Ihr Platz im House</value></data>
+  <data name="Membership.Cta.Heading" xml:space="preserve"><value>Der richtige Raum verändert alles.</value></data>
+  <data name="Membership.Cta.Body" xml:space="preserve"><value>Bewerben Sie sich um einen Platz in einer privaten Gemeinschaft rund um Substanz, Ambition und die Menschen, die den Weg lohnenswert machen.</value></data>
+  <data name="Membership.Cta.Note" xml:space="preserve"><value>Jede Bewerbung wird einzeln geprüft.</value></data>
   <data name="Membership.HowItWorks" xml:space="preserve"><value>So werden Sie Mitglied</value></data>
   <data name="Membership.Step1.Title" xml:space="preserve"><value>Bewerben</value></data>
   <data name="Membership.Step1.Body" xml:space="preserve"><value>Erzählen Sie uns, wer Sie sind und was Sie aufbauen. Jede Bewerbung wird von Hand gelesen.</value></data>
@@ -855,9 +908,9 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Membership.Step3.Title" xml:space="preserve"><value>Ein privater Zahlungslink</value></data>
   <data name="Membership.Step3.Body" xml:space="preserve"><value>Werden Sie angenommen, senden wir Ihnen einen eigenen Link. Er gilt nur für Sie und läuft ab.</value></data>
   <data name="Membership.Step4.Title" xml:space="preserve"><value>Sie sind dabei</value></data>
-  <data name="Membership.Step4.Body" xml:space="preserve"><value>Ihr Konto entsteht mit der Zahlung. Ihre Tickets und alles Weitere zur Experience warten darin.</value></data>
+  <data name="Membership.Step4.Body" xml:space="preserve"><value>Ihre Mitgliedschaft wird mit Ihrer Zahlung aktiviert. Ihr Mitgliedsprofil, der private Community-Zugang, Sessions, Ressourcen und Vorteile warten in Ihrem Konto.</value></data>
   <data name="Membership.SeeExperiences" xml:space="preserve"><value>Experiences ansehen</value></data>
-  <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Mitgliedschaft wird nicht verkauft. Sie kommt mit dem Raum, in den Sie aufgenommen werden.</value></data>
+  <data name="Membership.ApplicationOnlyNote" xml:space="preserve"><value>Mitgliedschaft gibt es nur auf Bewerbung. Der Zugang beginnt, sobald Sie im House aufgenommen sind.</value></data>
   <data name="Account.NavJoinTheHouse" xml:space="preserve"><value>Dem House beitreten</value></data>
   <data name="Account.NavCommunity" xml:space="preserve"><value>Community</value></data>
   <data name="Admin.Experience.NoFile" xml:space="preserve"><value>Bitte eine Datei auswählen oder einen Pfad einfügen.</value></data>

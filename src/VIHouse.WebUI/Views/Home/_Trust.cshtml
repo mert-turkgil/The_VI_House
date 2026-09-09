@@ -14,7 +14,7 @@
                 {
                     <p>@Model.Body</p>
                 }
-                <a class="home-trust__cta" href="@(Model.CtaUrl ?? "/membership")">
+                <a class="home-trust__cta" href="@(VIHouse.WebUI.Localization.CultureUrlHelper.Localise(Model.CtaUrl ?? "/membership"))">
                     @(Model.CtaLabel ?? Loc["Home.Trust.BecomeMember"].Value)
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M4 12h15M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />

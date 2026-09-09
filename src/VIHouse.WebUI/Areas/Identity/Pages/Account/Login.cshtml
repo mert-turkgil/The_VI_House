@@ -56,7 +56,7 @@
 
     <div class="auth-alt">
         <p><a id="forgot-password" asp-page="./ForgotPassword">@Loc["Auth.ForgotPassword"]</a></p>
-        <p>@Loc["Auth.NotAMember"] <a href="/apply">@Loc["Auth.RequestAccess"]</a></p>
+        <p>@Loc["Auth.NotAMember"] <a asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@VIHouse.Entities.Experiences.ExperienceStatus.ApplicationsOpen">@Loc["Auth.RequestAccess"]</a></p>
     </div>
 
     @if ((Model.ExternalLogins?.Count ?? 0) > 0)

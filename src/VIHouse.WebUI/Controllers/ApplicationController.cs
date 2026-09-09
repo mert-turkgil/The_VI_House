@@ -1,13 +1,10 @@
-using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using VIHouse.Business.Abstract;
-using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Applications;
 using VIHouse.Entities.Experiences;
 using VIHouse.WebUI.Services;
 using VIHouse.WebUI.ViewModels.Applications;
-using VIHouse.WebUI.ViewModels.Experiences;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -23,11 +20,27 @@ public class ApplicationController(IExperienceService experienceService, IApplic
 
         if (exp is null || exp.Visibility != ExperienceVisibility.Public || !CanApply(exp.Status))
         {
-            var open = await experienceService.GetPublicListingAsync(
-                new ExperienceFilter { Status = ExperienceStatus.ApplicationsOpen, Take = 20 }, ct);
-            ViewData["Title"] = "Request Access";
-            var culture = CultureInfo.CurrentUICulture.Name;
-            return View("ChooseExperience", open.Select(e => ExperienceCardViewModel.FromEntity(e, culture)).ToList());
+            // The listing, not a chooser of our own.
+            //
+            // This used to render ChooseExperience.cshtml: a second grid of the same cards, with no
+            // city filter, no status chips and no trending topics — a worse copy of /experiences
+            // that had to be kept in step with it by hand. Anyone who arrives here without naming a
+            // valid, open experience now goes to the real listing, already filtered to the ones
+            // they can actually apply for.
+            //
+            // It also catches the case where the slug names an experience that has since closed,
+            // which the chooser handled by silently showing something else entirely.
+            //
+            // Temporary (302), not permanent, and that is deliberate: this branch fires on mutable
+            // state. An experience that is full today may reopen tomorrow, and a 301 would have
+            // browsers caching "this experience redirects to the listing" long after it stopped
+            // being true. The bare /apply case would be safe as a 301; the closed-experience case
+            // would not, and they share the exit.
+            return RedirectToAction("Index", "Experiences", new
+            {
+                area = "",
+                status = nameof(ExperienceStatus.ApplicationsOpen),
+            });
         }
 
         var form = BuildForm(exp);

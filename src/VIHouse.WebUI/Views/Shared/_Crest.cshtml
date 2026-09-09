@@ -1,6 +1,29 @@
-@* Hexagon "VI" crest — the brand mark used in the nav and footer (brief §8: simple, symmetric, legible small). *@
+@* Hexagon "VI" crest — the brand mark used in the nav, footer and elsewhere (brief §8: simple,
+   symmetric, legible small). Redrawn to match the studio mark: a double hexagon border, "THE VI"
+   above the monogram, and the gold pin-and-diamond flourish either side of it.
+
+   Everything but the gold accent rides on currentColor rather than a fixed green, which is what
+   lets the one mark drop onto a dark header, a faded hero watermark (color: var(--vih-line-on-dark))
+   or a muted cream empty-state icon (color: var(--vih-green-900)) without a second colour to manage
+   per context — see _nav.scss, _footer.scss, _admin.scss and _home.scss for each of those. The gold
+   is the one brand accent used the same way regardless of ground (chips, borders, badges elsewhere
+   on the site), so it is the one place this mark is never currentColor. *@
 <svg viewBox="0 0 100 100" role="img" aria-hidden="true" focusable="false">
     <polygon points="50,4 91,27 91,73 50,96 9,73 9,27" fill="none" stroke="currentColor" stroke-width="3" />
-    <text x="50" y="47" text-anchor="middle" font-family="Georgia, 'Playfair Display', serif" font-size="28" font-weight="600" fill="currentColor">VI</text>
-    <text x="50" y="68" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" letter-spacing="1" fill="currentColor">EST. MMXXVI</text>
+    <polygon points="50,13 83,32 83,68 50,87 17,68 17,32" fill="none" stroke="currentColor" stroke-width="1.4" />
+
+    <text x="50" y="26" text-anchor="middle" font-family="Georgia, 'Playfair Display', serif" font-style="italic" font-size="8" letter-spacing="3" fill="currentColor">THE VI</text>
+    <text x="50" y="66" text-anchor="middle" font-family="Georgia, 'Playfair Display', serif" font-size="34" font-weight="700" fill="currentColor">VI</text>
+
+    <g stroke="var(--vih-gold)" fill="none" stroke-width="1.2">
+        <circle cx="22" cy="53" r="2" />
+        <line x1="24" y1="53" x2="30" y2="53" />
+        <circle cx="78" cy="53" r="2" />
+        <line x1="76" y1="53" x2="70" y2="53" />
+    </g>
+    <g fill="var(--vih-gold)">
+        <rect x="28" y="51" width="4" height="4" transform="rotate(45 30 53)" />
+        <rect x="66" y="51" width="4" height="4" transform="rotate(45 68 53)" />
+        <rect x="48" y="76" width="4" height="4" transform="rotate(45 50 78)" />
+    </g>
 </svg>

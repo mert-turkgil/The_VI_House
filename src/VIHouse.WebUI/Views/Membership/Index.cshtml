@@ -9,28 +9,207 @@
         VIHouse.Entities.Membership.MembershipBillingPeriod.Annual => Loc["Membership.PerYear"],
         _ => Loc["Membership.OneTime"],
     };
+
+    // The same self-contained line-icon approach _FeatureStrip.cshtml uses, and for the same
+    // reason: ten glyphs is not worth an icon library.
+    //
+    // Every glyph is drawn to one optical box — roughly x/y 5..19 of the 24 viewBox — at one stroke
+    // weight, so none reads heavier or larger than the one beside it. Keep new glyphs inside those
+    // bounds; a path that runs to the viewBox edge looks oversized next to the rest even though the
+    // <svg> element is the same size.
+    //
+    // pathLength="1" normalises every shape to a length of 1 so the hover draw-in in
+    // _membership.scss runs at the same speed on all of them. Without it a short line finishes long
+    // before a long outline and the icons appear to animate at different rates.
+    //
+    // Keyed on a stable string, never on the visible label: labels are translated, keys are not.
+    // The homepage strip learned that the hard way — see HomeController.WithIcons.
+    string IconPath(string key) => key switch
+    {
+        // Two figures, one behind the other: a network of people rather than a single member.
+        "network" => "<circle pathLength=\"1\" cx=\"10\" cy=\"9.2\" r=\"2.6\"/><path pathLength=\"1\" d=\"M5.6 18.4c0-2.6 2-4.4 4.4-4.4s4.4 1.8 4.4 4.4\"/><path pathLength=\"1\" d=\"M15.4 7.1a2.3 2.3 0 0 1 0 4.4\"/><path pathLength=\"1\" d=\"M16.6 14.4c1.3.6 2.1 1.9 2.1 3.6\"/>",
+        // Three nodes joined by two lines — an introduction being made between them.
+        "intros" => "<circle pathLength=\"1\" cx=\"7\" cy=\"12\" r=\"2\"/><circle pathLength=\"1\" cx=\"17\" cy=\"7.4\" r=\"2\"/><circle pathLength=\"1\" cx=\"17\" cy=\"16.6\" r=\"2\"/><path pathLength=\"1\" d=\"M8.8 11.1 15.2 8.3\"/><path pathLength=\"1\" d=\"M8.8 12.9l6.4 2.8\"/>",
+        // A calendar: sessions happen on dates.
+        "sessions" => "<rect pathLength=\"1\" x=\"5.4\" y=\"6.8\" width=\"13.2\" height=\"11.8\" rx=\"1.6\"/><path pathLength=\"1\" d=\"M5.4 10.4h13.2\"/><path pathLength=\"1\" d=\"M9 5.4v2.8\"/><path pathLength=\"1\" d=\"M15 5.4v2.8\"/>",
+        // An open book, matching the "learn" glyph on the homepage so the two read as siblings.
+        "library" => "<path pathLength=\"1\" d=\"M12 8.2c-1.7-1-3.8-1.6-6.1-1.6v10.7c2.3 0 4.4.6 6.1 1.6 1.7-1 3.8-1.6 6.1-1.6V6.6c-2.3 0-4.4.6-6.1 1.6Z\"/><path pathLength=\"1\" d=\"M12 8.2v10.7\"/>",
+        // A star: selected, vetted, not merely listed.
+        "marketplace" => "<path pathLength=\"1\" d=\"m12 5.8 2 4.1 4.5.6-3.3 3.2.8 4.5-4-2.1-4 2.1.8-4.5-3.3-3.2 4.5-.6Z\"/>",
+        // A crown for priority — the one glyph that says "before everyone else" without words.
+        "priority" => "<path pathLength=\"1\" d=\"M5.6 8.6 8 13l4-6.2L16 13l2.4-4.4v8.8H5.6Z\"/><path pathLength=\"1\" d=\"M5.6 17.4h12.8\"/>",
+        // A circle with a bar through it. Prohibition, drawn plainly.
+        "nopitch" => "<circle pathLength=\"1\" cx=\"12\" cy=\"12\" r=\"6.4\"/><path pathLength=\"1\" d=\"m7.5 7.5 9 9\"/>",
+        // A speech bubble: messaging, and the rule about how much of it.
+        "noblast" => "<path pathLength=\"1\" d=\"M18.4 14.4a1.6 1.6 0 0 1-1.6 1.6H9.2L5.6 18.4V7.2a1.6 1.6 0 0 1 1.6-1.6h9.6a1.6 1.6 0 0 1 1.6 1.6Z\"/>",
+        // A shield: contributions are vetted before they reach anyone.
+        "curated" => "<path pathLength=\"1\" d=\"M12 5.4 6.6 7.6v4.1c0 3.3 2.3 5.8 5.4 6.9 3.1-1.1 5.4-3.6 5.4-6.9V7.6Z\"/>",
+        // A padlock, shackle closed.
+        "confidential" => "<rect pathLength=\"1\" x=\"6.6\" y=\"11.2\" width=\"10.8\" height=\"7.4\" rx=\"1.4\"/><path pathLength=\"1\" d=\"M9 11.2V9.1a3 3 0 0 1 6 0v2.1\"/>",
+        _ => "<rect pathLength=\"1\" x=\"7.4\" y=\"7.4\" width=\"9.2\" height=\"9.2\" rx=\"1.2\" transform=\"rotate(45 12 12)\"/>",
+    };
+
+    // Section 2 and section 5 are both "icon, title, one line of body", so they share a shape and
+    // differ only in which resource keys they read. Kept as local data rather than markup repeated
+    // six then four times over.
+    var unlocks = new[]
+    {
+        ("network", "Membership.Unlocks.Network"),
+        ("intros", "Membership.Unlocks.Intros"),
+        ("sessions", "Membership.Unlocks.Sessions"),
+        ("library", "Membership.Unlocks.Library"),
+        ("marketplace", "Membership.Unlocks.Marketplace"),
+        ("priority", "Membership.Unlocks.Priority"),
+    };
+
+    var standards = new[]
+    {
+        ("nopitch", "Membership.Standard.NoPitch"),
+        ("noblast", "Membership.Standard.NoBlast"),
+        ("curated", "Membership.Standard.Curated"),
+        ("confidential", "Membership.Standard.Confidential"),
+    };
+
+    var month = new[]
+    {
+        "Membership.Month.Session",
+        "Membership.Month.Roundtable",
+        "Membership.Month.Connections",
+        "Membership.Month.Always",
+    };
 }
 
-<div class="content-hero">
+<div class="content-hero membership-hero">
     <div class="container">
         <span class="content-hero__eyebrow">@Loc["Membership.Eyebrow"]</span>
         <h1>@Loc["Membership.Heading"]</h1>
         <p>@Loc["Membership.Subheading"]</p>
+
+        <div class="membership-hero__actions">
+            <a class="btn btn--primary" asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Nav.ApplyToJoin"]</a>
+            @* An in-page jump, so the second button is useful on a page this long rather than a
+               second route away from it. *@
+            <a class="btn btn--ghost-dark" href="#membership-benefits">@Loc["Membership.ExploreBenefits"]</a>
+        </div>
     </div>
 </div>
 
-<div class="container membership-body">
-    @if (TempData["MembershipError"] is string error)
-    {
-        <div class="apply-form__summary" style="margin-bottom:24px;">@error</div>
-    }
+@if (TempData["MembershipError"] is string error)
+{
+    <div class="container" style="padding-top:24px;">
+        <div class="apply-form__summary">@error</div>
+    </div>
+}
 
+@* --- What membership unlocks ------------------------------------------------------------------ *@
+<section class="membership-section" id="membership-benefits" data-reveal>
+    <div class="container">
+        <h2 class="membership-section__heading">@Loc["Membership.Unlocks.Heading"]</h2>
+
+        <div class="membership-unlocks">
+            @{ var unlockIndex = 0; }
+            @foreach (var (icon, key) in unlocks)
+            {
+                <article class="membership-unlock" data-reveal data-reveal-delay="@(unlockIndex++ * 70)">
+                    <span class="membership-unlock__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            @Html.Raw(IconPath(icon))
+                        </svg>
+                    </span>
+                    <div>
+                        <h3 class="membership-unlock__title">@Loc[$"{key}.Title"]</h3>
+                        <p class="membership-unlock__body">@Loc[$"{key}.Body"]</p>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* --- A month inside the house ------------------------------------------------------------------ *@
+<section class="membership-month" data-reveal>
+    <div class="container">
+        <h2 class="membership-month__heading">@Loc["Membership.Month.Heading"]</h2>
+        <p class="membership-month__lede">@Loc["Membership.Month.Lede"]</p>
+
+        <div class="membership-month__grid">
+            @{ var monthIndex = 0; }
+            @foreach (var key in month)
+            {
+                monthIndex++;
+                <div class="membership-month__item" data-reveal data-reveal-delay="@((monthIndex - 1) * 80)">
+                    @* Written out rather than a CSS counter: these read as labels ("01") that belong
+                       to the copy, and a counter would put them out of reach of a screen reader. *@
+                    <span class="membership-month__number" aria-hidden="true">@monthIndex.ToString("00")</span>
+                    <h3 class="membership-month__title">@Loc[$"{key}.Title"]</h3>
+                    <p class="membership-month__body">@Loc[$"{key}.Body"]</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@* --- Member privileges ------------------------------------------------------------------------- *@
+<section class="membership-section membership-section--tinted" data-reveal>
+    <div class="container membership-privileges">
+        <div class="membership-privileges__intro">
+            <h2 class="membership-section__heading membership-section__heading--left">@Loc["Membership.Privileges.Heading"]</h2>
+            <p class="membership-privileges__lede">@Loc["Membership.Privileges.Body"]</p>
+        </div>
+
+        <ul class="membership-privileges__list">
+            @for (var i = 1; i <= 12; i++)
+            {
+                <li class="membership-privileges__item">
+                    <span class="membership-privileges__tick" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m8 12.4 2.8 2.8 5.2-6" />
+                        </svg>
+                    </span>
+                    @Loc[$"Membership.Privileges.Item{i}"]
+                </li>
+            }
+        </ul>
+    </div>
+</section>
+
+@* --- The house standard ------------------------------------------------------------------------ *@
+<section class="membership-standard" data-reveal>
+    <div class="container">
+        <h2 class="membership-section__heading">@Loc["Membership.Standard.Heading"]</h2>
+        <p class="membership-standard__lede">@Loc["Membership.Standard.Lede"]</p>
+
+        <div class="membership-standard__grid">
+            @{ var standardIndex = 0; }
+            @foreach (var (icon, key) in standards)
+            {
+                <div class="membership-standard__item" data-reveal data-reveal-delay="@(standardIndex++ * 70)">
+                    <span class="membership-standard__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            @Html.Raw(IconPath(icon))
+                        </svg>
+                    </span>
+                    <h3 class="membership-standard__title">@Loc[$"{key}.Title"]</h3>
+                    <p class="membership-standard__body">@Loc[$"{key}.Body"]</p>
+                </div>
+            }
+        </div>
+
+        <p class="membership-standard__closing">@Loc["Membership.Standard.Closing"]</p>
+    </div>
+</section>
+
+@* --- How you join, or the plans when membership is on sale ------------------------------------- *@
+<div class="container membership-body">
     @if (Model.Count == 0)
     {
         @* No plans means membership is not on sale — the ordinary state while the House is
            application-only (see FeatureOptions.MembershipSales). This is the page's real job in
            Phase 1: say what membership is, and point at the one way to get it. *@
-        <div class="membership-route">
+        <div class="membership-route" data-reveal>
             <h2>@Loc["Membership.HowItWorks"]</h2>
             <ol class="membership-route__steps">
                 <li>
@@ -52,8 +231,8 @@
             </ol>
 
             <div class="membership-route__actions">
-                <a class="btn btn--primary" asp-controller="Application" asp-action="Index">@Loc["Nav.ApplyToJoin"]</a>
-                <a class="btn btn--ghost" asp-controller="Experiences" asp-action="Index">@Loc["Membership.SeeExperiences"]</a>
+                <a class="btn btn--primary" asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Nav.ApplyToJoin"]</a>
+                <a class="btn btn--ghost" asp-area="" asp-controller="Experiences" asp-action="Index">@Loc["Membership.SeeExperiences"]</a>
             </div>
 
             <p class="membership-route__note">@Loc["Membership.ApplicationOnlyNote"]</p>
@@ -64,7 +243,7 @@
         <div class="membership-plan-grid">
             @foreach (var plan in Model)
             {
-                <div class="membership-plan-card">
+                <div class="membership-plan-card" data-reveal>
                     <h3>@plan.Name</h3>
                     <div class="membership-plan-card__price">
                         @MoneyFormatter.Format(plan.PriceMinor, plan.Currency)
@@ -95,10 +274,21 @@
                            member to a login page would be asking them to sign in to an account they
                            haven't bought yet — the account is created by the purchase, not before it. *@
                         <a class="btn btn--primary" style="width:100%;"
-                           asp-controller="Join" asp-action="Index" asp-route-plan="@plan.Id">@Loc["Membership.Join"]</a>
+                           asp-area="" asp-controller="Join" asp-action="Index" asp-route-plan="@plan.Id">@Loc["Membership.Join"]</a>
                     }
                 </div>
             }
         </div>
     }
 </div>
+
+@* --- Closing call to action -------------------------------------------------------------------- *@
+<section class="membership-cta" data-reveal>
+    <div class="container">
+        <span class="membership-cta__eyebrow">@Loc["Membership.Cta.Eyebrow"]</span>
+        <h2 class="membership-cta__heading">@Loc["Membership.Cta.Heading"]</h2>
+        <p class="membership-cta__body">@Loc["Membership.Cta.Body"]</p>
+        <a class="btn btn--primary" asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Nav.ApplyToJoin"]</a>
+        <p class="membership-cta__note">@Loc["Membership.Cta.Note"]</p>
+    </div>
+</section>

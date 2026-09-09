@@ -39,9 +39,10 @@
     <a class="@NavClass("Notifications")" asp-controller="Account" asp-action="Notifications">@Loc["Notif.Title"]</a>
     @if (!hasMembership)
     {
-        @* Membership is not sold; it is applied for. This points at the application rather than at a
-           plan list — see Controllers/MembershipController and FeatureOptions.MembershipSales. *@
-        <a asp-controller="Application" asp-action="Index">@Loc["Account.NavJoinTheHouse"]</a>
+        @* Membership is not sold; it is applied for. This points at the experiences that are open
+           for applications rather than at a plan list — see Controllers/MembershipController and
+           FeatureOptions.MembershipSales. *@
+        <a asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Account.NavJoinTheHouse"]</a>
     }
     <a asp-area="Identity" asp-page="/Account/Manage/Index">@Loc["Account.NavSecurity"]</a>
 </nav>

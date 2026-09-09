@@ -1,3 +1,5 @@
+@use '../breakpoints' as bp;
+
 // Membership plan catalog (brief §44-46) — pricing-card grid, visually a sibling of
 // .experience-ticket-panel's ticket rows but standalone cards since these aren't tied to an event.
 .membership-body {
@@ -151,4 +153,475 @@
   text-align: center;
   font-size: var(--vih-text-sm);
   color: var(--vih-text-muted);
+}
+
+// =================================================================================================
+// The membership page proper
+// =================================================================================================
+//
+// Everything above this line is the plan catalogue and the application route — the two states the
+// page has always had. What follows is the case the page makes for membership before either of
+// them: what it unlocks, what a month in it looks like, what members get, and the standard the room
+// is held to.
+//
+// House rules that apply throughout: tokens only, no literal colours, no literal breakpoints, and
+// every hover has a reduced-motion counterpart at the foot of the file. Nothing here sets
+// opacity: 0 on content — reveal.ts adds its own hiding class from script precisely so a failed
+// bundle leaves the page readable, and a stray opacity: 0 in CSS would undo that.
+
+// --- Hero -----------------------------------------------------------------------------------------
+
+.membership-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--vih-space-xs);
+  margin-top: var(--vih-space-md);
+}
+
+// --- Shared section frame ------------------------------------------------------------------------
+
+.membership-section {
+  padding-block: var(--vih-section-y);
+  background: var(--vih-surface);
+
+  &--tinted {
+    background: var(--vih-surface-tinted);
+  }
+}
+
+.membership-section__heading {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-display-sm);
+  text-align: center;
+  margin: 0 0 var(--vih-space-xl);
+  color: var(--vih-green-900);
+
+  &--left {
+    text-align: left;
+    margin-bottom: var(--vih-space-sm);
+  }
+}
+
+// --- What membership unlocks ---------------------------------------------------------------------
+
+.membership-unlocks {
+  display: grid;
+  // min() so the track can collapse below its ideal width rather than forcing the page sideways on
+  // a narrow phone — the bug .experience-grid documents at length.
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: var(--vih-space-md);
+}
+
+.membership-unlock {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--vih-space-sm);
+  padding: var(--vih-space-md);
+  background: var(--vih-surface);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+
+  transition:
+    transform var(--vih-dur-base) var(--vih-ease-out),
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    box-shadow var(--vih-dur-base) var(--vih-ease-out);
+
+  &:hover,
+  &:focus-within {
+    transform: translateY(-4px);
+    border-color: var(--vih-gold);
+    box-shadow: var(--vih-shadow-gold);
+  }
+}
+
+.membership-unlock__icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--vih-radius-pill);
+  border: 1px solid var(--vih-line-on-light);
+  color: var(--vih-green-800);
+
+  transition:
+    background var(--vih-dur-base) var(--vih-ease-out),
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    color var(--vih-dur-base) var(--vih-ease-out);
+
+  svg {
+    width: 22px;
+    height: 22px;
+    overflow: visible; // stops the ring clipping the stroke mid-draw
+  }
+}
+
+.membership-unlock:hover .membership-unlock__icon,
+.membership-unlock:focus-within .membership-unlock__icon {
+  background: var(--vih-green-900);
+  border-color: var(--vih-green-900);
+  color: var(--vih-cream);
+}
+
+// The same draw-in the homepage feature strip uses. stroke-dasharray lives in the keyframes rather
+// than on the shape so it only applies while the animation runs: as a resting style it would leave
+// a permanent butt-cap seam where a closed outline begins and ends.
+.membership-unlock:hover .membership-unlock__icon svg > *,
+.membership-unlock:focus-within .membership-unlock__icon svg > * {
+  animation: vih-membership-draw var(--vih-dur-reveal) var(--vih-ease-out);
+}
+
+@keyframes vih-membership-draw {
+  from {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+.membership-unlock__title {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-lg);
+  margin: 0 0 var(--vih-space-3xs);
+  color: var(--vih-green-900);
+}
+
+.membership-unlock__body {
+  margin: 0;
+  font-size: var(--vih-text-base);
+  line-height: 1.65;
+  color: var(--vih-text-secondary);
+}
+
+// --- A month inside the house --------------------------------------------------------------------
+
+.membership-month {
+  padding-block: var(--vih-section-y);
+  background: var(--vih-green-950);
+  color: var(--vih-cream);
+}
+
+.membership-month__heading {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-display-sm);
+  text-align: center;
+  margin: 0 0 var(--vih-space-2xs);
+}
+
+.membership-month__lede {
+  text-align: center;
+  margin: 0 0 var(--vih-space-xl);
+  color: var(--vih-cream-dim);
+}
+
+.membership-month__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--vih-space-lg);
+
+  @include bp.from(bp.$sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include bp.from(bp.$lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// The dividers are borders on the items rather than a separate element, so they appear and
+// disappear with the column count on their own — two columns get one vertical rule, four get three,
+// and a single column gets none at all without any nth-child arithmetic guessing where a row ends.
+.membership-month__item {
+  padding-left: var(--vih-space-md);
+  border-left: 1px solid var(--vih-line-on-dark);
+  transition: border-color var(--vih-dur-base) var(--vih-ease-out);
+
+  &:hover {
+    border-left-color: var(--vih-gold);
+  }
+
+  // Stacked, the rule sits above the item instead of beside it: a vertical rule down the left of a
+  // full-width block reads as a quote, which is not what these are.
+  @include bp.until(bp.$sm) {
+    padding-left: 0;
+    padding-top: var(--vih-space-sm);
+    border-left: 0;
+    border-top: 1px solid var(--vih-line-on-dark);
+
+    &:hover {
+      border-left-color: transparent;
+      border-top-color: var(--vih-gold);
+    }
+  }
+}
+
+.membership-month__number {
+  display: block;
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-xl);
+  color: var(--vih-gold);
+  margin-bottom: var(--vih-space-2xs);
+}
+
+.membership-month__title {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-lg);
+  margin: 0 0 var(--vih-space-2xs);
+}
+
+.membership-month__body {
+  margin: 0;
+  font-size: var(--vih-text-base);
+  line-height: 1.65;
+  color: var(--vih-cream-dim);
+}
+
+// --- Member privileges ---------------------------------------------------------------------------
+
+.membership-privileges {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--vih-space-lg);
+  align-items: start;
+
+  // The intro column is deliberately the narrower of the two: the list is the subject here, and a
+  // 50/50 split would leave the copy running to an uncomfortable measure.
+  @include bp.from(bp.$lg) {
+    grid-template-columns: minmax(240px, 0.8fr) 2.2fr;
+    gap: var(--vih-space-xl);
+  }
+}
+
+.membership-privileges__lede {
+  margin: 0;
+  font-size: var(--vih-text-base);
+  line-height: 1.7;
+  color: var(--vih-text-secondary);
+}
+
+.membership-privileges__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--vih-space-xs) var(--vih-space-lg);
+
+  @include bp.from(bp.$md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.membership-privileges__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--vih-space-2xs);
+  font-size: var(--vih-text-base);
+  line-height: 1.5;
+  color: var(--vih-text-secondary);
+}
+
+.membership-privileges__tick {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: var(--vih-radius-pill);
+  border: 1px solid var(--vih-gold);
+  color: var(--vih-gold);
+
+  transition:
+    background var(--vih-dur-fast) var(--vih-ease-out),
+    color var(--vih-dur-fast) var(--vih-ease-out);
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.membership-privileges__item:hover .membership-privileges__tick {
+  background: var(--vih-gold);
+  color: var(--vih-green-950);
+}
+
+// --- The house standard --------------------------------------------------------------------------
+
+.membership-standard {
+  padding-block: var(--vih-section-y);
+  background: var(--vih-surface-sunken);
+}
+
+// Pulled up under the heading, which carries the section's standard bottom margin. Cheaper than a
+// heading modifier used in exactly one place.
+.membership-standard__lede {
+  text-align: center;
+  margin: calc(var(--vih-space-xl) * -1 + var(--vih-space-2xs)) 0 var(--vih-space-xl);
+  color: var(--vih-text-secondary);
+}
+
+.membership-standard__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--vih-space-lg);
+
+  @include bp.from(bp.$sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include bp.from(bp.$lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.membership-standard__item {
+  padding-inline: var(--vih-space-md);
+  border-left: 1px solid var(--vih-line-on-light);
+
+  @include bp.until(bp.$sm) {
+    padding-inline: 0;
+    border-left: 0;
+  }
+}
+
+.membership-standard__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--vih-space-2xs);
+  border-radius: var(--vih-radius-pill);
+  border: 1px solid var(--vih-line-on-light);
+  color: var(--vih-gold);
+
+  transition:
+    transform var(--vih-dur-slow) var(--vih-ease-out),
+    border-color var(--vih-dur-base) var(--vih-ease-out);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    overflow: visible;
+  }
+}
+
+.membership-standard__item:hover .membership-standard__icon {
+  transform: translateY(-3px);
+  border-color: var(--vih-gold);
+}
+
+.membership-standard__item:hover .membership-standard__icon svg > * {
+  animation: vih-membership-draw var(--vih-dur-reveal) var(--vih-ease-out);
+}
+
+.membership-standard__title {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-lg);
+  margin: 0 0 var(--vih-space-3xs);
+  color: var(--vih-green-900);
+}
+
+.membership-standard__body {
+  margin: 0;
+  font-size: var(--vih-text-sm);
+  line-height: 1.6;
+  color: var(--vih-text-muted);
+}
+
+// A hairline either side rather than a full rule, so the sentence reads as a closing remark on the
+// four points above rather than as the start of something new.
+.membership-standard__closing {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-md);
+  margin: var(--vih-space-xl) 0 0;
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-lg);
+  text-align: center;
+  color: var(--vih-green-900);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--vih-line-on-light);
+  }
+
+  @include bp.until(bp.$md) {
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+}
+
+// --- Closing call to action ----------------------------------------------------------------------
+
+.membership-cta {
+  padding-block: var(--vih-section-y);
+  background: var(--vih-green-950);
+  color: var(--vih-cream);
+  text-align: center;
+}
+
+.membership-cta__eyebrow {
+  display: inline-block;
+  margin-bottom: var(--vih-space-2xs);
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vih-gold-light);
+}
+
+.membership-cta__heading {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-display-md);
+  margin: 0 0 var(--vih-space-xs);
+}
+
+.membership-cta__body {
+  max-width: 46rem;
+  margin: 0 auto var(--vih-space-md);
+  color: var(--vih-cream-dim);
+  line-height: 1.7;
+}
+
+.membership-cta__note {
+  margin: var(--vih-space-sm) 0 0;
+  font-size: var(--vih-text-sm);
+  color: var(--vih-cream-dim);
+}
+
+// --- Reduced motion ------------------------------------------------------------------------------
+// The animation never starts, rather than running fast or being paused — the convention every other
+// reduced-motion block in this codebase follows. The hover colour changes stay: those are feedback,
+// not motion, and removing them would leave the cards feeling dead rather than calm.
+@media (prefers-reduced-motion: reduce) {
+  .membership-unlock,
+  .membership-unlock__icon,
+  .membership-standard__icon,
+  .membership-privileges__tick,
+  .membership-month__item {
+    transition: none;
+  }
+
+  .membership-unlock:hover,
+  .membership-unlock:focus-within,
+  .membership-standard__item:hover .membership-standard__icon {
+    transform: none;
+  }
+
+  .membership-unlock:hover .membership-unlock__icon svg > *,
+  .membership-unlock:focus-within .membership-unlock__icon svg > *,
+  .membership-standard__item:hover .membership-standard__icon svg > * {
+    animation: none;
+  }
 }

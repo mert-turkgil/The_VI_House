@@ -62,8 +62,13 @@ public class HomeController(
                 Heading = ContentBlockContent.Heading(hero, culture) ?? "Where Ambition Meets Alignment.",
                 Subheading = ContentBlockContent.Subheading(hero, culture),
                 CtaLabel = ContentBlockContent.CtaLabel(hero, culture) ?? "Request Access",
-                // Not translated on purpose: a URL is a route, not a sentence.
-                CtaUrl = hero?.CtaUrl ?? "/apply",
+                // Not translated on purpose: a URL is a route, not a sentence. The language
+                // prefix is added at render time — see CultureUrlHelper.Localise in _Hero.cshtml.
+                //
+                // The default points at the experiences that are open for applications rather than
+                // at /apply: that page used to be a second, filterless grid of the same cards, and
+                // is now a redirect to exactly this URL.
+                CtaUrl = hero?.CtaUrl ?? "/experiences?status=ApplicationsOpen",
                 Slides = BuildSlides(await heroSlides.GetVisibleAsync(DateTimeOffset.UtcNow, ct)),
             },
             FeatureStripHeading = ContentBlockContent.Heading(featureStrip, culture) ?? "Find What Matters To You",

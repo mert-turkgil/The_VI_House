@@ -71,7 +71,17 @@ public sealed class CultureUrlHelper(IUrlHelper inner) : IUrlHelper
 
     public string? Link(string? routeName, object? values) => inner.Link(routeName, values);
 
-    private string? Localise(string? url)
+    /// <summary>
+    /// Public and static because views need it too, not only this decorator.
+    ///
+    /// The decorator can only reach URLs the framework generates. A URL typed into the CMS — a hero
+    /// button's target, an ecosystem card's link — is rendered straight into an href and never
+    /// passes through IUrlHelper at all, so it kept its unprefixed form and sent a Turkish reader
+    /// to the English page. Those call sites pass the value through here instead.
+    ///
+    /// Uses no instance state: the culture comes from the request and everything else is static.
+    /// </summary>
+    public static string? Localise(string? url)
     {
         if (string.IsNullOrEmpty(url)) return url;
 
