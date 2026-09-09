@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
 using VIHouse.WebUI.ViewModels.Content;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -15,6 +16,7 @@ public class ContactController(IEmailService emailService, IOptions<SiteOptions>
     public IActionResult Index()
     {
         ViewData["Title"] = loc["Contact.Title"];
+        this.SetSeo(loc["Seo.Contact.Description"].Value, canonicalPath: "/contact");
         return View(new ContactFormViewModel());
     }
 

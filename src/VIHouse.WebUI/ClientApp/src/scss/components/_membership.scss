@@ -1,12 +1,18 @@
 // Membership plan catalog (brief §44-46) — pricing-card grid, visually a sibling of
 // .experience-ticket-panel's ticket rows but standalone cards since these aren't tied to an event.
 .membership-body {
-  padding: 48px 0 96px;
+  // padding-block, not the padding shorthand: this element also carries .container, and a
+  // shorthand resets padding-inline to 0 — which silently threw away the page gutter and
+  // ran the text to the edge of the screen. Only the vertical rhythm belongs here.
+  padding-block: 48px 96px;
 }
 
 .membership-plan-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  // min() so the track can collapse below its ideal width. A bare floor of 280px is wider than a
+  // 320px phone has to give once the gutters are off, so every card overflowed its column and
+  // the page scrolled sideways — the same bug .experience-grid documents at length.
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 24px;
 }
 

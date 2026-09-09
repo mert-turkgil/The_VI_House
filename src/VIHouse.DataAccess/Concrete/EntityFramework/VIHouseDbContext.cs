@@ -10,6 +10,7 @@ using VIHouse.Entities.Compliance;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
 using VIHouse.Entities.Journal;
+using VIHouse.Entities.Settings;
 using VIHouse.Entities.Membership;
 using VIHouse.Entities.Notifications;
 using VIHouse.Entities.Referrals;
@@ -78,6 +79,11 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
     public DbSet<SmsLog> SmsLogs => Set<SmsLog>();
     public DbSet<AuditLogEntry> AuditLogEntries => Set<AuditLogEntry>();
     public DbSet<ConsentRecord> ConsentRecords => Set<ConsentRecord>();
+
+    public DbSet<ContentBlockTranslation> ContentBlockTranslations => Set<ContentBlockTranslation>();
+
+    public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
+    public DbSet<SiteSettingTranslation> SiteSettingTranslations => Set<SiteSettingTranslation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

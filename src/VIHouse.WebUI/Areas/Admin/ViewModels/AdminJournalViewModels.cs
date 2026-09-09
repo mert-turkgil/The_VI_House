@@ -82,6 +82,15 @@ public class AdminJournalTranslationFormViewModel
     [Display(Name = "Admin.Journal.Excerpt")]
     public string? Excerpt { get; set; }
 
+    // Per-language search copy, matching what the experience and seminar editors have always had.
+    [StringLength(200)]
+    [Display(Name = "Admin.Journal.SeoTitle")]
+    public string? SeoTitle { get; set; }
+
+    [StringLength(400)]
+    [Display(Name = "Admin.Journal.SeoDescription")]
+    public string? SeoDescription { get; set; }
+
     [Required]
     [Display(Name = "Admin.Journal.Body")]
     public string Body { get; set; } = default!;
@@ -92,6 +101,8 @@ public class AdminJournalTranslationFormViewModel
         Culture = Culture,
         Title = Title,
         Excerpt = Excerpt,
+        SeoTitle = SeoTitle,
+        SeoDescription = SeoDescription,
         Body = Body,
     };
 
@@ -101,6 +112,8 @@ public class AdminJournalTranslationFormViewModel
         Culture = t.Culture,
         Title = t.Title,
         Excerpt = t.Excerpt,
+        SeoTitle = t.SeoTitle,
+        SeoDescription = t.SeoDescription,
         Body = t.Body,
     };
 

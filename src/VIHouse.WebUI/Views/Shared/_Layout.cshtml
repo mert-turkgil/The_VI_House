@@ -1,10 +1,16 @@
 @using System.Globalization
 <!DOCTYPE html>
-<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+@* The full tag ("en-GB"), not just the language ("en"): it must agree with the hreflang the page
+   declares for itself, and a mismatch between them is a signal search engines act on. *@
+<html lang="@CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - The VI House</title>
+
+    @* Title, description, canonical, hreflang, Open Graph, Twitter card and JSON-LD — all of it,
+       for every page. The title used to be assembled here with a hardcoded English suffix; it is
+       now built from the per-language template on the settings screen. *@
+    <partial name="_Seo" />
 
     @* PWA — brief §65. Admin (_AdminLayout) deliberately doesn't get any of this; it's an internal
        tool, not something a member would install to their home screen. *@

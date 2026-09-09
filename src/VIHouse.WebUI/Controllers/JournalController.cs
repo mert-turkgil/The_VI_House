@@ -5,6 +5,7 @@ using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Journal;
 using VIHouse.WebUI.ViewModels.Journal;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -20,6 +21,7 @@ public class JournalController(IJournalService journalService, IStringLocalizer<
 
         var culture = CultureInfo.CurrentUICulture.Name;
         var model = posts.Select(p => JournalPostCardViewModel.FromEntity(p, culture)).ToList();
+        this.SetSeo(loc["Seo.Journal.Description"].Value, canonicalPath: "/journal");
         return View(model);
     }
 
@@ -29,6 +31,9 @@ public class JournalController(IJournalService journalService, IStringLocalizer<
         var post = await journalService.GetPublicDetailBySlugAsync(slug, ct);
         if (post is null || post.Status != JournalPostStatus.Published)
             return NotFound();
+
+        ViewData["Seo"] = PageSeoBuilder.ForJournalPost(
+            post, CultureInfo.CurrentUICulture.Name, loc["Journal.Heading"].Value);
 
         return View(JournalPostDetailViewModel.FromEntity(
             post, CultureInfo.CurrentUICulture.Name, loc["Journal.Video.Play"].Value));

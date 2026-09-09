@@ -19,6 +19,8 @@ using VIHouse.DataAccess.Concrete.EntityFramework.Seed;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI;
 using VIHouse.WebUI.Filters;
+using Microsoft.AspNetCore.Mvc.Routing;
+using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.Localization;
 using VIHouse.WebUI.Services;
 
@@ -225,6 +227,22 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
 builder.Services.AddScoped<ISeminarService, SeminarService>();
 
+// --- SEO ------------------------------------------------------------------------------------------
+// SiteSettingsService caches its single row in IMemoryCache and evicts on every write, so the
+// layout can read it on every page render without a query. SeoResolver is the one place that
+// decides what the canonical origin is, so the head, the sitemap and llms.txt cannot disagree.
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ISiteSettingRepository, EfSiteSettingRepository>();
+builder.Services.AddScoped<ISiteSettingsService, SiteSettingsService>();
+builder.Services.AddScoped<ISitemapService, SitemapService>();
+builder.Services.AddScoped<SeoResolver>();
+
+// Every generated link keeps the reader's language. Decorates the framework's factory rather than
+// touching a hundred anchors — see CultureUrlHelper for why asp-route-culture cannot do this.
+builder.Services.AddSingleton<IUrlHelperFactory>(sp =>
+    new CultureUrlHelperFactory(new UrlHelperFactory()));
+
 // Local disk today; the interface exists so a move to blob storage/CDN is one new class.
 builder.Services.AddScoped<IMediaStorage, LocalMediaStorage>();
 
@@ -284,12 +302,24 @@ builder.Services.AddSingleton<ResxCatalog>();
 builder.Services.AddSingleton<ResourceManagerStringLocalizerFactory>();
 builder.Services.Replace(ServiceDescriptor.Singleton<IStringLocalizerFactory, ResxStringLocalizerFactory>());
 
+// Lets "{culture:sitelang}" in a route template mean "one of the languages we actually serve".
+builder.Services.AddRouting(options =>
+    options.ConstraintMap["sitelang"] = typeof(SiteLanguageRouteConstraint));
+
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     options.SetDefaultCulture(SiteCultures.Default);
     options.AddSupportedCultures(supportedCultures);
     options.AddSupportedUICultures(supportedCultures);
-    options.RequestCultureProviders = [new CookieRequestCultureProvider { CookieName = CookieRequestCultureProvider.DefaultCookieName }];
+
+    // One provider, and no cookie. The URL is the whole answer: a prefixed path is that language,
+    // an unprefixed path is English. See RouteCultureProvider for why the cookie was taken out of
+    // the chain — in short, /experiences is published as the English URL in the sitemap, the
+    // canonical tag and hreflang, so it has to actually serve English to everybody.
+    //
+    // The cookie is still written by the switcher and is still read, once, to send a returning
+    // visitor from the bare root to their language. It no longer overrides an explicit URL.
+    options.RequestCultureProviders = [new RouteCultureProvider()];
 });
 
 // --- MVC + Razor Pages (Identity UI is Razor-Pages-based) -----------------------------------------
@@ -308,6 +338,15 @@ builder.Services.AddControllersWithViews(options =>
     // exception is the Stripe webhook, which opts out explicitly via [IgnoreAntiforgeryToken]
     // (it's a server-to-server call with no browser cookie/form to carry a token).
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+
+    // Gives every public action a second, language-prefixed route (/de/experiences). See
+    // CulturePrefixConvention — without it the site has one URL per page for four languages, and
+    // three of them are invisible to search.
+    options.Conventions.Add(new CulturePrefixConvention());
+
+    // Keeps the account area, the funnel and the search results out of the index. Self-scoping on
+    // the request path, so the public site is untouched — see NoIndexFilter.
+    options.Filters.Add(typeof(NoIndexFilter));
 })
     // Points [Required]/[StringLength]/[Display] at SharedResource, so a validation message can be
     // a resource key instead of a hard-coded English literal (see TwoFactorSetupViewModel). Keys
@@ -446,9 +485,16 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+// Before routing, because it never reaches an endpoint: a returning visitor asking for "/" is
+// bounced to their language's root. Only "/", and only when a cookie says so — see the class.
+app.UseMiddleware<RootLanguageRedirect>();
 
 app.UseRouting();
+
+// After UseRouting, not before: RouteCultureProvider reads the {culture} route value, which does
+// not exist until the router has matched the endpoint. With these the other way round the URL
+// prefix is silently ignored and every page falls back to the cookie.
+app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
 app.UseRateLimiter();
 
@@ -489,6 +535,14 @@ if (!string.IsNullOrWhiteSpace(adminHost))
 {
     adminRoute.RequireHost(adminHost, "localhost:*", "127.0.0.1:*");
 }
+
+// The language-prefixed twin of the default route, for the one public controller that is routed
+// conventionally rather than by attribute (Home). Registered first so /de resolves to the German
+// homepage; CulturePrefixConvention handles every attribute-routed controller.
+app.MapControllerRoute(
+    name: "default-culture",
+    pattern: "{culture:sitelang}/{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
 
 app.MapControllerRoute(
     name: "default",

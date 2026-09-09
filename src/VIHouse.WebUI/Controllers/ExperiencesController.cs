@@ -9,6 +9,7 @@ using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Experiences;
+using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.ViewModels.Experiences;
 
 namespace VIHouse.WebUI.Controllers;
@@ -23,7 +24,10 @@ public class ExperiencesController(
     [HttpGet("")]
     public async Task<IActionResult> Index(string? city, string? status, CancellationToken ct)
     {
-        ViewData["Title"] = "Experiences";
+        // The listing gets its own description rather than inheriting the site default: a set of
+        // pages sharing one description is a set Google writes its own snippet for.
+        ViewData["Title"] = loc["Experiences.Title"].Value;
+        this.SetSeo(loc["Seo.Experiences.Description"].Value, canonicalPath: "/experiences");
         return View(await BuildIndexAsync(city, status, ct));
     }
 
@@ -74,6 +78,11 @@ public class ExperiencesController(
         // silently unpublished the experience — a 404 for members included.
         if (!await CanSeeAsync(experience, userId, ct))
             return NotFound();
+
+        // Title, description, social image, hreflang set and schema.org/Event — built from the
+        // experience itself rather than left to the layout's defaults. See PageSeoBuilder.
+        ViewData["Seo"] = PageSeoBuilder.ForExperience(
+            experience, CultureInfo.CurrentUICulture.Name, loc["Experiences.Heading"].Value);
 
         var model = ExperienceDetailViewModel.FromEntity(experience, CultureInfo.CurrentUICulture.Name);
         model.Access = await experienceService.GetAccessAsync(experience, userId, ct);

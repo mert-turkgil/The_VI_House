@@ -50,7 +50,10 @@
 
 .journal-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  // min() so the track can collapse below its ideal width. A bare floor of 300px is wider than a
+  // 320px phone has to give once the gutters are off, so every card overflowed its column and
+  // the page scrolled sideways — the same bug .experience-grid documents at length.
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
   gap: 28px;
   padding: 0 0 96px;
 }

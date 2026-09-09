@@ -1,0 +1,188 @@
+@using System.Globalization
+@using VIHouse.WebUI.ViewModels.Seo
+@inject VIHouse.WebUI.Helpers.SeoResolver Seo
+@*
+    Everything a search engine, a social network, a messaging app's link preview or a language model
+    reads about this page.
+
+    Before this partial the site emitted a title and nothing else: no description, no canonical, no
+    Open Graph, no hreflang. A link pasted into WhatsApp previewed as a grey box with a URL, and
+    three of the four languages were invisible to search, because the language lived in a cookie and
+    crawlers do not send cookies.
+
+    Every page gets the full set whether or not it asked for it. One that sets no PageSeo still ends
+    up with a correct title, the site's default description, its canonical URL, four hreflang
+    alternates and a social card — the floor is defined once on the settings screen instead of being
+    forgotten once per page.
+
+    Note the local names. They are deliberately not "page" and "model": in markup, an expression
+    beginning with those words is parsed as the page and model Razor directives rather than as an
+    expression, and the errors point at the line that uses them, not the line that named them.
+*@
+@{
+    var seoPage = ViewData["Seo"] as PageSeo ?? new PageSeo();
+
+    // Every page in the site already sets ViewData["Title"], and none of them knew about PageSeo
+    // until now. Reading it as the fallback means the whole site gets correct titles immediately,
+    // and pages opt into the richer model one at a time — rather than all of them regressing to the
+    // bare site name until each has been converted.
+    if (string.IsNullOrWhiteSpace(seoPage.Title)
+        && ViewData["Title"] is string legacyTitle
+        && !string.IsNullOrWhiteSpace(legacyTitle))
+    {
+        seoPage.Title = legacyTitle;
+    }
+
+    // NoIndexFilter marks the account area, the funnel and the search results. It uses
+    // HttpContext.Items rather than ViewData because the Identity screens are Razor Pages and do
+    // not share a controller's ViewData — see the filter.
+    if (Context.Items.TryGetValue(VIHouse.WebUI.Filters.NoIndexFilter.ItemKey, out var flagged)
+        && flagged is true)
+    {
+        seoPage.NoIndex = true;
+    }
+
+    var settings = await Seo.SettingsAsync();
+    var culture = CultureInfo.CurrentUICulture.Name;
+    var tags = Seo.Resolve(settings, seoPage, culture, Context.Request.Path.Value ?? "/");
+
+    var organizationJson = Seo.OrganizationJsonLd(settings, culture);
+    var breadcrumbJson = Seo.BreadcrumbJsonLd(settings, seoPage, culture);
+}
+
+<title>@tags.Title</title>
+
+@if (!string.IsNullOrWhiteSpace(tags.Description))
+{
+    <meta name="description" content="@tags.Description" />
+}
+
+@* Always absolute, and always built from the settings origin rather than the incoming host — see
+   SeoResolver.Origin. The same page reached through a preview domain, a proxy or "www." must still
+   declare one canonical home, or it splits its own ranking across the lot. *@
+<link rel="canonical" href="@tags.CanonicalUrl" />
+
+@if (tags.NoIndex)
+{
+    <meta name="robots" content="noindex, nofollow, noimageindex" />
+}
+else
+{
+    @* max-image-preview:large is what earns the large thumbnail in a result; without it Google
+       shows a postage stamp or nothing at all. *@
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+}
+
+@* --- Languages ---------------------------------------------------------------------------------
+   The reason the URL carries a language at all. Each alternate is a real, reachable URL that
+   renders in that language, and the set includes this page itself — an entry that omits itself is
+   discarded whole. *@
+@foreach (var alternate in tags.Alternates)
+{
+    <link rel="alternate" hreflang="@alternate.HrefLang" href="@alternate.Url" />
+}
+<link rel="alternate" hreflang="x-default" href="@tags.DefaultUrl" />
+
+@* --- Open Graph -------------------------------------------------------------------------------- *@
+<meta property="og:site_name" content="@tags.SiteName" />
+<meta property="og:type" content="@tags.OgType" />
+<meta property="og:title" content="@tags.Title" />
+<meta property="og:url" content="@tags.CanonicalUrl" />
+<meta property="og:locale" content="@tags.Culture.OpenGraphLocale" />
+
+@foreach (var alternate in tags.Alternates.Where(a => a.OgLocale != tags.Culture.OpenGraphLocale))
+{
+    <meta property="og:locale:alternate" content="@alternate.OgLocale" />
+}
+
+@if (!string.IsNullOrWhiteSpace(tags.Description))
+{
+    <meta property="og:description" content="@tags.Description" />
+}
+
+@if (!string.IsNullOrWhiteSpace(tags.ImageUrl))
+{
+    <meta property="og:image" content="@tags.ImageUrl" />
+    @* Dimensions let a network reserve the right space before the image arrives, which is the
+       difference between a card that appears whole and one that reflows. 1200x630 is the size every
+       network agrees on, and the size the settings screen asks for. *@
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    if (!string.IsNullOrWhiteSpace(tags.ImageAlt))
+    {
+        <meta property="og:image:alt" content="@tags.ImageAlt" />
+    }
+}
+
+@if (tags.OgType == "article")
+{
+    if (seoPage.PublishedAt is { } published)
+    {
+        <meta property="article:published_time" content="@published.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")" />
+    }
+    if (seoPage.ModifiedAt is { } modified)
+    {
+        <meta property="article:modified_time" content="@modified.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")" />
+    }
+    if (!string.IsNullOrWhiteSpace(seoPage.AuthorName))
+    {
+        <meta property="article:author" content="@seoPage.AuthorName" />
+    }
+    if (!string.IsNullOrWhiteSpace(seoPage.Section))
+    {
+        <meta property="article:section" content="@seoPage.Section" />
+    }
+}
+
+@* --- Twitter / X -------------------------------------------------------------------------------
+   summary_large_image only when there is an image to make large; with none, the large card renders
+   as an empty box, where the plain summary looks deliberate. *@
+<meta name="twitter:card" content="@(string.IsNullOrWhiteSpace(tags.ImageUrl) ? "summary" : "summary_large_image")" />
+<meta name="twitter:title" content="@tags.Title" />
+
+@if (!string.IsNullOrWhiteSpace(tags.Description))
+{
+    <meta name="twitter:description" content="@tags.Description" />
+}
+@if (!string.IsNullOrWhiteSpace(tags.ImageUrl))
+{
+    <meta name="twitter:image" content="@tags.ImageUrl" />
+
+    if (!string.IsNullOrWhiteSpace(tags.ImageAlt))
+    {
+        <meta name="twitter:image:alt" content="@tags.ImageAlt" />
+    }
+}
+@if (!string.IsNullOrWhiteSpace(tags.TwitterHandle))
+{
+    <meta name="twitter:site" content="@tags.TwitterHandle" />
+}
+
+@* --- Search console verification ---------------------------------------------------------------
+   Stored as the bare token; the service strips a pasted-in full meta tag down to one, because
+   pasting the whole tag is the mistake everyone makes exactly once. *@
+@if (!string.IsNullOrWhiteSpace(settings.GoogleSiteVerification))
+{
+    <meta name="google-site-verification" content="@settings.GoogleSiteVerification" />
+}
+@if (!string.IsNullOrWhiteSpace(settings.BingSiteVerification))
+{
+    <meta name="msvalidate.01" content="@settings.BingSiteVerification" />
+}
+
+@* --- Structured data ----------------------------------------------------------------------------
+   Organization and WebSite on every page, with stable ids so a per-page graph can point at them
+   rather than restate them. sameAs is what ties this site to its social accounts in a knowledge
+   panel; without it they are unrelated strangers. *@
+<script type="application/ld+json">@Html.Raw(organizationJson)</script>
+
+@if (breadcrumbJson is not null)
+{
+    <script type="application/ld+json">@Html.Raw(breadcrumbJson)</script>
+}
+
+@if (!string.IsNullOrWhiteSpace(seoPage.StructuredDataJson))
+{
+    <script type="application/ld+json">@Html.Raw(seoPage.StructuredDataJson)</script>
+}

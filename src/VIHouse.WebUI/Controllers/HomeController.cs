@@ -9,18 +9,33 @@ using VIHouse.Entities.Content;
 using VIHouse.WebUI.Models;
 using VIHouse.WebUI.ViewModels.Experiences;
 using VIHouse.WebUI.ViewModels.Home;
+using VIHouse.WebUI.Helpers;
+using Microsoft.Extensions.Localization;
 
 namespace VIHouse.WebUI.Controllers;
 
 public class HomeController(
     IExperienceService experienceService,
     IContentPageRepository contentPages,
-    IHeroSlideRepository heroSlides) : Controller
+    IHeroSlideRepository heroSlides,
+    IStringLocalizer<SharedResource> loc) : Controller
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     public async Task<IActionResult> Index(CancellationToken ct)
     {
+        // Passed as fallbacks, not as the title and description themselves: whatever an admin
+        // types into Site & SEO must win, or that screen would appear to do nothing for the one
+        // page it matters most on. These are what a fresh install shows until someone fills it in.
+        this.SetSeoFallbacks(
+            titleFallback: loc["Seo.Home.Title"].Value,
+            descriptionFallback: loc["Seo.Home.Description"].Value,
+            canonicalPath: "/");
+
+        // The reader's language: used for the CMS blocks below and for the experience cards
+        // further down — see ContentBlockContent and ExperienceContent.
+        var culture = CultureInfo.CurrentUICulture.Name;
+
         var page = await contentPages.GetBySlugWithBlocksAsync("home", ct);
         var blocks = page?.Blocks.ToDictionary(b => b.SectionKey) ?? [];
         blocks.TryGetValue("hero", out var hero);
@@ -30,40 +45,51 @@ public class HomeController(
         blocks.TryGetValue("trust", out var trust);
         blocks.TryGetValue("trust-logos", out var trustLogos);
 
-        // The reader's language, for the experience cards further down — see ExperienceContent.
-        var culture = CultureInfo.CurrentUICulture.Name;
-
+        // Every block field goes through ContentBlockContent rather than being read off the row.
+        //
+        // This is what makes the homepage below the hero speak the reader's language. The slider
+        // was already translated (HeroSlideTranslation), everything under it was not — not because
+        // anything was broken, but because ContentBlock had one row per section and nowhere to put
+        // the other three languages. Reading .Heading directly here is now a bug, not a shortcut:
+        // it would serve English to a Turkish reader with no error anywhere to show for it.
+        //
+        // ExtraJson goes through the same resolver, which is the half that matters most — the
+        // feature strip's labels, the statistic captions and the testimonials all live in there.
         var model = new HomeViewModel
         {
             Hero = new HeroContent
             {
-                Heading = hero?.Heading ?? "Where Ambition Meets Alignment.",
-                Subheading = hero?.Subheading,
-                CtaLabel = hero?.CtaLabel ?? "Request Access",
+                Heading = ContentBlockContent.Heading(hero, culture) ?? "Where Ambition Meets Alignment.",
+                Subheading = ContentBlockContent.Subheading(hero, culture),
+                CtaLabel = ContentBlockContent.CtaLabel(hero, culture) ?? "Request Access",
+                // Not translated on purpose: a URL is a route, not a sentence.
                 CtaUrl = hero?.CtaUrl ?? "/apply",
                 Slides = BuildSlides(await heroSlides.GetVisibleAsync(DateTimeOffset.UtcNow, ct)),
             },
-            FeatureStripHeading = featureStrip?.Heading ?? "Find What Matters To You",
-            Features = ParseJsonList<FeatureItem>(featureStrip?.ExtraJson),
+            FeatureStripHeading = ContentBlockContent.Heading(featureStrip, culture) ?? "Find What Matters To You",
+            Features = WithIcons(
+                ParseJsonList<FeatureItem>(ContentBlockContent.ExtraJson(featureStrip, culture)),
+                ParseJsonList<FeatureItem>(featureStrip?.ExtraJson)),
             Ecosystem = new EcosystemContent
             {
-                Heading = ecosystem?.Heading ?? "",
-                Body = ecosystem?.BodyText,
-                CtaLabel = ecosystem?.CtaLabel,
+                Heading = ContentBlockContent.Heading(ecosystem, culture) ?? "",
+                Eyebrow = ContentBlockContent.Subheading(ecosystem, culture),
+                Body = ContentBlockContent.BodyText(ecosystem, culture),
+                CtaLabel = ContentBlockContent.CtaLabel(ecosystem, culture),
                 CtaUrl = ecosystem?.CtaUrl,
-                Pillars = ParseJsonList<EcosystemPillar>(ecosystem?.ExtraJson),
+                Pillars = ParseJsonList<EcosystemPillar>(ContentBlockContent.ExtraJson(ecosystem, culture)),
             },
-            Stats = ParseJsonList<StatItem>(stats?.ExtraJson),
+            Stats = ParseJsonList<StatItem>(ContentBlockContent.ExtraJson(stats, culture)),
             Trust = new TrustContent
             {
-                Eyebrow = trust?.Subheading,
-                Heading = trust?.Heading ?? "",
-                Body = trust?.BodyText,
-                CtaLabel = trust?.CtaLabel,
+                Eyebrow = ContentBlockContent.Subheading(trust, culture),
+                Heading = ContentBlockContent.Heading(trust, culture) ?? "",
+                Body = ContentBlockContent.BodyText(trust, culture),
+                CtaLabel = ContentBlockContent.CtaLabel(trust, culture),
                 CtaUrl = trust?.CtaUrl,
-                LogosHeading = trustLogos?.Heading,
-                Logos = ParseJsonList<TrustLogo>(trustLogos?.ExtraJson),
-                Testimonials = ParseJsonList<Testimonial>(trust?.ExtraJson),
+                LogosHeading = ContentBlockContent.Heading(trustLogos, culture),
+                Logos = ParseJsonList<TrustLogo>(ContentBlockContent.ExtraJson(trustLogos, culture)),
+                Testimonials = ParseJsonList<Testimonial>(ContentBlockContent.ExtraJson(trust, culture)),
             },
             Upcoming = (await experienceService.GetUpcomingAsync(6, ct)).Select(e => ExperienceCardViewModel.FromEntity(e, culture)).ToList(),
             Signature = (await experienceService.GetSignatureAsync(4, ct)).Select(e => ExperienceCardViewModel.FromEntity(e, culture)).ToList(),
@@ -128,6 +154,34 @@ public class HomeController(
         slide.ImageStorageKey is null
             ? slide.ImageUrl
             : Url.Action("HeroImage", "Media", new { id = slide.Id, v = (slide.UpdatedAt ?? slide.CreatedAt).ToUnixTimeSeconds() });
+
+    /// <summary>
+    /// Gives every feature a glyph key that does not depend on the language it is written in.
+    ///
+    /// The icons are picked by key in the view. A translated item should carry its own "icon", but a
+    /// translator editing JSON can reasonably drop a field they do not recognise — so anything
+    /// missing one borrows from the English item in the same position. Only if that is missing too
+    /// does it fall back to the label, which is the original behaviour and correct for English.
+    ///
+    /// Positional matching is safe here precisely because it is the fallback: the admin screen tells
+    /// translators to keep the order, and a mismatched list degrades to a default glyph rather than
+    /// to a wrong one.
+    /// </summary>
+    private static List<FeatureItem> WithIcons(List<FeatureItem> translated, List<FeatureItem> original)
+    {
+        for (var i = 0; i < translated.Count; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(translated[i].Icon)) continue;
+
+            var fallback = i < original.Count
+                ? original[i].Icon ?? original[i].Label
+                : translated[i].Label;
+
+            translated[i] = translated[i] with { Icon = fallback };
+        }
+
+        return translated;
+    }
 
     private static List<T> ParseJsonList<T>(string? json)
     {

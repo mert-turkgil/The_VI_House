@@ -9,6 +9,7 @@ using VIHouse.Business.Options;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Services;
 using VIHouse.WebUI.ViewModels.Membership;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -35,6 +36,7 @@ public class MembershipController(
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         ViewData["Title"] = loc["Membership.Title"];
+        this.SetSeo(loc["Seo.Membership.Description"].Value, canonicalPath: "/membership");
 
         var plans = features.Value.MembershipSales
             ? (await membershipService.GetActivePlansAsync(ct)).Select(MembershipPlanCardViewModel.FromEntity).ToList()

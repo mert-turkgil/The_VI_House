@@ -1,6 +1,9 @@
 @model HomeViewModel
 @{
-    ViewData["Title"] = "Home";
+    @* No ViewData["Title"]. The homepage title comes from Site & SEO (or, until that is filled
+       in, from the Seo.Home.Title resource) — see HomeController. Setting it here produced
+       "Home | The VI House", which spends the sixty characters a search result shows on the word
+       "Home" and silently overrode whatever an admin had typed. *@
 }
 
 <partial name="_Hero" model="Model.Hero" />

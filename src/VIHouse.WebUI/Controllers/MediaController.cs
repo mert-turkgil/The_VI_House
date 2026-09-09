@@ -3,6 +3,7 @@ using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
+using VIHouse.Entities.Settings;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -34,8 +35,52 @@ public class MediaController(
     IRepository<MediaAsset> assets,
     IExperienceRepository experiences,
     IRepository<ExperienceImage> galleryImages,
+    ISiteSettingRepository siteSettings,
+    IRepository<SiteSettingTranslation> siteSettingTranslations,
     IMediaStorage mediaStorage) : Controller
 {
+    /// <summary>
+    /// The site-wide social image — the picture that appears when any link to this site is pasted
+    /// into a chat. Fetched by crawlers and by every link-preview bot, so it is cached hard.
+    /// </summary>
+    [HttpGet("site-og-default/{id:guid}")]
+    [ResponseCache(Duration = 604800, Location = ResponseCacheLocation.Any)]
+    public async Task<IActionResult> SiteOgDefault(Guid id, CancellationToken ct)
+    {
+        var settings = await siteSettings.GetByIdAsync(id, ct);
+        return await ServeAsync(settings?.DefaultOgImageStorageKey, ct);
+    }
+
+    /// <summary>The organisation logo, referenced from the schema.org graph.</summary>
+    [HttpGet("site-logo/{id:guid}")]
+    [ResponseCache(Duration = 604800, Location = ResponseCacheLocation.Any)]
+    public async Task<IActionResult> SiteLogo(Guid id, CancellationToken ct)
+    {
+        var settings = await siteSettings.GetByIdAsync(id, ct);
+        return await ServeAsync(settings?.LogoStorageKey, ct);
+    }
+
+    /// <summary>
+    /// One language's own social image, addressed by the translation row's id. Exists because a
+    /// card with English words baked into the picture under a Turkish headline reads as a mistake.
+    /// </summary>
+    [HttpGet("site-og/{id:guid}")]
+    [ResponseCache(Duration = 604800, Location = ResponseCacheLocation.Any)]
+    public async Task<IActionResult> SiteOgForCulture(Guid id, CancellationToken ct)
+    {
+        var translation = await siteSettingTranslations.GetByIdAsync(id, ct);
+        return await ServeAsync(translation?.OgImageStorageKey, ct);
+    }
+
+    /// <summary>The key always comes from a database row, never from the request — see the note above.</summary>
+    private async Task<IActionResult> ServeAsync(string? storageKey, CancellationToken ct)
+    {
+        if (storageKey is null) return NotFound();
+
+        var file = await mediaStorage.GetAsync(storageKey, ct);
+        return file is null ? NotFound() : PhysicalFile(file.PhysicalPath, file.ContentType);
+    }
+
     /// <summary>
     /// An experience's cover photograph, when it was uploaded rather than typed as a path.
     ///

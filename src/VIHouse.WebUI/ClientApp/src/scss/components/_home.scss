@@ -132,7 +132,10 @@
   display: flex;
   align-items: center;
   min-height: 480px;
-  padding: 72px 0 96px;
+  // padding-block, not the padding shorthand: this element also carries .container, and a
+  // shorthand resets padding-inline to 0 — which silently threw away the page gutter and
+  // ran the text to the edge of the screen. Only the vertical rhythm belongs here.
+  padding-block: 72px 96px;
 
   @media (min-width: 900px) {
     min-height: 560px;
@@ -842,7 +845,10 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 32px 56px;
-  padding: 32px 0;
+  // padding-block, not the padding shorthand: this element also carries .container, and a
+  // shorthand resets padding-inline to 0 — which silently threw away the page gutter and
+  // ran the text to the edge of the screen. Only the vertical rhythm belongs here.
+  padding-block: 32px;
 }
 
 .home-stats__item {

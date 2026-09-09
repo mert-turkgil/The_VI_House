@@ -2,7 +2,10 @@
 // clone: avatars instead of cover photos, and the card is a flat row-ish block rather than an
 // image-led tile, since a directory is scanned quickly rather than browsed for imagery.
 .member-directory {
-  padding: 48px 0 96px;
+  // padding-block, not the padding shorthand: this element also carries .container, and a
+  // shorthand resets padding-inline to 0 — which silently threw away the page gutter and
+  // ran the text to the edge of the screen. Only the vertical rhythm belongs here.
+  padding-block: 48px 96px;
 }
 
 .member-directory__filters {
@@ -42,7 +45,10 @@
 
 .member-directory__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  // min() so the track can collapse below its ideal width. A bare floor of 280px is wider than a
+  // 320px phone has to give once the gutters are off, so every card overflowed its column and
+  // the page scrolled sideways — the same bug .experience-grid documents at length.
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
   gap: 20px;
 }
 

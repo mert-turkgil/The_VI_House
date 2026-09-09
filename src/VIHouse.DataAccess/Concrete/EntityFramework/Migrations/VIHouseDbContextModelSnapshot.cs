@@ -1023,6 +1023,52 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("ContentBlocks", (string)null);
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Content.ContentBlockTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BodyText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ContentBlockId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CtaLabel")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("Culture")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("ExtraJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Heading")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("Subheading")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContentBlockId", "Culture")
+                        .IsUnique();
+
+                    b.ToTable("ContentBlockTranslations", (string)null);
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Content.ContentPage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1797,6 +1843,14 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<Guid>("JournalPostId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("SeoDescription")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("SeoTitle")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -2315,6 +2369,191 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("SeminarTranslations", (string)null);
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Settings.SiteSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AddressCountry")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.Property<string>("AddressLocality")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("AddressRegion")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<bool>("AllowIndexing")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("BingSiteVerification")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("CanonicalBaseUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)");
+
+                    b.Property<string>("ContactPhone")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("DefaultOgImageStorageKey")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("DefaultOgImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FacebookUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FoundingDate")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("GoogleSiteVerification")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("InstagramUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("LegalName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("LinkedInUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("LogoStorageKey")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("LogoUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("OrganizationType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("PublishLlmsTxt")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RobotsExtra")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StreetAddress")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("TikTokUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("TwitterHandle")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("XUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("YouTubeUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SiteSettings", (string)null);
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Settings.SiteSettingTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Culture")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("DefaultMetaDescription")
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)");
+
+                    b.Property<string>("HomeTitle")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("OgImageAlt")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("OgImageStorageKey")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("OgImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("OrganizationDescription")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("SiteName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<Guid>("SiteSettingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TitleTemplate")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SiteSettingId", "Culture")
+                        .IsUnique();
+
+                    b.ToTable("SiteSettingTranslations", (string)null);
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Users.Profile", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -2564,6 +2803,15 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Content.ContentBlockTranslation", b =>
+                {
+                    b.HasOne("VIHouse.Entities.Content.ContentBlock", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("ContentBlockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Content.HeroSlideTranslation", b =>
                 {
                     b.HasOne("VIHouse.Entities.Content.HeroSlide", null)
@@ -2764,6 +3012,15 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Settings.SiteSettingTranslation", b =>
+                {
+                    b.HasOne("VIHouse.Entities.Settings.SiteSetting", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("SiteSettingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Users.Profile", b =>
                 {
                     b.HasOne("VIHouse.DataAccess.Identity.ApplicationUser", null)
@@ -2776,6 +3033,11 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
             modelBuilder.Entity("VIHouse.Entities.Applications.Application", b =>
                 {
                     b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Content.ContentBlock", b =>
+                {
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("VIHouse.Entities.Content.ContentPage", b =>
@@ -2821,6 +3083,11 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                 {
                     b.Navigation("Media");
 
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Settings.SiteSetting", b =>
+                {
                     b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618

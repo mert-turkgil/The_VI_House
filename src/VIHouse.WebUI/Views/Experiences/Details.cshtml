@@ -44,12 +44,9 @@
     }
 }
 
-@section Styles {
-    @if (!string.IsNullOrWhiteSpace(Model.ShortSummary))
-    {
-        <meta name="description" content="@Model.ShortSummary" />
-    }
-}
+@* The meta description used to be emitted here. It now comes from _Seo, which the layout renders
+   for every page — leaving this one in place produced two description tags on the same page, and a
+   crawler reading the second one would have got a different sentence from the first. *@
 
 <section class="experience-hero">
     <div class="experience-hero__media" data-motion="hero-parallax">

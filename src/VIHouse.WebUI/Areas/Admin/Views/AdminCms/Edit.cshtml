@@ -152,6 +152,113 @@
             </div>
         </form>
 
+        @* --- Translations --------------------------------------------------------------------
+           The English copy is the form above; these are the other three languages. Before this
+           existed the homepage below the hero rendered in English no matter which language a
+           visitor chose — the slider was translated, everything under it was not, because there
+           was nowhere to put the words. *@
+        <details class="admin-panel" style="margin-top:16px;" @(block.Translations.Any(t => t.IsWritten) ? "open" : null)>
+            <summary style="cursor:pointer; font-weight:600;">
+                Translations
+                @{ var written = block.Translations.Count(t => t.IsWritten); }
+                <span class="admin-lang-chip">@written / @block.Translations.Count</span>
+            </summary>
+
+            <p class="admin-field__hint" style="margin-top:8px;">
+                English is the section form above &mdash; it is the original every other language
+                falls back to, field by field. Leave a field blank here and that one field shows the
+                English; fill it in and it does not.
+            </p>
+
+            @foreach (var tab in block.Translations)
+            {
+                <details style="margin-top:10px; border-top:1px solid var(--vih-line-on-light); padding-top:10px;">
+                    <summary style="cursor:pointer;">
+                        @tab.Culture.NativeLabel
+                        @if (tab.IsWritten)
+                        {
+                            <span class="admin-lang-chip admin-lang-chip--on">written</span>
+                        }
+                        else
+                        {
+                            <span class="admin-lang-chip" title="Falls back to English">not written</span>
+                        }
+                    </summary>
+
+                    @* Plain name/value rather than asp-for: these bind to AdminContentTranslationForm,
+                       which is not this view's model, and the input tag helper would derive the
+                       posted name from the expression instead of the field. *@
+                    <form asp-action="SaveSectionTranslation" method="post" class="admin-form" style="margin-top:10px;">
+                        <input type="hidden" name="ContentBlockId" value="@block.Id" />
+                        <input type="hidden" name="Culture" value="@tab.Culture.Name" />
+                        <input type="hidden" name="pageSlug" value="@Model.Slug" />
+
+                        @if (schema is null || schema.UsesHeading)
+                        {
+                            <div class="admin-field">
+                                <label>Heading</label>
+                                <input name="Heading" value="@tab.Form.Heading" placeholder="@block.Heading" />
+                            </div>
+                        }
+
+                        @if (schema is null || schema.UsesSubheading)
+                        {
+                            <div class="admin-field">
+                                <label>@(block.SectionKey == "trust" ? "Eyebrow" : "Subheading")</label>
+                                <input name="Subheading" value="@tab.Form.Subheading" placeholder="@block.Subheading" />
+                            </div>
+                        }
+
+                        @if (schema is null || schema.UsesBody)
+                        {
+                            <div class="admin-field">
+                                <label>Body</label>
+                                <textarea name="BodyText" rows="3" placeholder="@block.BodyText">@tab.Form.BodyText</textarea>
+                            </div>
+                        }
+
+                        @if (schema is null || schema.UsesCta)
+                        {
+                            <div class="admin-field">
+                                <label>Button label</label>
+                                <input name="CtaLabel" value="@tab.Form.CtaLabel" placeholder="@block.CtaLabel" />
+                                <p class="admin-field__hint">The link itself is not translated &mdash; a URL is a route, not a sentence.</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(block.ExtraJson))
+                        {
+                            <div class="admin-field">
+                                <label>List content (JSON)</label>
+                                <textarea name="ExtraJson" rows="8" style="font-family:monospace; font-size:0.8125rem;">@tab.Form.ExtraJson</textarea>
+                                <p class="admin-field__hint">
+                                    Pre-filled from the English so you translate the values in place.
+                                    <strong>Keep the keys and the order</strong> &mdash; the same code reads
+                                    both. Translate only what is to the right of each colon. Invalid JSON is
+                                    refused rather than emptying this section for this language.
+                                </p>
+                            </div>
+                        }
+
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <button type="submit" class="admin-btn">Save @tab.Culture.NativeLabel</button>
+                        </div>
+                    </form>
+
+                    @if (tab.IsWritten)
+                    {
+                        <form asp-action="RemoveSectionTranslation" method="post" style="margin-top:8px;"
+                              onsubmit="return confirm('Remove the @tab.Culture.NativeLabel copy? This section falls back to English.');">
+                            <input type="hidden" name="blockId" value="@block.Id" />
+                            <input type="hidden" name="culture" value="@tab.Culture.Name" />
+                            <input type="hidden" name="pageSlug" value="@Model.Slug" />
+                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove @tab.Culture.NativeLabel</button>
+                        </form>
+                    }
+                </details>
+            }
+        </details>
+
         @if (schema?.Rows is not null && !string.IsNullOrWhiteSpace(block.ExtraJson))
         {
             @* Kept for the moments a form cannot help with: reordering a long list, or pasting a

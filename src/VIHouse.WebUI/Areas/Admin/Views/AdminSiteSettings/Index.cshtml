@@ -1,0 +1,365 @@
+@model AdminSiteSettingsViewModel
+@{
+    ViewData["Title"] = "Site settings";
+    var active = Model.Translations.First(t => t.Culture.Name == Model.ActiveCulture);
+    Model.CultureOgImageUrls.TryGetValue(active.Culture.Name, out var activeOgImage);
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<p class="admin-hint">
+    How the site describes itself to search engines, to link previews in messaging apps, and to
+    language models. Everything a reader sees as <strong>words</strong> is per language; everything
+    that is the same fact in every language is on this page once.
+</p>
+
+@* --- The thing that makes all of this work ---------------------------------------------------- *@
+<div class="admin-notice">
+    <strong>Every page now has one URL per language.</strong>
+    English is served at <code>/experiences</code> and the others under a prefix &mdash;
+    <code>/de/experiences</code>, <code>/tr/experiences</code>, <code>/et/experiences</code>.
+    That is what lets Google index all four, and what makes a link you send someone open in the
+    language <em>you</em> were reading, rather than in whatever language <em>they</em> last chose.
+</div>
+
+<div class="admin-stat-row">
+    <div class="admin-stat">
+        <span class="admin-stat__value">@Model.SitemapPageCount</span>
+        <span class="admin-stat__label">Pages in the sitemap</span>
+    </div>
+    <div class="admin-stat">
+        <span class="admin-stat__value">@Model.SitemapUrlCount</span>
+        <span class="admin-stat__label">URLs once languages are counted</span>
+    </div>
+    <a class="admin-stat" href="/sitemap.xml" target="_blank" rel="noopener">
+        <span class="admin-stat__value">XML</span>
+        <span class="admin-stat__label">View sitemap.xml &rarr;</span>
+    </a>
+    <a class="admin-stat" href="/robots.txt" target="_blank" rel="noopener">
+        <span class="admin-stat__value">TXT</span>
+        <span class="admin-stat__label">View robots.txt &rarr;</span>
+    </a>
+    <a class="admin-stat" href="/llms.txt" target="_blank" rel="noopener">
+        <span class="admin-stat__value">LLM</span>
+        <span class="admin-stat__label">View llms.txt &rarr;</span>
+    </a>
+</div>
+
+@* --- Per-language copy -------------------------------------------------------------------------
+   Page-per-language rather than tab panels, following the experience and seminar editors: the URL
+   is shareable, so a half-written German draft can be handed to whoever writes the German. *@
+<div class="admin-card" style="margin-bottom:24px;">
+    <h2>What the site says about itself</h2>
+
+    <div class="admin-lang-tabs">
+        @foreach (var tab in Model.Translations)
+        {
+            <a class="admin-lang-chip @(tab.Culture.Name == Model.ActiveCulture ? "admin-lang-chip--on" : "")"
+               asp-action="Index" asp-route-culture="@tab.Culture.Name">
+                @tab.Culture.NativeLabel
+                @if (!tab.IsWritten)
+                {
+                    <span title="Not written yet — falls back to English">&bull;</span>
+                }
+            </a>
+        }
+    </div>
+
+    @* Plain name/value rather than asp-for. These inputs bind to AdminSiteSettingsTranslationForm,
+       which is not this view's model, and the input tag helper derives the posted name from the
+       expression it is given — so asp-for would have posted "active.Form.SiteName" and every field
+       would have arrived null. *@
+    <form asp-action="SaveTranslation" method="post" class="admin-form">
+        <input type="hidden" name="SiteSettingId" value="@active.Form.SiteSettingId" />
+        <input type="hidden" name="Culture" value="@active.Form.Culture" />
+
+        <div class="admin-form__grid">
+            <div class="admin-field">
+                <label for="SiteName">Site name</label>
+                <input id="SiteName" name="SiteName" value="@active.Form.SiteName" maxlength="120" required />
+                <span class="admin-hint">Usually the same in every language. Occasionally not.</span>
+            </div>
+
+            <div class="admin-field">
+                <label for="TitleTemplate">Title template</label>
+                <input id="TitleTemplate" name="TitleTemplate" value="@active.Form.TitleTemplate" maxlength="120" required />
+                <span class="admin-hint">
+                    <code>{0}</code> is where each page's own name goes. Without it, every page on the
+                    site would share one title.
+                </span>
+            </div>
+        </div>
+
+        <div class="admin-field">
+            <label for="HomeTitle">Homepage title</label>
+            <input id="HomeTitle" name="HomeTitle" value="@active.Form.HomeTitle" maxlength="200" />
+            <span class="admin-hint">
+                Used as-is, without the template &mdash; a homepage titled &ldquo;Home &mdash; The VI
+                House&rdquo; wastes the most valuable 60 characters on the site. Aim for under 60.
+            </span>
+        </div>
+
+        <div class="admin-field">
+            <label for="DefaultMetaDescription">Default description</label>
+            <textarea id="DefaultMetaDescription" name="DefaultMetaDescription" rows="2" maxlength="320">@active.Form.DefaultMetaDescription</textarea>
+            <span class="admin-hint">
+                The sentence under the blue link in Google, and the one in a link preview. Any page
+                that does not write its own uses this. Google shows roughly the first 160 characters
+                &mdash; write it for a person, not for a crawler.
+            </span>
+        </div>
+
+        <div class="admin-field">
+            <label for="OrganizationDescription">What the organisation is</label>
+            <textarea id="OrganizationDescription" name="OrganizationDescription" rows="2" maxlength="500">@active.Form.OrganizationDescription</textarea>
+            <span class="admin-hint">One line describing the house itself, for structured data and llms.txt.</span>
+        </div>
+
+        <div class="admin-field">
+            <label for="OgImageAlt">Social image description</label>
+            <input id="OgImageAlt" name="OgImageAlt" value="@active.Form.OgImageAlt" maxlength="300" />
+        </div>
+
+        <div class="admin-field">
+            <label for="OgImageUrl">Social image URL for this language</label>
+            <input id="OgImageUrl" name="OgImageUrl" value="@active.Form.OgImageUrl" maxlength="500"
+                   placeholder="Optional — only when this language needs its own picture" />
+            <span class="admin-hint">
+                Usually empty. Worth setting when the image has words baked into it, because an
+                English card under a @active.Culture.NativeLabel headline reads as a mistake.
+            </span>
+        </div>
+
+        <button type="submit" class="admin-btn">Save @active.Culture.NativeLabel</button>
+    </form>
+
+    @* Per-language social image upload, its own form so it cannot clobber the copy above. *@
+    <div class="admin-panel" style="margin-top:16px;">
+        <h3>@active.Culture.NativeLabel social image</h3>
+
+        @if (!string.IsNullOrWhiteSpace(activeOgImage))
+        {
+            <img src="@activeOgImage" alt="" style="max-width:320px;display:block;margin-bottom:8px;border-radius:8px;" />
+            <form asp-action="RemoveOgImage" method="post" style="display:inline;">
+                <input type="hidden" name="culture" value="@active.Culture.Name" />
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+            </form>
+        }
+
+        <form asp-action="UploadOgImage" method="post" enctype="multipart/form-data" class="admin-inline-form">
+            <input type="hidden" name="culture" value="@active.Culture.Name" />
+            <div class="admin-field" style="flex:2;">
+                <label>Upload (1200&times;630 works everywhere)</label>
+                <input type="file" name="file" accept="image/*" required />
+            </div>
+            <button type="submit" class="admin-btn">Upload</button>
+        </form>
+    </div>
+</div>
+
+@* --- Everything that is the same in every language --------------------------------------------- *@
+<form asp-action="Index" method="post" class="admin-form">
+    <input type="hidden" name="culture" value="@Model.ActiveCulture" />
+
+    <div class="admin-card" style="margin-bottom:24px;">
+        <h2>Identity</h2>
+
+        <div class="admin-form__grid">
+            <div class="admin-field">
+                <label asp-for="Form.CanonicalBaseUrl"></label>
+                <input asp-for="Form.CanonicalBaseUrl" placeholder="https://thevihouse.com" />
+                <span asp-validation-for="Form.CanonicalBaseUrl" class="admin-error"></span>
+                <span class="admin-hint">
+                    Every absolute address the site publishes is built from this, rather than from
+                    whatever host the request arrived on. That is what stops the same page reached
+                    through a preview domain, a proxy or &ldquo;www.&rdquo; from competing with itself.
+                </span>
+            </div>
+
+            <div class="admin-field">
+                <label asp-for="Form.OrganizationType"></label>
+                <select asp-for="Form.OrganizationType">
+                    <option value="Organization">Organization</option>
+                    <option value="LocalBusiness">LocalBusiness</option>
+                    <option value="EventVenue">EventVenue</option>
+                    <option value="Corporation">Corporation</option>
+                </select>
+                <span class="admin-hint">Only change this if you know why. Organization suits most sites.</span>
+            </div>
+
+            <div class="admin-field">
+                <label asp-for="Form.LegalName"></label>
+                <input asp-for="Form.LegalName" />
+            </div>
+
+            <div class="admin-field">
+                <label asp-for="Form.FoundingDate"></label>
+                <input asp-for="Form.FoundingDate" placeholder="2024" />
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-card" style="margin-bottom:24px;">
+        <h2>Social accounts</h2>
+        <p class="admin-hint">
+            Published as <code>sameAs</code> in the site's structured data, which is how a search
+            engine learns that these accounts and this site are the same organisation. Leave blank
+            what does not exist &mdash; an empty entry is better than a wrong one.
+        </p>
+
+        <div class="admin-form__grid">
+            <div class="admin-field"><label asp-for="Form.InstagramUrl"></label><input asp-for="Form.InstagramUrl" placeholder="https://instagram.com/..." /></div>
+            <div class="admin-field"><label asp-for="Form.LinkedInUrl"></label><input asp-for="Form.LinkedInUrl" placeholder="https://linkedin.com/company/..." /></div>
+            <div class="admin-field"><label asp-for="Form.XUrl"></label><input asp-for="Form.XUrl" placeholder="https://x.com/..." /></div>
+            <div class="admin-field"><label asp-for="Form.FacebookUrl"></label><input asp-for="Form.FacebookUrl" /></div>
+            <div class="admin-field"><label asp-for="Form.YouTubeUrl"></label><input asp-for="Form.YouTubeUrl" /></div>
+            <div class="admin-field"><label asp-for="Form.TikTokUrl"></label><input asp-for="Form.TikTokUrl" /></div>
+
+            <div class="admin-field">
+                <label asp-for="Form.TwitterHandle"></label>
+                <input asp-for="Form.TwitterHandle" placeholder="thevihouse" />
+                <span class="admin-hint">Without the @@. Credits the account on link cards posted to X.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-card" style="margin-bottom:24px;">
+        <h2>Contact and address</h2>
+        <p class="admin-hint">
+            Published as structured data. Worth filling in even if the address is not public
+            elsewhere &mdash; it is what makes the house eligible for a knowledge panel and for map
+            results.
+        </p>
+
+        <div class="admin-form__grid">
+            <div class="admin-field"><label asp-for="Form.ContactEmail"></label><input asp-for="Form.ContactEmail" /></div>
+            <div class="admin-field"><label asp-for="Form.ContactPhone"></label><input asp-for="Form.ContactPhone" placeholder="+44 20 7000 0000" /></div>
+            <div class="admin-field"><label asp-for="Form.StreetAddress"></label><input asp-for="Form.StreetAddress" /></div>
+            <div class="admin-field"><label asp-for="Form.AddressLocality"></label><input asp-for="Form.AddressLocality" placeholder="London" /></div>
+            <div class="admin-field"><label asp-for="Form.AddressRegion"></label><input asp-for="Form.AddressRegion" /></div>
+            <div class="admin-field"><label asp-for="Form.PostalCode"></label><input asp-for="Form.PostalCode" /></div>
+            <div class="admin-field">
+                <label asp-for="Form.AddressCountry"></label>
+                <input asp-for="Form.AddressCountry" placeholder="GB" maxlength="2" />
+                <span asp-validation-for="Form.AddressCountry" class="admin-error"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-card" style="margin-bottom:24px;">
+        <h2>Search visibility</h2>
+
+        <div class="admin-field admin-field--check">
+            <label>
+                <input asp-for="Form.AllowIndexing" type="checkbox" />
+                Allow search engines to index this site
+            </label>
+            <span class="admin-hint">
+                <strong>The master switch.</strong> Turning it off publishes
+                <code>Disallow: /</code>, hides the sitemap and puts <code>noindex</code> on every
+                page. That is exactly what a staging copy needs &mdash; and switching it off on the
+                real site removes you from Google.
+            </span>
+        </div>
+
+        <div class="admin-field admin-field--check">
+            <label>
+                <input asp-for="Form.PublishLlmsTxt" type="checkbox" />
+                Publish /llms.txt
+            </label>
+            <span class="admin-hint">
+                A plain-language index of the site for language models. Separate from the switch
+                above, because &ldquo;search engines yes, models maybe&rdquo; is a reasonable
+                position to hold.
+            </span>
+        </div>
+
+        <div class="admin-form__grid">
+            <div class="admin-field">
+                <label asp-for="Form.GoogleSiteVerification"></label>
+                <input asp-for="Form.GoogleSiteVerification" />
+                <span class="admin-hint">
+                    Paste either the token or the whole <code>&lt;meta&gt;</code> tag &mdash; the
+                    token is taken out of it either way.
+                </span>
+            </div>
+
+            <div class="admin-field">
+                <label asp-for="Form.BingSiteVerification"></label>
+                <input asp-for="Form.BingSiteVerification" />
+            </div>
+        </div>
+
+        <div class="admin-field">
+            <label asp-for="Form.RobotsExtra"></label>
+            <textarea asp-for="Form.RobotsExtra" rows="4"
+                      placeholder="Disallow: /some-path&#10;Crawl-delay: 5"></textarea>
+            <span class="admin-hint">
+                Added to robots.txt as written. The admin area, the account pages, checkout and the
+                search results are already excluded &mdash; you do not need to repeat them here.
+            </span>
+        </div>
+    </div>
+
+    <button type="submit" class="admin-btn">Save settings</button>
+</form>
+
+@* --- Images that are the same in every language ------------------------------------------------ *@
+<div class="admin-card" style="margin-top:24px;">
+    <h2>Default social image</h2>
+    <p class="admin-hint">
+        The picture that appears when a link to this site is pasted anywhere &mdash; WhatsApp, Slack,
+        LinkedIn, X. A page with its own image wins; this is the floor, so that no link ever previews
+        as a bare grey box. <strong>1200&times;630</strong> is the size every network agrees on.
+    </p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.OgImagePreviewUrl))
+    {
+        <img src="@Model.OgImagePreviewUrl" alt="" style="max-width:400px;display:block;margin-bottom:8px;border-radius:8px;" />
+        @if (Model.HasUploadedOgImage)
+        {
+            <form asp-action="RemoveOgImage" method="post" style="display:inline;">
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+            </form>
+        }
+    }
+
+    <form asp-action="UploadOgImage" method="post" enctype="multipart/form-data" class="admin-inline-form">
+        <div class="admin-field" style="flex:2;">
+            <label>Upload default social image</label>
+            <input type="file" name="file" accept="image/*" required />
+        </div>
+        <button type="submit" class="admin-btn">Upload</button>
+    </form>
+</div>
+
+<div class="admin-card" style="margin-top:24px;">
+    <h2>Logo</h2>
+    <p class="admin-hint">Square, at least 112&times;112. Published in the structured data.</p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.LogoPreviewUrl))
+    {
+        <img src="@Model.LogoPreviewUrl" alt="" style="max-width:160px;display:block;margin-bottom:8px;border-radius:8px;" />
+        @if (Model.HasUploadedLogo)
+        {
+            <form asp-action="RemoveLogo" method="post" style="display:inline;">
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+            </form>
+        }
+    }
+
+    <form asp-action="UploadLogo" method="post" enctype="multipart/form-data" class="admin-inline-form">
+        <div class="admin-field" style="flex:2;">
+            <label>Upload logo</label>
+            <input type="file" name="file" accept="image/*" required />
+        </div>
+        <button type="submit" class="admin-btn">Upload</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

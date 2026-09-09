@@ -1,3 +1,4 @@
+@use 'breakpoints' as bp;
 *,
 *::before,
 *::after {
@@ -26,12 +27,35 @@ a {
   text-decoration: none;
 }
 
+// The one wrapper 45 views depend on.
+//
+// The gutter used to be a flat 24px at every width, which is the reason this looked cramped: the
+// same margin a 360px phone needs is far too little on a 900px tablet, where the text ran almost
+// edge to edge. It now steps up with the viewport — which is precisely what a Bootstrap container
+// does, and why one was asked for. Doing it here instead avoids loading a framework that defines
+// .container, .btn and .alert-* under the same names this site already uses.
+//
+// The safe-area insets matter on a notched phone held sideways: without them the first and last few
+// characters of every line sit underneath the rounded corner and are simply not readable.
 .container {
   width: 100%;
   max-width: var(--vih-container-max);
   margin-inline: auto;
-  padding-inline: 24px;
+
+  padding-inline:
+    calc(var(--vih-gutter) + env(safe-area-inset-left, 0px))
+    calc(var(--vih-gutter) + env(safe-area-inset-right, 0px));
 }
+
+// The gutter scale, on :root rather than on .container.
+//
+// Putting these inside .container would scale only .container, and anything else reading the token
+// — the account shell, which has no .container of its own — would sit at the 24px base for ever and
+// slowly stop matching the rest of the site. That drift is the thing the token exists to prevent,
+// so the token itself is what moves.
+@include bp.from(bp.$sm) { :root { --vih-gutter: 32px; } }
+@include bp.from(bp.$md) { :root { --vih-gutter: 40px; } }
+@include bp.from(bp.$lg) { :root { --vih-gutter: 48px; } }
 
 .visually-hidden {
   position: absolute;

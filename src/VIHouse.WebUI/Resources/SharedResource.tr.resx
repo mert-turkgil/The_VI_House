@@ -6,6 +6,10 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
 
   <data name="Nav.Home" xml:space="preserve"><value>Ana Sayfa</value></data>
+  <data name="Nav.HomeAria" xml:space="preserve"><value>The VI House — Ana Sayfa</value></data>
+  <data name="Nav.Search.Label" xml:space="preserve"><value>Ara</value></data>
+  <data name="Nav.Search.Placeholder" xml:space="preserve"><value>Deneyimlerde ve dergide ara…</value></data>
+  <data name="Nav.Search.Hint" xml:space="preserve"><value>Deneyimlerde ve dergi yazılarında arama yapın.</value></data>
   <data name="Nav.Experiences" xml:space="preserve"><value>Deneyimler</value></data>
   <data name="Nav.Membership" xml:space="preserve"><value>Üyelik</value></data>
   <data name="Nav.About" xml:space="preserve"><value>Hakkımızda</value></data>
@@ -575,6 +579,14 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Experiences.Closed.ComingSoon" xml:space="preserve"><value>Yakında</value></data>
   <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Bekleme listesi</value></data>
   <data name="Experiences.Closed.Closed" xml:space="preserve"><value>Başvurular kapalı</value></data>
+  <data name="Seo.Home.Title" xml:space="preserve"><value>The VI House — Kurucular için davetle girilen bir ev</value></data>
+  <data name="Seo.Home.Description" xml:space="preserve"><value>Kurucular için yalnızca davetle girilen bir ev. Avrupa'nın şehirlerinde özel yemekler, inzivalar ve odalar — küçük, seçilmiş ve halka kapalı.</value></data>
+  <data name="Seo.Experiences.Description" xml:space="preserve"><value>Avrupa genelinde özel kurucu yemekleri, inzivalar ve zirveler. Başvuruların hangisine açık olduğunu, neyin yaklaştığını ve her odanın kimler için olduğunu görün.</value></data>
+  <data name="Seo.Journal.Description" xml:space="preserve"><value>The VI House'tan yazılar, notlar ve söyleşiler — oda kapalıyken kuruculardan gerçekte neler konuşuluyor.</value></data>
+  <data name="Seo.Sessions.Description" xml:space="preserve"><value>Üyeler için çevrimiçi oturumlar ve kayıtlar: bunu gerçekten yapmış insanlarla pratik sohbetler.</value></data>
+  <data name="Seo.Membership.Description" xml:space="preserve"><value>The VI House üyeliği — neleri kapsıyor, ne kadar ve hangi deneyimleri başvurusuz açıyor.</value></data>
+  <data name="Seo.About.Description" xml:space="preserve"><value>The VI House neden var, kimler için ve bir oda nasıl seçiliyor.</value></data>
+  <data name="Seo.Contact.Description" xml:space="preserve"><value>The VI House ile iletişime geçin — üyelik, bir deneyim veya iş birliği hakkındaki sorularınız için.</value></data>
   <data name="Experiences.Gate.Soon.Note" xml:space="preserve"><value>Başvurular yakında açılıyor</value></data>
   <data name="Experiences.Gate.Waitlist.Note" xml:space="preserve"><value>Bu tur doldu</value></data>
   <data name="Experiences.Gate.Closed.Note" xml:space="preserve"><value>Başvurular artık alınmıyor</value></data>
@@ -655,6 +667,30 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Manage.TwoFactor.Disable" xml:space="preserve"><value>İki adımlı doğrulamayı kapat</value></data>
   <data name="Manage.Danger.Heading" xml:space="preserve"><value>Bunlara dikkat</value></data>
 
+  <data name="Home.Upcoming.Heading" xml:space="preserve"><value>Yaklaşan deneyimler</value></data>
+  <data name="Home.Signature.Heading" xml:space="preserve"><value>İmza deneyimler</value></data>
+  <data name="Home.Signature.Badge" xml:space="preserve"><value>İmza</value></data>
+  <data name="Home.ViewAll" xml:space="preserve"><value>Tüm deneyimleri görün</value></data>
+  <data name="Home.Filter.Eyebrow" xml:space="preserve"><value>Sizin için önemli olanı bulun</value></data>
+  <data name="Home.Filter.LookingFor" xml:space="preserve"><value>Şunu arıyorum…</value></data>
+  <data name="Home.Filter.Format" xml:space="preserve"><value>Biçim</value></data>
+  <data name="Home.Filter.AllFormats" xml:space="preserve"><value>Tüm biçimler</value></data>
+  <data name="Home.Filter.Format.Retreat" xml:space="preserve"><value>İnziva</value></data>
+  <data name="Home.Filter.Format.Seminar" xml:space="preserve"><value>Seminer</value></data>
+  <data name="Home.Filter.Format.Dinner" xml:space="preserve"><value>Yemek</value></data>
+  <data name="Home.Filter.Price" xml:space="preserve"><value>Fiyat</value></data>
+  <data name="Home.Filter.AnyPrice" xml:space="preserve"><value>Tüm fiyatlar</value></data>
+  <data name="Home.Filter.Price.UpTo" xml:space="preserve"><value>{0} kadar</value></data>
+  <data name="Home.Filter.Price.Over" xml:space="preserve"><value>{0} ve üzeri</value></data>
+  <data name="Home.Filter.Search" xml:space="preserve"><value>Ara</value></data>
+  <data name="Home.Filter.Trending" xml:space="preserve"><value>Öne çıkanlar:</value></data>
+  <data name="Home.Filter.Topic.Ecommerce" xml:space="preserve"><value>E-ticaret</value></data>
+  <data name="Home.Filter.Topic.BrandBuilding" xml:space="preserve"><value>Marka inşası</value></data>
+  <data name="Home.Filter.Topic.AiTools" xml:space="preserve"><value>Yapay zekâ araçları</value></data>
+  <data name="Home.Filter.Topic.Copywriting" xml:space="preserve"><value>Metin yazımı</value></data>
+  <data name="Home.Filter.Topic.PaidAds" xml:space="preserve"><value>Ücretli reklam</value></data>
+  <data name="Home.Filter.Topic.Trading" xml:space="preserve"><value>Trading</value></data>
+  <data name="Home.Filter.Topic.Funding" xml:space="preserve"><value>Yatırım</value></data>
   <data name="Home.Hero.Previous" xml:space="preserve"><value>Önceki slayt</value></data>
   <data name="Home.Hero.Next" xml:space="preserve"><value>Sonraki slayt</value></data>
   <data name="Admin.HeroSlide.Title" xml:space="preserve"><value>Ana Görsel Slaytları</value></data>
@@ -753,6 +789,10 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Admin.Journal.Languages" xml:space="preserve"><value>Diller</value></data>
   <data name="Admin.Journal.Excerpt" xml:space="preserve"><value>Özet</value></data>
   <data name="Admin.Journal.Excerpt.Hint" xml:space="preserve"><value>Liste kartında ve arama sonuçlarında görünür.</value></data>
+  <data name="Admin.Journal.SeoTitle" xml:space="preserve"><value>Arama başlığı</value></data>
+  <data name="Admin.Journal.SeoTitle.Hint" xml:space="preserve"><value>Isteğe bağlı. Arama sonuçlarında ve tarayıcı sekmelerinde başlığın yerine geçer — 60 karakterin altında tutun. Boş bırakılırsa başlık kullanılır.</value></data>
+  <data name="Admin.Journal.SeoDescription" xml:space="preserve"><value>Arama açıklaması</value></data>
+  <data name="Admin.Journal.SeoDescription.Hint" xml:space="preserve"><value>Isteğe bağlı. Google'daki bağlantının altında ve bağlantı önizlemelerinde görünen cümle. Yaklaşık 160 karakter gösterilir. Boş bırakılırsa özet kullanılır.</value></data>
   <data name="Admin.Journal.Body" xml:space="preserve"><value>Metin</value></data>
   <data name="Admin.Journal.Body.Hint" xml:space="preserve"><value>Görsel veya GIF'i doğrudan sürükleyip bırakarak yükleyin. Videoyu gömmek için YouTube bağlantısını kendi satırına yapıştırın; ses dosyaları aşağıdaki medya kitaplığından eklenir.</value></data>
   <data name="Admin.Journal.AuthorName" xml:space="preserve"><value>Yazar</value></data>

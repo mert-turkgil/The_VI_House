@@ -475,7 +475,10 @@
 .account-manage {
   max-width: 880px;
   margin: 0 auto;
-  padding: 56px 24px 96px;
+  // The same gutter .container scales, rather than a second flat 24px that would stop matching the
+  // rest of the site the moment one of them was tuned. These pages carry no .container of their
+  // own, so this is their only edge padding.
+  padding: 56px var(--vih-gutter) 96px;
   display: grid;
   gap: 40px;
 

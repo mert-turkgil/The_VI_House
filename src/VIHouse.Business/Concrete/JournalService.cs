@@ -187,6 +187,8 @@ public class JournalService(
 
         existing.Title = translation.Title.Trim();
         existing.Excerpt = string.IsNullOrWhiteSpace(translation.Excerpt) ? null : translation.Excerpt.Trim();
+        existing.SeoTitle = string.IsNullOrWhiteSpace(translation.SeoTitle) ? null : translation.SeoTitle.Trim();
+        existing.SeoDescription = string.IsNullOrWhiteSpace(translation.SeoDescription) ? null : translation.SeoDescription.Trim();
         existing.Body = body;
 
         post.UpdatedAt = DateTimeOffset.UtcNow;

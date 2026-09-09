@@ -11,6 +11,7 @@ using VIHouse.Entities.Audit;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Seminars;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+using VIHouse.Business.Concrete;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -109,6 +110,53 @@ public class AdminCmsController(
 
         TempData["StatusMessage"] = $"{schema?.Title ?? form.SectionKey} saved.";
         return RedirectToAction(nameof(Edit), new { id = form.PageSlug });
+    }
+
+    /// <summary>
+    /// Saves one language's copy of one section — the screen that finally lets the homepage below
+    /// the hero speak anything other than English.
+    /// </summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveSectionTranslation(
+        AdminContentTranslationForm form, string pageSlug, CancellationToken ct)
+    {
+        var (adminId, ip) = CurrentActor();
+
+        var error = await contentService.SaveBlockTranslationAsync(new ContentBlockTranslation
+        {
+            ContentBlockId = form.ContentBlockId,
+            Culture = form.Culture,
+            Heading = form.Heading,
+            Subheading = form.Subheading,
+            BodyText = form.BodyText,
+            CtaLabel = form.CtaLabel,
+            ExtraJson = form.ExtraJson,
+        }, adminId, ip, ct);
+
+        TempData["StatusMessage"] = error switch
+        {
+            null => $"{SiteCultures.Describe(form.Culture).NativeLabel} saved.",
+            "Admin.Cms.InvalidJson" => "That JSON could not be parsed, so nothing was saved. Check for a stray comma or a missing quote.",
+            "Admin.Cms.DefaultIsOnTheBlock" => "English is edited in the section form above, not as a translation.",
+            "Admin.Cms.UnknownCulture" => "That is not a language this site speaks.",
+            _ => "That could not be saved.",
+        };
+
+        return RedirectToAction(nameof(Edit), new { id = pageSlug });
+    }
+
+    /// <summary>Drops one language's copy, so the section falls back to English again.</summary>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveSectionTranslation(
+        Guid blockId, string culture, string pageSlug, CancellationToken ct)
+    {
+        var (adminId, ip) = CurrentActor();
+        await contentService.DeleteBlockTranslationAsync(blockId, culture, adminId, ip, ct);
+
+        TempData["StatusMessage"] = $"{SiteCultures.Describe(culture).NativeLabel} removed — this section falls back to English.";
+        return RedirectToAction(nameof(Edit), new { id = pageSlug });
     }
 
     [HttpPost]
@@ -256,6 +304,35 @@ public class AdminCmsController(
         var schema = ContentSectionSchema.For(block.SectionKey);
         var model = new AdminContentSectionViewModel
         {
+            // One tab per language other than English. The English copy is the block's own columns,
+            // edited by the main form — it is the original, not a translation, and giving it a tab
+            // would invite someone to fill in a row that shadows it.
+            Translations =
+            [
+                .. SiteCultures.All
+                    .Where(c => c.Name != SiteCultures.Default)
+                    .Select(c =>
+                    {
+                        var row = ContentBlockContent.Find(block, c.Name);
+                        return new AdminContentTranslationTab(
+                            c,
+                            IsWritten: row is not null,
+                            Form: new AdminContentTranslationForm
+                            {
+                                ContentBlockId = block.Id,
+                                Culture = c.Name,
+                                Heading = row?.Heading,
+                                Subheading = row?.Subheading,
+                                BodyText = row?.BodyText,
+                                CtaLabel = row?.CtaLabel,
+                                // Seeded from the English payload when this language has none, so a
+                                // translator edits values inside a structure that already parses
+                                // rather than authoring JSON from an empty box. The shape has to
+                                // match — the same view model reads both.
+                                ExtraJson = row?.ExtraJson ?? block.ExtraJson,
+                            });
+                    }),
+            ],
             Id = block.Id,
             SectionKey = block.SectionKey,
             SortOrder = block.SortOrder,

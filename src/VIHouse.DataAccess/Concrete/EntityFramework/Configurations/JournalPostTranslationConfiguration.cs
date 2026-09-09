@@ -18,6 +18,8 @@ public class JournalPostTranslationConfiguration : IEntityTypeConfiguration<Jour
         builder.Property(t => t.Culture).HasMaxLength(10).IsRequired();
         builder.Property(t => t.Title).HasMaxLength(200).IsRequired();
         builder.Property(t => t.Excerpt).HasMaxLength(500);
+        builder.Property(t => t.SeoTitle).HasMaxLength(200);
+        builder.Property(t => t.SeoDescription).HasMaxLength(400);
 
         // Left unbounded (nvarchar(max)): this is a full article of editor HTML, and a length cap
         // here would surface as a truncated body rather than a validation error.

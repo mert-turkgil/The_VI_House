@@ -1,4 +1,5 @@
 using VIHouse.Entities.Content;
+using VIHouse.Business.Options;
 
 namespace VIHouse.WebUI.Areas.Admin.ViewModels;
 
@@ -80,8 +81,30 @@ public class AdminContentRowViewModel
 }
 
 /// <summary>One block on the editing screen.</summary>
+/// <param name="IsWritten">False when no row exists for this language yet — it falls back to English.</param>
+public record AdminContentTranslationTab(
+    SiteCulture Culture, bool IsWritten, AdminContentTranslationForm Form);
+
+/// <summary>One language's copy of one homepage section.</summary>
+public class AdminContentTranslationForm
+{
+    public Guid ContentBlockId { get; set; }
+    public string Culture { get; set; } = default!;
+    public string? Heading { get; set; }
+    public string? Subheading { get; set; }
+    public string? BodyText { get; set; }
+    public string? CtaLabel { get; set; }
+    public string? ExtraJson { get; set; }
+}
+
 public class AdminContentSectionViewModel
 {
+    /// <summary>
+    /// One tab per non-English language. English is absent on purpose: it is not a translation, it
+    /// is the block's own columns, edited by the form above these tabs.
+    /// </summary>
+    public List<AdminContentTranslationTab> Translations { get; set; } = [];
+
     public Guid Id { get; set; }
     public string SectionKey { get; set; } = default!;
     public int SortOrder { get; set; }

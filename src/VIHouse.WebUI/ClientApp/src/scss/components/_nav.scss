@@ -50,13 +50,26 @@
   display: none;
 }
 
+// The gap is fluid, not fixed at 32px.
+//
+// Six labels sit here, and they are not the same width in every language: "Membership" is ten
+// characters in English and "Mitgliedschaft" is fourteen in German, while Turkish turns "About"
+// into "Hakkimizda". With a fixed 32px gap the row that just fitted at the 960px breakpoint in
+// English pushed the sign-in link and the call to action off the end in German and Turkish.
+//
+// clamp lets the row tighten to 18px where space is scarce and open back out to 32px once there is
+// room, so the same markup holds in all four languages instead of one of them dictating the
+// spacing for the rest.
 .site-nav__list {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: clamp(18px, 1.9vw, 32px);
   margin: 0;
   padding: 0;
   list-style: none;
+
+  // Labels stay on one line; the gap absorbs the pressure instead.
+  white-space: nowrap;
 }
 
 .site-nav__link {
@@ -154,7 +167,11 @@
 .site-search__menu {
   position: absolute;
   top: calc(100% + 10px);
-  left: -8px;
+  // Anchored to its right edge, not its left. The toggle sits at the right end of the header, so
+  // opening rightwards pushed a 340px panel off the side of the screen — the width clamp below
+  // limited how wide it got but not where it started.
+  right: -8px;
+  left: auto;
   z-index: 10;
   width: min(340px, calc(100vw - 32px));
   max-height: 420px;
@@ -785,9 +802,27 @@
 }
 
 // --- Breakpoint: desktop nav takes over from the burger -------------------------------------------
-@media (min-width: 960px) {
+//
+// 1120px, not 960px, and the number is measured rather than chosen.
+//
+// The row has to hold the wordmark (~200px), five nav labels, the search toggle, the language
+// switcher, the sign-in link, the call to action, and the page gutter (48px a side at this width).
+// In English the labels come to roughly 390px and it all fits inside 960. In German they come to
+// roughly 490px — "Mitgliedschaft" alone is fourteen characters — and the row needed about 1175px.
+//
+// At 960 the result was not a tidy overflow. .site-nav can shrink (min-width: 0) but its labels
+// cannot wrap, so the list spilled out of its own box and was painted underneath the search and
+// language icons: two circles sitting on top of the words. Raising the breakpoint is what actually
+// fixes that, because there is no width at which those labels fit into that space.
+//
+// Below this the burger menu handles all four languages identically, which is the point: the nav
+// stops depending on which language happens to have the shortest words.
+@media (min-width: 1120px) {
   .site-nav {
     display: block;
+    // Without this a flex item will not shrink below its content width, so the clamp above never
+    // gets the chance to do anything — the row would simply overflow the header instead.
+    min-width: 0;
   }
 
   .site-header__login,

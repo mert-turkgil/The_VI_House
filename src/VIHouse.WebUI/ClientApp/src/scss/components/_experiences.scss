@@ -22,7 +22,10 @@
 }
 
 .experiences-body {
-  padding: var(--vih-space-xl) 0 var(--vih-section-y);
+  // padding-block, not the padding shorthand: this element also carries .container, and a
+  // shorthand resets padding-inline to 0 — which silently threw away the page gutter and
+  // ran the text to the edge of the screen. Only the vertical rhythm belongs here.
+  padding-block: var(--vih-space-xl) var(--vih-section-y);
 }
 
 // --- Filters -------------------------------------------------------------------------------------
@@ -443,7 +446,10 @@
   flex-direction: column;
   justify-content: flex-end;
   min-height: clamp(320px, 52vw, 560px);
-  padding: var(--vih-space-2xl) 0 var(--vih-space-xl);
+  // padding-block, not the padding shorthand: this element also carries .container, and a
+  // shorthand resets padding-inline to 0 — which silently threw away the page gutter and
+  // ran the text to the edge of the screen. Only the vertical rhythm belongs here.
+  padding-block: var(--vih-space-2xl) var(--vih-space-xl);
 
   h1 {
     font-family: var(--vih-font-serif);

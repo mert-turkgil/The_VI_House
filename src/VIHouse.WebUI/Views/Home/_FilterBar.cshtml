@@ -1,54 +1,73 @@
 @{
     // Trending topics are presentational for now: the public listing filters on city and status
-    // only (see ExperiencesController.Index), so each chip carries the city/status it can actually
-    // act on and its label is the editorial hook. Swap this array for a view model the day the
-    // listing learns about topics.
-    var trending = new[] { "E-commerce", "Brand Building", "AI Tools", "Copywriting", "Paid Ads", "Trading", "Funding" };
+    // only (see ExperiencesController.Index), so each chip is an editorial hook rather than a real
+    // filter. The labels come from resources so the strip is not seven English words sitting on the
+    // Turkish homepage; the day this becomes a real filter it should become a view model backed by
+    // the database, and these keys go with it.
+    var trending = new[]
+    {
+        "Home.Filter.Topic.Ecommerce",
+        "Home.Filter.Topic.BrandBuilding",
+        "Home.Filter.Topic.AiTools",
+        "Home.Filter.Topic.Copywriting",
+        "Home.Filter.Topic.PaidAds",
+        "Home.Filter.Topic.Trading",
+        "Home.Filter.Topic.Funding",
+    };
+
+    // Cities are proper nouns and stay as they are in every language.
+    var cities = new[] { "London", "Istanbul", "Dubai" };
 }
 
 <section class="home-filter">
     <div class="container">
-        <p class="home-filter__eyebrow">Find what matters to you</p>
+        <p class="home-filter__eyebrow">@Loc["Home.Filter.Eyebrow"]</p>
         <form class="home-filter__form" method="get" action="/experiences">
             <div class="home-filter__field">
-                <label for="filter-city">I'm looking for…</label>
+                <label for="filter-city">@Loc["Home.Filter.LookingFor"]</label>
                 <select id="filter-city" name="city">
-                    <option value="">All Cities</option>
-                    <option value="London">London</option>
-                    <option value="Istanbul">Istanbul</option>
-                    <option value="Dubai">Dubai</option>
+                    <option value="">@Loc["Experiences.Filters.AnyCity"]</option>
+                    @foreach (var city in cities)
+                    {
+                        <option value="@city">@city</option>
+                    }
                 </select>
             </div>
             <div class="home-filter__field">
-                <label for="filter-status">Status</label>
+                <label for="filter-status">@Loc["Experiences.Filters.Status"]</label>
                 <select id="filter-status" name="status">
-                    <option value="">Any Status</option>
-                    <option value="ApplicationsOpen">Applications Open</option>
-                    <option value="AlmostFull">Almost Full</option>
-                    <option value="Waitlist">Waitlist</option>
-                    <option value="ComingSoon">Coming Soon</option>
+                    <option value="">@Loc["Experiences.Filters.AnyStatus"]</option>
+                    @* The same four keys the listing page and the status badges use. Restating them
+                       here would be a second English source that drifts the moment one is edited. *@
+                    <option value="ApplicationsOpen">@Loc["Experiences.Status.ApplicationsOpen"]</option>
+                    <option value="AlmostFull">@Loc["Experiences.Status.AlmostFull"]</option>
+                    <option value="Waitlist">@Loc["Experiences.Status.Waitlist"]</option>
+                    <option value="ComingSoon">@Loc["Experiences.Status.ComingSoon"]</option>
                 </select>
             </div>
             <div class="home-filter__field">
-                <label for="filter-format">Format</label>
+                <label for="filter-format">@Loc["Home.Filter.Format"]</label>
                 <select id="filter-format" name="format">
-                    <option value="">All Formats</option>
-                    <option value="Retreat">Retreat</option>
-                    <option value="Seminar">Seminar</option>
-                    <option value="Dinner">Dinner</option>
+                    <option value="">@Loc["Home.Filter.AllFormats"]</option>
+                    <option value="Retreat">@Loc["Home.Filter.Format.Retreat"]</option>
+                    <option value="Seminar">@Loc["Home.Filter.Format.Seminar"]</option>
+                    <option value="Dinner">@Loc["Home.Filter.Format.Dinner"]</option>
                 </select>
             </div>
             <div class="home-filter__field">
-                <label for="filter-price">Price</label>
+                <label for="filter-price">@Loc["Home.Filter.Price"]</label>
                 <select id="filter-price" name="price">
-                    <option value="">Any Price</option>
-                    <option value="0-1000">Up to £1,000</option>
-                    <option value="1000-5000">£1,000 – £5,000</option>
-                    <option value="5000-">£5,000+</option>
+                    <option value="">@Loc["Home.Filter.AnyPrice"]</option>
+                    @* The amounts stay in sterling in every language — the House prices in one
+                       currency, and a translated figure would be a different price, not a
+                       translation. Only the words around them change. *@
+                    <option value="0-1000">@Loc["Home.Filter.Price.UpTo", "£1,000"]</option>
+                    <option value="1000-5000">£1,000 &ndash; £5,000</option>
+                    <option value="5000-">@Loc["Home.Filter.Price.Over", "£5,000"]</option>
                 </select>
             </div>
             <button type="submit" class="btn btn--primary home-filter__submit">
-                Search
+                @Loc["Home.Filter.Search"]
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <circle cx="11" cy="11" r="7" />
                     <path d="m20 20-3.5-3.5" stroke-linecap="round" />
@@ -56,11 +75,12 @@
             </button>
         </form>
         <div class="home-filter__trending">
-            <span class="home-filter__trending-label">Trending:</span>
+            <span class="home-filter__trending-label">@Loc["Home.Filter.Trending"]</span>
             <ul class="home-filter__chips">
-                @foreach (var topic in trending)
+                @foreach (var key in trending)
                 {
-                    <li><a href="/experiences?topic=@Uri.EscapeDataString(topic)">@topic</a></li>
+                    var label = Loc[key].Value;
+                    <li><a href="/experiences?topic=@Uri.EscapeDataString(label)">@label</a></li>
                 }
             </ul>
         </div>

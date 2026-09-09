@@ -151,6 +151,20 @@
         <p class="admin-field__hint">@Loc["Admin.Journal.Excerpt.Hint"]</p>
     </div>
 
+    @* Per-language search copy. Optional — empty falls back to the headline and the standfirst
+       above, which is exactly what happened before these existed. *@
+    <div class="admin-field">
+        <label>@Loc["Admin.Journal.SeoTitle"]</label>
+        <input name="SeoTitle" maxlength="200" value="@active.Form.SeoTitle" />
+        <p class="admin-field__hint">@Loc["Admin.Journal.SeoTitle.Hint"]</p>
+    </div>
+
+    <div class="admin-field">
+        <label>@Loc["Admin.Journal.SeoDescription"]</label>
+        <textarea name="SeoDescription" rows="2" maxlength="400">@active.Form.SeoDescription</textarea>
+        <p class="admin-field__hint">@Loc["Admin.Journal.SeoDescription.Hint"]</p>
+    </div>
+
     <div class="admin-field">
         <label>@Loc["Admin.Journal.Body"]</label>
         @* data-upload-url turns on drag-and-drop image/GIF upload inside the editor: files go

@@ -6,6 +6,10 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
 
   <data name="Nav.Home" xml:space="preserve"><value>Avaleht</value></data>
+  <data name="Nav.HomeAria" xml:space="preserve"><value>The VI House — Avaleht</value></data>
+  <data name="Nav.Search.Label" xml:space="preserve"><value>Otsi</value></data>
+  <data name="Nav.Search.Placeholder" xml:space="preserve"><value>Otsi elamusi ja ajakirja…</value></data>
+  <data name="Nav.Search.Hint" xml:space="preserve"><value>Otsige elamusi ja ajakirja sissekandeid.</value></data>
   <data name="Nav.Experiences" xml:space="preserve"><value>Elamused</value></data>
   <data name="Nav.Membership" xml:space="preserve"><value>Liikmelisus</value></data>
   <data name="Nav.About" xml:space="preserve"><value>Meist</value></data>
@@ -575,6 +579,14 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Experiences.Closed.ComingSoon" xml:space="preserve"><value>Tulekul</value></data>
   <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Ootenimekiri</value></data>
   <data name="Experiences.Closed.Closed" xml:space="preserve"><value>Kandideerimine suletud</value></data>
+  <data name="Seo.Home.Title" xml:space="preserve"><value>The VI House — Ainult kutsetega maja asutajatele</value></data>
+  <data name="Seo.Home.Description" xml:space="preserve"><value>Ainult kutsetega maja asutajatele. Privaatsed õhtusöõgid, retriidid ja ruumid Euroopa linnades — väikesed, valitud ja avalikkusele suletud.</value></data>
+  <data name="Seo.Experiences.Description" xml:space="preserve"><value>Privaatsed asutajate õhtusöõgid, retriidid ja tippkohtumised üle Euroopa. Vaadake, millele saab kandideerida, mis on tulemas ja kellele iga ruum on mõeldud.</value></data>
+  <data name="Seo.Journal.Description" xml:space="preserve"><value>Esseed, märkmed ja vestlused The VI House'ist — millest asutajad tegelikult räägivad, kui uks on kinni.</value></data>
+  <data name="Seo.Sessions.Description" xml:space="preserve"><value>Veebisessioonid ja salvestused liikmetele: praktilised vestlused inimestega, kes on seda ise teinud.</value></data>
+  <data name="Seo.Membership.Description" xml:space="preserve"><value>The VI House'i liikmesus — mida see sisaldab, mis see maksab ja millised elamused avanevad ilma kandideerimata.</value></data>
+  <data name="Seo.About.Description" xml:space="preserve"><value>Miks The VI House olemas on, kellele see on mõeldud ja kuidas ruum kokku pannakse.</value></data>
+  <data name="Seo.Contact.Description" xml:space="preserve"><value>Võtke The VI House'iga ühendust — küsimused liikmesuse, elamuse või koostöö kohta.</value></data>
   <data name="Experiences.Gate.Soon.Note" xml:space="preserve"><value>Kandideerimine avaneb peagi</value></data>
   <data name="Experiences.Gate.Waitlist.Note" xml:space="preserve"><value>See voor on täis</value></data>
   <data name="Experiences.Gate.Closed.Note" xml:space="preserve"><value>Kandideerimine on lõppenud</value></data>
@@ -655,6 +667,30 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Manage.TwoFactor.Disable" xml:space="preserve"><value>Lülita kaheastmeline kinnitamine välja</value></data>
   <data name="Manage.Danger.Heading" xml:space="preserve"><value>Ole nendega ettevaatlik</value></data>
 
+  <data name="Home.Upcoming.Heading" xml:space="preserve"><value>Tulevased elamused</value></data>
+  <data name="Home.Signature.Heading" xml:space="preserve"><value>Signatuurelamused</value></data>
+  <data name="Home.Signature.Badge" xml:space="preserve"><value>Signatuur</value></data>
+  <data name="Home.ViewAll" xml:space="preserve"><value>Vaadake kõiki elamusi</value></data>
+  <data name="Home.Filter.Eyebrow" xml:space="preserve"><value>Leidke see, mis teile korda läheb</value></data>
+  <data name="Home.Filter.LookingFor" xml:space="preserve"><value>Otsin…</value></data>
+  <data name="Home.Filter.Format" xml:space="preserve"><value>Vorming</value></data>
+  <data name="Home.Filter.AllFormats" xml:space="preserve"><value>Kõik vormingud</value></data>
+  <data name="Home.Filter.Format.Retreat" xml:space="preserve"><value>Retriit</value></data>
+  <data name="Home.Filter.Format.Seminar" xml:space="preserve"><value>Seminar</value></data>
+  <data name="Home.Filter.Format.Dinner" xml:space="preserve"><value>Õhtusöök</value></data>
+  <data name="Home.Filter.Price" xml:space="preserve"><value>Hind</value></data>
+  <data name="Home.Filter.AnyPrice" xml:space="preserve"><value>Iga hind</value></data>
+  <data name="Home.Filter.Price.UpTo" xml:space="preserve"><value>Kuni {0}</value></data>
+  <data name="Home.Filter.Price.Over" xml:space="preserve"><value>Alates {0}</value></data>
+  <data name="Home.Filter.Search" xml:space="preserve"><value>Otsi</value></data>
+  <data name="Home.Filter.Trending" xml:space="preserve"><value>Populärsed:</value></data>
+  <data name="Home.Filter.Topic.Ecommerce" xml:space="preserve"><value>E-kaubandus</value></data>
+  <data name="Home.Filter.Topic.BrandBuilding" xml:space="preserve"><value>Brändi ehitamine</value></data>
+  <data name="Home.Filter.Topic.AiTools" xml:space="preserve"><value>AI tööriistad</value></data>
+  <data name="Home.Filter.Topic.Copywriting" xml:space="preserve"><value>Tekstiloome</value></data>
+  <data name="Home.Filter.Topic.PaidAds" xml:space="preserve"><value>Tasulised reklaamid</value></data>
+  <data name="Home.Filter.Topic.Trading" xml:space="preserve"><value>Kauplemine</value></data>
+  <data name="Home.Filter.Topic.Funding" xml:space="preserve"><value>Rahastus</value></data>
   <data name="Home.Hero.Previous" xml:space="preserve"><value>Eelmine slaid</value></data>
   <data name="Home.Hero.Next" xml:space="preserve"><value>Järgmine slaid</value></data>
   <data name="Admin.HeroSlide.Title" xml:space="preserve"><value>Avaslaidid</value></data>
@@ -753,6 +789,10 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Admin.Journal.Languages" xml:space="preserve"><value>Keeled</value></data>
   <data name="Admin.Journal.Excerpt" xml:space="preserve"><value>Väljavõte</value></data>
   <data name="Admin.Journal.Excerpt.Hint" xml:space="preserve"><value>Kuvatakse loendikaardil ja otsingutulemustes.</value></data>
+  <data name="Admin.Journal.SeoTitle" xml:space="preserve"><value>Otsingu pealkiri</value></data>
+  <data name="Admin.Journal.SeoTitle.Hint" xml:space="preserve"><value>Valikuline. Asendab pealkirja otsitulemustes ja brauseri sakkides — alla 60 tähemärgi. Tühjana kasutatakse pealkirja.</value></data>
+  <data name="Admin.Journal.SeoDescription" xml:space="preserve"><value>Otsingu kirjeldus</value></data>
+  <data name="Admin.Journal.SeoDescription.Hint" xml:space="preserve"><value>Valikuline. Lause Google'i lingi all ja lingi eelvaadetes. Näidatakse umbes 160 tähemärki. Tühjana kasutatakse sissejuhatust.</value></data>
   <data name="Admin.Journal.Body" xml:space="preserve"><value>Artikkel</value></data>
   <data name="Admin.Journal.Body.Hint" xml:space="preserve"><value>Pildi või GIF-i üleslaadimiseks lohista see otse siia. Video lisamiseks kleebi YouTube'i link omaette reale; heli lisatakse allolevast meediakogust.</value></data>
   <data name="Admin.Journal.AuthorName" xml:space="preserve"><value>Autor</value></data>

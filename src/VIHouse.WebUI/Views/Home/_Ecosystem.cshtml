@@ -6,7 +6,13 @@
     <section class="home-ecosystem" data-reveal>
         <div class="container home-ecosystem__inner">
             <div class="home-ecosystem__intro">
-                <p class="home-ecosystem__eyebrow">The VI House Ecosystem</p>
+                @* Was a hardcoded English literal, which is why this line stayed in English on all four
+               language versions of the homepage. It reads from the block now, so an editor can
+               translate it on the same screen as the rest of the section. *@
+            @if (!string.IsNullOrWhiteSpace(Model.Eyebrow))
+            {
+                <p class="home-ecosystem__eyebrow">@Model.Eyebrow</p>
+            }
                 @if (!string.IsNullOrWhiteSpace(Model.Heading))
                 {
                     <h2>@Model.Heading</h2>

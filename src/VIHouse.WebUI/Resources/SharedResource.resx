@@ -6,6 +6,10 @@
   <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
 
   <data name="Nav.Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Nav.HomeAria" xml:space="preserve"><value>The VI House — Home</value></data>
+  <data name="Nav.Search.Label" xml:space="preserve"><value>Search</value></data>
+  <data name="Nav.Search.Placeholder" xml:space="preserve"><value>Search experiences, journal…</value></data>
+  <data name="Nav.Search.Hint" xml:space="preserve"><value>Search experiences and journal entries.</value></data>
   <data name="Nav.Experiences" xml:space="preserve"><value>Experiences</value></data>
   <data name="Nav.Membership" xml:space="preserve"><value>Membership</value></data>
   <data name="Nav.About" xml:space="preserve"><value>About</value></data>
@@ -575,6 +579,14 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Experiences.Closed.ComingSoon" xml:space="preserve"><value>Coming soon</value></data>
   <data name="Experiences.Closed.Waitlist" xml:space="preserve"><value>Waitlist</value></data>
   <data name="Experiences.Closed.Closed" xml:space="preserve"><value>Applications closed</value></data>
+  <data name="Seo.Home.Title" xml:space="preserve"><value>The VI House — An Invitation-Only House For Founders</value></data>
+  <data name="Seo.Home.Description" xml:space="preserve"><value>An invitation-only house for founders. Private dinners, retreats and rooms in Europe's cities — small, curated and closed to the public.</value></data>
+  <data name="Seo.Experiences.Description" xml:space="preserve"><value>Private founder dinners, retreats and summits across Europe. See what is open for applications, what is coming, and who each room is for.</value></data>
+  <data name="Seo.Journal.Description" xml:space="preserve"><value>Essays, notes and conversations from The VI House — what founders actually talk about when the room is closed.</value></data>
+  <data name="Seo.Sessions.Description" xml:space="preserve"><value>Online sessions and recordings for members: practical, unrecorded-elsewhere conversations with people who have done it.</value></data>
+  <data name="Seo.Membership.Description" xml:space="preserve"><value>Membership of The VI House — what it includes, what it costs, and which experiences it opens without an application.</value></data>
+  <data name="Seo.About.Description" xml:space="preserve"><value>Why The VI House exists, who it is for, and how a room gets curated.</value></data>
+  <data name="Seo.Contact.Description" xml:space="preserve"><value>Get in touch with The VI House — questions about membership, an experience, or partnering with us.</value></data>
   <data name="Experiences.Gate.Soon.Note" xml:space="preserve"><value>Applications open soon</value></data>
   <data name="Experiences.Gate.Waitlist.Note" xml:space="preserve"><value>This round is full</value></data>
   <data name="Experiences.Gate.Closed.Note" xml:space="preserve"><value>Applications are no longer open</value></data>
@@ -655,6 +667,30 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Manage.TwoFactor.Disable" xml:space="preserve"><value>Turn off two-step verification</value></data>
   <data name="Manage.Danger.Heading" xml:space="preserve"><value>Careful with these</value></data>
 
+  <data name="Home.Upcoming.Heading" xml:space="preserve"><value>Upcoming experiences</value></data>
+  <data name="Home.Signature.Heading" xml:space="preserve"><value>Signature experiences</value></data>
+  <data name="Home.Signature.Badge" xml:space="preserve"><value>Signature</value></data>
+  <data name="Home.ViewAll" xml:space="preserve"><value>View all experiences</value></data>
+  <data name="Home.Filter.Eyebrow" xml:space="preserve"><value>Find what matters to you</value></data>
+  <data name="Home.Filter.LookingFor" xml:space="preserve"><value>I’m looking for…</value></data>
+  <data name="Home.Filter.Format" xml:space="preserve"><value>Format</value></data>
+  <data name="Home.Filter.AllFormats" xml:space="preserve"><value>All formats</value></data>
+  <data name="Home.Filter.Format.Retreat" xml:space="preserve"><value>Retreat</value></data>
+  <data name="Home.Filter.Format.Seminar" xml:space="preserve"><value>Seminar</value></data>
+  <data name="Home.Filter.Format.Dinner" xml:space="preserve"><value>Dinner</value></data>
+  <data name="Home.Filter.Price" xml:space="preserve"><value>Price</value></data>
+  <data name="Home.Filter.AnyPrice" xml:space="preserve"><value>Any price</value></data>
+  <data name="Home.Filter.Price.UpTo" xml:space="preserve"><value>Up to {0}</value></data>
+  <data name="Home.Filter.Price.Over" xml:space="preserve"><value>{0}+</value></data>
+  <data name="Home.Filter.Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Home.Filter.Trending" xml:space="preserve"><value>Trending:</value></data>
+  <data name="Home.Filter.Topic.Ecommerce" xml:space="preserve"><value>E-commerce</value></data>
+  <data name="Home.Filter.Topic.BrandBuilding" xml:space="preserve"><value>Brand building</value></data>
+  <data name="Home.Filter.Topic.AiTools" xml:space="preserve"><value>AI tools</value></data>
+  <data name="Home.Filter.Topic.Copywriting" xml:space="preserve"><value>Copywriting</value></data>
+  <data name="Home.Filter.Topic.PaidAds" xml:space="preserve"><value>Paid ads</value></data>
+  <data name="Home.Filter.Topic.Trading" xml:space="preserve"><value>Trading</value></data>
+  <data name="Home.Filter.Topic.Funding" xml:space="preserve"><value>Funding</value></data>
   <data name="Home.Hero.Previous" xml:space="preserve"><value>Previous slide</value></data>
   <data name="Home.Hero.Next" xml:space="preserve"><value>Next slide</value></data>
   <data name="Admin.HeroSlide.Title" xml:space="preserve"><value>Hero Slides</value></data>
@@ -753,6 +789,10 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Admin.Journal.Languages" xml:space="preserve"><value>Languages</value></data>
   <data name="Admin.Journal.Excerpt" xml:space="preserve"><value>Excerpt</value></data>
   <data name="Admin.Journal.Excerpt.Hint" xml:space="preserve"><value>Shown on the listing card and in search results.</value></data>
+  <data name="Admin.Journal.SeoTitle" xml:space="preserve"><value>Search title</value></data>
+  <data name="Admin.Journal.SeoTitle.Hint" xml:space="preserve"><value>Optional. Overrides the headline in search results and browser tabs — aim for under 60 characters. Empty uses the headline.</value></data>
+  <data name="Admin.Journal.SeoDescription" xml:space="preserve"><value>Search description</value></data>
+  <data name="Admin.Journal.SeoDescription.Hint" xml:space="preserve"><value>Optional. The sentence under the blue link in Google, and in link previews. Roughly 160 characters are shown. Empty uses the standfirst.</value></data>
   <data name="Admin.Journal.Body" xml:space="preserve"><value>Article</value></data>
   <data name="Admin.Journal.Body.Hint" xml:space="preserve"><value>Drag an image or GIF straight in to upload it. Paste a YouTube link on its own line to embed the video; audio is inserted from the media library below.</value></data>
   <data name="Admin.Journal.AuthorName" xml:space="preserve"><value>Author</value></data>

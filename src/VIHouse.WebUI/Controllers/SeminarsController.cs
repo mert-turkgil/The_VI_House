@@ -43,6 +43,7 @@ public class SeminarsController(
 
         var culture = CultureInfo.CurrentUICulture.Name;
         ViewData["Title"] = loc["Seminars.Title"].Value;
+        this.SetSeo(loc["Seo.Sessions.Description"].Value, canonicalPath: "/sessions");
 
         return View(seminars.Select(s => SeminarCardViewModel.FromEntity(s, culture)).ToList());
     }

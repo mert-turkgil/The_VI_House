@@ -11,7 +11,12 @@
     // pathLength="1" normalises every shape to a length of 1 so the hover draw-in animation in
     // _home.scss runs at the same speed on all of them — without it a short line would finish long
     // before a long outline and the icons would appear to animate at different rates.
-    string IconPath(string label) => label.Trim().ToLowerInvariant() switch
+    // Keyed on FeatureItem.Icon, not on the visible label.
+    //
+    // This used to switch on the label, which is why translating the strip turned every icon into
+    // the fallback diamond: "Learn" is a key, "Õppige" is not. The key is now carried by the data
+    // and is the same in all four languages — see HomeController.WithIcons.
+    string IconPath(string key) => key.Trim().ToLowerInvariant() switch
     {
         "learn" => "<path pathLength=\"1\" d=\"M12 7.4c-1.8-1.1-4-1.7-6.4-1.7v11.2c2.4 0 4.6.6 6.4 1.7 1.8-1.1 4-1.7 6.4-1.7V5.7c-2.4 0-4.6.6-6.4 1.7Z\"/><path pathLength=\"1\" d=\"M12 7.4v11.2\"/>",
         "connect" => "<circle pathLength=\"1\" cx=\"9.4\" cy=\"9.4\" r=\"2.5\"/><circle pathLength=\"1\" cx=\"15.6\" cy=\"10.9\" r=\"2.1\"/><path pathLength=\"1\" d=\"M5.6 18.6c0-2.5 1.8-4.2 3.8-4.2s3.8 1.7 3.8 4.2\"/><path pathLength=\"1\" d=\"M15.6 15c1.8 0 3.2 1.4 3.2 3.4\"/>",
@@ -39,7 +44,7 @@
                         <div class="home-features__head">
                             <span class="home-features__icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    @Html.Raw(IconPath(f.Label))
+                                    @Html.Raw(IconPath(f.Icon ?? f.Label))
                                 </svg>
                             </span>
                             <span class="home-features__label">@f.Label</span>

@@ -3,12 +3,8 @@
     var access = Model.Access;
 }
 
-@section Styles {
-    @if (!string.IsNullOrWhiteSpace(Model.SeoDescription))
-    {
-        <meta name="description" content="@Model.SeoDescription" />
-    }
-}
+@* The meta description used to be emitted here. It now comes from _Seo, which the layout renders
+   for every page — leaving this one in place produced two description tags on the same page. *@
 
 <div class="content-hero">
     <div class="container">

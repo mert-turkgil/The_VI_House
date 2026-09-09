@@ -11,7 +11,16 @@
 @{
     var currentCulture = CultureInfo.CurrentUICulture.Name;
     var currentPath = Context.Request.Path + Context.Request.QueryString;
-    string CultureUrl(string culture) => Url.Action("Set", "Culture", new { culture, returnUrl = currentPath })!;
+    // Switching language now changes the URL, not just a cookie: the target path is rebuilt with
+    // that language's prefix, so the address bar afterwards holds a link that means "this page, in
+    // this language" and can be copied and sent to somebody. It still goes through /culture/set so
+    // the choice is also remembered for the unprefixed English paths.
+    string CultureUrl(string culture)
+    {
+        var bare = VIHouse.WebUI.Helpers.SeoResolver.StripCulture(Context.Request.Path.Value ?? "/");
+        var target = VIHouse.WebUI.Helpers.SeoResolver.PathFor(culture, bare) + Context.Request.QueryString;
+        return Url.Action("Set", "Culture", new { culture, returnUrl = target })!;
+    }
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
 
     // Membership, not the Member role. The role is granted to anyone who completes a payment —
@@ -57,16 +66,21 @@
    The two logout forms are the exception: they legitimately target asp-area="Identity". *@
 <header class="site-header">
     <div class="container site-header__inner">
-        <a class="site-brand" asp-area="" asp-controller="Home" asp-action="Index" aria-label="The VI House — Home">
+        <a class="site-brand" asp-area="" asp-controller="Home" asp-action="Index" aria-label="@Loc["Nav.HomeAria"]">
             <span class="site-brand__crest">
                 <partial name="_Crest" />
             </span>
             <span class="site-brand__wordmark">The VI House</span>
         </a>
 
+        @* No "Home" link in either nav: the wordmark to the left of this is already the link
+           home, on every page and at every width. Carrying both cost a slot in a row that has
+           to hold six labels plus the language switcher, the sign-in link and the call to
+           action — and the labels are not the same length in every language ("Home" is four
+           characters, "Ana Sayfa" is nine, "Mitgliedschaft" is fourteen), so the row that just
+           fitted in English was overflowing in German and Turkish. *@
         <nav class="site-nav" aria-label="Primary">
             <ul class="site-nav__list">
-                <li><a class="@NavLinkClass("Home")" asp-area="" asp-controller="Home" asp-action="Index" aria-current="@AriaCurrent("Home")">@Loc["Nav.Home"]</a></li>
                 <li><a class="@NavLinkClass("Experiences")" asp-area="" asp-controller="Experiences" asp-action="Index" aria-current="@AriaCurrent("Experiences")">@Loc["Nav.Experiences"]</a></li>
                 <li><a class="@NavLinkClass("Membership")" asp-area="" asp-controller="Membership" asp-action="Index" aria-current="@AriaCurrent("Membership")">@Loc["Nav.Membership"]</a></li>
                 <li><a class="@NavLinkClass("About")" asp-area="" asp-controller="About" asp-action="Index" aria-current="@AriaCurrent("About")">@Loc["Nav.About"]</a></li>
@@ -81,7 +95,7 @@
 
         <div class="site-header__actions">
             <details class="site-search">
-                <summary class="site-search__toggle" aria-label="Search">
+                <summary class="site-search__toggle" aria-label="@Loc["Nav.Search.Label"]">
                     <svg class="site-search__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6" />
                         <line x1="15.3" y1="15.3" x2="21" y2="21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
@@ -89,10 +103,10 @@
                 </summary>
                 <div class="site-search__menu">
                     <form action="/search" method="get" class="site-search__form">
-                        <input type="text" name="q" class="site-search__input" placeholder="Search experiences, journal…" autocomplete="off" data-search-input />
+                        <input type="text" name="q" class="site-search__input" placeholder="@Loc["Nav.Search.Placeholder"]" autocomplete="off" data-search-input />
                     </form>
                     <div class="site-search__results" data-search-results>
-                        <p class="search-results__hint">Search experiences and journal entries.</p>
+                        <p class="search-results__hint">@Loc["Nav.Search.Hint"]</p>
                     </div>
                 </div>
             </details>
@@ -189,7 +203,6 @@
 <div class="site-mobile-nav" id="mobile-nav" data-nav-panel data-open="false">
     <nav aria-label="Mobile">
         <ul class="site-mobile-nav__list">
-            <li><a class="@MobileNavLinkClass("Home")" asp-area="" asp-controller="Home" asp-action="Index" aria-current="@AriaCurrent("Home")">@Loc["Nav.Home"]</a></li>
             <li><a class="@MobileNavLinkClass("Experiences")" asp-area="" asp-controller="Experiences" asp-action="Index" aria-current="@AriaCurrent("Experiences")">@Loc["Nav.Experiences"]</a></li>
             <li><a class="@MobileNavLinkClass("Membership")" asp-area="" asp-controller="Membership" asp-action="Index" aria-current="@AriaCurrent("Membership")">@Loc["Nav.Membership"]</a></li>
             <li><a class="@MobileNavLinkClass("About")" asp-area="" asp-controller="About" asp-action="Index" aria-current="@AriaCurrent("About")">@Loc["Nav.About"]</a></li>

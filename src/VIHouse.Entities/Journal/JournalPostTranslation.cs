@@ -26,4 +26,16 @@ public class JournalPostTranslation : BaseEntity
     /// <summary>Sanitised HTML. Posts written before the rich text editor existed are stored as
     /// plain text with blank-line-separated paragraphs and are converted on read.</summary>
     public string Body { get; set; } = default!;
+
+    // --- Search ---------------------------------------------------------------------------------
+    // Added to match SeminarTranslation and ExperienceTranslation, which have carried these all
+    // along. Without them a translated post could only ever present its headline to a search engine,
+    // and a headline written to work above an article is rarely the one that works as a blue link.
+    // Both are optional: empty falls back to Title and Excerpt, which is what happened before.
+
+    /// <summary>Overrides the title in search results and browser tabs. Aim for under 60 characters.</summary>
+    public string? SeoTitle { get; set; }
+
+    /// <summary>Overrides the excerpt as the meta description. Google shows roughly 160 characters.</summary>
+    public string? SeoDescription { get; set; }
 }

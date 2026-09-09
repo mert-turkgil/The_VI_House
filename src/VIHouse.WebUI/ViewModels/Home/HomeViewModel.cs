@@ -66,7 +66,18 @@ public class HeroSlideViewModel
     public bool HasSecondaryCta => !string.IsNullOrWhiteSpace(SecondaryCtaLabel) && !string.IsNullOrWhiteSpace(SecondaryCtaUrl);
 }
 
-public record FeatureItem(string Label, string Description);
+/// <param name="Icon">
+/// Stable key for the glyph, independent of the words beside it.
+///
+/// The icon used to be chosen from the Label, which worked exactly as long as the labels were
+/// English. The moment the strip was translated, "Learn" became "Õppige" and every item fell
+/// through to the default diamond — five identical placeholder marks in a row on three of the four
+/// language versions. The label is copy; the icon is structure, and they cannot be the same field.
+///
+/// Optional: an item without one falls back to the English item in the same position, so a
+/// translator who drops the key still gets the right glyph.
+/// </param>
+public record FeatureItem(string Label, string Description, string? Icon = null);
 
 /// <summary>
 /// A card in the ecosystem grid. Everything past Description is optional so a block authored before
@@ -85,6 +96,13 @@ public record EcosystemPillar
 
 public class EcosystemContent
 {
+    /// <summary>
+    /// The small line above the heading. It was hardcoded English in the view ("The VI House
+    /// Ecosystem") and so stayed English on the Turkish, German and Estonian homepage; it now comes
+    /// from the block's Subheading, which is translatable like everything else on the section.
+    /// </summary>
+    public string? Eyebrow { get; set; }
+
     public string Heading { get; set; } = "";
     public string? Body { get; set; }
     public string? CtaLabel { get; set; }

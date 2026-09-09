@@ -24,6 +24,12 @@
 
   --vih-header-height: 76px;
   --vih-container-max: 1280px;
+
+  // The page gutter, scaled by _base.scss at each breakpoint. A token rather than a literal so the
+  // handful of layouts that set their own edge padding (the account shell, the admin frame) can use
+  // the same number instead of drifting from it — which is how a site ends up with 24px here and
+  // 20px there for no reason anyone can name.
+  --vih-gutter: 24px;
   --vih-radius-pill: 999px;
 
   --vih-ease: cubic-bezier(0.22, 1, 0.36, 1);

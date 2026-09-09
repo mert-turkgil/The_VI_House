@@ -30,7 +30,10 @@
 }
 
 .content-body {
-  padding: 48px 0 96px;
+  // padding-block, not the padding shorthand: this element also carries .container, and a
+  // shorthand resets padding-inline to 0 — which silently threw away the page gutter and
+  // ran the text to the edge of the screen. Only the vertical rhythm belongs here.
+  padding-block: 48px 96px;
   max-width: 760px;
   margin: 0 auto;
 

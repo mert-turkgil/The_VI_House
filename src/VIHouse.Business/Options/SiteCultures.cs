@@ -20,11 +20,35 @@ public static class SiteCultures
 
     public static readonly IReadOnlyList<SiteCulture> All =
     [
-        new("en-GB", "EN", "English"),
-        new("de-DE", "DE", "Deutsch"),
-        new("tr-TR", "TR", "Türkçe"),
-        new("et-EE", "ET", "Eesti"),
+        new("en-GB", "EN", "English", "en"),
+        new("de-DE", "DE", "Deutsch", "de"),
+        new("tr-TR", "TR", "Türkçe", "tr"),
+        new("et-EE", "ET", "Eesti", "et"),
     ];
+
+    /// <summary>
+    /// The short codes that appear in URLs, minus the default's.
+    ///
+    /// English is served unprefixed (/experiences) and the rest are prefixed (/de/experiences).
+    /// That keeps every existing link, bookmark and inbound backlink working exactly as it did,
+    /// and it makes the English URL the natural x-default in the hreflang set.
+    /// </summary>
+    public static readonly string[] UrlCodes = [.. All.Where(c => c.Name != Default).Select(c => c.UrlCode)];
+
+    /// <summary>Every short code including the default's — for building hreflang sets.</summary>
+    public static readonly string[] AllUrlCodes = [.. All.Select(c => c.UrlCode)];
+
+    /// <summary>The full culture behind a URL segment ("de" -> "de-DE"), or null if it is not one.</summary>
+    public static string? FromUrlCode(string? code) =>
+        code is null ? null
+            : All.FirstOrDefault(c => string.Equals(c.UrlCode, code, StringComparison.OrdinalIgnoreCase))?.Name;
+
+    /// <summary>The URL segment for a culture, or null for the default, which has none.</summary>
+    public static string? ToUrlCode(string? culture)
+    {
+        var name = Normalise(culture);
+        return name == Default ? null : Describe(name).UrlCode;
+    }
 
     /// <summary>Culture names in declaration order — Default first, which is what
     /// RequestLocalizationOptions.SetDefaultCulture relies on.</summary>
@@ -61,4 +85,12 @@ public static class SiteCultures
 /// <param name="Name">Culture name, e.g. "de-DE".</param>
 /// <param name="ShortLabel">Two-letter label for the compact language switcher.</param>
 /// <param name="NativeLabel">The language's name in itself — never translated, by design.</param>
-public record SiteCulture(string Name, string ShortLabel, string NativeLabel);
+/// <param name="UrlCode">Lower-case segment used in the URL, e.g. "de" in /de/experiences.</param>
+public record SiteCulture(string Name, string ShortLabel, string NativeLabel, string UrlCode)
+{
+    /// <summary>The BCP-47 tag for hreflang and og:locale. Same as Name, but named for its use.</summary>
+    public string HrefLang => Name;
+
+    /// <summary>og:locale wants underscores: "en_GB", not "en-GB".</summary>
+    public string OpenGraphLocale => Name.Replace('-', '_');
+}
