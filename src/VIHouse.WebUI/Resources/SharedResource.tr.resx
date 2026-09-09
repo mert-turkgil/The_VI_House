@@ -32,7 +32,6 @@
   <data name="Footer.NewsletterHeading" xml:space="preserve"><value>VI Listesine Katılın</value></data>
   <data name="Footer.NewsletterPlaceholder" xml:space="preserve"><value>E-posta adresiniz</value></data>
   <data name="Footer.NewsletterSubmit" xml:space="preserve"><value>Abone Ol</value></data>
-  <data name="Footer.NewsletterNote" xml:space="preserve"><value>Gizliliğinize saygı duyuyoruz.</value></data>
   <data name="Footer.RightsReserved" xml:space="preserve"><value>Tüm hakları saklıdır.</value></data>
   <data name="Footer.Terms" xml:space="preserve"><value>Kullanım Koşulları</value></data>
   <data name="Footer.Privacy" xml:space="preserve"><value>Gizlilik Politikası</value></data>
@@ -619,6 +618,8 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Auth.Login.Lede" xml:space="preserve"><value>House önce davetle çalışır. Üyeliğinize, oturumlarınıza ve rehbere ulaşmak için giriş yapın.</value></data>
   <data name="Auth.Email" xml:space="preserve"><value>E-posta</value></data>
   <data name="Auth.Password" xml:space="preserve"><value>Parola</value></data>
+  <data name="Auth.Password.Show" xml:space="preserve"><value>Şifreyi göster</value></data>
+  <data name="Auth.Password.Hide" xml:space="preserve"><value>Şifreyi gizle</value></data>
   <data name="Auth.RememberMe" xml:space="preserve"><value>Oturumumu açık tut</value></data>
   <data name="Auth.Login.Submit" xml:space="preserve"><value>Giriş yap</value></data>
   <data name="Auth.ForgotPassword" xml:space="preserve"><value>Parolanızı mı unuttunuz?</value></data>

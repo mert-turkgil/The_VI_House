@@ -49,7 +49,10 @@ public sealed class CultureUrlHelper(IUrlHelper inner) : IUrlHelper
     /// </summary>
     private static readonly string[] Excluded =
     [
-        "/admin", "/identity", "/media", "/culture", "/webhooks",
+        // "/identity" is deliberately NOT here any more: CulturePageRouteConvention gives those
+        // pages a prefixed route, so /tr/Identity/Account/Login is real and linking to it in
+        // language is now both possible and correct.
+        "/admin", "/media", "/culture", "/webhooks",
         "/sitemap.xml", "/robots.txt", "/llms.txt",
         "/dist", "/img", "/lib", "/icons", "/css", "/js",
         "/favicon.ico", "/sw.js", "/manifest.json",

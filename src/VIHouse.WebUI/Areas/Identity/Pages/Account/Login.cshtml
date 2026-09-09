@@ -37,8 +37,11 @@
 
         <div class="auth-field">
             <label class="auth-field__label" asp-for="Input.Password">@Loc["Auth.Password"]</label>
-            <input class="auth-field__input" asp-for="Input.Password" autocomplete="current-password"
-                   aria-required="true" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+            <div class="auth-password-toggle">
+                <input class="auth-field__input" asp-for="Input.Password" autocomplete="current-password"
+                       aria-required="true" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+                <partial name="_PasswordToggleButton" />
+            </div>
             <span class="auth-field__error" asp-validation-for="Input.Password"></span>
         </div>
 

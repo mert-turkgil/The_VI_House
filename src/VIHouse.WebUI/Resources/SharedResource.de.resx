@@ -32,7 +32,6 @@
   <data name="Footer.NewsletterHeading" xml:space="preserve"><value>VI-Liste beitreten</value></data>
   <data name="Footer.NewsletterPlaceholder" xml:space="preserve"><value>Ihre E-Mail-Adresse</value></data>
   <data name="Footer.NewsletterSubmit" xml:space="preserve"><value>Abonnieren</value></data>
-  <data name="Footer.NewsletterNote" xml:space="preserve"><value>Wir respektieren Ihre Privatsphäre.</value></data>
   <data name="Footer.RightsReserved" xml:space="preserve"><value>Alle Rechte vorbehalten.</value></data>
   <data name="Footer.Terms" xml:space="preserve"><value>Allgemeine Geschäftsbedingungen</value></data>
   <data name="Footer.Privacy" xml:space="preserve"><value>Datenschutzerklärung</value></data>
@@ -619,6 +618,8 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Auth.Login.Lede" xml:space="preserve"><value>Das House ist einladungsbasiert. Melden Sie sich an, um zu Ihrer Mitgliedschaft, Ihren Sessions und dem Verzeichnis zu gelangen.</value></data>
   <data name="Auth.Email" xml:space="preserve"><value>E-Mail</value></data>
   <data name="Auth.Password" xml:space="preserve"><value>Passwort</value></data>
+  <data name="Auth.Password.Show" xml:space="preserve"><value>Passwort anzeigen</value></data>
+  <data name="Auth.Password.Hide" xml:space="preserve"><value>Passwort verbergen</value></data>
   <data name="Auth.RememberMe" xml:space="preserve"><value>Angemeldet bleiben</value></data>
   <data name="Auth.Login.Submit" xml:space="preserve"><value>Anmelden</value></data>
   <data name="Auth.ForgotPassword" xml:space="preserve"><value>Passwort vergessen?</value></data>

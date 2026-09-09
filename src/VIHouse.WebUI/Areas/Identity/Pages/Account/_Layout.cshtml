@@ -1,8 +1,82 @@
+@using Microsoft.AspNetCore.Hosting
+@inject IWebHostEnvironment Env
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
+
+    // The cinematic backdrop is for the signed-out screens only — sign in, two-factor challenge,
+    // password reset. Once someone is through the door they are on the account settings pages, and
+    // a full-bleed video behind a list of security options is noise, not atmosphere.
+    var signedOut = User.Identity?.IsAuthenticated != true;
+
+    // The video is optional and deliberately absent from the repository, the same arrangement
+    // wwwroot/img already has: binaries are fetched or dropped in, never committed. Rendering the
+    // element only when a file is actually on disk means no 404 on every sign-in page load, and the
+    // poster photograph below is a complete design on its own rather than a placeholder waiting for
+    // something. Drop an mp4 (and ideally a webm) at wwwroot/video/ and it starts playing.
+    string? VideoIfPresent(string relative) =>
+        Env.WebRootFileProvider.GetFileInfo(relative).Exists ? relative : null;
+
+    var mp4 = VideoIfPresent("video/auth-backdrop.mp4");
+    var webm = VideoIfPresent("video/auth-backdrop.webm");
+    var hasVideo = mp4 is not null || webm is not null;
+
+    // Built here rather than as a literal "~/a 800w, ~/b 1600w" attribute: Razor's tilde resolution
+    // only rewrites the first "~/" it finds in an attribute value, so the second URL in a
+    // comma-separated srcset was reaching the browser unresolved as a literal "~/img/..." path —
+    // silently 404, and the browser just fell back to the (also broken, before this fix) 800w
+    // still. Url.Content resolves each path explicitly, so both candidates are real URLs.
+    var still800 = Url.Content("~/img/auth/new-york-800.jpg");
+    var still1600 = Url.Content("~/img/auth/new-york-1600.jpg");
 }
-<div class="auth-page">
-    @RenderBody()
+
+@* The backdrop lives INSIDE .auth-page, not beside it. It is absolutely positioned, so it needs a
+   positioned ancestor of exactly the right size; as a sibling its containing block would have been
+   the viewport, and a fixed full-screen layer would have painted straight over the footer. *@
+<div class="auth-page @(signedOut ? "auth-page--backdrop" : null)">
+    @if (signedOut)
+    {
+        <div class="auth-backdrop" aria-hidden="true">
+            @* The photograph is the base layer, not a fallback of last resort: it is what everyone sees
+               on first paint, everyone on a metered connection, everyone who has asked for reduced
+               motion, and everyone whose browser cannot play the format. The video, when there is one,
+               simply fades in over the top. *@
+            <img class="auth-backdrop__still"
+                 src="@still1600"
+                 srcset="@($"{still800} 800w, {still1600} 1600w")"
+                 sizes="100vw" alt="" decoding="async" fetchpriority="high" />
+
+            @if (hasVideo)
+            {
+                @* muted + playsinline are what make autoplay legal on iOS and in Chrome; without both
+                   the browser silently refuses to start and the poster is all anyone ever sees.
+                   preload="none" keeps it off the critical path — the still is already showing. *@
+                <video class="auth-backdrop__video" autoplay loop muted playsinline preload="none"
+                       poster="@still1600" tabindex="-1" data-auth-backdrop>
+                    @if (webm is not null)
+                    {
+                        <source src="~/@webm" type="video/webm" />
+                    }
+                    @if (mp4 is not null)
+                    {
+                        <source src="~/@mp4" type="video/mp4" />
+                    }
+                </video>
+            }
+
+            @* Two layers, not one: a flat overlay dark enough to hold white text would bury the picture.
+               A vertical gradient plus a colour wash keeps the skyline readable at the edges while the
+               card sits on the darkest part. *@
+            <span class="auth-backdrop__scrim"></span>
+        </div>
+    }
+
+    @* One panel for every page under Account/, not just the four that hand-roll an .auth-card.
+       ForgotPassword, ResetPassword, Lockout and the rest are scaffolded markup — bare headings and
+       Bootstrap class names with no surface of their own. Over a dark photograph their dark text
+       would be unreadable, so the surface belongs to the layout, where every page gets it. *@
+    <div class="auth-page__panel">
+        @RenderBody()
+    </div>
 </div>
 
 @section Scripts {

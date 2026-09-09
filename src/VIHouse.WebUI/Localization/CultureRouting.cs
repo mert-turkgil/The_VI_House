@@ -93,3 +93,38 @@ public class SiteLanguageRouteConstraint : IRouteConstraint
         return SiteCultures.UrlCodes.Contains(code, StringComparer.OrdinalIgnoreCase);
     }
 }
+
+/// <summary>
+/// The Razor Pages half of <see cref="CulturePrefixConvention"/>.
+///
+/// That convention walks controllers, so it never touched the Identity area — those are Razor
+/// Pages, and they had exactly one URL each. The language switcher does not know that: it takes the
+/// current path, strips any language segment and prefixes the target one, which on the sign-in page
+/// produced /tr/Identity/Account/Login and a 404. Switching language on any Identity screen was a
+/// dead end, on the one set of screens where being unable to read the page matters most.
+///
+/// The pages themselves were already translated — they inject IStringLocalizer and every string on
+/// them comes from SharedResource. Only the routing was missing.
+/// </summary>
+public class CulturePageRouteConvention : IPageRouteModelConvention
+{
+    public void Apply(PageRouteModel model)
+    {
+        foreach (var selector in model.Selectors.ToList())
+        {
+            if (selector.AttributeRouteModel?.Template is not { } template) continue;
+
+            // A second selector rather than an optional segment, for the same reason the controller
+            // convention gives: an optional parameter in the middle of a template matches but does
+            // not round-trip through link generation.
+            model.Selectors.Add(new SelectorModel(selector)
+            {
+                AttributeRouteModel = new AttributeRouteModel
+                {
+                    Template = AttributeRouteModel.CombineTemplates("{culture:sitelang}", template),
+                    Name = selector.AttributeRouteModel.Name is { } n ? n + "__culture" : null,
+                },
+            });
+        }
+    }
+}

@@ -32,7 +32,6 @@
   <data name="Footer.NewsletterHeading" xml:space="preserve"><value>Liitu VI nimekirjaga</value></data>
   <data name="Footer.NewsletterPlaceholder" xml:space="preserve"><value>Sinu e-posti aadress</value></data>
   <data name="Footer.NewsletterSubmit" xml:space="preserve"><value>Telli</value></data>
-  <data name="Footer.NewsletterNote" xml:space="preserve"><value>Austame sinu privaatsust.</value></data>
   <data name="Footer.RightsReserved" xml:space="preserve"><value>Kõik õigused kaitstud.</value></data>
   <data name="Footer.Terms" xml:space="preserve"><value>Kasutustingimused</value></data>
   <data name="Footer.Privacy" xml:space="preserve"><value>Privaatsuspoliitika</value></data>
@@ -619,6 +618,8 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Auth.Login.Lede" xml:space="preserve"><value>House on ennekõike kutsepõhine. Logi sisse, et pääseda oma liikmesuse, sessioonide ja kataloogi juurde.</value></data>
   <data name="Auth.Email" xml:space="preserve"><value>E-post</value></data>
   <data name="Auth.Password" xml:space="preserve"><value>Parool</value></data>
+  <data name="Auth.Password.Show" xml:space="preserve"><value>Näita parooli</value></data>
+  <data name="Auth.Password.Hide" xml:space="preserve"><value>Peida parool</value></data>
   <data name="Auth.RememberMe" xml:space="preserve"><value>Hoia mind sisse logituna</value></data>
   <data name="Auth.Login.Submit" xml:space="preserve"><value>Logi sisse</value></data>
   <data name="Auth.ForgotPassword" xml:space="preserve"><value>Unustasid parooli?</value></data>

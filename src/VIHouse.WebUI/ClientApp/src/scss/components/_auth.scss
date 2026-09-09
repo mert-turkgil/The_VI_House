@@ -139,6 +139,95 @@
   &:empty { display: none; }
 }
 
+// Show/hide button on every password field — Login's bespoke .auth-field__input and the four
+// scaffolded .form-control password fields alike. modules/passwordToggle.ts flips the sibling
+// <input>'s type; everything below is purely the button and the eye ↔ eye-slash swap.
+.auth-password-toggle {
+  position: relative;
+
+  // Targets whichever input class the page happens to use, rather than duplicating this rule once
+  // per markup style. Right padding clears the button so revealed text never sits under it.
+  input {
+    padding-right: 44px;
+  }
+}
+
+.auth-password-toggle__btn {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: var(--vih-radius-sm);
+  background: none;
+  color: var(--vih-text-muted);
+  cursor: pointer;
+  transition: color var(--vih-dur-base) var(--vih-ease),
+              background-color var(--vih-dur-base) var(--vih-ease),
+              transform var(--vih-dur-base) var(--vih-ease);
+
+  // A small lift on hover, the same "something responded" cue as the rest of the site's ghost
+  // buttons — small enough not to nudge the eye position visibly against the fixed-width input.
+  &:hover {
+    color: var(--vih-green-900);
+    background: var(--vih-surface-tinted);
+    transform: translateY(-50%) scale(1.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--vih-focus-ring);
+    outline-offset: 1px;
+  }
+
+  // A brief press-down, so the click itself reads as a click and not just a state flip.
+  &:active {
+    transform: translateY(-50%) scale(0.94);
+  }
+}
+
+.auth-password-toggle__icon {
+  grid-area: 1 / 1;
+  transition: opacity var(--vih-dur-base) var(--vih-ease),
+              transform var(--vih-dur-base) var(--vih-ease);
+
+  // Closed eye is the resting state — nobody's typed anything to reveal yet — so it starts hidden
+  // and rotated a quarter turn, the same shape a needle makes swinging into place.
+  &--eye-off {
+    opacity: 0;
+    transform: rotate(-15deg) scale(0.7);
+  }
+}
+
+.auth-password-toggle__btn--revealed {
+  .auth-password-toggle__icon--eye {
+    opacity: 0;
+    transform: rotate(15deg) scale(0.7);
+  }
+
+  .auth-password-toggle__icon--eye-off {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-password-toggle__btn,
+  .auth-password-toggle__icon {
+    transition: none;
+  }
+
+  // The lift and press are motion cues; without them the button still needs a hover state, so
+  // colour alone carries it here instead.
+  .auth-password-toggle__btn:hover,
+  .auth-password-toggle__btn:active {
+    transform: translateY(-50%);
+  }
+}
+
 // The six-digit input. Generalised from .onboarding__code-input so the settings screen and the
 // first-run flow present the same control — they are the same task.
 .auth-code-input {
@@ -643,4 +732,154 @@
     box-shadow: none;
     border: 1px solid #000;
   }
+}
+
+// =================================================================================================
+// The signed-out backdrop
+// =================================================================================================
+//
+// Sign in, two-step verification, recovery codes, password reset and the rest of Account/ sit on a
+// full-bleed photograph of New York with an optional video loop over it (see
+// Areas/Identity/Pages/Account/_Layout.cshtml). The signed-in Manage screens deliberately do not —
+// .auth-page--backdrop is only added when nobody is signed in, and a video behind a list of
+// security settings would be noise rather than atmosphere.
+//
+// The panel stays a light surface rather than going glassy over the picture. Every field, label,
+// hint and error style above was drawn for dark text on a light ground, and turning the panel
+// translucent would mean restyling all of them and rechecking contrast against an image that moves
+// under them. A solid panel on a dark photograph is the same look with none of that risk.
+
+.auth-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  // Behind the panel, above nothing. body's own background still paints underneath, so a
+  // photograph that fails to load leaves an ordinary light page rather than a hole.
+  z-index: 0;
+  // It is decorative and aria-hidden; it must never swallow a click meant for the form.
+  pointer-events: none;
+}
+
+.auth-backdrop__still,
+.auth-backdrop__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  // cover, so the crop changes with the viewport instead of the picture squashing. This frame holds
+  // its subject centrally enough to survive a portrait phone crop; a different photograph may want
+  // object-position moved.
+  object-fit: cover;
+  object-position: center;
+}
+
+// A very slow push in, so the still reads as footage on the pages where no video file exists.
+// Forty seconds for a 6% scale change is below the rate at which the eye registers movement, which
+// is the point: it should feel alive, not animated.
+.auth-backdrop__still {
+  transform-origin: 60% 40%;
+  animation: vih-auth-drift 40s var(--vih-ease-in-out) infinite alternate;
+}
+
+@keyframes vih-auth-drift {
+  from { transform: scale(1.06); }
+  to   { transform: scale(1); }
+}
+
+// Fades in only once the video can genuinely play — modules/authBackdrop.ts adds .is-playing — so a
+// file that stalls, 404s or has autoplay refused never leaves a black rectangle where the
+// photograph was.
+.auth-backdrop__video {
+  opacity: 0;
+  transition: opacity var(--vih-dur-reveal) var(--vih-ease-out);
+
+  &.is-playing { opacity: 1; }
+}
+
+// Every string of text on this page sits inside .auth-page__panel, which is an opaque white card —
+// nothing is ever set directly on the photograph. So the scrim carries no contrast duty; it exists
+// only to pull the photograph toward the house green and to settle its edges into the header and
+// footer, which is why this is a light tint rather than the heavy overlay a legibility scrim would
+// need. A vertical gradient keeps the middle of the frame the clearest, where the skyline is, and
+// deepens gently at the top and bottom, where the header and footer meet it.
+.auth-backdrop__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--vih-green-950) 38%, transparent) 0%,
+    color-mix(in srgb, var(--vih-green-950) 14%, transparent) 45%,
+    color-mix(in srgb, var(--vih-green-950) 42%, transparent) 100%
+  );
+}
+
+// --- The page and the panel over it --------------------------------------------------------------
+
+.auth-page--backdrop {
+  position: relative;
+
+  // Full width, overriding the 460px column above: the photograph has to reach both edges of the
+  // viewport, and the column width moves to the panel instead. Done this way rather than with the
+  // usual left:50%/width:100vw break-out because 100vw includes the scrollbar, which would add a
+  // horizontal scrollbar to every sign-in page on Windows.
+  max-width: none;
+  padding: var(--vih-space-xl) var(--vih-gutter);
+
+  // Fills the viewport below the sticky header so this is a backdrop rather than a band.
+  // min-height, not height, because the two-factor and reset screens are taller than sign-in.
+  min-height: calc(100vh - var(--vih-header-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-page--backdrop .auth-page__panel {
+  // Above the backdrop. Needs position for z-index to mean anything.
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  // Wider than the bare 460px column: over a photograph the panel needs enough room to read as a
+  // panel and not as a strip.
+  max-width: 520px;
+  padding: var(--vih-space-xl) var(--vih-space-lg);
+  background: var(--vih-surface);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-2xl);
+  box-shadow: var(--vih-shadow-lg);
+}
+
+@include bp.until(bp.$md) {
+  .auth-page--backdrop {
+    // Vertical centring is a desktop luxury. On a phone the on-screen keyboard shrinks the viewport
+    // when a field takes focus, and a centred panel would jump upward mid-typing; flowing from the
+    // top keeps it still.
+    min-height: 0;
+    align-items: flex-start;
+    padding-block: var(--vih-space-lg) var(--vih-section-y);
+  }
+}
+
+@include bp.until(bp.$sm) {
+  .auth-page--backdrop {
+    // At 320px the gutter and the panel padding together were eating a third of the screen.
+    padding-inline: var(--vih-space-xs);
+  }
+
+  .auth-page--backdrop .auth-page__panel {
+    padding: var(--vih-space-lg) var(--vih-space-sm);
+    border-radius: var(--vih-radius-xl);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  // The drift never starts, rather than running faster or being paused mid-way — the same rule the
+  // rest of this codebase follows. The video is handled in the script, which does not play it at
+  // all under this setting, so the still photograph is simply what remains.
+  .auth-backdrop__still {
+    animation: none;
+    transform: none;
+  }
+
+  .auth-backdrop__video { transition: none; }
 }

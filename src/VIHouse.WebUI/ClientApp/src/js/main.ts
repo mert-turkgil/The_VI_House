@@ -9,6 +9,8 @@ import { initExperienceFilters } from './modules/filters';
 import { initSubnav } from './modules/subnav';
 import { initVideoEmbeds } from './modules/video';
 import { initExperienceGate } from './modules/gate';
+import { initAuthBackdrop } from './modules/authBackdrop';
+import { initPasswordToggle } from './modules/passwordToggle';
 
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
@@ -26,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initSubnav();
   initVideoEmbeds();
   initExperienceGate();
+  initAuthBackdrop();
+  initPasswordToggle();
 });
 
 // PWA (brief §65) — registered on every page (Admin included, harmlessly; the service worker

@@ -358,7 +358,13 @@ builder.Services.AddControllersWithViews(options =>
 // The same DataAnnotations localizer the MVC pipeline gets. Easy to miss and silent when missed:
 // without it, @inject IStringLocalizer works in the Identity .cshtml files but every [Display] and
 // [Required] on their page models stays English, so half of each form localises and half does not.
-builder.Services.AddRazorPages()
+builder.Services.AddRazorPages(options =>
+    {
+        // The Identity screens are Razor Pages, so CulturePrefixConvention — which walks controllers
+        // — never reached them. Without this, /tr/Identity/Account/Login is a 404 and the language
+        // switcher is a dead end on every sign-in and account screen.
+        options.Conventions.Add(new CulturePageRouteConvention());
+    })
     .AddDataAnnotationsLocalization(options =>
         options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
 

@@ -16,11 +16,12 @@
     "Resizing is done by the Unsplash CDN via the w= parameter at fetch time, which is why this needs",
     "no sharp/ImageSharp dependency. Two widths only: 800 for cards, 1600 for heroes."
   ],
-
   "outputRoot": "../wwwroot/img",
-  "widths": [800, 1600],
+  "widths": [
+    800,
+    1600
+  ],
   "quality": 78,
-
   "assets": [
     {
       "target": "experiences/izmir-founder-experience-2026",
@@ -71,7 +72,6 @@
       "credit": "Unsplash — Berlin",
       "alt": "Berlin architecture in flat morning light"
     },
-
     {
       "target": "gallery/room-boardroom",
       "source": "unsplash",
@@ -107,7 +107,6 @@
       "credit": "Unsplash — speaker",
       "alt": "A speaker addressing a seated group in a bright room"
     },
-
     {
       "target": "journal/why-we-built-the-vi-house",
       "source": "unsplash",
@@ -136,7 +135,6 @@
       "credit": "Unsplash — quiet workspace",
       "alt": ""
     },
-
     {
       "target": "hero/lounge",
       "source": "unsplash",
@@ -158,7 +156,6 @@
       "credit": "Unsplash — retreat terrace",
       "alt": "A terrace and pool overlooking the sea at golden hour"
     },
-
     {
       "target": "ecosystem/webinars",
       "source": "unsplash",
@@ -187,7 +184,6 @@
       "credit": "Unsplash — retreat villa",
       "alt": "A villa terrace and pool at sunset"
     },
-
     {
       "target": "people/voice-a",
       "source": "unsplash",
@@ -209,7 +205,6 @@
       "credit": "Unsplash — portrait",
       "alt": ""
     },
-
     {
       "target": "people/member-a",
       "source": "unsplash",
@@ -222,6 +217,13 @@
       "source": "unsplash",
       "id": "photo-1494790108377-be9c29b29330",
       "credit": "Unsplash — portrait",
+      "alt": ""
+    },
+    {
+      "target": "auth/new-york",
+      "source": "unsplash",
+      "id": "photo-1449824913935-59a10b8d2000",
+      "credit": "Unsplash — Manhattan avenue on an overcast day",
       "alt": ""
     }
   ]
