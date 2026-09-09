@@ -44,7 +44,7 @@
   border: 1px solid var(--vih-line-on-light);
   border-radius: var(--vih-radius-2xl);
 
-  @include bp.until(bp.$md) {
+  @include bp.until(bp.$lg) {
     // Stacked, and edge to edge. Stacking is what makes the chip rail's negative margin safe: it
     // only bleeds correctly on a row of its own, and side by side with the select that -24px would
     // eat the gap between them instead of the container's padding.
@@ -52,8 +52,18 @@
     // Edge to edge because a panel inset inside an already-padded container spends ~48px of a 360px
     // screen on nothing, and the chips need every pixel there is.
     flex-direction: column;
+    // Without this, "wrap" — inherited from the row layout above — turns a column flex container
+    // with no height limit into a multi-column one: every child's cross size (its width, in column
+    // mode) is resolved against a phantom second column instead of the panel's own width, and the
+    // whole bar doubles in width and pushes the entire page into horizontal scroll. There is only
+    // ever one column here, so nothing should ever wrap into a second.
+    flex-wrap: nowrap;
     align-items: stretch;
-    margin-inline: calc(var(--vih-space-md) * -1);
+    // --vih-gutter, not --vih-space-md: the container's own inset changes with viewport
+    // width (24/32/40/48px) but a fixed spacing token does not, so this only cancelled the
+    // container's padding exactly below 560px wide and left a few px of visible gap above
+    // that. This tracks whatever the container is actually using right now.
+    margin-inline: calc(var(--vih-gutter) * -1);
     border-radius: 0;
     border-inline: 0;
   }
@@ -73,7 +83,7 @@
   gap: var(--vih-space-3xs);
   min-width: 220px;
 
-  @include bp.until(bp.$md) {
+  @include bp.until(bp.$lg) {
     // min-width would otherwise hold the select at 220px inside a ~290px panel and stop it filling
     // its row, leaving a stranded gap beside it.
     min-width: 0;
@@ -131,7 +141,7 @@
   flex: 1 1 auto;
   min-width: 0;
 
-  @include bp.until(bp.$md) {
+  @include bp.until(bp.$lg) {
     overflow-x: auto;
     scrollbar-width: none;
     // Bleeds the scroll area to the panel edge so the last chip does not look clipped mid-word.
@@ -149,7 +159,7 @@
   align-items: center;
   flex-wrap: wrap;
 
-  @include bp.until(bp.$md) {
+  @include bp.until(bp.$lg) {
     flex-wrap: nowrap;
     // Without this the flex line collapses to the container width and the chips squash rather than
     // overflow, which is what makes them scrollable in the first place.
@@ -199,11 +209,20 @@
   text-underline-offset: 3px;
   white-space: nowrap;
 
-  @include bp.until(bp.$md) {
+  @include bp.until(bp.$lg) {
     align-self: flex-start; // centre means the cross axis, which is horizontal once stacked
   }
 
   &:hover { color: var(--vih-ink); }
+}
+
+// A full-width row of its own, forced onto a new line under the city/status row regardless of how
+// much space either leaves. min-width: 0 matters just as much as the flex-basis: without it this
+// row's own auto-sizing, not the panel's, would win, and the trending rail overflows the page the
+// same way the status rail did (see .experience-filters-bar's flex-wrap: nowrap above).
+.experience-filters__trending {
+  flex: 1 0 100%;
+  min-width: 0;
 }
 
 .experience-filters__count {

@@ -75,6 +75,7 @@ public class ExperienceService(
 
     public async Task<Experience> CreateAsync(Experience experience, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
+        experience.Description = EditorHtml.Sanitize(experience.Description);
         await experiences.AddAsync(experience, ct);
         await LogAsync("ExperienceCreated", nameof(Experience), experience.Id, adminUserId, ipAddress,
             before: null, after: new { experience.Title, experience.Slug, experience.Status }, ct);
@@ -92,7 +93,7 @@ public class ExperienceService(
         existing.Title = updated.Title;
         existing.Slug = updated.Slug;
         existing.ShortSummary = updated.ShortSummary;
-        existing.Description = updated.Description;
+        existing.Description = EditorHtml.Sanitize(updated.Description);
         existing.City = updated.City;
         existing.Country = updated.Country;
         existing.Venue = updated.Venue;
@@ -751,7 +752,7 @@ public class ExperienceService(
 
         existing.Title = form.Title;
         existing.ShortSummary = form.ShortSummary;
-        existing.Description = form.Description;
+        existing.Description = EditorHtml.Sanitize(form.Description);
         existing.Venue = form.Venue;
         existing.AudienceTags = form.AudienceTags;
         existing.SeoTitle = form.SeoTitle;

@@ -1,17 +1,54 @@
 @model ExperienceIndexViewModel
 @*
-    City select + status chips, in one panel.
+    City select + status chips + trending topics, in one panel.
 
     Everything here is a plain <form> and plain <a href>, so the page filters correctly with
     JavaScript disabled. filters.ts upgrades it to fetch-and-swap on top; it is an enhancement, not
-    the mechanism. Two things it depends on, so do not move them: the form keeps
-    data-experience-filters, and the chips stay OUTSIDE [data-experience-results] — they are
-    rebound after every swap, and a chip inside the swapped region would lose its handler.
+    the mechanism. A few things it depends on, so do not move them:
+
+      - the form keeps data-experience-filters.
+      - status and topic each carry a hidden input inside the form, always rendered (never
+        conditional) — filters.ts reads the whole form via FormData to build a request, and a field
+        that only sometimes exists in the DOM is a field JS sometimes cannot find.
+      - the chips themselves — status AND trending — stay OUTSIDE [data-experience-results]. A chip
+        inside the swapped region would lose its click handler on the next AJAX swap.
+      - every chip carries data-filter-field/data-filter-value rather than relying on its href
+        alone. filters.ts reads those to know which hidden input to update and to what, so clicking
+        a chip never depends on — and can never go stale relative to — whatever the OTHER two
+        controls happened to be set to at the last full page load.
 
     The city control is a <select> of cities that actually exist rather than the free-text box it
     replaces. A text box against an exact-match query could only ever produce an empty page for a
     typo, and "no experiences match" reads to a visitor exactly like "this site has nothing on".
+
+    Trending has no Experience.Topic column behind it — see EfExperienceRepository. A chip here is
+    a keyword search against each experience's own copy, in every language it has been translated
+    into. That is also why it can legitimately return zero results: "Trading" only matches an
+    experience if something currently listed actually says "trading" somewhere in its description.
 *@
+
+@{
+    string ChipUrl(ExperienceStatus? status) =>
+        Url.Action("Index", "Experiences", new
+        {
+            area = "",
+            city = Model.SelectedCity,
+            status = status?.ToString(),
+            topic = Model.SelectedTopic,
+        })!;
+
+    // Topics toggle: clicking the one that is already active drops it, the way clicking an
+    // already-ticked checkbox would. Status has no equivalent because it already has its own "off"
+    // position — the "All" chip — so there is nothing to toggle there.
+    string TopicUrl(string label) =>
+        Url.Action("Index", "Experiences", new
+        {
+            area = "",
+            city = Model.SelectedCity,
+            status = Model.SelectedStatus?.ToString(),
+            topic = string.Equals(Model.SelectedTopic, label, StringComparison.Ordinal) ? null : label,
+        })!;
+}
 
 <div class="experience-filters-bar">
     <form class="experience-filters"
@@ -43,11 +80,10 @@
             </div>
         </div>
 
-        @* Carries the current status through a city change, since this form only owns the select. *@
-        @if (Model.SelectedStatus is not null)
-        {
-            <input type="hidden" name="status" value="@Model.SelectedStatus" />
-        }
+        @* Always rendered — see the header comment. Carries status/topic through a plain city
+           change, since this <form> only has one visible field of its own. *@
+        <input type="hidden" name="status" value="@Model.SelectedStatus" data-experience-hidden="status" />
+        <input type="hidden" name="topic" value="@Model.SelectedTopic" data-experience-hidden="topic" />
 
         @* Shown only without JS — filters.ts hides it, because with the enhancement the select applies
            on change and a submit button is then just a dead control sitting there. *@
@@ -60,13 +96,9 @@
        the same one .experience-subnav uses. *@
     <div class="experience-filters__chips-scroll">
         <div class="experience-filters__chips" role="group" aria-label="@Loc["Experiences.Filters.Status"]">
-            @{
-                string ChipUrl(ExperienceStatus? status) =>
-                    Url.Action("Index", "Experiences", new { area = "", city = Model.SelectedCity, status = status?.ToString() })!;
-            }
-
             <a class="experience-filters__chip @(Model.SelectedStatus is null ? "experience-filters__chip--active" : "")"
                href="@ChipUrl(null)"
+               data-filter-field="status" data-filter-value=""
                aria-current="@(Model.SelectedStatus is null ? "true" : null)">
                 @Loc["Experiences.Filters.AnyStatus"]
             </a>
@@ -76,6 +108,7 @@
                 var isActive = Model.SelectedStatus == status;
                 <a class="experience-filters__chip @(isActive ? "experience-filters__chip--active" : "")"
                    href="@ChipUrl(status)"
+                   data-filter-field="status" data-filter-value="@status"
                    aria-current="@(isActive ? "true" : null)">
                     @Loc[status.ToResourceKey()]
                 </a>
@@ -83,10 +116,38 @@
         </div>
     </div>
 
-    @if (Model.HasFilters)
-    {
-        <a class="experience-filters__clear" href="@Url.Action("Index", "Experiences", new { area = "" })">
-            @Loc["Experiences.Filters.Clear"]
-        </a>
-    }
+    @* Always rendered, hidden via the boolean attribute rather than omitted, so filters.ts has
+       something in the DOM to reveal after an AJAX-applied filter — the element cannot be shown
+       later if it was never sent down in the first place. data-experience-clear is the JS hook;
+       the CSS class stays for styling only. *@
+    <a class="experience-filters__clear" data-experience-clear
+       hidden="@(!Model.HasFilters)"
+       href="@Url.Action("Index", "Experiences", new { area = "" })">
+        @Loc["Experiences.Filters.Clear"]
+    </a>
+
+    @* --- Trending -------------------------------------------------------------------------------
+       A full-width row of its own: flex: 1 0 100% forces it onto a new line under the city/status
+       row regardless of how much space either leaves — the usual technique for making one flex
+       child span the whole container. Same seven keys the homepage's hero filter bar offers — see
+       ExperienceIndexViewModel.TrendingTopicKeys for why they are shared rather than duplicated. *@
+    <div class="experience-filters__trending">
+        <span class="experience-filters__label">@Loc["Home.Filter.Trending"]</span>
+
+        <div class="experience-filters__chips-scroll">
+            <div class="experience-filters__chips" role="group" aria-label="@Loc["Home.Filter.Trending"]">
+                @foreach (var key in ExperienceIndexViewModel.TrendingTopicKeys)
+                {
+                    var label = Loc[key].Value;
+                    var isActive = string.Equals(Model.SelectedTopic, label, StringComparison.Ordinal);
+                    <a class="experience-filters__chip @(isActive ? "experience-filters__chip--active" : "")"
+                       href="@TopicUrl(label)"
+                       data-filter-field="topic" data-filter-value="@label"
+                       aria-current="@(isActive ? "true" : null)">
+                        @label
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
 </div>

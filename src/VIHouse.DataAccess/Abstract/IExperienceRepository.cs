@@ -30,6 +30,12 @@ public record ExperienceFilter
     public string? City { get; init; }
     public string? Country { get; init; }
     public ExperienceStatus? Status { get; init; }
+
+    /// <summary>A trending-topic chip's keyword ("AI Tools", "Copywriting"...). Matched as a
+    /// case-insensitive substring against the experience's own copy and every translation's, so
+    /// a topic mentioned only in the German description still surfaces the experience for
+    /// everyone browsing in English. See EfExperienceRepository.GetPublicListingAsync.</summary>
+    public string? Topic { get; init; }
     public int Skip { get; init; }
     public int Take { get; init; } = 20;
 }

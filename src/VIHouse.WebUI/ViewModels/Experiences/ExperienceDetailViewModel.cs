@@ -118,13 +118,17 @@ public class ExperienceDetailViewModel
     /// English column, so a half-written translation shows what has been translated and the original
     /// for the rest rather than blanks — see ExperienceContent.
     /// </summary>
-    public static ExperienceDetailViewModel FromEntity(Experience e, string? culture = null) => new()
+    /// <param name="videoPlayLabel">Localised accessible name for a video's play button. Passed in
+    /// because ArticleHtml lives in Business, which has no localiser and should not grow one.</param>
+    public static ExperienceDetailViewModel FromEntity(Experience e, string? culture = null, string videoPlayLabel = "Play video") => new()
     {
         Id = e.Id,
         Title = ExperienceContent.Title(e, culture),
         Slug = e.Slug,
         ShortSummary = ExperienceContent.ShortSummary(e, culture),
-        Description = ExperienceContent.Description(e, culture),
+        // EnsureHtml covers experiences written before CKEditor was wired up here, whose descriptions
+        // are still plain text; RenderForDisplay turns any video marker into its click-to-play facade.
+        Description = ArticleHtml.RenderForDisplay(EditorHtml.EnsureHtml(ExperienceContent.Description(e, culture)), videoPlayLabel),
         City = e.City,
         Country = e.Country,
         Venue = ExperienceContent.Venue(e, culture),

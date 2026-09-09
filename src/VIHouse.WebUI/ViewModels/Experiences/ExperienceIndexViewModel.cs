@@ -21,7 +21,30 @@ public class ExperienceIndexViewModel
     public string? SelectedCity { get; init; }
     public ExperienceStatus? SelectedStatus { get; init; }
 
-    public bool HasFilters => !string.IsNullOrWhiteSpace(SelectedCity) || SelectedStatus is not null;
+    /// <summary>The trending chip currently applied, if any — the literal label text ("AI tools"),
+    /// not a code. There is no Experience.Topic column; this is a keyword the listing searches for
+    /// in each experience's own copy. See EfExperienceRepository.GetPublicListingAsync.</summary>
+    public string? SelectedTopic { get; init; }
+
+    public bool HasFilters =>
+        !string.IsNullOrWhiteSpace(SelectedCity) || SelectedStatus is not null || !string.IsNullOrWhiteSpace(SelectedTopic);
+
+    /// <summary>
+    /// The same seven keys the homepage's hero filter bar trends on (Home.Filter.Topic.*) — reused
+    /// rather than duplicated, so there is one list of topics for the whole site, and so the
+    /// homepage's existing "/experiences?topic=..." links (previously decorative — the listing
+    /// ignored the parameter entirely) now land on a page that actually filters by them.
+    /// </summary>
+    public static readonly string[] TrendingTopicKeys =
+    [
+        "Home.Filter.Topic.Ecommerce",
+        "Home.Filter.Topic.BrandBuilding",
+        "Home.Filter.Topic.AiTools",
+        "Home.Filter.Topic.Copywriting",
+        "Home.Filter.Topic.PaidAds",
+        "Home.Filter.Topic.Trading",
+        "Home.Filter.Topic.Funding",
+    ];
 
     /// <summary>The statuses worth offering as chips. Draft and Completed are deliberately absent:
     /// draft is never publicly listed, and "completed" is a filter for a past nobody is shopping

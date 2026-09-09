@@ -22,13 +22,13 @@ public class ExperiencesController(
     UserManager<ApplicationUser> userManager) : Controller
 {
     [HttpGet("")]
-    public async Task<IActionResult> Index(string? city, string? status, CancellationToken ct)
+    public async Task<IActionResult> Index(string? city, string? status, string? topic, CancellationToken ct)
     {
         // The listing gets its own description rather than inheriting the site default: a set of
         // pages sharing one description is a set Google writes its own snippet for.
         ViewData["Title"] = loc["Experiences.Title"].Value;
         this.SetSeo(loc["Seo.Experiences.Description"].Value, canonicalPath: "/experiences");
-        return View(await BuildIndexAsync(city, status, ct));
+        return View(await BuildIndexAsync(city, status, topic, ct));
     }
 
     /// <summary>
@@ -40,16 +40,17 @@ public class ExperiencesController(
     /// start telling visitors different things.
     /// </summary>
     [HttpGet("results")]
-    public async Task<IActionResult> Results(string? city, string? status, CancellationToken ct) =>
-        PartialView("_ExperienceGrid", await BuildIndexAsync(city, status, ct));
+    public async Task<IActionResult> Results(string? city, string? status, string? topic, CancellationToken ct) =>
+        PartialView("_ExperienceGrid", await BuildIndexAsync(city, status, topic, ct));
 
-    private async Task<ExperienceIndexViewModel> BuildIndexAsync(string? city, string? status, CancellationToken ct)
+    private async Task<ExperienceIndexViewModel> BuildIndexAsync(string? city, string? status, string? topic, CancellationToken ct)
     {
         // Unparseable status is treated as "no filter" rather than an error: this arrives from a
         // query string, and a stale or hand-edited link should show the unfiltered page, not a 400.
         ExperienceStatus? parsedStatus = Enum.TryParse<ExperienceStatus>(status, out var s) ? s : null;
+        var trimmedTopic = string.IsNullOrWhiteSpace(topic) ? null : topic.Trim();
 
-        var filter = new ExperienceFilter { City = city, Status = parsedStatus, Take = 50 };
+        var filter = new ExperienceFilter { City = city, Status = parsedStatus, Topic = trimmedTopic, Take = 50 };
         var experiences = await experienceService.GetPublicListingAsync(filter, ct);
 
         // Resolved from the cookie by UseRequestLocalization; read once rather than per card.
@@ -61,6 +62,7 @@ public class ExperiencesController(
             Cities = await experienceService.GetPublicCitiesAsync(ct),
             SelectedCity = string.IsNullOrWhiteSpace(city) ? null : city.Trim(),
             SelectedStatus = parsedStatus,
+            SelectedTopic = trimmedTopic,
         };
     }
 
@@ -84,7 +86,7 @@ public class ExperiencesController(
         ViewData["Seo"] = PageSeoBuilder.ForExperience(
             experience, CultureInfo.CurrentUICulture.Name, loc["Experiences.Heading"].Value);
 
-        var model = ExperienceDetailViewModel.FromEntity(experience, CultureInfo.CurrentUICulture.Name);
+        var model = ExperienceDetailViewModel.FromEntity(experience, CultureInfo.CurrentUICulture.Name, loc["Journal.Video.Play"].Value);
         model.Access = await experienceService.GetAccessAsync(experience, userId, ct);
         model.AttendanceMode = experience.AttendanceMode;
 

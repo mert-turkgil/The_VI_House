@@ -38,6 +38,28 @@ public class EfExperienceRepository(VIHouseDbContext db) : EfRepository<Experien
         if (filter.Status is not null)
             query = query.Where(e => e.Status == filter.Status);
 
+        if (!string.IsNullOrWhiteSpace(filter.Topic))
+        {
+            // A trending chip is a keyword search, not a lookup against a controlled taxonomy —
+            // there is no Experience.Topic column, and pretending there is would mean inventing
+            // categories that do not match how these rooms are actually described. Matched against
+            // the same free-text fields a search box would use, on the experience's own copy and
+            // every translation's, so a keyword mentioned only in the Turkish description still
+            // surfaces the experience to someone browsing in English. Empty results for a chip are
+            // a correct answer — nothing currently listed happens to mention that topic — not a bug.
+            var topic = filter.Topic.Trim();
+            query = query.Where(e =>
+                EF.Functions.Collate(e.Title, CaseInsensitive).Contains(topic) ||
+                EF.Functions.Collate(e.Description, CaseInsensitive).Contains(topic) ||
+                (e.ShortSummary != null && EF.Functions.Collate(e.ShortSummary, CaseInsensitive).Contains(topic)) ||
+                (e.AudienceTags != null && EF.Functions.Collate(e.AudienceTags, CaseInsensitive).Contains(topic)) ||
+                e.Translations.Any(t =>
+                    EF.Functions.Collate(t.Title, CaseInsensitive).Contains(topic) ||
+                    (t.Description != null && EF.Functions.Collate(t.Description, CaseInsensitive).Contains(topic)) ||
+                    (t.ShortSummary != null && EF.Functions.Collate(t.ShortSummary, CaseInsensitive).Contains(topic)) ||
+                    (t.AudienceTags != null && EF.Functions.Collate(t.AudienceTags, CaseInsensitive).Contains(topic))));
+        }
+
         return await query
             // Draft is excluded unconditionally, not just when the caller asks for a specific
             // status — an admin can set Visibility=Public on a still-Draft experience while

@@ -39,11 +39,12 @@
         </div>
     }
 
-    <form asp-action="UploadCover" asp-route-id="@experienceId" method="post"
-          enctype="multipart/form-data" class="admin-inline-form">
+    <form asp-action="UploadCover" asp-route-id="@experienceId" method="post" enctype="multipart/form-data"
+          class="admin-inline-form">
         <div class="admin-field">
             <label for="cover-file">Upload a cover</label>
-            <input id="cover-file" type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif" required />
+            <input id="cover-file" type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif"
+                   required />
         </div>
         <button type="submit" class="admin-btn">Upload</button>
     </form>
@@ -115,7 +116,7 @@
 
         <div class="admin-field">
             <label>Description</label>
-            <textarea name="Description" rows="6">@active.Form.Description</textarea>
+            <textarea name="Description" rows="10" data-ckeditor>@active.Form.Description</textarea>
         </div>
 
         <div class="admin-form__grid">
@@ -165,7 +166,9 @@
     <h2>Details</h2>
     <form asp-action="Edit" asp-route-id="@experienceId" method="post" class="admin-form">
         <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
-        @{ ViewData["HasUploadedCover"] = Model.HasUploadedCover; }
+        @{
+            ViewData["HasUploadedCover"] = Model.HasUploadedCover;
+        }
         <partial name="_FormFields" model="Model.Form" view-data="ViewData" />
         <div>
             <button type="submit" class="admin-btn">Save changes</button>
@@ -220,7 +223,9 @@
 
     @if (Model.Gallery.Count == 0)
     {
-        <div class="admin-empty"><p class="admin-empty__title">No photographs yet</p></div>
+        <div class="admin-empty">
+            <p class="admin-empty__title">No photographs yet</p>
+        </div>
     }
     else
     {
@@ -229,12 +234,19 @@
             {
                 var src = image.StorageKey is null
                     ? image.Url
-                    : Url.Action("ExperienceGalleryImage", "Media", new { area = "", id = image.Id, v = (image.UpdatedAt ?? image.CreatedAt).ToUnixTimeSeconds() });
+                    : Url.Action("ExperienceGalleryImage", "Media", new
+                    {
+                        area = "",
+                        id = image.Id,
+                        v = (image.UpdatedAt ??
+        image.CreatedAt).ToUnixTimeSeconds()
+                    });
 
                 <figure class="admin-media-card">
                     <img class="admin-media-card__file" src="@src" alt="" loading="lazy" />
 
-                    <form asp-action="UpdateGalleryImage" asp-route-id="@experienceId" method="post" class="admin-form" style="gap:8px;">
+                    <form asp-action="UpdateGalleryImage" asp-route-id="@experienceId" method="post" class="admin-form"
+                          style="gap:8px;">
                         <input type="hidden" name="imageId" value="@image.Id" />
                         <div class="admin-field">
                             <label>Caption</label>
@@ -269,8 +281,8 @@
         </div>
     }
 
-    <form asp-action="AddGalleryImage" asp-route-id="@experienceId" method="post"
-          enctype="multipart/form-data" class="admin-inline-form" style="margin-top:16px;">
+    <form asp-action="AddGalleryImage" asp-route-id="@experienceId" method="post" enctype="multipart/form-data"
+          class="admin-inline-form" style="margin-top:16px;">
         <div class="admin-field">
             <label for="gallery-file">Upload</label>
             <input id="gallery-file" type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif" />
@@ -281,7 +293,8 @@
         </div>
         <div class="admin-field" style="flex:2;">
             <label for="gallery-alt">Caption</label>
-            <input id="gallery-alt" name="altText" maxlength="300" placeholder="A long table set for a private dinner" />
+            <input id="gallery-alt" name="altText" maxlength="300"
+                   placeholder="A long table set for a private dinner" />
         </div>
         <button type="submit" class="admin-btn">Add</button>
     </form>
@@ -342,217 +355,236 @@
             <form asp-action="RemoveProgramDay" asp-route-id="@experienceId" method="post" style="margin-top:10px;"
                   onsubmit="return confirm('Remove this day and all of its sessions?');">
                 <input type="hidden" name="dayId" value="@day.Id" />
-                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove day @day.DayNumber</button>
-            </form>
-        </div>
-    }
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove day
+                    @day.DayNumber</button>
+                </form>
+            </div>
+        }
 
-    <form asp-action="AddProgramDay" asp-route-id="@experienceId" method="post" class="admin-inline-form">
-        <input type="hidden" name="culture" value="@active.Culture.Name" />
-        <div class="admin-field"><label>Day number</label><input type="number" name="dayNumber" min="1" value="@(Model.ProgramDays.Count + 1)" required /></div>
-        <div class="admin-field" style="flex:2;"><label>Title</label><input name="title" placeholder="Arrival and opening dinner" required /></div>
-        <div class="admin-field"><label>Date label</label><input name="dateLabel" placeholder="Thursday 17 September" /></div>
-        <button type="submit" class="admin-btn">Add day</button>
-    </form>
-</div>
+        <form asp-action="AddProgramDay" asp-route-id="@experienceId" method="post" class="admin-inline-form">
+            <input type="hidden" name="culture" value="@active.Culture.Name" />
+            <div class="admin-field"><label>Day number</label><input type="number" name="dayNumber" min="1"
+                                                                         value="@(Model.ProgramDays.Count + 1)" required /></div>
+                <div class="admin-field" style="flex:2;"><label>Title</label><input name="title"
+                                                                                        placeholder="Arrival and opening dinner" required /></div>
+                    <div class="admin-field"><label>Date label</label><input name="dateLabel" placeholder="Thursday 17 September" />
+                    </div>
+                    <button type="submit" class="admin-btn">Add day</button>
+                </form>
+            </div>
 
-@* --- Ticket types ------------------------------------------------------------------------------- *@
-<div class="admin-card" style="margin-bottom:24px;">
-    <h2>Ticket types</h2>
+            @* --- Ticket types ------------------------------------------------------------------------------- *@
+            <div class="admin-card" style="margin-bottom:24px;">
+                <h2>Ticket types</h2>
 
-    @if (Model.TicketTypes.Count == 0)
-    {
-        <div class="admin-empty"><p class="admin-empty__title">No ticket types yet</p></div>
-    }
+                @if (Model.TicketTypes.Count == 0)
+                {
+                    <div class="admin-empty">
+                        <p class="admin-empty__title">No ticket types yet</p>
+                    </div>
+                }
 
-    @foreach (var t in Model.TicketTypes)
-    {
-        <div class="admin-panel" style="margin-bottom:12px;">
-            <form asp-action="UpdateTicketType" asp-route-id="@experienceId" method="post" class="admin-form">
-                <input type="hidden" name="Id" value="@t.Id" />
-                <div class="admin-form__grid">
-                    <div class="admin-field"><label>Title</label><input name="Title" value="@t.Title" required /></div>
-                    <div class="admin-field"><label>Price (minor units)</label><input name="PriceMinor" type="number" min="0" value="@t.PriceMinor" required /></div>
-                    <div class="admin-field"><label>Currency</label><input name="Currency" value="@t.Currency" maxlength="3" required /></div>
-                    <div class="admin-field"><label>Max per order</label><input name="MaxQuantityPerOrder" type="number" min="1" value="@t.MaxQuantityPerOrder" /></div>
-                    <div class="admin-field"><label>Order</label><input name="SortOrder" type="number" value="@t.SortOrder" /></div>
-                </div>
-                <div class="admin-field"><label>Description</label><input name="Description" value="@t.Description" /></div>
-                <div class="admin-field"><label>Perks</label><textarea name="PerksText" rows="2">@t.PerksText</textarea></div>
+                @foreach (var t in Model.TicketTypes)
+                {
+                    <div class="admin-panel" style="margin-bottom:12px;">
+                        <form asp-action="UpdateTicketType" asp-route-id="@experienceId" method="post" class="admin-form">
+                            <input type="hidden" name="Id" value="@t.Id" />
+                            <div class="admin-form__grid">
+                                <div class="admin-field"><label>Title</label><input name="Title" value="@t.Title" required /></div>
+                                <div class="admin-field"><label>Price (minor units)</label><input name="PriceMinor" type="number"
+                                                                                                      min="0" value="@t.PriceMinor" required /></div>
+                                    <div class="admin-field"><label>Currency</label><input name="Currency" value="@t.Currency" maxlength="3"
+                                                                                               required /></div>
+                                        <div class="admin-field"><label>Max per order</label><input name="MaxQuantityPerOrder" type="number"
+                                                                                                        min="1" value="@t.MaxQuantityPerOrder" /></div>
+                                            <div class="admin-field"><label>Order</label><input name="SortOrder" type="number"
+                                                                                                    value="@t.SortOrder" /></div>
+                                            </div>
+                                            <div class="admin-field"><label>Description</label><input name="Description" value="@t.Description" /></div>
+                                            <div class="admin-field"><label>Perks</label><textarea name="PerksText" rows="2">@t.PerksText</textarea>
+                                            </div>
 
-                @* Inventory is shown but not editable: it is the no-oversell counter, moved only by
+                                            @* Inventory is shown but not editable: it is the no-oversell counter, moved only by
                    the atomic reservation. A number typed here from a stale page would undo sales. *@
-                <p class="admin-field__hint">@t.Inventory place(s) left — inventory moves only as tickets are sold or released.</p>
+                                            <p class="admin-field__hint">@t.Inventory place(s) left — inventory moves only as tickets are sold or
+                                                released.</p>
 
-                <div class="admin-panel__actions">
-                    <button type="submit" class="admin-btn">Save ticket type</button>
-                </div>
-            </form>
+                                                <div class="admin-panel__actions">
+                                                    <button type="submit" class="admin-btn">Save ticket type</button>
+                                                </div>
+                                            </form>
 
-            <form asp-action="RemoveTicketType" method="post" onsubmit="return confirm('Remove this ticket type?');">
-                <input type="hidden" name="experienceId" value="@experienceId" />
-                <input type="hidden" name="ticketTypeId" value="@t.Id" />
-                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
-            </form>
-        </div>
-    }
+                                            <form asp-action="RemoveTicketType" method="post" onsubmit="return confirm('Remove this ticket type?');">
+                                                <input type="hidden" name="experienceId" value="@experienceId" />
+                                                <input type="hidden" name="ticketTypeId" value="@t.Id" />
+                                                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                                            </form>
+                                        </div>
+                                    }
 
-    <form asp-action="AddTicketType" method="post" class="admin-inline-form">
-        <input type="hidden" name="ExperienceId" value="@experienceId" />
-        <div class="admin-field"><label>Title</label><input name="Title" placeholder="Standard Experience" required /></div>
-        <div class="admin-field"><label>Price (minor units)</label><input name="PriceMinor" type="number" min="0" required /></div>
-        <div class="admin-field"><label>Currency</label><input name="Currency" value="GBP" maxlength="3" required /></div>
-        <div class="admin-field"><label>Inventory</label><input name="Inventory" type="number" min="0" required /></div>
-        <button type="submit" class="admin-btn">Add</button>
-    </form>
-</div>
+                                    <form asp-action="AddTicketType" method="post" class="admin-inline-form">
+                                        <input type="hidden" name="ExperienceId" value="@experienceId" />
+                                        <div class="admin-field"><label>Title</label><input name="Title" placeholder="Standard Experience" required />
+                                        </div>
+                                        <div class="admin-field"><label>Price (minor units)</label><input name="PriceMinor" type="number" min="0"
+                                                                                                              required /></div>
+                                            <div class="admin-field"><label>Currency</label><input name="Currency" value="GBP" maxlength="3" required />
+                                            </div>
+                                            <div class="admin-field"><label>Inventory</label><input name="Inventory" type="number" min="0" required /></div>
+                                            <button type="submit" class="admin-btn">Add</button>
+                                        </form>
+                                    </div>
 
-@* --- Included / Not included -------------------------------------------------------------------- *@
-<div class="admin-card" style="margin-bottom:24px;">
-    <h2>Included / not included <span class="admin-lang-chip admin-lang-chip--on">@active.Culture.ShortLabel</span></h2>
+                                    @* --- Included / Not included -------------------------------------------------------------------- *@
+                                    <div class="admin-card" style="margin-bottom:24px;">
+                                        <h2>Included / not included <span class="admin-lang-chip admin-lang-chip--on">@active.Culture.ShortLabel</span></h2>
 
-    @foreach (var i in Model.Inclusions.Where(i => i.Culture == Model.ActiveCulture))
-    {
-        <form asp-action="UpdateInclusion" asp-route-id="@experienceId" method="post" class="admin-inline-form">
-            <input type="hidden" name="inclusionId" value="@i.Id" />
-            <div class="admin-field" style="flex:3;"><label>Text</label><input name="text" value="@i.Text" required /></div>
-            <div class="admin-field admin-field--checkbox">
-                <input type="checkbox" name="isIncluded" value="true" checked="@i.IsIncluded" />
-                <label>Included</label>
-            </div>
-            <div class="admin-field"><label>Order</label><input name="sortOrder" type="number" value="@i.SortOrder" /></div>
-            <button type="submit" class="admin-icon-btn">Save</button>
-        </form>
-        <form asp-action="RemoveInclusion" method="post" style="margin:-8px 0 12px;">
-            <input type="hidden" name="experienceId" value="@experienceId" />
-            <input type="hidden" name="inclusionId" value="@i.Id" />
-            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
-        </form>
-    }
+                                        @foreach (var i in Model.Inclusions.Where(i => i.Culture == Model.ActiveCulture))
+                                        {
+                                            <form asp-action="UpdateInclusion" asp-route-id="@experienceId" method="post" class="admin-inline-form">
+                                                <input type="hidden" name="inclusionId" value="@i.Id" />
+                                                <div class="admin-field" style="flex:3;"><label>Text</label><input name="text" value="@i.Text" required /></div>
+                                                <div class="admin-field admin-field--checkbox">
+                                                    <input type="checkbox" name="isIncluded" value="true" checked="@i.IsIncluded" />
+                                                    <label>Included</label>
+                                                </div>
+                                                <div class="admin-field"><label>Order</label><input name="sortOrder" type="number" value="@i.SortOrder" /></div>
+                                                <button type="submit" class="admin-icon-btn">Save</button>
+                                            </form>
+                                            <form asp-action="RemoveInclusion" method="post" style="margin:-8px 0 12px;">
+                                                <input type="hidden" name="experienceId" value="@experienceId" />
+                                                <input type="hidden" name="inclusionId" value="@i.Id" />
+                                                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                                            </form>
+                                        }
 
-    <form asp-action="AddInclusion" method="post" class="admin-inline-form">
-        <input type="hidden" name="ExperienceId" value="@experienceId" />
-        <input type="hidden" name="Culture" value="@active.Culture.Name" />
-        <div class="admin-field" style="flex:3;"><label>Text</label><input name="Text" required /></div>
-        <div class="admin-field admin-field--checkbox"><input type="checkbox" name="IsIncluded" value="true" checked /><label>Included</label></div>
-        <button type="submit" class="admin-btn">Add</button>
-    </form>
-</div>
+                                        <form asp-action="AddInclusion" method="post" class="admin-inline-form">
+                                            <input type="hidden" name="ExperienceId" value="@experienceId" />
+                                            <input type="hidden" name="Culture" value="@active.Culture.Name" />
+                                            <div class="admin-field" style="flex:3;"><label>Text</label><input name="Text" required /></div>
+                                            <div class="admin-field admin-field--checkbox"><input type="checkbox" name="IsIncluded" value="true"
+                                                                                                      checked /><label>Included</label></div>
+                                                <button type="submit" class="admin-btn">Add</button>
+                                            </form>
+                                        </div>
 
-@* --- FAQ ---------------------------------------------------------------------------------------- *@
-<div class="admin-card" style="margin-bottom:24px;">
-    <h2>FAQ <span class="admin-lang-chip admin-lang-chip--on">@active.Culture.ShortLabel</span></h2>
+                                        @* --- FAQ ---------------------------------------------------------------------------------------- *@
+                                        <div class="admin-card" style="margin-bottom:24px;">
+                                            <h2>FAQ <span class="admin-lang-chip admin-lang-chip--on">@active.Culture.ShortLabel</span></h2>
 
-    @foreach (var f in Model.Faqs.Where(f => f.Culture == Model.ActiveCulture))
-    {
-        <div class="admin-panel" style="margin-bottom:12px;">
-            <form asp-action="UpdateFaq" asp-route-id="@experienceId" method="post" class="admin-form">
-                <input type="hidden" name="faqId" value="@f.Id" />
-                <div class="admin-field"><label>Question</label><input name="question" value="@f.Question" required /></div>
-                <div class="admin-field"><label>Answer</label><textarea name="answer" rows="3" required>@f.Answer</textarea></div>
-                <div class="admin-field"><label>Order</label><input name="sortOrder" type="number" value="@f.SortOrder" /></div>
-                <div class="admin-panel__actions">
-                    <button type="submit" class="admin-btn">Save</button>
-                </div>
-            </form>
-            <form asp-action="RemoveFaq" method="post">
-                <input type="hidden" name="experienceId" value="@experienceId" />
-                <input type="hidden" name="faqId" value="@f.Id" />
-                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
-            </form>
-        </div>
-    }
+                                            @foreach (var f in Model.Faqs.Where(f => f.Culture == Model.ActiveCulture))
+                                            {
+                                                <div class="admin-panel" style="margin-bottom:12px;">
+                                                    <form asp-action="UpdateFaq" asp-route-id="@experienceId" method="post" class="admin-form">
+                                                        <input type="hidden" name="faqId" value="@f.Id" />
+                                                        <div class="admin-field"><label>Question</label><input name="question" value="@f.Question" required /></div>
+                                                        <div class="admin-field"><label>Answer</label><textarea name="answer" rows="3" required>@f.Answer</textarea>
+                                                        </div>
+                                                        <div class="admin-field"><label>Order</label><input name="sortOrder" type="number" value="@f.SortOrder" />
+                                                        </div>
+                                                        <div class="admin-panel__actions">
+                                                            <button type="submit" class="admin-btn">Save</button>
+                                                        </div>
+                                                    </form>
+                                                    <form asp-action="RemoveFaq" method="post">
+                                                        <input type="hidden" name="experienceId" value="@experienceId" />
+                                                        <input type="hidden" name="faqId" value="@f.Id" />
+                                                        <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                                                    </form>
+                                                </div>
+                                            }
 
-    <form asp-action="AddFaq" method="post" class="admin-inline-form">
-        <input type="hidden" name="ExperienceId" value="@experienceId" />
-        <input type="hidden" name="Culture" value="@active.Culture.Name" />
-        <div class="admin-field" style="flex:2;"><label>Question</label><input name="Question" required /></div>
-        <div class="admin-field" style="flex:3;"><label>Answer</label><input name="Answer" required /></div>
-        <button type="submit" class="admin-btn">Add</button>
-    </form>
-</div>
+                                            <form asp-action="AddFaq" method="post" class="admin-inline-form">
+                                                <input type="hidden" name="ExperienceId" value="@experienceId" />
+                                                <input type="hidden" name="Culture" value="@active.Culture.Name" />
+                                                <div class="admin-field" style="flex:2;"><label>Question</label><input name="Question" required /></div>
+                                                <div class="admin-field" style="flex:3;"><label>Answer</label><input name="Answer" required /></div>
+                                                <button type="submit" class="admin-btn">Add</button>
+                                            </form>
+                                        </div>
 
-@* --- Waitlist ----------------------------------------------------------------------------------- *@
-<div class="admin-card" style="margin-bottom:24px;">
-    <h2>Waitlist <span class="admin-lang-chip">@Model.Waitlist.Count</span></h2>
-    <p class="admin-hint">
-        People who signed up while this experience was at capacity, in the order they arrived.
-        The public sign-up form only appears while the status is <strong>Waitlist</strong>.
-        Positions are not renumbered when you remove someone &mdash; they record arrival order.
-    </p>
+                                        @* --- Waitlist ----------------------------------------------------------------------------------- *@
+                                        <div class="admin-card" style="margin-bottom:24px;">
+                                            <h2>Waitlist <span class="admin-lang-chip">@Model.Waitlist.Count</span></h2>
+                                            <p class="admin-hint">
+                                                People who signed up while this experience was at capacity, in the order they arrived.
+                                                The public sign-up form only appears while the status is <strong>Waitlist</strong>.
+                                                Positions are not renumbered when you remove someone &mdash; they record arrival order.
+                                            </p>
 
-    @if (Model.Waitlist.Count == 0)
-    {
-        <div class="admin-empty">
-            <p class="admin-empty__title">Nobody is waiting.</p>
-            <p>Set the status to Waitlist and the form appears on the public page.</p>
-        </div>
-    }
-    else
-    {
-        <div class="admin-table-scroll">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Joined</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var entry in Model.Waitlist)
-                    {
-                        <tr>
-                            <td>@entry.Position</td>
-                            <td>@entry.FullName</td>
-                            @* mailto so reaching out is one click, which is the entire point of
+                                            @if (Model.Waitlist.Count == 0)
+                                            {
+                                                <div class="admin-empty">
+                                                    <p class="admin-empty__title">Nobody is waiting.</p>
+                                                    <p>Set the status to Waitlist and the form appears on the public page.</p>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="admin-table-scroll">
+                                                    <table class="admin-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">Name</th>
+                                                                <th scope="col">Email</th>
+                                                                <th scope="col">Joined</th>
+                                                                <th scope="col"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var entry in Model.Waitlist)
+                                                            {
+                                                                <tr>
+                                                                    <td>@entry.Position</td>
+                                                                    <td>@entry.FullName</td>
+                                                                    @* mailto so reaching out is one click, which is the entire point of
                                having captured the address. *@
-                            <td><a href="mailto:@entry.Email">@entry.Email</a></td>
-                            <td>@entry.CreatedAt.ToLocalTime().ToString("d MMM yyyy, HH:mm")</td>
-                            <td>
-                                <form asp-action="RemoveWaitlistEntry" method="post">
-                                    <input type="hidden" name="experienceId" value="@experienceId" />
-                                    <input type="hidden" name="entryId" value="@entry.Id" />
-                                    <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+                                                                    <td><a href="mailto:@entry.Email">@entry.Email</a></td>
+                                                                    <td>@entry.CreatedAt.ToLocalTime().ToString("d MMM yyyy, HH:mm")</td>
+                                                                    <td>
+                                                                        <form asp-action="RemoveWaitlistEntry" method="post">
+                                                                            <input type="hidden" name="experienceId" value="@experienceId" />
+                                                                            <input type="hidden" name="entryId" value="@entry.Id" />
+                                                                            <button type="submit" class="admin-icon-btn"
+                                                                                    style="color:var(--vih-danger);">Remove</button>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
+                                        </div>
 
-@* --- Notify ------------------------------------------------------------------------------------- *@
-<div class="admin-card">
-    <h2>Notify attendees</h2>
-    <p class="admin-hint">Sends an in-portal notification to everyone with a confirmed booking on this experience.</p>
-    <form asp-action="NotifyAttendees" method="post" class="admin-form">
-        <input type="hidden" name="ExperienceId" value="@experienceId" />
-        <div class="admin-form__grid">
-            <div class="admin-field">
-                <label>Type</label>
-                <select name="Type">
-                    <option value="EventUpdate">Event Update</option>
-                    <option value="NewSchedule">New Schedule</option>
-                </select>
-            </div>
-            <div class="admin-field">
-                <label>Title</label>
-                <input name="Title" maxlength="200" required />
-            </div>
-        </div>
-        <div class="admin-field">
-            <label>Body</label>
-            <textarea name="Body" rows="3" maxlength="1000" required></textarea>
-        </div>
-        <button type="submit" class="admin-btn">Notify attendees</button>
-    </form>
-</div>
+                                        @* --- Notify ------------------------------------------------------------------------------------- *@
+                                        <div class="admin-card">
+                                            <h2>Notify attendees</h2>
+                                            <p class="admin-hint">Sends an in-portal notification to everyone with a confirmed booking on this experience.</p>
+                                            <form asp-action="NotifyAttendees" method="post" class="admin-form">
+                                                <input type="hidden" name="ExperienceId" value="@experienceId" />
+                                                <div class="admin-form__grid">
+                                                    <div class="admin-field">
+                                                        <label>Type</label>
+                                                        <select name="Type">
+                                                            <option value="EventUpdate">Event Update</option>
+                                                            <option value="NewSchedule">New Schedule</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="admin-field">
+                                                        <label>Title</label>
+                                                        <input name="Title" maxlength="200" required />
+                                                    </div>
+                                                </div>
+                                                <div class="admin-field">
+                                                    <label>Body</label>
+                                                    <textarea name="Body" rows="3" maxlength="1000" required></textarea>
+                                                </div>
+                                                <button type="submit" class="admin-btn">Notify attendees</button>
+                                            </form>
+                                        </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+                                        @section Scripts {
+                                            <partial name="_ValidationScriptsPartial" />
+                                        }

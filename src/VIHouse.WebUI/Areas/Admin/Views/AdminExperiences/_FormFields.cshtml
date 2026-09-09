@@ -20,7 +20,7 @@
 
 <div class="admin-field">
     <label asp-for="Description"></label>
-    <textarea asp-for="Description"></textarea>
+    <textarea asp-for="Description" rows="10" data-ckeditor></textarea>
     <span asp-validation-for="Description" class="field-validation-error"></span>
 </div>
 
@@ -65,11 +65,13 @@
 <div class="admin-form__grid">
     <div class="admin-field">
         <label asp-for="Status"></label>
-        <select asp-for="Status" asp-items="Html.GetEnumSelectList<VIHouse.Entities.Experiences.ExperienceStatus>()"></select>
+        <select asp-for="Status"
+                asp-items="Html.GetEnumSelectList<VIHouse.Entities.Experiences.ExperienceStatus>()"></select>
     </div>
     <div class="admin-field">
         <label asp-for="Visibility"></label>
-        <select asp-for="Visibility" asp-items="Html.GetEnumSelectList<VIHouse.Entities.Experiences.ExperienceVisibility>()"></select>
+        <select asp-for="Visibility"
+                asp-items="Html.GetEnumSelectList<VIHouse.Entities.Experiences.ExperienceVisibility>()"></select>
         <p class="admin-field__hint">
             Members: only signed-in members with a membership see it. Invite only and Unlisted keep it
             out of the listings.
@@ -77,82 +79,86 @@
     </div>
     <div class="admin-field">
         <label asp-for="AttendanceMode"></label>
-        <select asp-for="AttendanceMode" asp-items="Html.GetEnumSelectList<VIHouse.Entities.Experiences.ExperienceAttendanceMode>()"></select>
-        <p class="admin-field__hint">When both are allowed, whoever joins picks which, and it is recorded on their booking.</p>
+        <select asp-for="AttendanceMode"
+                asp-items="Html.GetEnumSelectList<VIHouse.Entities.Experiences.ExperienceAttendanceMode>()"></select>
+        <p class="admin-field__hint">When both are allowed, whoever joins picks which, and it is recorded on their
+            booking.</p>
+        </div>
     </div>
-</div>
 
-@{
-    // The Cover image panel above this form owns the upload. When one exists it wins outright, so the
-    // path box is disabled rather than left looking editable while changing nothing.
-    var hasUpload = (ViewData["HasUploadedCover"] as bool?) ?? false;
-}
+    @{
+        // The Cover image panel above this form owns the upload. When one exists it wins outright, so the
+        // path box is disabled rather than left looking editable while changing nothing.
+        var hasUpload = (ViewData["HasUploadedCover"] as bool?) ?? false;
+    }
 
-<div class="admin-form__grid">
-    <div class="admin-field">
-        <label asp-for="CoverImageUrl"></label>
-        <input asp-for="CoverImageUrl" disabled="@hasUpload" />
-        <p class="admin-field__hint">
-            @(hasUpload
-                ? "An uploaded cover is in use. Remove it above to go back to a path."
-                : "A path to a file already on the site, e.g. /img/experiences/london-1600.jpg.")
-        </p>
-    </div>
-    <div class="admin-field">
-        <label asp-for="CoverImageAlt"></label>
-        <input asp-for="CoverImageAlt" />
-        <p class="admin-field__hint">Usually leave this empty — the heading below the cover already names the experience.</p>
-    </div>
-</div>
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="CoverImageUrl"></label>
+            <input asp-for="CoverImageUrl" disabled="@hasUpload" />
+            <p class="admin-field__hint">
+                @(hasUpload
+                    ? "An uploaded cover is in use. Remove it above to go back to a path."
+                    : "A path to a file already on the site, e.g. /img/experiences/london-1600.jpg.")
+            </p>
+        </div>
+        <div class="admin-field">
+            <label asp-for="CoverImageAlt"></label>
+            <input asp-for="CoverImageAlt" />
+            <p class="admin-field__hint">Usually leave this empty — the heading below the cover already names the
+                experience.</p>
+            </div>
+        </div>
 
-<div class="admin-field">
-    <label asp-for="AudienceTags"></label>
-    <input asp-for="AudienceTags" placeholder="Founders, Operators, Investors" />
-    <p class="admin-field__hint">Rendered as the chips under "Who is in the room?".</p>
-</div>
+        <div class="admin-field">
+            <label asp-for="AudienceTags"></label>
+            <input asp-for="AudienceTags" placeholder="Founders, Operators, Investors" />
+            <p class="admin-field__hint">Rendered as the chips under "Who is in the room?".</p>
+        </div>
 
-<div class="admin-form__grid">
-    <div class="admin-field">
-        <label asp-for="ApplicationOpenAt"></label>
-        <input asp-for="ApplicationOpenAt" type="datetime-local" />
-    </div>
-    <div class="admin-field">
-        <label asp-for="ApplicationCloseAt"></label>
-        <input asp-for="ApplicationCloseAt" type="datetime-local" />
-    </div>
-    <div class="admin-field">
-        <label asp-for="SalesOpenAt"></label>
-        <input asp-for="SalesOpenAt" type="datetime-local" />
-    </div>
-    <div class="admin-field">
-        <label asp-for="SalesCloseAt"></label>
-        <input asp-for="SalesCloseAt" type="datetime-local" />
-    </div>
-</div>
+        <div class="admin-form__grid">
+            <div class="admin-field">
+                <label asp-for="ApplicationOpenAt"></label>
+                <input asp-for="ApplicationOpenAt" type="datetime-local" />
+            </div>
+            <div class="admin-field">
+                <label asp-for="ApplicationCloseAt"></label>
+                <input asp-for="ApplicationCloseAt" type="datetime-local" />
+            </div>
+            <div class="admin-field">
+                <label asp-for="SalesOpenAt"></label>
+                <input asp-for="SalesOpenAt" type="datetime-local" />
+            </div>
+            <div class="admin-field">
+                <label asp-for="SalesCloseAt"></label>
+                <input asp-for="SalesCloseAt" type="datetime-local" />
+            </div>
+        </div>
 
-<div class="admin-form__grid">
-    <div class="admin-field">
-        <label asp-for="SeoTitle"></label>
-        <input asp-for="SeoTitle" />
-    </div>
-    <div class="admin-field">
-        <label asp-for="SortOrder"></label>
-        <input asp-for="SortOrder" type="number" />
-    </div>
-</div>
+        <div class="admin-form__grid">
+            <div class="admin-field">
+                <label asp-for="SeoTitle"></label>
+                <input asp-for="SeoTitle" />
+            </div>
+            <div class="admin-field">
+                <label asp-for="SortOrder"></label>
+                <input asp-for="SortOrder" type="number" />
+            </div>
+        </div>
 
-<div class="admin-field">
-    <label asp-for="SeoDescription"></label>
-    <input asp-for="SeoDescription" />
-</div>
+        <div class="admin-field">
+            <label asp-for="SeoDescription"></label>
+            <input asp-for="SeoDescription" />
+        </div>
 
-<div class="admin-field">
-    <label asp-for="SeoOgImageUrl"></label>
-    <input asp-for="SeoOgImageUrl" />
-    <p class="admin-field__hint">Used when a link to this experience is pasted into a chat or a social post. Falls back to the cover.</p>
-</div>
+        <div class="admin-field">
+            <label asp-for="SeoOgImageUrl"></label>
+            <input asp-for="SeoOgImageUrl" />
+            <p class="admin-field__hint">Used when a link to this experience is pasted into a chat or a social post. Falls back
+                to the cover.</p>
+            </div>
 
-<div class="admin-field admin-field--checkbox">
-    <input asp-for="IsSignature" />
-    <label asp-for="IsSignature"></label>
-</div>
+            <div class="admin-field admin-field--checkbox">
+                <input asp-for="IsSignature" />
+                <label asp-for="IsSignature"></label>
+            </div>

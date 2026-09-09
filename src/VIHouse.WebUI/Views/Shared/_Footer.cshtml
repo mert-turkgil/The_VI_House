@@ -3,19 +3,17 @@
 @using Microsoft.Extensions.Options
 @inject IConfiguration Configuration
 @inject IOptions<FeatureOptions> Features
-@*
-    asp-area="" on every link below is required, not decorative — see the comment in _Nav.cshtml.
-    This footer renders inside the Identity area as well, where an ambient area="Identity" would
-    otherwise make every one of these resolve to nothing and emit href="".
-*@
+
 @{
     var currentPath = Context.Request.Path + Context.Request.QueryString;
-    string CultureUrl(string culture) => Url.Action("Set", "Culture", new { culture, returnUrl = currentPath })!;
+    string CultureUrl(string culture)
+    {
+        var bare = VIHouse.WebUI.Helpers.SeoResolver.StripCulture(Context.Request.Path.Value ?? "/");
+        var target = VIHouse.WebUI.Helpers.SeoResolver.PathFor(culture, bare) + Context.Request.QueryString;
+        return Url.Action("Set", "Culture", new { culture, returnUrl = target })!;
+    }
     var currentCulture = SiteCultures.Describe(CultureInfo.CurrentUICulture.Name);
 
-    // Social profiles come from configuration rather than being hardcoded here, and each icon is
-    // rendered only if its URL is actually set. An icon linking to a profile that does not exist yet
-    // is worse than no icon: it looks live, and it 404s the first person who clicks it.
     var social = new (string Icon, string Key, string Label)[]
     {
         ("instagram", "Site:Social:Instagram", "Instagram"),
@@ -65,7 +63,8 @@
                        worse than a shorter footer — see FeatureOptions. *@
                     @if (Features.Value.MemberDirectory)
                     {
-                        <li><a asp-area="" asp-controller="MemberDirectory" asp-action="Index">@Loc["Footer.Community"]</a></li>
+                        <li><a asp-area="" asp-controller="MemberDirectory" asp-action="Index">@Loc["Footer.Community"]</a>
+                        </li>
                     }
                 </ul>
             </div>
@@ -98,9 +97,11 @@
             <div class="site-footer__newsletter">
                 <h4>@Loc["Footer.NewsletterHeading"]</h4>
                 <p class="site-footer__newsletter-lede">@Loc["Footer.NewsletterLede"]</p>
-                @* TODO: wire to a real newsletter endpoint once a mailing-list provider is chosen — inert for now rather than a dead POST. *@
+                @* TODO: wire to a real newsletter endpoint once a mailing-list provider is chosen — inert for now
+                rather than a dead POST. *@
                 <form class="site-footer__newsletter-form" onsubmit="return false;">
-                    <input type="email" placeholder="@Loc["Footer.NewsletterPlaceholder"]" aria-label="@Loc["Footer.NewsletterPlaceholder"]" required />
+                    <input type="email" placeholder="@Loc["Footer.NewsletterPlaceholder"]"
+                           aria-label="@Loc["Footer.NewsletterPlaceholder"]" required />
                     <button type="submit" aria-label="@Loc["Footer.NewsletterSubmit"]">&rarr;</button>
                 </form>
                 <p class="site-footer__newsletter-note">@Loc["Footer.NewsletterNote"]</p>
@@ -117,15 +118,11 @@
                 <li><a asp-area="" asp-controller="Legal" asp-action="Refund">@Loc["Footer.RefundPolicy"]</a></li>
             </ul>
 
-            @* A second language switcher, where the reference design puts it. Plain links to the same
-               CultureController action the header uses — no JS, and it works as a right-click-open
-               like any other link. *@
             <nav class="site-footer__lang" aria-label="@Loc["Nav.LanguageLabel"]">
                 @foreach (var lang in SiteCultures.All)
                 {
                     <a class="@(lang.Name == currentCulture.Name ? "site-footer__lang-link active" : "site-footer__lang-link")"
-                       href="@CultureUrl(lang.Name)"
-                       lang="@lang.Name"
+                       href="@CultureUrl(lang.Name)" lang="@lang.Name"
                        aria-current="@(lang.Name == currentCulture.Name ? "true" : null)">@lang.NativeLabel</a>
                 }
             </nav>

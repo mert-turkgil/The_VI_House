@@ -50,19 +50,21 @@
 
 <section class="experience-hero">
     <div class="experience-hero__media" data-motion="hero-parallax">
-        <partial name="_CoverImage" model="@(new CoverImageViewModel {
-            Url = Model.CoverImageUrl,
-            Alt = Model.CoverImageAlt,
-            Ratio = "hero",
-            Sizes = "100vw",
-            Eager = true,
-        })" />
+        <partial name="_CoverImage" model="@(new CoverImageViewModel
+                 {
+                     Url = Model.CoverImageUrl,
+                     Alt = Model.CoverImageAlt,
+                     Ratio = "hero",
+                     Sizes = "100vw",
+                     Eager = true,
+                 })" />
         <div class="experience-hero__scrim"></div>
     </div>
 
     <div class="container experience-hero__inner">
         <div class="experience-hero__eyebrow">
-            <span class="experience-card__badge experience-card__badge--@Model.StatusModifier">@Loc[Model.StatusKey]</span>
+            <span
+            class="experience-card__badge experience-card__badge--@Model.StatusModifier">@Loc[Model.StatusKey]</span>
             <span>@Model.City, @Model.Country</span>
         </div>
 
@@ -122,7 +124,7 @@
                 {
                     <p><strong>@Model.ShortSummary</strong></p>
                 }
-                <p>@Model.Description</p>
+                <div class="content-body">@Html.Raw(Model.Description)</div>
             </section>
 
             @if (hasAudience)
@@ -150,290 +152,296 @@
                     {
                         <div class="experience-program__day">
                             <div class="experience-program__day-head">
-                                <span class="experience-program__day-num">@Loc["Experiences.Programme.Day", day.DayNumber]</span>
-                                <h3 class="experience-program__day-title">@day.Title</h3>
-                            </div>
+                                <span class="experience-program__day-num">@Loc["Experiences.Programme.Day",
+                                                                day.DayNumber]</span>
+                                    <h3 class="experience-program__day-title">@day.Title</h3>
+                                </div>
 
-                            <ul class="experience-program__sessions">
-                                @foreach (var session in day.Sessions.OrderBy(s => s.SortOrder))
-                                {
-                                    <li class="experience-program__session">
-                                        @* Rendered exactly as stored, in the experience's own zone —
+                                <ul class="experience-program__sessions">
+                                    @foreach (var session in day.Sessions.OrderBy(s => s.SortOrder))
+                                    {
+                                        <li class="experience-program__session">
+                                            @* Rendered exactly as stored, in the experience's own zone —
                                            see the note below the list. EndTime, SpeakerName and
                                            Description are all on the entity and were previously
                                            loaded and then thrown away. *@
-                                        <span class="experience-program__time">
-                                            @session.StartTime.ToString(@"hh\:mm")&ndash;@session.EndTime.ToString(@"hh\:mm")
-                                        </span>
-                                        <p class="experience-program__session-title">
-                                            @session.Title
-                                            @if (!string.IsNullOrWhiteSpace(session.SpeakerName))
+                                            <span class="experience-program__time">
+                                                @session.StartTime.ToString(@"hh\:mm")&ndash;@session.EndTime.ToString(@"hh\:mm")
+                                            </span>
+                                            <p class="experience-program__session-title">
+                                                @session.Title
+                                                @if (!string.IsNullOrWhiteSpace(session.SpeakerName))
+                                                {
+                                                    <span class="experience-program__speaker"> &middot; @session.SpeakerName</span>
+                                                }
+                                            </p>
+                                            @if (!string.IsNullOrWhiteSpace(session.Description))
                                             {
-                                                <span class="experience-program__speaker"> &middot; @session.SpeakerName</span>
+                                                <p class="experience-program__session-desc">@session.Description</p>
                                             }
-                                        </p>
-                                        @if (!string.IsNullOrWhiteSpace(session.Description))
-                                        {
-                                            <p class="experience-program__session-desc">@session.Description</p>
-                                        }
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    }
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
 
-                    @* Sessions are bare TimeSpans understood to be in Experience.TimeZoneId. Saying
+                        @* Sessions are bare TimeSpans understood to be in Experience.TimeZoneId. Saying
                        so is the honest option: converting them to the visitor's browser timezone
                        would show a Berlin reader "18:00" for a 19:00 Istanbul dinner. *@
-                    <p class="experience-program__tz-note">@Loc["Experiences.Programme.LocalTimes", Model.City]</p>
-                </section>
-            }
+                        <p class="experience-program__tz-note">@Loc["Experiences.Programme.LocalTimes", Model.City]</p>
+                    </section>
+                }
 
-            @if (hasInclusions)
-            {
-                <section class="experience-section" id="included" data-subnav-section="included">
-                    <h2>@Loc["Experiences.Section.Included"]</h2>
+                @if (hasInclusions)
+                {
+                    <section class="experience-section" id="included" data-subnav-section="included">
+                        <h2>@Loc["Experiences.Section.Included"]</h2>
 
-                    <div class="experience-inclusions">
-                        @if (Model.Included.Count > 0)
-                        {
-                            <div class="experience-inclusions__col experience-inclusions__col--included">
-                                <h3 class="experience-inclusions__heading">@Loc["Experiences.Included"]</h3>
-                                <ul class="experience-inclusions__list">
-                                    @foreach (var item in Model.Included)
-                                    {
-                                        <li class="experience-inclusions__item">
-                                            @* Was a literal ✓, which a screen reader announces as
+                        <div class="experience-inclusions">
+                            @if (Model.Included.Count > 0)
+                            {
+                                <div class="experience-inclusions__col experience-inclusions__col--included">
+                                    <h3 class="experience-inclusions__heading">@Loc["Experiences.Included"]</h3>
+                                    <ul class="experience-inclusions__list">
+                                        @foreach (var item in Model.Included)
+                                        {
+                                            <li class="experience-inclusions__item">
+                                                @* Was a literal ✓, which a screen reader announces as
                                                "check mark" on every single row. The heading above
                                                already carries the meaning, so the icon is decorative. *@
-                                            <span class="experience-inclusions__mark"><partial name="_Icon" model="@("check")" /></span>
-                                            <span>@item.Text</span>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        }
+                                                <span class="experience-inclusions__mark">
+                                                    <partial name="_Icon" model="@("check")" />
+                                                </span>
+                                                <span>@item.Text</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
 
-                        @if (Model.NotIncluded.Count > 0)
-                        {
-                            <div class="experience-inclusions__col experience-inclusions__col--excluded">
-                                <h3 class="experience-inclusions__heading">@Loc["Experiences.NotIncluded"]</h3>
-                                <ul class="experience-inclusions__list">
-                                    @foreach (var item in Model.NotIncluded)
-                                    {
-                                        <li class="experience-inclusions__item">
-                                            <span class="experience-inclusions__mark"><partial name="_Icon" model="@("x")" /></span>
-                                            <span>@item.Text</span>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
-                        }
-                    </div>
-                </section>
-            }
-
-            @if (hasGallery)
-            {
-                <section class="experience-section" id="gallery" data-subnav-section="gallery">
-                    <h2>@Loc["Experiences.Section.Gallery"]</h2>
-
-                    @* Model.Gallery was loaded by the repository and never rendered until now. Uses
-                       the Swiper instance the site already ships — no new library. *@
-                    <div class="experience-gallery swiper"
-                         data-swiper
-                         data-swiper-per-view="2"
-                         data-swiper-prev-label="@Loc["Experiences.Gallery.Prev"]"
-                         data-swiper-next-label="@Loc["Experiences.Gallery.Next"]">
-                        <div class="swiper-wrapper">
-                            @foreach (var image in Model.Gallery)
+                            @if (Model.NotIncluded.Count > 0)
                             {
-                                <div class="swiper-slide">
-                                    <figure class="experience-gallery__item">
-                                        @* Real alt here, unlike the covers: these sit away from any
-                                           heading that describes them. AltText is null-safe — a null
-                                           becomes alt="" (decorative), never the experience title,
-                                           which would make a screen reader read it six times. *@
-                                        @* Resolved, not the raw column: an uploaded photograph has no
-                                           Url and is streamed by MediaController instead. *@
-                                        <partial name="_CoverImage" model="@(new CoverImageViewModel {
-                                            Url = ExperienceService.GalleryImageUrl(image),
-                                            Alt = image.AltText,
-                                            Ratio = "4x3",
-                                            Sizes = "(min-width: 960px) 40vw, 90vw",
-                                        })" />
-                                    </figure>
-                                    @if (!string.IsNullOrWhiteSpace(image.AltText))
-                                    {
-                                        <figcaption class="experience-gallery__caption">@image.AltText</figcaption>
-                                    }
+                                <div class="experience-inclusions__col experience-inclusions__col--excluded">
+                                    <h3 class="experience-inclusions__heading">@Loc["Experiences.NotIncluded"]</h3>
+                                    <ul class="experience-inclusions__list">
+                                        @foreach (var item in Model.NotIncluded)
+                                        {
+                                            <li class="experience-inclusions__item">
+                                                <span class="experience-inclusions__mark">
+                                                    <partial name="_Icon" model="@("x")" />
+                                                </span>
+                                                <span>@item.Text</span>
+                                            </li>
+                                        }
+                                    </ul>
                                 </div>
                             }
                         </div>
-                        <div class="swiper-button-prev"></div>
-                        <div class="swiper-button-next"></div>
-                    </div>
-                </section>
-            }
+                    </section>
+                }
 
-            @if (hasFaqs)
-            {
-                <section class="experience-section" id="faq" data-subnav-section="faq">
-                    <h2>@Loc["Experiences.Section.Faq"]</h2>
-
-                    @* <details> rather than a JS accordion: it opens with no script, is keyboard
-                       operable for free, and is findable by the browser's own in-page search. *@
-                    @foreach (var faq in Model.Faqs)
-                    {
-                        <details class="experience-faq__item">
-                            <summary class="experience-faq__q">
-                                @faq.Question
-                                <span class="experience-faq__chevron"><partial name="_Icon" model="@("chevron-down")" /></span>
-                            </summary>
-                            <p class="experience-faq__a">@faq.Answer</p>
-                        </details>
-                    }
-                </section>
-            }
-        </div>
-
-        @* id so the sticky mobile bar can send someone to the waitlist form, which is too tall to
-           render inside the bar itself. *@
-        <aside class="experience-ticket-panel" id="tickets">
-            <h2 class="experience-ticket-panel__title">@Loc["Experiences.Tickets.Title"]</h2>
-
-            @if (Model.TicketTypes.Count == 0)
-            {
-                <p class="experience-ticket-panel__note">@Loc["Experiences.Tickets.None"]</p>
-            }
-            else
-            {
-                foreach (var ticket in Model.TicketTypes)
+                @if (hasGallery)
                 {
-                    <div class="experience-ticket">
-                        <p class="experience-ticket__title">@ticket.Title</p>
-                        <span class="experience-ticket__price">@MoneyFormatter.Format(ticket.PriceMinor, ticket.Currency)</span>
+                    <section class="experience-section" id="gallery" data-subnav-section="gallery">
+                        <h2>@Loc["Experiences.Section.Gallery"]</h2>
 
-                        @if (!string.IsNullOrWhiteSpace(ticket.PerksText))
+                        @* Model.Gallery was loaded by the repository and never rendered until now. Uses
+                       the Swiper instance the site already ships — no new library. *@
+                        <div class="experience-gallery swiper" data-swiper data-swiper-per-view="2"
+                             data-swiper-prev-label="@Loc["Experiences.Gallery.Prev"]"
+                             data-swiper-next-label="@Loc["Experiences.Gallery.Next"]">
+                            <div class="swiper-wrapper">
+                                @foreach (var image in Model.Gallery)
+                                {
+                                    <div class="swiper-slide">
+                                        <figure class="experience-gallery__item">
+                                            @* Real alt here, unlike the covers: these sit away from any
+                                           heading that describes them. AltText is null-safe — a null
+                                           becomes alt="" (decorative), never the experience title,
+                                           which would make a screen reader read it six times. *@
+                                            @* Resolved, not the raw column: an uploaded photograph has no
+                                           Url and is streamed by MediaController instead. *@
+                                            <partial name="_CoverImage" model="@(new CoverImageViewModel
+                                                     {
+                                                         Url = ExperienceService.GalleryImageUrl(image),
+                                                         Alt = image.AltText,
+                                                         Ratio = "4x3",
+                                                         Sizes = "(min-width: 960px) 40vw, 90vw",
+                                                     })" />
+                                        </figure>
+                                        @if (!string.IsNullOrWhiteSpace(image.AltText))
+                                        {
+                                            <figcaption class="experience-gallery__caption">@image.AltText</figcaption>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                            <div class="swiper-button-prev"></div>
+                            <div class="swiper-button-next"></div>
+                        </div>
+                    </section>
+                }
+
+                @if (hasFaqs)
+                {
+                    <section class="experience-section" id="faq" data-subnav-section="faq">
+                        <h2>@Loc["Experiences.Section.Faq"]</h2>
+
+                        @* <details> rather than a JS accordion: it opens with no script, is keyboard
+                       operable for free, and is findable by the browser's own in-page search. *@
+                        @foreach (var faq in Model.Faqs)
                         {
-                            <p class="experience-ticket__perks">@ticket.PerksText</p>
+                            <details class="experience-faq__item">
+                                <summary class="experience-faq__q">
+                                    @faq.Question
+                                    <span class="experience-faq__chevron">
+                                        <partial name="_Icon" model="@("chevron-down")" />
+                                    </span>
+                                </summary>
+                                <p class="experience-faq__a">@faq.Answer</p>
+                            </details>
                         }
+                    </section>
+                }
+            </div>
 
-                        @* Genuine scarcity, from TicketType.Inventory, and only near the end. Never
+            @* id so the sticky mobile bar can send someone to the waitlist form, which is too tall to
+           render inside the bar itself. *@
+            <aside class="experience-ticket-panel" id="tickets">
+                <h2 class="experience-ticket-panel__title">@Loc["Experiences.Tickets.Title"]</h2>
+
+                @if (Model.TicketTypes.Count == 0)
+                {
+                    <p class="experience-ticket-panel__note">@Loc["Experiences.Tickets.None"]</p>
+                }
+                else
+                {
+                    foreach (var ticket in Model.TicketTypes)
+                    {
+                        <div class="experience-ticket">
+                            <p class="experience-ticket__title">@ticket.Title</p>
+                            <span class="experience-ticket__price">@MoneyFormatter.Format(ticket.PriceMinor, ticket.Currency)</span>
+
+                            @if (!string.IsNullOrWhiteSpace(ticket.PerksText))
+                            {
+                                <p class="experience-ticket__perks">@ticket.PerksText</p>
+                            }
+
+                            @* Genuine scarcity, from TicketType.Inventory, and only near the end. Never
                            shown at zero — the status badge already says waitlist or closed there,
                            and "0 places left" as a nudge would be invented urgency (brief §15). *@
-                        @if (ticket.Inventory > 0 && ticket.Inventory <= 5)
-                        {
-                            <span class="experience-ticket__inventory">@Loc["Experiences.Tickets.PlacesLeft", ticket.Inventory]</span>
+                            @if (ticket.Inventory > 0 && ticket.Inventory <= 5)
+                            {
+                                <span class="experience-ticket__inventory">@Loc["Experiences.Tickets.PlacesLeft",
+                                                        ticket.Inventory]</span>
+                                }
+                            </div>
                         }
-                    </div>
-                }
-            }
+                    }
 
-            @* One panel, four outcomes, decided entirely by the server — see
+                    @* One panel, four outcomes, decided entirely by the server — see
                ExperienceService.GetAccessAsync. Nothing about the entitlement is posted from here. *@
-            @switch (Model.Access?.Outcome)
-            {
-                case ExperienceAccessOutcome.AlreadyBooked:
-                    <p class="experience-ticket-panel__note">
-                        <strong>@Loc["Experiences.Join.Booked", Model.Access.BookingReference ?? ""]</strong>
-                    </p>
-                    <a class="btn btn--ghost experience-ticket-panel__cta"
-                       asp-controller="Account" asp-action="Bookings">@Loc["Account.NavBookings"]</a>
-                    break;
-
-                case ExperienceAccessOutcome.IncludedInMembership:
-                    <p class="experience-ticket-panel__note">
-                        <strong>@Loc["Experiences.Join.Heading"]</strong><br />
-                        @Loc["Experiences.Join.Body"]
-                    </p>
-                    <form asp-action="Join" asp-route-slug="@Model.Slug" method="post">
-                        @if (Model.AttendanceMode == ExperienceAttendanceMode.Both)
-                        {
-                            <fieldset class="experience-join__attendance">
-                                <legend>@Loc["Experiences.Join.Attendance"]</legend>
-                                <label>
-                                    <input type="radio" name="attendance" value="@BookingAttendance.InPerson" checked />
-                                    @Loc["Experiences.Join.InPerson"]
-                                </label>
-                                <label>
-                                    <input type="radio" name="attendance" value="@BookingAttendance.Online" />
-                                    @Loc["Experiences.Join.Online"]
-                                </label>
-                            </fieldset>
-                        }
-                        <button type="submit" class="btn btn--primary experience-ticket-panel__cta">
-                            @Loc["Experiences.Join.Button"]
-                        </button>
-                    </form>
-                    break;
-
-                case ExperienceAccessOutcome.NeedsSignIn:
-                    <a class="btn btn--primary experience-ticket-panel__cta"
-                       asp-area="Identity" asp-page="/Account/Login"
-                       asp-route-returnUrl="@Url.Action("Details", "Experiences", new { area = "", slug = Model.Slug })">
-                        @Loc["Experiences.Join.SignIn"]
-                    </a>
-                    break;
-
-                default:
-                    @* The route every experience took before memberships could join one. *@
-                    if (Model.CanApply)
+                    @switch (Model.Access?.Outcome)
                     {
-                        <a class="btn btn--primary experience-ticket-panel__cta" href="/apply?experience=@Model.Slug">
-                            @Loc["Experiences.Apply"]
-                        </a>
-                    }
-                    else
-                    {
-                        @* Not open. Until now this branch rendered nothing at all, so the sidebar
+                        case ExperienceAccessOutcome.AlreadyBooked:
+                            <p class="experience-ticket-panel__note">
+                                <strong>@Loc["Experiences.Join.Booked", Model.Access.BookingReference ?? ""]</strong>
+                            </p>
+                            <a class="btn btn--ghost experience-ticket-panel__cta" asp-controller="Account"
+                               asp-action="Bookings">@Loc["Account.NavBookings"]</a>
+                            break;
+
+                        case ExperienceAccessOutcome.IncludedInMembership:
+                            <p class="experience-ticket-panel__note">
+                                <strong>@Loc["Experiences.Join.Heading"]</strong><br />
+                                @Loc["Experiences.Join.Body"]
+                            </p>
+                            <form asp-action="Join" asp-route-slug="@Model.Slug" method="post">
+                                @if (Model.AttendanceMode == ExperienceAttendanceMode.Both)
+                                {
+                                    <fieldset class="experience-join__attendance">
+                                        <legend>@Loc["Experiences.Join.Attendance"]</legend>
+                                        <label>
+                                            <input type="radio" name="attendance" value="@BookingAttendance.InPerson" checked />
+                                            @Loc["Experiences.Join.InPerson"]
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="attendance" value="@BookingAttendance.Online" />
+                                            @Loc["Experiences.Join.Online"]
+                                        </label>
+                                    </fieldset>
+                                }
+                                <button type="submit" class="btn btn--primary experience-ticket-panel__cta">
+                                    @Loc["Experiences.Join.Button"]
+                                </button>
+                            </form>
+                            break;
+
+                        case ExperienceAccessOutcome.NeedsSignIn:
+                            <a class="btn btn--primary experience-ticket-panel__cta" asp-area="Identity" asp-page="/Account/Login"
+                               asp-route-returnUrl="@Url.Action("Details", "Experiences", new { area = "", slug = Model.Slug })">
+                                @Loc["Experiences.Join.SignIn"]
+                            </a>
+                            break;
+
+                        default:
+                            @* The route every experience took before memberships could join one. *@
+                            if (Model.CanApply)
+                            {
+                                <a class="btn btn--primary experience-ticket-panel__cta" href="/apply?experience=@Model.Slug">
+                                    @Loc["Experiences.Apply"]
+                                </a>
+                            }
+                            else
+                            {
+                                @* Not open. Until now this branch rendered nothing at all, so the sidebar
                            listed prices under a heading and then simply stopped. *@
-                        <partial name="_ExperienceGate" model="@Model.Gate(ExperienceGateVariant.Panel)" />
+                                <partial name="_ExperienceGate" model="@Model.Gate(ExperienceGateVariant.Panel)" />
+                            }
+                            break;
                     }
-                    break;
-            }
 
-            <p class="experience-ticket-panel__note">@Loc["Experiences.Tickets.Note"]</p>
-        </aside>
-    </div>
+                    <p class="experience-ticket-panel__note">@Loc["Experiences.Tickets.Note"]</p>
+                </aside>
+            </div>
 
-    <p class="seminar-detail__back">
-        <a asp-area="" asp-controller="Experiences" asp-action="Index">&larr; @Loc["Experiences.BackToAll"]</a>
-    </p>
-</div>
+            <p class="seminar-detail__back">
+                <a asp-area="" asp-controller="Experiences" asp-action="Index">&larr; @Loc["Experiences.BackToAll"]</a>
+            </p>
+        </div>
 
-@*
+        @*
     The sticky bar. This used to be wrapped in @if (Model.CanApply), so a Coming Soon experience had
     no bottom bar at all — on a phone you scrolled the entire page and arrived at nothing. It now
     renders in both cases and carries the gate when there is nothing to buy.
 *@
-<div class="experience-mobile-cta">
-    @if (Model.CanApply)
-    {
-        <span class="experience-mobile-cta__price">
-            @if (Model.CheapestTicket is { } cheapest)
+        <div class="experience-mobile-cta">
+            @if (Model.CanApply)
             {
-                <text>@Loc["Experiences.From"]</text>
-                <strong>@MoneyFormatter.Format(cheapest.PriceMinor, cheapest.Currency)</strong>
+                <span class="experience-mobile-cta__price">
+                    @if (Model.CheapestTicket is { } cheapest)
+                    {
+                        <text>@Loc["Experiences.From"]</text>
+                        <strong>@MoneyFormatter.Format(cheapest.PriceMinor, cheapest.Currency)</strong>
+                    }
+                    else
+                    {
+                        <strong>@Model.City</strong>
+                    }
+                </span>
+                <a class="btn btn--primary btn--sm" href="/apply?experience=@Model.Slug">@Loc["Experiences.Apply"]</a>
             }
             else
             {
-                <strong>@Model.City</strong>
+                <partial name="_ExperienceGate" model="@Model.Gate(ExperienceGateVariant.Mobile)" />
             }
-        </span>
-        <a class="btn btn--primary btn--sm" href="/apply?experience=@Model.Slug">@Loc["Experiences.Apply"]</a>
-    }
-    else
-    {
-        <partial name="_ExperienceGate" model="@Model.Gate(ExperienceGateVariant.Mobile)" />
-    }
-</div>
+        </div>
 
-@section Scripts {
-    @if (faqJson is not null)
-    {
-        @* Already serialised above — JsonSerializer escapes the values, so Html.Raw here is
+        @section Scripts {
+            @if (faqJson is not null)
+            {
+                @* Already serialised above — JsonSerializer escapes the values, so Html.Raw here is
            emitting known-safe JSON rather than trusting model content. *@
-        <script type="application/ld+json">@Html.Raw(faqJson)</script>
-    }
-}
+                <script type="application/ld+json">@Html.Raw(faqJson)</script>
+            }
+        }
