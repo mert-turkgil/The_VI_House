@@ -31,6 +31,7 @@ efbundle*
 ## committed source of truth and `npm run fetch:media` reproduces this folder. Must be run before
 ## `dotnet publish` on a clean checkout, or every cover falls back to the crest placeholder. ##
 **/wwwroot/img/
+**/wwwroot/video/
 
 ## Node / npm / Vite (src/VIHouse.WebUI/ClientApp) ##
 node_modules/

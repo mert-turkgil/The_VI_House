@@ -771,6 +771,11 @@
   // object-position moved.
   object-fit: cover;
   object-position: center;
+  // Monochrome, dark theme: strips whatever colour the source photo/footage was shot in so every
+  // asset dropped in (photo or drone clip) reads as the same graphite-toned city, not just this one.
+  // brightness stays close to 1 — the scrim below carries the darkening, so the footage itself
+  // (often already low-light drone/night shots) doesn't get crushed to near-black on top of that.
+  filter: grayscale(1) brightness(0.95) contrast(1.1);
 }
 
 // A very slow push in, so the still reads as footage on the pages where no video file exists.
@@ -798,18 +803,19 @@
 
 // Every string of text on this page sits inside .auth-page__panel, which is an opaque white card —
 // nothing is ever set directly on the photograph. So the scrim carries no contrast duty; it exists
-// only to pull the photograph toward the house green and to settle its edges into the header and
-// footer, which is why this is a light tint rather than the heavy overlay a legibility scrim would
-// need. A vertical gradient keeps the middle of the frame the clearest, where the skyline is, and
-// deepens gently at the top and bottom, where the header and footer meet it.
+// only to settle the (already grayscaled, see .auth-backdrop__still/__video) footage into the header
+// and footer and to keep it dark theme, not to pull it toward the house green. A vertical gradient
+// keeps the middle of the frame the clearest, where the skyline is, and deepens gently at the top
+// and bottom, where the header and footer meet it. Plain black rather than a token, since this is a
+// neutral gray/black wash by design, not a brand-colour tint.
 .auth-backdrop__scrim {
   position: absolute;
   inset: 0;
   background: linear-gradient(
     to bottom,
-    color-mix(in srgb, var(--vih-green-950) 38%, transparent) 0%,
-    color-mix(in srgb, var(--vih-green-950) 14%, transparent) 45%,
-    color-mix(in srgb, var(--vih-green-950) 42%, transparent) 100%
+    rgba(0, 0, 0, 0.38) 0%,
+    rgba(0, 0, 0, 0.16) 45%,
+    rgba(0, 0, 0, 0.42) 100%
   );
 }
 
