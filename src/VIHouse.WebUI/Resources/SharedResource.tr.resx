@@ -940,4 +940,42 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Admin.Experience.TranslationDeleted" xml:space="preserve"><value>{0} metni kaldırıldı.</value></data>
   <data name="Admin.Experience.UnknownCulture" xml:space="preserve"><value>Bu, sitenin dillerinden biri değil.</value></data>
   <data name="Admin.Experience.CannotDeleteDefault" xml:space="preserve"><value>İngilizce metin kaldırılamaz — diğer tüm diller ona geri döner.</value></data>
+
+  <data name="ComingSoon.Title" xml:space="preserve"><value>The House Neredeyse Hazır</value></data>
+  <data name="ComingSoon.MetaDescription" xml:space="preserve"><value>The VI House; kurucular, yatırımcılar ve operasyoncular için özel, küresel bir topluluktur. Adresinizi bırakın, kapılar açılır açılmaz size haber verelim.</value></data>
+  <data name="ComingSoon.RailTopLeft1" xml:space="preserve"><value>Bir ağdan fazlası</value></data>
+  <data name="ComingSoon.RailTopLeft2" xml:space="preserve"><value>Daha yüksek bir standart</value></data>
+  <data name="ComingSoon.RailTopRight" xml:space="preserve"><value>İnsanlar / Fikirler / Fırsatlar</value></data>
+  <data name="ComingSoon.Brandline" xml:space="preserve"><value>Küresel Bir Kurucular Topluluğu</value></data>
+  <data name="ComingSoon.HeadlineLead" xml:space="preserve"><value>The House Neredeyse</value></data>
+  <data name="ComingSoon.HeadlineAccent" xml:space="preserve"><value>Hazır</value></data>
+  <data name="ComingSoon.Subtitle" xml:space="preserve"><value>Kurucular, yatırımcılar ve operasyoncular için özel, küresel bir topluluk.</value></data>
+  <data name="ComingSoon.Body" xml:space="preserve"><value>Hırslı insanların birlikte öğrenmesi, bağ kurması ve inşa etmesi için tasarlanmış bir şey hazırlıyoruz.</value></data>
+  <data name="ComingSoon.EmailLabel" xml:space="preserve"><value>E-posta adresiniz</value></data>
+  <data name="ComingSoon.EmailPlaceholder" xml:space="preserve"><value>E-posta adresiniz</value></data>
+  <data name="ComingSoon.NotifyMe" xml:space="preserve"><value>İlk Sen Öğren</value></data>
+  <data name="ComingSoon.DataNote" xml:space="preserve"><value>Adresinizi yalnızca tek bir şey için kullanacağız: The VI House açıldığında size haber vermek. Bülten yok, kimseyle paylaşım yok ve dilediğiniz zaman silinmesini isteyebilirsiniz.</value></data>
+  <data name="ComingSoon.Launching" xml:space="preserve"><value>Yakında · 2026</value></data>
+  <data name="ComingSoon.RailLeft1" xml:space="preserve"><value>Kurucular</value></data>
+  <data name="ComingSoon.RailLeft2" xml:space="preserve"><value>Yatırımcılar</value></data>
+  <data name="ComingSoon.RailLeft3" xml:space="preserve"><value>Operasyoncular</value></data>
+  <data name="ComingSoon.RailLeft4" xml:space="preserve"><value>Daha aydınlık bir yarın</value></data>
+  <data name="ComingSoon.RailRight1" xml:space="preserve"><value>Aynı hırs</value></data>
+  <data name="ComingSoon.RailRight2" xml:space="preserve"><value>Daha yüksek bir bakış</value></data>
+  <data name="ComingSoon.Members" xml:space="preserve"><value>Üyeler</value></data>
+  <data name="ComingSoon.Notify.Success" xml:space="preserve"><value>Teşekkürler — listedesiniz. Kapılar açılır açılmaz size ulaşacağız.</value></data>
+  <data name="ComingSoon.Notify.Already" xml:space="preserve"><value>Zaten listedesiniz. Kapılar açılır açılmaz size ulaşacağız.</value></data>
+  <data name="ComingSoon.Notify.Missing" xml:space="preserve"><value>Lütfen bir e-posta adresi girin.</value></data>
+  <data name="ComingSoon.Notify.Invalid" xml:space="preserve"><value>Bu bir e-posta adresine benzemiyor. Lütfen kontrol edip tekrar deneyin.</value></data>
+  <data name="ComingSoon.Notify.Failed" xml:space="preserve"><value>Bizim tarafımızda bir şeyler ters gitti. Lütfen birazdan tekrar deneyin.</value></data>
+  <data name="Admin.NotifySignups.Title" xml:space="preserve"><value>Lansman Listesi</value></data>
+  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Yakında sayfasında bırakılan adresler. Buradaki hiçbir şey düzenlenemez — bu, site açıldığında haber verilmesini isteyenlerin kaydıdır.</value></data>
+  <data name="Admin.NotifySignups.When" xml:space="preserve"><value>Ne zaman</value></data>
+  <data name="Admin.NotifySignups.Email" xml:space="preserve"><value>E-posta</value></data>
+  <data name="Admin.NotifySignups.Language" xml:space="preserve"><value>Dil</value></data>
+  <data name="Admin.NotifySignups.Source" xml:space="preserve"><value>Kaynak</value></data>
+  <data name="Admin.NotifySignups.Notified" xml:space="preserve"><value>Bilgilendirildi</value></data>
+  <data name="Admin.NotifySignups.NotYet" xml:space="preserve"><value>Henüz değil</value></data>
+  <data name="Admin.NotifySignups.Empty" xml:space="preserve"><value>Henüz kimse kaydolmadı.</value></data>
+  <data name="Admin.NotifySignups.Total" xml:space="preserve"><value>Listede {0} kişi</value></data>
 </root>

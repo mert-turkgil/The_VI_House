@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
 using VIHouse.WebUI.Helpers;
@@ -22,7 +23,8 @@ namespace VIHouse.WebUI.Controllers;
 public class SeoController(
     ISitemapService sitemap,
     ISiteSettingsService settingsService,
-    SeoResolver seo) : Controller
+    SeoResolver seo,
+    IOptionsMonitor<FeatureOptions> features) : Controller
 {
     private static readonly XNamespace Sm = "http://www.sitemaps.org/schemas/sitemap/0.9";
     private static readonly XNamespace Xhtml = "http://www.w3.org/1999/xhtml";
@@ -45,7 +47,18 @@ public class SeoController(
         if (!settings.AllowIndexing) return NotFound();
 
         var origin = seo.Origin(settings);
-        var entries = await sitemap.GetEntriesAsync(ct);
+
+        // Behind the launch curtain the site has exactly one public page, so the map says so.
+        // Without this the sitemap keeps advertising every URL on the site while ComingSoonGate
+        // redirects all of them to /coming-soon — handing a crawler a list of several dozen
+        // addresses that all resolve to the same page, which is the textbook shape of a site that
+        // gets its rankings discounted for duplicate content.
+        //
+        // The entry replaces the list rather than filtering it, so the loop below still writes the
+        // full hreflang alternate set and the curtain is correctly declared in all four languages.
+        var entries = features.CurrentValue.ComingSoon
+            ? [new SitemapEntry("/coming-soon", null, "daily", 1.0, SiteCultures.All.Select(c => c.Name).ToList())]
+            : await sitemap.GetEntriesAsync(ct);
 
         var urlset = new XElement(Sm + "urlset", new XAttribute(XNamespace.Xmlns + "xhtml", Xhtml));
 

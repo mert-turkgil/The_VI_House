@@ -32,6 +32,7 @@ efbundle*
 ## `dotnet publish` on a clean checkout, or every cover falls back to the crest placeholder. ##
 **/wwwroot/img/
 **/wwwroot/video/
+**/wwwroot/brand/
 
 ## Node / npm / Vite (src/VIHouse.WebUI/ClientApp) ##
 node_modules/

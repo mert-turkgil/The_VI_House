@@ -940,4 +940,42 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Admin.Experience.TranslationDeleted" xml:space="preserve"><value>{0} copy removed.</value></data>
   <data name="Admin.Experience.UnknownCulture" xml:space="preserve"><value>That isn't one of the site's languages.</value></data>
   <data name="Admin.Experience.CannotDeleteDefault" xml:space="preserve"><value>The English copy can't be removed — it's what every other language falls back to.</value></data>
+
+  <data name="ComingSoon.Title" xml:space="preserve"><value>The House Is Almost Ready</value></data>
+  <data name="ComingSoon.MetaDescription" xml:space="preserve"><value>The VI House is a private global community for founders, investors and operators. Leave your address and we will tell you the moment the doors open.</value></data>
+  <data name="ComingSoon.RailTopLeft1" xml:space="preserve"><value>More than a network</value></data>
+  <data name="ComingSoon.RailTopLeft2" xml:space="preserve"><value>A higher standard</value></data>
+  <data name="ComingSoon.RailTopRight" xml:space="preserve"><value>People / Ideas / Opportunities</value></data>
+  <data name="ComingSoon.Brandline" xml:space="preserve"><value>A Global Founders Community</value></data>
+  <data name="ComingSoon.HeadlineLead" xml:space="preserve"><value>The House Is</value></data>
+  <data name="ComingSoon.HeadlineAccent" xml:space="preserve"><value>Almost Ready</value></data>
+  <data name="ComingSoon.Subtitle" xml:space="preserve"><value>A private global community for founders, investors and operators.</value></data>
+  <data name="ComingSoon.Body" xml:space="preserve"><value>We're preparing something built for ambitious people to learn, connect and build together.</value></data>
+  <data name="ComingSoon.EmailLabel" xml:space="preserve"><value>Your email address</value></data>
+  <data name="ComingSoon.EmailPlaceholder" xml:space="preserve"><value>Your email address</value></data>
+  <data name="ComingSoon.NotifyMe" xml:space="preserve"><value>Notify Me</value></data>
+  <data name="ComingSoon.DataNote" xml:space="preserve"><value>We'll use your address for one thing only: to tell you when The VI House opens. No newsletter, no sharing with anyone else, and you can ask us to remove it at any time.</value></data>
+  <data name="ComingSoon.Launching" xml:space="preserve"><value>Launching soon · 2026</value></data>
+  <data name="ComingSoon.RailLeft1" xml:space="preserve"><value>Founders</value></data>
+  <data name="ComingSoon.RailLeft2" xml:space="preserve"><value>Investors</value></data>
+  <data name="ComingSoon.RailLeft3" xml:space="preserve"><value>Operators</value></data>
+  <data name="ComingSoon.RailLeft4" xml:space="preserve"><value>A brighter tomorrow</value></data>
+  <data name="ComingSoon.RailRight1" xml:space="preserve"><value>Same ambition</value></data>
+  <data name="ComingSoon.RailRight2" xml:space="preserve"><value>Higher perspective</value></data>
+  <data name="ComingSoon.Members" xml:space="preserve"><value>Members</value></data>
+  <data name="ComingSoon.Notify.Success" xml:space="preserve"><value>Thank you — you're on the list. We'll be in touch the moment the doors open.</value></data>
+  <data name="ComingSoon.Notify.Already" xml:space="preserve"><value>You're already on the list. We'll be in touch the moment the doors open.</value></data>
+  <data name="ComingSoon.Notify.Missing" xml:space="preserve"><value>Please enter an email address.</value></data>
+  <data name="ComingSoon.Notify.Invalid" xml:space="preserve"><value>That doesn't look like an email address. Please check it and try again.</value></data>
+  <data name="ComingSoon.Notify.Failed" xml:space="preserve"><value>Something went wrong at our end. Please try again in a moment.</value></data>
+  <data name="Admin.NotifySignups.Title" xml:space="preserve"><value>Launch List</value></data>
+  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Addresses left on the coming-soon page. Nothing here is editable — this is a record of who asked to be told when the site opens.</value></data>
+  <data name="Admin.NotifySignups.When" xml:space="preserve"><value>When</value></data>
+  <data name="Admin.NotifySignups.Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Admin.NotifySignups.Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Admin.NotifySignups.Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Admin.NotifySignups.Notified" xml:space="preserve"><value>Notified</value></data>
+  <data name="Admin.NotifySignups.NotYet" xml:space="preserve"><value>Not yet</value></data>
+  <data name="Admin.NotifySignups.Empty" xml:space="preserve"><value>No one has signed up yet.</value></data>
+  <data name="Admin.NotifySignups.Total" xml:space="preserve"><value>{0} on the list</value></data>
 </root>

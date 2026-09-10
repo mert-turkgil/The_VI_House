@@ -10,6 +10,7 @@ using VIHouse.Entities.Compliance;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
 using VIHouse.Entities.Journal;
+using VIHouse.Entities.Marketing;
 using VIHouse.Entities.Settings;
 using VIHouse.Entities.Membership;
 using VIHouse.Entities.Notifications;
@@ -84,6 +85,8 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
 
     public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
     public DbSet<SiteSettingTranslation> SiteSettingTranslations => Set<SiteSettingTranslation>();
+
+    public DbSet<NotifySignup> NotifySignups => Set<NotifySignup>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

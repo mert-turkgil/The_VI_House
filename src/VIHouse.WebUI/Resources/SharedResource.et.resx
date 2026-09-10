@@ -940,4 +940,42 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Admin.Experience.TranslationDeleted" xml:space="preserve"><value>{0} tekst eemaldatud.</value></data>
   <data name="Admin.Experience.UnknownCulture" xml:space="preserve"><value>See pole üks saidi keeltest.</value></data>
   <data name="Admin.Experience.CannotDeleteDefault" xml:space="preserve"><value>Ingliskeelset teksti ei saa eemaldada — kõik teised keeled taanduvad sellele.</value></data>
+
+  <data name="ComingSoon.Title" xml:space="preserve"><value>The House on peaaegu valmis</value></data>
+  <data name="ComingSoon.MetaDescription" xml:space="preserve"><value>The VI House on privaatne ülemaailmne kogukond asutajatele, investoritele ja juhtidele. Jätke oma aadress ja anname teada kohe, kui uksed avanevad.</value></data>
+  <data name="ComingSoon.RailTopLeft1" xml:space="preserve"><value>Enamat kui võrgustik</value></data>
+  <data name="ComingSoon.RailTopLeft2" xml:space="preserve"><value>Kõrgem standard</value></data>
+  <data name="ComingSoon.RailTopRight" xml:space="preserve"><value>Inimesed / Ideed / Võimalused</value></data>
+  <data name="ComingSoon.Brandline" xml:space="preserve"><value>Ülemaailmne asutajate kogukond</value></data>
+  <data name="ComingSoon.HeadlineLead" xml:space="preserve"><value>The House on</value></data>
+  <data name="ComingSoon.HeadlineAccent" xml:space="preserve"><value>peaaegu valmis</value></data>
+  <data name="ComingSoon.Subtitle" xml:space="preserve"><value>Privaatne ülemaailmne kogukond asutajatele, investoritele ja juhtidele.</value></data>
+  <data name="ComingSoon.Body" xml:space="preserve"><value>Valmistame ette midagi, mis on loodud ambitsioonikatele inimestele koos õppimiseks, suhtlemiseks ja loomiseks.</value></data>
+  <data name="ComingSoon.EmailLabel" xml:space="preserve"><value>Teie e-posti aadress</value></data>
+  <data name="ComingSoon.EmailPlaceholder" xml:space="preserve"><value>Teie e-posti aadress</value></data>
+  <data name="ComingSoon.NotifyMe" xml:space="preserve"><value>Anna teada</value></data>
+  <data name="ComingSoon.DataNote" xml:space="preserve"><value>Kasutame teie aadressi ainult ühel eesmärgil: et anda teada, millal The VI House avaneb. Uudiskirja ei ole, kellelegi teisele me seda ei jaga ja te võite igal ajal paluda selle kustutamist.</value></data>
+  <data name="ComingSoon.Launching" xml:space="preserve"><value>Avame peagi · 2026</value></data>
+  <data name="ComingSoon.RailLeft1" xml:space="preserve"><value>Asutajad</value></data>
+  <data name="ComingSoon.RailLeft2" xml:space="preserve"><value>Investorid</value></data>
+  <data name="ComingSoon.RailLeft3" xml:space="preserve"><value>Juhid</value></data>
+  <data name="ComingSoon.RailLeft4" xml:space="preserve"><value>Helgem homne</value></data>
+  <data name="ComingSoon.RailRight1" xml:space="preserve"><value>Sama ambitsioon</value></data>
+  <data name="ComingSoon.RailRight2" xml:space="preserve"><value>Kõrgem vaade</value></data>
+  <data name="ComingSoon.Members" xml:space="preserve"><value>Liikmed</value></data>
+  <data name="ComingSoon.Notify.Success" xml:space="preserve"><value>Aitäh — olete nimekirjas. Võtame ühendust kohe, kui uksed avanevad.</value></data>
+  <data name="ComingSoon.Notify.Already" xml:space="preserve"><value>Olete juba nimekirjas. Võtame ühendust kohe, kui uksed avanevad.</value></data>
+  <data name="ComingSoon.Notify.Missing" xml:space="preserve"><value>Palun sisestage e-posti aadress.</value></data>
+  <data name="ComingSoon.Notify.Invalid" xml:space="preserve"><value>See ei näe välja nagu e-posti aadress. Palun kontrollige ja proovige uuesti.</value></data>
+  <data name="ComingSoon.Notify.Failed" xml:space="preserve"><value>Meie poolel läks midagi valesti. Palun proovige hetke pärast uuesti.</value></data>
+  <data name="Admin.NotifySignups.Title" xml:space="preserve"><value>Avamise nimekiri</value></data>
+  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Aadressid, mis jäeti peagi avatava lehe kaudu. Siin ei saa midagi muuta — see on ülevaade sellest, kes soovis avamisest teada saada.</value></data>
+  <data name="Admin.NotifySignups.When" xml:space="preserve"><value>Millal</value></data>
+  <data name="Admin.NotifySignups.Email" xml:space="preserve"><value>E-post</value></data>
+  <data name="Admin.NotifySignups.Language" xml:space="preserve"><value>Keel</value></data>
+  <data name="Admin.NotifySignups.Source" xml:space="preserve"><value>Allikas</value></data>
+  <data name="Admin.NotifySignups.Notified" xml:space="preserve"><value>Teavitatud</value></data>
+  <data name="Admin.NotifySignups.NotYet" xml:space="preserve"><value>Veel mitte</value></data>
+  <data name="Admin.NotifySignups.Empty" xml:space="preserve"><value>Keegi pole veel registreerunud.</value></data>
+  <data name="Admin.NotifySignups.Total" xml:space="preserve"><value>{0} nimekirjas</value></data>
 </root>

@@ -940,4 +940,42 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Admin.Experience.TranslationDeleted" xml:space="preserve"><value>{0}-Text entfernt.</value></data>
   <data name="Admin.Experience.UnknownCulture" xml:space="preserve"><value>Das ist keine der Sprachen dieser Website.</value></data>
   <data name="Admin.Experience.CannotDeleteDefault" xml:space="preserve"><value>Der englische Text kann nicht entfernt werden — auf ihn greift jede andere Sprache zurück.</value></data>
+
+  <data name="ComingSoon.Title" xml:space="preserve"><value>The House ist fast bereit</value></data>
+  <data name="ComingSoon.MetaDescription" xml:space="preserve"><value>The VI House ist eine private, weltweite Gemeinschaft für Gründer, Investoren und Operators. Hinterlassen Sie Ihre Adresse und wir melden uns, sobald die Türen öffnen.</value></data>
+  <data name="ComingSoon.RailTopLeft1" xml:space="preserve"><value>Mehr als ein Netzwerk</value></data>
+  <data name="ComingSoon.RailTopLeft2" xml:space="preserve"><value>Ein höherer Anspruch</value></data>
+  <data name="ComingSoon.RailTopRight" xml:space="preserve"><value>Menschen / Ideen / Chancen</value></data>
+  <data name="ComingSoon.Brandline" xml:space="preserve"><value>Eine globale Gründergemeinschaft</value></data>
+  <data name="ComingSoon.HeadlineLead" xml:space="preserve"><value>The House ist</value></data>
+  <data name="ComingSoon.HeadlineAccent" xml:space="preserve"><value>fast bereit</value></data>
+  <data name="ComingSoon.Subtitle" xml:space="preserve"><value>Eine private, weltweite Gemeinschaft für Gründer, Investoren und Operators.</value></data>
+  <data name="ComingSoon.Body" xml:space="preserve"><value>Wir bereiten etwas vor, das ehrgeizigen Menschen Raum gibt, zu lernen, sich zu vernetzen und gemeinsam zu bauen.</value></data>
+  <data name="ComingSoon.EmailLabel" xml:space="preserve"><value>Ihre E-Mail-Adresse</value></data>
+  <data name="ComingSoon.EmailPlaceholder" xml:space="preserve"><value>Ihre E-Mail-Adresse</value></data>
+  <data name="ComingSoon.NotifyMe" xml:space="preserve"><value>Benachrichtigen</value></data>
+  <data name="ComingSoon.DataNote" xml:space="preserve"><value>Wir verwenden Ihre Adresse für genau eines: um Ihnen mitzuteilen, wann The VI House öffnet. Kein Newsletter, keine Weitergabe an Dritte, und Sie können die Löschung jederzeit verlangen.</value></data>
+  <data name="ComingSoon.Launching" xml:space="preserve"><value>Start bald · 2026</value></data>
+  <data name="ComingSoon.RailLeft1" xml:space="preserve"><value>Gründer</value></data>
+  <data name="ComingSoon.RailLeft2" xml:space="preserve"><value>Investoren</value></data>
+  <data name="ComingSoon.RailLeft3" xml:space="preserve"><value>Operators</value></data>
+  <data name="ComingSoon.RailLeft4" xml:space="preserve"><value>Ein besseres Morgen</value></data>
+  <data name="ComingSoon.RailRight1" xml:space="preserve"><value>Gleicher Ehrgeiz</value></data>
+  <data name="ComingSoon.RailRight2" xml:space="preserve"><value>Höhere Perspektive</value></data>
+  <data name="ComingSoon.Members" xml:space="preserve"><value>Mitglieder</value></data>
+  <data name="ComingSoon.Notify.Success" xml:space="preserve"><value>Vielen Dank — Sie stehen auf der Liste. Wir melden uns, sobald die Türen öffnen.</value></data>
+  <data name="ComingSoon.Notify.Already" xml:space="preserve"><value>Sie stehen bereits auf der Liste. Wir melden uns, sobald die Türen öffnen.</value></data>
+  <data name="ComingSoon.Notify.Missing" xml:space="preserve"><value>Bitte geben Sie eine E-Mail-Adresse ein.</value></data>
+  <data name="ComingSoon.Notify.Invalid" xml:space="preserve"><value>Das sieht nicht nach einer E-Mail-Adresse aus. Bitte prüfen Sie sie und versuchen Sie es erneut.</value></data>
+  <data name="ComingSoon.Notify.Failed" xml:space="preserve"><value>Bei uns ist etwas schiefgegangen. Bitte versuchen Sie es gleich noch einmal.</value></data>
+  <data name="Admin.NotifySignups.Title" xml:space="preserve"><value>Startliste</value></data>
+  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Adressen, die auf der Coming-soon-Seite hinterlassen wurden. Nichts davon ist bearbeitbar — dies ist eine Aufzeichnung darüber, wer benachrichtigt werden möchte.</value></data>
+  <data name="Admin.NotifySignups.When" xml:space="preserve"><value>Wann</value></data>
+  <data name="Admin.NotifySignups.Email" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="Admin.NotifySignups.Language" xml:space="preserve"><value>Sprache</value></data>
+  <data name="Admin.NotifySignups.Source" xml:space="preserve"><value>Quelle</value></data>
+  <data name="Admin.NotifySignups.Notified" xml:space="preserve"><value>Benachrichtigt</value></data>
+  <data name="Admin.NotifySignups.NotYet" xml:space="preserve"><value>Noch nicht</value></data>
+  <data name="Admin.NotifySignups.Empty" xml:space="preserve"><value>Es hat sich noch niemand eingetragen.</value></data>
+  <data name="Admin.NotifySignups.Total" xml:space="preserve"><value>{0} auf der Liste</value></data>
 </root>

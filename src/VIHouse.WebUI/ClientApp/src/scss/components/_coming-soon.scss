@@ -1,0 +1,493 @@
+@use '../breakpoints' as bp;
+
+// =================================================================================================
+// The launch curtain
+// =================================================================================================
+//
+// One full-screen page shown to everyone while Features:ComingSoon is on — see ComingSoonGate. It
+// carries its own chrome because the site nav and footer are unreachable behind it, so nothing here
+// may depend on _nav.scss or _footer.scss.
+//
+// Tokens only, no literal colours or spacing, following _auth.scss and _experiences.scss as the
+// reference implementations named in _tokens.scss.
+
+.curtain-body {
+  // The page owns the viewport. Set on <body> rather than on .curtain so that an over-scroll on a
+  // phone reveals the same dark ground rather than the browser's white.
+  background: var(--vih-green-950);
+  color: var(--vih-cream);
+}
+
+.curtain {
+  position: relative;
+  // svh, not vh: on a phone the browser chrome retracts as you scroll, and 100vh is measured
+  // against the *expanded* chrome — so a design pinned to the viewport is cut off by exactly the
+  // height of the address bar on first paint, which is where the "Notify Me" button sits.
+  min-height: 100svh;
+  display: flex;
+  overflow: hidden;
+}
+
+// --- The photograph -------------------------------------------------------------------------------
+
+.curtain__backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.curtain__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  // The interior sits left of frame and the view sits right. Anchoring at centre keeps both in a
+  // landscape crop; the portrait override below moves it, rather than letting a phone crop to the
+  // middle of a window frame.
+  object-position: center;
+  transform-origin: 55% 45%;
+  animation: vih-curtain-drift 44s var(--vih-ease-in-out) infinite alternate;
+}
+
+@keyframes vih-curtain-drift {
+  from { transform: scale(1.06); }
+  to   { transform: scale(1); }
+}
+
+.curtain__scrim {
+  position: absolute;
+  inset: 0;
+  // Two gradients, not one flat wash. The headline sits mid-frame where the photograph is
+  // brightest, so the vertical pass darkens top and bottom for the rails and footer while the
+  // radial pass sinks the middle just enough to hold white serif type without flattening the room
+  // behind it.
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 50% 45%,
+      color-mix(in srgb, var(--vih-green-950) 72%, transparent) 0%,
+      color-mix(in srgb, var(--vih-green-950) 30%, transparent) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--vih-green-950) 62%, transparent) 0%,
+      color-mix(in srgb, var(--vih-green-950) 34%, transparent) 40%,
+      color-mix(in srgb, var(--vih-green-950) 78%, transparent) 100%
+    );
+}
+
+// --- Layout ---------------------------------------------------------------------------------------
+
+.curtain__inner {
+  position: relative;
+  z-index: var(--vih-z-base);
+  width: 100%;
+  max-width: var(--vih-container-max);
+  margin: 0 auto;
+  padding: var(--vih-space-lg) var(--vih-gutter);
+  display: grid;
+  // minmax(0, 1fr), not a bare 1fr: a grid track's default minimum is its content's own minimum
+  // width, so a long word in the subtitle or a wide headline pushes the track — and the whole
+  // page — past the viewport on a narrow phone. minmax(0, …) lets the column shrink below its
+  // content and the text wrap instead.
+  grid-template-columns: minmax(0, 1fr);
+  // Four rows: corner rails, brand, the hero (which takes the slack), footer. The side rails are
+  // positioned out of flow against this element, so they cost no column.
+  grid-template-rows: auto auto 1fr auto;
+  gap: var(--vih-space-lg);
+}
+
+.curtain__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--vih-space-md);
+}
+
+// --- The corner and side rails --------------------------------------------------------------------
+//
+// Four blocks of tracked-out micro-type in the margins. Decorative in effect but real text, so they
+// translate and can be read aloud rather than being baked into the photograph.
+
+.curtain__rail {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-3xs);
+  font-size: var(--vih-text-3xs);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--vih-cream-dim);
+  opacity: 0.72;
+}
+
+.curtain__rail--top-right {
+  text-align: right;
+}
+
+// The two vertical rails flanking the hero. Absolute against .curtain__inner so they sit in the
+// gutter without reserving a grid column that would squeeze the headline on a narrow desktop.
+.curtain__rail--left,
+.curtain__rail--right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  gap: var(--vih-space-2xs);
+
+  // Hidden below the point where the gutter stops being wide enough to hold them clear of the
+  // text. They repeat nothing the hero says, so losing them costs no meaning.
+  @include bp.until(bp.$xl) {
+    display: none;
+  }
+}
+
+.curtain__rail--left {
+  left: var(--vih-space-sm);
+  padding-left: var(--vih-space-sm);
+  border-left: 1px solid var(--vih-line-on-dark);
+}
+
+.curtain__rail--right {
+  right: var(--vih-space-sm);
+  padding-right: var(--vih-space-sm);
+  border-right: 1px solid var(--vih-line-on-dark);
+  text-align: right;
+}
+
+// --- Brand ----------------------------------------------------------------------------------------
+
+.curtain__brand {
+  text-align: center;
+}
+
+.curtain__crest {
+  display: block;
+  width: 46px;
+  margin: 0 auto var(--vih-space-2xs);
+  // _Crest.cshtml rides on currentColor for everything but its gold flourish, so the mark is
+  // recoloured here rather than in the partial.
+  color: var(--vih-cream);
+
+  svg { display: block; width: 100%; height: auto; }
+}
+
+.curtain__wordmark {
+  margin: 0;
+  font-family: var(--vih-font-serif);
+  font-size: clamp(1.375rem, 3vw, 1.875rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--vih-cream);
+}
+
+.curtain__brandline {
+  margin: var(--vih-space-3xs) 0 0;
+  font-size: var(--vih-text-3xs);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--vih-gold-light);
+}
+
+// --- Hero -----------------------------------------------------------------------------------------
+
+.curtain__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  // Long words in German and Turkish ("Mitgliedschaft", "operasyoncular") break rather than push
+  // the layout wide on a narrow screen.
+  overflow-wrap: break-word;
+}
+
+.curtain__headline {
+  margin: 0;
+  max-width: 100%;
+  font-family: var(--vih-font-serif);
+  // Larger than --vih-display-lg: this is the only thing on the page, and the reference sets it
+  // near the full width of the frame. The 2rem floor is sized so "Almost Ready." — the widest of
+  // the four languages' second line — still fits a 320px screen without a mid-word break.
+  font-size: clamp(2rem, 8vw, 5.5rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+
+  span { display: block; }
+}
+
+.curtain__headline-lead { color: var(--vih-white); }
+
+// The second line in gold is the whole hinge of the design — it is what makes "Almost Ready." read
+// as the promise rather than as the rest of a sentence.
+.curtain__headline-accent { color: var(--vih-gold-light); }
+
+.curtain__subtitle {
+  margin: var(--vih-space-md) 0 0;
+  font-family: var(--vih-font-serif);
+  font-size: clamp(1rem, 2.2vw, 1.375rem);
+  line-height: 1.5;
+  color: var(--vih-cream);
+  // width first, then cap: "fill the column, but never run past 40ch". Without the explicit width
+  // an `align-items: center` flex child shrink-wraps to its content, and a long line of unbroken
+  // prose then sets the column wider than a narrow phone.
+  width: 100%;
+  max-width: 40ch;
+}
+
+.curtain__divider {
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin: var(--vih-space-md) 0;
+  background: var(--vih-gold);
+  opacity: 0.7;
+}
+
+.curtain__body {
+  margin: 0;
+  font-size: var(--vih-text-md);
+  line-height: 1.75;
+  color: var(--vih-cream-dim);
+  width: 100%;
+  max-width: 44ch;
+}
+
+// --- The form -------------------------------------------------------------------------------------
+
+.curtain__form {
+  display: flex;
+  width: 100%;
+  max-width: 520px;
+  margin-top: var(--vih-space-lg);
+
+  @include bp.until(bp.$sm) {
+    // Stacked, because a 44px-tall input and a legible button do not both fit across a 320px
+    // screen without one of them becoming unusable.
+    flex-direction: column;
+    gap: var(--vih-space-2xs);
+  }
+}
+
+.curtain__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--vih-space-sm) var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-dark);
+  border-right: 0;
+  background: color-mix(in srgb, var(--vih-green-950) 55%, transparent);
+  font: inherit;
+  font-size: var(--vih-text-md);
+  color: var(--vih-cream);
+  transition: border-color var(--vih-dur-base) var(--vih-ease),
+              background-color var(--vih-dur-base) var(--vih-ease);
+
+  &::placeholder { color: var(--vih-cream-dim); opacity: 0.62; }
+
+  &:hover { background: color-mix(in srgb, var(--vih-green-950) 70%, transparent); }
+
+  &:focus {
+    outline: none;
+    border-color: var(--vih-gold);
+    background: color-mix(in srgb, var(--vih-green-950) 78%, transparent);
+  }
+
+  @include bp.until(bp.$sm) {
+    border-right: 1px solid var(--vih-line-on-dark);
+    text-align: center;
+  }
+}
+
+.curtain__submit {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--vih-space-2xs);
+  padding: var(--vih-space-sm) var(--vih-space-lg);
+  border: 1px solid var(--vih-gold);
+  background: var(--vih-gold-light);
+  color: var(--vih-green-950);
+  font-size: var(--vih-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--vih-dur-base) var(--vih-ease),
+              box-shadow var(--vih-dur-base) var(--vih-ease);
+
+  svg { transition: transform var(--vih-dur-base) var(--vih-ease); }
+
+  &:hover {
+    background: var(--vih-gold);
+    box-shadow: var(--vih-shadow-gold);
+
+    // The arrow leads the eye out of the button in the direction the action goes.
+    svg { transform: translateX(3px); }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--vih-cream);
+    outline-offset: 2px;
+  }
+}
+
+.curtain__data-note {
+  margin: var(--vih-space-2xs) 0 0;
+  width: 100%;
+  max-width: 46ch;
+  font-size: var(--vih-text-2xs);
+  line-height: 1.6;
+  color: var(--vih-cream-dim);
+  opacity: 0.66;
+}
+
+.curtain__message {
+  margin: var(--vih-space-sm) 0 0;
+  padding: var(--vih-space-2xs) var(--vih-space-sm);
+  border-left: 2px solid currentColor;
+  font-size: var(--vih-text-base);
+  text-align: left;
+
+  &--ok { color: var(--vih-gold-light); }
+
+  // Not --vih-danger: that red is drawn for dark text on a light card and disappears against a
+  // dark photograph. Cream carries the message and the rule at the edge carries the emphasis.
+  &--bad { color: var(--vih-cream); }
+}
+
+.curtain__launching {
+  margin: var(--vih-space-lg) 0 0;
+  font-size: var(--vih-text-3xs);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--vih-cream-dim);
+  opacity: 0.7;
+}
+
+// --- Footer ---------------------------------------------------------------------------------------
+
+.curtain__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vih-space-sm) var(--vih-space-md);
+  padding-top: var(--vih-space-sm);
+  border-top: 1px solid var(--vih-line-on-dark);
+  font-size: var(--vih-text-xs);
+  color: var(--vih-cream-dim);
+
+  @include bp.until(bp.$md) {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+.curtain__copyright { margin: 0; }
+
+.curtain__links,
+.curtain__langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-sm);
+
+  a {
+    color: var(--vih-cream-dim);
+    text-decoration: none;
+    transition: color var(--vih-dur-base) var(--vih-ease);
+
+    &:hover { color: var(--vih-gold-light); }
+  }
+}
+
+.curtain__lang--active {
+  color: var(--vih-gold-light);
+}
+
+// The way in for admins. Quiet rather than hidden — dimmed until it is looked for, and fully
+// legible on hover and on keyboard focus, because a link nobody can find by tabbing is not a
+// discreet link, it is a broken one.
+.curtain__members {
+  opacity: 0.5;
+
+  &:hover,
+  &:focus-visible { opacity: 1; }
+}
+
+.curtain__social {
+  display: flex;
+  gap: var(--vih-space-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  a {
+    display: block;
+    color: var(--vih-cream-dim);
+    transition: color var(--vih-dur-base) var(--vih-ease),
+                transform var(--vih-dur-base) var(--vih-ease);
+
+    &:hover {
+      color: var(--vih-gold-light);
+      transform: translateY(-2px);
+    }
+  }
+
+  svg { display: block; width: 18px; height: 18px; }
+}
+
+// --- Entrance -------------------------------------------------------------------------------------
+//
+// There is no staggered fade-up. This page loads no JavaScript, so an entrance animation would have
+// to be CSS with animation-delay — and any element given `opacity: 0` up front stays invisible for
+// the length of its delay if the animation is slow to start, never runs (a print stylesheet, a
+// preview capture, a reduced-motion setting handled clumsily), or the stylesheet 404s. The rule
+// this repo already follows is that content is never hidden behind an animation that might not
+// fire. The reference design has no entrance motion either.
+//
+// The one piece of motion kept is the Ken Burns drift on the photograph above — it animates
+// `transform` only, so a browser that ignores it simply shows the room at its final scale.
+
+@include bp.until(bp.$md) {
+  .curtain__inner {
+    padding-block: var(--vih-space-md) var(--vih-space-lg);
+    gap: var(--vih-space-md);
+  }
+
+  .curtain__top { display: none; }
+
+  .curtain__footer {
+    flex-direction: column;
+    gap: var(--vih-space-2xs);
+  }
+}
+
+@media (orientation: portrait) {
+  // A portrait crop of a wide interior would land on a window mullion. Biasing left keeps the
+  // lit bookcase and the chair in frame, which is what makes the photograph read as a room.
+  .curtain__photo { object-position: 38% center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  // The drift never starts, rather than running faster — the rule the rest of this codebase
+  // follows. Nothing here was hidden to begin with, so switching the animation off is all that is
+  // needed; the room simply sits at its final scale.
+  .curtain__photo {
+    animation: none;
+    transform: none;
+  }
+
+  .curtain__submit svg,
+  .curtain__social a {
+    transition: none;
+  }
+
+  .curtain__submit:hover svg,
+  .curtain__social a:hover {
+    transform: none;
+  }
+}

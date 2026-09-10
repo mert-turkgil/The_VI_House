@@ -67,6 +67,9 @@
             <a class="@NavClass("AdminJournal")" asp-area="Admin" asp-controller="AdminJournal" asp-action="Index">Journal</a>
             <a class="@NavClass("AdminCommunity")" asp-area="Admin" asp-controller="AdminCommunity" asp-action="Index">Community</a>
             <a class="@NavClass("AdminEmails")" asp-area="Admin" asp-controller="AdminEmails" asp-action="Index">Emails &amp; SMS</a>
+            @* Deliberately not behind Features.Value.ComingSoon: the day the curtain comes down is
+               exactly when this list is needed, and hiding it with the flag would hide it then. *@
+            <a class="@NavClass("AdminNotifySignups")" asp-area="Admin" asp-controller="AdminNotifySignups" asp-action="Index">Launch List</a>
             <a class="@NavClass("AdminTranslations")" asp-area="Admin" asp-controller="AdminTranslations" asp-action="Index">Translations</a>
             <a class="@NavClass("AdminSiteSettings")" asp-area="Admin" asp-controller="AdminSiteSettings" asp-action="Index">Site &amp; SEO</a>
         </nav>

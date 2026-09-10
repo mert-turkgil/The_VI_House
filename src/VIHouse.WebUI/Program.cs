@@ -22,6 +22,7 @@ using VIHouse.WebUI.Filters;
 using Microsoft.AspNetCore.Mvc.Routing;
 using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.Localization;
+using VIHouse.WebUI.Middleware;
 using VIHouse.WebUI.Services;
 
 // Process-wide fallback only (background services like TicketHoldExpiryService run with no HTTP
@@ -214,6 +215,7 @@ builder.Services.AddScoped<INotificationRepository, EfNotificationRepository>();
 builder.Services.AddScoped<IJournalPostRepository, EfJournalPostRepository>();
 builder.Services.AddScoped<ISeminarRepository, EfSeminarRepository>();
 builder.Services.AddScoped<ISeminarEnrollmentRepository, EfSeminarEnrollmentRepository>();
+builder.Services.AddScoped<INotifySignupRepository, EfNotifySignupRepository>();
 
 // --- Business services -------------------------------------------------------------------------
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
@@ -226,6 +228,7 @@ builder.Services.AddScoped<IAmbassadorService, AmbassadorService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
 builder.Services.AddScoped<ISeminarService, SeminarService>();
+builder.Services.AddScoped<INotifySignupService, NotifySignupService>();
 
 // --- SEO ------------------------------------------------------------------------------------------
 // SiteSettingsService caches its single row in IMemoryCache and evicts on every write, so the
@@ -506,6 +509,14 @@ app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// The launch curtain — Features:ComingSoon. Position is load-bearing twice over: after
+// UseAuthentication, because the admin exemption reads role claims off the cookie *and* because
+// /signin-google is handled inside that middleware rather than as an endpoint, so a gate placed
+// earlier would break Google sign-in outright; and after UseAuthorization, so an [Authorize]
+// endpoint has already issued its own challenge and an admin with an expired cookie lands on the
+// sign-in page instead of on the curtain. See ComingSoonGate.
+app.UseMiddleware<ComingSoonGate>();
 
 // The service worker script itself must never be aggressively cached by the browser's own HTTP
 // cache — otherwise a stuck stale sw.js means updates to it (and its cache-versioning logic) never

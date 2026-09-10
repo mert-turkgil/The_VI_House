@@ -30,6 +30,24 @@ public class FeatureOptions
     public bool Community { get; set; }
 
     /// <summary>
+    /// Holds the entire public site behind the coming-soon page. Enforced in one place —
+    /// <c>ComingSoonGate</c>.
+    ///
+    /// Unlike every other flag here, this one hides the whole product rather than one entry point,
+    /// and it is a curtain rather than a lock: admins pass through it, and it decides what a visitor
+    /// is shown, never what they are allowed to do. Everything behind it is still guarded by the
+    /// same <c>[Authorize]</c> attributes it was before, and static files under wwwroot stay
+    /// reachable to anyone holding a URL — the gate has to let them through to dress its own page.
+    ///
+    /// Read through IOptionsMonitor rather than IOptions, which is the opposite of
+    /// <see cref="RequireTwoFactor"/> below and deliberately so: the whole purpose of this flag is a
+    /// timed moment, and needing an application restart to open the site at launch would be a poor
+    /// trade. The argument for pinning a security gate to startup does not transfer to a curtain
+    /// whose worst failure is opening a few seconds early.
+    /// </summary>
+    public bool ComingSoon { get; set; }
+
+    /// <summary>
     /// Whether a signed-in account must have two-factor switched on before any authorized page will
     /// render. Enforced in one place — <c>OnboardingRequirementFilter</c>.
     ///

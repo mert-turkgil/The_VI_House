@@ -1,0 +1,164 @@
+@using System.Globalization
+@using VIHouse.Business.Options
+@inject VIHouse.WebUI.Helpers.SeoResolver Seo
+
+@{
+    ViewData["Title"] = Loc["ComingSoon.Title"];
+
+    // The same cached single row the SEO head reads — see _Seo.cshtml. Socials and the contact
+    // address are admin-editable in Admin > Site & SEO rather than hardcoded here.
+    var settings = await Seo.SettingsAsync();
+
+    var social = new (string Icon, string? Url, string Label)[]
+    {
+        ("linkedin", settings.LinkedInUrl, "LinkedIn"),
+        ("instagram", settings.InstagramUrl, "Instagram"),
+        ("youtube", settings.YouTubeUrl, "YouTube"),
+        ("twitter", settings.XUrl, "X"),
+    }
+    // FacebookUrl and TikTokUrl are skipped on purpose: _Icon.cshtml has no case for either, and a
+    // link with a missing glyph reads as a broken image rather than a social account.
+    .Where(s => !string.IsNullOrWhiteSpace(s.Url))
+    .ToList();
+
+    var currentCulture = CultureInfo.CurrentUICulture.Name;
+
+    var message = TempData["NotifyMessage"] as string;
+    var messageOk = TempData["NotifyOk"] as bool? ?? false;
+}
+
+<div class="curtain">
+    @* The photograph is a plain <img> rather than a CSS background for the same reason
+       _CoverImage.cshtml gives: it can carry srcset, it is fetched at the right priority, and it
+       degrades to nothing rather than to a broken layout. *@
+    <div class="curtain__backdrop" aria-hidden="true">
+        <img class="curtain__photo" src="~/brand/coming-soon.jpg" alt="" decoding="async" fetchpriority="high" />
+        <span class="curtain__scrim"></span>
+    </div>
+
+    <div class="curtain__inner">
+        <header class="curtain__top">
+            <p class="curtain__rail curtain__rail--top-left">
+                <span>@Loc["ComingSoon.RailTopLeft1"]</span>
+                <span>@Loc["ComingSoon.RailTopLeft2"]</span>
+            </p>
+            <p class="curtain__rail curtain__rail--top-right">
+                <span>@Loc["ComingSoon.RailTopRight"]</span>
+            </p>
+        </header>
+
+        <div class="curtain__brand">
+            <span class="curtain__crest"><partial name="_Crest" /></span>
+            <p class="curtain__wordmark">The VI House</p>
+            <p class="curtain__brandline">@Loc["ComingSoon.Brandline"]</p>
+        </div>
+
+        <main class="curtain__main" id="main-content">
+            @* Two spans rather than one heading with a <br>: the second line is a different colour,
+               and the break between them is part of the design rather than an accident of width. *@
+            <h1 class="curtain__headline">
+                <span class="curtain__headline-lead">@Loc["ComingSoon.HeadlineLead"]</span>
+                <span class="curtain__headline-accent">@Loc["ComingSoon.HeadlineAccent"]</span>
+            </h1>
+
+            <p class="curtain__subtitle">@Loc["ComingSoon.Subtitle"]</p>
+
+            <span class="curtain__divider" aria-hidden="true"></span>
+
+            <p class="curtain__body">@Loc["ComingSoon.Body"]</p>
+
+            @if (message is not null)
+            {
+                <p class="curtain__message @(messageOk ? "curtain__message--ok" : "curtain__message--bad")" role="status">
+                    @message
+                </p>
+            }
+
+            @* A real form posting to a real action — no JavaScript on this page at all, so it works
+               the moment the HTML arrives. *@
+            <form class="curtain__form" method="post" asp-controller="ComingSoon" asp-action="Notify">
+                <label class="visually-hidden" for="curtain-email">@Loc["ComingSoon.EmailLabel"]</label>
+                <input class="curtain__input" id="curtain-email" type="email" name="email"
+                       placeholder="@Loc["ComingSoon.EmailPlaceholder"]" autocomplete="email"
+                       required aria-describedby="curtain-data-note" />
+                <button class="curtain__submit" type="submit">
+                    <span>@Loc["ComingSoon.NotifyMe"]</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                </button>
+            </form>
+
+            @* The privacy notice, such as it is. /legal/privacy is behind the curtain like every
+               other page, so rather than link to something nobody can open, the whole of what we do
+               with the address is said here, next to the field where someone is deciding. *@
+            <p class="curtain__data-note" id="curtain-data-note">@Loc["ComingSoon.DataNote"]</p>
+
+            <p class="curtain__launching">@Loc["ComingSoon.Launching"]</p>
+        </main>
+
+        <p class="curtain__rail curtain__rail--left">
+            <span>@Loc["ComingSoon.RailLeft1"]</span>
+            <span>@Loc["ComingSoon.RailLeft2"]</span>
+            <span>@Loc["ComingSoon.RailLeft3"]</span>
+            <span>@Loc["ComingSoon.RailLeft4"]</span>
+        </p>
+
+        <p class="curtain__rail curtain__rail--right">
+            <span>@Loc["ComingSoon.RailRight1"]</span>
+            <span>@Loc["ComingSoon.RailRight2"]</span>
+        </p>
+
+        <footer class="curtain__footer">
+            <p class="curtain__copyright">&copy; @DateTime.UtcNow.Year The VI House Group Ltd. @Loc["Footer.RightsReserved"]</p>
+
+            <nav class="curtain__links" aria-label="@Loc["ComingSoon.Title"]">
+                @if (!string.IsNullOrWhiteSpace(settings.ContactEmail))
+                {
+                    @* mailto: rather than /contact, which the gate closes along with everything
+                       else. A dead link would be worse than no link. *@
+                    <a href="mailto:@settings.ContactEmail">@Loc["Footer.Contact"]</a>
+                }
+
+                @* The way in. Deliberately quiet rather than hidden — /Identity/Account/Login is one
+                   of the few paths the gate leaves open, and the same password, lockout and
+                   two-factor rules apply to it as always. *@
+                <a class="curtain__members" asp-area="Identity" asp-page="/Account/Login">@Loc["ComingSoon.Members"]</a>
+            </nav>
+
+            @* Linked directly rather than through /culture/set: RouteCultureProvider ignores the
+               culture cookie by design, so the switcher would set a preference and still land the
+               reader on the English curtain. *@
+            <nav class="curtain__langs" aria-label="@Loc["Nav.LanguageLabel"]">
+                @foreach (var culture in SiteCultures.All)
+                {
+                    var path = culture.Name == SiteCultures.Default
+                        ? "/coming-soon"
+                        : $"/{culture.UrlCode}/coming-soon";
+                    var isCurrent = string.Equals(culture.Name, currentCulture, StringComparison.OrdinalIgnoreCase);
+
+                    <a class="curtain__lang @(isCurrent ? "curtain__lang--active" : null)"
+                       href="@path" lang="@culture.Name"
+                       aria-current="@(isCurrent ? "true" : null)">@culture.NativeLabel</a>
+                }
+            </nav>
+
+            @if (social.Count > 0)
+            {
+                <ul class="curtain__social">
+                    @foreach (var link in social)
+                    {
+                        <li>
+                            @* _Icon.cshtml marks every glyph aria-hidden, so the accessible name has
+                               to live on the link. *@
+                            <a href="@link.Url" target="_blank" rel="noopener me" aria-label="@link.Label">
+                                <partial name="_Icon" model="@link.Icon" />
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+        </footer>
+    </div>
+</div>

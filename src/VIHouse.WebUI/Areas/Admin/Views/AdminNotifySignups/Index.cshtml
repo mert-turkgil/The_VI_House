@@ -1,0 +1,66 @@
+@using VIHouse.Business.Options
+@model AdminNotifySignupsViewModel
+@{
+    ViewData["Title"] = Loc["Admin.NotifySignups.Title"].Value;
+}
+
+<p class="admin-hint">@Loc["Admin.NotifySignups.Hint"]</p>
+
+@if (Model.TotalCount == 0)
+{
+    <p class="admin-empty">@Loc["Admin.NotifySignups.Empty"]</p>
+}
+else
+{
+    <div class="admin-table-scroll">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>@Loc["Admin.NotifySignups.When"]</th>
+                    <th>@Loc["Admin.NotifySignups.Email"]</th>
+                    <th>@Loc["Admin.NotifySignups.Language"]</th>
+                    <th>@Loc["Admin.NotifySignups.Source"]</th>
+                    <th>@Loc["Admin.NotifySignups.Notified"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td>@row.CreatedAt.ToLocalTime().ToString("d MMM yyyy HH:mm")</td>
+                        @* The address is the whole point of the row, so it is selectable and
+                           linkable rather than plain text — replying to one person is the most
+                           likely thing anyone does from this screen. *@
+                        <td><a href="mailto:@row.Email">@row.Email</a></td>
+                        <td>@(SiteCultures.Describe(row.Culture).NativeLabel)</td>
+                        <td>@(row.Source ?? "—")</td>
+                        <td>
+                            @if (row.NotifiedAt is { } notified)
+                            {
+                                <span class="admin-badge admin-badge--open">@notified.ToLocalTime().ToString("d MMM yyyy")</span>
+                            }
+                            else
+                            {
+                                <span class="admin-badge admin-badge--draft">@Loc["Admin.NotifySignups.NotYet"]</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-toolbar" style="margin-top:16px;">
+        @if (Model.HasPrevious)
+        {
+            <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-page="@(Model.Page - 1)">&larr; Newer</a>
+        }
+        <span class="admin-hint" style="margin:0;">
+            Page @Model.Page of @Model.TotalPages · @Loc["Admin.NotifySignups.Total", Model.TotalCount]
+        </span>
+        @if (Model.HasNext)
+        {
+            <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-page="@(Model.Page + 1)">Older &rarr;</a>
+        }
+    </div>
+}

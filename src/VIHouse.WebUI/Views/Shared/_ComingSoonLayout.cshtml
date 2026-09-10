@@ -1,0 +1,37 @@
+@using System.Globalization
+@*
+    The layout for the launch curtain, and only for it.
+
+    Not Views/Shared/_Layout.cshtml, which brings the full site nav and footer — every link in them
+    would bounce straight back here, so the curtain has to carry its own chrome.
+
+    Keeps _Seo: the whole point of this page is that people share its link, so the title, canonical,
+    hreflang set and Open Graph card matter more here than on any page behind it.
+
+    Drops ~/dist/main.js. Nothing on this page needs JavaScript — the form is a real POST — and
+    skipping the entry means the service worker never installs while the site is closed, which is one
+    less caching variable to reason about on the day the curtain comes down.
+*@
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.Name">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <partial name="_Seo" />
+
+    <link rel="icon" href="~/favicon.ico" />
+    <link rel="apple-touch-icon" href="~/icons/apple-touch-icon.png" />
+    <meta name="theme-color" content="#001a02" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/dist/main.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="curtain-body">
+    @RenderBody()
+</body>
+</html>
