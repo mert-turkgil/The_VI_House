@@ -1,0 +1,337 @@
+# Deploys the site to MonsterASP over FTP on every push to master.
+#
+# What happens, in order:
+#   1. Build the ClientApp (Vite), fetch the site photography, publish the .NET app.
+#   2. Write appsettings.Production.json from GitHub Secrets + the env block below. The file is
+#      gitignored on purpose — this is the only place production configuration is assembled.
+#   3. Apply EF Core migrations to the production database (the app never migrates on boot in
+#      Production — see the "Seeding" section of Program.cs).
+#   4. Put app_offline.htm in place so IIS stops the app and releases its file locks, wait, upload
+#      the publish output, then remove app_offline.htm so IIS starts the new build.
+#
+# Non-secret configuration lives in the `env:` block below and is changed by editing this file.
+# Secrets live in GitHub → Settings → Secrets and variables → Actions (see the list at the bottom).
+#
+# Things the app writes at runtime (data-protection keys in App_Data, uploaded media in App_Media)
+# live inside the site folder and survive deployments: the FTP sync only deletes files it uploaded
+# itself. Never turn on dangerous-clean-slate — that would wipe them.
+
+name: Deploy to MonsterASP
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Two pushes in quick succession must not interleave their FTP uploads.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  # --- Feature switches (Features section; see VIHouse.Business/Options/FeatureOptions.cs) ---------
+  # ComingSoon holds the public site behind /coming-soon; admins sign in and pass through. Flip to
+  # 'false' and push to launch. (Editing the file on the server also works until the next deploy
+  # writes this value over it again.)
+  FEATURE_COMING_SOON: 'true'
+  FEATURE_REQUIRE_TWO_FACTOR: 'true'
+  FEATURE_MEMBERSHIP_SALES: 'false'
+  FEATURE_MEMBER_DIRECTORY: 'false'
+  FEATURE_COMMUNITY: 'false'
+
+  # --- Site identity ------------------------------------------------------------------------------
+  SITE_BASE_URL: 'https://thevihouse.com'
+  SITE_CONTACT_EMAIL: ''
+  # Leave both EMPTY until thevihouse.com AND admin.thevihouse.com are bound to the MonsterASP site.
+  # With a CookieDomain set while the site is still served from a *.runasp.net address, browsers
+  # reject the auth cookie and nobody can sign in; with AdminHost set, /Admin only answers on that
+  # host. Once DNS is live: ADMIN_HOST 'admin.thevihouse.com', COOKIE_DOMAIN '.thevihouse.com'.
+  ADMIN_HOST: ''
+  COOKIE_DOMAIN: ''
+
+  # --- Storage paths (empty = inside the site folder: App_Data/dp-keys, App_Media, Resources) -------
+  # Only set these to ABSOLUTE Windows paths that the MonsterASP app pool can write to. A path it
+  # cannot create makes the app fail at startup. Relative paths are resolved against the process
+  # working directory, not the app folder, so do not use them here.
+  # Note: with RESOURCES_PATH empty the .resx files ship with each deploy, so translations edited in
+  # Admin → Translations must be exported (Download .resx files) and committed to survive a deploy.
+  MEDIA_ROOT_PATH: ''
+  DATA_PROTECTION_KEYS_PATH: ''
+  RESOURCES_PATH: ''
+
+
+  # --- SMS gateway (dormant until a gateway account exists; see SmsOptions.cs) --------------------
+  SMS_ENABLED: 'false'
+  SMS_ENDPOINT: 'https://api.twilio.com/2010-04-01/Accounts/REPLACE_WITH_ACCOUNT_SID/Messages.json'
+  SMS_FROM: ''
+  SMS_DEFAULT_COUNTRY_CODE: ''
+
+  # --- Deployment mechanics ------------------------------------------------------------------------
+  # How long to wait after app_offline.htm lands before uploading DLLs. IIS on shared hosting can be
+  # slow to release file locks; uploads that hit a locked DLL fail the whole deploy.
+  OFFLINE_WAIT_SECONDS: '120'
+  PUBLISH_DIR: publish
+
+jobs:
+  publish-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required secrets
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          PROD_CONNECTION_STRING: ${{ secrets.PROD_CONNECTION_STRING }}
+          SEED_ADMIN_EMAIL: ${{ secrets.SEED_ADMIN_EMAIL }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_TEST_SECRET_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          CKEDITOR_LICENSE_KEY: ${{ secrets.CKEDITOR_LICENSE_KEY }}
+        run: |
+          missing=0
+          for name in FTP_SERVER FTP_USERNAME FTP_PASSWORD PROD_CONNECTION_STRING; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository secret $name is not set."
+              missing=1
+            fi
+          done
+          [ "$missing" -eq 0 ] || exit 1
+          # Not fatal, but each of these leaves a feature dark; say so in the run log.
+          [ -n "$SEED_ADMIN_EMAIL" ]     || echo "::warning::SEED_ADMIN_EMAIL is empty — a fresh database will have no admin account."
+          [ -n "$STRIPE_SECRET_KEY" ]    || echo "::warning::STRIPE_TEST_SECRET_KEY is empty — payments are off."
+          [ -n "$GOOGLE_CLIENT_ID" ]     || echo "::warning::GOOGLE_CLIENT_ID is empty — Google sign-in is off."
+          [ -n "$CKEDITOR_LICENSE_KEY" ] || echo "::warning::CKEDITOR_LICENSE_KEY is empty — the admin rich-text editor will not load."
+
+      # --- Build -----------------------------------------------------------------------------------
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/VIHouse.WebUI/ClientApp/package-lock.json
+
+      - name: Install ClientApp dependencies
+        working-directory: src/VIHouse.WebUI/ClientApp
+        run: npm ci
+
+      # wwwroot/img is gitignored; the manifest is the source of truth. Without this every cover
+      # renders the crest placeholder, and MapStaticAssets only serves files present at build time.
+      - name: Fetch site photography
+        working-directory: src/VIHouse.WebUI/ClientApp
+        run: npm run fetch:media
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore VIHouse.slnx
+
+      # Written before publish so the Web SDK picks it up like any other appsettings*.json.
+      # jq --arg does the JSON escaping, so passwords with quotes/backslashes/% survive intact.
+      # No Smtp section yet: no mail provider exists, so the app runs on SmtpOptions defaults and
+      # logs each failed send. Add Smtp here (Host/Port/From in env + SMTP_USERNAME/SMTP_PASSWORD
+      # secrets) when there is one.
+      - name: Write appsettings.Production.json
+        working-directory: src/VIHouse.WebUI
+        env:
+          PROD_CONNECTION_STRING: ${{ secrets.PROD_CONNECTION_STRING }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_TEST_SECRET_KEY }}
+          STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_TEST_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          SMS_USERNAME: ${{ secrets.SMS_USERNAME }}
+          SMS_PASSWORD: ${{ secrets.SMS_PASSWORD }}
+          CKEDITOR_LICENSE_KEY: ${{ secrets.CKEDITOR_LICENSE_KEY }}
+          SEED_ADMIN_EMAIL: ${{ secrets.SEED_ADMIN_EMAIL }}
+          SEED_ADMIN_PASSWORD: ${{ secrets.SEED_ADMIN_PASSWORD }}
+          SEED_ADMINS_JSON: ${{ secrets.SEED_ADMINS_JSON }}
+        run: |
+          jq -n \
+            --argjson comingSoon        "$FEATURE_COMING_SOON" \
+            --argjson requireTwoFactor  "$FEATURE_REQUIRE_TWO_FACTOR" \
+            --argjson membershipSales   "$FEATURE_MEMBERSHIP_SALES" \
+            --argjson memberDirectory   "$FEATURE_MEMBER_DIRECTORY" \
+            --argjson community         "$FEATURE_COMMUNITY" \
+            --arg     connectionString  "$PROD_CONNECTION_STRING" \
+            --arg     stripeSecret      "$STRIPE_SECRET_KEY" \
+            --arg     stripePublishable "$STRIPE_PUBLISHABLE_KEY" \
+            --arg     stripeWebhook     "$STRIPE_WEBHOOK_SECRET" \
+            --arg     googleClientId    "$GOOGLE_CLIENT_ID" \
+            --arg     googleSecret      "$GOOGLE_CLIENT_SECRET" \
+            --argjson smsEnabled        "$SMS_ENABLED" \
+            --arg     smsEndpoint       "$SMS_ENDPOINT" \
+            --arg     smsFrom           "$SMS_FROM" \
+            --arg     smsCountryCode    "$SMS_DEFAULT_COUNTRY_CODE" \
+            --arg     smsUsername       "$SMS_USERNAME" \
+            --arg     smsPassword       "$SMS_PASSWORD" \
+            --arg     ckeditorKey       "$CKEDITOR_LICENSE_KEY" \
+            --arg     mediaRoot         "$MEDIA_ROOT_PATH" \
+            --arg     dpKeysPath        "$DATA_PROTECTION_KEYS_PATH" \
+            --arg     resourcesPath     "$RESOURCES_PATH" \
+            --arg     adminHost         "$ADMIN_HOST" \
+            --arg     cookieDomain      "$COOKIE_DOMAIN" \
+            --arg     siteBaseUrl       "$SITE_BASE_URL" \
+            --arg     siteContactEmail  "$SITE_CONTACT_EMAIL" \
+            --arg     seedAdminEmail    "$SEED_ADMIN_EMAIL" \
+            --arg     seedAdminPassword "$SEED_ADMIN_PASSWORD" \
+            --arg     seedAdminsJson    "$SEED_ADMINS_JSON" \
+            '{
+              Features: {
+                ComingSoon: $comingSoon,
+                RequireTwoFactor: $requireTwoFactor,
+                MembershipSales: $membershipSales,
+                MemberDirectory: $memberDirectory,
+                Community: $community
+              },
+              Logging: { LogLevel: { Default: "Warning", "Microsoft.AspNetCore": "Warning" } },
+              ConnectionStrings: { DefaultConnection: $connectionString },
+              Stripe: {
+                SecretKey: $stripeSecret,
+                PublishableKey: $stripePublishable,
+                WebhookSecret: $stripeWebhook
+              },
+              Authentication: { Google: { ClientId: $googleClientId, ClientSecret: $googleSecret } },
+              Sms: {
+                Enabled: $smsEnabled, Endpoint: $smsEndpoint, From: $smsFrom,
+                Username: $smsUsername, Password: $smsPassword,
+                DefaultCountryCode: $smsCountryCode
+              },
+              CkEditor: { LicenseKey: $ckeditorKey },
+              Media: { RootPath: $mediaRoot },
+              DataProtection: { KeysPath: $dpKeysPath },
+              Localization: { ResourcesPath: $resourcesPath },
+              AdminHost: $adminHost,
+              CookieDomain: $cookieDomain,
+              Site: { BaseUrl: $siteBaseUrl, ContactEmail: $siteContactEmail },
+              SeedAdmin: { Email: $seedAdminEmail, Password: $seedAdminPassword, Roles: ["SuperAdmin"] },
+              SeedAdmins: (if $seedAdminsJson == "" then [] else ($seedAdminsJson | fromjson) end)
+            }' > appsettings.Production.json
+
+          echo "appsettings.Production.json written. Non-secret sections:"
+          jq 'del(.ConnectionStrings, .Stripe, .Authentication, .Sms, .CkEditor, .SeedAdmin, .SeedAdmins)' appsettings.Production.json
+
+      - name: Publish
+        run: >
+          dotnet publish src/VIHouse.WebUI/VIHouse.WebUI.csproj
+          --configuration Release
+          --no-restore
+          --output ${{ env.PUBLISH_DIR }}
+
+      - name: Verify publish output
+        run: |
+          cd "$PUBLISH_DIR"
+          for f in VIHouse.WebUI.dll web.config appsettings.json appsettings.Production.json \
+                   wwwroot/brand/coming-soon.jpg wwwroot/dist Resources/SharedResource.resx; do
+            [ -e "$f" ] || { echo "::error::Expected $f in the publish output."; exit 1; }
+          done
+          [ ! -e appsettings.Development.json ] || { echo "::error::appsettings.Development.json must not be published."; exit 1; }
+          img_count=$(find wwwroot/img -type f 2>/dev/null | wc -l)
+          echo "wwwroot/img files: $img_count"
+          [ "$img_count" -gt 0 ] || { echo "::error::No photography in wwwroot/img — fetch:media did not populate it."; exit 1; }
+
+      # --- Database --------------------------------------------------------------------------------
+      # Runs against the current bin/Release output (--no-build) and before the site goes offline,
+      # so a failed migration leaves the old build running untouched.
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef --version 10.0.11
+
+      - name: Apply database migrations
+        env:
+          PROD_CONNECTION_STRING: ${{ secrets.PROD_CONNECTION_STRING }}
+        run: >
+          dotnet ef database update
+          --project src/VIHouse.DataAccess
+          --startup-project src/VIHouse.WebUI
+          --configuration Release
+          --no-build
+          --connection "$PROD_CONNECTION_STRING"
+
+      # --- Deploy ----------------------------------------------------------------------------------
+      # app_offline.htm is handled with plain curl rather than the sync action: the sync action keeps
+      # a state file, and a second run would see "already uploaded, unchanged" and skip it.
+      - name: Take site offline (upload app_offline.htm)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: >
+          curl --silent --show-error --fail
+          --user "$FTP_USERNAME:$FTP_PASSWORD"
+          --upload-file .github/deploy/app_offline.htm
+          "ftp://$FTP_SERVER/wwwroot/app_offline.htm"
+
+      - name: Wait for IIS to release file locks
+        run: sleep "$OFFLINE_WAIT_SECONDS"
+
+      - name: Upload publish output
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          local-dir: ${{ env.PUBLISH_DIR }}/
+          server-dir: /wwwroot/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+
+      - name: Bring site online (delete app_offline.htm)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: >
+          curl --silent --show-error --fail
+          --user "$FTP_USERNAME:$FTP_PASSWORD"
+          --quote "DELE wwwroot/app_offline.htm"
+          --list-only
+          "ftp://$FTP_SERVER/wwwroot/"
+          --output /dev/null
+
+      # First request after a deploy is what makes IIS start the app, so this doubles as warm-up.
+      # Non-fatal: the deploy already happened, and the domain may not be pointed at the host yet.
+      - name: Smoke check
+        continue-on-error: true
+        run: >
+          curl --silent --show-error --fail --location
+          --retry 8 --retry-delay 15 --retry-all-errors
+          --output /dev/null --write-out "HTTP %{http_code} from %{url_effective}\n"
+          "$SITE_BASE_URL/"
+
+# ---------------------------------------------------------------------------------------------------
+# Repository secrets this workflow reads (Settings → Secrets and variables → Actions → New secret):
+#
+#   FTP_SERVER              MonsterASP FTP host name only, no protocol (from the control panel)
+#   FTP_USERNAME            MonsterASP FTP user
+#   FTP_PASSWORD            MonsterASP FTP password
+#   PROD_CONNECTION_STRING  ConnectionStrings:DefaultConnection for the production database
+#   STRIPE_TEST_SECRET_KEY      Stripe:SecretKey    (sk_test_… — swap for live keys at launch)
+#   STRIPE_TEST_PUBLISHABLE_KEY Stripe:PublishableKey (pk_test_…)
+#   STRIPE_WEBHOOK_SECRET   Stripe:WebhookSecret    (from the Stripe Dashboard webhook endpoint)
+#   GOOGLE_CLIENT_ID        Authentication:Google:ClientId
+#   GOOGLE_CLIENT_SECRET    Authentication:Google:ClientSecret
+#   SMS_USERNAME            Sms:Username
+#   SMS_PASSWORD            Sms:Password
+#   CKEDITOR_LICENSE_KEY    CkEditor:LicenseKey     (production key; CKEDITOR_DEV_LICENSE_KEY is not
+#                           read here — its licence only allows localhost / private IPs)
+#   SEED_ADMIN_EMAIL        SeedAdmin:Email         (bootstrap SuperAdmin; ignored once the account exists)
+#   SEED_ADMIN_PASSWORD     SeedAdmin:Password
+#   SEED_ADMINS_JSON        optional: extra bootstrap admins as a JSON array, same shape as the
+#                           SeedAdmins section of appsettings.Production.json
+# ---------------------------------------------------------------------------------------------------

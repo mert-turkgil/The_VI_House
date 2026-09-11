@@ -1,0 +1,46 @@
+# Build check for pull requests and feature branches. Pushes to master are covered by deploy.yml,
+# which does the same build before publishing — running both there would just build twice.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches-ignore: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # The ViteBuild MSBuild target runs `npm run build` inside every `dotnet build`, so Node has to
+      # be on the runner before .NET touches the project.
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: src/VIHouse.WebUI/ClientApp/package-lock.json
+
+      - name: Install ClientApp dependencies
+        working-directory: src/VIHouse.WebUI/ClientApp
+        run: npm ci
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore VIHouse.slnx
+
+      - name: Build
+        run: dotnet build VIHouse.slnx --configuration Release --no-restore

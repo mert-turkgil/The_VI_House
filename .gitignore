@@ -30,9 +30,11 @@ efbundle*
 ## Site photography. The binaries are fetched, not committed — ClientApp/media-manifest.json is the
 ## committed source of truth and `npm run fetch:media` reproduces this folder. Must be run before
 ## `dotnet publish` on a clean checkout, or every cover falls back to the crest placeholder. ##
+## wwwroot/brand/ and wwwroot/video/ are NOT in the manifest and ARE committed: MapStaticAssets only
+## serves files present at build time, so a CI publish without them ships a broken Coming Soon page. ##
 **/wwwroot/img/
-**/wwwroot/video/
-**/wwwroot/brand/
+**/wwwroot/brand/*.**
+**/wwwroot/video/*.**
 
 ## Node / npm / Vite (src/VIHouse.WebUI/ClientApp) ##
 node_modules/

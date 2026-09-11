@@ -23,6 +23,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!--
+      Never ship the local Development settings (dev connection string, dev-only licence key). CI has
+      no such file, but a `dotnet publish` from a developer machine would otherwise include it.
+    -->
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- ClientApp is built by Vite (see targets below), not by MSBuild directly. -->
     <Content Remove="ClientApp/**" />
     <Compile Remove="ClientApp/**" />
