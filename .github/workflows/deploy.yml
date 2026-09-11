@@ -154,7 +154,7 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           SMS_USERNAME: ${{ secrets.SMS_USERNAME }}
           SMS_PASSWORD: ${{ secrets.SMS_PASSWORD }}
-          CKEDITOR_LICENSE_KEY: ${{ secrets.CKEDITOR_LICENSE_KEY }}
+          CKEDITOR_LICENSE_KEY: ${{ secrets.CKEDITOR_DEV_LICENSE_KEY }}
           SEED_ADMIN_EMAIL: ${{ secrets.SEED_ADMIN_EMAIL }}
           SEED_ADMIN_PASSWORD: ${{ secrets.SEED_ADMIN_PASSWORD }}
           SEED_ADMINS_JSON: ${{ secrets.SEED_ADMINS_JSON }}
