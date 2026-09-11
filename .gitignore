@@ -33,8 +33,6 @@ efbundle*
 ## wwwroot/brand/ and wwwroot/video/ are NOT in the manifest and ARE committed: MapStaticAssets only
 ## serves files present at build time, so a CI publish without them ships a broken Coming Soon page. ##
 **/wwwroot/img/
-**/wwwroot/brand/*.**
-**/wwwroot/video/*.**
 
 ## Node / npm / Vite (src/VIHouse.WebUI/ClientApp) ##
 node_modules/
