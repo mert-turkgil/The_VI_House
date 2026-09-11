@@ -4,8 +4,9 @@
 #   1. Build the ClientApp (Vite), fetch the site photography, publish the .NET app.
 #   2. Write appsettings.Production.json from GitHub Secrets + the env block below. The file is
 #      gitignored on purpose — this is the only place production configuration is assembled.
-#   3. Apply EF Core migrations to the production database (the app never migrates on boot in
-#      Production — see the "Seeding" section of Program.cs).
+#   3. If the build carries migrations the database has not seen, export a .bacpac backup of the
+#      production database to /Backup/ on the FTP account, then apply the migrations (the app never
+#      migrates on boot in Production — see the "Seeding" section of Program.cs).
 #   4. Put app_offline.htm in place so IIS stops the app and releases its file locks, wait, upload
 #      the publish output, then remove app_offline.htm so IIS starts the new build.
 #
@@ -78,6 +79,15 @@ env:
   # slow to release file locks; uploads that hit a locked DLL fail the whole deploy.
   OFFLINE_WAIT_SECONDS: '120'
   PUBLISH_DIR: publish
+
+  # --- Pre-migration database backup ---------------------------------------------------------------
+  # A .bacpac (schema + data) exported with SqlPackage and uploaded to /<BACKUP_DIR>/ at the FTP
+  # root — next to wwwroot/, never inside it, because the file holds every member's data and must
+  # not be web-reachable. Taken only when a deploy has migrations to apply (or always, with
+  # BACKUP_ALWAYS). The panel cannot restore a .bacpac directly; see .github/deploy/RESTORE.md.
+  BACKUP_DIR: 'Backup'
+  BACKUP_KEEP: '10'
+  BACKUP_ALWAYS: 'false'
 
 jobs:
   publish-and-deploy:
@@ -247,6 +257,76 @@ jobs:
       # so a failed migration leaves the old build running untouched.
       - name: Install EF Core tools
         run: dotnet tool install --global dotnet-ef --version 10.0.11
+
+      # `migrations list` marks unapplied migrations "(Pending)". Needs the same Production
+      # environment as the update step below, for the same reason (see that step's comment).
+      - name: Check for pending migrations
+        id: pending
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+          PROD_CONNECTION_STRING: ${{ secrets.PROD_CONNECTION_STRING }}
+        run: |
+          list=$(dotnet ef migrations list \
+            --project src/VIHouse.DataAccess \
+            --startup-project src/VIHouse.WebUI \
+            --configuration Release \
+            --no-build \
+            --connection "$PROD_CONNECTION_STRING")
+          printf '%s\n' "$list"
+          count=$(printf '%s\n' "$list" | grep -c '(Pending)' || true)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "Pending migrations: $count"
+
+      # SqlPackage export works with the ordinary db_owner login — no BACKUP DATABASE permission or
+      # server-side file path needed, which shared hosting does not give us. The site is still
+      # online during the export; for this site's traffic that is fine. If the export fails the
+      # deploy stops here, before anything has been changed.
+      - name: Back up production database
+        if: steps.pending.outputs.count != '0' || env.BACKUP_ALWAYS == 'true'
+        env:
+          PROD_CONNECTION_STRING: ${{ secrets.PROD_CONNECTION_STRING }}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          dotnet tool install --global microsoft.sqlpackage
+          file="vihouse-$(date -u +%Y%m%d-%H%M%S)-${GITHUB_SHA::7}.bacpac"
+
+          "$HOME/.dotnet/tools/sqlpackage" /Action:Export \
+            /SourceConnectionString:"$PROD_CONNECTION_STRING" \
+            /TargetFile:"$file"
+          ls -la "$file"
+
+          # --ftp-create-dirs makes /Backup/ on the first run.
+          curl --silent --show-error --fail --ftp-create-dirs \
+            --user "$FTP_USERNAME:$FTP_PASSWORD" \
+            --upload-file "$file" \
+            "ftp://$FTP_SERVER/$BACKUP_DIR/$file"
+          echo "Uploaded to /$BACKUP_DIR/$file"
+          {
+            echo "### Database backup"
+            echo "Pending migrations: **${{ steps.pending.outputs.count }}** — exported \`/$BACKUP_DIR/$file\` ($(du -h "$file" | cut -f1)) before applying them."
+            echo "Restore instructions: .github/deploy/RESTORE.md"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Retention: names sort chronologically, so keep the last BACKUP_KEEP and delete the rest.
+          existing=$(curl --silent --show-error --fail --list-only \
+            --user "$FTP_USERNAME:$FTP_PASSWORD" "ftp://$FTP_SERVER/$BACKUP_DIR/" \
+            | sed 's|.*/||' | grep -E '^vihouse-.*\.bacpac$' | sort)
+          total=$(printf '%s\n' "$existing" | grep -c . || true)
+          if [ "$total" -gt "$BACKUP_KEEP" ]; then
+            printf '%s\n' "$existing" | head -n $((total - BACKUP_KEEP)) | while read -r old; do
+              # Housekeeping only: the new backup is already safe, so a failed delete just warns.
+              if curl --silent --show-error --fail \
+                   --user "$FTP_USERNAME:$FTP_PASSWORD" \
+                   --quote "DELE $BACKUP_DIR/$old" --list-only "ftp://$FTP_SERVER/$BACKUP_DIR/" \
+                   --output /dev/null; then
+                echo "Deleted old backup $old"
+              else
+                echo "::warning::Could not delete old backup $old — remove it by hand in WebFTP."
+              fi
+            done
+          fi
 
       - name: Apply database migrations
         env:
