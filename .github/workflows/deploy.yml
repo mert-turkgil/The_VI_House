@@ -250,6 +250,13 @@ jobs:
 
       - name: Apply database migrations
         env:
+          # dotnet ef's design-time host defaults to the Development environment when this is unset
+          # (verified locally) — it then looks for appsettings.Development.json, which does not exist
+          # on this runner, GetConnectionString("DefaultConnection") comes back null, and Program.cs's
+          # own `?? throw` fires before --connection below ever gets a chance to help (that flag only
+          # overrides the connection string *after* the host has already built successfully). This is
+          # what "Connection string 'DefaultConnection' not found" during this step actually means.
+          ASPNETCORE_ENVIRONMENT: Production
           PROD_CONNECTION_STRING: ${{ secrets.PROD_CONNECTION_STRING }}
         run: >
           dotnet ef database update
