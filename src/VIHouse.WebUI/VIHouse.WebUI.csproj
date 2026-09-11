@@ -50,12 +50,37 @@
     <EmbeddedResource Update="Resources\*.resx" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <Target Name="NpmInstall" BeforeTargets="Build" Condition="!Exists('ClientApp/node_modules')">
+  <Target Name="NpmInstall" Condition="!Exists('ClientApp/node_modules')">
     <Exec Command="npm install" WorkingDirectory="ClientApp" />
   </Target>
 
-  <Target Name="ViteBuild" BeforeTargets="Build">
+  <!--
+    Two things about this target are load-bearing, both learned from a deploy where every anonymous
+    request for /dist/main.css was answered with the Coming Soon page.
+
+    MapStaticAssets serves only what is in the static web assets manifest, and the SDK builds that
+    manifest from @(Content) in ResolveProjectStaticWebAssets — which runs BeforeTargets=AssignTargetPaths,
+    early in the build, and @(Content) itself is evaluated before any target runs at all. Hooking
+    Vite BeforeTargets="Build" therefore ran it after the scan: on a developer machine wwwroot/dist
+    already existed from the previous build and was picked up anyway, on a clean CI checkout it did
+    not exist yet, so the manifest had no /dist/* entries and the gate saw "no endpoint" and redirected.
+
+    So: run Vite before the scan, and add its output to Content ourselves, with the same metadata
+    the SDK gives the rest of wwwroot (Sdk.StaticWebAssets.StaticAssets.ProjectSystem.props).
+    Remove-then-Include rather than Exclude="@(Content)" so a local build, where the evaluation-time
+    glob already found the stale dist files, ends up with exactly one item per file either way.
+
+    Skipped for design-time builds: the IDE runs those constantly, and nothing in them needs the CSS.
+  -->
+  <Target Name="ViteBuild"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          DependsOnTargets="NpmInstall"
+          Condition="'$(DesignTimeBuild)' != 'true'">
     <Exec Command="npm run build" WorkingDirectory="ClientApp" />
+    <ItemGroup>
+      <Content Remove="wwwroot\dist\**" />
+      <Content Include="wwwroot\dist\**" ExcludeFromSingleFile="true" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
   </Target>
 
 </Project>
