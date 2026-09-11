@@ -278,7 +278,7 @@ jobs:
           curl --silent --show-error --fail
           --user "$FTP_USERNAME:$FTP_PASSWORD"
           --upload-file .github/deploy/app_offline.htm
-          "ftp://$FTP_SERVER/app_offline.htm"
+          "ftp://$FTP_SERVER/wwwroot/app_offline.htm"
 
       - name: Wait for IIS to release file locks
         run: sleep "$OFFLINE_WAIT_SECONDS"
@@ -291,7 +291,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           local-dir: ${{ env.PUBLISH_DIR }}/
-          server-dir: /
+          server-dir: /wwwroot/
           dangerous-clean-slate: false
           exclude: |
             **/.git*
@@ -306,9 +306,9 @@ jobs:
         run: >
           curl --silent --show-error --fail
           --user "$FTP_USERNAME:$FTP_PASSWORD"
-          --quote "DELE app_offline.htm"
+          --quote "DELE wwwroot/app_offline.htm"
           --list-only
-          "ftp://$FTP_SERVER/"
+          "ftp://$FTP_SERVER/wwwroot/"
           --output /dev/null
 
       # First request after a deploy is what makes IIS start the app, so this doubles as warm-up.
