@@ -1,7 +1,14 @@
 @model ContactFormViewModel
+@inject VIHouse.WebUI.Helpers.SeoResolver Seo
 @{
     ViewData["Title"] = Loc["Contact.Title"];
     var sent = ViewData["Sent"] is true;
+
+    // The one contact address, same source the coming-soon footer and the JSON-LD block already
+    // read (SiteSetting.ContactEmail, edited in Admin > Site & SEO) — this used to be a hardcoded
+    // literal here, independent of all three.
+    var settings = await Seo.SettingsAsync();
+    var contactEmail = settings.ContactEmail;
 }
 
 <div class="content-hero">
@@ -15,10 +22,13 @@
 <div class="container content-body">
     <div class="contact-grid">
         <div class="contact-info">
-            <div class="contact-info__item">
-                <h4>@Loc["Contact.EmailHeading"]</h4>
-                <p><a href="mailto:concierge@thevihouse.com">concierge@thevihouse.com</a></p>
-            </div>
+            @if (!string.IsNullOrWhiteSpace(contactEmail))
+            {
+                <div class="contact-info__item">
+                    <h4>@Loc["Contact.EmailHeading"]</h4>
+                    <p><a href="mailto:@contactEmail">@contactEmail</a></p>
+                </div>
+            }
             <div class="contact-info__item">
                 <h4>@Loc["Contact.FaqHeading"]</h4>
                 <p>@Loc["Contact.FaqBody"] <a asp-controller="Faq" asp-action="Index">@Loc["Footer.Faq"]</a></p>

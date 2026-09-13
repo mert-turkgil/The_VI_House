@@ -3,31 +3,28 @@
 @{
     string PeriodLabel(MembershipBillingPeriod period) => period switch
     {
-        MembershipBillingPeriod.Monthly => "per month",
-        MembershipBillingPeriod.Annual => "per year",
-        _ => "one-time",
+        MembershipBillingPeriod.Monthly => Loc["Membership.PerMonth"].Value,
+        MembershipBillingPeriod.Annual => Loc["Membership.PerYear"].Value,
+        _ => Loc["Membership.OneTime"].Value,
     };
 }
 
 <div class="join">
     <div class="container join__inner">
-        <span class="join__eyebrow">Membership</span>
-        <h1>Join The VI House</h1>
-        <p class="join__lede">
-            There are two ways in. Become a member for standing access to the House, or apply to a
-            single experience if you'd rather start with one room.
-        </p>
+        <span class="join__eyebrow">@Loc["Nav.Membership"]</span>
+        <h1>@Loc["Join.Heading"]</h1>
+        <p class="join__lede">@Loc["Join.Lede"]</p>
 
         @* The two routes differ in more than price — one completes now, the other is reviewed by
            hand — so the choice is stated up front rather than discovered halfway through. *@
-        <div class="join__routes" role="group" aria-label="How to join">
+        <div class="join__routes" role="group" aria-label="@Loc["Join.Routes.Label"]">
             <div class="join__route join__route--active">
-                <span class="join__route-tag">Membership</span>
-                <p>Choose a plan and pay now. Your account is created straight away.</p>
+                <span class="join__route-tag">@Loc["Nav.Membership"]</span>
+                <p>@Loc["Join.Route.Membership"]</p>
             </div>
             <a class="join__route" href="#single-event">
-                <span class="join__route-tag">One experience</span>
-                <p>Apply to a single gathering. Reviewed by hand — you only pay once you're approved.</p>
+                <span class="join__route-tag">@Loc["Join.Route.Single.Tag"]</span>
+                <p>@Loc["Join.Route.Single"]</p>
             </a>
         </div>
 
@@ -41,20 +38,20 @@
             @* Arriving from a plan card on /membership. Confirming the choice here means the visitor
                can see it carried over instead of wondering whether the click registered. *@
             <div class="join__preselected" role="status">
-                <strong>@preselected.Name</strong> selected &mdash; fill in your details below to continue.
+                <strong>@preselected.Name</strong> @Loc["Join.Preselected"]
             </div>
         }
 
-        <form asp-action="Index" method="post" class="join__form">
+        <form asp-action="Index" method="post" class="join__form" novalidate>
             <input type="hidden" asp-for="ReferralCode" />
 
             <fieldset class="join__plans">
-                <legend>Choose your plan</legend>
+                <legend>@Loc["Join.ChoosePlan"]</legend>
                 <span asp-validation-for="PlanId" class="join__field-error"></span>
 
                 @if (Model.Plans.Count == 0)
                 {
-                    <p class="join__empty">No plans are open right now. Please check back shortly.</p>
+                    <p class="join__empty">@Loc["Join.NoPlans"]</p>
                 }
 
                 @foreach (var plan in Model.Plans)
@@ -73,12 +70,7 @@
                             }
                             @if (plan.BillingPeriod != MembershipBillingPeriod.OneTime)
                             {
-                                @* Deliberately not "cancel any time" — there is no self-service
-                                   cancellation yet, so this states the route that actually exists. *@
-                                <span class="join__plan-note">
-                                    Renews @(plan.BillingPeriod == MembershipBillingPeriod.Monthly ? "monthly" : "yearly")
-                                    until cancelled &mdash; <a href="/contact">contact us</a> to cancel.
-                                </span>
+                                <span class="join__plan-note">@Loc["Join.RenewsNote"]</span>
                             }
                         </span>
                     </label>
@@ -86,68 +78,128 @@
             </fieldset>
 
             <fieldset class="join__details">
-                <legend>Your details</legend>
+                <legend>@Loc["Form.Section.You"]</legend>
 
                 <div class="join__row">
                     <div class="join__field">
-                        <label asp-for="FirstName"></label>
+                        <label asp-for="FirstName">@Loc["Form.FirstName"]</label>
                         <input asp-for="FirstName" autocomplete="given-name" />
                         <span asp-validation-for="FirstName" class="join__field-error"></span>
                     </div>
                     <div class="join__field">
-                        <label asp-for="LastName"></label>
+                        <label asp-for="LastName">@Loc["Form.LastName"]</label>
                         <input asp-for="LastName" autocomplete="family-name" />
                         <span asp-validation-for="LastName" class="join__field-error"></span>
                     </div>
                 </div>
 
-                <div class="join__field">
-                    <label asp-for="Email"></label>
-                    <input asp-for="Email" type="email" autocomplete="email" />
-                    <span class="join__hint">This is where your receipt and account setup link go.</span>
-                    <span asp-validation-for="Email" class="join__field-error"></span>
-                </div>
-
                 <div class="join__row">
                     <div class="join__field">
-                        <label asp-for="Country"></label>
-                        <input asp-for="Country" placeholder="GB" maxlength="2" autocomplete="country" />
-                        <span asp-validation-for="Country" class="join__field-error"></span>
+                        <label asp-for="Email">@Loc["Form.Email"]</label>
+                        <input asp-for="Email" type="email" autocomplete="email" />
+                        <span class="join__hint">@Loc["Join.EmailHint"]</span>
+                        <span asp-validation-for="Email" class="join__field-error"></span>
                     </div>
                     <div class="join__field">
-                        <label asp-for="City"></label>
-                        <input asp-for="City" autocomplete="address-level2" />
-                        <span asp-validation-for="City" class="join__field-error"></span>
+                        <label asp-for="JobTitle">@Loc["Form.JobTitle"]</label>
+                        <input asp-for="JobTitle" autocomplete="organization-title" placeholder="@Loc["Form.JobTitle.Placeholder"]" />
+                        <span asp-validation-for="JobTitle" class="join__field-error"></span>
                     </div>
                 </div>
             </fieldset>
 
+            <fieldset class="join__details">
+                <legend>@Loc["Form.Section.Address"]</legend>
+
+                <div class="join__row">
+                    <div class="join__field">
+                        <label asp-for="AddressLine1">@Loc["Form.AddressLine1"]</label>
+                        <input asp-for="AddressLine1" autocomplete="address-line1" />
+                        <span asp-validation-for="AddressLine1" class="join__field-error"></span>
+                    </div>
+                    <div class="join__field">
+                        <label asp-for="AddressLine2">@Loc["Form.AddressLine2"]</label>
+                        <input asp-for="AddressLine2" autocomplete="address-line2" />
+                        <span asp-validation-for="AddressLine2" class="join__field-error"></span>
+                    </div>
+                </div>
+
+                <div class="join__row">
+                    <div class="join__field">
+                        <label asp-for="PostalCode">@Loc["Form.PostalCode"]</label>
+                        <input asp-for="PostalCode" autocomplete="postal-code" />
+                        <span asp-validation-for="PostalCode" class="join__field-error"></span>
+                    </div>
+                    <div class="join__field">
+                        <label asp-for="City">@Loc["Form.City"]</label>
+                        <input asp-for="City" autocomplete="address-level2" />
+                        <span asp-validation-for="City" class="join__field-error"></span>
+                    </div>
+                </div>
+
+                <div class="join__field">
+                    <label asp-for="Country">@Loc["Form.Country"]</label>
+                    <select asp-for="Country" asp-items='@Countries.SelectList(Model.Country, Loc["Form.ChooseCountry"].Value)' autocomplete="country"></select>
+                    <span asp-validation-for="Country" class="join__field-error"></span>
+                </div>
+            </fieldset>
+
+            <fieldset class="join__details">
+                <legend>@Loc["Form.Section.About"]</legend>
+
+                <div class="join__field">
+                    <label asp-for="About">@Loc["Form.About"] <span class="join__required" aria-hidden="true">*</span></label>
+                    <textarea asp-for="About" rows="4" placeholder="@Loc["Form.About.Placeholder"]" required></textarea>
+                    <span asp-validation-for="About" class="join__field-error"></span>
+                </div>
+
+                <div class="join__field">
+                    <label asp-for="Expectations">@Loc["Form.Expectations"] <span class="join__required" aria-hidden="true">*</span></label>
+                    <textarea asp-for="Expectations" rows="4" placeholder="@Loc["Form.Expectations.Placeholder"]" required></textarea>
+                    <span asp-validation-for="Expectations" class="join__field-error"></span>
+                </div>
+
+                <div class="join__row">
+                    <div class="join__field">
+                        <label asp-for="EarningsBand">@Loc["Form.EarningsBand"]</label>
+                        <select asp-for="EarningsBand">
+                            <option value="">@Loc["Form.EarningsBand.Choose"]</option>
+                            @foreach (var band in EarningsBand.All)
+                            {
+                                <option value="@band.Code" selected="@(band.Code == Model.EarningsBand)">@band.Label</option>
+                            }
+                        </select>
+                        <span class="join__hint">@Loc["Form.EarningsBand.Hint"]</span>
+                        <span asp-validation-for="EarningsBand" class="join__field-error"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            @* The text is wrapped in one span on purpose: the label is a flex row, and bare text
+               nodes beside the anchors each became their own flex item — which is how "I agree to
+               the / Terms & Conditions / and / Privacy Policy" ended up spread across the width. *@
             <div class="join__consent">
                 <label>
                     <input asp-for="AgreeToTerms" />
-                    I agree to the <a href="/legal/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a>
-                    and <a href="/legal/privacy" target="_blank" rel="noopener">Privacy Policy</a>.
+                    <span>@Loc["Form.AgreePrefix"] <a href="/legal/terms" target="_blank" rel="noopener">@Loc["Form.Terms"]</a> @Loc["Form.And"] <a href="/legal/privacy" target="_blank" rel="noopener">@Loc["Form.Privacy"]</a>.</span>
                 </label>
                 <span asp-validation-for="AgreeToTerms" class="join__field-error"></span>
             </div>
 
-            <button type="submit" class="btn btn--primary join__submit">Continue to payment</button>
-            <p class="join__secure">Payment is handled by Stripe. We never see or store your card details.</p>
+            <button type="submit" class="btn btn--primary join__submit">@Loc["Join.Submit"]</button>
+            <p class="join__secure">@Loc["Join.Secure"]</p>
         </form>
 
         <section class="join__single" id="single-event">
-            <span class="join__eyebrow">One experience</span>
-            <h2>Just want to attend one gathering?</h2>
-            <p class="join__single-lede">
-                No membership needed. Apply to the experience you're interested in — every
-                application is read by hand, and you'll only be asked to pay once you're approved.
-            </p>
+            <span class="join__eyebrow">@Loc["Join.Route.Single.Tag"]</span>
+            <h2>@Loc["Join.Single.Heading"]</h2>
+            <p class="join__single-lede">@Loc["Join.Single.Lede"]</p>
 
             @if (Model.OpenExperiences.Count == 0)
             {
                 <p class="join__empty">
-                    No experiences are open for applications right now.
-                    <a href="/experiences">See what's coming up</a>.
+                    @Loc["Join.Single.None"]
+                    <a href="/experiences">@Loc["Join.Single.SeeUpcoming"]</a>.
                 </p>
             }
             else
@@ -162,16 +214,16 @@
                                 </span>
                                 <h3>The VI House &mdash; @exp.City</h3>
                                 <span class="join__experience-meta">
-                                    @exp.City, @exp.Country
+                                    @exp.City, @Countries.NameFor(exp.Country)
                                     @if (exp.FromPriceMinor is not null)
                                     {
-                                        <text>&middot; from @MoneyFormatter.Format(exp.FromPriceMinor.Value, exp.Currency!)</text>
+                                        <text>&middot; @Loc["Join.From"] @MoneyFormatter.Format(exp.FromPriceMinor.Value, exp.Currency!)</text>
                                     }
                                 </span>
                             </div>
                             @* Carries the chosen experience through to the application form, so the
                                visitor never has to pick it a second time. *@
-                            <a class="btn btn--ghost" href="/apply?experience=@exp.Slug">Apply for this</a>
+                            <a class="btn btn--ghost" href="/apply?experience=@exp.Slug">@Loc["Join.ApplyForThis"]</a>
                         </li>
                     }
                 </ul>
@@ -179,7 +231,7 @@
         </section>
 
         <p class="join__alt">
-            Already have an account? <a asp-area="Identity" asp-page="/Account/Login">Sign in</a>.
+            @Loc["Join.AlreadyHaveAccount"] <a asp-area="Identity" asp-page="/Account/Login">@Loc["Nav.LogIn"]</a>.
         </p>
     </div>
 </div>

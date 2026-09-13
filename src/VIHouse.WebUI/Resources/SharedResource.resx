@@ -178,12 +178,6 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Account.NavSecurity" xml:space="preserve"><value>Security &amp; Login</value></data>
   <data name="Account.NavAdminPanel" xml:space="preserve"><value>Admin Panel</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>My Profile</value></data>
-  <data name="Account.CompanyLabel" xml:space="preserve"><value>Company</value></data>
-  <data name="Account.RoleLabel" xml:space="preserve"><value>Role</value></data>
-  <data name="Account.IndustryLabel" xml:space="preserve"><value>Industry</value></data>
-  <data name="Account.LinkedInLabel" xml:space="preserve"><value>LinkedIn URL</value></data>
-  <data name="Account.WebsiteLabel" xml:space="preserve"><value>Website</value></data>
-  <data name="Account.BioLabel" xml:space="preserve"><value>Bio</value></data>
   <data name="Account.SaveProfile" xml:space="preserve"><value>Save Profile</value></data>
   <data name="Account.BookingsTitle" xml:space="preserve"><value>My Bookings</value></data>
   <data name="Account.NoBookings" xml:space="preserve"><value>You don't have any bookings yet.</value></data>
@@ -235,7 +229,6 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Directory.Subheading" xml:space="preserve"><value>Search the community — find founders, operators and investors by industry, city, or what they're working on.</value></data>
   <data name="Directory.SearchLabel" xml:space="preserve"><value>Search</value></data>
   <data name="Directory.SearchPlaceholder" xml:space="preserve"><value>Name, company, role…</value></data>
-  <data name="Directory.IndustryLabel" xml:space="preserve"><value>Industry</value></data>
   <data name="Directory.CityLabel" xml:space="preserve"><value>City</value></data>
   <data name="Directory.CountryLabel" xml:space="preserve"><value>Country Code</value></data>
   <data name="Directory.FilterSubmit" xml:space="preserve"><value>Search</value></data>
@@ -243,14 +236,9 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Directory.NoResults" xml:space="preserve"><value>No members match these filters yet.</value></data>
   <data name="Directory.BackToDirectory" xml:space="preserve"><value>Back to Directory</value></data>
   <data name="Directory.About" xml:space="preserve"><value>About</value></data>
-  <data name="Directory.LookingFor" xml:space="preserve"><value>Looking For</value></data>
-  <data name="Directory.CanHelpWith" xml:space="preserve"><value>Can Help With</value></data>
 
   <data name="Account.DirectorySectionHeading" xml:space="preserve"><value>Member Directory</value></data>
   <data name="Account.DirectorySectionNote" xml:space="preserve"><value>These fields only appear on your Member Directory profile card.</value></data>
-  <data name="Account.InterestsLabel" xml:space="preserve"><value>Interests</value></data>
-  <data name="Account.LookingForLabel" xml:space="preserve"><value>Looking For</value></data>
-  <data name="Account.CanHelpWithLabel" xml:space="preserve"><value>Can Help With</value></data>
   <data name="Account.VisibleInDirectoryLabel" xml:space="preserve"><value>Show my profile in the Member Directory</value></data>
 
   <data name="Notif.Title" xml:space="preserve"><value>Notifications</value></data>
@@ -978,4 +966,177 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Admin.NotifySignups.NotYet" xml:space="preserve"><value>Not yet</value></data>
   <data name="Admin.NotifySignups.Empty" xml:space="preserve"><value>No one has signed up yet.</value></data>
   <data name="Admin.NotifySignups.Total" xml:space="preserve"><value>{0} on the list</value></data>
+  <data name="Form.Section.You" xml:space="preserve"><value>About you</value></data>
+  <data name="Form.Section.Address" xml:space="preserve"><value>Address</value></data>
+  <data name="Form.Section.About" xml:space="preserve"><value>In your words</value></data>
+  <data name="Form.FirstName" xml:space="preserve"><value>First name</value></data>
+  <data name="Form.LastName" xml:space="preserve"><value>Last name</value></data>
+  <data name="Form.Email" xml:space="preserve"><value>Email address</value></data>
+  <data name="Form.JobTitle" xml:space="preserve"><value>Title / profession</value></data>
+  <data name="Form.JobTitle.Placeholder" xml:space="preserve"><value>e.g. Founder, Partner at XYZ Capital, Architect</value></data>
+  <data name="Form.AddressLine1" xml:space="preserve"><value>Address line 1</value></data>
+  <data name="Form.AddressLine2" xml:space="preserve"><value>Address line 2</value></data>
+  <data name="Form.PostalCode" xml:space="preserve"><value>Postal code</value></data>
+  <data name="Form.City" xml:space="preserve"><value>City</value></data>
+  <data name="Form.Country" xml:space="preserve"><value>Country</value></data>
+  <data name="Form.ChooseCountry" xml:space="preserve"><value>Choose your country…</value></data>
+  <data name="Form.AnyCountry" xml:space="preserve"><value>Any country</value></data>
+  <data name="Form.About" xml:space="preserve"><value>Describe yourself or your business</value></data>
+  <data name="Form.About.Placeholder" xml:space="preserve"><value>What you do, what you have built, and what you are working on now.</value></data>
+  <data name="Form.Expectations" xml:space="preserve"><value>How may we help you with your goals, or what are your expectations?</value></data>
+  <data name="Form.Expectations.Placeholder" xml:space="preserve"><value>The introductions, rooms or conversations that would make this worth your time.</value></data>
+  <data name="Form.EarningsBand" xml:space="preserve"><value>Annual earnings</value></data>
+  <data name="Form.EarningsBand.Choose" xml:space="preserve"><value>Choose a range…</value></data>
+  <data name="Form.EarningsBand.Hint" xml:space="preserve"><value>A range, not a figure — it helps us seat the right people together.</value></data>
+  <data name="Form.AgreePrefix" xml:space="preserve"><value>I agree to the</value></data>
+  <data name="Form.Terms" xml:space="preserve"><value>Terms &amp; Conditions</value></data>
+  <data name="Form.And" xml:space="preserve"><value>and</value></data>
+  <data name="Form.Privacy" xml:space="preserve"><value>Privacy Policy</value></data>
+  <data name="Apply.Eyebrow" xml:space="preserve"><value>Request Access</value></data>
+  <data name="Apply.Intro" xml:space="preserve"><value>A few questions, read by hand. Tell us who you are and what you are hoping for, and we will come back to you within a few days.</value></data>
+  <data name="Apply.Submit" xml:space="preserve"><value>Submit application</value></data>
+  <data name="Apply.Note" xml:space="preserve"><value>Every application is reviewed by hand. You will hear back within a few days.</value></data>
+  <data name="Join.Heading" xml:space="preserve"><value>Join The VI House</value></data>
+  <data name="Join.Lede" xml:space="preserve"><value>There are two ways in. Become a member for standing access to the House, or apply to a single experience if you would rather start with one room.</value></data>
+  <data name="Join.Routes.Label" xml:space="preserve"><value>How to join</value></data>
+  <data name="Join.Route.Membership" xml:space="preserve"><value>Choose a plan and pay now. Your account is created straight away.</value></data>
+  <data name="Join.Route.Single.Tag" xml:space="preserve"><value>One experience</value></data>
+  <data name="Join.Route.Single" xml:space="preserve"><value>Apply to a single gathering. Reviewed by hand — you only pay once you are approved.</value></data>
+  <data name="Join.Preselected" xml:space="preserve"><value>selected — fill in your details below to continue.</value></data>
+  <data name="Join.ChoosePlan" xml:space="preserve"><value>Choose your plan</value></data>
+  <data name="Join.NoPlans" xml:space="preserve"><value>No plans are open right now. Please check back shortly.</value></data>
+  <data name="Join.RenewsNote" xml:space="preserve"><value>Renews automatically until cancelled — manage or cancel any time from your account.</value></data>
+  <data name="Join.EmailHint" xml:space="preserve"><value>This is where your receipt and account setup link go.</value></data>
+  <data name="Join.Submit" xml:space="preserve"><value>Continue to payment</value></data>
+  <data name="Join.Secure" xml:space="preserve"><value>Payment is handled by Stripe. We never see or store your card details.</value></data>
+  <data name="Join.Single.Heading" xml:space="preserve"><value>Just want to attend one gathering?</value></data>
+  <data name="Join.Single.Lede" xml:space="preserve"><value>No membership needed. Apply to the experience you are interested in — every application is read by hand, and you will only be asked to pay once you are approved.</value></data>
+  <data name="Join.Single.None" xml:space="preserve"><value>No experiences are open for applications right now.</value></data>
+  <data name="Join.Single.SeeUpcoming" xml:space="preserve"><value>See what is coming up</value></data>
+  <data name="Join.From" xml:space="preserve"><value>from</value></data>
+  <data name="Join.ApplyForThis" xml:space="preserve"><value>Apply for this</value></data>
+  <data name="Join.AlreadyHaveAccount" xml:space="preserve"><value>Already have an account?</value></data>
+  <data name="Account.NavOverview" xml:space="preserve"><value>Overview</value></data>
+  <data name="Account.NavMembership" xml:space="preserve"><value>Membership</value></data>
+  <data name="Account.DashboardTitle" xml:space="preserve"><value>My Account</value></data>
+  <data name="Account.WelcomeBack" xml:space="preserve"><value>Welcome back</value></data>
+  <data name="Account.Standing.Staff" xml:space="preserve"><value>House staff</value></data>
+  <data name="Account.Standing.Guest" xml:space="preserve"><value>Guest of the House</value></data>
+  <data name="Account.Standing.Prospect" xml:space="preserve"><value>Not yet a member</value></data>
+  <data name="Account.ProfileIncomplete.Heading" xml:space="preserve"><value>Your profile is missing a couple of answers.</value></data>
+  <data name="Account.ProfileIncomplete.Body" xml:space="preserve"><value>Every participant tells the House a little about themselves and what they are hoping for. It takes a minute, and it is needed before you can take a place on a session.</value></data>
+  <data name="Account.ProfileIncomplete.Cta" xml:space="preserve"><value>Complete profile</value></data>
+  <data name="Account.YourMembership" xml:space="preserve"><value>Your membership</value></data>
+  <data name="Account.Membership.Renews" xml:space="preserve"><value>Renews on {0}.</value></data>
+  <data name="Account.Membership.Ended" xml:space="preserve"><value>Ended on {0}.</value></data>
+  <data name="Account.MembershipDetails" xml:space="preserve"><value>Membership details</value></data>
+  <data name="Account.ManageBilling" xml:space="preserve"><value>Manage billing</value></data>
+  <data name="Account.MembershipUnlocks" xml:space="preserve"><value>What your membership opens</value></data>
+  <data name="Account.Perk.Sessions" xml:space="preserve"><value>Sessions, included</value></data>
+  <data name="Account.Perk.Directory" xml:space="preserve"><value>Member directory</value></data>
+  <data name="Account.Perk.Community" xml:space="preserve"><value>Community channels</value></data>
+  <data name="Account.Perk.Experiences" xml:space="preserve"><value>Priority on experiences</value></data>
+  <data name="Account.Staff.Heading" xml:space="preserve"><value>You are on the House team.</value></data>
+  <data name="Account.Staff.Body" xml:space="preserve"><value>Your account opens the admin panel. Anything you book or enrol in as a guest shows here too.</value></data>
+  <data name="Account.Guest.Heading" xml:space="preserve"><value>You are a guest of the House.</value></data>
+  <data name="Account.Guest.Body" xml:space="preserve"><value>You hold {0} booking(s) and {1} session(s). Membership would make every session included, and open the rooms between experiences.</value></data>
+  <data name="Account.Prospect.Heading" xml:space="preserve"><value>You are not a member yet.</value></data>
+  <data name="Account.Prospect.Body" xml:space="preserve"><value>Membership is standing access to the House between experiences — the sessions, the room, the people.</value></data>
+  <data name="Account.SeePlans" xml:space="preserve"><value>See plans</value></data>
+  <data name="Account.WhatMembershipIs" xml:space="preserve"><value>What membership is</value></data>
+  <data name="Account.NextSessions" xml:space="preserve"><value>Your next sessions</value></data>
+  <data name="Account.NextExperiences" xml:space="preserve"><value>Your next experiences</value></data>
+  <data name="Account.SeeAll" xml:space="preserve"><value>See all</value></data>
+  <data name="Account.NoLiveSessions" xml:space="preserve"><value>No live sittings coming up — you have {0} on-demand session(s) in your library.</value></data>
+  <data name="Account.NoUpcomingBookings" xml:space="preserve"><value>Nothing booked yet.</value></data>
+  <data name="Account.BrowseExperiences" xml:space="preserve"><value>Browse experiences</value></data>
+  <data name="Account.QuickLinks" xml:space="preserve"><value>Everything else</value></data>
+  <data name="Account.Quick.ProfileComplete" xml:space="preserve"><value>Complete</value></data>
+  <data name="Account.Quick.ProfileIncomplete" xml:space="preserve"><value>Needs a couple of answers</value></data>
+  <data name="Account.Quick.Unread" xml:space="preserve"><value>{0} unread</value></data>
+  <data name="Account.Quick.AllRead" xml:space="preserve"><value>All read</value></data>
+  <data name="Account.Quick.Bookings" xml:space="preserve"><value>{0} booking(s)</value></data>
+  <data name="Account.Quick.Sessions" xml:space="preserve"><value>{0} session(s)</value></data>
+  <data name="Account.ProfileLede" xml:space="preserve"><value>The House asks everyone the same few things, once. Keep them current and they follow you into every session and experience.</value></data>
+  <data name="Account.ProfilePrompt.Heading" xml:space="preserve"><value>Two quick answers before you take your place.</value></data>
+  <data name="Account.ProfilePrompt.Body" xml:space="preserve"><value>Tell us a little about yourself and what you are hoping for, save, and you will be taken straight back to the session.</value></data>
+  <data name="Account.MembershipTitle" xml:space="preserve"><value>My Membership</value></data>
+  <data name="Account.CurrentPlan" xml:space="preserve"><value>Current plan</value></data>
+  <data name="Account.Billing" xml:space="preserve"><value>Billing</value></data>
+  <data name="Account.Billing.Recurring" xml:space="preserve"><value>Renews automatically</value></data>
+  <data name="Account.Billing.OneTime" xml:space="preserve"><value>Paid once</value></data>
+  <data name="Account.ContactAboutMembership" xml:space="preserve"><value>Contact us about your membership</value></data>
+  <data name="Account.ManageBilling.Note" xml:space="preserve"><value>Change your card, download invoices or cancel — securely, on Stripe. You will be brought back here afterwards.</value></data>
+  <data name="Account.ManageBilling.Unavailable" xml:space="preserve"><value>Self-service billing is not available for this membership yet — contact us and we will sort any change by hand.</value></data>
+  <data name="Account.NoMembership.Sales" xml:space="preserve"><value>Choose a plan below to join. Your card, your sessions and the rooms between experiences open the moment payment clears.</value></data>
+  <data name="Account.NoMembership.Apply" xml:space="preserve"><value>Membership is granted through an application to an experience. Once you are approved and have attended, the House will be in touch.</value></data>
+  <data name="Account.ChooseAPlan" xml:space="preserve"><value>Choose a plan</value></data>
+  <data name="Account.MembershipHistory" xml:space="preserve"><value>Membership history</value></data>
+  <data name="Account.History.Plan" xml:space="preserve"><value>Plan</value></data>
+  <data name="Account.History.From" xml:space="preserve"><value>From</value></data>
+  <data name="Account.History.Until" xml:space="preserve"><value>Until</value></data>
+  <data name="Account.History.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Account.Status.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Account.Status.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Account.Status.Expired" xml:space="preserve"><value>Expired</value></data>
+  <data name="Sessions.Grant.Paid" xml:space="preserve"><value>Paid</value></data>
+  <data name="Sessions.Grant.Membership" xml:space="preserve"><value>Membership</value></data>
+  <data name="Sessions.Grant.Free" xml:space="preserve"><value>Free</value></data>
+  <data name="Sessions.Grant.Comped" xml:space="preserve"><value>Complimentary</value></data>
+  <data name="Sessions.JoinLink" xml:space="preserve"><value>Join session</value></data>
+  <data name="Sessions.LinkPending" xml:space="preserve"><value>Join link arrives before the session</value></data>
+  <data name="Sessions.LiveNow" xml:space="preserve"><value>Live now</value></data>
+  <data name="Sessions.Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Sessions.WatchAgain" xml:space="preserve"><value>Watch again</value></data>
+  <data name="Sessions.Upcoming" xml:space="preserve"><value>Coming up</value></data>
+  <data name="Sessions.Library" xml:space="preserve"><value>Your on-demand library</value></data>
+  <data name="Sessions.PastHeading" xml:space="preserve"><value>Already held</value></data>
+  <data name="Sessions.Portal.Lede" xml:space="preserve"><value>Every session you hold a place on — live sittings with their join links first, then the library, then the ones already held.</value></data>
+  <data name="Sessions.Portal.Empty" xml:space="preserve"><value>Nothing here yet. Free sessions take one click; priced ones are included with a membership.</value></data>
+  <data name="Sessions.Stat.Total" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Sessions.Stat.Upcoming" xml:space="preserve"><value>Upcoming</value></data>
+  <data name="Sessions.Stat.Paid" xml:space="preserve"><value>Paid</value></data>
+  <data name="Sessions.Stat.Membership" xml:space="preserve"><value>Via membership</value></data>
+  <data name="Seminars.Attendee.Paid.Heading" xml:space="preserve"><value>Your place is paid for.</value></data>
+  <data name="Seminars.Attendee.Paid.Body" xml:space="preserve"><value>You paid {0} on {1}. Your access does not expire — the recording and materials stay yours.</value></data>
+  <data name="Seminars.Attendee.Membership.Heading" xml:space="preserve"><value>Included with your membership.</value></data>
+  <data name="Seminars.Attendee.Membership.Body" xml:space="preserve"><value>This session is priced at {0} for non-members. Your membership covers it — nothing to pay.</value></data>
+  <data name="Seminars.Attendee.Free.Heading" xml:space="preserve"><value>You are in.</value></data>
+  <data name="Seminars.Attendee.Free.Body" xml:space="preserve"><value>This session is open to everyone who can see it. Your place is confirmed.</value></data>
+  <data name="Seminars.Attendee.Comped.Heading" xml:space="preserve"><value>A place, with our compliments.</value></data>
+  <data name="Seminars.Attendee.Comped.Body" xml:space="preserve"><value>The House has granted you a place on this session. Nothing to pay.</value></data>
+  <data name="Seminars.Attendee.Starts" xml:space="preserve"><value>Starts</value></data>
+  <data name="Seminars.Attendee.AllSessions" xml:space="preserve"><value>All my sessions</value></data>
+  <data name="Seminars.Access.ProfileFirst" xml:space="preserve"><value>One thing first: the House asks every participant a couple of questions about themselves.</value></data>
+  <data name="Seminars.Access.CompleteProfile" xml:space="preserve"><value>Complete your profile to enrol</value></data>
+  <data name="Seminar.Error.ProfileIncomplete" xml:space="preserve"><value>Please complete your profile before taking a place on a session.</value></data>
+  <data name="Membership.SeePlans" xml:space="preserve"><value>See plans</value></data>
+  <data name="Membership.Guest.Heading" xml:space="preserve"><value>Welcome back, {0}.</value></data>
+  <data name="Membership.Guest.Subheading" xml:space="preserve"><value>You already hold a place with the House. Membership is the standing version of that — every session included, and the rooms between experiences open all year.</value></data>
+  <data name="Membership.Member.Eyebrow" xml:space="preserve"><value>Your membership</value></data>
+  <data name="Membership.Member.Heading" xml:space="preserve"><value>Good to see you, {0}.</value></data>
+  <data name="Membership.Member.Subheading" xml:space="preserve"><value>You are a {0} of The VI House. This page is what that opens.</value></data>
+  <data name="Membership.Member.Renews" xml:space="preserve"><value>Renews</value></data>
+  <data name="Membership.Member.Doors.Heading" xml:space="preserve"><value>The doors your membership opens</value></data>
+  <data name="Membership.Member.Doors.Sessions" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Membership.Member.Doors.Sessions.Body" xml:space="preserve"><value>Workshops, founder sessions and the library — priced sessions are included for you.</value></data>
+  <data name="Membership.Member.Doors.Experiences" xml:space="preserve"><value>Experiences</value></data>
+  <data name="Membership.Member.Doors.Experiences.Body" xml:space="preserve"><value>The multi-day gatherings. Members hear first, and join without a second application.</value></data>
+  <data name="Membership.Member.Doors.Directory" xml:space="preserve"><value>Member directory</value></data>
+  <data name="Membership.Member.Doors.Directory.Body" xml:space="preserve"><value>Who is in the room — and how to reach them.</value></data>
+  <data name="Membership.Member.Doors.Community" xml:space="preserve"><value>Community</value></data>
+  <data name="Membership.Member.Doors.Community.Body" xml:space="preserve"><value>The channels where the conversation carries on between gatherings.</value></data>
+  <data name="Membership.Member.Doors.Portal" xml:space="preserve"><value>Your session portal</value></data>
+  <data name="Membership.Member.Doors.Portal.Body" xml:space="preserve"><value>Everything you are enrolled in — join links, recordings, materials.</value></data>
+  <data name="Membership.Member.OtherPlans" xml:space="preserve"><value>Other plans</value></data>
+  <data name="Membership.Member.OtherPlans.Note" xml:space="preserve"><value>To change plan, use Manage billing on your account page, or contact us — we will move you across without a second subscription.</value></data>
+  <data name="Membership.Member.YourPlan" xml:space="preserve"><value>Your plan</value></data>
+  <data name="Membership.Member.AskToChange" xml:space="preserve"><value>Ask to change plan</value></data>
+  <data name="Membership.Member.Cta.Eyebrow" xml:space="preserve"><value>Next</value></data>
+  <data name="Membership.Member.Cta.Heading" xml:space="preserve"><value>Take a seat in the next room.</value></data>
+  <data name="Membership.Member.Cta.Body" xml:space="preserve"><value>Every session is one click away — no checkout, no application.</value></data>
+  <data name="Membership.Member.Cta.Button" xml:space="preserve"><value>Browse sessions</value></data>
+  <data name="Directory.ProfessionLabel" xml:space="preserve"><value>Profession</value></data>
+  <data name="Admin.Seminar.MeetingUrl" xml:space="preserve"><value>Meeting link</value></data>
+  <data name="Admin.Seminar.MeetingUrl.Hint" xml:space="preserve"><value>Zoom / Meet / Teams link for an online sitting. Shown only to confirmed attendees, in their portal and on the page once enrolled — never on the public card.</value></data>
 </root>

@@ -1,102 +1,268 @@
-@model ProfileFormViewModel
+@model AccountDashboardViewModel
 @{
-    ViewData["Title"] = Loc["Account.ProfileTitle"];
-    var membership = ViewData["Membership"] as AccountMembershipInfo;
+    ViewData["Title"] = Loc["Account.DashboardTitle"];
+    var m = Model.Membership;
+
+    var standingClass = Model.Standing switch
+    {
+        AccountStanding.Member => "account-standing--member",
+        AccountStanding.Staff => "account-standing--staff",
+        AccountStanding.Guest => "account-standing--guest",
+        _ => "account-standing--prospect",
+    };
+
+    string GrantLabel(SeminarAccessGrant grant) => grant switch
+    {
+        SeminarAccessGrant.Purchase => Loc["Sessions.Grant.Paid"].Value,
+        SeminarAccessGrant.Membership => Loc["Sessions.Grant.Membership"].Value,
+        SeminarAccessGrant.Comped => Loc["Sessions.Grant.Comped"].Value,
+        _ => Loc["Sessions.Grant.Free"].Value,
+    };
 }
 
 <div class="account-manage">
     <partial name="_AccountNav" />
-    <div class="account-manage__content">
-        <h1>@Loc["Account.ProfileTitle"]</h1>
+    <div class="account-manage__content account-dash">
 
         @if (TempData["StatusMessage"] is string status)
         {
-            <div class="contact-success" style="margin-bottom:20px;">@status</div>
+            <div class="contact-success" role="status">@status</div>
         }
 
-        <div class="account-membership-card">
-            @if (membership is not null)
-            {
-                <span class="account-membership-card__badge">@membership.PlanName</span>
-                <p>
-                    @if (membership.ExpiresAt is not null)
+        @* --- Who you are to the House ---------------------------------------------------- *@
+        <header class="account-dash__hero">
+            <span class="account-dash__eyebrow">@Loc["Account.WelcomeBack"]</span>
+            <h1>@Model.FirstName @Model.LastName</h1>
+            <div class="account-dash__standing">
+                <span class="account-standing @standingClass">
+                    @switch (Model.Standing)
                     {
-                        @Loc["Account.MembershipValidUntil", membership.ExpiresAt.Value.ToString("d MMMM yyyy")]
+                        case AccountStanding.Member: @m!.Plan.Name break;
+                        case AccountStanding.Staff: @Loc["Account.Standing.Staff"] break;
+                        case AccountStanding.Guest: @Loc["Account.Standing.Guest"] break;
+                        default: @Loc["Account.Standing.Prospect"] break;
                     }
-                    else
+                </span>
+                @if (Model.MemberNumber is not null)
+                {
+                    <span class="account-dash__number">@Loc["Card.MemberNumber"] @Model.MemberNumber</span>
+                }
+            </div>
+        </header>
+
+        @if (!Model.ProfileComplete)
+        {
+            <div class="account-notice" role="status">
+                <div>
+                    <strong>@Loc["Account.ProfileIncomplete.Heading"]</strong>
+                    <p>@Loc["Account.ProfileIncomplete.Body"]</p>
+                </div>
+                <a class="btn btn--primary" asp-action="Profile">@Loc["Account.ProfileIncomplete.Cta"]</a>
+            </div>
+        }
+
+        @* --- Membership: the panel the dashboard is built around ---------------------------- *@
+        @if (m is not null)
+        {
+            <section class="account-membership" aria-labelledby="membership-heading">
+                <div class="account-membership__body">
+                    <span class="account-membership__eyebrow">@Loc["Account.YourMembership"]</span>
+                    <h2 id="membership-heading">@m.Plan.Name</h2>
+                    <p class="account-membership__term">
+                        @if (m.Membership.Status == MembershipStatus.Cancelled)
+                        {
+                            @Loc["Account.Membership.Ended", m.Membership.ExpiresAt?.ToString("d MMMM yyyy") ?? ""]
+                        }
+                        else if (m.HasProviderSubscription && m.Membership.RenewalAt is { } renews)
+                        {
+                            @Loc["Account.Membership.Renews", renews.ToString("d MMMM yyyy")]
+                        }
+                        else if (m.Membership.ExpiresAt is { } expires)
+                        {
+                            @Loc["Account.MembershipValidUntil", expires.ToString("d MMMM yyyy")]
+                        }
+                        else
+                        {
+                            @Loc["Account.MembershipNoExpiry"]
+                        }
+                        &middot; @Loc["Card.MemberSince"] @m.Membership.StartAt.ToString("MMMM yyyy")
+                    </p>
+                    <div class="account-membership__actions">
+                        <a class="btn btn--primary" asp-action="Card">@Loc["Card.ViewCard"]</a>
+                        <a class="btn btn--ghost-dark" asp-action="Membership">@Loc["Account.MembershipDetails"]</a>
+                        @if (Model.CanManageBilling)
+                        {
+                            <form asp-action="Billing" method="post">
+                                <button type="submit" class="btn btn--ghost-dark">@Loc["Account.ManageBilling"]</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+                <ul class="account-membership__perks" aria-label="@Loc["Account.MembershipUnlocks"]">
+                    <li><a asp-controller="Seminars" asp-action="Index">@Loc["Account.Perk.Sessions"]</a></li>
+                    @if (Model.DirectoryEnabled)
                     {
-                        @Loc["Account.MembershipNoExpiry"]
+                        <li><a asp-controller="MemberDirectory" asp-action="Index">@Loc["Account.Perk.Directory"]</a></li>
                     }
-                    &middot; <a asp-controller="Account" asp-action="Card">@Loc["Card.ViewCard"]</a>
-                </p>
-            }
-            else
-            {
-                <p>@Loc["Account.NoMembership"] <a asp-controller="Membership" asp-action="Index">@Loc["Account.ViewPlans"]</a></p>
-            }
+                    @if (Model.CommunityEnabled)
+                    {
+                        <li><a asp-action="Community">@Loc["Account.Perk.Community"]</a></li>
+                    }
+                    <li><a asp-controller="Experiences" asp-action="Index">@Loc["Account.Perk.Experiences"]</a></li>
+                </ul>
+            </section>
+        }
+        else if (Model.Standing == AccountStanding.Staff)
+        {
+            <section class="account-membership account-membership--muted">
+                <div class="account-membership__body">
+                    <span class="account-membership__eyebrow">@Loc["Account.Standing.Staff"]</span>
+                    <h2>@Loc["Account.Staff.Heading"]</h2>
+                    <p class="account-membership__term">@Loc["Account.Staff.Body"]</p>
+                    <div class="account-membership__actions">
+                        <a class="btn btn--primary" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">@Loc["Account.NavAdminPanel"]</a>
+                    </div>
+                </div>
+            </section>
+        }
+        else
+        {
+            @* A guest or a prospect: the same panel, addressed to someone who is not yet a member.
+               What they already hold is acknowledged first — a ticket-holder is a guest of the
+               House, not a stranger — and the route in follows. *@
+            <section class="account-membership account-membership--invite">
+                <div class="account-membership__body">
+                    <span class="account-membership__eyebrow">@Loc["Account.YourMembership"]</span>
+                    <h2>@(Model.Standing == AccountStanding.Guest ? Loc["Account.Guest.Heading"] : Loc["Account.Prospect.Heading"])</h2>
+                    <p class="account-membership__term">
+                        @if (Model.Standing == AccountStanding.Guest)
+                        {
+                            @Loc["Account.Guest.Body", Model.TotalBookingCount, Model.TotalSessionCount]
+                        }
+                        else
+                        {
+                            @Loc["Account.Prospect.Body"]
+                        }
+                    </p>
+                    <div class="account-membership__actions">
+                        @if (Model.Plans.Count > 0)
+                        {
+                            <a class="btn btn--primary" asp-action="Membership">@Loc["Account.SeePlans"]</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn--primary" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Nav.ApplyToJoin"]</a>
+                        }
+                        <a class="btn btn--ghost-dark" asp-controller="Membership" asp-action="Index">@Loc["Account.WhatMembershipIs"]</a>
+                    </div>
+                </div>
+            </section>
+        }
+
+        @* --- What is coming up ----------------------------------------------------------- *@
+        <div class="account-dash__grid">
+            <section class="account-panel">
+                <header class="account-panel__head">
+                    <h2>@Loc["Account.NextSessions"]</h2>
+                    <a asp-action="Sessions">@Loc["Account.SeeAll"] (@Model.TotalSessionCount)</a>
+                </header>
+                @if (Model.UpcomingSessions.Count == 0)
+                {
+                    <p class="account-panel__empty">
+                        @if (Model.OnDemandSessionCount > 0)
+                        {
+                            @Loc["Account.NoLiveSessions", Model.OnDemandSessionCount]
+                        }
+                        else
+                        {
+                            @Loc["Account.NoSessions"]
+                        }
+                        <a asp-controller="Seminars" asp-action="Index">@Loc["Account.BrowseSessions"]</a>
+                    </p>
+                }
+                else
+                {
+                    <ul class="account-list">
+                        @foreach (var s in Model.UpcomingSessions)
+                        {
+                            <li class="account-list__item">
+                                <div class="account-list__date">
+                                    <span class="account-list__day">@s.StartAtUtc!.Value.ToString("dd")</span>
+                                    <span class="account-list__month">@s.StartAtUtc.Value.ToString("MMM")</span>
+                                </div>
+                                <div class="account-list__body">
+                                    <a class="account-list__title" asp-controller="Seminars" asp-action="Details" asp-route-slug="@s.Slug">@s.Title</a>
+                                    <span class="account-list__meta">
+                                        @s.StartAtUtc.Value.ToString("HH:mm") UTC &middot;
+                                        @(s.IsOnline ? Loc["Seminars.Online"].Value : s.Location ?? Loc["Seminars.InPerson"].Value)
+                                        &middot; <span class="account-grant account-grant--@s.GrantedVia.ToString().ToLowerInvariant()">@GrantLabel(s.GrantedVia)</span>
+                                    </span>
+                                </div>
+                                @if (s.HasMeetingLink)
+                                {
+                                    <a class="btn btn--ghost-dark btn--sm" asp-controller="Seminars" asp-action="Details" asp-route-slug="@s.Slug">@Loc["Sessions.JoinLink"]</a>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+
+            <section class="account-panel">
+                <header class="account-panel__head">
+                    <h2>@Loc["Account.NextExperiences"]</h2>
+                    <a asp-action="Bookings">@Loc["Account.SeeAll"] (@Model.TotalBookingCount)</a>
+                </header>
+                @if (Model.UpcomingBookings.Count == 0)
+                {
+                    <p class="account-panel__empty">
+                        @Loc["Account.NoUpcomingBookings"]
+                        <a asp-controller="Experiences" asp-action="Index">@Loc["Account.BrowseExperiences"]</a>
+                    </p>
+                }
+                else
+                {
+                    <ul class="account-list">
+                        @foreach (var b in Model.UpcomingBookings)
+                        {
+                            <li class="account-list__item">
+                                <div class="account-list__date">
+                                    <span class="account-list__day">@b.StartAtUtc.ToString("dd")</span>
+                                    <span class="account-list__month">@b.StartAtUtc.ToString("MMM")</span>
+                                </div>
+                                <div class="account-list__body">
+                                    <a class="account-list__title" asp-action="Ticket" asp-route-reference="@b.Reference">@b.ExperienceLabel</a>
+                                    <span class="account-list__meta">@b.Reference &middot; @b.Status</span>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
         </div>
 
-        <form asp-action="Index" method="post" class="apply-form" novalidate>
-            <div asp-validation-summary="ModelOnly" class="apply-form__summary"></div>
-            <div class="apply-form__grid apply-form__grid--2">
-                <div class="apply-field">
-                    <label asp-for="CompanyName">@Loc["Account.CompanyLabel"]</label>
-                    <input asp-for="CompanyName" />
-                </div>
-                <div class="apply-field">
-                    <label asp-for="JobTitle">@Loc["Account.RoleLabel"]</label>
-                    <input asp-for="JobTitle" />
-                </div>
-                <div class="apply-field">
-                    <label asp-for="Industry">@Loc["Account.IndustryLabel"]</label>
-                    <input asp-for="Industry" />
-                </div>
-                <div class="apply-field">
-                    <label asp-for="LinkedInUrl">@Loc["Account.LinkedInLabel"]</label>
-                    <input asp-for="LinkedInUrl" />
-                    <span asp-validation-for="LinkedInUrl" class="apply-field__error"></span>
-                </div>
-                <div class="apply-field">
-                    <label asp-for="WebsiteUrl">@Loc["Account.WebsiteLabel"]</label>
-                    <input asp-for="WebsiteUrl" />
-                    <span asp-validation-for="WebsiteUrl" class="apply-field__error"></span>
-                </div>
-            </div>
-            <div class="apply-field">
-                <label asp-for="Bio">@Loc["Account.BioLabel"]</label>
-                <textarea asp-for="Bio" rows="4"></textarea>
-            </div>
-
-            <fieldset class="apply-form__section">
-                <legend>@Loc["Account.DirectorySectionHeading"]</legend>
-                <p class="apply-form__note" style="margin-top:-8px;">@Loc["Account.DirectorySectionNote"]</p>
-                <div class="apply-form__grid apply-form__grid--2">
-                    <div class="apply-field">
-                        <label asp-for="Interests">@Loc["Account.InterestsLabel"]</label>
-                        <input asp-for="Interests" />
-                    </div>
-                    <div class="apply-field">
-                        <label asp-for="LookingFor">@Loc["Account.LookingForLabel"]</label>
-                        <input asp-for="LookingFor" />
-                    </div>
-                </div>
-                <div class="apply-field">
-                    <label asp-for="CanHelpWith">@Loc["Account.CanHelpWithLabel"]</label>
-                    <input asp-for="CanHelpWith" />
-                </div>
-                <div class="apply-field apply-field--checkbox">
-                    <label>
-                        <input asp-for="VisibleInDirectory" type="checkbox" />
-                        <span>@Loc["Account.VisibleInDirectoryLabel"]</span>
-                    </label>
-                </div>
-            </fieldset>
-
-            <button type="submit" class="btn btn--primary apply-form__submit">@Loc["Account.SaveProfile"]</button>
-        </form>
+        @* --- Everything else in the account, one tap away ------------------------------------ *@
+        <nav class="account-quick" aria-label="@Loc["Account.QuickLinks"]">
+            <a class="account-quick__item" asp-action="Profile">
+                <strong>@Loc["Account.NavProfile"]</strong>
+                <span>@(Model.ProfileComplete ? Loc["Account.Quick.ProfileComplete"] : Loc["Account.Quick.ProfileIncomplete"])</span>
+            </a>
+            <a class="account-quick__item" asp-action="Notifications">
+                <strong>@Loc["Notif.Title"]</strong>
+                <span>@(Model.UnreadNotifications > 0 ? Loc["Account.Quick.Unread", Model.UnreadNotifications] : Loc["Account.Quick.AllRead"])</span>
+            </a>
+            <a class="account-quick__item" asp-action="Bookings">
+                <strong>@Loc["Account.NavBookings"]</strong>
+                <span>@Loc["Account.Quick.Bookings", Model.TotalBookingCount]</span>
+            </a>
+            <a class="account-quick__item" asp-action="Sessions">
+                <strong>@Loc["Account.NavSessions"]</strong>
+                <span>@Loc["Account.Quick.Sessions", Model.TotalSessionCount]</span>
+            </a>
+            <a class="account-quick__item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                <strong>@Loc["Account.NavSecurity"]</strong>
+                <span>@Model.Email</span>
+            </a>
+        </nav>
     </div>
 </div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

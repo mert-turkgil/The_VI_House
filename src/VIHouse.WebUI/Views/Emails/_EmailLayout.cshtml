@@ -1,8 +1,21 @@
+@* Fully qualified rather than relying on an inherited @using: this view has no Views/Emails/
+   _ViewImports.cshtml of its own, and while Views/_ViewImports.cshtml's directives do cascade down
+   into this render path (RazorEmailTemplateRenderer uses the same IRazorViewEngine/DI container as
+   a normal request), spelling the type out here means this file's correctness doesn't depend on
+   what the parent ViewImports happens to contain today. *@
+@inject VIHouse.WebUI.Helpers.SeoResolver Seo
 @{
     // Deliberately plain, table-free, inline-styled HTML — brief §70: "logo -> short message -> CTA
     // -> contact is enough," and heavy/complex HTML risks spam filters. Not pixel-perfect on every
     // legacy Outlook build, but renders cleanly on webmail/mobile, which covers the vast majority of
     // where these are actually opened.
+    //
+    // The contact address used to be a literal here, independent of the coming-soon page and the
+    // JSON-LD block, which both read SiteSetting.ContactEmail — the one address an admin actually
+    // edits (Admin > Site & SEO). Reading the same source here means changing it there now moves
+    // every footer in the same deploy, not three-out-of-four.
+    var settings = await Seo.SettingsAsync();
+    var contactEmail = settings.ContactEmail;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +42,14 @@
                     <tr>
                         <td style="padding:20px 32px; background-color:#f4f0e6; font-family:Arial,Helvetica,sans-serif; font-size:12px; color:#666666; border-top:1px solid #e9e3d3;">
                             The VI House &mdash; a private global community for founders, operators and investors.<br />
-                            Questions? Reply to this email or contact us at <a href="mailto:concierge@thevihouse.com" style="color:#7a5f2f;">concierge@thevihouse.com</a>.
+                            @if (string.IsNullOrWhiteSpace(contactEmail))
+                            {
+                                @: Questions? Reply to this email and we'll get back to you.
+                            }
+                            else
+                            {
+                                @: Questions? Reply to this email or contact us at <a href="mailto:@contactEmail" style="color:#7a5f2f;">@contactEmail</a>.
+                            }
                         </td>
                     </tr>
                 </table>

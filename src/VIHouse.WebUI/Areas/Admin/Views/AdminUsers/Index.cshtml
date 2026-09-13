@@ -29,7 +29,7 @@ else
         <thead>
             <tr>
                 <th>Email</th>
-                <th>Company</th>
+                <th>Title / profession</th>
                 <th>Roles</th>
                 <th>Applications</th>
                 <th>Bookings</th>
@@ -41,7 +41,7 @@ else
             {
                 <tr>
                     <td><a asp-action="Details" asp-route-id="@u.UserId">@u.Email</a></td>
-                    <td>@(u.CompanyName ?? "—")</td>
+                    <td>@(u.JobTitle ?? "—")</td>
                     <td>@(u.Roles.Count == 0 ? "—" : string.Join(", ", u.Roles))</td>
                     <td>@u.ApplicationCount</td>
                     <td>@u.BookingCount</td>

@@ -178,12 +178,6 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Account.NavSecurity" xml:space="preserve"><value>Turvalisus ja sisselogimine</value></data>
   <data name="Account.NavAdminPanel" xml:space="preserve"><value>Halduspaneel</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>Minu profiil</value></data>
-  <data name="Account.CompanyLabel" xml:space="preserve"><value>Ettevõte</value></data>
-  <data name="Account.RoleLabel" xml:space="preserve"><value>Roll</value></data>
-  <data name="Account.IndustryLabel" xml:space="preserve"><value>Valdkond</value></data>
-  <data name="Account.LinkedInLabel" xml:space="preserve"><value>LinkedIn URL</value></data>
-  <data name="Account.WebsiteLabel" xml:space="preserve"><value>Veebileht</value></data>
-  <data name="Account.BioLabel" xml:space="preserve"><value>Enda kohta</value></data>
   <data name="Account.SaveProfile" xml:space="preserve"><value>Salvesta profiil</value></data>
   <data name="Account.BookingsTitle" xml:space="preserve"><value>Minu broneeringud</value></data>
   <data name="Account.NoBookings" xml:space="preserve"><value>Sul ei ole veel broneeringuid.</value></data>
@@ -235,7 +229,6 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Directory.Subheading" xml:space="preserve"><value>Otsi kogukonnast — leia asutajaid, tegevjuhte ja investoreid valdkonna, linna või selle järgi, millega nad tegelevad.</value></data>
   <data name="Directory.SearchLabel" xml:space="preserve"><value>Otsi</value></data>
   <data name="Directory.SearchPlaceholder" xml:space="preserve"><value>Nimi, ettevõte, roll...</value></data>
-  <data name="Directory.IndustryLabel" xml:space="preserve"><value>Valdkond</value></data>
   <data name="Directory.CityLabel" xml:space="preserve"><value>Linn</value></data>
   <data name="Directory.CountryLabel" xml:space="preserve"><value>Riigikood</value></data>
   <data name="Directory.FilterSubmit" xml:space="preserve"><value>Otsi</value></data>
@@ -243,14 +236,9 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Directory.NoResults" xml:space="preserve"><value>Ükski liige ei vasta neile filtritele.</value></data>
   <data name="Directory.BackToDirectory" xml:space="preserve"><value>Tagasi registrisse</value></data>
   <data name="Directory.About" xml:space="preserve"><value>Minust</value></data>
-  <data name="Directory.LookingFor" xml:space="preserve"><value>Otsin</value></data>
-  <data name="Directory.CanHelpWith" xml:space="preserve"><value>Saan aidata</value></data>
 
   <data name="Account.DirectorySectionHeading" xml:space="preserve"><value>Liikmete register</value></data>
   <data name="Account.DirectorySectionNote" xml:space="preserve"><value>Need väljad kuvatakse ainult sinu profiilikaardil liikmete registris.</value></data>
-  <data name="Account.InterestsLabel" xml:space="preserve"><value>Huvid</value></data>
-  <data name="Account.LookingForLabel" xml:space="preserve"><value>Otsin</value></data>
-  <data name="Account.CanHelpWithLabel" xml:space="preserve"><value>Saan aidata</value></data>
   <data name="Account.VisibleInDirectoryLabel" xml:space="preserve"><value>Näita minu profiili liikmete registris</value></data>
 
   <data name="Notif.Title" xml:space="preserve"><value>Teated</value></data>
@@ -978,4 +966,177 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Admin.NotifySignups.NotYet" xml:space="preserve"><value>Veel mitte</value></data>
   <data name="Admin.NotifySignups.Empty" xml:space="preserve"><value>Keegi pole veel registreerunud.</value></data>
   <data name="Admin.NotifySignups.Total" xml:space="preserve"><value>{0} nimekirjas</value></data>
+  <data name="Form.Section.You" xml:space="preserve"><value>Teie kohta</value></data>
+  <data name="Form.Section.Address" xml:space="preserve"><value>Aadress</value></data>
+  <data name="Form.Section.About" xml:space="preserve"><value>Teie sõnadega</value></data>
+  <data name="Form.FirstName" xml:space="preserve"><value>Eesnimi</value></data>
+  <data name="Form.LastName" xml:space="preserve"><value>Perekonnanimi</value></data>
+  <data name="Form.Email" xml:space="preserve"><value>E-posti aadress</value></data>
+  <data name="Form.JobTitle" xml:space="preserve"><value>Ametinimetus / elukutse</value></data>
+  <data name="Form.JobTitle.Placeholder" xml:space="preserve"><value>nt Asutaja, XYZ Capitali partner, arhitekt</value></data>
+  <data name="Form.AddressLine1" xml:space="preserve"><value>Aadressirida 1</value></data>
+  <data name="Form.AddressLine2" xml:space="preserve"><value>Aadressirida 2</value></data>
+  <data name="Form.PostalCode" xml:space="preserve"><value>Postiindeks</value></data>
+  <data name="Form.City" xml:space="preserve"><value>Linn</value></data>
+  <data name="Form.Country" xml:space="preserve"><value>Riik</value></data>
+  <data name="Form.ChooseCountry" xml:space="preserve"><value>Valige riik…</value></data>
+  <data name="Form.AnyCountry" xml:space="preserve"><value>Kõik riigid</value></data>
+  <data name="Form.About" xml:space="preserve"><value>Kirjeldage ennast või oma ettevõtet</value></data>
+  <data name="Form.About.Placeholder" xml:space="preserve"><value>Mida te teete, mida olete loonud ja millega praegu tegelete.</value></data>
+  <data name="Form.Expectations" xml:space="preserve"><value>Kuidas saame teid teie eesmärkide saavutamisel aidata või mida te ootate?</value></data>
+  <data name="Form.Expectations.Placeholder" xml:space="preserve"><value>Tutvused, ruumid või vestlused, mis teeksid selle teie aega väärt.</value></data>
+  <data name="Form.EarningsBand" xml:space="preserve"><value>Aastane sissetulek</value></data>
+  <data name="Form.EarningsBand.Choose" xml:space="preserve"><value>Valige vahemik…</value></data>
+  <data name="Form.EarningsBand.Hint" xml:space="preserve"><value>Vahemik, mitte täpne arv — see aitab meil õiged inimesed kokku viia.</value></data>
+  <data name="Form.AgreePrefix" xml:space="preserve"><value>Nõustun</value></data>
+  <data name="Form.Terms" xml:space="preserve"><value>Tingimustega</value></data>
+  <data name="Form.And" xml:space="preserve"><value>ja</value></data>
+  <data name="Form.Privacy" xml:space="preserve"><value>Privaatsuspoliitikaga</value></data>
+  <data name="Apply.Eyebrow" xml:space="preserve"><value>Taotle ligipääsu</value></data>
+  <data name="Apply.Intro" xml:space="preserve"><value>Mõned küsimused, mida loeme ise. Rääkige, kes te olete ja mida ootate — vastame mõne päeva jooksul.</value></data>
+  <data name="Apply.Submit" xml:space="preserve"><value>Saada taotlus</value></data>
+  <data name="Apply.Note" xml:space="preserve"><value>Iga taotlus vaadatakse läbi käsitsi. Vastame mõne päeva jooksul.</value></data>
+  <data name="Join.Heading" xml:space="preserve"><value>Liitu The VI House'iga</value></data>
+  <data name="Join.Lede" xml:space="preserve"><value>Sisse pääseb kahel viisil. Saage liikmeks püsivaks ligipääsuks või kandideerige ühele elamusele, kui eelistate alustada ühest ruumist.</value></data>
+  <data name="Join.Routes.Label" xml:space="preserve"><value>Kuidas liituda</value></data>
+  <data name="Join.Route.Membership" xml:space="preserve"><value>Valige plaan ja tasuge kohe. Teie konto luuakse otsekohe.</value></data>
+  <data name="Join.Route.Single.Tag" xml:space="preserve"><value>Üks elamus</value></data>
+  <data name="Join.Route.Single" xml:space="preserve"><value>Kandideerige ühele kogunemisele. Vaadatakse läbi käsitsi — maksate alles pärast heakskiitu.</value></data>
+  <data name="Join.Preselected" xml:space="preserve"><value>valitud — jätkamiseks täitke allpool oma andmed.</value></data>
+  <data name="Join.ChoosePlan" xml:space="preserve"><value>Valige oma plaan</value></data>
+  <data name="Join.NoPlans" xml:space="preserve"><value>Praegu ei ole ühtegi plaani avatud. Palun vaadake peagi uuesti.</value></data>
+  <data name="Join.RenewsNote" xml:space="preserve"><value>Uueneb automaatselt kuni tühistamiseni — hallake või tühistage igal ajal oma kontolt.</value></data>
+  <data name="Join.EmailHint" xml:space="preserve"><value>Siia saadame teie kviitungi ja konto seadistamise lingi.</value></data>
+  <data name="Join.Submit" xml:space="preserve"><value>Jätka maksmisega</value></data>
+  <data name="Join.Secure" xml:space="preserve"><value>Makse töötleb Stripe. Me ei näe ega salvesta kunagi teie kaardiandmeid.</value></data>
+  <data name="Join.Single.Heading" xml:space="preserve"><value>Soovite osaleda vaid ühel kogunemisel?</value></data>
+  <data name="Join.Single.Lede" xml:space="preserve"><value>Liikmesust pole vaja. Kandideerige elamusele, mis teid huvitab — iga taotlus loetakse läbi käsitsi ja maksta palutakse alles pärast heakskiitu.</value></data>
+  <data name="Join.Single.None" xml:space="preserve"><value>Praegu ei ole ükski elamus kandideerimiseks avatud.</value></data>
+  <data name="Join.Single.SeeUpcoming" xml:space="preserve"><value>Vaadake, mis tulemas on</value></data>
+  <data name="Join.From" xml:space="preserve"><value>alates</value></data>
+  <data name="Join.ApplyForThis" xml:space="preserve"><value>Kandideeri sellele</value></data>
+  <data name="Join.AlreadyHaveAccount" xml:space="preserve"><value>Kas teil on juba konto?</value></data>
+  <data name="Account.NavOverview" xml:space="preserve"><value>Ülevaade</value></data>
+  <data name="Account.NavMembership" xml:space="preserve"><value>Liikmesus</value></data>
+  <data name="Account.DashboardTitle" xml:space="preserve"><value>Minu konto</value></data>
+  <data name="Account.WelcomeBack" xml:space="preserve"><value>Tere tulemast tagasi</value></data>
+  <data name="Account.Standing.Staff" xml:space="preserve"><value>House'i meeskond</value></data>
+  <data name="Account.Standing.Guest" xml:space="preserve"><value>House'i külaline</value></data>
+  <data name="Account.Standing.Prospect" xml:space="preserve"><value>Veel mitte liige</value></data>
+  <data name="Account.ProfileIncomplete.Heading" xml:space="preserve"><value>Teie profiilis on paar vastust puudu.</value></data>
+  <data name="Account.ProfileIncomplete.Body" xml:space="preserve"><value>Iga osaleja räägib House'ile veidi endast ja oma ootustest. See võtab minuti ja on vajalik enne sessioonil koha võtmist.</value></data>
+  <data name="Account.ProfileIncomplete.Cta" xml:space="preserve"><value>Täienda profiili</value></data>
+  <data name="Account.YourMembership" xml:space="preserve"><value>Teie liikmesus</value></data>
+  <data name="Account.Membership.Renews" xml:space="preserve"><value>Uueneb {0}.</value></data>
+  <data name="Account.Membership.Ended" xml:space="preserve"><value>Lõppes {0}.</value></data>
+  <data name="Account.MembershipDetails" xml:space="preserve"><value>Liikmesuse üksikasjad</value></data>
+  <data name="Account.ManageBilling" xml:space="preserve"><value>Halda arveldust</value></data>
+  <data name="Account.MembershipUnlocks" xml:space="preserve"><value>Mida teie liikmesus avab</value></data>
+  <data name="Account.Perk.Sessions" xml:space="preserve"><value>Sessioonid, kaasa arvatud</value></data>
+  <data name="Account.Perk.Directory" xml:space="preserve"><value>Liikmete kataloog</value></data>
+  <data name="Account.Perk.Community" xml:space="preserve"><value>Kogukonna kanalid</value></data>
+  <data name="Account.Perk.Experiences" xml:space="preserve"><value>Eelisõigus elamustele</value></data>
+  <data name="Account.Staff.Heading" xml:space="preserve"><value>Olete House'i meeskonnas.</value></data>
+  <data name="Account.Staff.Body" xml:space="preserve"><value>Teie konto avab halduspaneeli. Kõik, mida külalisena broneerite või millele registreerute, kuvatakse ka siin.</value></data>
+  <data name="Account.Guest.Heading" xml:space="preserve"><value>Olete House'i külaline.</value></data>
+  <data name="Account.Guest.Body" xml:space="preserve"><value>Teil on {0} broneering(ut) ja {1} sessioon(i). Liikmesus teeks iga sessiooni kaasaarvatuks ja avaks ruumid elamuste vahel.</value></data>
+  <data name="Account.Prospect.Heading" xml:space="preserve"><value>Te ei ole veel liige.</value></data>
+  <data name="Account.Prospect.Body" xml:space="preserve"><value>Liikmesus on püsiv ligipääs House'ile elamuste vahel — sessioonid, ruum, inimesed.</value></data>
+  <data name="Account.SeePlans" xml:space="preserve"><value>Vaata plaane</value></data>
+  <data name="Account.WhatMembershipIs" xml:space="preserve"><value>Mis on liikmesus</value></data>
+  <data name="Account.NextSessions" xml:space="preserve"><value>Teie järgmised sessioonid</value></data>
+  <data name="Account.NextExperiences" xml:space="preserve"><value>Teie järgmised elamused</value></data>
+  <data name="Account.SeeAll" xml:space="preserve"><value>Vaata kõiki</value></data>
+  <data name="Account.NoLiveSessions" xml:space="preserve"><value>Otseülekandeid ei ole tulemas — teie raamatukogus on {0} tellitavat sessiooni.</value></data>
+  <data name="Account.NoUpcomingBookings" xml:space="preserve"><value>Midagi pole veel broneeritud.</value></data>
+  <data name="Account.BrowseExperiences" xml:space="preserve"><value>Sirvi elamusi</value></data>
+  <data name="Account.QuickLinks" xml:space="preserve"><value>Kõik muu</value></data>
+  <data name="Account.Quick.ProfileComplete" xml:space="preserve"><value>Täidetud</value></data>
+  <data name="Account.Quick.ProfileIncomplete" xml:space="preserve"><value>Vajab paari vastust</value></data>
+  <data name="Account.Quick.Unread" xml:space="preserve"><value>{0} lugemata</value></data>
+  <data name="Account.Quick.AllRead" xml:space="preserve"><value>Kõik loetud</value></data>
+  <data name="Account.Quick.Bookings" xml:space="preserve"><value>{0} broneering(ut)</value></data>
+  <data name="Account.Quick.Sessions" xml:space="preserve"><value>{0} sessioon(i)</value></data>
+  <data name="Account.ProfileLede" xml:space="preserve"><value>House küsib kõigilt samu asju, üks kord. Hoidke need ajakohased ja need saadavad teid igale sessioonile ja elamusele.</value></data>
+  <data name="Account.ProfilePrompt.Heading" xml:space="preserve"><value>Kaks kiiret vastust enne koha võtmist.</value></data>
+  <data name="Account.ProfilePrompt.Body" xml:space="preserve"><value>Rääkige veidi endast ja oma ootustest, salvestage ja teid suunatakse otse sessioonile tagasi.</value></data>
+  <data name="Account.MembershipTitle" xml:space="preserve"><value>Minu liikmesus</value></data>
+  <data name="Account.CurrentPlan" xml:space="preserve"><value>Praegune plaan</value></data>
+  <data name="Account.Billing" xml:space="preserve"><value>Arveldus</value></data>
+  <data name="Account.Billing.Recurring" xml:space="preserve"><value>Uueneb automaatselt</value></data>
+  <data name="Account.Billing.OneTime" xml:space="preserve"><value>Makstud üks kord</value></data>
+  <data name="Account.ContactAboutMembership" xml:space="preserve"><value>Võtke meiega liikmesuse osas ühendust</value></data>
+  <data name="Account.ManageBilling.Note" xml:space="preserve"><value>Muutke kaarti, laadige alla arveid või tühistage — turvaliselt Stripe'is. Pärast tuuakse teid siia tagasi.</value></data>
+  <data name="Account.ManageBilling.Unavailable" xml:space="preserve"><value>Iseteenindusarveldus ei ole selle liikmesuse jaoks veel saadaval — võtke meiega ühendust ja korraldame muudatused käsitsi.</value></data>
+  <data name="Account.NoMembership.Sales" xml:space="preserve"><value>Liitumiseks valige allpool plaan. Teie kaart, sessioonid ja ruumid elamuste vahel avanevad kohe, kui makse laekub.</value></data>
+  <data name="Account.NoMembership.Apply" xml:space="preserve"><value>Liikmesus antakse elamusele kandideerimise kaudu. Kui olete heaks kiidetud ja osalenud, võtab House teiega ühendust.</value></data>
+  <data name="Account.ChooseAPlan" xml:space="preserve"><value>Valige plaan</value></data>
+  <data name="Account.MembershipHistory" xml:space="preserve"><value>Liikmesuse ajalugu</value></data>
+  <data name="Account.History.Plan" xml:space="preserve"><value>Plaan</value></data>
+  <data name="Account.History.From" xml:space="preserve"><value>Alates</value></data>
+  <data name="Account.History.Until" xml:space="preserve"><value>Kuni</value></data>
+  <data name="Account.History.Status" xml:space="preserve"><value>Olek</value></data>
+  <data name="Account.Status.Active" xml:space="preserve"><value>Aktiivne</value></data>
+  <data name="Account.Status.Cancelled" xml:space="preserve"><value>Tühistatud</value></data>
+  <data name="Account.Status.Expired" xml:space="preserve"><value>Aegunud</value></data>
+  <data name="Sessions.Grant.Paid" xml:space="preserve"><value>Makstud</value></data>
+  <data name="Sessions.Grant.Membership" xml:space="preserve"><value>Liikmesus</value></data>
+  <data name="Sessions.Grant.Free" xml:space="preserve"><value>Tasuta</value></data>
+  <data name="Sessions.Grant.Comped" xml:space="preserve"><value>Kutsutud</value></data>
+  <data name="Sessions.JoinLink" xml:space="preserve"><value>Liitu sessiooniga</value></data>
+  <data name="Sessions.LinkPending" xml:space="preserve"><value>Liitumislink saabub enne sessiooni</value></data>
+  <data name="Sessions.LiveNow" xml:space="preserve"><value>Praegu otse</value></data>
+  <data name="Sessions.Open" xml:space="preserve"><value>Ava</value></data>
+  <data name="Sessions.WatchAgain" xml:space="preserve"><value>Vaata uuesti</value></data>
+  <data name="Sessions.Upcoming" xml:space="preserve"><value>Tulemas</value></data>
+  <data name="Sessions.Library" xml:space="preserve"><value>Teie tellitav raamatukogu</value></data>
+  <data name="Sessions.PastHeading" xml:space="preserve"><value>Juba toimunud</value></data>
+  <data name="Sessions.Portal.Lede" xml:space="preserve"><value>Iga sessioon, kus teil on koht — kõigepealt otseülekanded liitumislinkidega, siis raamatukogu, siis juba toimunud.</value></data>
+  <data name="Sessions.Portal.Empty" xml:space="preserve"><value>Siin pole veel midagi. Tasuta sessioonid on ühe klõpsu kaugusel; tasulised on liikmesusega kaasas.</value></data>
+  <data name="Sessions.Stat.Total" xml:space="preserve"><value>Sessioonid</value></data>
+  <data name="Sessions.Stat.Upcoming" xml:space="preserve"><value>Tulemas</value></data>
+  <data name="Sessions.Stat.Paid" xml:space="preserve"><value>Makstud</value></data>
+  <data name="Sessions.Stat.Membership" xml:space="preserve"><value>Liikmesuse kaudu</value></data>
+  <data name="Seminars.Attendee.Paid.Heading" xml:space="preserve"><value>Teie koht on makstud.</value></data>
+  <data name="Seminars.Attendee.Paid.Body" xml:space="preserve"><value>Maksite {0} kuupäeval {1}. Teie ligipääs ei aegu — salvestis ja materjalid jäävad teile.</value></data>
+  <data name="Seminars.Attendee.Membership.Heading" xml:space="preserve"><value>Kaasas teie liikmesusega.</value></data>
+  <data name="Seminars.Attendee.Membership.Body" xml:space="preserve"><value>See sessioon maksab mitteliikmetele {0}. Teie liikmesus katab selle — midagi maksta pole.</value></data>
+  <data name="Seminars.Attendee.Free.Heading" xml:space="preserve"><value>Olete sees.</value></data>
+  <data name="Seminars.Attendee.Free.Body" xml:space="preserve"><value>See sessioon on avatud kõigile, kes seda näevad. Teie koht on kinnitatud.</value></data>
+  <data name="Seminars.Attendee.Comped.Heading" xml:space="preserve"><value>Koht, meie poolt.</value></data>
+  <data name="Seminars.Attendee.Comped.Body" xml:space="preserve"><value>House on andnud teile sellel sessioonil koha. Midagi maksta pole.</value></data>
+  <data name="Seminars.Attendee.Starts" xml:space="preserve"><value>Algab</value></data>
+  <data name="Seminars.Attendee.AllSessions" xml:space="preserve"><value>Kõik minu sessioonid</value></data>
+  <data name="Seminars.Access.ProfileFirst" xml:space="preserve"><value>Kõigepealt üks asi: House küsib igalt osalejalt paar küsimust tema kohta.</value></data>
+  <data name="Seminars.Access.CompleteProfile" xml:space="preserve"><value>Registreerumiseks täiendage profiili</value></data>
+  <data name="Seminar.Error.ProfileIncomplete" xml:space="preserve"><value>Palun täiendage oma profiili enne sessioonil koha võtmist.</value></data>
+  <data name="Membership.SeePlans" xml:space="preserve"><value>Vaata plaane</value></data>
+  <data name="Membership.Guest.Heading" xml:space="preserve"><value>Tere tulemast tagasi, {0}.</value></data>
+  <data name="Membership.Guest.Subheading" xml:space="preserve"><value>Teil on House'is juba koht. Liikmesus on selle püsiv versioon — iga sessioon kaasas ja ruumid elamuste vahel aasta läbi avatud.</value></data>
+  <data name="Membership.Member.Eyebrow" xml:space="preserve"><value>Teie liikmesus</value></data>
+  <data name="Membership.Member.Heading" xml:space="preserve"><value>Tore teid näha, {0}.</value></data>
+  <data name="Membership.Member.Subheading" xml:space="preserve"><value>Olete The VI House'i {0}. See leht näitab, mida see avab.</value></data>
+  <data name="Membership.Member.Renews" xml:space="preserve"><value>Uueneb</value></data>
+  <data name="Membership.Member.Doors.Heading" xml:space="preserve"><value>Uksed, mida teie liikmesus avab</value></data>
+  <data name="Membership.Member.Doors.Sessions" xml:space="preserve"><value>Sessioonid</value></data>
+  <data name="Membership.Member.Doors.Sessions.Body" xml:space="preserve"><value>Töötoad, asutajate sessioonid ja raamatukogu — tasulised sessioonid on teile kaasas.</value></data>
+  <data name="Membership.Member.Doors.Experiences" xml:space="preserve"><value>Elamused</value></data>
+  <data name="Membership.Member.Doors.Experiences.Body" xml:space="preserve"><value>Mitmepäevased kogunemised. Liikmed kuulevad esimesena ja liituvad ilma teise taotluseta.</value></data>
+  <data name="Membership.Member.Doors.Directory" xml:space="preserve"><value>Liikmete kataloog</value></data>
+  <data name="Membership.Member.Doors.Directory.Body" xml:space="preserve"><value>Kes on ruumis — ja kuidas nendeni jõuda.</value></data>
+  <data name="Membership.Member.Doors.Community" xml:space="preserve"><value>Kogukond</value></data>
+  <data name="Membership.Member.Doors.Community.Body" xml:space="preserve"><value>Kanalid, kus vestlus jätkub kogunemiste vahel.</value></data>
+  <data name="Membership.Member.Doors.Portal" xml:space="preserve"><value>Teie sessiooniportaal</value></data>
+  <data name="Membership.Member.Doors.Portal.Body" xml:space="preserve"><value>Kõik, millele olete registreerunud — liitumislingid, salvestised, materjalid.</value></data>
+  <data name="Membership.Member.OtherPlans" xml:space="preserve"><value>Muud plaanid</value></data>
+  <data name="Membership.Member.OtherPlans.Note" xml:space="preserve"><value>Plaani muutmiseks kasutage oma kontolehel „Halda arveldust“ või võtke meiega ühendust — viime teid üle ilma teise tellimuseta.</value></data>
+  <data name="Membership.Member.YourPlan" xml:space="preserve"><value>Teie plaan</value></data>
+  <data name="Membership.Member.AskToChange" xml:space="preserve"><value>Küsi plaani muutmist</value></data>
+  <data name="Membership.Member.Cta.Eyebrow" xml:space="preserve"><value>Järgmisena</value></data>
+  <data name="Membership.Member.Cta.Heading" xml:space="preserve"><value>Võtke koht järgmises ruumis.</value></data>
+  <data name="Membership.Member.Cta.Body" xml:space="preserve"><value>Iga sessioon on ühe klõpsu kaugusel — ilma makse ja taotluseta.</value></data>
+  <data name="Membership.Member.Cta.Button" xml:space="preserve"><value>Sirvi sessioone</value></data>
+  <data name="Directory.ProfessionLabel" xml:space="preserve"><value>Elukutse</value></data>
+  <data name="Admin.Seminar.MeetingUrl" xml:space="preserve"><value>Koosoleku link</value></data>
+  <data name="Admin.Seminar.MeetingUrl.Hint" xml:space="preserve"><value>Zoom / Meet / Teams link veebisessiooni jaoks. Kuvatakse ainult kinnitatud osalejatele nende portaalis ja lehel pärast registreerumist — mitte kunagi avalikul kaardil.</value></data>
 </root>

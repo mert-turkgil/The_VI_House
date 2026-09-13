@@ -4,9 +4,9 @@ using VIHouse.Entities.Membership;
 namespace VIHouse.WebUI.ViewModels.Membership;
 
 /// <summary>
-/// The join-and-pay form for a visitor with no account. Deliberately short: everything else about
-/// them (company, bio, what they're looking for) is asked later, on their profile — this form only
-/// collects what's needed to take a payment and create an account.
+/// The join-and-pay form for a visitor with no account. Asks the House's one set of questions —
+/// the same ones /apply asks and the account profile holds — so a member who joins directly
+/// arrives with a complete profile rather than an empty one to fill in later.
 /// </summary>
 public class JoinFormViewModel
 {
@@ -26,13 +26,44 @@ public class JoinFormViewModel
     [Display(Name = "Email address")]
     public string Email { get; set; } = default!;
 
-    [Required, StringLength(2, MinimumLength = 2, ErrorMessage = "Use the two-letter country code, e.g. GB.")]
-    [Display(Name = "Country")]
-    public string Country { get; set; } = default!;
+    [StringLength(200)]
+    [Display(Name = "Title / profession")]
+    public string? JobTitle { get; set; }
+
+    [StringLength(200)]
+    [Display(Name = "Address line 1")]
+    public string? AddressLine1 { get; set; }
+
+    [StringLength(200)]
+    [Display(Name = "Address line 2")]
+    public string? AddressLine2 { get; set; }
+
+    [StringLength(20)]
+    [Display(Name = "Postal code")]
+    public string? PostalCode { get; set; }
 
     [StringLength(120)]
     [Display(Name = "City")]
     public string? City { get; set; }
+
+    [Required(ErrorMessage = "Choose your country.")]
+    [StringLength(2, MinimumLength = 2)]
+    [Display(Name = "Country")]
+    public string Country { get; set; } = default!;
+
+    [Required(ErrorMessage = "Tell us a little about yourself or your business.")]
+    [StringLength(2000)]
+    [Display(Name = "Describe yourself or your business")]
+    public string About { get; set; } = default!;
+
+    [Required(ErrorMessage = "Tell us what you're hoping for.")]
+    [StringLength(2000)]
+    [Display(Name = "How may we help you with your goals, or what are your expectations?")]
+    public string Expectations { get; set; } = default!;
+
+    [StringLength(20)]
+    [Display(Name = "Annual earnings")]
+    public string? EarningsBand { get; set; }
 
     [Display(Name = "I agree to the Terms & Conditions and Privacy Policy")]
     public bool AgreeToTerms { get; set; }

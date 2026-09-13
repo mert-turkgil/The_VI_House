@@ -2,6 +2,7 @@ using System.Buffers.Text;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
@@ -19,21 +20,28 @@ public class MembershipService(
     IRepository<MembershipPlan> plans,
     IRepository<Membership> memberships,
     IMembershipPaymentRepository membershipPayments,
+    IProfileRepository profiles,
     IPaymentProvider paymentProvider,
+    IPaymentCatalogProvider catalog,
     IEmailService emailService,
     INotificationService notificationService,
     IAuditLogRepository auditLogs,
     IOptions<SiteOptions> siteOptions,
-    UserManager<ApplicationUser> userManager) : IMembershipService
+    UserManager<ApplicationUser> userManager,
+    ILogger<MembershipService> logger) : IMembershipService
 {
+    // =============================================================================================
+    // Plans
+    // =============================================================================================
+
     public async Task<List<MembershipPlan>> GetActivePlansAsync(CancellationToken ct = default)
     {
         var active = await plans.FindAsync(p => p.Status == MembershipPlanStatus.Active, ct);
-        return active.OrderBy(p => p.SortOrder).ToList();
+        return active.OrderBy(p => p.SortOrder).ThenBy(p => p.PriceMinor).ToList();
     }
 
     public async Task<List<MembershipPlan>> GetAllPlansAsync(CancellationToken ct = default) =>
-        (await plans.GetAllAsync(ct)).OrderBy(p => p.SortOrder).ToList();
+        (await plans.GetAllAsync(ct)).OrderBy(p => p.SortOrder).ThenBy(p => p.PriceMinor).ToList();
 
     public Task<MembershipPlan?> GetPlanAsync(Guid id, CancellationToken ct = default) => plans.GetByIdAsync(id, ct);
 
@@ -41,7 +49,12 @@ public class MembershipService(
     {
         await plans.AddAsync(plan, ct);
         await LogAsync("MembershipPlanCreated", plan.Id, adminUserId, ipAddress,
-            before: null, after: new { plan.Name, plan.PriceMinor, plan.Currency, plan.BillingPeriod, plan.Status }, ct);
+            before: null, after: Snapshot(plan), ct);
+        await plans.SaveChangesAsync(ct);
+
+        // Saved locally first, then mirrored: the row must exist before its id can ride along as
+        // provider metadata, and a provider failure must not undo the admin's work.
+        await PushToProviderAsync(plan, ct);
         await plans.SaveChangesAsync(ct);
         return plan;
     }
@@ -51,7 +64,7 @@ public class MembershipService(
         var existing = await plans.GetByIdAsync(updated.Id, ct)
             ?? throw new InvalidOperationException($"Membership plan {updated.Id} not found.");
 
-        var before = new { existing.Name, existing.PriceMinor, existing.Currency, existing.BillingPeriod, existing.Status };
+        var before = Snapshot(existing);
 
         existing.Name = updated.Name;
         existing.Description = updated.Description;
@@ -63,11 +76,13 @@ public class MembershipService(
         existing.SortOrder = updated.SortOrder;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
 
-        await LogAsync("MembershipPlanUpdated", existing.Id, adminUserId, ipAddress,
-            before, new { existing.Name, existing.PriceMinor, existing.Currency, existing.BillingPeriod, existing.Status }, ct);
+        await LogAsync("MembershipPlanUpdated", existing.Id, adminUserId, ipAddress, before, Snapshot(existing), ct);
 
         // No explicit Update() call: `existing` is already tracked, loaded on this same scoped
         // DbContext — same reasoning as ExperienceService.UpdateCoreFieldsAsync.
+        await plans.SaveChangesAsync(ct);
+
+        await PushToProviderAsync(existing, ct);
         await plans.SaveChangesAsync(ct);
     }
 
@@ -81,7 +96,199 @@ public class MembershipService(
 
         await LogAsync("MembershipPlanArchived", id, adminUserId, ipAddress, before: null, after: new { plan.Name }, ct);
         await plans.SaveChangesAsync(ct);
+
+        await PushToProviderAsync(plan, ct);
+        await plans.SaveChangesAsync(ct);
     }
+
+    public async Task<PlanMutationResult> DeletePlanAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var plan = await plans.GetByIdAsync(id, ct);
+        if (plan is null) return PlanMutationResult.Fail("That plan no longer exists.");
+
+        var usage = await GetPlanUsageAsync(id, ct);
+        if (!usage.CanDelete)
+        {
+            return PlanMutationResult.Fail(
+                $"\"{plan.Name}\" has {usage.Memberships} membership(s) and {usage.Payments} payment(s) against it, so it can't be deleted — archive it instead.");
+        }
+
+        // The provider side first, while the ids are still to hand. A failure here is reported
+        // rather than swallowed: leaving a live product on sale at Stripe for a plan that no longer
+        // exists is precisely the drift the catalogue exists to prevent.
+        if (plan.ProviderProductId is not null)
+        {
+            try
+            {
+                await catalog.ArchivePlanAsync(plan.ProviderProductId, plan.ProviderPriceId, ct);
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Could not archive plan {PlanId} at the payment provider before deleting it", id);
+                return PlanMutationResult.Fail($"Stripe refused to archive the product ({ex.Message}). Nothing was deleted.");
+            }
+        }
+
+        await LogAsync("MembershipPlanDeleted", id, adminUserId, ipAddress, before: Snapshot(plan), after: null, ct);
+        plans.Remove(plan);
+        await plans.SaveChangesAsync(ct);
+
+        return PlanMutationResult.Ok($"\"{plan.Name}\" deleted." + (plan.ProviderProductId is null ? "" : " Its Stripe product has been archived."));
+    }
+
+    public async Task<PlanMutationResult> SyncPlanAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var plan = await plans.GetByIdAsync(id, ct);
+        if (plan is null) return PlanMutationResult.Fail("That plan no longer exists.");
+
+        var replaced = await PushToProviderAsync(plan, ct);
+        await plans.SaveChangesAsync(ct);
+
+        if (plan.ProviderSyncError is not null)
+            return PlanMutationResult.Fail($"Sync failed: {plan.ProviderSyncError}");
+
+        await LogAsync("MembershipPlanSynced", id, adminUserId, ipAddress, before: null,
+            after: new { plan.ProviderProductId, plan.ProviderPriceId }, ct);
+        await plans.SaveChangesAsync(ct);
+
+        return PlanMutationResult.Ok(replaced
+            ? $"\"{plan.Name}\" synced — the price changed, so a new Stripe price was issued and the old one archived."
+            : $"\"{plan.Name}\" is in sync with Stripe.");
+    }
+
+    public async Task<PlanSyncSummary> SyncAllPlansAsync(Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var all = await plans.GetAllAsync(ct);
+        var errors = new List<string>();
+        var synced = 0;
+
+        foreach (var plan in all.OrderBy(p => p.SortOrder))
+        {
+            await PushToProviderAsync(plan, ct);
+            if (plan.ProviderSyncError is null) synced++;
+            else errors.Add($"{plan.Name}: {plan.ProviderSyncError}");
+        }
+
+        await plans.SaveChangesAsync(ct);
+        await LogAsync("MembershipPlansSyncedAll", Guid.Empty, adminUserId, ipAddress, before: null,
+            after: new { Synced = synced, Failed = errors.Count }, ct);
+        await plans.SaveChangesAsync(ct);
+
+        return new PlanSyncSummary(synced, errors.Count, errors);
+    }
+
+    public async Task<PlanImportSummary> ImportPlansFromProviderAsync(Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        List<CatalogPlan> remote;
+        try
+        {
+            remote = await catalog.ListPlansAsync(ct);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Could not list plans at the payment provider");
+            return new PlanImportSummary(0, 0, ex.Message);
+        }
+
+        var local = await plans.GetAllAsync(ct);
+        var imported = 0;
+        var skipped = 0;
+
+        foreach (var item in remote)
+        {
+            // Already mirrored — by product id, or by the plan id we stamped into its metadata
+            // (which survives the local Provider* columns being cleared). Existing rows are never
+            // touched by an import.
+            var known = local.Any(p => p.ProviderProductId == item.ProductId)
+                || (item.LocalPlanId is { } localId && local.Any(p => p.Id == localId));
+            if (known)
+            {
+                skipped++;
+                continue;
+            }
+
+            var plan = new MembershipPlan
+            {
+                Name = item.Name,
+                Description = item.Description,
+                PriceMinor = item.AmountMinor,
+                Currency = item.Currency,
+                BillingPeriod = item.Recurring switch
+                {
+                    RecurringInterval.Monthly => MembershipBillingPeriod.Monthly,
+                    RecurringInterval.Annual => MembershipBillingPeriod.Annual,
+                    _ => MembershipBillingPeriod.OneTime,
+                },
+                // Archived on arrival: the admin decides what goes on the public page, not whatever
+                // happened to be active in the Stripe dashboard.
+                Status = MembershipPlanStatus.Archived,
+                SortOrder = local.Count + imported,
+                ProviderProductId = item.ProductId,
+                ProviderPriceId = item.PriceId,
+                ProviderSyncedAt = DateTimeOffset.UtcNow,
+            };
+
+            await plans.AddAsync(plan, ct);
+            await LogAsync("MembershipPlanImported", plan.Id, adminUserId, ipAddress, before: null, after: Snapshot(plan), ct);
+            imported++;
+        }
+
+        await plans.SaveChangesAsync(ct);
+        return new PlanImportSummary(imported, skipped, null);
+    }
+
+    public async Task<PlanUsage> GetPlanUsageAsync(Guid id, CancellationToken ct = default)
+    {
+        var membershipCount = (await memberships.FindAsync(m => m.PlanId == id, ct)).Count;
+        var paymentCount = (await membershipPayments.FindAsync(p => p.PlanId == id, ct)).Count;
+        return new PlanUsage(membershipCount, paymentCount);
+    }
+
+    /// <summary>
+    /// The one place a plan reaches the provider. Records the outcome on the row — ids and a
+    /// timestamp on success, the message on failure — and never throws, so every caller can save
+    /// the local change regardless. Returns whether the provider issued a replacement price.
+    /// </summary>
+    private async Task<bool> PushToProviderAsync(MembershipPlan plan, CancellationToken ct)
+    {
+        try
+        {
+            if (plan.Status == MembershipPlanStatus.Archived)
+            {
+                // Retiring takes precedence over any pending edit: an archived plan should not be
+                // buyable at Stripe whatever else changed. A plan that was never mirrored has
+                // nothing to retire and is simply marked as up to date.
+                if (plan.ProviderProductId is not null)
+                    await catalog.ArchivePlanAsync(plan.ProviderProductId, plan.ProviderPriceId, ct);
+
+                plan.ProviderSyncedAt = DateTimeOffset.UtcNow;
+                plan.ProviderSyncError = null;
+                return false;
+            }
+
+            var result = await catalog.SyncPlanAsync(new CatalogPlan(
+                plan.ProviderProductId, plan.ProviderPriceId, plan.Id,
+                plan.Name, plan.Description, plan.PriceMinor, plan.Currency,
+                ToRecurringInterval(plan.BillingPeriod), Active: true), ct);
+
+            plan.ProviderProductId = result.ProductId;
+            plan.ProviderPriceId = result.PriceId;
+            plan.ProviderSyncedAt = DateTimeOffset.UtcNow;
+            plan.ProviderSyncError = null;
+            return result.PriceReplaced;
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Could not sync membership plan {PlanId} to the payment provider", plan.Id);
+            plan.ProviderSyncedAt = null;
+            plan.ProviderSyncError = Truncate(ex.Message, 1000);
+            return false;
+        }
+    }
+
+    // =============================================================================================
+    // Membership
+    // =============================================================================================
 
     /// <summary>
     /// The membership that currently entitles someone to anything, or null.
@@ -90,11 +297,11 @@ public class MembershipService(
     /// card, the community links, members-only seminars and now joining an experience all resolve
     /// through it, so what it counts as "current" is worth being exact about.
     ///
-    /// The ExpiresAt check is not redundant with the status. Nothing in the codebase ever writes
-    /// MembershipStatus.Expired — there is no background sweep and no webhook that does it — so
-    /// filtering on Status alone meant a membership that lapsed a year ago still opened every one of
-    /// those doors, permanently. Expiry is therefore derived from the date rather than trusted to a
-    /// column somebody has to remember to update.
+    /// The ExpiresAt check is not redundant with the status. A cancellation webhook sets Cancelled,
+    /// but nothing sweeps lapsed rows to Expired — so filtering on Status alone would let a
+    /// membership that lapsed a year ago open every one of those doors, permanently. Expiry is
+    /// therefore derived from the date rather than trusted to a column somebody has to remember to
+    /// update.
     /// </summary>
     public async Task<Membership?> GetCurrentMembershipAsync(Guid userId, CancellationToken ct = default)
     {
@@ -109,6 +316,38 @@ public class MembershipService(
             .FirstOrDefault();
     }
 
+    public async Task<MembershipSummary?> GetMembershipSummaryAsync(Guid userId, CancellationToken ct = default)
+    {
+        var membership = await GetCurrentMembershipAsync(userId, ct);
+        if (membership is null) return null;
+
+        var plan = await plans.GetByIdAsync(membership.PlanId, ct);
+        return plan is null ? null : new MembershipSummary(membership, plan);
+    }
+
+    public async Task<List<MembershipSummary>> GetMembershipHistoryAsync(Guid userId, CancellationToken ct = default)
+    {
+        var mine = await memberships.FindAsync(m => m.UserId == userId, ct);
+        if (mine.Count == 0) return [];
+
+        var planIds = mine.Select(m => m.PlanId).Distinct().ToList();
+        var known = (await plans.FindAsync(p => planIds.Contains(p.Id), ct)).ToDictionary(p => p.Id);
+
+        return mine
+            .OrderByDescending(m => m.StartAt)
+            .Where(m => known.ContainsKey(m.PlanId))
+            .Select(m => new MembershipSummary(m, known[m.PlanId]))
+            .ToList();
+    }
+
+    public async Task<string?> CreateBillingPortalUrlAsync(Guid userId, string returnUrl, CancellationToken ct = default)
+    {
+        var membership = await GetCurrentMembershipAsync(userId, ct);
+        if (membership?.ProviderCustomerId is null) return null;
+
+        return await paymentProvider.CreateBillingPortalUrlAsync(membership.ProviderCustomerId, returnUrl, ct);
+    }
+
     public async Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string? referralCode, string successUrl, string cancelUrl, CancellationToken ct = default)
     {
         var plan = await plans.GetByIdAsync(planId, ct);
@@ -119,52 +358,12 @@ public class MembershipService(
         if (user is null)
             return MembershipCheckoutResult.Fail("Your account couldn't be found — please log in again.");
 
-        var payment = new MembershipPayment
-        {
-            UserId = userId,
-            PlanId = planId,
-            AmountMinor = plan.PriceMinor,
-            Currency = plan.Currency,
-            Status = PaymentStatus.Created,
-            ReferralCode = referralCode,
-        };
-        payment.ProviderReference = $"pending_{payment.Id:N}"; // placeholder, unique — replaced once Stripe returns a session id
-        await membershipPayments.AddAsync(payment, ct);
-        await membershipPayments.SaveChangesAsync(ct);
+        // One current membership per person. Buying a second while the first still runs would
+        // open two rows and, for a recurring plan, two subscriptions billing side by side.
+        if (await GetCurrentMembershipAsync(userId, ct) is not null)
+            return MembershipCheckoutResult.Fail("You already hold an active membership. To change plan, manage your billing from your account page or contact us.");
 
-        try
-        {
-            var session = await paymentProvider.CreateCheckoutSessionAsync(new CreateCheckoutSessionRequest(
-                CustomerEmail: user.Email!,
-                ProductName: $"The VI House Membership — {plan.Name}",
-                ProductDescription: plan.Description,
-                AmountMinor: plan.PriceMinor,
-                Currency: plan.Currency,
-                SuccessUrl: successUrl,
-                CancelUrl: cancelUrl,
-                ClientReferenceId: payment.Id.ToString(),
-                Metadata: new Dictionary<string, string>
-                {
-                    ["membershipPaymentId"] = payment.Id.ToString(),
-                    ["planId"] = planId.ToString(),
-                    ["userId"] = userId.ToString(),
-                })
-            {
-                // A Monthly/Annual plan becomes a real recurring subscription rather than a single
-                // charge that silently lapses — previously every plan was billed once and the
-                // "renewal" date was just a local expiry nothing ever acted on.
-                Recurring = ToRecurringInterval(plan.BillingPeriod),
-            }, ct);
-
-            payment.ProviderReference = session.SessionId;
-            await membershipPayments.SaveChangesAsync(ct);
-
-            return MembershipCheckoutResult.Ok(session.Url);
-        }
-        catch (Exception)
-        {
-            return MembershipCheckoutResult.Fail("We couldn't reach the payment provider — please try again in a moment.");
-        }
+        return await StartCheckoutAsync(plan, user, referralCode, successUrl, cancelUrl, ct);
     }
 
     public async Task<MembershipCheckoutResult> InitiateJoinCheckoutAsync(JoinRequest request, string successUrl, string cancelUrl, CancellationToken ct = default)
@@ -203,6 +402,31 @@ public class MembershipService(
         if (!created.Succeeded)
             return MembershipCheckoutResult.Fail(string.Join(" ", created.Errors.Select(e => e.Description)));
 
+        // The form's answers become the profile straight away, so the member never has to type
+        // them a second time on the account page — and so the House has them even if the checkout
+        // is abandoned and someone follows up by hand.
+        await profiles.AddAsync(new Profile
+        {
+            UserId = user.Id,
+            JobTitle = request.JobTitle,
+            AddressLine1 = request.AddressLine1,
+            AddressLine2 = request.AddressLine2,
+            PostalCode = request.PostalCode,
+            About = request.About,
+            Expectations = request.Expectations,
+            EarningsBand = request.EarningsBand,
+            UpdatedAt = DateTimeOffset.UtcNow,
+        }, ct);
+        await profiles.SaveChangesAsync(ct);
+
+        return await StartCheckoutAsync(plan, user, request.ReferralCode, successUrl, cancelUrl, ct);
+    }
+
+    /// <summary>Shared tail of both checkout entry points: the local payment row first, then the
+    /// provider session, then the row updated with the session id it must be matched on.</summary>
+    private async Task<MembershipCheckoutResult> StartCheckoutAsync(
+        MembershipPlan plan, ApplicationUser user, string? referralCode, string successUrl, string cancelUrl, CancellationToken ct)
+    {
         var payment = new MembershipPayment
         {
             UserId = user.Id,
@@ -210,9 +434,9 @@ public class MembershipService(
             AmountMinor = plan.PriceMinor,
             Currency = plan.Currency,
             Status = PaymentStatus.Created,
-            ReferralCode = request.ReferralCode,
+            ReferralCode = referralCode,
         };
-        payment.ProviderReference = $"pending_{payment.Id:N}";
+        payment.ProviderReference = $"pending_{payment.Id:N}"; // placeholder, unique — replaced once Stripe returns a session id
         await membershipPayments.AddAsync(payment, ct);
         await membershipPayments.SaveChangesAsync(ct);
 
@@ -234,7 +458,12 @@ public class MembershipService(
                     ["userId"] = user.Id.ToString(),
                 })
             {
+                // A Monthly/Annual plan becomes a real recurring subscription rather than a single
+                // charge that silently lapses.
                 Recurring = ToRecurringInterval(plan.BillingPeriod),
+                // Sell by the mirrored Stripe price when there is one, so the sale lands under the
+                // named product in Stripe's reporting; the inline amount remains the fallback.
+                ProviderPriceId = plan.IsProviderSynced ? plan.ProviderPriceId : null,
             }, ct);
 
             payment.ProviderReference = session.SessionId;
@@ -242,8 +471,9 @@ public class MembershipService(
 
             return MembershipCheckoutResult.Ok(session.Url);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogWarning(ex, "Could not open a checkout session for membership payment {PaymentId}", payment.Id);
             return MembershipCheckoutResult.Fail("We couldn't reach the payment provider — please try again in a moment.");
         }
     }
@@ -265,17 +495,32 @@ public class MembershipService(
         };
     }
 
+    // =============================================================================================
+    // Webhooks
+    // =============================================================================================
+
     public async Task HandleWebhookEventAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct = default)
     {
-        if (webhookEvent.Type == PaymentWebhookEventType.CheckoutCompleted && webhookEvent.SessionId is not null)
-            await HandleCheckoutCompletedAsync(webhookEvent.SessionId, ct);
-        else if (webhookEvent.Type == PaymentWebhookEventType.CheckoutExpired && webhookEvent.SessionId is not null)
-            await HandleCheckoutExpiredAsync(webhookEvent.SessionId, ct);
+        switch (webhookEvent.Type)
+        {
+            case PaymentWebhookEventType.CheckoutCompleted when webhookEvent.SessionId is not null:
+                await HandleCheckoutCompletedAsync(webhookEvent, ct);
+                break;
+            case PaymentWebhookEventType.CheckoutExpired when webhookEvent.SessionId is not null:
+                await HandleCheckoutExpiredAsync(webhookEvent.SessionId, ct);
+                break;
+            case PaymentWebhookEventType.SubscriptionRenewed when webhookEvent.SubscriptionId is not null:
+                await HandleSubscriptionRenewedAsync(webhookEvent, ct);
+                break;
+            case PaymentWebhookEventType.SubscriptionCancelled when webhookEvent.SubscriptionId is not null:
+                await HandleSubscriptionCancelledAsync(webhookEvent, ct);
+                break;
+        }
     }
 
-    private async Task HandleCheckoutCompletedAsync(string sessionId, CancellationToken ct)
+    private async Task HandleCheckoutCompletedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
-        var payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct);
+        var payment = await membershipPayments.GetByProviderReferenceAsync(webhookEvent.SessionId!, ct);
         if (payment is null || payment.Status == PaymentStatus.Paid)
             return; // unknown session (e.g. a ticket-purchase session — see PaymentService), or already handled
 
@@ -301,6 +546,9 @@ public class MembershipService(
             RenewalAt = expiresAt,
             ExpiresAt = expiresAt,
             Status = MembershipStatus.Active,
+            // What the renewal and cancellation webhooks, and the billing portal, will look up.
+            ProviderSubscriptionId = webhookEvent.SubscriptionId,
+            ProviderCustomerId = webhookEvent.CustomerId,
         };
         await memberships.AddAsync(membership, ct);
         await memberships.SaveChangesAsync(ct);
@@ -345,7 +593,7 @@ public class MembershipService(
             await notificationService.CreateForUserAsync(
                 user.Id, NotificationType.Payment,
                 "Membership Confirmed", $"You're confirmed as a {plan.Name}.",
-                "/account/card", ct);
+                "/account", ct);
         }
     }
 
@@ -360,12 +608,123 @@ public class MembershipService(
         await membershipPayments.SaveChangesAsync(ct);
     }
 
+    /// <summary>
+    /// A later billing cycle paid: the same row runs on, its expiry pushed to the end of the period
+    /// just paid for. Idempotent by construction — the date only ever moves forward, so a
+    /// redelivered event changes nothing.
+    /// </summary>
+    private async Task HandleSubscriptionRenewedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var membership = await FindBySubscriptionAsync(webhookEvent.SubscriptionId!, ct);
+        if (membership is null) return;
+
+        // The payment row written below doubles as the idempotency key: Stripe retries webhooks,
+        // and a second delivery of the same invoice must not extend the term twice.
+        var receipt = $"renewal_{webhookEvent.EventId}";
+        if (await membershipPayments.GetByProviderReferenceAsync(receipt, ct) is not null) return;
+
+        var plan = await plans.GetByIdAsync(membership.PlanId, ct);
+        var now = DateTimeOffset.UtcNow;
+
+        // The provider's period end when it sent one; otherwise one more period from whichever is
+        // later of "now" and the current expiry, so a late-arriving webhook never shortens a term.
+        var baseline = membership.ExpiresAt is { } current && current > now ? current : now;
+        var newExpiry = webhookEvent.CurrentPeriodEnd ?? (plan?.BillingPeriod switch
+        {
+            MembershipBillingPeriod.Monthly => baseline.AddMonths(1),
+            MembershipBillingPeriod.Annual => baseline.AddYears(1),
+            _ => baseline,
+        });
+
+        membership.ExpiresAt = newExpiry;
+        membership.RenewalAt = newExpiry;
+        membership.Status = MembershipStatus.Active;
+        membership.CancelledAt = null;
+        membership.ProviderCustomerId ??= webhookEvent.CustomerId;
+        membership.UpdatedAt = now;
+        await memberships.SaveChangesAsync(ct);
+
+        // A renewal also records a payment row, so the member's history and the admin's payment
+        // list both show every charge — not just the first.
+        await membershipPayments.AddAsync(new MembershipPayment
+        {
+            UserId = membership.UserId,
+            PlanId = membership.PlanId,
+            MembershipId = membership.Id,
+            AmountMinor = plan?.PriceMinor ?? 0,
+            Currency = plan?.Currency ?? "GBP",
+            Status = PaymentStatus.Paid,
+            ProviderReference = receipt,
+        }, ct);
+        await membershipPayments.SaveChangesAsync(ct);
+
+        if (await userManager.FindByIdAsync(membership.UserId.ToString()) is { } user)
+        {
+            await emailService.SendAsync(
+                "MembershipRenewed", user.Email!, $"Your {plan?.Name ?? "membership"} has renewed",
+                new MembershipRenewedEmailModel(user.FirstName, plan?.Name ?? "Membership", newExpiry),
+                nameof(Membership), membership.Id, ct);
+
+            await notificationService.CreateForUserAsync(
+                user.Id, NotificationType.Payment,
+                "Membership Renewed", $"Your {plan?.Name ?? "membership"} now runs until {newExpiry:d MMMM yyyy}.",
+                "/account", ct);
+        }
+    }
+
+    /// <summary>
+    /// The subscription has ended at the provider. The membership is marked Cancelled but keeps
+    /// its ExpiresAt: a member who cancels mid-period has paid for the period and keeps access
+    /// until it ends — Stripe sends this event at the end of the period, not on the click.
+    /// </summary>
+    private async Task HandleSubscriptionCancelledAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var membership = await FindBySubscriptionAsync(webhookEvent.SubscriptionId!, ct);
+        if (membership is null || membership.Status == MembershipStatus.Cancelled) return;
+
+        var now = DateTimeOffset.UtcNow;
+        membership.Status = MembershipStatus.Cancelled;
+        membership.CancelledAt = now;
+        membership.RenewalAt = null;
+        // Close it now rather than leaving a future expiry on a cancelled row; the entitlement
+        // check reads Status first anyway, so this is bookkeeping rather than a second lock.
+        if (membership.ExpiresAt is null || membership.ExpiresAt > now)
+            membership.ExpiresAt = now;
+        membership.UpdatedAt = now;
+        await memberships.SaveChangesAsync(ct);
+
+        if (await userManager.FindByIdAsync(membership.UserId.ToString()) is { } user)
+        {
+            var plan = await plans.GetByIdAsync(membership.PlanId, ct);
+            await notificationService.CreateForUserAsync(
+                user.Id, NotificationType.Payment,
+                "Membership Ended", $"Your {plan?.Name ?? "membership"} has ended. You're welcome back any time.",
+                "/membership", ct);
+        }
+    }
+
+    private async Task<Membership?> FindBySubscriptionAsync(string subscriptionId, CancellationToken ct) =>
+        (await memberships.FindAsync(m => m.ProviderSubscriptionId == subscriptionId, ct))
+            .OrderByDescending(m => m.StartAt)
+            .FirstOrDefault();
+
+    // =============================================================================================
+    // Helpers
+    // =============================================================================================
+
     private static RecurringInterval? ToRecurringInterval(MembershipBillingPeriod period) => period switch
     {
         MembershipBillingPeriod.Monthly => RecurringInterval.Monthly,
         MembershipBillingPeriod.Annual => RecurringInterval.Annual,
         _ => null, // OneTime — a single charge, no renewal
     };
+
+    private static object Snapshot(MembershipPlan plan) => new
+    {
+        plan.Name, plan.PriceMinor, plan.Currency, plan.BillingPeriod, plan.Status, plan.ProviderProductId, plan.ProviderPriceId,
+    };
+
+    private static string Truncate(string value, int max) => value.Length <= max ? value : value[..max];
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>
         auditLogs.AddAsync(new AuditLogEntry

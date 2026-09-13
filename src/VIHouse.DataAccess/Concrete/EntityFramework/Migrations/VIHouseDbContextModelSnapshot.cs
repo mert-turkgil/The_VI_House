@@ -251,23 +251,21 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AnnualRevenueBand")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("AboutStatement")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
-                    b.Property<string>("BuildingStatement")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("AddressLine1")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("AddressLine2")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompanyName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompanyStage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContributionStatement")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Country")
                         .IsRequired()
@@ -283,10 +281,18 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<string>("DecisionReason")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EarningsBand")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(320)
                         .HasColumnType("nvarchar(320)");
+
+                    b.Property<string>("ExpectationsStatement")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<Guid>("ExperienceId")
                         .HasColumnType("uniqueidentifier");
@@ -296,40 +302,32 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("FundingStage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HowDidYouHear")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Industry")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("InternalNotes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("JobTitle")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("LinkedInUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MotivationStatement")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int?>("QualificationScore")
                         .HasColumnType("int");
 
                     b.Property<string>("ReferralCode")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.Property<DateTimeOffset?>("ReviewedAt")
                         .HasColumnType("datetimeoffset");
@@ -348,12 +346,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("WebsiteUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("YearsOfExperience")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1912,6 +1904,9 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTimeOffset?>("CancelledAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -1920,6 +1915,14 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.Property<Guid>("PlanId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProviderCustomerId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ProviderSubscriptionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTimeOffset?>("RenewalAt")
                         .HasColumnType("datetimeoffset");
@@ -1940,7 +1943,9 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.HasIndex("PlanId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ProviderSubscriptionId");
+
+                    b.HasIndex("UserId", "Status");
 
                     b.ToTable("Memberships", (string)null);
                 });
@@ -2033,6 +2038,21 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<long>("PriceMinor")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("ProviderPriceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ProviderProductId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ProviderSyncError")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTimeOffset?>("ProviderSyncedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");
 
@@ -2043,6 +2063,10 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProviderProductId")
+                        .IsUnique()
+                        .HasFilter("[ProviderProductId] IS NOT NULL");
 
                     b.ToTable("MembershipPlans", (string)null);
                 });
@@ -2212,6 +2236,10 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<string>("Location")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("MeetingUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<long>("PriceMinor")
                         .HasColumnType("bigint");
@@ -2598,50 +2626,43 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Bio")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("About")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
-                    b.Property<string>("CanHelpWith")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompanyName")
+                    b.Property<string>("AddressLine1")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("Industry")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<string>("AddressLine2")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("InstagramHandle")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<string>("EarningsBand")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("Interests")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Expectations")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<string>("JobTitle")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("LinkedInUrl")
+                    b.Property<string>("PhotoUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("LookingFor")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhotoUrl")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<int>("Visibility")
                         .HasColumnType("int");
-
-                    b.Property<string>("WebsiteUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("UserId");
 

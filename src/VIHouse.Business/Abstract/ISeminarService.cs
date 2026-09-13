@@ -59,6 +59,13 @@ public interface ISeminarService
     /// <summary>Confirmed enrolments for one member, for their account page.</summary>
     Task<List<Seminar>> GetEnrolledSeminarsAsync(Guid userId, CancellationToken ct = default);
 
+    /// <summary>
+    /// The same list, each seminar paired with the enrolment that grants it — for the attendee
+    /// portal, which shows *how* someone holds their place (paid, membership, free, comped) and
+    /// what that entitles them to, not just that they do.
+    /// </summary>
+    Task<List<SeminarEnrolment>> GetEnrolmentsForUserAsync(Guid userId, CancellationToken ct = default);
+
     // --- Admin --- (every mutation is audit-logged) ----------------------------------------------
 
     Task<List<Seminar>> GetAllForAdminAsync(CancellationToken ct = default);
@@ -167,6 +174,9 @@ public enum SeminarEnrollmentOutcome
     Failed,
 }
 
+/// <summary>A seminar together with the viewer's own enrolment on it.</summary>
+public record SeminarEnrolment(Seminar Seminar, SeminarEnrollment Enrollment);
+
 /// <param name="SeatsRemaining">Null when the seminar has no capacity limit.</param>
 public record SeminarAccessInfo(
     SeminarAccessOutcome Outcome,
@@ -176,6 +186,17 @@ public record SeminarAccessInfo(
 {
     /// <summary>True only when the body and media should actually be rendered.</summary>
     public bool HasAccess => Outcome == SeminarAccessOutcome.Enrolled;
+
+    /// <summary>The viewer's confirmed enrolment, when <see cref="HasAccess"/> — what the page
+    /// reads to tell a paying attendee's interface from a member's or a free one's.</summary>
+    public SeminarEnrollment? Enrollment { get; init; }
+
+    /// <summary>
+    /// Set when the viewer could enrol but has not yet answered the profile questions the House
+    /// asks of every participant. The enrol button then points at the profile page instead of
+    /// posting, and <see cref="CanEnrolNow"/> stays true so the seat count still shows.
+    /// </summary>
+    public bool ProfileIncomplete { get; init; }
 
     /// <summary>True when a POST to the enrol endpoint would do something — used to decide whether
     /// to render the button at all.</summary>

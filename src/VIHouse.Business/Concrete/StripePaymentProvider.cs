@@ -11,6 +11,7 @@ public class StripePaymentProvider : IPaymentProvider
 {
     private readonly StripeOptions options;
     private readonly SessionService sessionService;
+    private readonly Stripe.BillingPortal.SessionService portalService;
     private readonly ILogger<StripePaymentProvider> logger;
 
     public StripePaymentProvider(IOptions<StripeOptions> options, ILogger<StripePaymentProvider> logger)
@@ -19,6 +20,7 @@ public class StripePaymentProvider : IPaymentProvider
         this.logger = logger;
         StripeConfiguration.ApiKey = this.options.SecretKey;
         sessionService = new SessionService();
+        portalService = new Stripe.BillingPortal.SessionService();
     }
 
     public async Task<CheckoutSessionResult> CreateCheckoutSessionAsync(CreateCheckoutSessionRequest request, CancellationToken ct = default)
@@ -33,32 +35,7 @@ public class StripePaymentProvider : IPaymentProvider
             SuccessUrl = request.SuccessUrl,
             CancelUrl = request.CancelUrl,
             Metadata = new Dictionary<string, string>(request.Metadata),
-            LineItems =
-            [
-                new SessionLineItemOptions
-                {
-                    Quantity = 1,
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                        Currency = request.Currency,
-                        UnitAmount = request.AmountMinor,
-                        // An inline recurring price rather than a pre-created Price object: plans are
-                        // admin-editable data here, so requiring someone to mirror every price change
-                        // in the Stripe dashboard would guarantee the two drift apart.
-                        Recurring = request.Recurring switch
-                        {
-                            RecurringInterval.Monthly => new SessionLineItemPriceDataRecurringOptions { Interval = "month" },
-                            RecurringInterval.Annual => new SessionLineItemPriceDataRecurringOptions { Interval = "year" },
-                            _ => null,
-                        },
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
-                        {
-                            Name = request.ProductName,
-                            Description = request.ProductDescription,
-                        },
-                    },
-                },
-            ],
+            LineItems = [BuildLineItem(request)],
         };
 
         // Ticket checkouts expire to release the seat hold (CapacityService holds for 15 minutes);
@@ -71,6 +48,42 @@ public class StripePaymentProvider : IPaymentProvider
 
         var session = await sessionService.CreateAsync(createOptions, cancellationToken: ct);
         return new CheckoutSessionResult(session.Id, session.Url);
+    }
+
+    /// <summary>
+    /// A mirrored plan sells by its Stripe Price id, so the sale lands under the named product in
+    /// the dashboard and reporting; anything else — a ticket, a seminar, a plan whose sync has not
+    /// landed yet — is priced inline, which is what every checkout did before the catalogue existed.
+    /// Requiring the mirror would have turned a Stripe outage during an admin edit into "nobody can
+    /// buy this plan", so the inline path stays as the fallback.
+    /// </summary>
+    private static SessionLineItemOptions BuildLineItem(CreateCheckoutSessionRequest request)
+    {
+        if (!string.IsNullOrWhiteSpace(request.ProviderPriceId))
+        {
+            return new SessionLineItemOptions { Quantity = 1, Price = request.ProviderPriceId };
+        }
+
+        return new SessionLineItemOptions
+        {
+            Quantity = 1,
+            PriceData = new SessionLineItemPriceDataOptions
+            {
+                Currency = request.Currency,
+                UnitAmount = request.AmountMinor,
+                Recurring = request.Recurring switch
+                {
+                    RecurringInterval.Monthly => new SessionLineItemPriceDataRecurringOptions { Interval = "month" },
+                    RecurringInterval.Annual => new SessionLineItemPriceDataRecurringOptions { Interval = "year" },
+                    _ => null,
+                },
+                ProductData = new SessionLineItemPriceDataProductDataOptions
+                {
+                    Name = request.ProductName,
+                    Description = request.ProductDescription,
+                },
+            },
+        };
     }
 
     public async Task<PaymentProviderDetails?> GetPaymentDetailsAsync(string providerReference, CancellationToken ct = default)
@@ -100,20 +113,90 @@ public class StripePaymentProvider : IPaymentProvider
         }
     }
 
+    public async Task<string?> CreateBillingPortalUrlAsync(string providerCustomerId, string returnUrl, CancellationToken ct = default)
+    {
+        try
+        {
+            var session = await portalService.CreateAsync(new Stripe.BillingPortal.SessionCreateOptions
+            {
+                Customer = providerCustomerId,
+                ReturnUrl = returnUrl,
+            }, cancellationToken: ct);
+
+            return session.Url;
+        }
+        catch (StripeException ex)
+        {
+            // The usual cause is the portal not having been configured in the Stripe dashboard yet
+            // (Settings → Billing → Customer portal); the member page simply omits the button.
+            logger.LogWarning(ex, "Could not open a Stripe billing portal session for {CustomerId}", providerCustomerId);
+            return null;
+        }
+    }
+
     public PaymentWebhookEvent ConstructWebhookEvent(string requestBody, string signatureHeader)
     {
         // Throws StripeException on a bad/missing signature — the caller (WebhooksController) lets
         // that translate to a 400 so Stripe knows delivery failed, rather than swallowing it.
         var stripeEvent = EventUtility.ConstructEvent(requestBody, signatureHeader, options.WebhookSecret);
 
-        var type = stripeEvent.Type switch
+        switch (stripeEvent.Type)
         {
-            "checkout.session.completed" => PaymentWebhookEventType.CheckoutCompleted,
-            "checkout.session.expired" => PaymentWebhookEventType.CheckoutExpired,
-            _ => PaymentWebhookEventType.Unhandled,
-        };
+            case "checkout.session.completed":
+            case "checkout.session.expired":
+            {
+                var session = stripeEvent.Data.Object as Session;
+                var type = stripeEvent.Type == "checkout.session.completed"
+                    ? PaymentWebhookEventType.CheckoutCompleted
+                    : PaymentWebhookEventType.CheckoutExpired;
 
-        var sessionId = stripeEvent.Data.Object is Session session ? session.Id : null;
-        return new PaymentWebhookEvent(stripeEvent.Id, type, sessionId);
+                return new PaymentWebhookEvent(stripeEvent.Id, type, session?.Id)
+                {
+                    SubscriptionId = session?.SubscriptionId,
+                    CustomerId = session?.CustomerId,
+                };
+            }
+
+            case "invoice.paid":
+            {
+                // The first invoice of a subscription is paid inside checkout and already handled
+                // by checkout.session.completed; only a later billing cycle is a renewal. Manual and
+                // upcoming-invoice reasons are ignored for the same reason.
+                if (stripeEvent.Data.Object is not Invoice invoice
+                    || invoice.BillingReason != "subscription_cycle"
+                    || invoice.Parent?.SubscriptionDetails?.SubscriptionId is not { } subscriptionId)
+                {
+                    return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.Unhandled, null);
+                }
+
+                // The period the invoice covers is on its line items; the invoice-level PeriodEnd
+                // is the billing-usage window, which for a licensed subscription trails a cycle
+                // behind. The latest line end is the date the member is now paid up to.
+                var periodEnd = invoice.Lines?.Data?
+                    .Select(l => l.Period?.End)
+                    .Where(d => d is not null)
+                    .Max();
+
+                return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.SubscriptionRenewed, null)
+                {
+                    SubscriptionId = subscriptionId,
+                    CustomerId = invoice.CustomerId,
+                    CurrentPeriodEnd = periodEnd is null ? null : new DateTimeOffset(DateTime.SpecifyKind(periodEnd.Value, DateTimeKind.Utc)),
+                };
+            }
+
+            case "customer.subscription.deleted":
+            {
+                var subscription = stripeEvent.Data.Object as Subscription;
+                return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.SubscriptionCancelled, null)
+                {
+                    SubscriptionId = subscription?.Id,
+                    CustomerId = subscription?.CustomerId,
+                };
+            }
+
+            default:
+                return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.Unhandled, null);
+        }
     }
 }

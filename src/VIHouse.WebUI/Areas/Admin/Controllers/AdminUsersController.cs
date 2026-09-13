@@ -43,7 +43,7 @@ public class AdminUsersController(
                 UserId = user.Id,
                 Email = user.Email ?? user.UserName ?? "—",
                 Roles = (await userManager.GetRolesAsync(user)).ToList(),
-                CompanyName = profile?.CompanyName,
+                JobTitle = profile?.JobTitle,
                 ApplicationCount = allApplications.Count(a => a.UserId == user.Id),
                 BookingCount = allBookings.Count(b => b.UserId == user.Id),
             });

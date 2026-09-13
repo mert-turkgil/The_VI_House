@@ -1,0 +1,13 @@
+@model MembershipRenewedEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">Your membership has renewed</h1>
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    Your <strong>@Model.PlanName</strong> membership has been renewed and now runs until
+    @Model.ExpiresAt.ToString("d MMMM yyyy"). Nothing else changes &mdash; your access, your card and
+    your place in the room carry straight on.
+</p>
+<p style="margin:0 0 16px;">
+    You can change your card, download invoices or cancel at any time from your account page.
+</p>
+<p style="margin:0;">&mdash; The VI House</p>

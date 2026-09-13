@@ -5,6 +5,11 @@ namespace VIHouse.Entities.Membership;
 /// <summary>
 /// Brief §45's Membership object: User/Plan/Start/Renewal/Expiry/Status. One row per purchase —
 /// a renewal creates a new row rather than mutating the old one, so history is never lost.
+///
+/// The one exception to "never mutate" is a recurring plan: the provider bills the same
+/// subscription again each period, and a renewal there extends <see cref="ExpiresAt"/> on this row
+/// rather than opening a second one, because it is the same purchase continuing — the subscription
+/// id is what ties the two together.
 /// </summary>
 public class Membership : BaseEntity
 {
@@ -13,9 +18,21 @@ public class Membership : BaseEntity
 
     public DateTimeOffset StartAt { get; set; }
 
-    /// <summary>Stored for future auto-renewal billing (brief §46, explicitly a later phase) — nothing reads this to auto-charge yet.</summary>
+    /// <summary>The next date the provider is expected to charge for a recurring plan; null for a
+    /// one-time purchase. Advanced by each renewal webhook.</summary>
     public DateTimeOffset? RenewalAt { get; set; }
 
     public DateTimeOffset? ExpiresAt { get; set; }
     public MembershipStatus Status { get; set; } = MembershipStatus.Active;
+
+    /// <summary>The provider's subscription id ("sub_…") for a recurring plan; null for a one-time
+    /// purchase. This is the key the renewal and cancellation webhooks match on.</summary>
+    public string? ProviderSubscriptionId { get; set; }
+
+    /// <summary>The provider's customer id ("cus_…"), which is what opens the self-service billing
+    /// portal for this member. Null when the checkout did not create one (one-time purchases).</summary>
+    public string? ProviderCustomerId { get; set; }
+
+    /// <summary>When the provider reported the subscription ended, for a status of Cancelled.</summary>
+    public DateTimeOffset? CancelledAt { get; set; }
 }

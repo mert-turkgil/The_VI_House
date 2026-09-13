@@ -38,15 +38,15 @@ public class MemberDirectoryController(
         && await MemberAccess.HasActiveMembershipAsync(User, membershipService, userManager, ct);
 
     [HttpGet("")]
-    public async Task<IActionResult> Index(string? industry, string? city, string? country, string? search, CancellationToken ct)
+    public async Task<IActionResult> Index(string? profession, string? city, string? country, string? search, CancellationToken ct)
     {
         if (!await MayViewAsync(ct)) return NotFound();
 
-        var filter = new ProfileFilter { Industry = industry, City = city, Country = country, Search = search, Take = 50 };
+        var filter = new ProfileFilter { Profession = profession, City = city, Country = country, Search = search, Take = 50 };
         var entries = await profiles.SearchDirectoryAsync(filter, ct);
 
         ViewData["Title"] = "Member Directory";
-        ViewData["Industry"] = industry;
+        ViewData["Profession"] = profession;
         ViewData["City"] = city;
         ViewData["Country"] = country;
         ViewData["Search"] = search;

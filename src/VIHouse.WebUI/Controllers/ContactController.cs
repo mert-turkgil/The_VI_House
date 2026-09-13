@@ -1,16 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
-using VIHouse.Business.Options;
 using VIHouse.WebUI.ViewModels.Content;
 using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Controllers;
 
 [Route("contact")]
-public class ContactController(IEmailService emailService, IOptions<SiteOptions> siteOptions, IStringLocalizer<SharedResource> loc) : Controller
+public class ContactController(IEmailService emailService, SeoResolver seo, IStringLocalizer<SharedResource> loc) : Controller
 {
     [HttpGet("")]
     public IActionResult Index()
@@ -29,7 +27,12 @@ public class ContactController(IEmailService emailService, IOptions<SiteOptions>
 
         if (!ModelState.IsValid) return View(form);
 
-        var recipient = siteOptions.Value.ContactEmail;
+        // SiteSetting.ContactEmail, not SiteOptions — the same source the Contact page's own info
+        // panel, the coming-soon footer, and the JSON-LD block all read, edited in one place
+        // (Admin > Site & SEO). Two independently-configurable "contact email" values meant an
+        // admin could change one and have this form keep mailing the address they just replaced.
+        var settings = await seo.SettingsAsync(ct);
+        var recipient = settings.ContactEmail;
         if (!string.IsNullOrWhiteSpace(recipient))
         {
             await emailService.SendAsync(

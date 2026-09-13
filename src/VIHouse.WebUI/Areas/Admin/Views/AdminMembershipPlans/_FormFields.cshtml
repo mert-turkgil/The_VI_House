@@ -7,39 +7,41 @@
         <span asp-validation-for="Name" class="field-validation-error"></span>
     </div>
     <div class="admin-field">
-        <label asp-for="Currency"></label>
-        <input asp-for="Currency" placeholder="GBP" maxlength="3" />
-        <span asp-validation-for="Currency" class="field-validation-error"></span>
-    </div>
-</div>
-
-<div class="admin-field">
-    <label asp-for="Description"></label>
-    <textarea asp-for="Description"></textarea>
-</div>
-
-<div class="admin-form__grid">
-    <div class="admin-field">
-        <label asp-for="PriceMinor">Price (minor units — e.g. 250000 = £2,500.00)</label>
-        <input asp-for="PriceMinor" type="number" />
-        <span asp-validation-for="PriceMinor" class="field-validation-error"></span>
-    </div>
-    <div class="admin-field">
-        <label asp-for="BillingPeriod"></label>
-        <select asp-for="BillingPeriod" asp-items="Html.GetEnumSelectList<VIHouse.Entities.Membership.MembershipBillingPeriod>()"></select>
-    </div>
-    <div class="admin-field">
         <label asp-for="Status"></label>
         <select asp-for="Status" asp-items="Html.GetEnumSelectList<VIHouse.Entities.Membership.MembershipPlanStatus>()"></select>
     </div>
 </div>
 
 <div class="admin-field">
-    <label asp-for="Features"></label>
-    <textarea asp-for="Features" rows="5" placeholder="Priority booking&#10;Founding Member badge&#10;Invitation to House Notes previews"></textarea>
+    <label asp-for="Description"></label>
+    <textarea asp-for="Description" rows="2" placeholder="One sentence, shown under the plan name on the public page and in Stripe."></textarea>
+    <span asp-validation-for="Description" class="field-validation-error"></span>
+</div>
+
+<div class="admin-form__grid admin-form__grid--3">
+    <div class="admin-field">
+        <label asp-for="Price">Price (e.g. 2500.00)</label>
+        <input asp-for="Price" type="number" step="0.01" min="0" inputmode="decimal" />
+        <span asp-validation-for="Price" class="field-validation-error"></span>
+    </div>
+    <div class="admin-field">
+        <label asp-for="Currency"></label>
+        <input asp-for="Currency" placeholder="GBP" maxlength="3" style="text-transform:uppercase;" />
+        <span asp-validation-for="Currency" class="field-validation-error"></span>
+    </div>
+    <div class="admin-field">
+        <label asp-for="BillingPeriod"></label>
+        <select asp-for="BillingPeriod" asp-items="Html.GetEnumSelectList<VIHouse.Entities.Membership.MembershipBillingPeriod>()"></select>
+    </div>
 </div>
 
 <div class="admin-field">
-    <label asp-for="SortOrder"></label>
+    <label asp-for="Features"></label>
+    <textarea asp-for="Features" rows="5" placeholder="Priority booking&#10;Founding Member badge&#10;Invitation to House Notes previews"></textarea>
+    <span asp-validation-for="Features" class="field-validation-error"></span>
+</div>
+
+<div class="admin-field" style="max-width:200px;">
+    <label asp-for="SortOrder">Sort order</label>
     <input asp-for="SortOrder" type="number" />
 </div>

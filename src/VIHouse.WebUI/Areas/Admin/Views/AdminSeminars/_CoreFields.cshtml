@@ -56,10 +56,18 @@
     </label>
 </div>
 
-<div class="admin-field">
-    <label asp-for="Location"></label>
-    <input asp-for="Location" placeholder="Zoom / The VI House, London" />
-    <p class="admin-field__hint">@Loc["Admin.Seminar.Location.Hint"]</p>
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label asp-for="Location"></label>
+        <input asp-for="Location" placeholder="Zoom / The VI House, London" />
+        <p class="admin-field__hint">@Loc["Admin.Seminar.Location.Hint"]</p>
+    </div>
+    <div class="admin-field">
+        <label asp-for="MeetingUrl"></label>
+        <input asp-for="MeetingUrl" type="url" placeholder="https://zoom.us/j/…" />
+        <p class="admin-field__hint">@Loc["Admin.Seminar.MeetingUrl.Hint"]</p>
+        <span asp-validation-for="MeetingUrl" class="field-validation-error"></span>
+    </div>
 </div>
 
 <div class="admin-form__grid">

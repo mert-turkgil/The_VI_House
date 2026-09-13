@@ -20,11 +20,13 @@ public class ProfileConfiguration : IEntityTypeConfiguration<Profile>
             .HasForeignKey<Profile>(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(p => p.CompanyName).HasMaxLength(200);
         builder.Property(p => p.JobTitle).HasMaxLength(200);
-        builder.Property(p => p.Industry).HasMaxLength(100);
-        builder.Property(p => p.LinkedInUrl).HasMaxLength(500);
-        builder.Property(p => p.InstagramHandle).HasMaxLength(100);
-        builder.Property(p => p.WebsiteUrl).HasMaxLength(500);
+        builder.Property(p => p.AddressLine1).HasMaxLength(200);
+        builder.Property(p => p.AddressLine2).HasMaxLength(200);
+        builder.Property(p => p.PostalCode).HasMaxLength(20);
+        builder.Property(p => p.About).HasMaxLength(2000);
+        builder.Property(p => p.Expectations).HasMaxLength(2000);
+        builder.Property(p => p.EarningsBand).HasMaxLength(20);
+        builder.Property(p => p.PhotoUrl).HasMaxLength(500);
     }
 }

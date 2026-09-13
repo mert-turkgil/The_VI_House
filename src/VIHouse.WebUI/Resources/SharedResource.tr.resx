@@ -178,12 +178,6 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Account.NavSecurity" xml:space="preserve"><value>Güvenlik ve Giriş</value></data>
   <data name="Account.NavAdminPanel" xml:space="preserve"><value>Yönetim Paneli</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>Profilim</value></data>
-  <data name="Account.CompanyLabel" xml:space="preserve"><value>Şirket</value></data>
-  <data name="Account.RoleLabel" xml:space="preserve"><value>Unvan</value></data>
-  <data name="Account.IndustryLabel" xml:space="preserve"><value>Sektör</value></data>
-  <data name="Account.LinkedInLabel" xml:space="preserve"><value>LinkedIn Adresi</value></data>
-  <data name="Account.WebsiteLabel" xml:space="preserve"><value>Web Sitesi</value></data>
-  <data name="Account.BioLabel" xml:space="preserve"><value>Hakkında</value></data>
   <data name="Account.SaveProfile" xml:space="preserve"><value>Profili Kaydet</value></data>
   <data name="Account.BookingsTitle" xml:space="preserve"><value>Rezervasyonlarım</value></data>
   <data name="Account.NoBookings" xml:space="preserve"><value>Henüz bir rezervasyonunuz yok.</value></data>
@@ -235,7 +229,6 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Directory.Subheading" xml:space="preserve"><value>Topluluğu arayın — sektöre, şehre veya üzerinde çalıştıkları şeye göre girişimcileri, operatörleri ve yatırımcıları bulun.</value></data>
   <data name="Directory.SearchLabel" xml:space="preserve"><value>Ara</value></data>
   <data name="Directory.SearchPlaceholder" xml:space="preserve"><value>İsim, şirket, unvan...</value></data>
-  <data name="Directory.IndustryLabel" xml:space="preserve"><value>Sektör</value></data>
   <data name="Directory.CityLabel" xml:space="preserve"><value>Şehir</value></data>
   <data name="Directory.CountryLabel" xml:space="preserve"><value>Ülke Kodu</value></data>
   <data name="Directory.FilterSubmit" xml:space="preserve"><value>Ara</value></data>
@@ -243,14 +236,9 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Directory.NoResults" xml:space="preserve"><value>Bu filtrelere uyan üye bulunamadı.</value></data>
   <data name="Directory.BackToDirectory" xml:space="preserve"><value>Rehbere Dön</value></data>
   <data name="Directory.About" xml:space="preserve"><value>Hakkında</value></data>
-  <data name="Directory.LookingFor" xml:space="preserve"><value>Aradığı</value></data>
-  <data name="Directory.CanHelpWith" xml:space="preserve"><value>Yardımcı Olabileceği</value></data>
 
   <data name="Account.DirectorySectionHeading" xml:space="preserve"><value>Üye Rehberi</value></data>
   <data name="Account.DirectorySectionNote" xml:space="preserve"><value>Bu alanlar yalnızca Üye Rehberi'ndeki profil kartınızda görünür.</value></data>
-  <data name="Account.InterestsLabel" xml:space="preserve"><value>İlgi Alanları</value></data>
-  <data name="Account.LookingForLabel" xml:space="preserve"><value>Aradığı</value></data>
-  <data name="Account.CanHelpWithLabel" xml:space="preserve"><value>Yardımcı Olabileceği</value></data>
   <data name="Account.VisibleInDirectoryLabel" xml:space="preserve"><value>Profilimi Üye Rehberi'nde göster</value></data>
 
   <data name="Notif.Title" xml:space="preserve"><value>Bildirimler</value></data>
@@ -978,4 +966,177 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Admin.NotifySignups.NotYet" xml:space="preserve"><value>Henüz değil</value></data>
   <data name="Admin.NotifySignups.Empty" xml:space="preserve"><value>Henüz kimse kaydolmadı.</value></data>
   <data name="Admin.NotifySignups.Total" xml:space="preserve"><value>Listede {0} kişi</value></data>
+  <data name="Form.Section.You" xml:space="preserve"><value>Sizin hakkınızda</value></data>
+  <data name="Form.Section.Address" xml:space="preserve"><value>Adres</value></data>
+  <data name="Form.Section.About" xml:space="preserve"><value>Kendi sözlerinizle</value></data>
+  <data name="Form.FirstName" xml:space="preserve"><value>Ad</value></data>
+  <data name="Form.LastName" xml:space="preserve"><value>Soyad</value></data>
+  <data name="Form.Email" xml:space="preserve"><value>E-posta adresi</value></data>
+  <data name="Form.JobTitle" xml:space="preserve"><value>Unvan / Meslek</value></data>
+  <data name="Form.JobTitle.Placeholder" xml:space="preserve"><value>örn. Kurucu, XYZ Capital Ortağı, Mimar</value></data>
+  <data name="Form.AddressLine1" xml:space="preserve"><value>Adres satırı 1</value></data>
+  <data name="Form.AddressLine2" xml:space="preserve"><value>Adres satırı 2</value></data>
+  <data name="Form.PostalCode" xml:space="preserve"><value>Posta kodu</value></data>
+  <data name="Form.City" xml:space="preserve"><value>Şehir</value></data>
+  <data name="Form.Country" xml:space="preserve"><value>Ülke</value></data>
+  <data name="Form.ChooseCountry" xml:space="preserve"><value>Ülkenizi seçin…</value></data>
+  <data name="Form.AnyCountry" xml:space="preserve"><value>Tüm ülkeler</value></data>
+  <data name="Form.About" xml:space="preserve"><value>Kendinizi veya işinizi tanımlayın</value></data>
+  <data name="Form.About.Placeholder" xml:space="preserve"><value>Ne yaptığınız, ne kurduğunuz ve şu an ne üzerinde çalıştığınız.</value></data>
+  <data name="Form.Expectations" xml:space="preserve"><value>Hedeflerinize nasıl yardımcı olabiliriz veya beklentileriniz nelerdir?</value></data>
+  <data name="Form.Expectations.Placeholder" xml:space="preserve"><value>Bunu zamanınıza değer kılacak tanışmalar, odalar veya sohbetler.</value></data>
+  <data name="Form.EarningsBand" xml:space="preserve"><value>Yıllık kazanç</value></data>
+  <data name="Form.EarningsBand.Choose" xml:space="preserve"><value>Bir aralık seçin…</value></data>
+  <data name="Form.EarningsBand.Hint" xml:space="preserve"><value>Bir rakam değil, bir aralık — doğru insanları bir araya getirmemize yardımcı olur.</value></data>
+  <data name="Form.AgreePrefix" xml:space="preserve"><value>Şunları kabul ediyorum:</value></data>
+  <data name="Form.Terms" xml:space="preserve"><value>Şartlar ve Koşullar</value></data>
+  <data name="Form.And" xml:space="preserve"><value>ve</value></data>
+  <data name="Form.Privacy" xml:space="preserve"><value>Gizlilik Politikası</value></data>
+  <data name="Apply.Eyebrow" xml:space="preserve"><value>Erişim Talebi</value></data>
+  <data name="Apply.Intro" xml:space="preserve"><value>Elle okunan birkaç soru. Bize kim olduğunuzu ve ne umduğunuzu anlatın; birkaç gün içinde size dönelim.</value></data>
+  <data name="Apply.Submit" xml:space="preserve"><value>Başvuruyu gönder</value></data>
+  <data name="Apply.Note" xml:space="preserve"><value>Her başvuru elle incelenir. Birkaç gün içinde haber alacaksınız.</value></data>
+  <data name="Join.Heading" xml:space="preserve"><value>The VI House'a Katılın</value></data>
+  <data name="Join.Lede" xml:space="preserve"><value>İçeri iki yol var. House'a sürekli erişim için üye olun ya da tek bir odayla başlamayı tercih ediyorsanız tek bir deneyime başvurun.</value></data>
+  <data name="Join.Routes.Label" xml:space="preserve"><value>Nasıl katılınır</value></data>
+  <data name="Join.Route.Membership" xml:space="preserve"><value>Bir plan seçin ve hemen ödeyin. Hesabınız anında oluşturulur.</value></data>
+  <data name="Join.Route.Single.Tag" xml:space="preserve"><value>Tek deneyim</value></data>
+  <data name="Join.Route.Single" xml:space="preserve"><value>Tek bir buluşmaya başvurun. Elle incelenir — yalnızca onaylandığınızda ödersiniz.</value></data>
+  <data name="Join.Preselected" xml:space="preserve"><value>seçildi — devam etmek için bilgilerinizi aşağıya girin.</value></data>
+  <data name="Join.ChoosePlan" xml:space="preserve"><value>Planınızı seçin</value></data>
+  <data name="Join.NoPlans" xml:space="preserve"><value>Şu anda açık plan yok. Lütfen kısa süre sonra tekrar bakın.</value></data>
+  <data name="Join.RenewsNote" xml:space="preserve"><value>İptal edilene kadar otomatik yenilenir — hesabınızdan istediğiniz zaman yönetin veya iptal edin.</value></data>
+  <data name="Join.EmailHint" xml:space="preserve"><value>Makbuzunuz ve hesap kurulum bağlantınız buraya gönderilir.</value></data>
+  <data name="Join.Submit" xml:space="preserve"><value>Ödemeye devam et</value></data>
+  <data name="Join.Secure" xml:space="preserve"><value>Ödeme Stripe tarafından işlenir. Kart bilgilerinizi asla görmez veya saklamayız.</value></data>
+  <data name="Join.Single.Heading" xml:space="preserve"><value>Yalnızca tek bir buluşmaya mı katılmak istiyorsunuz?</value></data>
+  <data name="Join.Single.Lede" xml:space="preserve"><value>Üyelik gerekmez. İlgilendiğiniz deneyime başvurun — her başvuru elle okunur ve yalnızca onaylandığınızda ödeme istenir.</value></data>
+  <data name="Join.Single.None" xml:space="preserve"><value>Şu anda başvuruya açık deneyim yok.</value></data>
+  <data name="Join.Single.SeeUpcoming" xml:space="preserve"><value>Yaklaşanlara bakın</value></data>
+  <data name="Join.From" xml:space="preserve"><value>başlangıç</value></data>
+  <data name="Join.ApplyForThis" xml:space="preserve"><value>Buna başvur</value></data>
+  <data name="Join.AlreadyHaveAccount" xml:space="preserve"><value>Zaten hesabınız var mı?</value></data>
+  <data name="Account.NavOverview" xml:space="preserve"><value>Genel bakış</value></data>
+  <data name="Account.NavMembership" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Account.DashboardTitle" xml:space="preserve"><value>Hesabım</value></data>
+  <data name="Account.WelcomeBack" xml:space="preserve"><value>Tekrar hoş geldiniz</value></data>
+  <data name="Account.Standing.Staff" xml:space="preserve"><value>House ekibi</value></data>
+  <data name="Account.Standing.Guest" xml:space="preserve"><value>House misafiri</value></data>
+  <data name="Account.Standing.Prospect" xml:space="preserve"><value>Henüz üye değil</value></data>
+  <data name="Account.ProfileIncomplete.Heading" xml:space="preserve"><value>Profilinizde birkaç yanıt eksik.</value></data>
+  <data name="Account.ProfileIncomplete.Body" xml:space="preserve"><value>Her katılımcı House'a kendisi ve beklentileri hakkında biraz bilgi verir. Bir dakika sürer ve bir oturumda yer almadan önce gereklidir.</value></data>
+  <data name="Account.ProfileIncomplete.Cta" xml:space="preserve"><value>Profili tamamla</value></data>
+  <data name="Account.YourMembership" xml:space="preserve"><value>Üyeliğiniz</value></data>
+  <data name="Account.Membership.Renews" xml:space="preserve"><value>{0} tarihinde yenilenir.</value></data>
+  <data name="Account.Membership.Ended" xml:space="preserve"><value>{0} tarihinde sona erdi.</value></data>
+  <data name="Account.MembershipDetails" xml:space="preserve"><value>Üyelik detayları</value></data>
+  <data name="Account.ManageBilling" xml:space="preserve"><value>Faturalandırmayı yönet</value></data>
+  <data name="Account.MembershipUnlocks" xml:space="preserve"><value>Üyeliğinizin açtığı kapılar</value></data>
+  <data name="Account.Perk.Sessions" xml:space="preserve"><value>Oturumlar, dahil</value></data>
+  <data name="Account.Perk.Directory" xml:space="preserve"><value>Üye rehberi</value></data>
+  <data name="Account.Perk.Community" xml:space="preserve"><value>Topluluk kanalları</value></data>
+  <data name="Account.Perk.Experiences" xml:space="preserve"><value>Deneyimlerde öncelik</value></data>
+  <data name="Account.Staff.Heading" xml:space="preserve"><value>House ekibindesiniz.</value></data>
+  <data name="Account.Staff.Body" xml:space="preserve"><value>Hesabınız yönetim panelini açar. Misafir olarak ayırttığınız veya kaydolduğunuz her şey de burada görünür.</value></data>
+  <data name="Account.Guest.Heading" xml:space="preserve"><value>House'un misafirisiniz.</value></data>
+  <data name="Account.Guest.Body" xml:space="preserve"><value>{0} rezervasyonunuz ve {1} oturumunuz var. Üyelik her oturumu dahil eder ve deneyimler arasındaki odaları açar.</value></data>
+  <data name="Account.Prospect.Heading" xml:space="preserve"><value>Henüz üye değilsiniz.</value></data>
+  <data name="Account.Prospect.Body" xml:space="preserve"><value>Üyelik, deneyimler arasında House'a sürekli erişimdir — oturumlar, oda, insanlar.</value></data>
+  <data name="Account.SeePlans" xml:space="preserve"><value>Planları gör</value></data>
+  <data name="Account.WhatMembershipIs" xml:space="preserve"><value>Üyelik nedir</value></data>
+  <data name="Account.NextSessions" xml:space="preserve"><value>Sıradaki oturumlarınız</value></data>
+  <data name="Account.NextExperiences" xml:space="preserve"><value>Sıradaki deneyimleriniz</value></data>
+  <data name="Account.SeeAll" xml:space="preserve"><value>Tümünü gör</value></data>
+  <data name="Account.NoLiveSessions" xml:space="preserve"><value>Yaklaşan canlı oturum yok — kütüphanenizde {0} isteğe bağlı oturum var.</value></data>
+  <data name="Account.NoUpcomingBookings" xml:space="preserve"><value>Henüz rezervasyon yok.</value></data>
+  <data name="Account.BrowseExperiences" xml:space="preserve"><value>Deneyimlere göz atın</value></data>
+  <data name="Account.QuickLinks" xml:space="preserve"><value>Diğer her şey</value></data>
+  <data name="Account.Quick.ProfileComplete" xml:space="preserve"><value>Tamamlandı</value></data>
+  <data name="Account.Quick.ProfileIncomplete" xml:space="preserve"><value>Birkaç yanıt gerekiyor</value></data>
+  <data name="Account.Quick.Unread" xml:space="preserve"><value>{0} okunmamış</value></data>
+  <data name="Account.Quick.AllRead" xml:space="preserve"><value>Tümü okundu</value></data>
+  <data name="Account.Quick.Bookings" xml:space="preserve"><value>{0} rezervasyon</value></data>
+  <data name="Account.Quick.Sessions" xml:space="preserve"><value>{0} oturum</value></data>
+  <data name="Account.ProfileLede" xml:space="preserve"><value>House herkese aynı birkaç şeyi bir kez sorar. Güncel tutun; her oturuma ve deneyime sizinle gelsinler.</value></data>
+  <data name="Account.ProfilePrompt.Heading" xml:space="preserve"><value>Yerinizi almadan önce iki kısa yanıt.</value></data>
+  <data name="Account.ProfilePrompt.Body" xml:space="preserve"><value>Kendinizden ve beklentilerinizden kısaca bahsedin, kaydedin; doğrudan oturuma geri götürüleceksiniz.</value></data>
+  <data name="Account.MembershipTitle" xml:space="preserve"><value>Üyeliğim</value></data>
+  <data name="Account.CurrentPlan" xml:space="preserve"><value>Mevcut plan</value></data>
+  <data name="Account.Billing" xml:space="preserve"><value>Faturalandırma</value></data>
+  <data name="Account.Billing.Recurring" xml:space="preserve"><value>Otomatik yenilenir</value></data>
+  <data name="Account.Billing.OneTime" xml:space="preserve"><value>Tek seferlik ödendi</value></data>
+  <data name="Account.ContactAboutMembership" xml:space="preserve"><value>Üyeliğiniz hakkında bize ulaşın</value></data>
+  <data name="Account.ManageBilling.Note" xml:space="preserve"><value>Kartınızı değiştirin, faturaları indirin veya iptal edin — Stripe üzerinden güvenle. Ardından buraya geri döneceksiniz.</value></data>
+  <data name="Account.ManageBilling.Unavailable" xml:space="preserve"><value>Bu üyelik için self servis faturalandırma henüz mevcut değil — bize ulaşın, her değişikliği elle halledelim.</value></data>
+  <data name="Account.NoMembership.Sales" xml:space="preserve"><value>Katılmak için aşağıdan bir plan seçin. Kartınız, oturumlarınız ve deneyimler arasındaki odalar ödeme onaylandığı anda açılır.</value></data>
+  <data name="Account.NoMembership.Apply" xml:space="preserve"><value>Üyelik, bir deneyime başvuru yoluyla verilir. Onaylanıp katıldıktan sonra House sizinle iletişime geçecek.</value></data>
+  <data name="Account.ChooseAPlan" xml:space="preserve"><value>Bir plan seçin</value></data>
+  <data name="Account.MembershipHistory" xml:space="preserve"><value>Üyelik geçmişi</value></data>
+  <data name="Account.History.Plan" xml:space="preserve"><value>Plan</value></data>
+  <data name="Account.History.From" xml:space="preserve"><value>Başlangıç</value></data>
+  <data name="Account.History.Until" xml:space="preserve"><value>Bitiş</value></data>
+  <data name="Account.History.Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Account.Status.Active" xml:space="preserve"><value>Aktif</value></data>
+  <data name="Account.Status.Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Account.Status.Expired" xml:space="preserve"><value>Süresi doldu</value></data>
+  <data name="Sessions.Grant.Paid" xml:space="preserve"><value>Ücretli</value></data>
+  <data name="Sessions.Grant.Membership" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Sessions.Grant.Free" xml:space="preserve"><value>Ücretsiz</value></data>
+  <data name="Sessions.Grant.Comped" xml:space="preserve"><value>Davetli</value></data>
+  <data name="Sessions.JoinLink" xml:space="preserve"><value>Oturuma katıl</value></data>
+  <data name="Sessions.LinkPending" xml:space="preserve"><value>Katılım bağlantısı oturumdan önce gelir</value></data>
+  <data name="Sessions.LiveNow" xml:space="preserve"><value>Şu an canlı</value></data>
+  <data name="Sessions.Open" xml:space="preserve"><value>Aç</value></data>
+  <data name="Sessions.WatchAgain" xml:space="preserve"><value>Tekrar izle</value></data>
+  <data name="Sessions.Upcoming" xml:space="preserve"><value>Yaklaşan</value></data>
+  <data name="Sessions.Library" xml:space="preserve"><value>İsteğe bağlı kütüphaneniz</value></data>
+  <data name="Sessions.PastHeading" xml:space="preserve"><value>Gerçekleşenler</value></data>
+  <data name="Sessions.Portal.Lede" xml:space="preserve"><value>Yer aldığınız her oturum — önce katılım bağlantılı canlı oturumlar, sonra kütüphane, sonra gerçekleşenler.</value></data>
+  <data name="Sessions.Portal.Empty" xml:space="preserve"><value>Henüz bir şey yok. Ücretsiz oturumlar tek tıkla; ücretli olanlar üyeliğe dahildir.</value></data>
+  <data name="Sessions.Stat.Total" xml:space="preserve"><value>Oturum</value></data>
+  <data name="Sessions.Stat.Upcoming" xml:space="preserve"><value>Yaklaşan</value></data>
+  <data name="Sessions.Stat.Paid" xml:space="preserve"><value>Ücretli</value></data>
+  <data name="Sessions.Stat.Membership" xml:space="preserve"><value>Üyelikle</value></data>
+  <data name="Seminars.Attendee.Paid.Heading" xml:space="preserve"><value>Yeriniz ödendi.</value></data>
+  <data name="Seminars.Attendee.Paid.Body" xml:space="preserve"><value>{1} tarihinde {0} ödediniz. Erişiminizin süresi dolmaz — kayıt ve materyaller sizin kalır.</value></data>
+  <data name="Seminars.Attendee.Membership.Heading" xml:space="preserve"><value>Üyeliğinize dahil.</value></data>
+  <data name="Seminars.Attendee.Membership.Body" xml:space="preserve"><value>Bu oturum üye olmayanlar için {0}. Üyeliğiniz karşılıyor — ödeme yok.</value></data>
+  <data name="Seminars.Attendee.Free.Heading" xml:space="preserve"><value>İçeridesiniz.</value></data>
+  <data name="Seminars.Attendee.Free.Body" xml:space="preserve"><value>Bu oturum onu görebilen herkese açık. Yeriniz onaylandı.</value></data>
+  <data name="Seminars.Attendee.Comped.Heading" xml:space="preserve"><value>Bizden bir yer.</value></data>
+  <data name="Seminars.Attendee.Comped.Body" xml:space="preserve"><value>House size bu oturumda bir yer verdi. Ödeme yok.</value></data>
+  <data name="Seminars.Attendee.Starts" xml:space="preserve"><value>Başlangıç</value></data>
+  <data name="Seminars.Attendee.AllSessions" xml:space="preserve"><value>Tüm oturumlarım</value></data>
+  <data name="Seminars.Access.ProfileFirst" xml:space="preserve"><value>Önce bir şey: House her katılımcıya kendisi hakkında birkaç soru sorar.</value></data>
+  <data name="Seminars.Access.CompleteProfile" xml:space="preserve"><value>Kaydolmak için profilinizi tamamlayın</value></data>
+  <data name="Seminar.Error.ProfileIncomplete" xml:space="preserve"><value>Lütfen bir oturumda yer almadan önce profilinizi tamamlayın.</value></data>
+  <data name="Membership.SeePlans" xml:space="preserve"><value>Planları gör</value></data>
+  <data name="Membership.Guest.Heading" xml:space="preserve"><value>Tekrar hoş geldiniz, {0}.</value></data>
+  <data name="Membership.Guest.Subheading" xml:space="preserve"><value>House'ta zaten bir yeriniz var. Üyelik bunun sürekli hali — her oturum dahil ve deneyimler arasındaki odalar tüm yıl açık.</value></data>
+  <data name="Membership.Member.Eyebrow" xml:space="preserve"><value>Üyeliğiniz</value></data>
+  <data name="Membership.Member.Heading" xml:space="preserve"><value>Sizi görmek güzel, {0}.</value></data>
+  <data name="Membership.Member.Subheading" xml:space="preserve"><value>The VI House {0} üyesisiniz. Bu sayfa bunun açtığı kapıları gösterir.</value></data>
+  <data name="Membership.Member.Renews" xml:space="preserve"><value>Yenilenme</value></data>
+  <data name="Membership.Member.Doors.Heading" xml:space="preserve"><value>Üyeliğinizin açtığı kapılar</value></data>
+  <data name="Membership.Member.Doors.Sessions" xml:space="preserve"><value>Oturumlar</value></data>
+  <data name="Membership.Member.Doors.Sessions.Body" xml:space="preserve"><value>Atölyeler, kurucu oturumları ve kütüphane — ücretli oturumlar sizin için dahil.</value></data>
+  <data name="Membership.Member.Doors.Experiences" xml:space="preserve"><value>Deneyimler</value></data>
+  <data name="Membership.Member.Doors.Experiences.Body" xml:space="preserve"><value>Çok günlük buluşmalar. Üyeler önce duyar ve ikinci bir başvuru olmadan katılır.</value></data>
+  <data name="Membership.Member.Doors.Directory" xml:space="preserve"><value>Üye rehberi</value></data>
+  <data name="Membership.Member.Doors.Directory.Body" xml:space="preserve"><value>Odada kim var — ve onlara nasıl ulaşılır.</value></data>
+  <data name="Membership.Member.Doors.Community" xml:space="preserve"><value>Topluluk</value></data>
+  <data name="Membership.Member.Doors.Community.Body" xml:space="preserve"><value>Sohbetin buluşmalar arasında devam ettiği kanallar.</value></data>
+  <data name="Membership.Member.Doors.Portal" xml:space="preserve"><value>Oturum portalınız</value></data>
+  <data name="Membership.Member.Doors.Portal.Body" xml:space="preserve"><value>Kayıtlı olduğunuz her şey — katılım bağlantıları, kayıtlar, materyaller.</value></data>
+  <data name="Membership.Member.OtherPlans" xml:space="preserve"><value>Diğer planlar</value></data>
+  <data name="Membership.Member.OtherPlans.Note" xml:space="preserve"><value>Plan değiştirmek için hesap sayfanızdaki Faturalandırmayı yönet'i kullanın veya bize ulaşın — ikinci bir abonelik olmadan sizi taşırız.</value></data>
+  <data name="Membership.Member.YourPlan" xml:space="preserve"><value>Planınız</value></data>
+  <data name="Membership.Member.AskToChange" xml:space="preserve"><value>Plan değişikliği iste</value></data>
+  <data name="Membership.Member.Cta.Eyebrow" xml:space="preserve"><value>Sırada</value></data>
+  <data name="Membership.Member.Cta.Heading" xml:space="preserve"><value>Sıradaki odada yerinizi alın.</value></data>
+  <data name="Membership.Member.Cta.Body" xml:space="preserve"><value>Her oturum tek tık uzakta — ödeme yok, başvuru yok.</value></data>
+  <data name="Membership.Member.Cta.Button" xml:space="preserve"><value>Oturumlara göz at</value></data>
+  <data name="Directory.ProfessionLabel" xml:space="preserve"><value>Meslek</value></data>
+  <data name="Admin.Seminar.MeetingUrl" xml:space="preserve"><value>Toplantı bağlantısı</value></data>
+  <data name="Admin.Seminar.MeetingUrl.Hint" xml:space="preserve"><value>Çevrimiçi oturum için Zoom / Meet / Teams bağlantısı. Yalnızca onaylı katılımcılara, portallarında ve kaydolduktan sonra sayfada gösterilir — herkese açık kartta asla.</value></data>
 </root>

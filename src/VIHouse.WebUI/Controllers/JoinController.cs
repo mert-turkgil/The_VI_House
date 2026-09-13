@@ -8,6 +8,8 @@ using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Experiences;
+using VIHouse.Entities.Users;
+using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.Services;
 using VIHouse.WebUI.ViewModels.Experiences;
 using VIHouse.WebUI.ViewModels.Membership;
@@ -80,9 +82,16 @@ public class JoinController(
         if (form.PlanId == Guid.Empty)
             ModelState.AddModelError(nameof(form.PlanId), "Choose a plan to continue.");
 
+        if (!Countries.IsValid(form.Country))
+            ModelState.AddModelError(nameof(form.Country), "Choose your country.");
+
+        if (form.EarningsBand is not null && !EarningsBand.IsValid(form.EarningsBand))
+            ModelState.AddModelError(nameof(form.EarningsBand), "Choose a range from the list.");
+
         if (!ModelState.IsValid)
         {
             form.Plans = await membershipService.GetActivePlansAsync(ct);
+            form.OpenExperiences = await LoadOpenExperiencesAsync(ct);
             ViewData["Title"] = "Join The VI House";
             return View(form);
         }
@@ -99,13 +108,23 @@ public class JoinController(
                 form.Email.Trim(),
                 form.Country.Trim().ToUpperInvariant(),
                 form.City?.Trim(),
-                form.ReferralCode),
+                form.ReferralCode)
+            {
+                JobTitle = form.JobTitle?.Trim(),
+                AddressLine1 = form.AddressLine1?.Trim(),
+                AddressLine2 = form.AddressLine2?.Trim(),
+                PostalCode = form.PostalCode?.Trim(),
+                About = form.About.Trim(),
+                Expectations = form.Expectations.Trim(),
+                EarningsBand = form.EarningsBand,
+            },
             successUrl, cancelUrl, ct);
 
         if (!result.Success)
         {
             ModelState.AddModelError(string.Empty, result.Error!);
             form.Plans = await membershipService.GetActivePlansAsync(ct);
+            form.OpenExperiences = await LoadOpenExperiencesAsync(ct);
             ViewData["Title"] = "Join The VI House";
             return View(form);
         }

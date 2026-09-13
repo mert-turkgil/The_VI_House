@@ -3,11 +3,16 @@
     ViewData["Title"] = "New Membership Plan";
 }
 
+<p class="admin-lede">
+    The plan is saved here and mirrored to Stripe as a product with one price. Edit it here from
+    then on &mdash; a price change issues a new Stripe price automatically and retires the old one.
+</p>
+
 <form asp-action="Create" method="post" class="admin-form">
     <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
     <partial name="_FormFields" model="Model" />
     <div>
-        <button type="submit" class="admin-btn">Create Plan</button>
+        <button type="submit" class="admin-btn">Create &amp; sync to Stripe</button>
         <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
     </div>
 </form>

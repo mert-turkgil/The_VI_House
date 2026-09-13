@@ -19,40 +19,21 @@
         </div>
         <div>
             <h1>@Model.FullName</h1>
-            @if (!string.IsNullOrWhiteSpace(Model.JobTitle) || !string.IsNullOrWhiteSpace(Model.CompanyName))
+            @if (!string.IsNullOrWhiteSpace(Model.JobTitle))
             {
-                <p class="member-detail__role">@Model.JobTitle@(!string.IsNullOrWhiteSpace(Model.JobTitle) && !string.IsNullOrWhiteSpace(Model.CompanyName) ? " · " : "")@Model.CompanyName</p>
+                <p class="member-detail__role">@Model.JobTitle</p>
             }
             <p class="member-detail__meta">
-                @if (!string.IsNullOrWhiteSpace(Model.City)) { @($"{Model.City}, ") }@Model.Country
-                @if (!string.IsNullOrWhiteSpace(Model.Industry)) { <span> &middot; @Model.Industry</span> }
+                @if (!string.IsNullOrWhiteSpace(Model.City)) { @($"{Model.City}, ") }@Countries.NameFor(Model.Country)
             </p>
-            @if (!string.IsNullOrWhiteSpace(Model.LinkedInUrl))
-            {
-                <a href="@Model.LinkedInUrl" target="_blank" rel="noopener" class="member-detail__linkedin">LinkedIn &rarr;</a>
-            }
         </div>
     </div>
 
-    @if (!string.IsNullOrWhiteSpace(Model.Bio))
+    @if (!string.IsNullOrWhiteSpace(Model.About))
     {
         <section class="experience-section">
             <h2>@Loc["Directory.About"]</h2>
-            <p>@Model.Bio</p>
-        </section>
-    }
-    @if (!string.IsNullOrWhiteSpace(Model.LookingFor))
-    {
-        <section class="experience-section">
-            <h2>@Loc["Directory.LookingFor"]</h2>
-            <p>@Model.LookingFor</p>
-        </section>
-    }
-    @if (!string.IsNullOrWhiteSpace(Model.CanHelpWith))
-    {
-        <section class="experience-section">
-            <h2>@Loc["Directory.CanHelpWith"]</h2>
-            <p>@Model.CanHelpWith</p>
+            <p>@Model.About</p>
         </section>
     }
 </div>

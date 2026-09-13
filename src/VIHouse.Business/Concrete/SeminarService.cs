@@ -24,6 +24,7 @@ public class SeminarService(
     IRepository<SeminarTranslation> translations,
     IRepository<SeminarMedia> mediaRows,
     IMembershipService membershipService,
+    IProfileRepository profiles,
     IPaymentProvider paymentProvider,
     IMediaStorage mediaStorage,
     IEmailService emailService,
@@ -70,7 +71,7 @@ public class SeminarService(
         // seminar: someone who already has a place keeps it when the last seat goes.
         var existing = await enrollments.GetForUserAsync(seminar.Id, userId.Value, ct);
         if (existing is { Status: SeminarEnrollmentStatus.Confirmed })
-            return new SeminarAccessInfo(SeminarAccessOutcome.Enrolled, seminar.PriceMinor, seminar.Currency, seatsRemaining);
+            return new SeminarAccessInfo(SeminarAccessOutcome.Enrolled, seminar.PriceMinor, seminar.Currency, seatsRemaining) { Enrollment = existing };
 
         if (existing is { Status: SeminarEnrollmentStatus.Pending })
             return new SeminarAccessInfo(SeminarAccessOutcome.PendingPayment, seminar.PriceMinor, seminar.Currency, seatsRemaining);
@@ -81,15 +82,22 @@ public class SeminarService(
         if (seatsRemaining is 0)
             return new SeminarAccessInfo(SeminarAccessOutcome.SoldOut, seminar.PriceMinor, seminar.Currency, seatsRemaining);
 
+        // Every participant answers the same short set of questions before taking a place — the
+        // ones an applicant or a joining member has already answered on their form. Someone whose
+        // profile predates those questions is sent to fill them in first, whichever branch below
+        // they land in.
+        var profile = await profiles.GetByUserIdAsync(userId.Value, ct);
+        var profileIncomplete = profile is null || !profile.IsComplete;
+
         if (seminar.PriceMinor <= 0)
-            return new SeminarAccessInfo(SeminarAccessOutcome.FreeToEnrol, 0, seminar.Currency, seatsRemaining);
+            return new SeminarAccessInfo(SeminarAccessOutcome.FreeToEnrol, 0, seminar.Currency, seatsRemaining) { ProfileIncomplete = profileIncomplete };
 
         // The "free if you're subscribed" rule. Read live rather than from a claim, so a lapsed
         // membership stops covering seminars the moment it lapses rather than at next sign-in.
         if (seminar.IncludedWithMembership && await membershipService.GetCurrentMembershipAsync(userId.Value, ct) is not null)
-            return new SeminarAccessInfo(SeminarAccessOutcome.IncludedInMembership, seminar.PriceMinor, seminar.Currency, seatsRemaining);
+            return new SeminarAccessInfo(SeminarAccessOutcome.IncludedInMembership, seminar.PriceMinor, seminar.Currency, seatsRemaining) { ProfileIncomplete = profileIncomplete };
 
-        return new SeminarAccessInfo(SeminarAccessOutcome.RequiresPayment, seminar.PriceMinor, seminar.Currency, seatsRemaining);
+        return new SeminarAccessInfo(SeminarAccessOutcome.RequiresPayment, seminar.PriceMinor, seminar.Currency, seatsRemaining) { ProfileIncomplete = profileIncomplete };
     }
 
     public async Task<List<Seminar>> GetEnrolledSeminarsAsync(Guid userId, CancellationToken ct = default)
@@ -106,6 +114,19 @@ public class SeminarService(
         return [.. mine
             .Select(e => found.FirstOrDefault(s => s.Id == e.SeminarId))
             .OfType<Seminar>()];
+    }
+
+    public async Task<List<SeminarEnrolment>> GetEnrolmentsForUserAsync(Guid userId, CancellationToken ct = default)
+    {
+        var mine = await enrollments.GetConfirmedForUserAsync(userId, ct);
+        if (mine.Count == 0) return [];
+
+        var ids = mine.Select(e => e.SeminarId).Distinct().ToList();
+        var found = await seminars.GetByIdsAsync(ids, ct);
+
+        return [.. mine
+            .Select(e => found.FirstOrDefault(s => s.Id == e.SeminarId) is { } seminar ? new SeminarEnrolment(seminar, e) : null)
+            .OfType<SeminarEnrolment>()];
     }
 
     // --- Enrolment -----------------------------------------------------------------------------
@@ -140,6 +161,11 @@ public class SeminarService(
                 _ => "Seminar.Error.SignInRequired",
             });
         }
+
+        // Enforced here as well as on the page: the button is replaced for an incomplete profile,
+        // but a POST does not need a button.
+        if (access.ProfileIncomplete)
+            return SeminarEnrollmentResult.Fail("Seminar.Error.ProfileIncomplete");
 
         var enrollment = await UpsertEnrollmentAsync(seminarId, userId, ct);
         enrollment.Status = SeminarEnrollmentStatus.Confirmed;
@@ -176,6 +202,9 @@ public class SeminarService(
                 _ => "Seminar.Error.NoPaymentNeeded",
             });
         }
+
+        if (access.ProfileIncomplete)
+            return SeminarEnrollmentResult.Fail("Seminar.Error.ProfileIncomplete");
 
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null) return SeminarEnrollmentResult.Fail("Seminar.Error.AccountMissing");
@@ -328,6 +357,7 @@ public class SeminarService(
         existing.HostName = updated.HostName;
         existing.HostTitle = updated.HostTitle;
         existing.IsOnline = updated.IsOnline;
+        existing.MeetingUrl = updated.MeetingUrl;
         existing.Location = updated.Location;
         existing.TimeZoneId = updated.TimeZoneId;
         existing.StartAtUtc = updated.StartAtUtc;

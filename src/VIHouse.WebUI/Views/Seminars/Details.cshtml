@@ -1,6 +1,16 @@
 @model SeminarDetailViewModel
 @{
     var access = Model.Access;
+    var enrolment = Model.Enrollment;
+    var profileUrl = Url.Action("Profile", "Account", new { returnUrl = $"/sessions/{Model.Slug}" });
+
+    string GrantLabel(SeminarAccessGrant grant) => grant switch
+    {
+        SeminarAccessGrant.Purchase => Loc["Sessions.Grant.Paid"].Value,
+        SeminarAccessGrant.Membership => Loc["Sessions.Grant.Membership"].Value,
+        SeminarAccessGrant.Comped => Loc["Sessions.Grant.Comped"].Value,
+        _ => Loc["Sessions.Grant.Free"].Value,
+    };
 }
 
 @* The meta description used to be emitted here. It now comes from _Seo, which the layout renders
@@ -70,7 +80,72 @@
         </div>
     }
 
-    @if (access.HasAccess)
+    @if (access.HasAccess && enrolment is not null)
+    {
+        @* --- The attendee's panel -------------------------------------------------------------
+           What someone who holds a place sees instead of the sales gate. It reads differently by
+           how the place was granted: a paying attendee gets their receipt line, a member is told
+           their membership covers it, a free or comped attendee simply that they are in. The join
+           link, when there is one, is the loudest thing here. *@
+        <div class="seminar-attendee seminar-attendee--@enrolment.GrantedVia.ToString().ToLowerInvariant() @(Model.IsLiveNow ? "seminar-attendee--live" : "")">
+            <div class="seminar-attendee__status">
+                <span class="seminar-attendee__mark" aria-hidden="true">&#10003;</span>
+                <div>
+                    <strong class="seminar-attendee__heading">
+                        @switch (enrolment.GrantedVia)
+                        {
+                            case SeminarAccessGrant.Purchase: @Loc["Seminars.Attendee.Paid.Heading"] break;
+                            case SeminarAccessGrant.Membership: @Loc["Seminars.Attendee.Membership.Heading"] break;
+                            case SeminarAccessGrant.Comped: @Loc["Seminars.Attendee.Comped.Heading"] break;
+                            default: @Loc["Seminars.Attendee.Free.Heading"] break;
+                        }
+                    </strong>
+                    <p class="seminar-attendee__body">
+                        @switch (enrolment.GrantedVia)
+                        {
+                            case SeminarAccessGrant.Purchase:
+                                @Loc["Seminars.Attendee.Paid.Body", MoneyFormatter.Format(enrolment.AmountMinor, enrolment.Currency), enrolment.ConfirmedAt?.ToString("d MMMM yyyy") ?? ""]
+                                break;
+                            case SeminarAccessGrant.Membership:
+                                @Loc["Seminars.Attendee.Membership.Body", MoneyFormatter.Format(access.PriceMinor, access.Currency)]
+                                break;
+                            case SeminarAccessGrant.Comped:
+                                @Loc["Seminars.Attendee.Comped.Body"]
+                                break;
+                            default:
+                                @Loc["Seminars.Attendee.Free.Body"]
+                                break;
+                        }
+                    </p>
+                </div>
+                <span class="account-grant account-grant--@enrolment.GrantedVia.ToString().ToLowerInvariant()">@GrantLabel(enrolment.GrantedVia)</span>
+            </div>
+
+            @if (Model.StartAtUtc is { } start && (Model.EndAtUtc ?? start.AddHours(2)) >= DateTimeOffset.UtcNow)
+            {
+                <div class="seminar-attendee__when">
+                    <div>
+                        <span class="seminar-attendee__label">@(Model.IsLiveNow ? Loc["Sessions.LiveNow"] : Loc["Seminars.Attendee.Starts"])</span>
+                        <span class="seminar-attendee__value">@start.ToString("dddd d MMMM yyyy, HH:mm") UTC</span>
+                        <span class="seminar-attendee__sub">@(Model.IsOnline ? Loc["Seminars.Online"].Value : Model.Location ?? Loc["Seminars.InPerson"].Value)</span>
+                    </div>
+                    @if (Model.MeetingUrl is not null)
+                    {
+                        <a class="btn btn--primary seminar-attendee__join" href="@Model.MeetingUrl" target="_blank" rel="noopener">@Loc["Sessions.JoinLink"]</a>
+                    }
+                    else if (Model.IsOnline)
+                    {
+                        <span class="seminar-attendee__pending">@Loc["Sessions.LinkPending"]</span>
+                    }
+                </div>
+            }
+
+            <p class="seminar-attendee__portal">
+                <a asp-controller="Account" asp-action="Sessions">@Loc["Seminars.Attendee.AllSessions"] &rarr;</a>
+            </p>
+        </div>
+    }
+    else if (access.HasAccess)
     {
         <div class="seminar-access seminar-access--granted">
             <span class="seminar-access__mark" aria-hidden="true">&#10003;</span>
@@ -142,17 +217,33 @@
                 case SeminarAccessOutcome.FreeToEnrol:
                     <h2>@Loc["Seminars.Access.Free.Heading"]</h2>
                     <p>@Loc["Seminars.Access.Free.Body"]</p>
-                    <form asp-action="Enrol" asp-route-slug="@Model.Slug" method="post">
-                        <button type="submit" class="btn btn--primary">@Loc["Seminars.Enrol"]</button>
-                    </form>
+                    @if (access.ProfileIncomplete)
+                    {
+                        <p class="seminar-access__profile">@Loc["Seminars.Access.ProfileFirst"]</p>
+                        <a class="btn btn--primary" href="@profileUrl">@Loc["Seminars.Access.CompleteProfile"]</a>
+                    }
+                    else
+                    {
+                        <form asp-action="Enrol" asp-route-slug="@Model.Slug" method="post">
+                            <button type="submit" class="btn btn--primary">@Loc["Seminars.Enrol"]</button>
+                        </form>
+                    }
                     break;
 
                 case SeminarAccessOutcome.IncludedInMembership:
                     <h2>@Loc["Seminars.Access.Included.Heading"]</h2>
                     <p>@Loc["Seminars.Access.Included.Body", MoneyFormatter.Format(access.PriceMinor, access.Currency)]</p>
-                    <form asp-action="Enrol" asp-route-slug="@Model.Slug" method="post">
-                        <button type="submit" class="btn btn--primary">@Loc["Seminars.EnrolFree"]</button>
-                    </form>
+                    @if (access.ProfileIncomplete)
+                    {
+                        <p class="seminar-access__profile">@Loc["Seminars.Access.ProfileFirst"]</p>
+                        <a class="btn btn--primary" href="@profileUrl">@Loc["Seminars.Access.CompleteProfile"]</a>
+                    }
+                    else
+                    {
+                        <form asp-action="Enrol" asp-route-slug="@Model.Slug" method="post">
+                            <button type="submit" class="btn btn--primary">@Loc["Seminars.EnrolFree"]</button>
+                        </form>
+                    }
                     break;
 
                 case SeminarAccessOutcome.RequiresPayment:
@@ -164,11 +255,19 @@
                             <text> @Loc["Seminars.Access.Pay.MembershipHint"]</text>
                         }
                     </p>
-                    <form asp-action="Enrol" asp-route-slug="@Model.Slug" method="post">
-                        <button type="submit" class="btn btn--primary">
-                            @Loc["Seminars.Buy", MoneyFormatter.Format(access.PriceMinor, access.Currency)]
-                        </button>
-                    </form>
+                    @if (access.ProfileIncomplete)
+                    {
+                        <p class="seminar-access__profile">@Loc["Seminars.Access.ProfileFirst"]</p>
+                        <a class="btn btn--primary" href="@profileUrl">@Loc["Seminars.Access.CompleteProfile"]</a>
+                    }
+                    else
+                    {
+                        <form asp-action="Enrol" asp-route-slug="@Model.Slug" method="post">
+                            <button type="submit" class="btn btn--primary">
+                                @Loc["Seminars.Buy", MoneyFormatter.Format(access.PriceMinor, access.Currency)]
+                            </button>
+                        </form>
+                    }
                     @if (Model.IncludedWithMembership)
                     {
                         <a class="btn btn--ghost-dark" asp-controller="Membership" asp-action="Index">@Loc["Seminars.SeeMembership"]</a>

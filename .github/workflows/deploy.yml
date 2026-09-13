@@ -49,13 +49,27 @@ env:
 
   # --- Site identity ------------------------------------------------------------------------------
   SITE_BASE_URL: 'https://thevihouse.com'
-  SITE_CONTACT_EMAIL: ''
+  SITE_CONTACT_EMAIL: 'concierge@thevihouse.com'
   # Leave both EMPTY until thevihouse.com AND admin.thevihouse.com are bound to the MonsterASP site.
   # With a CookieDomain set while the site is still served from a *.runasp.net address, browsers
   # reject the auth cookie and nobody can sign in; with AdminHost set, /Admin only answers on that
   # host. Once DNS is live: ADMIN_HOST 'admin.thevihouse.com', COOKIE_DOMAIN '.thevihouse.com'.
   ADMIN_HOST: ''
   COOKIE_DOMAIN: ''
+
+  # --- Outbound email (Hostinger mailbox for thevihouse.com; see SmtpOptions.cs) -------------------
+  # Host/port come from hPanel's "Connect apps" / "Configure email client" screen for the mailbox —
+  # Hostinger sells three mail products (Hostinger Email, Titan Email, cPanel mail) with different
+  # SMTP hostnames, so that screen is authoritative, not this comment. 465 is implicit TLS
+  # (SslOnConnect); 587 negotiates plaintext-then-upgrade (StartTls) — SmtpEmailSender picks the
+  # right one from SMTP_PORT automatically, so only the port needs to match what hPanel actually says.
+  # SMTP_USERNAME/SMTP_PASSWORD are secrets — see the bottom of this file — not the Hostinger API
+  # key, which authenticates a different, HTTP-based Mail API this app does not use.
+  SMTP_HOST: 'smtp.hostinger.com'
+  SMTP_PORT: '587'
+  SMTP_USE_SSL: 'true'
+  SMTP_FROM_NAME: 'The VI House'
+  SMTP_FROM_EMAIL: 'concierge@thevihouse.com'
 
   # --- Storage paths (empty = inside the site folder: App_Data/dp-keys, App_Media, Resources) -------
   # Only set these to ABSOLUTE Windows paths that the MonsterASP app pool can write to. A path it
@@ -107,6 +121,7 @@ jobs:
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_TEST_SECRET_KEY }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           CKEDITOR_LICENSE_KEY: ${{ secrets.CKEDITOR_LICENSE_KEY }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
         run: |
           missing=0
           for name in FTP_SERVER FTP_USERNAME FTP_PASSWORD PROD_CONNECTION_STRING; do
@@ -121,6 +136,7 @@ jobs:
           [ -n "$STRIPE_SECRET_KEY" ]    || echo "::warning::STRIPE_TEST_SECRET_KEY is empty — payments are off."
           [ -n "$GOOGLE_CLIENT_ID" ]     || echo "::warning::GOOGLE_CLIENT_ID is empty — Google sign-in is off."
           [ -n "$CKEDITOR_LICENSE_KEY" ] || echo "::warning::CKEDITOR_LICENSE_KEY is empty — the admin rich-text editor will not load."
+          [ -n "$SMTP_USERNAME" ]        || echo "::warning::SMTP_USERNAME is empty — outbound email (2FA/receipt/contact mail) is off."
 
       # --- Build -----------------------------------------------------------------------------------
       - name: Setup Node
@@ -150,9 +166,6 @@ jobs:
 
       # Written before publish so the Web SDK picks it up like any other appsettings*.json.
       # jq --arg does the JSON escaping, so passwords with quotes/backslashes/% survive intact.
-      # No Smtp section yet: no mail provider exists, so the app runs on SmtpOptions defaults and
-      # logs each failed send. Add Smtp here (Host/Port/From in env + SMTP_USERNAME/SMTP_PASSWORD
-      # secrets) when there is one.
       - name: Write appsettings.Production.json
         working-directory: src/VIHouse.WebUI
         env:
@@ -164,6 +177,8 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           SMS_USERNAME: ${{ secrets.SMS_USERNAME }}
           SMS_PASSWORD: ${{ secrets.SMS_PASSWORD }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           CKEDITOR_LICENSE_KEY: ${{ secrets.CKEDITOR_DEV_LICENSE_KEY }}
           SEED_ADMIN_EMAIL: ${{ secrets.SEED_ADMIN_EMAIL }}
           SEED_ADMIN_PASSWORD: ${{ secrets.SEED_ADMIN_PASSWORD }}
@@ -187,6 +202,13 @@ jobs:
             --arg     smsCountryCode    "$SMS_DEFAULT_COUNTRY_CODE" \
             --arg     smsUsername       "$SMS_USERNAME" \
             --arg     smsPassword       "$SMS_PASSWORD" \
+            --arg     smtpHost          "$SMTP_HOST" \
+            --argjson smtpPort          "$SMTP_PORT" \
+            --argjson smtpUseSsl        "$SMTP_USE_SSL" \
+            --arg     smtpFromName      "$SMTP_FROM_NAME" \
+            --arg     smtpFromEmail     "$SMTP_FROM_EMAIL" \
+            --arg     smtpUsername      "$SMTP_USERNAME" \
+            --arg     smtpPassword      "$SMTP_PASSWORD" \
             --arg     ckeditorKey       "$CKEDITOR_LICENSE_KEY" \
             --arg     mediaRoot         "$MEDIA_ROOT_PATH" \
             --arg     dpKeysPath        "$DATA_PROTECTION_KEYS_PATH" \
@@ -219,6 +241,11 @@ jobs:
                 Username: $smsUsername, Password: $smsPassword,
                 DefaultCountryCode: $smsCountryCode
               },
+              Smtp: {
+                Host: $smtpHost, Port: $smtpPort, UseSsl: $smtpUseSsl,
+                FromName: $smtpFromName, FromEmail: $smtpFromEmail,
+                Username: $smtpUsername, Password: $smtpPassword
+              },
               CkEditor: { LicenseKey: $ckeditorKey },
               Media: { RootPath: $mediaRoot },
               DataProtection: { KeysPath: $dpKeysPath },
@@ -231,7 +258,8 @@ jobs:
             }' > appsettings.Production.json
 
           echo "appsettings.Production.json written. Non-secret sections:"
-          jq 'del(.ConnectionStrings, .Stripe, .Authentication, .Sms, .CkEditor, .SeedAdmin, .SeedAdmins)' appsettings.Production.json
+          jq 'del(.ConnectionStrings, .Stripe, .Authentication, .Sms, .Smtp, .CkEditor, .SeedAdmin, .SeedAdmins)' appsettings.Production.json
+          echo "Smtp (secrets redacted): host=$(jq -r '.Smtp.Host' appsettings.Production.json):$(jq -r '.Smtp.Port' appsettings.Production.json), from=$(jq -r '.Smtp.FromEmail' appsettings.Production.json), username set: $(jq -r '.Smtp.Username != ""' appsettings.Production.json)"
 
       - name: Publish
         run: >
@@ -426,6 +454,10 @@ jobs:
 #   GOOGLE_CLIENT_SECRET    Authentication:Google:ClientSecret
 #   SMS_USERNAME            Sms:Username
 #   SMS_PASSWORD            Sms:Password
+#   SMTP_USERNAME           Smtp:Username  (the Hostinger mailbox's full address, e.g.
+#                           concierge@thevihouse.com — NOT the Hostinger API key, which authenticates
+#                           a separate HTTP-based Mail API this app does not use)
+#   SMTP_PASSWORD           Smtp:Password  (that mailbox's real password)
 #   CKEDITOR_LICENSE_KEY    CkEditor:LicenseKey     (production key; CKEDITOR_DEV_LICENSE_KEY is not
 #                           read here — its licence only allows localhost / private IPs)
 #   SEED_ADMIN_EMAIL        SeedAdmin:Email         (bootstrap SuperAdmin; ignored once the account exists)

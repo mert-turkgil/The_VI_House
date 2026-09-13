@@ -1,21 +1,35 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Concrete;
 using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
+using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Community;
+using VIHouse.Entities.Seminars;
 using VIHouse.Entities.Users;
+using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.ViewModels.Account;
+using VIHouse.WebUI.ViewModels.Membership;
 using VIHouse.WebUI.ViewModels.Seminars;
 
 namespace VIHouse.WebUI.Controllers;
 
-/// <summary>The member-facing "Basic Profile" + "Booking" account area (brief §206) — deliberately a
-/// plain MVC controller, not part of the Areas/Identity Razor Pages scaffold, which only owns
-/// auth mechanics (login/password/2FA), not member-facing content like this.</summary>
+/// <summary>
+/// The member-facing account area (brief §206) — deliberately a plain MVC controller, not part of
+/// the Areas/Identity Razor Pages scaffold, which only owns auth mechanics (login/password/2FA),
+/// not member-facing content like this.
+///
+/// The area reads differently depending on who is signed in. A member gets a dashboard built
+/// around their membership; a guest — someone holding a ticket or a session but no membership —
+/// gets the same shell with their bookings in front and an invitation to join; staff get a
+/// pointer to the panel. The standing is worked out once, in <see cref="Index"/>, and every
+/// other page here is the same for everyone because what it shows is theirs regardless.
+/// </summary>
 [Authorize]
 [Route("account")]
 public class AccountController(
@@ -29,27 +43,118 @@ public class AccountController(
     IRepository<CommunityLink> communityLinks,
     IOptions<FeatureOptions> features) : Controller
 {
+    // --- Dashboard -----------------------------------------------------------------------------
+
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var userId = CurrentUserId();
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null) return Challenge();
+
+        var culture = CultureInfo.CurrentUICulture.Name;
+        var now = DateTimeOffset.UtcNow;
+
+        var membership = await membershipService.GetMembershipSummaryAsync(userId, ct);
         var profile = await profiles.GetByUserIdAsync(userId, ct);
-        ViewData["Title"] = "My Profile";
-        ViewData["Membership"] = await CurrentMembershipInfoAsync(userId, ct);
-        return View(profile is null ? new ProfileFormViewModel() : ProfileFormViewModel.FromEntity(profile));
+        var enrolments = await seminarService.GetEnrolmentsForUserAsync(userId, ct);
+        var myBookings = await bookings.GetByUserAsync(userId, ct);
+        var isStaff = Roles.AdminRoles.Any(User.IsInRole);
+
+        var model = new AccountDashboardViewModel
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email ?? "",
+            Membership = membership,
+            CanManageBilling = membership is { HasProviderSubscription: true, Membership.ProviderCustomerId: not null },
+            MemberNumber = membership is null ? null : MemberNumberFor(membership.Membership.Id),
+            ProfileComplete = profile?.IsComplete == true,
+            UnreadNotifications = await notificationService.GetUnreadCountAsync(userId, ct),
+            TotalSessionCount = enrolments.Count,
+            OnDemandSessionCount = enrolments.Count(e => e.Seminar.StartAtUtc is null),
+            UpcomingSessions = enrolments
+                .Where(e => e.Seminar.StartAtUtc is { } start && (e.Seminar.EndAtUtc ?? start.AddHours(2)) > now)
+                .OrderBy(e => e.Seminar.StartAtUtc)
+                .Take(3)
+                .Select(e => new DashboardSessionItem(
+                    e.Seminar.Slug, SeminarContent.Title(e.Seminar, culture), e.Seminar.StartAtUtc,
+                    e.Seminar.IsOnline, e.Seminar.Location, e.Enrollment.GrantedVia,
+                    !string.IsNullOrWhiteSpace(e.Seminar.MeetingUrl)))
+                .ToList(),
+            TotalBookingCount = myBookings.Count,
+            CommunityEnabled = features.Value.Community,
+            DirectoryEnabled = features.Value.MemberDirectory,
+        };
+
+        // Standing: membership wins over everything else because it is what the dashboard is built
+        // around; a staff account with no membership gets the staff view.
+        model.Standing = membership is not null ? AccountStanding.Member
+            : isStaff ? AccountStanding.Staff
+            : enrolments.Count > 0 || myBookings.Count > 0 ? AccountStanding.Guest
+            : AccountStanding.Prospect;
+
+        foreach (var booking in myBookings.Where(b => b.Status is BookingStatus.Confirmed or BookingStatus.Pending))
+        {
+            var experience = await experienceService.GetForAdminEditAsync(booking.ExperienceId, ct);
+            if (experience is null || experience.EndAtUtc < now) continue;
+
+            model.UpcomingBookings.Add(new DashboardBookingItem(
+                booking.BookingReference, $"The VI House — {experience.City}", experience.StartAtUtc, booking.Status));
+        }
+        model.UpcomingBookings = model.UpcomingBookings.OrderBy(b => b.StartAtUtc).Take(3).ToList();
+
+        if (membership is null && features.Value.MembershipSales)
+            model.Plans = (await membershipService.GetActivePlansAsync(ct)).Select(MembershipPlanCardViewModel.FromEntity).ToList();
+
+        ViewData["Title"] = "My Account";
+        return View(model);
     }
 
-    [HttpPost("")]
+    // --- Profile ------------------------------------------------------------------------------
+
+    [HttpGet("profile")]
+    public async Task<IActionResult> Profile(string? returnUrl, CancellationToken ct)
+    {
+        var userId = CurrentUserId();
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null) return Challenge();
+
+        var profile = await profiles.GetByUserIdAsync(userId, ct);
+        var form = ProfileFormViewModel.FromEntity(user, profile);
+        form.ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : null;
+
+        // Sent here from a session they tried to enrol in: say so, rather than leaving them to
+        // wonder why the page changed under them.
+        if (form.ReturnUrl is not null && profile?.IsComplete != true)
+            ViewData["ProfilePrompt"] = true;
+
+        ViewData["Title"] = "My Profile";
+        return View(form);
+    }
+
+    [HttpPost("profile")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Index(ProfileFormViewModel form, CancellationToken ct)
+    public async Task<IActionResult> Profile(ProfileFormViewModel form, CancellationToken ct)
     {
         ViewData["Title"] = "My Profile";
         var userId = CurrentUserId();
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null) return Challenge();
+
+        if (!Countries.IsValid(form.Country))
+            ModelState.AddModelError(nameof(form.Country), "Choose your country.");
+        if (form.EarningsBand is not null && !EarningsBand.IsValid(form.EarningsBand))
+            ModelState.AddModelError(nameof(form.EarningsBand), "Choose a range from the list.");
+
         if (!ModelState.IsValid)
-        {
-            ViewData["Membership"] = await CurrentMembershipInfoAsync(userId, ct);
             return View(form);
-        }
+
+        user.FirstName = form.FirstName.Trim();
+        user.LastName = form.LastName.Trim();
+        user.City = form.City?.Trim();
+        user.Country = form.Country.Trim().ToUpperInvariant();
+        await userManager.UpdateAsync(user);
 
         var profile = await profiles.GetByUserIdAsync(userId, ct);
         if (profile is null)
@@ -65,8 +170,65 @@ public class AccountController(
         }
 
         await profiles.SaveChangesAsync(ct);
+
+        // Back to wherever they came from — a session page, typically — with no status banner
+        // queued: TempData survives one redirect and would otherwise surface on whatever page
+        // next happens to read it.
+        if (Url.IsLocalUrl(form.ReturnUrl)) return Redirect(form.ReturnUrl!);
+
         TempData["StatusMessage"] = "Profile saved.";
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Profile));
+    }
+
+    // --- Membership ---------------------------------------------------------------------------
+
+    /// <summary>
+    /// The member's own membership: current plan, what happens next (renews / expires / ended),
+    /// the billing portal, and every membership they have held. For someone without one it is the
+    /// plans, or — while membership is application-only — the route to apply.
+    /// </summary>
+    [HttpGet("membership")]
+    public async Task<IActionResult> Membership(CancellationToken ct)
+    {
+        var userId = CurrentUserId();
+        var current = await membershipService.GetMembershipSummaryAsync(userId, ct);
+        var history = await membershipService.GetMembershipHistoryAsync(userId, ct);
+
+        var model = new AccountMembershipViewModel
+        {
+            Current = current,
+            History = history,
+            CanManageBilling = current is { HasProviderSubscription: true, Membership.ProviderCustomerId: not null },
+            MemberNumber = current is null ? null : MemberNumberFor(current.Membership.Id),
+            SalesOpen = features.Value.MembershipSales,
+            Plans = current is null && features.Value.MembershipSales
+                ? (await membershipService.GetActivePlansAsync(ct)).Select(MembershipPlanCardViewModel.FromEntity).ToList()
+                : [],
+        };
+
+        ViewData["Title"] = "My Membership";
+        return View(model);
+    }
+
+    /// <summary>
+    /// Hands the member to the provider's hosted billing page — change card, download invoices,
+    /// cancel. A POST because it creates a one-time session at the provider on every click; a GET
+    /// would do that for every prefetch and link preview too.
+    /// </summary>
+    [HttpPost("billing")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Billing(CancellationToken ct)
+    {
+        var returnUrl = Url.Action(nameof(Membership), "Account", null, Request.Scheme)!;
+        var portalUrl = await membershipService.CreateBillingPortalUrlAsync(CurrentUserId(), returnUrl, ct);
+
+        if (portalUrl is null)
+        {
+            TempData["MembershipError"] = "The billing portal isn't available right now. Please contact us and we'll sort it out by hand.";
+            return RedirectToAction(nameof(Membership));
+        }
+
+        return Redirect(portalUrl);
     }
 
     [HttpGet("card")]
@@ -77,7 +239,7 @@ public class AccountController(
         if (membership is null)
         {
             TempData["MembershipError"] = "You don't have an active membership yet.";
-            return RedirectToAction("Index", "Membership");
+            return RedirectToAction(nameof(Membership));
         }
 
         var plan = await membershipService.GetPlanAsync(membership.PlanId, ct);
@@ -88,9 +250,7 @@ public class AccountController(
         {
             FullName = user is null ? "" : $"{user.FirstName} {user.LastName}",
             PlanName = plan?.Name ?? "Member",
-            // Purely presentational — derived from the Membership row's own id, not a separately
-            // stored/sequential field, so there's nothing new to keep in sync.
-            MemberNumber = $"VIH-{membership.Id:N}".Substring(0, 12).ToUpperInvariant(),
+            MemberNumber = MemberNumberFor(membership.Id),
             MemberSince = membership.StartAt,
             ExpiresAt = membership.ExpiresAt,
         });
@@ -116,7 +276,7 @@ public class AccountController(
         if (membership is null)
         {
             TempData["MembershipError"] = "The community channels are open to members. Your ticket covers the event itself.";
-            return RedirectToAction("Index", "Membership");
+            return RedirectToAction(nameof(Membership));
         }
 
         var links = (await communityLinks.FindAsync(l => l.IsActive, ct))
@@ -127,6 +287,8 @@ public class AccountController(
         ViewData["Title"] = "Community";
         return View(links);
     }
+
+    // --- Notifications ------------------------------------------------------------------------
 
     [HttpGet("notifications")]
     public async Task<IActionResult> Notifications(CancellationToken ct)
@@ -156,6 +318,8 @@ public class AccountController(
         return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : RedirectToAction(nameof(Notifications));
     }
 
+    // --- Bookings -----------------------------------------------------------------------------
+
     [HttpGet("bookings")]
     public async Task<IActionResult> Bookings(CancellationToken ct)
     {
@@ -179,22 +343,6 @@ public class AccountController(
 
         ViewData["Title"] = "My Bookings";
         return View(model);
-    }
-
-    /// <summary>
-    /// The sessions this member has signed up for, whichever way they got in — free, covered by
-    /// their membership, or paid for. Kept next to Bookings rather than folded into it because an
-    /// Experience booking is a ticket to a place on a date, and a Session enrolment is standing
-    /// access to a body of content; showing them in one table would flatten that difference.
-    /// </summary>
-    [HttpGet("sessions")]
-    public async Task<IActionResult> Sessions(CancellationToken ct)
-    {
-        var culture = System.Globalization.CultureInfo.CurrentUICulture.Name;
-        var enrolled = await seminarService.GetEnrolledSeminarsAsync(CurrentUserId(), ct);
-
-        ViewData["Title"] = "My Sessions";
-        return View(enrolled.Select(s => SeminarCardViewModel.FromEntity(s, culture)).ToList());
     }
 
     /// <summary>
@@ -235,29 +383,47 @@ public class AccountController(
         });
     }
 
+    // --- Sessions (the attendee portal) -----------------------------------------------------
+
+    /// <summary>
+    /// The sessions this member has a place on, whichever way they got it — free, covered by their
+    /// membership, paid for, or comped. This is the attendee's portal rather than a list: live
+    /// sittings that are still to come sit first with their join link, the on-demand library
+    /// follows, and past sittings are kept because the recording outlives the date.
+    ///
+    /// Kept next to Bookings rather than folded into it because an Experience booking is a ticket
+    /// to a place on a date, and a Session enrolment is standing access to a body of content;
+    /// showing them in one table would flatten that difference.
+    /// </summary>
+    [HttpGet("sessions")]
+    public async Task<IActionResult> Sessions(CancellationToken ct)
+    {
+        var culture = CultureInfo.CurrentUICulture.Name;
+        var enrolments = await seminarService.GetEnrolmentsForUserAsync(CurrentUserId(), ct);
+
+        ViewData["Title"] = "My Sessions";
+        return View(SessionPortalViewModel.Build(enrolments, culture, DateTimeOffset.UtcNow));
+    }
+
+    // --- Helpers ------------------------------------------------------------------------------
+
     private static void ApplyForm(Profile profile, ProfileFormViewModel form)
     {
-        profile.CompanyName = form.CompanyName;
-        profile.JobTitle = form.JobTitle;
-        profile.Industry = form.Industry;
-        profile.Bio = form.Bio;
-        profile.LinkedInUrl = form.LinkedInUrl;
-        profile.WebsiteUrl = form.WebsiteUrl;
-        profile.Interests = form.Interests;
-        profile.LookingFor = form.LookingFor;
-        profile.CanHelpWith = form.CanHelpWith;
+        profile.JobTitle = form.JobTitle?.Trim();
+        profile.AddressLine1 = form.AddressLine1?.Trim();
+        profile.AddressLine2 = form.AddressLine2?.Trim();
+        profile.PostalCode = form.PostalCode?.Trim();
+        profile.About = form.About.Trim();
+        profile.Expectations = form.Expectations.Trim();
+        profile.EarningsBand = form.EarningsBand;
         profile.Visibility = form.VisibleInDirectory ? ProfileVisibility.MembersOnly : ProfileVisibility.Private;
         profile.UpdatedAt = DateTimeOffset.UtcNow;
     }
 
-    private async Task<AccountMembershipInfo?> CurrentMembershipInfoAsync(Guid userId, CancellationToken ct)
-    {
-        var membership = await membershipService.GetCurrentMembershipAsync(userId, ct);
-        if (membership is null) return null;
-
-        var plan = await membershipService.GetPlanAsync(membership.PlanId, ct);
-        return plan is null ? null : new AccountMembershipInfo(plan.Name, membership.ExpiresAt);
-    }
+    /// <summary>Purely presentational — derived from the Membership row's own id, not a separately
+    /// stored/sequential field, so there's nothing new to keep in sync.</summary>
+    private static string MemberNumberFor(Guid membershipId) =>
+        $"VIH-{membershipId:N}".Substring(0, 12).ToUpperInvariant();
 
     private Guid CurrentUserId() => Guid.Parse(userManager.GetUserId(User)!);
 }

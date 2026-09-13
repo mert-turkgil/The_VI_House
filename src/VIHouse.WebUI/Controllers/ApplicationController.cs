@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.RateLimiting;
 using VIHouse.Business.Abstract;
 using VIHouse.Entities.Applications;
 using VIHouse.Entities.Experiences;
+using VIHouse.Entities.Users;
+using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.Services;
 using VIHouse.WebUI.ViewModels.Applications;
 
@@ -67,6 +69,12 @@ public class ApplicationController(IExperienceService experienceService, IApplic
             ModelState.AddModelError(nameof(form.AgreeToTerms), "You must agree to the Terms & Conditions and Privacy Policy to apply.");
         }
 
+        if (!Countries.IsValid(form.Country))
+            ModelState.AddModelError(nameof(form.Country), "Choose your country.");
+
+        if (form.EarningsBand is not null && !EarningsBand.IsValid(form.EarningsBand))
+            ModelState.AddModelError(nameof(form.EarningsBand), "Choose a range from the list.");
+
         if (!ModelState.IsValid)
         {
             ViewData["Title"] = "Request Access";
@@ -80,22 +88,15 @@ public class ApplicationController(IExperienceService experienceService, IApplic
             FirstName = form.FirstName.Trim(),
             LastName = form.LastName.Trim(),
             Email = form.Email.Trim(),
-            Phone = form.Phone,
+            JobTitle = form.JobTitle?.Trim(),
+            AddressLine1 = form.AddressLine1?.Trim(),
+            AddressLine2 = form.AddressLine2?.Trim(),
+            PostalCode = form.PostalCode?.Trim(),
+            City = form.City?.Trim(),
             Country = form.Country.Trim().ToUpperInvariant(),
-            City = form.City,
-            CompanyName = form.CompanyName,
-            JobTitle = form.JobTitle,
-            Industry = form.Industry,
-            CompanyStage = form.CompanyStage,
-            LinkedInUrl = form.LinkedInUrl,
-            WebsiteUrl = form.WebsiteUrl,
-            YearsOfExperience = form.YearsOfExperience,
-            AnnualRevenueBand = form.AnnualRevenueBand,
-            FundingStage = form.FundingStage,
-            MotivationStatement = form.MotivationStatement,
-            BuildingStatement = form.BuildingStatement,
-            ContributionStatement = form.ContributionStatement,
-            HowDidYouHear = form.HowDidYouHear,
+            AboutStatement = form.AboutStatement.Trim(),
+            ExpectationsStatement = form.ExpectationsStatement.Trim(),
+            EarningsBand = form.EarningsBand,
             ReferralCode = form.ReferralCode,
         };
 

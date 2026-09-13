@@ -20,6 +20,14 @@ public interface IPaymentProvider
     /// PaymentService.InitiateCheckoutAsync's placeholder ProviderReference). Callers fall back to
     /// local DB fields when this is null.</summary>
     Task<PaymentProviderDetails?> GetPaymentDetailsAsync(string providerReference, CancellationToken ct = default);
+
+    /// <summary>
+    /// A one-time URL to the provider's hosted self-service billing page, where the member can
+    /// change card, download invoices or cancel a subscription. Returns null (never throws) when
+    /// the provider cannot open one — no such customer, portal not configured on the provider
+    /// side, network failure — so a member-facing page can simply not show the button.
+    /// </summary>
+    Task<string?> CreateBillingPortalUrlAsync(string providerCustomerId, string returnUrl, CancellationToken ct = default);
 }
 
 public record CreateCheckoutSessionRequest(
@@ -40,6 +48,16 @@ public record CreateCheckoutSessionRequest(
     /// price id so nothing above this interface has to know Stripe exists.
     /// </summary>
     public RecurringInterval? Recurring { get; init; }
+
+    /// <summary>
+    /// The provider's own Price id for what is being sold, when the plan has been mirrored into the
+    /// provider's catalogue (see IPaymentCatalogProvider). When set, the checkout line references
+    /// that price and the amount/currency/interval above are informational only; when null, the
+    /// provider is given the amount inline exactly as before. Either way the member sees the same
+    /// charge — the difference is whether the provider's dashboard groups the sale under a named
+    /// product.
+    /// </summary>
+    public string? ProviderPriceId { get; init; }
 }
 
 public enum RecurringInterval
@@ -68,6 +86,27 @@ public enum PaymentWebhookEventType
     Unhandled,
     CheckoutCompleted,
     CheckoutExpired,
+
+    /// <summary>A recurring subscription was billed again for a new period — not the first
+    /// payment, which arrives as <see cref="CheckoutCompleted"/>.</summary>
+    SubscriptionRenewed,
+
+    /// <summary>The subscription has ended at the provider — cancelled by the member through the
+    /// billing portal, by an admin in the provider's dashboard, or by repeated payment failure.</summary>
+    SubscriptionCancelled,
 }
 
-public record PaymentWebhookEvent(string EventId, PaymentWebhookEventType Type, string? SessionId);
+/// <param name="SessionId">The checkout session, for the two Checkout* events.</param>
+public record PaymentWebhookEvent(string EventId, PaymentWebhookEventType Type, string? SessionId)
+{
+    /// <summary>The provider's subscription id. Set on a completed subscription checkout and on
+    /// both Subscription* events — it is the key membership rows are matched on.</summary>
+    public string? SubscriptionId { get; init; }
+
+    /// <summary>The provider's customer id, when the event carries one.</summary>
+    public string? CustomerId { get; init; }
+
+    /// <summary>For <see cref="PaymentWebhookEventType.SubscriptionRenewed"/>: when the period
+    /// just paid for ends, i.e. the new expiry.</summary>
+    public DateTimeOffset? CurrentPeriodEnd { get; init; }
+}

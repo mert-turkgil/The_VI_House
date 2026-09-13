@@ -21,7 +21,9 @@
     {
         <a asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">@Loc["Account.NavAdminPanel"]</a>
     }
-    <a class="@NavClass("Index")" asp-controller="Account" asp-action="Index">@Loc["Account.NavProfile"]</a>
+    <a class="@NavClass("Index")" asp-controller="Account" asp-action="Index">@Loc["Account.NavOverview"]</a>
+    <a class="@NavClass("Profile")" asp-controller="Account" asp-action="Profile">@Loc["Account.NavProfile"]</a>
+    <a class="@NavClass("Membership")" asp-controller="Account" asp-action="Membership">@Loc["Account.NavMembership"]</a>
     <a class="@NavClass("Bookings")" asp-controller="Account" asp-action="Bookings">@Loc["Account.NavBookings"]</a>
     <a class="@NavClass("Sessions")" asp-controller="Account" asp-action="Sessions">@Loc["Account.NavSessions"]</a>
     @if (hasMembership)
@@ -37,7 +39,7 @@
         }
     }
     <a class="@NavClass("Notifications")" asp-controller="Account" asp-action="Notifications">@Loc["Notif.Title"]</a>
-    @if (!hasMembership)
+    @if (!hasMembership && !Features.Value.MembershipSales)
     {
         @* Membership is not sold; it is applied for. This points at the experiences that are open
            for applications rather than at a plan list — see Controllers/MembershipController and

@@ -26,6 +26,16 @@ public class ApplicationConfiguration : IEntityTypeConfiguration<Application>
         builder.Property(a => a.LastName).HasMaxLength(100).IsRequired();
         builder.Property(a => a.Email).HasMaxLength(320).IsRequired();
         builder.Property(a => a.Country).HasMaxLength(2).IsRequired();
+        builder.Property(a => a.Phone).HasMaxLength(32);
+        builder.Property(a => a.JobTitle).HasMaxLength(200);
+        builder.Property(a => a.AddressLine1).HasMaxLength(200);
+        builder.Property(a => a.AddressLine2).HasMaxLength(200);
+        builder.Property(a => a.PostalCode).HasMaxLength(20);
+        builder.Property(a => a.City).HasMaxLength(100);
+        builder.Property(a => a.AboutStatement).HasMaxLength(2000);
+        builder.Property(a => a.ExpectationsStatement).HasMaxLength(2000);
+        builder.Property(a => a.EarningsBand).HasMaxLength(20);
+        builder.Property(a => a.ReferralCode).HasMaxLength(40);
 
         builder.HasMany(a => a.Tags)
             .WithOne()

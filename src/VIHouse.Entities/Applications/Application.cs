@@ -6,6 +6,10 @@ namespace VIHouse.Entities.Applications;
 /// The application-first funnel entry point (brief §25-28): Visitor -> Request Access ->
 /// Application -> VI House Review -> Approved -> Private Payment Link -> Payment -> Member/Guest
 /// account activated. UserId is null until an account is provisioned post-approval.
+///
+/// The applicant's answers are the same set the account profile holds (see
+/// <see cref="Users.Profile"/>), so an approved application can seed the profile without asking
+/// the same questions twice. Keep the two in step.
 /// </summary>
 public class Application : BaseEntity
 {
@@ -16,26 +20,30 @@ public class Application : BaseEntity
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
     public string Email { get; set; } = default!;
-    public string? Phone { get; set; }
-    public string Country { get; set; } = default!;
-    public string? City { get; set; }
 
-    // Professional
-    public string? CompanyName { get; set; }
+    /// <summary>Not collected by the public form any more. Kept nullable so an admin-entered or
+    /// historic number still reaches the SMS path (see ApplicationService.SendInvitationAsync).</summary>
+    public string? Phone { get; set; }
+
+    /// <summary>Title / profession.</summary>
     public string? JobTitle { get; set; }
-    public string? Industry { get; set; }
-    public string? CompanyStage { get; set; }
-    public string? LinkedInUrl { get; set; }
-    public string? WebsiteUrl { get; set; }
+
+    public string? AddressLine1 { get; set; }
+    public string? AddressLine2 { get; set; }
+    public string? PostalCode { get; set; }
+    public string? City { get; set; }
+    public string Country { get; set; } = default!;
 
     // Qualification
-    public int? YearsOfExperience { get; set; }
-    public string? AnnualRevenueBand { get; set; }
-    public string? FundingStage { get; set; }
-    public string? MotivationStatement { get; set; }      // "Why do you want to join The VI House?"
-    public string? BuildingStatement { get; set; }         // "What are you building?"
-    public string? ContributionStatement { get; set; }     // "What could you bring to the community?"
-    public string? HowDidYouHear { get; set; }
+    /// <summary>"Describe yourself or your business." Required on the form.</summary>
+    public string? AboutStatement { get; set; }
+
+    /// <summary>"How may we help you with your goals, or what are your expectations?" Required on the form.</summary>
+    public string? ExpectationsStatement { get; set; }
+
+    /// <summary>One of <see cref="Users.EarningsBand"/>'s codes.</summary>
+    public string? EarningsBand { get; set; }
+
     public string? ReferralCode { get; set; }
 
     /// <summary>Admin-settable qualification score, not customer-visible.</summary>

@@ -90,6 +90,18 @@ public class SeminarDetailViewModel
 
     public SeminarAccessInfo Access { get; set; } = default!;
 
+    /// <summary>The join link for an online sitting — populated only for a confirmed attendee
+    /// (or a staff preview), so the public page never carries it.</summary>
+    public string? MeetingUrl { get; set; }
+
+    /// <summary>True from an hour before the start until the end: the window in which the join
+    /// button leads the page.</summary>
+    public bool IsLiveNow { get; set; }
+
+    /// <summary>The attendee's own enrolment, when they have one — how they got in, what it cost,
+    /// when. This is what makes a paying attendee's page read differently from a member's.</summary>
+    public SeminarEnrollment? Enrollment { get; set; }
+
     /// <summary>True when the content below is being shown to an editor rather than to someone who
     /// signed up. The page says so out loud, and still renders the enrolment panel underneath, so a
     /// preview shows both halves of what a real visitor would meet.</summary>
@@ -107,9 +119,14 @@ public class SeminarDetailViewModel
     {
         var copy = SeminarContent.Resolve(s, culture);
         var showContent = access.HasAccess || isStaffPreview;
+        var now = DateTimeOffset.UtcNow;
+        var end = s.EndAtUtc ?? s.StartAtUtc?.AddHours(2);
 
         return new SeminarDetailViewModel
         {
+            MeetingUrl = showContent && s.IsOnline ? s.MeetingUrl : null,
+            IsLiveNow = s.StartAtUtc is { } start && end is { } finish && now >= start.AddHours(-1) && now <= finish,
+            Enrollment = access.Enrollment,
             Slug = s.Slug,
             Title = copy?.Title ?? s.Slug,
             Summary = copy?.Summary,

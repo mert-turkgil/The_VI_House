@@ -1,6 +1,7 @@
 @model List<MemberCardViewModel>
 @{
     ViewData["Title"] = Loc["Directory.Title"];
+    var hasFilter = ViewData["Search"] is not null || ViewData["Profession"] is not null || ViewData["City"] is not null || ViewData["Country"] is not null;
 }
 
 <div class="content-hero">
@@ -18,8 +19,8 @@
             <input id="search" name="search" value="@ViewData["Search"]" placeholder="@Loc["Directory.SearchPlaceholder"]" />
         </div>
         <div class="apply-field">
-            <label for="industry">@Loc["Directory.IndustryLabel"]</label>
-            <input id="industry" name="industry" value="@ViewData["Industry"]" />
+            <label for="profession">@Loc["Directory.ProfessionLabel"]</label>
+            <input id="profession" name="profession" value="@ViewData["Profession"]" />
         </div>
         <div class="apply-field">
             <label for="city">@Loc["Directory.CityLabel"]</label>
@@ -27,10 +28,10 @@
         </div>
         <div class="apply-field">
             <label for="country">@Loc["Directory.CountryLabel"]</label>
-            <input id="country" name="country" placeholder="e.g. GB" maxlength="2" value="@ViewData["Country"]" />
+            <select id="country" name="country" asp-items='@Countries.SelectList(ViewData["Country"] as string, Loc["Form.AnyCountry"].Value)'></select>
         </div>
         <button type="submit" class="btn btn--primary">@Loc["Directory.FilterSubmit"]</button>
-        @if (ViewData["Search"] is not null || ViewData["Industry"] is not null || ViewData["City"] is not null || ViewData["Country"] is not null)
+        @if (hasFilter)
         {
             <a class="member-directory__clear" asp-action="Index">@Loc["Directory.ClearFilters"]</a>
         }
@@ -58,17 +59,16 @@
                     </div>
                     <div class="member-card__body">
                         <h3>@m.FullName</h3>
-                        @if (!string.IsNullOrWhiteSpace(m.JobTitle) || !string.IsNullOrWhiteSpace(m.CompanyName))
+                        @if (!string.IsNullOrWhiteSpace(m.JobTitle))
                         {
-                            <p class="member-card__role">@m.JobTitle@(!string.IsNullOrWhiteSpace(m.JobTitle) && !string.IsNullOrWhiteSpace(m.CompanyName) ? " · " : "")@m.CompanyName</p>
+                            <p class="member-card__role">@m.JobTitle</p>
                         }
                         <p class="member-card__meta">
-                            @if (!string.IsNullOrWhiteSpace(m.City)) { @($"{m.City}, ") }@m.Country
-                            @if (!string.IsNullOrWhiteSpace(m.Industry)) { <span> &middot; @m.Industry</span> }
+                            @if (!string.IsNullOrWhiteSpace(m.City)) { @($"{m.City}, ") }@Countries.NameFor(m.Country)
                         </p>
-                        @if (m.BioSnippet is not null)
+                        @if (m.AboutSnippet is not null)
                         {
-                            <p class="member-card__bio">@m.BioSnippet</p>
+                            <p class="member-card__bio">@m.AboutSnippet</p>
                         }
                     </div>
                 </a>

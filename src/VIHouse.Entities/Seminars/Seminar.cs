@@ -44,6 +44,14 @@ public class Seminar : BaseEntity
     public bool IsOnline { get; set; } = true;
     public string? Location { get; set; }
 
+    /// <summary>
+    /// Where an online sitting actually happens — the Zoom/Meet/Teams link. Shown only to a
+    /// confirmed attendee, in their session portal and on the detail page once enrolled; it is
+    /// never rendered on the public card, since the link is the ticket. Null for an on-demand
+    /// session, or an in-person one, or an online one whose link has not been set yet.
+    /// </summary>
+    public string? MeetingUrl { get; set; }
+
     /// <summary>IANA zone (e.g. "Europe/London"), so a start time is never persisted as a bare,
     /// zone-less "19:00" — same rule as Experience (brief §68).</summary>
     public string TimeZoneId { get; set; } = "Europe/London";

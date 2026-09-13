@@ -1,57 +1,167 @@
-@model List<SeminarCardViewModel>
+@model SessionPortalViewModel
 @{
     ViewData["Title"] = Loc["Account.SessionsTitle"];
+
+    string GrantLabel(SeminarAccessGrant grant) => grant switch
+    {
+        SeminarAccessGrant.Purchase => Loc["Sessions.Grant.Paid"].Value,
+        SeminarAccessGrant.Membership => Loc["Sessions.Grant.Membership"].Value,
+        SeminarAccessGrant.Comped => Loc["Sessions.Grant.Comped"].Value,
+        _ => Loc["Sessions.Grant.Free"].Value,
+    };
 }
 
 <div class="account-manage">
     <partial name="_AccountNav" />
-    <div class="account-manage__content">
-        <h1>@Loc["Account.SessionsTitle"]</h1>
-
-        @if (Model.Count == 0)
-        {
-            <p>@Loc["Account.NoSessions"]</p>
-            <p><a class="btn btn--primary" asp-controller="Seminars" asp-action="Index">@Loc["Account.BrowseSessions"]</a></p>
-        }
-        else
-        {
-            @* The same card as the public listing: someone who enrolled should recognise what they
-               signed up for, and a second visual language for the same thing would only confuse. *@
-            <div class="seminar-grid seminar-grid--compact">
-                @foreach (var seminar in Model)
-                {
-                    <a class="seminar-card" asp-controller="Seminars" asp-action="Details" asp-route-slug="@seminar.Slug">
-                        <div class="seminar-card__image">
-                            <partial name="_CoverImage" model="@(new CoverImageViewModel {
-                                Url = seminar.HasCover ? Url.Action("Media", "Seminars", new { id = seminar.CoverMediaId }) : null,
-                                Ratio = "16x9",
-                                Sizes = "(min-width: 960px) 25vw, (min-width: 560px) 50vw, 100vw",
-                            })" />
-                            @if (seminar.IsArchived)
-                            {
-                                <span class="seminar-card__badge">@Loc["Seminars.Past"]</span>
-                            }
-                        </div>
-                        <div class="seminar-card__body">
-                            <h3 class="seminar-card__title">@seminar.Title</h3>
-                            @if (!string.IsNullOrWhiteSpace(seminar.Summary))
-                            {
-                                <p class="seminar-card__summary">@seminar.Summary</p>
-                            }
-                            <div class="seminar-card__meta">
-                                @if (seminar.StartAtUtc is not null)
-                                {
-                                    <span>@seminar.StartAtUtc.Value.ToString("d MMMM yyyy, HH:mm") UTC</span>
-                                }
-                                else
-                                {
-                                    <span>@Loc["Seminars.OnDemand"]</span>
-                                }
-                            </div>
-                        </div>
-                    </a>
-                }
+    <div class="account-manage__content session-portal">
+        <header class="session-portal__head">
+            <div>
+                <h1>@Loc["Account.SessionsTitle"]</h1>
+                <p class="account-lede">@Loc["Sessions.Portal.Lede"]</p>
             </div>
+            @if (Model.Total > 0)
+            {
+                <dl class="session-portal__stats">
+                    <div><dt>@Loc["Sessions.Stat.Total"]</dt><dd>@Model.Total</dd></div>
+                    <div><dt>@Loc["Sessions.Stat.Upcoming"]</dt><dd>@Model.Upcoming.Count</dd></div>
+                    <div><dt>@Loc["Sessions.Stat.Paid"]</dt><dd>@Model.PaidCount</dd></div>
+                    @if (Model.MembershipCount > 0)
+                    {
+                        <div><dt>@Loc["Sessions.Stat.Membership"]</dt><dd>@Model.MembershipCount</dd></div>
+                    }
+                </dl>
+            }
+        </header>
+
+        @if (Model.Total == 0)
+        {
+            <div class="account-membership account-membership--invite">
+                <div class="account-membership__body">
+                    <h2>@Loc["Account.NoSessions"]</h2>
+                    <p class="account-membership__term">@Loc["Sessions.Portal.Empty"]</p>
+                    <div class="account-membership__actions">
+                        <a class="btn btn--primary" asp-controller="Seminars" asp-action="Index">@Loc["Account.BrowseSessions"]</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* --- Live sittings still to come: the join link is the point of this list ------------ *@
+        @if (Model.Upcoming.Count > 0)
+        {
+            <section class="session-portal__group" aria-labelledby="upcoming-heading">
+                <h2 id="upcoming-heading" class="account-section-heading">@Loc["Sessions.Upcoming"]</h2>
+                <ul class="session-portal__list">
+                    @foreach (var s in Model.Upcoming)
+                    {
+                        <li class="session-row @(s.IsLiveNow ? "session-row--live" : "")">
+                            <div class="session-row__date" aria-hidden="true">
+                                <span class="session-row__day">@s.StartAtUtc!.Value.ToString("dd")</span>
+                                <span class="session-row__month">@s.StartAtUtc.Value.ToString("MMM")</span>
+                            </div>
+                            <div class="session-row__body">
+                                @if (s.IsLiveNow)
+                                {
+                                    <span class="session-row__live">@Loc["Sessions.LiveNow"]</span>
+                                }
+                                <a class="session-row__title" asp-controller="Seminars" asp-action="Details" asp-route-slug="@s.Slug">@s.Title</a>
+                                <span class="session-row__meta">
+                                    @s.StartAtUtc.Value.ToString("dddd d MMMM yyyy, HH:mm") UTC
+                                    &middot; @(s.IsOnline ? Loc["Seminars.Online"].Value : s.Location ?? Loc["Seminars.InPerson"].Value)
+                                    @if (!string.IsNullOrWhiteSpace(s.HostName))
+                                    {
+                                        <text>&middot; @s.HostName</text>
+                                    }
+                                </span>
+                                <span class="account-grant account-grant--@s.GrantedVia.ToString().ToLowerInvariant()">
+                                    @GrantLabel(s.GrantedVia)
+                                    @if (s.IsPaid)
+                                    {
+                                        <text>&middot; @MoneyFormatter.Format(s.AmountPaidMinor, s.Currency)</text>
+                                    }
+                                </span>
+                            </div>
+                            <div class="session-row__actions">
+                                @if (s.MeetingUrl is not null)
+                                {
+                                    <a class="btn @(s.IsLiveNow ? "btn--primary" : "btn--ghost-dark")" href="@s.MeetingUrl" target="_blank" rel="noopener">@Loc["Sessions.JoinLink"]</a>
+                                }
+                                else if (s.IsOnline)
+                                {
+                                    <span class="session-row__pending">@Loc["Sessions.LinkPending"]</span>
+                                }
+                                <a class="session-row__more" asp-controller="Seminars" asp-action="Details" asp-route-slug="@s.Slug">@Loc["Sessions.Open"] &rarr;</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </section>
+        }
+
+        @* --- On-demand library --------------------------------------------------------------- *@
+        @if (Model.OnDemand.Count > 0)
+        {
+            <section class="session-portal__group" aria-labelledby="ondemand-heading">
+                <h2 id="ondemand-heading" class="account-section-heading">@Loc["Sessions.Library"]</h2>
+                <div class="seminar-grid seminar-grid--compact">
+                    @foreach (var s in Model.OnDemand)
+                    {
+                        <a class="seminar-card" asp-controller="Seminars" asp-action="Details" asp-route-slug="@s.Slug">
+                            <div class="seminar-card__image">
+                                <partial name="_CoverImage" model="@(new CoverImageViewModel {
+                                    Url = s.HasCover ? Url.Action("Media", "Seminars", new { id = s.CoverMediaId }) : null,
+                                    Ratio = "16x9",
+                                    Sizes = "(min-width: 960px) 25vw, (min-width: 560px) 50vw, 100vw",
+                                })" />
+                                <span class="seminar-card__badge seminar-card__badge--@s.GrantedVia.ToString().ToLowerInvariant()">@GrantLabel(s.GrantedVia)</span>
+                            </div>
+                            <div class="seminar-card__body">
+                                <h3 class="seminar-card__title">@s.Title</h3>
+                                @if (!string.IsNullOrWhiteSpace(s.Summary))
+                                {
+                                    <p class="seminar-card__summary">@s.Summary</p>
+                                }
+                                <div class="seminar-card__meta">
+                                    <span>@Loc["Seminars.OnDemand"]</span>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+
+        @* --- What has already happened: the recording outlives the date ---------------------- *@
+        @if (Model.Past.Count > 0)
+        {
+            <section class="session-portal__group" aria-labelledby="past-heading">
+                <h2 id="past-heading" class="account-section-heading">@Loc["Sessions.PastHeading"]</h2>
+                <ul class="session-portal__list session-portal__list--past">
+                    @foreach (var s in Model.Past)
+                    {
+                        <li class="session-row session-row--past">
+                            <div class="session-row__date" aria-hidden="true">
+                                <span class="session-row__day">@s.StartAtUtc!.Value.ToString("dd")</span>
+                                <span class="session-row__month">@s.StartAtUtc.Value.ToString("MMM yy")</span>
+                            </div>
+                            <div class="session-row__body">
+                                <a class="session-row__title" asp-controller="Seminars" asp-action="Details" asp-route-slug="@s.Slug">@s.Title</a>
+                                <span class="session-row__meta">
+                                    @s.StartAtUtc.Value.ToString("d MMMM yyyy")
+                                    @if (!string.IsNullOrWhiteSpace(s.HostName))
+                                    {
+                                        <text>&middot; @s.HostName</text>
+                                    }
+                                </span>
+                                <span class="account-grant account-grant--@s.GrantedVia.ToString().ToLowerInvariant()">@GrantLabel(s.GrantedVia)</span>
+                            </div>
+                            <div class="session-row__actions">
+                                <a class="session-row__more" asp-controller="Seminars" asp-action="Details" asp-route-slug="@s.Slug">@Loc["Sessions.WatchAgain"] &rarr;</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </section>
         }
     </div>
 </div>

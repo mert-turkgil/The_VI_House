@@ -254,6 +254,11 @@ builder.Services.AddScoped<IMediaStorage, LocalMediaStorage>();
 builder.Services.Configure<StripeOptions>(builder.Configuration.GetSection("Stripe"));
 builder.Services.AddScoped<IPaymentProvider, StripePaymentProvider>();
 
+// The plan catalogue mirror (Admin -> Membership Plans <-> Stripe Products/Prices). Its own class
+// rather than a second interface on StripePaymentProvider, so the checkout path and the admin
+// catalogue path can evolve — or be swapped for another provider — independently.
+builder.Services.AddScoped<IPaymentCatalogProvider, StripeCatalogProvider>();
+
 // SMTP: Host/Port/FromName/FromEmail are plain config (appsettings.Development.json /
 // appsettings.Production.json) since they aren't secret and change per environment. Username/Password
 // are secret and come from user-secrets/environment variables only — see SmtpOptions.

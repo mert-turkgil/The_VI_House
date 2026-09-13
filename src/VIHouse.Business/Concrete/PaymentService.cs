@@ -25,6 +25,7 @@ public class PaymentService(
     ITicketHoldRepository ticketHolds,
     IPaymentRepository payments,
     IBookingRepository bookings,
+    IProfileRepository profiles,
     IWebhookEventRepository webhookEvents,
     ICapacityService capacity,
     IPaymentProvider paymentProvider,
@@ -410,6 +411,26 @@ public class PaymentService(
         // behind, not a member.
         application.UserId = user.Id;
         await applications.SaveChangesAsync(ct);
+
+        // The application asked the same questions the account profile holds, so the answers are
+        // carried across now rather than asked for again on first sign-in. Guarded because a
+        // profile may already exist for an address that was pre-registered by hand.
+        if (await profiles.GetByUserIdAsync(user.Id, ct) is null)
+        {
+            await profiles.AddAsync(new Profile
+            {
+                UserId = user.Id,
+                JobTitle = application.JobTitle,
+                AddressLine1 = application.AddressLine1,
+                AddressLine2 = application.AddressLine2,
+                PostalCode = application.PostalCode,
+                About = application.AboutStatement,
+                Expectations = application.ExpectationsStatement,
+                EarningsBand = application.EarningsBand,
+                UpdatedAt = DateTimeOffset.UtcNow,
+            }, ct);
+            await profiles.SaveChangesAsync(ct);
+        }
 
         return user;
     }

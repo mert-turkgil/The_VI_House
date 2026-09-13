@@ -29,51 +29,35 @@
             <dl class="admin-detail-list">
                 <div><dt>Name</dt><dd>@a.FirstName @a.LastName</dd></div>
                 <div><dt>Email</dt><dd>@a.Email</dd></div>
+                <div><dt>Title / profession</dt><dd>@(a.JobTitle ?? "—")</dd></div>
                 <div><dt>Phone</dt><dd>@(a.Phone ?? "—")</dd></div>
-                <div><dt>Location</dt><dd>@(a.City is null ? a.Country : $"{a.City}, {a.Country}")</dd></div>
+                <div>
+                    <dt>Address</dt>
+                    <dd>
+                        @{
+                            var addressLines = new[] { a.AddressLine1, a.AddressLine2, string.Join(" ", new[] { a.PostalCode, a.City }.Where(x => !string.IsNullOrWhiteSpace(x))), Countries.NameFor(a.Country) }
+                                .Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                        }
+                        @for (var i = 0; i < addressLines.Count; i++)
+                        {
+                            @addressLines[i]@(i < addressLines.Count - 1 ? Html.Raw("<br />") : null)
+                        }
+                    </dd>
+                </div>
+                <div><dt>Annual earnings</dt><dd>@(EarningsBand.LabelFor(a.EarningsBand) ?? "—")</dd></div>
                 <div><dt>Experience</dt><dd>@Model.ExperienceLabel</dd></div>
                 <div><dt>Submitted</dt><dd>@(a.SubmittedAt?.ToString("dd MMM yyyy, HH:mm") ?? "—")</dd></div>
+                @if (!string.IsNullOrWhiteSpace(a.ReferralCode))
+                {
+                    <div><dt>Referral code</dt><dd>@a.ReferralCode</dd></div>
+                }
             </dl>
         </div>
 
         <div class="admin-card">
-            <h2>Professional</h2>
-            <dl class="admin-detail-list">
-                <div><dt>Company</dt><dd>@(a.CompanyName ?? "—")</dd></div>
-                <div><dt>Role</dt><dd>@(a.JobTitle ?? "—")</dd></div>
-                <div><dt>Industry</dt><dd>@(a.Industry ?? "—")</dd></div>
-                <div><dt>Stage</dt><dd>@(a.CompanyStage ?? "—")</dd></div>
-                <div>
-                    <dt>LinkedIn</dt>
-                    <dd>
-                        @if (a.LinkedInUrl is null) { <text>—</text> }
-                        else { <a href="@a.LinkedInUrl" target="_blank" rel="noopener">@a.LinkedInUrl</a> }
-                    </dd>
-                </div>
-                <div>
-                    <dt>Website</dt>
-                    <dd>
-                        @if (a.WebsiteUrl is null) { <text>—</text> }
-                        else { <a href="@a.WebsiteUrl" target="_blank" rel="noopener">@a.WebsiteUrl</a> }
-                    </dd>
-                </div>
-                <div><dt>Years of Experience</dt><dd>@(a.YearsOfExperience?.ToString() ?? "—")</dd></div>
-                <div><dt>Revenue Band</dt><dd>@(a.AnnualRevenueBand ?? "—")</dd></div>
-            </dl>
-        </div>
-
-        <div class="admin-card">
-            <h2>Statements</h2>
-            <p><strong>Why do you want to join?</strong><br />@a.MotivationStatement</p>
-            <p><strong>What are you building?</strong><br />@a.BuildingStatement</p>
-            @if (!string.IsNullOrWhiteSpace(a.ContributionStatement))
-            {
-                <p><strong>What could you bring?</strong><br />@a.ContributionStatement</p>
-            }
-            @if (!string.IsNullOrWhiteSpace(a.HowDidYouHear))
-            {
-                <p><strong>How did they hear about us?</strong> @a.HowDidYouHear</p>
-            }
+            <h2>In their words</h2>
+            <p><strong>Describe yourself or your business</strong><br />@(string.IsNullOrWhiteSpace(a.AboutStatement) ? "—" : a.AboutStatement)</p>
+            <p><strong>How may we help with your goals / what are your expectations?</strong><br />@(string.IsNullOrWhiteSpace(a.ExpectationsStatement) ? "—" : a.ExpectationsStatement)</p>
         </div>
 
         <div class="admin-card">

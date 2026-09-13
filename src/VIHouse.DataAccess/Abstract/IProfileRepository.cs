@@ -20,10 +20,11 @@ public interface IProfileRepository
     Task<MemberDirectoryEntry?> GetDirectoryEntryAsync(Guid userId, CancellationToken ct = default);
 }
 
-/// <summary>Filter set for the Member Directory search (brief §38: industry/city/country + free text).</summary>
+/// <summary>Filter set for the Member Directory search (brief §38: profession/city/country + free text).</summary>
 public record ProfileFilter
 {
-    public string? Industry { get; init; }
+    /// <summary>Matches against the title / profession field.</summary>
+    public string? Profession { get; init; }
     public string? City { get; init; }
     public string? Country { get; init; }
     public string? Search { get; init; }
@@ -35,6 +36,9 @@ public record ProfileFilter
 /// Directory-facing projection joining Profile + ApplicationUser — deliberately its own type
 /// rather than exposing ApplicationUser itself outside DataAccess (Profile has no C# navigation
 /// property to ApplicationUser by design; see Profile.cs).
+///
+/// Carries only what a fellow member may see. The address, the earnings band and the expectations
+/// statement are for the House, not the room, and never leave the profile row.
 /// </summary>
 public record MemberDirectoryEntry(
     Guid UserId,
@@ -42,12 +46,6 @@ public record MemberDirectoryEntry(
     string LastName,
     string? City,
     string Country,
-    string? CompanyName,
     string? JobTitle,
-    string? Industry,
-    string? Bio,
-    string? PhotoUrl,
-    string? LinkedInUrl,
-    string? Interests,
-    string? LookingFor,
-    string? CanHelpWith);
+    string? About,
+    string? PhotoUrl);

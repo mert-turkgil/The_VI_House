@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<VIHouse.DataAccess.Identity.ApplicationUser> SignInManager
 @inject UserManager<VIHouse.DataAccess.Identity.ApplicationUser> UserManager
 @inject IConfiguration Configuration
@@ -57,10 +57,9 @@
             <a class="@NavClass("AdminPayments")" asp-area="Admin" asp-controller="AdminPayments" asp-action="Index">Payments</a>
             <a class="@NavClass("AdminPromoCodes")" asp-area="Admin" asp-controller="AdminPromoCodes" asp-action="Index">Promo Codes</a>
             <a class="@NavClass("AdminAmbassadors")" asp-area="Admin" asp-controller="AdminAmbassadors" asp-action="Index">Ambassadors</a>
-            @if (Features.Value.MembershipSales)
-            {
-                <a class="@NavClass("AdminMembershipPlans")" asp-area="Admin" asp-controller="AdminMembershipPlans" asp-action="Index">Membership Plans</a>
-            }
+            @* Always reachable, whatever Features:MembershipSales says: the plans are prepared and
+               mirrored to Stripe before sales open, not after. The public page is what the flag gates. *@
+            <a class="@NavClass("AdminMembershipPlans")" asp-area="Admin" asp-controller="AdminMembershipPlans" asp-action="Index">Membership Plans</a>
             <a class="@NavClass("AdminCms")" asp-area="Admin" asp-controller="AdminCms" asp-action="Index">Content</a>
             <a class="@NavClass("AdminHeroSlides")" asp-area="Admin" asp-controller="AdminHeroSlides" asp-action="Index">Hero Slides</a>
             <a class="@NavClass("AdminSeminars")" asp-area="Admin" asp-controller="AdminSeminars" asp-action="Index">Sessions</a>

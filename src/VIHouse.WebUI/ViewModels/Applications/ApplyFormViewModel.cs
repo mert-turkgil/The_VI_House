@@ -2,6 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VIHouse.WebUI.ViewModels.Applications;
 
+/// <summary>
+/// The application form. The questions are the House's one set — the same ones /join asks and the
+/// account profile holds (see ProfileFormViewModel) — so an approved applicant's answers become
+/// their profile without being asked again. Two statements are required; everything else about
+/// the person is optional, and nothing about their company beyond what fits in a title.
+/// </summary>
 public class ApplyFormViewModel
 {
     public Guid ExperienceId { get; set; }
@@ -22,55 +28,37 @@ public class ApplyFormViewModel
     [Required, EmailAddress, StringLength(320)]
     public string Email { get; set; } = default!;
 
-    [Phone, StringLength(32)]
-    public string? Phone { get; set; }
+    [StringLength(200)]
+    public string? JobTitle { get; set; }
 
-    [Required, StringLength(2, MinimumLength = 2, ErrorMessage = "Use a 2-letter country code.")]
-    public string Country { get; set; } = default!;
+    // Address
+    [StringLength(200)]
+    public string? AddressLine1 { get; set; }
+
+    [StringLength(200)]
+    public string? AddressLine2 { get; set; }
+
+    [StringLength(20)]
+    public string? PostalCode { get; set; }
 
     [StringLength(100)]
     public string? City { get; set; }
 
-    // Professional
-    [StringLength(150)]
-    public string? CompanyName { get; set; }
+    [Required(ErrorMessage = "Choose your country.")]
+    [StringLength(2, MinimumLength = 2)]
+    public string Country { get; set; } = default!;
 
-    [StringLength(150)]
-    public string? JobTitle { get; set; }
-
-    [StringLength(100)]
-    public string? Industry { get; set; }
-
-    [StringLength(50)]
-    public string? CompanyStage { get; set; }
-
-    [Url, StringLength(300)]
-    public string? LinkedInUrl { get; set; }
-
-    [Url, StringLength(300)]
-    public string? WebsiteUrl { get; set; }
-
-    // Qualification
-    [Range(0, 60)]
-    public int? YearsOfExperience { get; set; }
-
-    [StringLength(50)]
-    public string? AnnualRevenueBand { get; set; }
-
-    [StringLength(50)]
-    public string? FundingStage { get; set; }
-
-    [Required, StringLength(2000)]
-    public string MotivationStatement { get; set; } = default!;
-
-    [Required, StringLength(2000)]
-    public string BuildingStatement { get; set; } = default!;
-
+    // About
+    [Required(ErrorMessage = "Tell us a little about yourself or your business.")]
     [StringLength(2000)]
-    public string? ContributionStatement { get; set; }
+    public string AboutStatement { get; set; } = default!;
 
-    [StringLength(100)]
-    public string? HowDidYouHear { get; set; }
+    [Required(ErrorMessage = "Tell us what you're hoping for.")]
+    [StringLength(2000)]
+    public string ExpectationsStatement { get; set; } = default!;
+
+    [StringLength(20)]
+    public string? EarningsBand { get; set; }
 
     [StringLength(40)]
     public string? ReferralCode { get; set; }

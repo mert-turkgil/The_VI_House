@@ -28,8 +28,8 @@ public class EfProfileRepository(VIHouseDbContext db) : IProfileRepository
             where profile.Visibility == ProfileVisibility.MembersOnly
             select new { profile, user };
 
-        if (!string.IsNullOrWhiteSpace(filter.Industry))
-            query = query.Where(x => x.profile.Industry != null && x.profile.Industry.Contains(filter.Industry));
+        if (!string.IsNullOrWhiteSpace(filter.Profession))
+            query = query.Where(x => x.profile.JobTitle != null && x.profile.JobTitle.Contains(filter.Profession));
         if (!string.IsNullOrWhiteSpace(filter.City))
             query = query.Where(x => x.user.City == filter.City);
         if (!string.IsNullOrWhiteSpace(filter.Country))
@@ -39,10 +39,8 @@ public class EfProfileRepository(VIHouseDbContext db) : IProfileRepository
             var s = filter.Search;
             query = query.Where(x =>
                 x.user.FirstName.Contains(s) || x.user.LastName.Contains(s) ||
-                (x.profile.CompanyName != null && x.profile.CompanyName.Contains(s)) ||
                 (x.profile.JobTitle != null && x.profile.JobTitle.Contains(s)) ||
-                (x.profile.Interests != null && x.profile.Interests.Contains(s)) ||
-                (x.profile.CanHelpWith != null && x.profile.CanHelpWith.Contains(s)));
+                (x.profile.About != null && x.profile.About.Contains(s)));
         }
 
         return await query
@@ -50,8 +48,7 @@ public class EfProfileRepository(VIHouseDbContext db) : IProfileRepository
             .Skip(filter.Skip).Take(filter.Take)
             .Select(x => new MemberDirectoryEntry(
                 x.user.Id, x.user.FirstName, x.user.LastName, x.user.City, x.user.Country,
-                x.profile.CompanyName, x.profile.JobTitle, x.profile.Industry, x.profile.Bio,
-                x.profile.PhotoUrl, x.profile.LinkedInUrl, x.profile.Interests, x.profile.LookingFor, x.profile.CanHelpWith))
+                x.profile.JobTitle, x.profile.About, x.profile.PhotoUrl))
             .ToListAsync(ct);
     }
 
@@ -63,8 +60,7 @@ public class EfProfileRepository(VIHouseDbContext db) : IProfileRepository
             where profile.Visibility == ProfileVisibility.MembersOnly && user.Id == userId
             select new MemberDirectoryEntry(
                 user.Id, user.FirstName, user.LastName, user.City, user.Country,
-                profile.CompanyName, profile.JobTitle, profile.Industry, profile.Bio,
-                profile.PhotoUrl, profile.LinkedInUrl, profile.Interests, profile.LookingFor, profile.CanHelpWith);
+                profile.JobTitle, profile.About, profile.PhotoUrl);
 
         return await result.FirstOrDefaultAsync(ct);
     }

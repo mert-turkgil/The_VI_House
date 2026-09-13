@@ -1,0 +1,1061 @@
+@use '../breakpoints' as bp;
+
+// =================================================================================================
+// The account area: dashboard, membership, and the session portal
+// =================================================================================================
+//
+// The shell (.account-manage, the side nav) lives in _auth.scss because the Identity Manage pages
+// share it. Everything here is the content that sits inside that shell — and it is written to the
+// house rules: tokens only, no literal colours, no literal breakpoints, every hover with a
+// reduced-motion counterpart at the foot of the file.
+//
+// One idea runs through it: the same person can be a member, a guest holding a ticket, or an
+// attendee of a single session, and the page should read differently for each without being three
+// different pages. So the building blocks are shared — a panel, a list row, a grant badge — and
+// the modifiers (--member, --invite, --paid, --live) carry the difference.
+
+// --- Shared bits ---------------------------------------------------------------------------------
+
+.account-lede {
+  margin: -8px 0 var(--vih-space-md);
+  font-size: var(--vih-text-md);
+  line-height: 1.65;
+  color: var(--vih-text-secondary);
+  max-width: 56ch;
+}
+
+.account-section-heading {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-2xl);
+  color: var(--vih-green-900);
+  margin: var(--vih-space-xl) 0 var(--vih-space-sm);
+}
+
+// "Paid · £120", "Membership", "Free", "Comped" — the one thing that tells a paying attendee's
+// screen from a member's. Coloured by grant so the eye can sort a list without reading it.
+.account-grant {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--vih-radius-pill);
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--vih-surface-sunken);
+  color: var(--vih-text-secondary);
+
+  &--purchase {
+    background: rgba(184, 149, 90, 0.18);
+    color: var(--vih-green-900);
+  }
+
+  &--membership {
+    background: var(--vih-green-900);
+    color: var(--vih-gold-light);
+  }
+
+  &--free {
+    background: var(--vih-success-bg);
+    color: var(--vih-success);
+  }
+
+  &--comped {
+    background: var(--vih-warning-bg);
+    color: var(--vih-warning);
+  }
+}
+
+.account-status {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--vih-radius-pill);
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--vih-surface-sunken);
+  color: var(--vih-text-muted);
+
+  &--active {
+    background: var(--vih-success-bg);
+    color: var(--vih-success);
+  }
+
+  &--cancelled {
+    background: var(--vih-danger-bg);
+    color: var(--vih-danger);
+  }
+}
+
+// A single prompt that needs acting on — "complete your profile". Sits between the hero and the
+// membership panel and is the only warning-coloured thing on the page, so it cannot be missed.
+.account-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vih-space-sm);
+  padding: var(--vih-space-sm) var(--vih-space-md);
+  margin-bottom: var(--vih-space-md);
+  border: 1px solid var(--vih-gold);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-warning-bg);
+
+  strong {
+    display: block;
+    color: var(--vih-green-900);
+  }
+
+  p {
+    margin: 2px 0 0;
+    font-size: var(--vih-text-base);
+    color: var(--vih-text-secondary);
+  }
+
+  .btn {
+    flex-shrink: 0;
+  }
+}
+
+// --- Dashboard hero ------------------------------------------------------------------------------
+
+.account-dash__hero {
+  margin-bottom: var(--vih-space-md);
+
+  h1 {
+    margin: 0 0 var(--vih-space-2xs);
+    font-size: var(--vih-display-sm);
+  }
+}
+
+.account-dash__eyebrow {
+  display: block;
+  margin-bottom: var(--vih-space-3xs);
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+}
+
+.account-dash__standing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-xs);
+}
+
+.account-dash__number {
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+  letter-spacing: 0.04em;
+}
+
+// Who the person is to the House, as a pill. The member variant is the brand ground with gold
+// text — the same treatment as the digital card — so "member" reads as the thing everything else
+// is measured against.
+.account-standing {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: var(--vih-radius-pill);
+  font-size: var(--vih-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  &--member {
+    background: var(--vih-green-950);
+    color: var(--vih-gold-light);
+  }
+
+  &--staff {
+    background: var(--vih-green-800);
+    color: var(--vih-cream);
+  }
+
+  &--guest {
+    background: rgba(184, 149, 90, 0.18);
+    color: var(--vih-green-900);
+  }
+
+  &--prospect {
+    background: var(--vih-surface-sunken);
+    color: var(--vih-text-secondary);
+  }
+}
+
+// --- The membership panel -----------------------------------------------------------------------
+// The dashboard is built around this. For a member it is theirs: dark ground, plan name in serif,
+// the perks down the side. For a guest or a prospect the same panel goes light and becomes the
+// invitation — same shape, so the page does not rearrange itself the day they join.
+
+.account-membership {
+  display: grid;
+  gap: var(--vih-space-md);
+  padding: var(--vih-space-md);
+  margin-bottom: var(--vih-space-lg);
+  border-radius: var(--vih-radius-2xl);
+  background: linear-gradient(135deg, var(--vih-green-950) 0%, var(--vih-green-800) 100%);
+  color: var(--vih-cream);
+  box-shadow: var(--vih-shadow-lg);
+
+  @include bp.from(bp.$md) {
+    grid-template-columns: 1fr auto;
+    padding: var(--vih-space-lg);
+  }
+
+  h2 {
+    margin: 0 0 var(--vih-space-2xs);
+    font-size: var(--vih-text-3xl);
+    color: inherit;
+  }
+
+  &--invite,
+  &--muted {
+    background: var(--vih-surface-tinted);
+    color: var(--vih-ink);
+    border: 1px solid var(--vih-line-on-light);
+    box-shadow: none;
+
+    h2 {
+      color: var(--vih-green-900);
+    }
+
+    .account-membership__eyebrow {
+      color: var(--vih-gold);
+    }
+
+    .account-membership__term,
+    .account-membership__note {
+      color: var(--vih-text-secondary);
+    }
+
+    .btn--ghost-dark {
+      color: var(--vih-ink);
+      border-color: var(--vih-line-on-light);
+
+      &:hover {
+        border-color: var(--vih-ink);
+      }
+    }
+  }
+}
+
+.account-membership__eyebrow {
+  display: block;
+  margin-bottom: var(--vih-space-2xs);
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-gold-light);
+}
+
+.account-membership__term {
+  margin: 0 0 var(--vih-space-sm);
+  font-size: var(--vih-text-md);
+  line-height: 1.6;
+  color: var(--vih-cream-dim);
+}
+
+.account-membership__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+  gap: var(--vih-space-sm);
+  margin: 0 0 var(--vih-space-md);
+  padding: var(--vih-space-sm) 0;
+  border-top: 1px solid var(--vih-line-on-dark);
+  border-bottom: 1px solid var(--vih-line-on-dark);
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  dt {
+    font-size: var(--vih-text-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.7;
+  }
+
+  dd {
+    margin: 0;
+    font-size: var(--vih-text-base);
+    font-weight: 600;
+  }
+}
+
+.account-membership__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+
+  form {
+    display: contents;
+  }
+}
+
+.account-membership__note {
+  margin: var(--vih-space-sm) 0 0;
+  font-size: var(--vih-text-sm);
+  line-height: 1.6;
+  color: var(--vih-cream-dim);
+  max-width: 52ch;
+}
+
+// The perks column: what the membership opens, as links where there is somewhere to go.
+.account-membership__perks {
+  list-style: none;
+  margin: 0;
+  padding: var(--vih-space-sm) 0 0;
+  border-top: 1px solid var(--vih-line-on-dark);
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-2xs);
+  font-size: var(--vih-text-base);
+
+  @include bp.from(bp.$md) {
+    min-width: 200px;
+    padding: 0 0 0 var(--vih-space-md);
+    border-top: 0;
+    border-left: 1px solid var(--vih-line-on-dark);
+  }
+
+  li {
+    position: relative;
+    padding-left: 18px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--vih-gold);
+    }
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--vih-dur-fast) var(--vih-ease-out);
+
+    &:hover {
+      border-bottom-color: var(--vih-gold-light);
+    }
+  }
+}
+
+// --- Panels: what is coming up ------------------------------------------------------------------
+
+.account-dash__grid {
+  display: grid;
+  gap: var(--vih-space-md);
+  margin-bottom: var(--vih-space-lg);
+
+  @include bp.from(bp.$lg) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.account-panel {
+  padding: var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+}
+
+.account-panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--vih-space-sm);
+  margin-bottom: var(--vih-space-sm);
+
+  h2 {
+    margin: 0;
+    font-size: var(--vih-text-xl);
+    color: var(--vih-green-900);
+  }
+
+  a {
+    font-size: var(--vih-text-sm);
+    font-weight: 600;
+    color: var(--vih-green-900);
+    white-space: nowrap;
+  }
+}
+
+.account-panel__empty {
+  margin: 0;
+  font-size: var(--vih-text-base);
+  line-height: 1.6;
+  color: var(--vih-text-muted);
+
+  a {
+    color: var(--vih-green-900);
+    font-weight: 600;
+  }
+}
+
+// A dated row: the day stands in a box on the left so a list of sessions reads as a calendar.
+.account-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.account-list__item {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-sm);
+  padding: var(--vih-space-xs) 0;
+  border-top: 1px solid var(--vih-line-on-light);
+
+  &:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .btn--sm {
+    flex-shrink: 0;
+  }
+}
+
+.account-list__date {
+  flex: 0 0 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 0;
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-surface-sunken);
+  line-height: 1;
+}
+
+.account-list__day {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-xl);
+  color: var(--vih-green-900);
+}
+
+.account-list__month {
+  margin-top: 2px;
+  font-size: var(--vih-text-3xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+}
+
+.account-list__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.account-list__title {
+  font-weight: 600;
+  color: var(--vih-ink);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--vih-green-900);
+  }
+}
+
+.account-list__meta {
+  font-size: var(--vih-text-xs);
+  color: var(--vih-text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+// --- Quick links ---------------------------------------------------------------------------------
+
+.account-quick {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+  gap: var(--vih-space-xs);
+}
+
+.account-quick__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--vih-space-sm);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    transform var(--vih-dur-base) var(--vih-ease-out);
+
+  strong {
+    font-size: var(--vih-text-base);
+    color: var(--vih-green-900);
+  }
+
+  span {
+    font-size: var(--vih-text-xs);
+    color: var(--vih-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    border-color: var(--vih-gold);
+    transform: translateY(-2px);
+  }
+}
+
+// --- Membership page: history table --------------------------------------------------------------
+
+.account-table-scroll {
+  overflow-x: auto;
+}
+
+.account-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--vih-text-base);
+
+  th,
+  td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--vih-line-on-light);
+    white-space: nowrap;
+  }
+
+  th {
+    font-size: var(--vih-text-2xs);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--vih-text-muted);
+  }
+}
+
+.membership-plan-grid--compact {
+  margin-bottom: var(--vih-space-lg);
+}
+
+// =================================================================================================
+// The session portal
+// =================================================================================================
+
+.session-portal__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--vih-space-md);
+  margin-bottom: var(--vih-space-md);
+
+  h1 {
+    margin: 0 0 var(--vih-space-2xs);
+  }
+
+  .account-lede {
+    margin-bottom: 0;
+  }
+}
+
+.session-portal__stats {
+  display: flex;
+  gap: var(--vih-space-md);
+  margin: 0;
+  padding: var(--vih-space-xs) var(--vih-space-sm);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface-tinted);
+
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  dt {
+    font-size: var(--vih-text-3xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vih-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-xl);
+    color: var(--vih-green-900);
+  }
+}
+
+.session-portal__group {
+  margin-bottom: var(--vih-space-lg);
+
+  .account-section-heading {
+    margin-top: var(--vih-space-md);
+  }
+}
+
+.session-portal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-xs);
+}
+
+// One session, as a row. The live state is the one that matters: a gold rule and the join button
+// promoted to primary, for the hour either side of the sitting.
+.session-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--vih-space-sm);
+  align-items: center;
+  padding: var(--vih-space-sm);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+  transition: border-color var(--vih-dur-base) var(--vih-ease-out);
+
+  @include bp.from(bp.$md) {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  &:hover {
+    border-color: var(--vih-gold);
+  }
+
+  &--live {
+    border-color: var(--vih-gold);
+    box-shadow: var(--vih-shadow-gold);
+  }
+
+  &--past {
+    background: var(--vih-surface-tinted);
+
+    .session-row__title {
+      color: var(--vih-text-secondary);
+    }
+  }
+}
+
+.session-row__date {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 56px;
+  padding: 8px 0;
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-green-950);
+  color: var(--vih-cream);
+  line-height: 1;
+
+  .session-row--past & {
+    background: var(--vih-surface-sunken);
+    color: var(--vih-text-secondary);
+  }
+}
+
+.session-row__day {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-2xl);
+}
+
+.session-row__month {
+  margin-top: 3px;
+  font-size: var(--vih-text-3xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.session-row__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.session-row__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-danger);
+
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: vih-live-pulse 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes vih-live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.session-row__title {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-lg);
+  color: var(--vih-green-900);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+.session-row__meta {
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+.session-row__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-xs);
+
+  @include bp.from(bp.$md) {
+    grid-column: auto;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--vih-space-2xs);
+  }
+}
+
+.session-row__pending {
+  font-size: var(--vih-text-xs);
+  color: var(--vih-text-muted);
+  font-style: italic;
+}
+
+.session-row__more {
+  font-size: var(--vih-text-sm);
+  font-weight: 600;
+  color: var(--vih-green-900);
+  white-space: nowrap;
+}
+
+// Grant colours on the on-demand cards, so the library reads the same way as the rows.
+.seminar-card__badge--purchase { background: var(--vih-gold); color: var(--vih-green-950); }
+.seminar-card__badge--membership { background: var(--vih-green-900); color: var(--vih-gold-light); }
+.seminar-card__badge--free { background: var(--vih-success); color: var(--vih-white); }
+.seminar-card__badge--comped { background: var(--vih-warning); color: var(--vih-white); }
+
+// =================================================================================================
+// The attendee's panel on a session page
+// =================================================================================================
+// Replaces the one-line "you're enrolled" strip for someone who holds a place. It reads by grant:
+// the paid variant gets a gold rule and its receipt line, the membership variant the brand ground,
+// free and comped a quieter tint. The join button, when there is a link, is the point.
+
+.seminar-attendee {
+  margin-bottom: 36px;
+  padding: var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-left: 4px solid var(--vih-success);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface-tinted);
+
+  &--purchase {
+    border-left-color: var(--vih-gold);
+    background: rgba(184, 149, 90, 0.08);
+  }
+
+  &--membership {
+    border-left-color: var(--vih-green-900);
+    background: var(--vih-green-950);
+    color: var(--vih-cream);
+
+    .seminar-attendee__heading { color: var(--vih-gold-light); }
+    .seminar-attendee__body,
+    .seminar-attendee__sub,
+    .seminar-attendee__pending { color: var(--vih-cream-dim); }
+    .seminar-attendee__value { color: var(--vih-cream); }
+    .seminar-attendee__label { color: var(--vih-gold-light); }
+    .seminar-attendee__when { border-top-color: var(--vih-line-on-dark); }
+    .seminar-attendee__portal a { color: var(--vih-gold-light); }
+  }
+
+  &--comped {
+    border-left-color: var(--vih-warning);
+  }
+
+  &--live {
+    box-shadow: var(--vih-shadow-gold);
+  }
+}
+
+.seminar-attendee__status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--vih-space-xs);
+
+  > div {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .account-grant {
+    flex-shrink: 0;
+  }
+}
+
+.seminar-attendee__mark {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--vih-gold);
+  color: var(--vih-green-950);
+  font-size: var(--vih-text-sm);
+  font-weight: 700;
+}
+
+.seminar-attendee__heading {
+  display: block;
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-xl);
+  color: var(--vih-green-900);
+}
+
+.seminar-attendee__body {
+  margin: 4px 0 0;
+  font-size: var(--vih-text-base);
+  line-height: 1.6;
+  color: var(--vih-text-secondary);
+}
+
+.seminar-attendee__when {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vih-space-sm);
+  margin-top: var(--vih-space-sm);
+  padding-top: var(--vih-space-sm);
+  border-top: 1px solid var(--vih-line-on-light);
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.seminar-attendee__label {
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+}
+
+.seminar-attendee__value {
+  font-weight: 600;
+  color: var(--vih-ink);
+}
+
+.seminar-attendee__sub {
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+.seminar-attendee__pending {
+  font-size: var(--vih-text-sm);
+  font-style: italic;
+  color: var(--vih-text-muted);
+}
+
+.seminar-attendee__portal {
+  margin: var(--vih-space-sm) 0 0;
+  font-size: var(--vih-text-sm);
+
+  a {
+    font-weight: 600;
+    color: var(--vih-green-900);
+  }
+}
+
+// The "complete your profile first" line inside the enrolment gate.
+.seminar-access__profile {
+  margin: -6px 0 14px !important;
+  font-size: var(--vih-text-sm) !important;
+  color: var(--vih-warning) !important;
+  font-weight: 600;
+}
+
+// =================================================================================================
+// /membership, as a member sees it
+// =================================================================================================
+
+.membership-hero--member {
+  .content-hero__eyebrow {
+    color: var(--vih-gold-light);
+  }
+}
+
+.membership-hero__facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--vih-space-md) var(--vih-space-xl);
+  margin: var(--vih-space-md) auto 0;
+  padding: var(--vih-space-sm) 0;
+  border-top: 1px solid var(--vih-line-on-dark);
+  border-bottom: 1px solid var(--vih-line-on-dark);
+  max-width: 720px;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  dt {
+    font-size: var(--vih-text-2xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vih-gold-light);
+  }
+
+  dd {
+    margin: 0;
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-lg);
+    color: var(--vih-cream);
+  }
+}
+
+// The doors a membership opens — the member's version of "what membership unlocks", with every
+// tile a link to the actual room rather than a description of it.
+.membership-doors {
+  padding-block: var(--vih-section-y-tight);
+  background: var(--vih-surface-tinted);
+}
+
+.membership-doors__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: var(--vih-space-sm);
+}
+
+.membership-door {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-3xs);
+  padding: var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform var(--vih-dur-base) var(--vih-ease-out),
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    box-shadow var(--vih-dur-base) var(--vih-ease-out);
+
+  strong {
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-lg);
+    color: var(--vih-green-900);
+  }
+
+  span {
+    font-size: var(--vih-text-base);
+    line-height: 1.55;
+    color: var(--vih-text-secondary);
+  }
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-3px);
+    border-color: var(--vih-gold);
+    box-shadow: var(--vih-shadow-gold);
+  }
+}
+
+.membership-plan-card--current {
+  position: relative;
+  border-color: var(--vih-gold);
+  box-shadow: 0 0 0 1px var(--vih-gold);
+}
+
+.membership-plan-card__badge {
+  position: absolute;
+  top: -12px;
+  left: var(--vih-space-md);
+  padding: 4px 12px;
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-gold);
+  color: var(--vih-green-950);
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.membership-cta--member {
+  background: var(--vih-surface-tinted);
+}
+
+// --- Reduced motion ------------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .account-quick__item,
+  .membership-door {
+    transition: none;
+
+    &:hover,
+    &:focus-visible {
+      transform: none;
+    }
+  }
+
+  .session-row__live::before {
+    animation: none;
+  }
+}

@@ -1,25 +1,114 @@
 @model AdminMembershipPlanFormViewModel
 @{
     ViewData["Title"] = Model.Name;
+    var usage = Model.Usage ?? new PlanUsage(0, 0);
 }
 
 @if (TempData["StatusMessage"] is string status)
 {
     <div class="admin-status-message">@status</div>
 }
+@if (TempData["ErrorMessage"] is string error)
+{
+    <div class="admin-status-message admin-status-message--error" role="alert">@error</div>
+}
 
-<form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
-    <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
-    <partial name="_FormFields" model="Model" />
-    <div>
-        <button type="submit" class="admin-btn">Save Changes</button>
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">Back to Plans</a>
+<div class="admin-review-grid">
+    <div class="admin-review-main">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
+            <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+            <partial name="_FormFields" model="Model" />
+            <div>
+                <button type="submit" class="admin-btn">Save &amp; sync</button>
+                <a class="admin-btn admin-btn--ghost" asp-action="Index">Back to Plans</a>
+            </div>
+        </form>
     </div>
-</form>
 
-<form asp-action="Archive" asp-route-id="@Model.Id" method="post" style="margin-top:16px;" onsubmit="return confirm('Archive this plan? It will stop appearing on the public Membership page.');">
-    <button type="submit" class="admin-btn admin-btn--danger">Archive Plan</button>
-</form>
+    <div class="admin-review-side">
+        @* --- The Stripe mirror -------------------------------------------------------------- *@
+        <div class="admin-card">
+            <h2>Stripe</h2>
+
+            @if (Model.ProviderSyncError is not null)
+            {
+                <p class="admin-sync-state admin-sync-state--error">
+                    <span class="admin-badge admin-badge--danger">Sync failed</span>
+                    @Model.ProviderSyncError
+                </p>
+            }
+            else if (Model.IsProviderSynced)
+            {
+                <p class="admin-sync-state admin-sync-state--ok">
+                    <span class="admin-badge admin-badge--paid">Synced</span>
+                    Last pushed @Model.ProviderSyncedAt?.ToLocalTime().ToString("d MMM yyyy, HH:mm").
+                </p>
+            }
+            else
+            {
+                <p class="admin-sync-state">
+                    <span class="admin-badge admin-badge--pending">Not synced</span>
+                    Checkout uses an inline price until this plan is mirrored.
+                </p>
+            }
+
+            <dl class="admin-detail-list admin-detail-list--compact">
+                <div>
+                    <dt>Product</dt>
+                    <dd>
+                        @if (Model.ProviderProductId is null) { <text>&mdash;</text> }
+                        else { <a href="@Model.StripeProductUrl" target="_blank" rel="noopener"><code>@Model.ProviderProductId</code></a> }
+                    </dd>
+                </div>
+                <div>
+                    <dt>Price</dt>
+                    <dd>@if (Model.ProviderPriceId is null) { <text>&mdash;</text> } else { <code>@Model.ProviderPriceId</code> }</dd>
+                </div>
+            </dl>
+
+            <form asp-action="Sync" asp-route-id="@Model.Id" method="post" style="margin-top:12px;">
+                <button type="submit" class="admin-btn admin-btn--ghost" style="width:100%;">Sync now</button>
+            </form>
+            <p class="admin-hint">
+                Stripe prices are immutable: changing the amount, currency or billing period here
+                creates a new price and archives the old one. Members already subscribed keep the
+                price they signed up at.
+            </p>
+        </div>
+
+        @* --- Usage & lifecycle -------------------------------------------------------------- *@
+        <div class="admin-card">
+            <h2>Usage</h2>
+            <dl class="admin-detail-list admin-detail-list--compact">
+                <div><dt>Memberships</dt><dd>@usage.Memberships</dd></div>
+                <div><dt>Payments</dt><dd>@usage.Payments</dd></div>
+            </dl>
+
+            @if (Model.Status == MembershipPlanStatus.Active)
+            {
+                <form asp-action="Archive" asp-route-id="@Model.Id" method="post" style="margin-top:12px;"
+                      onsubmit="return confirm('Archive this plan? It will stop appearing on the public Membership page and be taken off sale at Stripe. Existing members keep their membership.');">
+                    <button type="submit" class="admin-btn admin-btn--ghost" style="width:100%;">Archive plan</button>
+                </form>
+            }
+
+            @if (usage.CanDelete)
+            {
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="margin-top:8px;"
+                      onsubmit="return confirm('Delete this plan permanently? The Stripe product will be archived (Stripe does not allow deleting a product that has had a price).');">
+                    <button type="submit" class="admin-btn admin-btn--danger" style="width:100%;">Delete plan</button>
+                </form>
+            }
+            else
+            {
+                <p class="admin-hint">
+                    This plan can't be deleted while memberships or payments reference it &mdash;
+                    that is financial history. Archive it instead.
+                </p>
+            }
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

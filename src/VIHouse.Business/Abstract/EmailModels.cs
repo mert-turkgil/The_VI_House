@@ -29,6 +29,9 @@ public record ContactMessageEmailModel(string Name, string Email, string? Subjec
 
 public record MembershipConfirmedEmailModel(string FirstName, string PlanName, DateTimeOffset? ExpiresAt);
 
+/// <summary>Sent when the provider bills a recurring membership for a further period.</summary>
+public record MembershipRenewedEmailModel(string FirstName, string PlanName, DateTimeOffset ExpiresAt);
+
 /// <summary>Sent during onboarding to prove the member owns the address they signed up with.</summary>
 public record ConfirmEmailAddressEmailModel(string FirstName, string ConfirmUrl);
 

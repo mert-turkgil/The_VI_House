@@ -1,0 +1,182 @@
+@model AccountMembershipViewModel
+@{
+    ViewData["Title"] = Loc["Account.MembershipTitle"];
+    var m = Model.Current;
+
+    string BillingLabel(MembershipBillingPeriod period) => period switch
+    {
+        MembershipBillingPeriod.Monthly => Loc["Membership.PerMonth"].Value,
+        MembershipBillingPeriod.Annual => Loc["Membership.PerYear"].Value,
+        _ => Loc["Membership.OneTime"].Value,
+    };
+
+    string StatusKey(MembershipSummary s) => s.Membership.Status switch
+    {
+        MembershipStatus.Cancelled => "cancelled",
+        _ when s.IsCurrent => "active",
+        _ => "expired",
+    };
+
+    string StatusLabel(MembershipSummary s) => StatusKey(s) switch
+    {
+        "cancelled" => Loc["Account.Status.Cancelled"].Value,
+        "active" => Loc["Account.Status.Active"].Value,
+        _ => Loc["Account.Status.Expired"].Value,
+    };
+}
+
+<div class="account-manage">
+    <partial name="_AccountNav" />
+    <div class="account-manage__content">
+        <h1>@Loc["Account.MembershipTitle"]</h1>
+
+        @if (TempData["MembershipError"] is string error)
+        {
+            <div class="apply-form__summary" role="alert" style="margin-bottom:20px;">@error</div>
+        }
+
+        @if (m is not null)
+        {
+            <section class="account-membership" aria-labelledby="current-heading">
+                <div class="account-membership__body">
+                    <span class="account-membership__eyebrow">@Loc["Account.CurrentPlan"]</span>
+                    <h2 id="current-heading">@m.Plan.Name</h2>
+                    <p class="account-membership__term">
+                        @MoneyFormatter.Format(m.Plan.PriceMinor, m.Plan.Currency) @BillingLabel(m.Plan.BillingPeriod)
+                        @if (m.Membership.Status == MembershipStatus.Cancelled)
+                        {
+                            <text>&middot; @Loc["Account.Membership.Ended", m.Membership.ExpiresAt?.ToString("d MMMM yyyy") ?? ""]</text>
+                        }
+                        else if (m.HasProviderSubscription && m.Membership.RenewalAt is { } renews)
+                        {
+                            <text>&middot; @Loc["Account.Membership.Renews", renews.ToString("d MMMM yyyy")]</text>
+                        }
+                        else if (m.Membership.ExpiresAt is { } expires)
+                        {
+                            <text>&middot; @Loc["Account.MembershipValidUntil", expires.ToString("d MMMM yyyy")]</text>
+                        }
+                        else
+                        {
+                            <text>&middot; @Loc["Account.MembershipNoExpiry"]</text>
+                        }
+                    </p>
+                    <dl class="account-membership__facts">
+                        <div><dt>@Loc["Card.MemberNumber"]</dt><dd>@Model.MemberNumber</dd></div>
+                        <div><dt>@Loc["Card.MemberSince"]</dt><dd>@m.Membership.StartAt.ToString("d MMMM yyyy")</dd></div>
+                        <div><dt>@Loc["Account.Billing"]</dt><dd>@(m.IsRecurring ? Loc["Account.Billing.Recurring"] : Loc["Account.Billing.OneTime"])</dd></div>
+                    </dl>
+                    <div class="account-membership__actions">
+                        <a class="btn btn--primary" asp-action="Card">@Loc["Card.ViewCard"]</a>
+                        @if (Model.CanManageBilling)
+                        {
+                            <form asp-action="Billing" method="post">
+                                <button type="submit" class="btn btn--ghost-dark">@Loc["Account.ManageBilling"]</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a class="btn btn--ghost-dark" href="/contact">@Loc["Account.ContactAboutMembership"]</a>
+                        }
+                    </div>
+                    @if (Model.CanManageBilling)
+                    {
+                        <p class="account-membership__note">@Loc["Account.ManageBilling.Note"]</p>
+                    }
+                    else if (m.IsRecurring)
+                    {
+                        <p class="account-membership__note">@Loc["Account.ManageBilling.Unavailable"]</p>
+                    }
+                </div>
+                @if (m.Plan.Features is { } features && !string.IsNullOrWhiteSpace(features))
+                {
+                    <ul class="account-membership__perks" aria-label="@Loc["Account.MembershipUnlocks"]">
+                        @foreach (var feature in features.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                        {
+                            <li>@feature</li>
+                        }
+                    </ul>
+                }
+            </section>
+        }
+        else
+        {
+            <section class="account-membership account-membership--invite">
+                <div class="account-membership__body">
+                    <span class="account-membership__eyebrow">@Loc["Account.CurrentPlan"]</span>
+                    <h2>@Loc["Account.NoMembership"]</h2>
+                    <p class="account-membership__term">
+                        @(Model.SalesOpen ? Loc["Account.NoMembership.Sales"] : Loc["Account.NoMembership.Apply"])
+                    </p>
+                    @if (!Model.SalesOpen)
+                    {
+                        <div class="account-membership__actions">
+                            <a class="btn btn--primary" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Nav.ApplyToJoin"]</a>
+                            <a class="btn btn--ghost-dark" asp-controller="Membership" asp-action="Index">@Loc["Account.WhatMembershipIs"]</a>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            @if (Model.Plans.Count > 0)
+            {
+                <h2 class="account-section-heading">@Loc["Account.ChooseAPlan"]</h2>
+                <div class="membership-plan-grid membership-plan-grid--compact">
+                    @foreach (var plan in Model.Plans)
+                    {
+                        <div class="membership-plan-card">
+                            <h3>@plan.Name</h3>
+                            <div class="membership-plan-card__price">
+                                @MoneyFormatter.Format(plan.PriceMinor, plan.Currency)
+                                <span>@BillingLabel(plan.BillingPeriod)</span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(plan.Description))
+                            {
+                                <p class="membership-plan-card__description">@plan.Description</p>
+                            }
+                            @if (plan.Features.Count > 0)
+                            {
+                                <ul class="membership-plan-card__features">
+                                    @foreach (var feature in plan.Features)
+                                    {
+                                        <li>@feature</li>
+                                    }
+                                </ul>
+                            }
+                            <form asp-controller="Membership" asp-action="Checkout" asp-route-planId="@plan.Id" method="post">
+                                <button type="submit" class="btn btn--primary" style="width:100%;">@Loc["Membership.Join"]</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            }
+        }
+
+        @if (Model.History.Count > 0)
+        {
+            <h2 class="account-section-heading">@Loc["Account.MembershipHistory"]</h2>
+            <div class="account-table-scroll">
+                <table class="account-table">
+                    <thead>
+                        <tr>
+                            <th>@Loc["Account.History.Plan"]</th>
+                            <th>@Loc["Account.History.From"]</th>
+                            <th>@Loc["Account.History.Until"]</th>
+                            <th>@Loc["Account.History.Status"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var h in Model.History)
+                        {
+                            <tr>
+                                <td>@h.Plan.Name</td>
+                                <td>@h.Membership.StartAt.ToString("d MMM yyyy")</td>
+                                <td>@(h.Membership.ExpiresAt?.ToString("d MMM yyyy") ?? Loc["Card.NoExpiry"].Value)</td>
+                                <td><span class="account-status account-status--@StatusKey(h)">@StatusLabel(h)</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

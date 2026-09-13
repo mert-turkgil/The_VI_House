@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using VIHouse.Business.Abstract;
 using VIHouse.Entities.Membership;
 
 namespace VIHouse.WebUI.Areas.Admin.ViewModels;
@@ -13,8 +14,14 @@ public class AdminMembershipPlanFormViewModel
     [StringLength(1000)]
     public string? Description { get; set; }
 
-    [Required, Range(0, long.MaxValue)]
-    public long PriceMinor { get; set; }
+    /// <summary>
+    /// Entered as a decimal in major units (e.g. 2500.00) rather than the minor-unit integer the
+    /// row stores. The old "250000 = £2,500.00" box was the single easiest way to sell a plan for
+    /// a hundredth of its price.
+    /// </summary>
+    [Required, Range(0, 10_000_000)]
+    [Display(Name = "Price")]
+    public decimal Price { get; set; }
 
     [Required, StringLength(3, MinimumLength = 3)]
     public string Currency { get; set; } = "GBP";
@@ -31,12 +38,30 @@ public class AdminMembershipPlanFormViewModel
 
     public int SortOrder { get; set; }
 
+    // --- Read-only: the state of the Stripe mirror, shown on the edit page --------------------
+
+    public string? ProviderProductId { get; set; }
+    public string? ProviderPriceId { get; set; }
+    public DateTimeOffset? ProviderSyncedAt { get; set; }
+    public string? ProviderSyncError { get; set; }
+    public bool IsProviderSynced => ProviderPriceId is not null && ProviderSyncedAt is not null && ProviderSyncError is null;
+
+    /// <summary>Decides whether the delete button is offered, and what it says.</summary>
+    public PlanUsage? Usage { get; set; }
+
+    /// <summary>Whether the configured key is a live one — decides which Stripe dashboard the
+    /// product links point at.</summary>
+    public bool StripeLive { get; set; }
+
+    public string? StripeProductUrl => ProviderProductId is null ? null
+        : $"https://dashboard.stripe.com/{(StripeLive ? "" : "test/")}products/{ProviderProductId}";
+
     public MembershipPlan ToEntity() => new()
     {
         Id = Id ?? Guid.NewGuid(),
         Name = Name.Trim(),
-        Description = Description,
-        PriceMinor = PriceMinor,
+        Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
+        PriceMinor = (long)Math.Round(Price * 100, MidpointRounding.AwayFromZero),
         Currency = Currency.Trim().ToUpperInvariant(),
         BillingPeriod = BillingPeriod,
         Features = Features,
@@ -49,11 +74,15 @@ public class AdminMembershipPlanFormViewModel
         Id = p.Id,
         Name = p.Name,
         Description = p.Description,
-        PriceMinor = p.PriceMinor,
+        Price = p.PriceMinor / 100m,
         Currency = p.Currency,
         BillingPeriod = p.BillingPeriod,
         Features = p.Features,
         Status = p.Status,
         SortOrder = p.SortOrder,
+        ProviderProductId = p.ProviderProductId,
+        ProviderPriceId = p.ProviderPriceId,
+        ProviderSyncedAt = p.ProviderSyncedAt,
+        ProviderSyncError = p.ProviderSyncError,
     };
 }

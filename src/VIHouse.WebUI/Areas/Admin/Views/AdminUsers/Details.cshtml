@@ -20,11 +20,37 @@
             <h2>Account</h2>
             <dl class="admin-detail-list">
                 <div><dt>Email</dt><dd>@Model.Email</dd></div>
-                <div><dt>Company</dt><dd>@(Model.Profile?.CompanyName ?? "—")</dd></div>
-                <div><dt>Role</dt><dd>@(Model.Profile?.JobTitle ?? "—")</dd></div>
-                <div><dt>Industry</dt><dd>@(Model.Profile?.Industry ?? "—")</dd></div>
+                <div><dt>Title / profession</dt><dd>@(Model.Profile?.JobTitle ?? "—")</dd></div>
+                <div>
+                    <dt>Address</dt>
+                    <dd>
+                        @{
+                            var addressLines = new[] { Model.Profile?.AddressLine1, Model.Profile?.AddressLine2, Model.Profile?.PostalCode }
+                                .Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                        }
+                        @if (addressLines.Count == 0) { <text>&mdash;</text> }
+                        else { @string.Join(", ", addressLines) }
+                    </dd>
+                </div>
+                <div><dt>Annual earnings</dt><dd>@(EarningsBand.LabelFor(Model.Profile?.EarningsBand) ?? "—")</dd></div>
+                <div><dt>Profile</dt><dd>@(Model.Profile?.IsComplete == true ? "Complete" : "Incomplete — the required statements are missing")</dd></div>
             </dl>
         </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Profile?.About) || !string.IsNullOrWhiteSpace(Model.Profile?.Expectations))
+        {
+            <div class="admin-card">
+                <h2>In their words</h2>
+                @if (!string.IsNullOrWhiteSpace(Model.Profile?.About))
+                {
+                    <p><strong>About</strong><br />@Model.Profile.About</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Profile?.Expectations))
+                {
+                    <p><strong>Expectations</strong><br />@Model.Profile.Expectations</p>
+                }
+            </div>
+        }
 
         <div class="admin-card">
             <h2>Applications</h2>

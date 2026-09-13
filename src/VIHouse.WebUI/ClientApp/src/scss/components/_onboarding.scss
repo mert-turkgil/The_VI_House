@@ -637,7 +637,9 @@
     color: var(--vih-green-900);
   }
 
-  input {
+  input,
+  select,
+  textarea {
     width: 100%;
     padding: 11px 14px;
     border: 1px solid var(--vih-line-on-light);
@@ -645,12 +647,35 @@
     background: var(--vih-white);
     font-family: var(--vih-font-sans);
     font-size: 0.9375rem;
+    color: var(--vih-ink);
 
     &:focus {
       outline: 2px solid var(--vih-gold);
       outline-offset: 1px;
     }
   }
+
+  textarea {
+    resize: vertical;
+    line-height: 1.55;
+  }
+
+  // Same treatment as .apply-field select — see _apply.scss for why.
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 40px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2363685c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+    cursor: pointer;
+  }
+}
+
+.join__required {
+  color: var(--vih-gold);
+  font-weight: 700;
 }
 
 .join__hint {
@@ -671,11 +696,28 @@
   margin-bottom: 24px;
   font-size: 0.875rem;
 
+  // The label is a two-item flex row: the box, and one span holding all the text. The markup
+  // used to put bare text nodes and two anchors straight into this row, and flex laid each of
+  // them out as its own item — "I agree to the", "Terms & Conditions", "and", "Privacy Policy"
+  // spread across the full width with the wrap points in the wrong places. Views/Join/Index.cshtml
+  // now wraps the sentence, and the rule below is the belt to that pair of braces.
   label {
     display: flex;
     gap: 10px;
     align-items: flex-start;
     line-height: 1.55;
+
+    > span {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  input[type='checkbox'] {
+    flex-shrink: 0;
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
   }
 }
 
