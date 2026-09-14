@@ -5,10 +5,50 @@
 @inject Microsoft.Extensions.Options.IOptions<VIHouse.Business.Options.FeatureOptions> Features
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     var currentUser = User.Identity?.IsAuthenticated == true ? await UserManager.GetUserAsync(User) : null;
+    var pageTitle = ViewData["Title"]?.ToString() ?? "Admin";
+
+    var navItems = new[]
+    {
+        (Controller: "AdminDashboard", Action: "Index", Label: "Dashboard", Icon: "layout-dashboard"),
+        (Controller: "AdminApplications", Action: "Index", Label: "Applications", Icon: "file-text"),
+        (Controller: "AdminUsers", Action: "Index", Label: "Customers", Icon: "user-round"),
+        (Controller: "AdminExperiences", Action: "Index", Label: "Experiences", Icon: "sparkles"),
+        (Controller: "AdminBookings", Action: "Index", Label: "Bookings", Icon: "calendar"),
+        (Controller: "AdminPayments", Action: "Index", Label: "Payments", Icon: "credit-card"),
+        (Controller: "AdminPromoCodes", Action: "Index", Label: "Promo Codes", Icon: "tag"),
+        (Controller: "AdminAmbassadors", Action: "Index", Label: "Ambassadors", Icon: "megaphone"),
+        (Controller: "AdminMembershipPlans", Action: "Index", Label: "Membership Plans", Icon: "layers"),
+        (Controller: "AdminCms", Action: "Index", Label: "Content", Icon: "pen-square"),
+        (Controller: "AdminHeroSlides", Action: "Index", Label: "Hero Slides", Icon: "image"),
+        (Controller: "AdminSeminars", Action: "Index", Label: "Sessions", Icon: "calendar"),
+        (Controller: "AdminJournal", Action: "Index", Label: "Journal", Icon: "book-open"),
+        (Controller: "AdminCommunity", Action: "Index", Label: "Community", Icon: "messages-square"),
+        (Controller: "AdminEmails", Action: "Index", Label: "Emails & SMS", Icon: "mail"),
+        (Controller: "AdminNotifySignups", Action: "Index", Label: "Launch List", Icon: "bell"),
+        (Controller: "AdminTranslations", Action: "Index", Label: "Translations", Icon: "languages"),
+        (Controller: "AdminSiteSettings", Action: "Index", Label: "Site & SEO", Icon: "settings"),
+    };
+
+    var quickActions = new[]
+    {
+        (Area: "Admin", Controller: "AdminApplications", Action: "Index", Label: "Review queue"),
+        (Area: "Admin", Controller: "AdminExperiences", Action: "Create", Label: "New experience"),
+        (Area: "Admin", Controller: "AdminSeminars", Action: "Create", Label: "New session"),
+        (Area: "Admin", Controller: "AdminJournal", Action: "Create", Label: "New article"),
+    };
 
     string NavClass(string controllerName) =>
         string.Equals(currentController, controllerName, StringComparison.OrdinalIgnoreCase) ? "admin-sidebar__link active" : "admin-sidebar__link";
+
+    string PageContext() =>
+        string.Equals(currentController, "AdminDashboard", StringComparison.OrdinalIgnoreCase) && string.Equals(currentAction, "Index", StringComparison.OrdinalIgnoreCase)
+            ? "A live view of applications, bookings, content and revenue."
+            : "Fast, guided admin workflows for everyday operations.";
+
+    var activeNav = navItems.FirstOrDefault(item => string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase));
+    var activeNavLabel = activeNav == default ? pageTitle : activeNav.Label;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -39,58 +79,116 @@
    the npm build (which reports itself as "sh") and the editor goes read-only with a licence error
    while looking, at a glance, like it simply will not accept typing. *@
 <body class="admin-shell" data-ckeditor-license="@Configuration["CkEditor:LicenseKey"]">
+    <a class="admin-skip-link" href="#admin-content">Skip to content</a>
     <aside class="admin-sidebar">
-        <a class="admin-sidebar__brand" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">
-            <partial name="_Crest" />
-            <span>VI House Admin</span>
-        </a>
+        <div class="admin-sidebar__top">
+            <a class="admin-sidebar__brand" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">
+                <partial name="_Crest" />
+                <span class="admin-sidebar__brand-wordmark">VI House Admin</span>
+            </a>
+            <button class="admin-sidebar__pin" type="button" data-admin-sidebar-collapse aria-pressed="false" aria-label="Collapse sidebar" title="Collapse sidebar">
+                <span class="admin-sidebar__pin-icon" data-admin-sidebar-collapse-icon>
+                    <partial name="_Icon" model="panel-left-close" />
+                </span>
+            </button>
+        </div>
+
+        <div class="admin-sidebar__search">
+            <label class="admin-searchbar admin-searchbar--sidebar">
+                <span class="admin-searchbar__icon">
+                    <partial name="_Icon" model="search" />
+                </span>
+                <input type="search" data-admin-nav-search placeholder="Search admin pages" aria-label="Search admin pages" />
+            </label>
+        </div>
 
         <nav class="admin-sidebar__nav" aria-label="Admin">
-            @* Order follows the brief's admin menu (§57). Membership Plans appears only when
-               memberships are actually on sale — while the House is application-only there is
-               nothing to price. *@
-            <a class="@NavClass("AdminDashboard")" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">Dashboard</a>
-            <a class="@NavClass("AdminApplications")" asp-area="Admin" asp-controller="AdminApplications" asp-action="Index">Applications</a>
-            <a class="@NavClass("AdminUsers")" asp-area="Admin" asp-controller="AdminUsers" asp-action="Index">Customers</a>
-            <a class="@NavClass("AdminExperiences")" asp-area="Admin" asp-controller="AdminExperiences" asp-action="Index">Experiences</a>
-            <a class="@NavClass("AdminBookings")" asp-area="Admin" asp-controller="AdminBookings" asp-action="Index">Bookings</a>
-            <a class="@NavClass("AdminPayments")" asp-area="Admin" asp-controller="AdminPayments" asp-action="Index">Payments</a>
-            <a class="@NavClass("AdminPromoCodes")" asp-area="Admin" asp-controller="AdminPromoCodes" asp-action="Index">Promo Codes</a>
-            <a class="@NavClass("AdminAmbassadors")" asp-area="Admin" asp-controller="AdminAmbassadors" asp-action="Index">Ambassadors</a>
-            @* Always reachable, whatever Features:MembershipSales says: the plans are prepared and
-               mirrored to Stripe before sales open, not after. The public page is what the flag gates. *@
-            <a class="@NavClass("AdminMembershipPlans")" asp-area="Admin" asp-controller="AdminMembershipPlans" asp-action="Index">Membership Plans</a>
-            <a class="@NavClass("AdminCms")" asp-area="Admin" asp-controller="AdminCms" asp-action="Index">Content</a>
-            <a class="@NavClass("AdminHeroSlides")" asp-area="Admin" asp-controller="AdminHeroSlides" asp-action="Index">Hero Slides</a>
-            <a class="@NavClass("AdminSeminars")" asp-area="Admin" asp-controller="AdminSeminars" asp-action="Index">Sessions</a>
-            <a class="@NavClass("AdminJournal")" asp-area="Admin" asp-controller="AdminJournal" asp-action="Index">Journal</a>
-            <a class="@NavClass("AdminCommunity")" asp-area="Admin" asp-controller="AdminCommunity" asp-action="Index">Community</a>
-            <a class="@NavClass("AdminEmails")" asp-area="Admin" asp-controller="AdminEmails" asp-action="Index">Emails &amp; SMS</a>
-            @* Deliberately not behind Features.Value.ComingSoon: the day the curtain comes down is
-               exactly when this list is needed, and hiding it with the flag would hide it then. *@
-            <a class="@NavClass("AdminNotifySignups")" asp-area="Admin" asp-controller="AdminNotifySignups" asp-action="Index">Launch List</a>
-            <a class="@NavClass("AdminTranslations")" asp-area="Admin" asp-controller="AdminTranslations" asp-action="Index">Translations</a>
-            <a class="@NavClass("AdminSiteSettings")" asp-area="Admin" asp-controller="AdminSiteSettings" asp-action="Index">Site &amp; SEO</a>
+            @foreach (var item in navItems)
+            {
+                <a class="@NavClass(item.Controller)"
+                   data-nav-label="@item.Label"
+                   asp-area="Admin"
+                   asp-controller="@item.Controller"
+                   asp-action="@item.Action">
+                    <span class="admin-sidebar__icon">
+                        <partial name="_Icon" model="@item.Icon" />
+                    </span>
+                    <span class="admin-sidebar__text">@item.Label</span>
+                </a>
+            }
         </nav>
+        <p class="admin-sidebar__empty" data-admin-nav-empty hidden>No matching admin pages.</p>
 
         <div class="admin-sidebar__footer">
-            @if (currentUser is not null)
-            {
-                <div class="admin-sidebar__user">@currentUser.Email</div>
-            }
-            <a asp-area="" asp-controller="Home" asp-action="Index">&larr; View site</a>
-            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
-                <button type="submit" style="background:none;border:none;padding:6px 0;color:inherit;font:inherit;cursor:pointer;">Log out</button>
-            </form>
+            <div class="admin-sidebar__profile">
+                <span class="admin-sidebar__avatar" aria-hidden="true">@((currentUser?.Email ?? "A")[0].ToString().ToUpperInvariant())</span>
+                <div class="admin-sidebar__profile-copy">
+                    <strong>@activeNavLabel</strong>
+                    <span>@(currentUser?.Email ?? "Admin user")</span>
+                </div>
+            </div>
+            <div class="admin-sidebar__footer-links">
+                <a asp-area="" asp-controller="Home" asp-action="Index">
+                    <partial name="_Icon" model="arrow-up-right" />
+                    <span>View site</span>
+                </a>
+            </div>
         </div>
     </aside>
 
-    <main class="admin-main">
-        <div class="admin-header">
-            <h1>@ViewData["Title"]</h1>
-        </div>
-        @RenderBody()
-    </main>
+    <div class="admin-workspace">
+        <header class="admin-topbar" data-reveal>
+            <div class="admin-topbar__intro">
+                <p class="admin-eyebrow">Admin workspace</p>
+                <h1>@pageTitle</h1>
+                <p class="admin-topbar__meta">@PageContext()</p>
+            </div>
+            <div class="admin-topbar__actions">
+                <label class="admin-searchbar">
+                    <span class="admin-searchbar__icon">
+                        <partial name="_Icon" model="search" />
+                    </span>
+                    <input type="search" data-admin-nav-search placeholder="Jump to a section" aria-label="Jump to a section" />
+                </label>
+                <div class="admin-quick-actions">
+                    <span class="admin-quick-actions__label">Quick actions</span>
+                    <div class="admin-quick-actions__links">
+                        @foreach (var action in quickActions)
+                        {
+                            <a class="admin-btn admin-btn--ghost admin-btn--sm"
+                               asp-area="@action.Area"
+                               asp-controller="@action.Controller"
+                               asp-action="@action.Action">@action.Label</a>
+                        }
+                    </div>
+                </div>
+                <details class="admin-user-menu">
+                    <summary>
+                        <span class="admin-user-menu__avatar" aria-hidden="true">@((currentUser?.Email ?? "A")[0].ToString().ToUpperInvariant())</span>
+                        <span class="admin-user-menu__copy">
+                            <strong>@(currentUser?.Email ?? "Admin")</strong>
+                            <span>@activeNavLabel</span>
+                        </span>
+                        <span class="admin-user-menu__chevron">
+                            <partial name="_Icon" model="chevron-down" />
+                        </span>
+                    </summary>
+                    <div class="admin-user-menu__panel">
+                        <a asp-area="" asp-controller="Home" asp-action="Index">Open website</a>
+                        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                            <button type="submit">Log out</button>
+                        </form>
+                    </div>
+                </details>
+            </div>
+        </header>
+
+        <main class="admin-main" id="admin-content">
+            <div class="admin-page" data-reveal data-reveal-delay="60">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     @* CKEditor, from the CDN — see the comment above <body> for why it is not in admin.js, and
