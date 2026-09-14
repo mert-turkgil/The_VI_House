@@ -5,14 +5,16 @@ export function initAdminNav(): void {
   const shell = document.querySelector<HTMLElement>('.admin-shell');
   const sidebar = document.querySelector<HTMLElement>('.admin-sidebar');
   if (!shell || !sidebar) return;
+  const adminShell = shell;
+  const adminSidebar = sidebar;
 
   const desktopQuery = window.matchMedia('(min-width: 960px)');
   const storageKey = 'vih-admin-sidebar-collapsed';
   const collapseToggle = document.querySelector<HTMLButtonElement>('[data-admin-sidebar-collapse]');
   const collapseIcon = collapseToggle?.querySelector<HTMLElement>('[data-admin-sidebar-collapse-icon]');
   const searchInputs = Array.from(document.querySelectorAll<HTMLInputElement>('[data-admin-nav-search]'));
-  const navLinks = Array.from(sidebar.querySelectorAll<HTMLAnchorElement>('[data-nav-label]'));
-  const emptyState = sidebar.querySelector<HTMLElement>('[data-admin-nav-empty]');
+  const navLinks = Array.from(adminSidebar.querySelectorAll<HTMLAnchorElement>('[data-nav-label]'));
+  const emptyState = adminSidebar.querySelector<HTMLElement>('[data-admin-nav-empty]');
   const topbar = document.querySelector<HTMLElement>('.admin-topbar');
 
   let toggle = document.querySelector<HTMLButtonElement>('.admin-burger');
@@ -44,7 +46,7 @@ export function initAdminNav(): void {
   }
 
   function setOpen(open: boolean): void {
-    shell.classList.toggle('admin-shell--nav-open', open);
+    adminShell.classList.toggle('admin-shell--nav-open', open);
     toggle!.setAttribute('aria-expanded', String(open));
     scrim!.hidden = !open;
     document.body.style.overflow = open ? 'hidden' : '';
@@ -53,7 +55,7 @@ export function initAdminNav(): void {
   function setCollapsed(collapsed: boolean): void {
     const effectiveCollapsed = desktopQuery.matches ? collapsed : false;
 
-    shell.classList.toggle('admin-shell--nav-collapsed', effectiveCollapsed);
+    adminShell.classList.toggle('admin-shell--nav-collapsed', effectiveCollapsed);
     collapseToggle?.setAttribute('aria-pressed', String(effectiveCollapsed));
     collapseToggle?.setAttribute('aria-label', effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar');
     collapseToggle?.setAttribute('title', effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar');
@@ -91,7 +93,7 @@ export function initAdminNav(): void {
     if (event.key === 'Escape') setOpen(false);
   });
 
-  sidebar.addEventListener('click', (event) => {
+  adminSidebar.addEventListener('click', (event) => {
     if (!desktopQuery.matches && (event.target as HTMLElement | null)?.closest('a')) setOpen(false);
   });
 
@@ -105,7 +107,7 @@ export function initAdminNav(): void {
         setCollapsed(false);
       }
     } else {
-      shell.classList.remove('admin-shell--nav-collapsed');
+      adminShell.classList.remove('admin-shell--nav-collapsed');
     }
   });
 
@@ -127,6 +129,6 @@ export function initAdminNav(): void {
     setCollapsed(false);
   }
 
-  if (collapseIcon) collapseIcon.innerHTML = collapseIconMarkup(shell.classList.contains('admin-shell--nav-collapsed'));
+  if (collapseIcon) collapseIcon.innerHTML = collapseIconMarkup(adminShell.classList.contains('admin-shell--nav-collapsed'));
   applyFilter(searchInputs[0]?.value ?? '');
 }
