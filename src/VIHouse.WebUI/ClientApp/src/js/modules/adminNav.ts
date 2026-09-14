@@ -51,16 +51,13 @@ export function initAdminNav(): void {
   }
 
   function setCollapsed(collapsed: boolean): void {
-    if (!desktopQuery.matches) {
-      shell.classList.remove('admin-shell--nav-collapsed');
-      return;
-    }
+    const effectiveCollapsed = desktopQuery.matches ? collapsed : false;
 
-    shell.classList.toggle('admin-shell--nav-collapsed', collapsed);
-    collapseToggle?.setAttribute('aria-pressed', String(collapsed));
-    collapseToggle?.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
-    collapseToggle?.setAttribute('title', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
-    if (collapseIcon) collapseIcon.innerHTML = collapseIconMarkup(collapsed);
+    shell.classList.toggle('admin-shell--nav-collapsed', effectiveCollapsed);
+    collapseToggle?.setAttribute('aria-pressed', String(effectiveCollapsed));
+    collapseToggle?.setAttribute('aria-label', effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar');
+    collapseToggle?.setAttribute('title', effectiveCollapsed ? 'Expand sidebar' : 'Collapse sidebar');
+    if (collapseIcon) collapseIcon.innerHTML = collapseIconMarkup(effectiveCollapsed);
 
     try {
       window.localStorage.setItem(storageKey, collapsed ? 'true' : 'false');

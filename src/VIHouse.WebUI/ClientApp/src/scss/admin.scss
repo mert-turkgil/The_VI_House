@@ -205,3 +205,9 @@
     padding: 24px;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-chart-card {
+    transition: none !important;
+  }
+}
