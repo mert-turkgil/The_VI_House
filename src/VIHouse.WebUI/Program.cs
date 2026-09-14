@@ -210,6 +210,7 @@ builder.Services.AddScoped<IAuditLogRepository, EfAuditLogRepository>();
 builder.Services.AddScoped<IProfileRepository, EfProfileRepository>();
 builder.Services.AddScoped<IWebhookEventRepository, EfWebhookEventRepository>();
 builder.Services.AddScoped<IMembershipPaymentRepository, EfMembershipPaymentRepository>();
+builder.Services.AddScoped<IPendingJoinRepository, EfPendingJoinRepository>();
 builder.Services.AddScoped<IAmbassadorRepository, EfAmbassadorRepository>();
 builder.Services.AddScoped<INotificationRepository, EfNotificationRepository>();
 builder.Services.AddScoped<IJournalPostRepository, EfJournalPostRepository>();
@@ -284,6 +285,10 @@ builder.Services.AddScoped<ISmsService, SmsService>();
 // Releases abandoned TicketHolds back to inventory every 60s (brief §177-179) — a safety net
 // alongside the immediate release on checkout failure/expiry in PaymentService.
 builder.Services.AddHostedService<TicketHoldExpiryService>();
+
+// Clears the form data from membership checkouts that never paid, once they are 30 days old —
+// the row is kept, the personal detail is not.
+builder.Services.AddHostedService<PendingJoinPurgeService>();
 
 // --- Localization (EN default / DE / TR / ET) --------------------------------------------------
 // Cookie-driven, not URL-prefixed: switching language never changes the URL (thevihouse.com/about

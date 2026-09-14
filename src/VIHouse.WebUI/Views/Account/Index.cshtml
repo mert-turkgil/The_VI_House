@@ -64,6 +64,21 @@
         @* --- Membership: the panel the dashboard is built around ---------------------------- *@
         @if (m is not null)
         {
+            @if (m.IsPastDue)
+            {
+                <div class="account-notice account-notice--pastdue" role="alert">
+                    <div>
+                        <strong>@Loc["Account.PastDue.Title"]</strong>
+                        <span>@Loc["Account.PastDue.Banner", m.Membership.ExpiresAt?.ToString("d MMMM yyyy") ?? ""]</span>
+                    </div>
+                    @if (Model.CanManageBilling)
+                    {
+                        <form asp-action="Billing" method="post">
+                            <button type="submit" class="btn btn--primary">@Loc["Account.PastDue.Cta"]</button>
+                        </form>
+                    }
+                </div>
+            }
             <section class="account-membership" aria-labelledby="membership-heading">
                 <div class="account-membership__body">
                     <span class="account-membership__eyebrow">@Loc["Account.YourMembership"]</span>
@@ -72,6 +87,10 @@
                         @if (m.Membership.Status == MembershipStatus.Cancelled)
                         {
                             @Loc["Account.Membership.Ended", m.Membership.ExpiresAt?.ToString("d MMMM yyyy") ?? ""]
+                        }
+                        else if (m.IsPastDue && m.Membership.ExpiresAt is { } paidUntil)
+                        {
+                            @Loc["Account.Membership.PaidUntil", paidUntil.ToString("d MMMM yyyy")]
                         }
                         else if (m.HasProviderSubscription && m.Membership.RenewalAt is { } renews)
                         {

@@ -1,4 +1,5 @@
 using System.Buffers.Text;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Commerce;
+using VIHouse.Entities.Compliance;
 using VIHouse.Entities.Membership;
 using VIHouse.Entities.Notifications;
 using VIHouse.Entities.Users;
@@ -20,13 +22,16 @@ public class MembershipService(
     IRepository<MembershipPlan> plans,
     IRepository<Membership> memberships,
     IMembershipPaymentRepository membershipPayments,
+    IPendingJoinRepository pendingJoins,
     IProfileRepository profiles,
+    IRepository<ConsentRecord> consentRecords,
     IPaymentProvider paymentProvider,
     IPaymentCatalogProvider catalog,
     IEmailService emailService,
     INotificationService notificationService,
     IAuditLogRepository auditLogs,
     IOptions<SiteOptions> siteOptions,
+    ISiteSettingsService siteSettings,
     UserManager<ApplicationUser> userManager,
     ILogger<MembershipService> logger) : IMembershipService
 {
@@ -309,7 +314,9 @@ public class MembershipService(
         var mine = await memberships.FindAsync(m => m.UserId == userId, ct);
 
         return mine
-            .Where(m => m.Status == MembershipStatus.Active)
+            // PastDue counts: a declined renewal does not end the period already paid for. The
+            // ExpiresAt filter below is what ends it.
+            .Where(m => m.Status is MembershipStatus.Active or MembershipStatus.PastDue)
             // A null ExpiresAt is a one-time membership that does not lapse, not an expired one.
             .Where(m => m.ExpiresAt is null || m.ExpiresAt > now)
             .OrderByDescending(m => m.StartAt)
@@ -360,70 +367,250 @@ public class MembershipService(
 
         // One current membership per person. Buying a second while the first still runs would
         // open two rows and, for a recurring plan, two subscriptions billing side by side.
-        if (await GetCurrentMembershipAsync(userId, ct) is not null)
-            return MembershipCheckoutResult.Fail("You already hold an active membership. To change plan, manage your billing from your account page or contact us.");
+        if (await GetCurrentMembershipAsync(userId, ct) is { } current)
+        {
+            return MembershipCheckoutResult.Fail(current.Status == MembershipStatus.PastDue
+                ? "Your membership has a payment outstanding. Update your card from your account page and it will continue — there's no need to buy again."
+                : "You already hold an active membership. To change plan, manage your billing from your account page or contact us.");
+        }
 
         return await StartCheckoutAsync(plan, user, referralCode, successUrl, cancelUrl, ct);
     }
 
-    public async Task<MembershipCheckoutResult> InitiateJoinCheckoutAsync(JoinRequest request, string successUrl, string cancelUrl, CancellationToken ct = default)
+    // ---------------------------------------------------------------------------------------------
+    // Join (no account yet)
+    // ---------------------------------------------------------------------------------------------
+
+    private const string JoinCodeAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    private const string TermsConsentText = "I agree to The VI House Terms & Conditions and Privacy Policy.";
+    private const string AlreadyMemberMessage =
+        "This email address already holds a membership. Look for the account setup email we sent you — it has the link to choose your password — or contact us and we'll resend it.";
+
+    public async Task<MembershipCheckoutResult> InitiateJoinCheckoutAsync(JoinRequest request, string successUrl, string cancelUrlTemplate, CancellationToken ct = default)
     {
         var plan = await plans.GetByIdAsync(request.PlanId, ct);
         if (plan is null || plan.Status != MembershipPlanStatus.Active)
             return MembershipCheckoutResult.Fail("This membership plan isn't available right now.");
 
-        // Refusing rather than reusing: attaching this payment to an existing account would let
-        // anyone who knows a member's email buy "for" them, and would hand the payer an onboarding
-        // link to an account that isn't theirs.
-        if (await userManager.FindByEmailAsync(request.Email) is not null)
+        var email = request.Email.Trim();
+        var normalized = NormalizeEmail(email);
+
+        // Refusing rather than reusing when the address belongs to someone who can sign in:
+        // attaching this payment to their account would let anyone who knows a member's email buy
+        // "for" them, and would hand the payer a setup link to an account that isn't theirs. An
+        // account that *cannot* sign in — no password, no external login, no staff role — is a
+        // ghost left by an earlier abandoned checkout, and the webhook attaches to it instead.
+        if (await userManager.FindByEmailAsync(email) is { } existing)
         {
-            return MembershipCheckoutResult.Fail(
-                "An account already exists for that email address. Please sign in first, then choose your plan.");
+            if (await CanSignInAsync(existing))
+            {
+                return MembershipCheckoutResult.Fail(
+                    "An account already exists for that email address. Please sign in first, then choose your plan.");
+            }
+
+            // A paid member who has not yet chosen a password. Their route in is the setup email,
+            // not a second checkout.
+            if (await GetCurrentMembershipAsync(existing.Id, ct) is not null)
+                return MembershipCheckoutResult.Fail(AlreadyMemberMessage);
         }
 
-        var user = new ApplicationUser
+        var now = DateTimeOffset.UtcNow;
+        var join = await pendingJoins.GetLatestOpenByEmailAsync(normalized, ct);
+
+        // A second submit for the same plan while the first checkout is still open — a
+        // double-click, a back button, an impatient refresh — goes back to the same session.
+        // No second row, no second provider session, nothing to reconcile.
+        if (join is { Status: PendingJoinStatus.Pending, CheckoutUrl: not null } && join.HasLiveSession(now) && join.PlanId == plan.Id)
+            return MembershipCheckoutResult.Ok(join.CheckoutUrl);
+
+        if (join is null)
         {
-            UserName = request.Email,
-            Email = request.Email,
-            // Unconfirmed on purpose: unlike the application route, nobody has vetted this person,
-            // so the address is unproven until they click the link in the onboarding email.
-            EmailConfirmed = false,
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Country = request.Country,
-            City = request.City,
-            MemberStatus = MemberStatus.PendingApplication,
-        };
+            join = new PendingJoin
+            {
+                Code = RandomNumberGenerator.GetString(JoinCodeAlphabet, 10),
+                Email = email,
+                EmailNormalized = normalized,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Country = request.Country,
+            };
+            await pendingJoins.AddAsync(join, ct);
+        }
 
-        // No password is ever set or communicated. The member creates their own during onboarding,
-        // via a reset token — so an abandoned checkout leaves behind an account nobody can sign in
-        // to, rather than one with a guessable or emailed credential.
-        var created = await userManager.CreateAsync(user);
-        if (!created.Succeeded)
-            return MembershipCheckoutResult.Fail(string.Join(" ", created.Errors.Select(e => e.Description)));
+        // Otherwise the newest open row is reused in place: the form's latest answers win, and an
+        // earlier session that is still payable is closed at the provider so only one exists.
+        join.FirstName = request.FirstName;
+        join.LastName = request.LastName;
+        join.Country = request.Country;
+        join.City = request.City;
+        join.JobTitle = request.JobTitle;
+        join.AddressLine1 = request.AddressLine1;
+        join.AddressLine2 = request.AddressLine2;
+        join.PostalCode = request.PostalCode;
+        join.About = request.About;
+        join.Expectations = request.Expectations;
+        join.EarningsBand = request.EarningsBand;
+        join.ReferralCode = request.ReferralCode;
+        join.IpAddress = request.IpAddress;
+        join.PurgedAt = null;
 
-        // The form's answers become the profile straight away, so the member never has to type
-        // them a second time on the account page — and so the House has them even if the checkout
-        // is abandoned and someone follows up by hand.
-        await profiles.AddAsync(new Profile
-        {
-            UserId = user.Id,
-            JobTitle = request.JobTitle,
-            AddressLine1 = request.AddressLine1,
-            AddressLine2 = request.AddressLine2,
-            PostalCode = request.PostalCode,
-            About = request.About,
-            Expectations = request.Expectations,
-            EarningsBand = request.EarningsBand,
-            UpdatedAt = DateTimeOffset.UtcNow,
-        }, ct);
-        await profiles.SaveChangesAsync(ct);
-
-        return await StartCheckoutAsync(plan, user, request.ReferralCode, successUrl, cancelUrl, ct);
+        return await OpenJoinSessionAsync(join, plan, successUrl, cancelUrlTemplate, ct);
     }
 
-    /// <summary>Shared tail of both checkout entry points: the local payment row first, then the
-    /// provider session, then the row updated with the session id it must be matched on.</summary>
+    public async Task<PendingJoinInfo?> GetPendingJoinByCodeAsync(string code, CancellationToken ct = default)
+    {
+        var join = await pendingJoins.GetByCodeAsync(code, ct);
+        if (join is null) return null;
+
+        var plan = await plans.GetByIdAsync(join.PlanId, ct);
+        return new PendingJoinInfo(join.Code, join.FirstName, plan?.Name ?? "Membership",
+            join.Status == PendingJoinStatus.Paid, join.ProviderSessionId);
+    }
+
+    public async Task<MembershipCheckoutResult> ResumeJoinCheckoutAsync(string code, string successUrl, string cancelUrlTemplate, CancellationToken ct = default)
+    {
+        var join = await pendingJoins.GetByCodeAsync(code, ct);
+        if (join is null)
+            return MembershipCheckoutResult.Fail("That link isn't recognised. Please start again from the membership page.");
+
+        if (join.Status == PendingJoinStatus.Paid)
+            return MembershipCheckoutResult.Fail("This checkout has already been completed.");
+
+        // A superseded row was replaced by a later submit for the same address; the newest open
+        // row is the one to continue, if there still is one. Otherwise this row is as good as any.
+        if (join.Status == PendingJoinStatus.Superseded
+            && await pendingJoins.GetLatestOpenByEmailAsync(join.EmailNormalized, ct) is { } newer)
+        {
+            join = newer;
+        }
+
+        var plan = await plans.GetByIdAsync(join.PlanId, ct);
+        if (plan is null || plan.Status != MembershipPlanStatus.Active)
+            return MembershipCheckoutResult.Fail("This membership plan isn't available any more. Please choose a plan from the membership page.");
+
+        if (await userManager.FindByEmailAsync(join.Email) is { } existing)
+        {
+            if (await CanSignInAsync(existing))
+                return MembershipCheckoutResult.Fail("An account already exists for that email address. Please sign in, then choose your plan.");
+
+            if (await GetCurrentMembershipAsync(existing.Id, ct) is not null)
+                return MembershipCheckoutResult.Fail(AlreadyMemberMessage);
+        }
+
+        return await OpenJoinSessionAsync(join, plan, successUrl, cancelUrlTemplate, ct);
+    }
+
+    /// <summary>
+    /// Opens the provider session for a pending join and records it on the row. The row is saved
+    /// with no session *before* the provider is called, so a provider failure leaves an honest
+    /// "no live session" state that the next submit simply retries — no orphans, no second row.
+    /// </summary>
+    private async Task<MembershipCheckoutResult> OpenJoinSessionAsync(
+        PendingJoin join, MembershipPlan plan, string successUrl, string cancelUrlTemplate, CancellationToken ct)
+    {
+        var now = DateTimeOffset.UtcNow;
+
+        // The resume path can land here with the session still open (the email arrived late, or
+        // the visitor came back through the cancel URL). Same plan, still payable: reuse it.
+        if (join is { Status: PendingJoinStatus.Pending, CheckoutUrl: not null } && join.HasLiveSession(now) && join.PlanId == plan.Id)
+            return MembershipCheckoutResult.Ok(join.CheckoutUrl);
+
+        var previousSessionId = join.HasLiveSession(now) ? join.ProviderSessionId : null;
+
+        join.PlanId = plan.Id;
+        join.Status = PendingJoinStatus.Pending;
+        join.ProviderSessionId = null;
+        join.CheckoutUrl = null;
+        join.SessionExpiresAt = null;
+        join.UpdatedAt = now;
+        await pendingJoins.SaveChangesAsync(ct);
+
+        // One payable session per person. Left open, a forgotten tab on the old plan could still be
+        // paid — and its webhook would then find a row that has moved on to a different session.
+        if (previousSessionId is not null)
+            await paymentProvider.ExpireCheckoutSessionAsync(previousSessionId, ct);
+
+        try
+        {
+            var session = await paymentProvider.CreateCheckoutSessionAsync(new CreateCheckoutSessionRequest(
+                CustomerEmail: join.Email,
+                ProductName: $"The VI House Membership — {plan.Name}",
+                ProductDescription: plan.Description,
+                AmountMinor: plan.PriceMinor,
+                Currency: plan.Currency,
+                SuccessUrl: successUrl,
+                CancelUrl: cancelUrlTemplate.Replace("{code}", join.Code),
+                ClientReferenceId: join.Id.ToString(),
+                Metadata: new Dictionary<string, string>
+                {
+                    ["pendingJoinId"] = join.Id.ToString(),
+                    ["planId"] = plan.Id.ToString(),
+                })
+            {
+                Recurring = ToRecurringInterval(plan.BillingPeriod),
+                ProviderPriceId = plan.IsProviderSynced ? plan.ProviderPriceId : null,
+            }, ct);
+
+            join.ProviderSessionId = session.SessionId;
+            join.CheckoutUrl = session.Url;
+            // The provider's own figure. Its default for a subscription checkout is 24 hours; the
+            // fallback only matters if it ever stops reporting one.
+            join.SessionExpiresAt = session.ExpiresAt ?? now.AddHours(24);
+            join.UpdatedAt = DateTimeOffset.UtcNow;
+            await pendingJoins.SaveChangesAsync(ct);
+
+            return MembershipCheckoutResult.Ok(session.Url);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Could not open a checkout session for pending join {PendingJoinId}", join.Id);
+            return MembershipCheckoutResult.Fail("We couldn't reach the payment provider — please try again in a moment.");
+        }
+    }
+
+    /// <summary>A user who can actually get in — as opposed to a ghost row the old join flow left
+    /// behind, which has no password, no external login and no role that would let it through.</summary>
+    private async Task<bool> CanSignInAsync(ApplicationUser user)
+    {
+        if (await userManager.HasPasswordAsync(user)) return true;
+        if ((await userManager.GetLoginsAsync(user)).Count > 0) return true;
+
+        var roles = await userManager.GetRolesAsync(user);
+        return roles.Any(r => r == Roles.Ambassador || Roles.AdminRoles.Contains(r));
+    }
+
+    private static string NormalizeEmail(string email) => email.Trim().ToUpperInvariant();
+
+    public async Task<int> PurgeStalePendingJoinsAsync(TimeSpan olderThan, CancellationToken ct = default)
+    {
+        var cutoff = DateTimeOffset.UtcNow - olderThan;
+        var stale = await pendingJoins.ListPurgeableAsync(cutoff, take: 200, ct);
+        if (stale.Count == 0) return 0;
+
+        var now = DateTimeOffset.UtcNow;
+        foreach (var join in stale)
+        {
+            // Name, email, plan and status stay: a very late payment on this row must still find
+            // it, and the audit trail of "this address tried to join" is not personal data we
+            // have no reason to keep. Everything the form asked beyond that goes.
+            join.JobTitle = null;
+            join.AddressLine1 = null;
+            join.AddressLine2 = null;
+            join.PostalCode = null;
+            join.About = null;
+            join.Expectations = null;
+            join.EarningsBand = null;
+            join.IpAddress = null;
+            join.PurgedAt = now;
+            // Deliberately not UpdatedAt: that would make the row look freshly touched.
+        }
+
+        await pendingJoins.SaveChangesAsync(ct);
+        return stale.Count;
+    }
+
+    /// <summary>Shared tail of the signed-in checkout entry point: the local payment row first,
+    /// then the provider session, then the row updated with the session id it must be matched on.</summary>
     private async Task<MembershipCheckoutResult> StartCheckoutAsync(
         MembershipPlan plan, ApplicationUser user, string? referralCode, string successUrl, string cancelUrl, CancellationToken ct)
     {
@@ -481,17 +668,36 @@ public class MembershipService(
     public async Task<MembershipConfirmationInfo?> GetConfirmationBySessionAsync(string sessionId, CancellationToken ct = default)
     {
         var payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct);
-        if (payment is null) return null;
-
-        var plan = await plans.GetByIdAsync(payment.PlanId, ct);
-
-        if (payment.Status != PaymentStatus.Paid || payment.MembershipId is null)
-            return new MembershipConfirmationInfo(false, plan?.Name, payment.AmountMinor, payment.Currency, null);
-
-        var membership = await memberships.GetByIdAsync(payment.MembershipId.Value, ct);
-        return new MembershipConfirmationInfo(true, plan?.Name, payment.AmountMinor, payment.Currency, membership?.ExpiresAt)
+        if (payment is not null)
         {
-            UserId = payment.UserId,
+            var plan = await plans.GetByIdAsync(payment.PlanId, ct);
+
+            if (payment.Status != PaymentStatus.Paid || payment.MembershipId is null)
+                return new MembershipConfirmationInfo(false, plan?.Name, payment.AmountMinor, payment.Currency, null);
+
+            var membership = await memberships.GetByIdAsync(payment.MembershipId.Value, ct);
+            return new MembershipConfirmationInfo(true, plan?.Name, payment.AmountMinor, payment.Currency, membership?.ExpiresAt)
+            {
+                UserId = payment.UserId,
+            };
+        }
+
+        // A /join checkout has no payment row until the webhook writes one; the pending join is
+        // what the success page can show in the meantime, priced from the plan.
+        var join = await pendingJoins.GetBySessionAsync(sessionId, ct);
+        if (join is null) return null;
+
+        var joinPlan = await plans.GetByIdAsync(join.PlanId, ct);
+        var amount = joinPlan?.PriceMinor ?? 0;
+        var currency = joinPlan?.Currency ?? "GBP";
+
+        if (join.Status != PendingJoinStatus.Paid || join.MembershipId is null)
+            return new MembershipConfirmationInfo(false, joinPlan?.Name, amount, currency, null);
+
+        var joined = await memberships.GetByIdAsync(join.MembershipId.Value, ct);
+        return new MembershipConfirmationInfo(true, joinPlan?.Name, amount, currency, joined?.ExpiresAt)
+        {
+            UserId = join.UserId,
         };
     }
 
@@ -512,6 +718,9 @@ public class MembershipService(
             case PaymentWebhookEventType.SubscriptionRenewed when webhookEvent.SubscriptionId is not null:
                 await HandleSubscriptionRenewedAsync(webhookEvent, ct);
                 break;
+            case PaymentWebhookEventType.SubscriptionPaymentFailed when webhookEvent.SubscriptionId is not null:
+                await HandleSubscriptionPaymentFailedAsync(webhookEvent, ct);
+                break;
             case PaymentWebhookEventType.SubscriptionCancelled when webhookEvent.SubscriptionId is not null:
                 await HandleSubscriptionCancelledAsync(webhookEvent, ct);
                 break;
@@ -520,92 +729,401 @@ public class MembershipService(
 
     private async Task HandleCheckoutCompletedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
-        var payment = await membershipPayments.GetByProviderReferenceAsync(webhookEvent.SessionId!, ct);
-        if (payment is null || payment.Status == PaymentStatus.Paid)
-            return; // unknown session (e.g. a ticket-purchase session — see PaymentService), or already handled
+        var sessionId = webhookEvent.SessionId!;
+        Guid.TryParse(webhookEvent.ClientReferenceId, out var referenceId);
+
+        // Signed-in purchase: the payment row was written before the session was opened. Matched
+        // by session id, or — if the provider call timed out after succeeding, leaving the
+        // placeholder reference behind — by the row id we handed the provider.
+        var payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct)
+                      ?? (referenceId == Guid.Empty ? null : await membershipPayments.GetByIdAsync(referenceId, ct));
+        if (payment is not null)
+        {
+            await HandleMemberCheckoutCompletedAsync(payment, webhookEvent, ct);
+            return;
+        }
+
+        // Otherwise a /join checkout, matched the same two ways.
+        var join = await pendingJoins.GetBySessionAsync(sessionId, ct)
+                   ?? (referenceId == Guid.Empty ? null : await pendingJoins.GetByIdAsync(referenceId, ct));
+        if (join is null)
+            return; // unknown session — a ticket or seminar checkout, which PaymentService/SeminarService own
+
+        // The claim is the idempotency: the delivery that flips the row to Paid is the one that
+        // provisions, and any other delivery of the same event finds nothing to claim. All three
+        // open states are claimable — a payment that lands on a superseded or lapsed row is still
+        // money, and money that arrived must never be ignored.
+        if (!await pendingJoins.TryClaimAsync(join.Id, [PendingJoinStatus.Pending, PendingJoinStatus.Superseded, PendingJoinStatus.Expired], PendingJoinStatus.Paid, ct))
+            return;
+
+        join.Status = PendingJoinStatus.Paid;
+
+        try
+        {
+            await ActivateFromPendingJoinAsync(join, webhookEvent, ct);
+        }
+        catch
+        {
+            // Half-provisioned is the one state that must not persist: the claim is handed back so
+            // the provider's retry (the exception becomes a 500) runs this again from the top.
+            // Every step in ActivateFromPendingJoinAsync is written to be re-entrant for that reason.
+            await pendingJoins.TryClaimAsync(join.Id, [PendingJoinStatus.Paid], PendingJoinStatus.Pending, ct);
+            throw;
+        }
+    }
+
+    /// <summary>The signed-in path: the payment row already exists, the account already exists.</summary>
+    private async Task HandleMemberCheckoutCompletedAsync(MembershipPayment payment, PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        if (!await membershipPayments.TryClaimAsync(payment.Id, PaymentStatus.Created, PaymentStatus.Paid, ct))
+            return; // already handled, or never a live checkout
+
+        payment.Status = PaymentStatus.Paid;
+        payment.ProviderReference = webhookEvent.SessionId!;
+        payment.UpdatedAt = DateTimeOffset.UtcNow;
 
         var plan = await plans.GetByIdAsync(payment.PlanId, ct);
         if (plan is null) return;
 
-        payment.Status = PaymentStatus.Paid;
-        payment.UpdatedAt = DateTimeOffset.UtcNow;
+        var user = await userManager.FindByIdAsync(payment.UserId.ToString());
+        await ActivateMembershipAsync(payment, plan, user, webhookEvent, ct);
+    }
+
+    /// <summary>
+    /// The account comes into being here, because here is where there is a payment to attach it
+    /// to. Every step finds-or-creates, so a crash partway (and the provider's retry) picks up
+    /// where it left off rather than duplicating anything.
+    /// </summary>
+    private async Task ActivateFromPendingJoinAsync(PendingJoin join, PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var sessionId = webhookEvent.SessionId!;
+        var plan = await plans.GetByIdAsync(join.PlanId, ct)
+                   ?? throw new InvalidOperationException($"Pending join {join.Id} references a plan that no longer exists.");
+        var now = DateTimeOffset.UtcNow;
+
+        var user = await userManager.FindByEmailAsync(join.Email);
+        if (user is null)
+        {
+            user = new ApplicationUser
+            {
+                UserName = join.Email,
+                Email = join.Email,
+                // Unconfirmed: nobody has vetted this address. Choosing a password through the
+                // emailed setup link is what proves it (see ResetPassword).
+                EmailConfirmed = false,
+                FirstName = join.FirstName,
+                LastName = join.LastName,
+                Country = join.Country,
+                City = join.City,
+                // Not PendingApplication: this account exists because money landed.
+                MemberStatus = MemberStatus.Active,
+            };
+
+            // No password is ever set or communicated — the member chooses one via the setup link.
+            var created = await userManager.CreateAsync(user);
+            if (!created.Succeeded)
+                throw new InvalidOperationException($"Could not create the account for pending join {join.Id}: {string.Join(" ", created.Errors.Select(e => e.Description))}");
+        }
+        else
+        {
+            // A ghost from an earlier attempt, or a signed-in retry of this same webhook. The form
+            // is the freshest word on who they are.
+            user.FirstName = join.FirstName;
+            user.LastName = join.LastName;
+            user.Country = join.Country;
+            user.City ??= join.City;
+            user.MemberStatus = MemberStatus.Active;
+            await userManager.UpdateAsync(user);
+        }
+
+        // Two tabs, both paid: the person already holds a current membership by the time the
+        // second completion arrives. The money is real and goes in the ledger against the
+        // membership they have; the duplicate subscription is stopped at the provider so it never
+        // bills again; the first charge is left for a human to refund, with a trail to find it by.
+        if (await GetCurrentMembershipAsync(user.Id, ct) is { } existingMembership)
+        {
+            await RecordDuplicatePurchaseAsync(join, user, plan, existingMembership, webhookEvent, ct);
+            return;
+        }
+
+        if (await profiles.GetByUserIdAsync(user.Id, ct) is null)
+        {
+            await profiles.AddAsync(new Profile
+            {
+                UserId = user.Id,
+                JobTitle = join.JobTitle,
+                AddressLine1 = join.AddressLine1,
+                AddressLine2 = join.AddressLine2,
+                PostalCode = join.PostalCode,
+                About = join.About,
+                Expectations = join.Expectations,
+                EarningsBand = join.EarningsBand,
+                UpdatedAt = now,
+            }, ct);
+            await profiles.SaveChangesAsync(ct);
+        }
+
+        // The terms tick on the form, recorded now that there is a user to record it against.
+        await consentRecords.AddAsync(new ConsentRecord
+        {
+            UserId = user.Id,
+            Type = ConsentType.TermsOfService,
+            Granted = true,
+            Text = TermsConsentText,
+            GrantedAt = join.CreatedAt,
+            IpAddress = join.IpAddress,
+        }, ct);
+        await consentRecords.SaveChangesAsync(ct);
+
+        var payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct);
+        if (payment is null)
+        {
+            payment = new MembershipPayment
+            {
+                UserId = user.Id,
+                PlanId = plan.Id,
+                AmountMinor = plan.PriceMinor,
+                Currency = plan.Currency,
+                Status = PaymentStatus.Paid,
+                ProviderReference = sessionId,
+                ReferralCode = join.ReferralCode,
+            };
+            await membershipPayments.AddAsync(payment, ct);
+            await membershipPayments.SaveChangesAsync(ct);
+        }
+
+        var membership = await ActivateMembershipAsync(payment, plan, user, webhookEvent, ct);
+
+        join.UserId = user.Id;
+        join.MembershipId = membership.Id;
+        join.PaidAt = now;
+        join.ProviderSessionId ??= sessionId;
+        join.UpdatedAt = now;
+        await pendingJoins.SaveChangesAsync(ct);
+
+        await SupersedeOtherJoinsAsync(join, ct);
+    }
+
+    private async Task RecordDuplicatePurchaseAsync(
+        PendingJoin join, ApplicationUser user, MembershipPlan plan, Membership existing, PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var sessionId = webhookEvent.SessionId!;
+        var now = DateTimeOffset.UtcNow;
+
+        if (await membershipPayments.GetByProviderReferenceAsync(sessionId, ct) is null)
+        {
+            await membershipPayments.AddAsync(new MembershipPayment
+            {
+                UserId = user.Id,
+                PlanId = plan.Id,
+                MembershipId = existing.Id,
+                AmountMinor = plan.PriceMinor,
+                Currency = plan.Currency,
+                Status = PaymentStatus.Paid,
+                ProviderReference = sessionId,
+                ReferralCode = join.ReferralCode,
+            }, ct);
+            await membershipPayments.SaveChangesAsync(ct);
+        }
+
+        var cancelled = false;
+        if (webhookEvent.SubscriptionId is { } duplicateSubscription && duplicateSubscription != existing.ProviderSubscriptionId)
+            cancelled = await paymentProvider.CancelSubscriptionAsync(duplicateSubscription, ct);
+
+        logger.LogWarning(
+            "Duplicate membership purchase: user {UserId} paid session {SessionId} while membership {MembershipId} is current. Duplicate subscription {SubscriptionId} cancelled: {Cancelled}",
+            user.Id, sessionId, existing.Id, webhookEvent.SubscriptionId, cancelled);
+
+        await auditLogs.AddAsync(new AuditLogEntry
+        {
+            AdminUserId = Guid.Empty, // system, not a person
+            Action = "DuplicateMembershipPurchase",
+            EntityType = nameof(Membership),
+            EntityId = existing.Id,
+            DataAfter = JsonSerializer.Serialize(new
+            {
+                UserId = user.Id,
+                user.Email,
+                SessionId = sessionId,
+                webhookEvent.SubscriptionId,
+                DuplicateSubscriptionCancelled = cancelled,
+                plan.Name,
+                plan.PriceMinor,
+                plan.Currency,
+            }),
+        }, ct);
+        await auditLogs.SaveChangesAsync(ct);
+
+        var contact = await ContactEmailAsync(ct);
+        if (!string.IsNullOrWhiteSpace(contact))
+        {
+            await emailService.SendAsync(
+                "ContactMessage", contact, "Duplicate membership payment needs a refund",
+                new ContactMessageEmailModel("The VI House (system)", user.Email!, "Duplicate membership purchase",
+                    $"{user.FirstName} {user.LastName} ({user.Email}) paid for {plan.Name} a second time while membership {existing.Id} was already current.\n" +
+                    $"Provider session: {sessionId}. Duplicate subscription: {webhookEvent.SubscriptionId ?? "none"} (cancelled at provider: {(cancelled ? "yes" : "no — check manually")}).\n" +
+                    "Nothing was refunded automatically. Please refund the second charge from the provider dashboard."),
+                nameof(Membership), existing.Id, ct);
+        }
+
+        join.UserId = user.Id;
+        join.MembershipId = existing.Id;
+        join.PaidAt = now;
+        join.ProviderSessionId ??= sessionId;
+        join.UpdatedAt = now;
+        await pendingJoins.SaveChangesAsync(ct);
+
+        await SupersedeOtherJoinsAsync(join, ct);
+    }
+
+    /// <summary>Once one row for an address has paid, every other open row for it is closed —
+    /// including at the provider, so no forgotten tab can take a second payment.</summary>
+    private async Task SupersedeOtherJoinsAsync(PendingJoin paid, CancellationToken ct)
+    {
+        var others = await pendingJoins.ListByEmailAsync(paid.EmailNormalized, [PendingJoinStatus.Pending, PendingJoinStatus.Expired], paid.Id, ct);
+        if (others.Count == 0) return;
 
         var now = DateTimeOffset.UtcNow;
-        DateTimeOffset? expiresAt = plan.BillingPeriod switch
+        foreach (var other in others)
         {
-            MembershipBillingPeriod.Monthly => now.AddMonths(1),
-            MembershipBillingPeriod.Annual => now.AddYears(1),
-            _ => null, // OneTime — no expiry
-        };
+            if (other.HasLiveSession(now))
+                await paymentProvider.ExpireCheckoutSessionAsync(other.ProviderSessionId!, ct);
 
-        var membership = new Membership
+            other.Status = PendingJoinStatus.Superseded;
+            other.UpdatedAt = now;
+        }
+
+        await pendingJoins.SaveChangesAsync(ct);
+    }
+
+    /// <summary>
+    /// Shared tail of both completion paths: the membership row, the payment linked to it, the
+    /// Member role, the emails. The account may be null only on the signed-in path, if the user
+    /// vanished between checkout and webhook — the membership is still recorded against the id.
+    /// </summary>
+    private async Task<Membership> ActivateMembershipAsync(
+        MembershipPayment payment, MembershipPlan plan, ApplicationUser? user, PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var now = DateTimeOffset.UtcNow;
+
+        // Re-entrant: a retry after a crash further down finds the membership it already wrote.
+        var membership = payment.MembershipId is { } linked ? await memberships.GetByIdAsync(linked, ct) : null;
+        membership ??= webhookEvent.SubscriptionId is { } subscriptionId ? await FindBySubscriptionAsync(subscriptionId, ct) : null;
+
+        if (membership is null)
         {
-            UserId = payment.UserId,
-            PlanId = payment.PlanId,
-            StartAt = now,
-            RenewalAt = expiresAt,
-            ExpiresAt = expiresAt,
-            Status = MembershipStatus.Active,
-            // What the renewal and cancellation webhooks, and the billing portal, will look up.
-            ProviderSubscriptionId = webhookEvent.SubscriptionId,
-            ProviderCustomerId = webhookEvent.CustomerId,
-        };
-        await memberships.AddAsync(membership, ct);
-        await memberships.SaveChangesAsync(ct);
+            DateTimeOffset? expiresAt = plan.BillingPeriod switch
+            {
+                MembershipBillingPeriod.Monthly => now.AddMonths(1),
+                MembershipBillingPeriod.Annual => now.AddYears(1),
+                _ => null, // OneTime — no expiry
+            };
 
-        payment.MembershipId = membership.Id;
+            membership = new Membership
+            {
+                UserId = payment.UserId,
+                PlanId = payment.PlanId,
+                StartAt = now,
+                RenewalAt = expiresAt,
+                ExpiresAt = expiresAt,
+                Status = MembershipStatus.Active,
+                // What the renewal and cancellation webhooks, and the billing portal, will look up.
+                ProviderSubscriptionId = webhookEvent.SubscriptionId,
+                ProviderCustomerId = webhookEvent.CustomerId,
+            };
+            await memberships.AddAsync(membership, ct);
+            await memberships.SaveChangesAsync(ct);
+        }
+
+        if (payment.MembershipId != membership.Id)
+        {
+            payment.MembershipId = membership.Id;
+            payment.UpdatedAt = now;
+        }
         await membershipPayments.SaveChangesAsync(ct);
 
-        if (await userManager.FindByIdAsync(payment.UserId.ToString()) is { } user)
+        if (user is null) return membership;
+
+        if (!await userManager.IsInRoleAsync(user, Roles.Member))
+            await userManager.AddToRoleAsync(user, Roles.Member);
+
+        if (user.MemberStatus != MemberStatus.Active)
         {
-            if (!await userManager.IsInRoleAsync(user, Roles.Member))
-                await userManager.AddToRoleAsync(user, Roles.Member);
+            user.MemberStatus = MemberStatus.Active;
+            await userManager.UpdateAsync(user);
+        }
 
-            if (user.MemberStatus != MemberStatus.Active)
-            {
-                user.MemberStatus = MemberStatus.Active;
-                await userManager.UpdateAsync(user);
-            }
-
-            // Someone who joined through /join has no password at all — the browser redirect shows
-            // them a setup link, but that tab is easily lost, so the same link is emailed. Sent from
-            // the webhook rather than the redirect because this is the path that always runs.
-            if (!await userManager.HasPasswordAsync(user))
-            {
-                var token = await userManager.GeneratePasswordResetTokenAsync(user);
-                // Same unpadded URL-safe alphabet as WebEncoders.Base64UrlEncode, which is what the
-                // ResetPassword page decodes with — using the framework primitive here keeps the
-                // Business layer free of an ASP.NET Core dependency.
-                var encoded = Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
-                var setupUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/Identity/Account/ResetPassword?code={encoded}";
-
-                await emailService.SendAsync(
-                    "WelcomeSetup", user.Email!, "Set up your VI House account",
-                    new WelcomeSetupEmailModel(user.FirstName, setupUrl, plan.Name),
-                    nameof(ApplicationUser), user.Id, ct);
-            }
+        // Someone who joined through /join has no password at all — the browser redirect shows
+        // them a setup link, but that tab is easily lost, so the same link is emailed. Sent from
+        // the webhook rather than the redirect because this is the path that always runs.
+        if (!await userManager.HasPasswordAsync(user))
+        {
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            // Same unpadded URL-safe alphabet as WebEncoders.Base64UrlEncode, which is what the
+            // ResetPassword page decodes with — using the framework primitive here keeps the
+            // Business layer free of an ASP.NET Core dependency.
+            var encoded = Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
+            var setupUrl = $"{BaseUrl}/Identity/Account/ResetPassword?code={encoded}";
 
             await emailService.SendAsync(
-                "MembershipConfirmed", user.Email!, $"Welcome — you're a {plan.Name}",
-                new MembershipConfirmedEmailModel(user.FirstName, plan.Name, membership.ExpiresAt),
-                nameof(Membership), membership.Id, ct);
-
-            await notificationService.CreateForUserAsync(
-                user.Id, NotificationType.Payment,
-                "Membership Confirmed", $"You're confirmed as a {plan.Name}.",
-                "/account", ct);
+                "WelcomeSetup", user.Email!, "Set up your VI House account",
+                new WelcomeSetupEmailModel(user.FirstName, setupUrl, plan.Name),
+                nameof(ApplicationUser), user.Id, ct);
         }
+
+        await emailService.SendAsync(
+            "MembershipConfirmed", user.Email!, $"Welcome — you're a {plan.Name}",
+            new MembershipConfirmedEmailModel(user.FirstName, plan.Name, membership.ExpiresAt),
+            nameof(Membership), membership.Id, ct);
+
+        await notificationService.CreateForUserAsync(
+            user.Id, NotificationType.Payment,
+            "Membership Confirmed", $"You're confirmed as a {plan.Name}.",
+            "/account", ct);
+
+        return membership;
     }
 
     private async Task HandleCheckoutExpiredAsync(string sessionId, CancellationToken ct)
     {
         var payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct);
-        if (payment is null || payment.Status == PaymentStatus.Paid)
+        if (payment is not null)
+        {
+            if (payment.Status == PaymentStatus.Paid) return;
+
+            payment.Status = PaymentStatus.Cancelled;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
+            await membershipPayments.SaveChangesAsync(ct);
+            return;
+        }
+
+        var join = await pendingJoins.GetBySessionAsync(sessionId, ct);
+        if (join is null) return;
+
+        // Only a Pending row lapses. Paid stays paid; Superseded stays superseded (its replacement
+        // is the live one, and this event is usually our own doing — see OpenJoinSessionAsync).
+        if (!await pendingJoins.TryClaimAsync(join.Id, [PendingJoinStatus.Pending], PendingJoinStatus.Expired, ct))
             return;
 
-        payment.Status = PaymentStatus.Cancelled;
-        payment.UpdatedAt = DateTimeOffset.UtcNow;
-        await membershipPayments.SaveChangesAsync(ct);
+        join.Status = PendingJoinStatus.Expired;
+
+        // One nudge per abandoned form, and none at all if the person has since got in some other
+        // way — a later row that paid, or an account that already holds a membership.
+        if (join.ResumeEmailSentAt is not null) return;
+        if (await pendingJoins.AnyPaidForEmailAsync(join.EmailNormalized, ct)) return;
+        if (await userManager.FindByEmailAsync(join.Email) is { } user && await GetCurrentMembershipAsync(user.Id, ct) is not null) return;
+
+        var plan = await plans.GetByIdAsync(join.PlanId, ct);
+        var resumeUrl = $"{BaseUrl}/join/resume/{join.Code}";
+
+        await emailService.SendAsync(
+            "MembershipResume", join.Email, "Pick up where you left off",
+            new MembershipResumeEmailModel(join.FirstName, plan?.Name ?? "Membership", resumeUrl),
+            nameof(PendingJoin), join.Id, ct);
+
+        join.ResumeEmailSentAt = DateTimeOffset.UtcNow;
+        join.UpdatedAt = join.ResumeEmailSentAt;
+        await pendingJoins.SaveChangesAsync(ct);
     }
 
     /// <summary>
@@ -619,8 +1137,10 @@ public class MembershipService(
         if (membership is null) return;
 
         // The payment row written below doubles as the idempotency key: Stripe retries webhooks,
-        // and a second delivery of the same invoice must not extend the term twice.
-        var receipt = $"renewal_{webhookEvent.EventId}";
+        // and a second delivery of the same invoice must not extend the term twice. Keyed on the
+        // invoice, not the event — one invoice can raise more than one paid event, and each of
+        // those has its own event id.
+        var receipt = $"renewal_{webhookEvent.InvoiceId ?? webhookEvent.EventId}";
         if (await membershipPayments.GetByProviderReferenceAsync(receipt, ct) is not null) return;
 
         var plan = await plans.GetByIdAsync(membership.PlanId, ct);
@@ -635,6 +1155,8 @@ public class MembershipService(
             MembershipBillingPeriod.Annual => baseline.AddYears(1),
             _ => baseline,
         });
+
+        var wasPastDue = membership.Status == MembershipStatus.PastDue;
 
         membership.ExpiresAt = newExpiry;
         membership.RenewalAt = newExpiry;
@@ -667,9 +1189,55 @@ public class MembershipService(
 
             await notificationService.CreateForUserAsync(
                 user.Id, NotificationType.Payment,
-                "Membership Renewed", $"Your {plan?.Name ?? "membership"} now runs until {newExpiry:d MMMM yyyy}.",
+                wasPastDue ? "Payment Received" : "Membership Renewed",
+                $"Your {plan?.Name ?? "membership"} now runs until {newExpiry:d MMMM yyyy}.",
                 "/account", ct);
         }
+    }
+
+    /// <summary>
+    /// A renewal charge was declined. The membership is marked PastDue but keeps its ExpiresAt —
+    /// the member has paid up to that date and keeps access until it. The provider retries the
+    /// card on its own schedule and raises this event every time, so the member is told once, on
+    /// the way in; a successful retry arrives as a renewal and sets things right, and giving up
+    /// arrives as a cancellation.
+    /// </summary>
+    private async Task HandleSubscriptionPaymentFailedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var membership = await FindBySubscriptionAsync(webhookEvent.SubscriptionId!, ct);
+        if (membership is null || membership.Status != MembershipStatus.Active) return;
+
+        var now = DateTimeOffset.UtcNow;
+        membership.Status = MembershipStatus.PastDue;
+        membership.UpdatedAt = now;
+        await memberships.SaveChangesAsync(ct);
+
+        var user = await userManager.FindByIdAsync(membership.UserId.ToString());
+        if (user is null) return;
+
+        var plan = await plans.GetByIdAsync(membership.PlanId, ct);
+        var accountUrl = $"{BaseUrl}/account/membership";
+
+        // The hosted invoice is a direct "pay this" page and needs nothing configured; the billing
+        // portal is the fallback (it returns null until it has been set up in the dashboard); the
+        // account page is the fallback's fallback.
+        var actionUrl = webhookEvent.HostedInvoiceUrl;
+        if (actionUrl is null && membership.ProviderCustomerId is not null)
+            actionUrl = await paymentProvider.CreateBillingPortalUrlAsync(membership.ProviderCustomerId, accountUrl, ct);
+        actionUrl ??= accountUrl;
+
+        await emailService.SendAsync(
+            "MembershipPaymentFailed", user.Email!, "Your membership payment didn't go through",
+            new MembershipPaymentFailedEmailModel(user.FirstName, plan?.Name ?? "Membership", actionUrl, membership.ExpiresAt, webhookEvent.NextPaymentAttempt),
+            nameof(Membership), membership.Id, ct);
+
+        await notificationService.CreateForUserAsync(
+            user.Id, NotificationType.Payment,
+            "Payment Needs Attention",
+            membership.ExpiresAt is { } until
+                ? $"Your {plan?.Name ?? "membership"} renewal was declined. Update your card to keep access beyond {until:d MMMM yyyy}."
+                : $"Your {plan?.Name ?? "membership"} renewal was declined. Please update your card.",
+            "/account/membership", ct);
     }
 
     /// <summary>
@@ -707,6 +1275,16 @@ public class MembershipService(
         (await memberships.FindAsync(m => m.ProviderSubscriptionId == subscriptionId, ct))
             .OrderByDescending(m => m.StartAt)
             .FirstOrDefault();
+
+    private string BaseUrl => siteOptions.Value.BaseUrl.TrimEnd('/');
+
+    /// <summary>The team inbox — the admin-edited site setting first, the config value behind it.</summary>
+    private async Task<string?> ContactEmailAsync(CancellationToken ct)
+    {
+        var settings = await siteSettings.GetCachedAsync(ct);
+        var fromSettings = settings.ContactEmail;
+        return string.IsNullOrWhiteSpace(fromSettings) ? siteOptions.Value.ContactEmail : fromSettings;
+    }
 
     // =============================================================================================
     // Helpers

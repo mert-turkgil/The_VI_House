@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Experiences;
@@ -22,19 +24,26 @@ namespace VIHouse.WebUI.Controllers;
 ///
 /// Distinct from /apply, which is the route into a single <em>experience</em> and goes through
 /// admin review before any money is taken. This one is the direct membership purchase: no review
-/// step, so nothing here may create a usable account on its own — the account only becomes real
-/// once Stripe confirms payment, and stays behind the onboarding gate until the member proves their
-/// email and switches on two-factor.
+/// step, so nothing here creates an account at all — the form is held as a PendingJoin, and the
+/// account comes into being in the webhook once Stripe confirms payment. Until then the person can
+/// resubmit, change plan, or come back through the resume link, and none of it collides.
+///
+/// Gated by Features:MembershipSales only where a charge can start (the form and the resume POST).
+/// The welcome and resume pages read local state and stay reachable with the flag off, so switching
+/// sales off never 404s someone who has already paid.
 /// </summary>
 [Route("join")]
 public class JoinController(
     IMembershipService membershipService,
     IExperienceService experienceService,
-    UserManager<ApplicationUser> userManager) : Controller
+    UserManager<ApplicationUser> userManager,
+    IOptions<FeatureOptions> features) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(Guid? plan, CancellationToken ct)
     {
+        if (!features.Value.MembershipSales) return NotFound();
+
         // Already signed in? The logged-in purchase path already exists and knows who they are.
         if (User.Identity?.IsAuthenticated == true)
             return RedirectToAction("Index", "Membership");
@@ -73,6 +82,8 @@ public class JoinController(
     [EnableRateLimiting("checkout")]
     public async Task<IActionResult> Index(JoinFormViewModel form, CancellationToken ct)
     {
+        if (!features.Value.MembershipSales) return NotFound();
+
         if (User.Identity?.IsAuthenticated == true)
             return RedirectToAction("Index", "Membership");
 
@@ -101,10 +112,6 @@ public class JoinController(
             return View(form);
         }
 
-        var successUrl = Url.Action(nameof(Success), "Join", null, Request.Scheme)!;
-        successUrl += (successUrl.Contains('?') ? "&" : "?") + "session_id={CHECKOUT_SESSION_ID}";
-        var cancelUrl = Url.Action(nameof(Index), "Join", null, Request.Scheme)!;
-
         var result = await membershipService.InitiateJoinCheckoutAsync(
             new JoinRequest(
                 form.PlanId,
@@ -122,8 +129,9 @@ public class JoinController(
                 About = form.About.Trim(),
                 Expectations = form.Expectations.Trim(),
                 EarningsBand = form.EarningsBand,
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
             },
-            successUrl, cancelUrl, ct);
+            SuccessUrl(), CancelUrlTemplate(), ct);
 
         if (!result.Success)
         {
@@ -136,6 +144,63 @@ public class JoinController(
 
         return Redirect(result.CheckoutUrl!);
     }
+
+    /// <summary>
+    /// The page behind the link in the "your checkout expired" email, and where Stripe's own
+    /// "back" button lands. Read-only: it shows what the person was buying and offers to reopen
+    /// checkout. Deliberately not the thing that opens the checkout — a GET that creates a provider
+    /// session does so for every link-preview and mail-scanner fetch too (see AccountController.Billing).
+    /// </summary>
+    [HttpGet("resume/{code}")]
+    public async Task<IActionResult> Resume(string code, CancellationToken ct)
+    {
+        if (User.Identity?.IsAuthenticated == true)
+            return RedirectToAction("Index", "Membership");
+
+        var info = await membershipService.GetPendingJoinByCodeAsync(code, ct);
+        if (info is null) return NotFound();
+
+        // Already paid — the welcome page is the right place, not another checkout.
+        if (info.IsPaid && info.PaidSessionId is not null)
+            return RedirectToAction(nameof(Success), new { session_id = info.PaidSessionId });
+
+        ViewData["Title"] = "Pick up where you left off";
+        return View(new JoinResumeViewModel(info, features.Value.MembershipSales));
+    }
+
+    [HttpPost("resume/{code}")]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("checkout")]
+    public async Task<IActionResult> ResumePost(string code, CancellationToken ct)
+    {
+        if (!features.Value.MembershipSales) return NotFound();
+
+        if (User.Identity?.IsAuthenticated == true)
+            return RedirectToAction("Index", "Membership");
+
+        var result = await membershipService.ResumeJoinCheckoutAsync(code, SuccessUrl(), CancelUrlTemplate(), ct);
+        if (result.Success)
+            return Redirect(result.CheckoutUrl!);
+
+        var info = await membershipService.GetPendingJoinByCodeAsync(code, ct);
+        if (info is null) return NotFound();
+
+        ModelState.AddModelError(string.Empty, result.Error!);
+        ViewData["Title"] = "Pick up where you left off";
+        return View(nameof(Resume), new JoinResumeViewModel(info, features.Value.MembershipSales));
+    }
+
+    private string SuccessUrl()
+    {
+        var url = Url.Action(nameof(Success), "Join", null, Request.Scheme)!;
+        return url + (url.Contains('?') ? "&" : "?") + "session_id={CHECKOUT_SESSION_ID}";
+    }
+
+    /// <summary>The cancel URL points at the resume page for the row being paid — so "back" from
+    /// Stripe lands somewhere that can restart, not on a blank form. The code is only known once
+    /// the row exists, so this is a template the service fills in.</summary>
+    private string CancelUrlTemplate() =>
+        Url.Action(nameof(Resume), "Join", new { code = "__code__" }, Request.Scheme)!.Replace("__code__", "{code}");
 
     /// <summary>
     /// Where Stripe sends the browser back to. Reads local state only — the webhook, not this

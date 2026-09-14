@@ -106,9 +106,22 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 
+            // Read before the reset — afterwards it is always true.
+            var hadNoPassword = !await _userManager.HasPasswordAsync(user);
+
             var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
             if (result.Succeeded)
             {
+                // An account provisioned by a payment has no password and an unconfirmed email;
+                // the setup link that led here was delivered to that inbox, which is the same
+                // proof ConfirmEmail relies on. Narrowed to the first password on purpose: an
+                // ordinary forgot-password on an unconfirmed address earns no free confirmation.
+                if (hadNoPassword && !user.EmailConfirmed)
+                {
+                    user.EmailConfirmed = true;
+                    await _userManager.UpdateAsync(user);
+                }
+
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 

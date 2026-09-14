@@ -43,7 +43,7 @@ env:
   # writes this value over it again.)
   FEATURE_COMING_SOON: 'true'
   FEATURE_REQUIRE_TWO_FACTOR: 'true'
-  FEATURE_MEMBERSHIP_SALES: 'false'
+  FEATURE_MEMBERSHIP_SALES: 'true'
   FEATURE_MEMBER_DIRECTORY: 'false'
   FEATURE_COMMUNITY: 'false'
 

@@ -1,5 +1,17 @@
 @model JoinSuccessViewModel
 
+@section Styles {
+    @* A session id in the query string is unguessable, but a page that only ever says "just a
+       moment" is still not something a crawler should keep. *@
+    <meta name="robots" content="noindex" />
+    @if (!Model.Info.IsConfirmed)
+    {
+        @* The webhook usually lands within seconds of the redirect; polling by reload is the
+           simplest thing that shows the confirmed state without the visitor having to act. *@
+        <meta http-equiv="refresh" content="3" />
+    }
+}
+
 <div class="onboarding">
     <div class="container onboarding__inner onboarding__inner--narrow">
         @if (Model.Info.IsConfirmed)

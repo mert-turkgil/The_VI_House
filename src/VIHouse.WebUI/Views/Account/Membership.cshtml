@@ -13,6 +13,7 @@
     string StatusKey(MembershipSummary s) => s.Membership.Status switch
     {
         MembershipStatus.Cancelled => "cancelled",
+        MembershipStatus.PastDue when s.IsCurrent => "pastdue",
         _ when s.IsCurrent => "active",
         _ => "expired",
     };
@@ -20,6 +21,7 @@
     string StatusLabel(MembershipSummary s) => StatusKey(s) switch
     {
         "cancelled" => Loc["Account.Status.Cancelled"].Value,
+        "pastdue" => Loc["Account.Status.PastDue"].Value,
         "active" => Loc["Account.Status.Active"].Value,
         _ => Loc["Account.Status.Expired"].Value,
     };
@@ -37,6 +39,23 @@
 
         @if (m is not null)
         {
+            @if (m.IsPastDue)
+            {
+                @* A declined renewal. Access runs to the end of the paid period; the provider keeps
+                   retrying the card, and "Manage billing" below is where a new one goes. *@
+                <div class="account-notice account-notice--pastdue" role="alert">
+                    <div>
+                        <strong>@Loc["Account.PastDue.Title"]</strong>
+                        <span>@Loc["Account.PastDue.Banner", m.Membership.ExpiresAt?.ToString("d MMMM yyyy") ?? ""]</span>
+                    </div>
+                    @if (Model.CanManageBilling)
+                    {
+                        <form asp-action="Billing" method="post">
+                            <button type="submit" class="btn btn--primary">@Loc["Account.PastDue.Cta"]</button>
+                        </form>
+                    }
+                </div>
+            }
             <section class="account-membership" aria-labelledby="current-heading">
                 <div class="account-membership__body">
                     <span class="account-membership__eyebrow">@Loc["Account.CurrentPlan"]</span>
@@ -46,6 +65,10 @@
                         @if (m.Membership.Status == MembershipStatus.Cancelled)
                         {
                             <text>&middot; @Loc["Account.Membership.Ended", m.Membership.ExpiresAt?.ToString("d MMMM yyyy") ?? ""]</text>
+                        }
+                        else if (m.IsPastDue && m.Membership.ExpiresAt is { } paidUntil)
+                        {
+                            <text>&middot; @Loc["Account.Membership.PaidUntil", paidUntil.ToString("d MMMM yyyy")]</text>
                         }
                         else if (m.HasProviderSubscription && m.Membership.RenewalAt is { } renews)
                         {

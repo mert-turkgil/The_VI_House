@@ -1,4 +1,5 @@
 @model SeminarDetailViewModel
+@inject Microsoft.Extensions.Options.IOptions<FeatureOptions> Features
 @{
     var access = Model.Access;
     var enrolment = Model.Enrollment;
@@ -211,7 +212,7 @@
                     <h2>@Loc["Seminars.Access.SignIn.Heading"]</h2>
                     <p>@Loc["Seminars.Access.SignIn.Body"]</p>
                     <a class="btn btn--primary" href="/Identity/Account/Login?returnUrl=@Uri.EscapeDataString($"/sessions/{Model.Slug}")">@Loc["Nav.LogIn"]</a>
-                    <a class="btn btn--ghost-dark" href="/join">@Loc["Nav.ApplyToJoin"]</a>
+                    <a class="btn btn--ghost-dark" href="@(Features.Value.MembershipSales ? "/join" : "/experiences?status=ApplicationsOpen")">@Loc["Nav.ApplyToJoin"]</a>
                     break;
 
                 case SeminarAccessOutcome.FreeToEnrol:

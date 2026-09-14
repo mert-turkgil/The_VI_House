@@ -28,6 +28,21 @@ public interface IPaymentProvider
     /// side, network failure — so a member-facing page can simply not show the button.
     /// </summary>
     Task<string?> CreateBillingPortalUrlAsync(string providerCustomerId, string returnUrl, CancellationToken ct = default);
+
+    /// <summary>
+    /// Closes a checkout session that is still open so it can no longer be paid. Used when a
+    /// visitor's earlier session is replaced by a new one — one payable session per person, so a
+    /// forgotten tab cannot take a second payment. Never throws: an already-expired or already-paid
+    /// session is not an error from the caller's point of view.
+    /// </summary>
+    Task ExpireCheckoutSessionAsync(string sessionId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Cancels a subscription at the provider immediately. Used to stop a duplicate subscription
+    /// from billing again. Never throws; returns false when the provider refused or could not be
+    /// reached so the caller can leave a trail for a human.
+    /// </summary>
+    Task<bool> CancelSubscriptionAsync(string subscriptionId, CancellationToken ct = default);
 }
 
 public record CreateCheckoutSessionRequest(
@@ -66,7 +81,9 @@ public enum RecurringInterval
     Annual,
 }
 
-public record CheckoutSessionResult(string SessionId, string Url);
+/// <param name="ExpiresAt">When the provider stops accepting payment on this session — its own
+/// figure, not ours. Null if the provider did not say.</param>
+public record CheckoutSessionResult(string SessionId, string Url, DateTimeOffset? ExpiresAt);
 
 public record PaymentProviderDetails(
     string? SessionStatus,
@@ -94,11 +111,33 @@ public enum PaymentWebhookEventType
     /// <summary>The subscription has ended at the provider — cancelled by the member through the
     /// billing portal, by an admin in the provider's dashboard, or by repeated payment failure.</summary>
     SubscriptionCancelled,
+
+    /// <summary>A renewal charge failed. The provider keeps retrying on its own schedule and
+    /// raises this again on every attempt; the subscription is not over until
+    /// <see cref="SubscriptionCancelled"/> arrives.</summary>
+    SubscriptionPaymentFailed,
 }
 
 /// <param name="SessionId">The checkout session, for the two Checkout* events.</param>
 public record PaymentWebhookEvent(string EventId, PaymentWebhookEventType Type, string? SessionId)
 {
+    /// <summary>The reference we handed the provider when the session was created — our own id,
+    /// echoed back. Set on the two Checkout* events. A fallback for matching when our record of the
+    /// provider's session id never got written.</summary>
+    public string? ClientReferenceId { get; init; }
+
+    /// <summary>The provider's invoice id, on the two invoice-driven Subscription* events. Stable
+    /// across redeliveries and across separate events about the same invoice, unlike EventId.</summary>
+    public string? InvoiceId { get; init; }
+
+    /// <summary>For <see cref="PaymentWebhookEventType.SubscriptionPaymentFailed"/>: the provider's
+    /// hosted page where the member can pay the open invoice directly.</summary>
+    public string? HostedInvoiceUrl { get; init; }
+
+    /// <summary>For <see cref="PaymentWebhookEventType.SubscriptionPaymentFailed"/>: when the
+    /// provider will try the card again, if it will.</summary>
+    public DateTimeOffset? NextPaymentAttempt { get; init; }
+
     /// <summary>The provider's subscription id. Set on a completed subscription checkout and on
     /// both Subscription* events — it is the key membership rows are matched on.</summary>
     public string? SubscriptionId { get; init; }

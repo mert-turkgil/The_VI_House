@@ -1079,6 +1079,11 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Account.Status.Active" xml:space="preserve"><value>Aktif</value></data>
   <data name="Account.Status.Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
   <data name="Account.Status.Expired" xml:space="preserve"><value>Süresi doldu</value></data>
+  <data name="Account.Status.PastDue" xml:space="preserve"><value>Ödeme bekleniyor</value></data>
+  <data name="Account.PastDue.Title" xml:space="preserve"><value>Son ödemeniz gerçekleşmedi</value></data>
+  <data name="Account.PastDue.Banner" xml:space="preserve"><value>Üyeliğiniz {0} tarihine kadar aktif kalır. O tarihten önce kartınızı güncellerseniz her şey olduğu gibi devam eder.</value></data>
+  <data name="Account.PastDue.Cta" xml:space="preserve"><value>Ödemeyi güncelle</value></data>
+  <data name="Account.Membership.PaidUntil" xml:space="preserve"><value>{0} tarihine kadar ödendi — ödeme bekleniyor.</value></data>
   <data name="Sessions.Grant.Paid" xml:space="preserve"><value>Ücretli</value></data>
   <data name="Sessions.Grant.Membership" xml:space="preserve"><value>Üyelik</value></data>
   <data name="Sessions.Grant.Free" xml:space="preserve"><value>Ücretsiz</value></data>

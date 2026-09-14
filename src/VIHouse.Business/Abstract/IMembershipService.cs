@@ -67,19 +67,39 @@ public interface IMembershipService
     Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string? referralCode, string successUrl, string cancelUrl, CancellationToken ct = default);
 
     /// <summary>
-    /// Join-and-pay in one step for someone with no account yet: the form's details provision a
-    /// pending account, then checkout begins against it. The account exists before payment (it has
-    /// to — the payment must be attributable to someone) but is unusable until the webhook confirms
-    /// the money: no password is ever set, the email is unconfirmed, and the onboarding gate blocks
-    /// every signed-in page until 2FA is set up.
+    /// Join-and-pay in one step for someone with no account yet. The form is held as a PendingJoin
+    /// and checkout begins against that row; nothing with a uniqueness constraint — user, profile,
+    /// membership — is written until the provider's webhook confirms the money. So a retry cannot
+    /// collide with an earlier attempt, a repeat submit lands on the same checkout, and the account
+    /// comes into being with a payment to attach to.
     ///
-    /// Returns a failure if the email already belongs to an account, rather than silently attaching
-    /// a stranger's payment to it.
+    /// Returns a failure only when the email belongs to an account that can sign in (has a
+    /// password, or holds a staff role) — that person should buy from their account, not attach a
+    /// payment to it from outside.
     /// </summary>
-    Task<MembershipCheckoutResult> InitiateJoinCheckoutAsync(JoinRequest request, string successUrl, string cancelUrl, CancellationToken ct = default);
+    /// <param name="successUrl">Must contain the provider's session-id placeholder — see the ticket flow.</param>
+    /// <param name="cancelUrlTemplate">A template with <c>{code}</c> where the pending join's code
+    /// goes, because the row does not exist yet when the caller builds the URL.</param>
+    Task<MembershipCheckoutResult> InitiateJoinCheckoutAsync(JoinRequest request, string successUrl, string cancelUrlTemplate, CancellationToken ct = default);
+
+    /// <summary>The pending join behind a resume code, or null. Read-only; for the resume page.</summary>
+    Task<PendingJoinInfo?> GetPendingJoinByCodeAsync(string code, CancellationToken ct = default);
+
+    /// <summary>
+    /// Opens a fresh checkout for an existing pending join whose session has lapsed (or reuses the
+    /// live one). Fails if the row has already paid.
+    /// </summary>
+    Task<MembershipCheckoutResult> ResumeJoinCheckoutAsync(string code, string successUrl, string cancelUrlTemplate, CancellationToken ct = default);
 
     /// <summary>Reads LOCAL state only, same "never trust the browser redirect alone" rule as the ticket-purchase flow.</summary>
     Task<MembershipConfirmationInfo?> GetConfirmationBySessionAsync(string sessionId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Clears the free-text and address fields from pending joins that never paid and have sat
+    /// untouched for <paramref name="olderThan"/>. Returns how many rows were cleared. The row
+    /// itself stays, so a very late payment on it can still be matched.
+    /// </summary>
+    Task<int> PurgeStalePendingJoinsAsync(TimeSpan olderThan, CancellationToken ct = default);
 
     /// <summary>
     /// Deliberately does NOT touch the shared ProcessedWebhookEvent ledger that PaymentService uses —
@@ -104,6 +124,10 @@ public record MembershipConfirmationInfo(bool IsConfirmed, string? PlanName, lon
     public Guid? UserId { get; init; }
 }
 
+/// <summary>What the resume page shows. Paid means the checkout already went through — the page
+/// should send the visitor to the welcome page for <c>PaidSessionId</c> instead of offering to pay.</summary>
+public record PendingJoinInfo(string Code, string FirstName, string PlanName, bool IsPaid, string? PaidSessionId);
+
 /// <summary>
 /// What /join collects. The profile fields are the same set the application form and the account
 /// profile ask for (see Profile), so a member who joined directly and one who was approved through
@@ -125,6 +149,10 @@ public record JoinRequest(
     public string? About { get; init; }
     public string? Expectations { get; init; }
     public string? EarningsBand { get; init; }
+
+    /// <summary>Where the terms were accepted from — recorded on the ConsentRecord written when
+    /// the account is created.</summary>
+    public string? IpAddress { get; init; }
 }
 
 /// <summary>A membership row resolved against its plan, ready to display.</summary>
@@ -132,14 +160,19 @@ public record MembershipSummary(Membership Membership, MembershipPlan Plan)
 {
     public bool IsRecurring => Plan.BillingPeriod != MembershipBillingPeriod.OneTime;
 
-    /// <summary>True while the membership is Active and, if it expires at all, has not yet.</summary>
-    public bool IsCurrent => Membership.Status == MembershipStatus.Active
+    /// <summary>True while the membership is in good standing — Active, or PastDue with the paid
+    /// period not yet over — and, if it expires at all, has not yet. A PastDue member keeps access
+    /// to the end of what they paid for; the provider's retries decide what happens after.</summary>
+    public bool IsCurrent => (Membership.Status is MembershipStatus.Active or MembershipStatus.PastDue)
         && (Membership.ExpiresAt is null || Membership.ExpiresAt > DateTimeOffset.UtcNow);
 
+    public bool IsPastDue => Membership.Status == MembershipStatus.PastDue;
+
     /// <summary>True when the provider holds a live subscription for this row — what makes
-    /// "manage billing" and "renews on" meaningful.</summary>
+    /// "manage billing" and "renews on" meaningful. PastDue counts: that is exactly the member who
+    /// needs the billing page.</summary>
     public bool HasProviderSubscription => Membership.ProviderSubscriptionId is not null
-        && Membership.Status == MembershipStatus.Active;
+        && (Membership.Status is MembershipStatus.Active or MembershipStatus.PastDue);
 }
 
 /// <summary>Outcome of an admin plan action. <c>Message</c> is a sentence for the status bar.</summary>

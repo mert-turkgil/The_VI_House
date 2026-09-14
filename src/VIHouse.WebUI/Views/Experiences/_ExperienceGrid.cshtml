@@ -1,4 +1,5 @@
 @model ExperienceIndexViewModel
+@inject Microsoft.Extensions.Options.IOptions<FeatureOptions> Features
 @*
     The results region on its own, so ExperiencesController.Results can return exactly this fragment
     for the JS filter swap — the same "Razor renders, JS replaces innerHTML" arrangement the site
@@ -33,7 +34,7 @@
         {
             <h2 class="experience-empty__title">@Loc["Experiences.Empty.Title"]</h2>
             <p class="experience-empty__body">@Loc["Experiences.Empty.Body"]</p>
-            <a class="btn btn--primary" href="/join">@Loc["Nav.ApplyToJoin"]</a>
+            <a class="btn btn--primary" href="@(Features.Value.MembershipSales ? "/join" : "/experiences?status=ApplicationsOpen")">@Loc["Nav.ApplyToJoin"]</a>
         }
     </div>
 }

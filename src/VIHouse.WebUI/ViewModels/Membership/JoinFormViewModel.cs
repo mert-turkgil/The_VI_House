@@ -84,3 +84,10 @@ public class JoinFormViewModel
 /// already has a password — an existing member topping up, for instance.
 /// </summary>
 public record JoinSuccessViewModel(VIHouse.Business.Abstract.MembershipConfirmationInfo Info, string? SetupUrl);
+
+/// <summary>
+/// The resume page: what an abandoned checkout was for, and whether a new one can be opened.
+/// <paramref name="SalesOpen"/> is false when Features:MembershipSales is off — the page still
+/// renders (it is linked from an email) but offers no button.
+/// </summary>
+public record JoinResumeViewModel(VIHouse.Business.Abstract.PendingJoinInfo Info, bool SalesOpen);

@@ -61,6 +61,7 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
     public DbSet<MembershipPlan> MembershipPlans => Set<MembershipPlan>();
     public DbSet<Membership> Memberships => Set<Membership>();
     public DbSet<MembershipPayment> MembershipPayments => Set<MembershipPayment>();
+    public DbSet<PendingJoin> PendingJoins => Set<PendingJoin>();
 
     public DbSet<Ambassador> Ambassadors => Set<Ambassador>();
     public DbSet<ReferralVisit> ReferralVisits => Set<ReferralVisit>();

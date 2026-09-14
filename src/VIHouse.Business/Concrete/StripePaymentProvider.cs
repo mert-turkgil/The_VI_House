@@ -12,6 +12,7 @@ public class StripePaymentProvider : IPaymentProvider
     private readonly StripeOptions options;
     private readonly SessionService sessionService;
     private readonly Stripe.BillingPortal.SessionService portalService;
+    private readonly SubscriptionService subscriptionService;
     private readonly ILogger<StripePaymentProvider> logger;
 
     public StripePaymentProvider(IOptions<StripeOptions> options, ILogger<StripePaymentProvider> logger)
@@ -21,6 +22,7 @@ public class StripePaymentProvider : IPaymentProvider
         StripeConfiguration.ApiKey = this.options.SecretKey;
         sessionService = new SessionService();
         portalService = new Stripe.BillingPortal.SessionService();
+        subscriptionService = new SubscriptionService();
     }
 
     public async Task<CheckoutSessionResult> CreateCheckoutSessionAsync(CreateCheckoutSessionRequest request, CancellationToken ct = default)
@@ -47,7 +49,38 @@ public class StripePaymentProvider : IPaymentProvider
         }
 
         var session = await sessionService.CreateAsync(createOptions, cancellationToken: ct);
-        return new CheckoutSessionResult(session.Id, session.Url);
+        return new CheckoutSessionResult(session.Id, session.Url, ToUtc(session.ExpiresAt));
+    }
+
+    private static DateTimeOffset? ToUtc(DateTime? value) =>
+        value is null ? null : new DateTimeOffset(DateTime.SpecifyKind(value.Value, DateTimeKind.Utc));
+
+    public async Task ExpireCheckoutSessionAsync(string sessionId, CancellationToken ct = default)
+    {
+        try
+        {
+            await sessionService.ExpireAsync(sessionId, cancellationToken: ct);
+        }
+        catch (StripeException ex)
+        {
+            // Only an open session can be expired; one that has already completed or lapsed comes
+            // back as an error, and that outcome is exactly what the caller wanted anyway.
+            logger.LogWarning(ex, "Could not expire Stripe checkout session {SessionId}", sessionId);
+        }
+    }
+
+    public async Task<bool> CancelSubscriptionAsync(string subscriptionId, CancellationToken ct = default)
+    {
+        try
+        {
+            await subscriptionService.CancelAsync(subscriptionId, cancellationToken: ct);
+            return true;
+        }
+        catch (StripeException ex)
+        {
+            logger.LogWarning(ex, "Could not cancel Stripe subscription {SubscriptionId}", subscriptionId);
+            return false;
+        }
     }
 
     /// <summary>
@@ -154,16 +187,18 @@ public class StripePaymentProvider : IPaymentProvider
                 {
                     SubscriptionId = session?.SubscriptionId,
                     CustomerId = session?.CustomerId,
+                    ClientReferenceId = session?.ClientReferenceId,
                 };
             }
 
             case "invoice.paid":
             {
                 // The first invoice of a subscription is paid inside checkout and already handled
-                // by checkout.session.completed; only a later billing cycle is a renewal. Manual and
-                // upcoming-invoice reasons are ignored for the same reason.
+                // by checkout.session.completed, so that one is excluded. Everything else that
+                // resolves to a subscription — the regular cycle, a plan change through the portal,
+                // an open invoice paid by hand — is money for a further period.
                 if (stripeEvent.Data.Object is not Invoice invoice
-                    || invoice.BillingReason != "subscription_cycle"
+                    || invoice.BillingReason == "subscription_create"
                     || invoice.Parent?.SubscriptionDetails?.SubscriptionId is not { } subscriptionId)
                 {
                     return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.Unhandled, null);
@@ -181,7 +216,26 @@ public class StripePaymentProvider : IPaymentProvider
                 {
                     SubscriptionId = subscriptionId,
                     CustomerId = invoice.CustomerId,
-                    CurrentPeriodEnd = periodEnd is null ? null : new DateTimeOffset(DateTime.SpecifyKind(periodEnd.Value, DateTimeKind.Utc)),
+                    InvoiceId = invoice.Id,
+                    CurrentPeriodEnd = ToUtc(periodEnd),
+                };
+            }
+
+            case "invoice.payment_failed":
+            {
+                if (stripeEvent.Data.Object is not Invoice invoice
+                    || invoice.Parent?.SubscriptionDetails?.SubscriptionId is not { } subscriptionId)
+                {
+                    return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.Unhandled, null);
+                }
+
+                return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.SubscriptionPaymentFailed, null)
+                {
+                    SubscriptionId = subscriptionId,
+                    CustomerId = invoice.CustomerId,
+                    InvoiceId = invoice.Id,
+                    HostedInvoiceUrl = invoice.HostedInvoiceUrl,
+                    NextPaymentAttempt = ToUtc(invoice.NextPaymentAttempt),
                 };
             }
 

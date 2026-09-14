@@ -87,6 +87,11 @@
     background: var(--vih-danger-bg);
     color: var(--vih-danger);
   }
+
+  &--pastdue {
+    background: var(--vih-warning-bg);
+    color: var(--vih-warning);
+  }
 }
 
 // A single prompt that needs acting on — "complete your profile". Sits between the hero and the
@@ -106,6 +111,17 @@
   strong {
     display: block;
     color: var(--vih-green-900);
+  }
+
+  // A declined renewal: the one notice that is about money rather than housekeeping, so it
+  // borrows the danger palette while keeping the same shape.
+  &--pastdue {
+    border-color: var(--vih-danger);
+    background: var(--vih-danger-bg);
+
+    strong {
+      color: var(--vih-danger);
+    }
   }
 
   p {

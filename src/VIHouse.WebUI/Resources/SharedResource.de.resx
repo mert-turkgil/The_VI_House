@@ -1079,6 +1079,11 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Account.Status.Active" xml:space="preserve"><value>Aktiv</value></data>
   <data name="Account.Status.Cancelled" xml:space="preserve"><value>Gekündigt</value></data>
   <data name="Account.Status.Expired" xml:space="preserve"><value>Abgelaufen</value></data>
+  <data name="Account.Status.PastDue" xml:space="preserve"><value>Zahlung ausstehend</value></data>
+  <data name="Account.PastDue.Title" xml:space="preserve"><value>Ihre letzte Zahlung ist fehlgeschlagen</value></data>
+  <data name="Account.PastDue.Banner" xml:space="preserve"><value>Ihre Mitgliedschaft bleibt bis {0} aktiv. Aktualisieren Sie Ihre Karte bis dahin, und alles läuft wie gewohnt weiter.</value></data>
+  <data name="Account.PastDue.Cta" xml:space="preserve"><value>Zahlung aktualisieren</value></data>
+  <data name="Account.Membership.PaidUntil" xml:space="preserve"><value>Bezahlt bis {0} — Zahlung ausstehend.</value></data>
   <data name="Sessions.Grant.Paid" xml:space="preserve"><value>Bezahlt</value></data>
   <data name="Sessions.Grant.Membership" xml:space="preserve"><value>Mitgliedschaft</value></data>
   <data name="Sessions.Grant.Free" xml:space="preserve"><value>Kostenlos</value></data>

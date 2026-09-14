@@ -32,6 +32,15 @@ public record MembershipConfirmedEmailModel(string FirstName, string PlanName, D
 /// <summary>Sent when the provider bills a recurring membership for a further period.</summary>
 public record MembershipRenewedEmailModel(string FirstName, string PlanName, DateTimeOffset ExpiresAt);
 
+/// <summary>Sent once, when a membership checkout lapses unpaid — carries the resume link that
+/// reopens checkout for the same form without filling it in again.</summary>
+public record MembershipResumeEmailModel(string FirstName, string PlanName, string ResumeUrl);
+
+/// <summary>Sent once, when a renewal charge first fails. ActionUrl is wherever the member can fix
+/// it — the provider's hosted invoice when it has one, the billing portal otherwise. AccessUntil is
+/// the end of the period already paid for; NextAttemptAt is the provider's next retry, if any.</summary>
+public record MembershipPaymentFailedEmailModel(string FirstName, string PlanName, string ActionUrl, DateTimeOffset? AccessUntil, DateTimeOffset? NextAttemptAt);
+
 /// <summary>Sent during onboarding to prove the member owns the address they signed up with.</summary>
 public record ConfirmEmailAddressEmailModel(string FirstName, string ConfirmUrl);
 

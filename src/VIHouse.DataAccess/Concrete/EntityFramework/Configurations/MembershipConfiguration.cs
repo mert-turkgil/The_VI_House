@@ -20,8 +20,13 @@ public class MembershipConfiguration : IEntityTypeConfiguration<Membership>
         builder.Property(m => m.ProviderCustomerId).HasMaxLength(100);
 
         // The renewal and cancellation webhooks look a membership up by its subscription, so this
-        // is the one query on the table that must not scan.
-        builder.HasIndex(m => m.ProviderSubscriptionId);
+        // is the one query on the table that must not scan. Unique as well: a redelivered
+        // checkout.session.completed racing itself must fail at the database rather than leave two
+        // active memberships on one subscription. Filtered because one-off (non-subscription)
+        // memberships have no subscription id at all.
+        builder.HasIndex(m => m.ProviderSubscriptionId)
+            .IsUnique()
+            .HasFilter("[ProviderSubscriptionId] IS NOT NULL");
         builder.HasIndex(m => new { m.UserId, m.Status });
     }
 }

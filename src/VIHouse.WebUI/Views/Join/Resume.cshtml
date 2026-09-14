@@ -1,0 +1,38 @@
+@model JoinResumeViewModel
+
+@section Styles {
+    <meta name="robots" content="noindex" />
+}
+
+<div class="onboarding">
+    <div class="container onboarding__inner onboarding__inner--narrow">
+        <span class="onboarding__eyebrow">Membership</span>
+        <h1>Pick up where you left off</h1>
+        <p class="onboarding__lede">
+            Hi @Model.Info.FirstName — your checkout for the <strong>@Model.Info.PlanName</strong>
+            membership wasn't completed, so no payment was taken and no account has been created.
+            Everything you told us is saved.
+        </p>
+
+        <div asp-validation-summary="ModelOnly" class="onboarding__error" role="alert"></div>
+
+        @if (Model.SalesOpen)
+        {
+            <form method="post" asp-action="ResumePost" asp-route-code="@Model.Info.Code">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn--primary">Continue to payment</button>
+            </form>
+            <p class="onboarding__footnote">
+                You'll be taken to our payment provider to finish. Your details won't be asked for again.
+            </p>
+        }
+        else
+        {
+            <p class="onboarding__footnote">
+                Membership sales are paused at the moment. Nothing further is needed from you — we'll
+                be in touch when they reopen.
+            </p>
+            <a class="btn btn--primary" asp-controller="Membership" asp-action="Index">Back to membership</a>
+        }
+    </div>
+</div>
