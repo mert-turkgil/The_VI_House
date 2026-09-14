@@ -434,6 +434,14 @@
     color: var(--vih-text-secondary);
   }
 
+  // Auto-appended by RequiredLabelTagHelper next to any label bound to a "not null" field, so the
+  // sections that must be filled out are obvious before the admin submits and hits an error.
+  .admin-required {
+    color: var(--vih-danger);
+    margin-left: 2px;
+    font-weight: 700;
+  }
+
   input,
   select,
   textarea {
@@ -452,6 +460,18 @@
       border-color: var(--vih-focus-ring);
       box-shadow: var(--vih-shadow-focus);
     }
+
+    // jquery.validate.unobtrusive toggles this class live as the admin types, so an invalid
+    // required field turns red immediately rather than only after a full page round-trip.
+    &.input-validation-error {
+      border-color: var(--vih-danger);
+      background: var(--vih-danger-bg);
+
+      &:focus-visible {
+        border-color: var(--vih-danger);
+        box-shadow: 0 0 0 3px rgba(154, 51, 36, 0.25);
+      }
+    }
   }
 
   textarea {
@@ -460,8 +480,14 @@
   }
 
   .field-validation-error {
+    display: block;
     color: var(--vih-danger);
     font-size: 0.75rem;
+    font-weight: 600;
+
+    &:empty {
+      display: none;
+    }
   }
 
   &.admin-field--checkbox {
@@ -472,6 +498,31 @@
     input {
       width: auto;
     }
+  }
+}
+
+// Summarises every failed rule at the top of the form (asp-validation-summary="ModelOnly"), so a
+// submit that fails validation communicates *what* went wrong in one place, not just per-field.
+.admin-form .validation-summary-errors {
+  display: block;
+  padding: 12px 16px;
+  border: 1px solid var(--vih-danger);
+  border-radius: 8px;
+  background: var(--vih-danger-bg);
+  color: var(--vih-danger-strong);
+  font-size: 0.8125rem;
+  font-weight: 600;
+
+  ul {
+    margin: 4px 0 0;
+    padding-left: 18px;
+    font-weight: 400;
+  }
+
+  &:empty {
+    display: none;
+    padding: 0;
+    border: 0;
   }
 }
 
