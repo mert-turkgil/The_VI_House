@@ -1,3 +1,4 @@
+@using VIHouse.Entities.Commerce
 @using System.Text.Json
 @model AdminDashboardViewModel
 @{
@@ -29,32 +30,93 @@
     var bookingsPayload = Payload(
         Model.BookingsByStatus.Keys.Select(s => s.ToString()),
         Model.BookingsByStatus.Values.Select(v => (decimal)v));
+
+    var approvedApplications = Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.Approved);
+    var paidApplications = Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.Paid);
+    var underReviewApplications = Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.UnderReview)
+        + Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.Shortlisted);
+    var waitlistedApplications = Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.Waitlisted);
+    var confirmedBookings = Model.BookingsByStatus.GetValueOrDefault(BookingStatus.Confirmed);
+
+    string ApplicationBadgeClass(ApplicationStatus status) => status switch
+    {
+        ApplicationStatus.Approved => "admin-badge admin-badge--open",
+        ApplicationStatus.Paid => "admin-badge admin-badge--paid",
+        ApplicationStatus.Waitlisted or ApplicationStatus.PaymentPending => "admin-badge admin-badge--pending",
+        ApplicationStatus.UnderReview or ApplicationStatus.Shortlisted => "admin-badge admin-badge--info",
+        ApplicationStatus.Rejected => "admin-badge admin-badge--closed",
+        _ => "admin-badge admin-badge--draft",
+    };
+
+    string BookingBadgeClass(BookingStatus status) => status switch
+    {
+        BookingStatus.Confirmed => "admin-badge admin-badge--open",
+        BookingStatus.Pending => "admin-badge admin-badge--pending",
+        BookingStatus.Cancelled or BookingStatus.Refunded => "admin-badge admin-badge--closed",
+        _ => "admin-badge admin-badge--info",
+    };
 }
 
-<div class="admin-kpi-grid">
-    <div class="admin-kpi-card">
+<section class="admin-dashboard-hero" data-reveal>
+    <div class="admin-dashboard-hero__content">
+        <span class="admin-eyebrow">Today at a glance</span>
+        <h2>Give your team one clear place to track approvals, bookings, revenue and publishing.</h2>
+        <p>Every key workflow is surfaced as a card, chart or status summary so non-technical operators can see what needs attention immediately.</p>
+    </div>
+    <div class="admin-dashboard-hero__summary">
+        <div class="admin-dashboard-hero__pill">
+            <strong>@Model.TotalApplications</strong>
+            <span>Total applications</span>
+        </div>
+        <div class="admin-dashboard-hero__pill">
+            <strong>@confirmedBookings</strong>
+            <span>Confirmed bookings</span>
+        </div>
+        <div class="admin-dashboard-hero__pill">
+            <strong>@paidApplications</strong>
+            <span>Paid members</span>
+        </div>
+    </div>
+ </section>
+
+<section class="admin-kpi-grid">
+    <article class="admin-kpi-card" data-reveal data-reveal-delay="40">
+        <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("file-text")' /></div>
         <div class="admin-kpi-card__value">@Model.PendingApplications</div>
-        <div class="admin-kpi-card__label">Applications Awaiting Review</div>
-    </div>
-    <div class="admin-kpi-card">
+        <div class="admin-kpi-card__label">Applications awaiting review</div>
+        <div class="admin-kpi-card__meta">Needs attention now</div>
+    </article>
+    <article class="admin-kpi-card" data-reveal data-reveal-delay="80">
+        <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("calendar")' /></div>
         <div class="admin-kpi-card__value">@Model.TotalBookings</div>
-        <div class="admin-kpi-card__label">Total Bookings</div>
-    </div>
-    <div class="admin-kpi-card">
+        <div class="admin-kpi-card__label">Total bookings</div>
+        <div class="admin-kpi-card__meta">@confirmedBookings confirmed</div>
+    </article>
+    <article class="admin-kpi-card" data-reveal data-reveal-delay="120">
+        <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("check")' /></div>
         <div class="admin-kpi-card__value">@Model.ConversionToPaidPercent%</div>
-        <div class="admin-kpi-card__label">Application &rarr; Paid Conversion</div>
-    </div>
+        <div class="admin-kpi-card__label">Application to paid conversion</div>
+        <div class="admin-kpi-card__meta">@approvedApplications approved so far</div>
+    </article>
+    <article class="admin-kpi-card" data-reveal data-reveal-delay="160">
+        <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("messages-square")' /></div>
+        <div class="admin-kpi-card__value">@underReviewApplications</div>
+        <div class="admin-kpi-card__label">Applications in motion</div>
+        <div class="admin-kpi-card__meta">@waitlistedApplications waitlisted</div>
+    </article>
     @foreach (var (currency, amountMinor) in Model.RevenueByCurrency)
     {
-        <div class="admin-kpi-card">
+        <article class="admin-kpi-card" data-reveal data-reveal-delay="200">
+            <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("credit-card")' /></div>
             <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
-            <div class="admin-kpi-card__label">Revenue Collected (@currency)</div>
-        </div>
+            <div class="admin-kpi-card__label">Revenue collected (@currency)</div>
+            <div class="admin-kpi-card__meta">Settled payments only</div>
+        </article>
     }
-</div>
+</section>
 
-<div class="admin-chart-grid">
-    <div class="admin-chart-card admin-chart-card--wide">
+<section class="admin-chart-grid">
+    <article class="admin-chart-card admin-chart-card--wide" data-reveal>
         <h2>Revenue Collected</h2>
         <span class="admin-chart-card__hint">
             @if (Model.PrimaryCurrency is not null)
@@ -76,9 +138,9 @@
         {
             <div class="admin-chart-empty">No payments collected yet.</div>
         }
-    </div>
+    </article>
 
-    <div class="admin-chart-card">
+    <article class="admin-chart-card" data-reveal data-reveal-delay="60">
         <h2>Application Funnel</h2>
         <span class="admin-chart-card__hint">Where every application currently sits.</span>
         @if (Model.TotalApplications > 0)
@@ -91,9 +153,9 @@
         {
             <div class="admin-chart-empty">No applications yet.</div>
         }
-    </div>
+    </article>
 
-    <div class="admin-chart-card">
+    <article class="admin-chart-card" data-reveal data-reveal-delay="120">
         <h2>Bookings by Status</h2>
         <span class="admin-chart-card__hint">Across every experience.</span>
         @if (Model.BookingsByStatus.Count > 0)
@@ -106,44 +168,70 @@
         {
             <div class="admin-chart-empty">No bookings yet.</div>
         }
-    </div>
-</div>
+    </article>
+</section>
 
-<div class="admin-card" style="margin-top:24px;">
-    <h2>Application Funnel</h2>
-    <table class="admin-table">
-        <thead><tr><th>Status</th><th>Count</th><th>% of Total</th></tr></thead>
-        <tbody>
-            @foreach (var status in funnelStatuses)
-            {
-                var count = Model.ApplicationsByStatus.GetValueOrDefault(status);
-                var pct = Model.TotalApplications == 0 ? 0 : Math.Round(count * 100.0 / Model.TotalApplications, 1);
-                <tr>
-                    <td>@status.ToDisplayLabel()</td>
-                    <td>@count</td>
-                    <td>@pct%</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+<section class="admin-dashboard-grid">
+    <article class="admin-card admin-card--elevated" data-reveal>
+        <div class="admin-section-heading-wrap">
+            <div>
+                <span class="admin-eyebrow">Pipeline health</span>
+                <h2>Application funnel</h2>
+            </div>
+            <p>Color-coded stages make it easy to spot where applications are slowing down.</p>
+        </div>
+        <div class="admin-table-scroll">
+            <table class="admin-table" data-admin-table data-admin-table-per-page="8">
+                <thead><tr><th>Status</th><th>Count</th><th>% of Total</th></tr></thead>
+                <tbody>
+                    @foreach (var status in funnelStatuses)
+                    {
+                        var count = Model.ApplicationsByStatus.GetValueOrDefault(status);
+                        var pct = Model.TotalApplications == 0 ? 0 : Math.Round(count * 100.0 / Model.TotalApplications, 1);
+                        <tr>
+                            <td>
+                                <span class="@ApplicationBadgeClass(status)">@status.ToDisplayLabel()</span>
+                            </td>
+                            <td>@count</td>
+                            <td>@pct%</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </article>
 
-<div class="admin-card" style="margin-top:24px;">
-    <h2>Bookings by Status</h2>
-    @if (Model.BookingsByStatus.Count == 0)
-    {
-        <p>No bookings yet.</p>
-    }
-    else
-    {
-        <table class="admin-table">
-            <thead><tr><th>Status</th><th>Count</th></tr></thead>
-            <tbody>
-                @foreach (var (status, count) in Model.BookingsByStatus)
-                {
-                    <tr><td>@status</td><td>@count</td></tr>
-                }
-            </tbody>
-        </table>
-    }
-</div>
+    <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="80">
+        <div class="admin-section-heading-wrap">
+            <div>
+                <span class="admin-eyebrow">Operations status</span>
+                <h2>Bookings by status</h2>
+            </div>
+            <p>Booking states are spaced out for quick scanning during fulfilment and support.</p>
+        </div>
+        @if (Model.BookingsByStatus.Count == 0)
+        {
+            <div class="admin-empty">
+                <h3 class="admin-empty__title">No bookings yet</h3>
+                <p>Once bookings start coming in, this panel will summarise how many are pending, confirmed or closed.</p>
+            </div>
+        }
+        else
+        {
+            <div class="admin-table-scroll">
+                <table class="admin-table" data-admin-table data-admin-table-per-page="8">
+                    <thead><tr><th>Status</th><th>Count</th></tr></thead>
+                    <tbody>
+                        @foreach (var (status, count) in Model.BookingsByStatus.OrderBy(row => row.Key.ToString()))
+                        {
+                            <tr>
+                                <td><span class="@BookingBadgeClass(status)">@status</span></td>
+                                <td>@count</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </article>
+</section>
