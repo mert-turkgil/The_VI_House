@@ -1795,7 +1795,8 @@ kbd {
     background: linear-gradient(90deg, rgba(184, 149, 90, 0.95), rgba(0, 35, 10, 0.75));
   }
 
-  &:hover {
+  &:hover,
+  &:focus-within {
     transform: translateY(-4px);
     box-shadow: 0 24px 44px rgba(0, 35, 10, 0.12);
     border-color: rgba(184, 149, 90, 0.24);

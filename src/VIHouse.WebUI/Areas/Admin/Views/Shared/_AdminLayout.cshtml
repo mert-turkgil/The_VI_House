@@ -95,6 +95,7 @@
 
         <div class="admin-sidebar__search">
             <label class="admin-searchbar admin-searchbar--sidebar">
+                <span class="visually-hidden">Search admin pages</span>
                 <span class="admin-searchbar__icon">
                     <partial name="_Icon" model='@("search")' />
                 </span>
@@ -105,19 +106,20 @@
         <nav class="admin-sidebar__nav" aria-label="Admin">
             @foreach (var item in navItems)
             {
-                <a class="@NavClass(item.Controller)"
-                   data-nav-entry
-                   data-nav-label="@item.Label"
-                   aria-label="@item.Label"
-                   aria-current="@(string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase) ? "page" : null)"
-                   asp-area="Admin"
-                   asp-controller="@item.Controller"
-                   asp-action="@item.Action">
-                    <span class="admin-sidebar__icon">
-                        <partial name="_Icon" model="@item.Icon" />
-                    </span>
-                    <span class="admin-sidebar__text">@item.Label</span>
-                </a>
+                <div class="admin-sidebar__item" data-nav-entry>
+                    <a class="@NavClass(item.Controller)"
+                       data-nav-label="@item.Label"
+                       aria-label="@item.Label"
+                       aria-current="@(string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase) ? "page" : null)"
+                       asp-area="Admin"
+                       asp-controller="@item.Controller"
+                       asp-action="@item.Action">
+                        <span class="admin-sidebar__icon">
+                            <partial name="_Icon" model="@item.Icon" />
+                        </span>
+                        <span class="admin-sidebar__text">@item.Label</span>
+                    </a>
+                </div>
             }
         </nav>
         <p class="admin-sidebar__empty" data-admin-nav-empty hidden>No matching admin pages.</p>
@@ -148,6 +150,7 @@
             </div>
             <div class="admin-topbar__actions">
                 <label class="admin-searchbar">
+                    <span class="visually-hidden">Jump to an admin page</span>
                     <span class="admin-searchbar__icon">
                         <partial name="_Icon" model='@("search")' />
                     </span>

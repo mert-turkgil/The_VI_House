@@ -111,7 +111,8 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 
-  &:hover {
+  &:hover,
+  &:focus-within {
     transform: translateY(-4px);
     box-shadow: 0 24px 44px rgba(0, 35, 10, 0.1);
     border-color: rgba(184, 149, 90, 0.2);
