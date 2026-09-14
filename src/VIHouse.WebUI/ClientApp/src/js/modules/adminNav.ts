@@ -76,7 +76,8 @@ export function initAdminNav(): void {
     navLinks.forEach((link) => {
       const label = (link.dataset.navLabel ?? '').toLowerCase();
       const matches = query.length === 0 || label.includes(query);
-      link.hidden = !matches;
+      const entry = link.closest<HTMLElement>('[data-nav-entry]') ?? link;
+      entry.hidden = !matches;
       if (matches) visible += 1;
     });
 

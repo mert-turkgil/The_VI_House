@@ -1980,3 +1980,19 @@ kbd {
     padding-inline: 0;
   }
 }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-page,
+  .admin-topbar,
+  .admin-searchbar,
+  .admin-sidebar__link,
+  .admin-kpi-card,
+  .admin-card,
+  .admin-user-menu__chevron,
+  .admin-sidebar__brand,
+  .admin-sidebar__pin {
+    animation: none !important;
+    transition: none !important;
+  }
+}
