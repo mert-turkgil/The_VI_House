@@ -88,7 +88,7 @@
             </a>
             <button class="admin-sidebar__pin" type="button" data-admin-sidebar-collapse aria-pressed="false" aria-label="Collapse sidebar" title="Collapse sidebar">
                 <span class="admin-sidebar__pin-icon" data-admin-sidebar-collapse-icon>
-                    <partial name="_Icon" model="panel-left-close" />
+                    <partial name="_Icon" model='@("panel-left-close")' />
                 </span>
             </button>
         </div>
@@ -96,7 +96,7 @@
         <div class="admin-sidebar__search">
             <label class="admin-searchbar admin-searchbar--sidebar">
                 <span class="admin-searchbar__icon">
-                    <partial name="_Icon" model="search" />
+                    <partial name="_Icon" model='@("search")' />
                 </span>
                 <input type="search" data-admin-nav-search placeholder="Search admin pages" aria-label="Search admin pages" />
             </label>
@@ -129,7 +129,7 @@
             </div>
             <div class="admin-sidebar__footer-links">
                 <a asp-area="" asp-controller="Home" asp-action="Index">
-                    <partial name="_Icon" model="arrow-up-right" />
+                    <partial name="_Icon" model='@("arrow-up-right")' />
                     <span>View site</span>
                 </a>
             </div>
@@ -146,7 +146,7 @@
             <div class="admin-topbar__actions">
                 <label class="admin-searchbar">
                     <span class="admin-searchbar__icon">
-                        <partial name="_Icon" model="search" />
+                        <partial name="_Icon" model='@("search")' />
                     </span>
                     <input type="search" data-admin-nav-search placeholder="Jump to a section" aria-label="Jump to a section" />
                 </label>
@@ -170,7 +170,7 @@
                             <span>@activeNavLabel</span>
                         </span>
                         <span class="admin-user-menu__chevron">
-                            <partial name="_Icon" model="chevron-down" />
+                            <partial name="_Icon" model='@("chevron-down")' />
                         </span>
                     </summary>
                     <div class="admin-user-menu__panel">

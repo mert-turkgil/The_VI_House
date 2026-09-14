@@ -1,3 +1,4 @@
+@using VIHouse.Entities.Commerce
 @using System.Text.Json
 @model AdminDashboardViewModel
 @{
@@ -80,25 +81,25 @@
 
 <section class="admin-kpi-grid">
     <article class="admin-kpi-card" data-reveal data-reveal-delay="40">
-        <div class="admin-kpi-card__icon"><partial name="_Icon" model="file-text" /></div>
+        <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("file-text")' /></div>
         <div class="admin-kpi-card__value">@Model.PendingApplications</div>
         <div class="admin-kpi-card__label">Applications awaiting review</div>
         <div class="admin-kpi-card__meta">Needs attention now</div>
     </article>
     <article class="admin-kpi-card" data-reveal data-reveal-delay="80">
-        <div class="admin-kpi-card__icon"><partial name="_Icon" model="calendar" /></div>
+        <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("calendar")' /></div>
         <div class="admin-kpi-card__value">@Model.TotalBookings</div>
         <div class="admin-kpi-card__label">Total bookings</div>
         <div class="admin-kpi-card__meta">@confirmedBookings confirmed</div>
     </article>
     <article class="admin-kpi-card" data-reveal data-reveal-delay="120">
-        <div class="admin-kpi-card__icon"><partial name="_Icon" model="check" /></div>
+        <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("check")' /></div>
         <div class="admin-kpi-card__value">@Model.ConversionToPaidPercent%</div>
         <div class="admin-kpi-card__label">Application to paid conversion</div>
         <div class="admin-kpi-card__meta">@approvedApplications approved so far</div>
     </article>
     <article class="admin-kpi-card" data-reveal data-reveal-delay="160">
-        <div class="admin-kpi-card__icon"><partial name="_Icon" model="messages-square" /></div>
+        <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("messages-square")' /></div>
         <div class="admin-kpi-card__value">@underReviewApplications</div>
         <div class="admin-kpi-card__label">Applications in motion</div>
         <div class="admin-kpi-card__meta">@waitlistedApplications waitlisted</div>
@@ -106,7 +107,7 @@
     @foreach (var (currency, amountMinor) in Model.RevenueByCurrency)
     {
         <article class="admin-kpi-card" data-reveal data-reveal-delay="200">
-            <div class="admin-kpi-card__icon"><partial name="_Icon" model="credit-card" /></div>
+            <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("credit-card")' /></div>
             <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
             <div class="admin-kpi-card__label">Revenue collected (@currency)</div>
             <div class="admin-kpi-card__meta">Settled payments only</div>
