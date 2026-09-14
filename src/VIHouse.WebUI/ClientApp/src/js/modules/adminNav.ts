@@ -92,7 +92,7 @@ export function initAdminNav(): void {
   });
 
   sidebar.addEventListener('click', (event) => {
-    if ((event.target as HTMLElement | null)?.closest('a')) setOpen(false);
+    if (!desktopQuery.matches && (event.target as HTMLElement | null)?.closest('a')) setOpen(false);
   });
 
   desktopQuery.addEventListener('change', (event) => {

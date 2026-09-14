@@ -108,6 +108,7 @@
                 <a class="@NavClass(item.Controller)"
                    data-nav-entry
                    data-nav-label="@item.Label"
+                   aria-label="@item.Label"
                    aria-current="@(string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase) ? "page" : null)"
                    asp-area="Admin"
                    asp-controller="@item.Controller"
