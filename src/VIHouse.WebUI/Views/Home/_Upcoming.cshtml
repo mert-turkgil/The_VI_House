@@ -1,4 +1,16 @@
 @model List<ExperienceCardViewModel>
+@{
+    // The carousel shows 4 across at desktop width (data-swiper-per-view below), and it earns its
+    // keep at that count or above: even a set that fits desktop exactly (4) is still worth
+    // swiping through on a phone, where Swiper only ever shows ~1.1 at a time regardless of the
+    // total. Below 4, though, there is nothing left to scroll on ANY screen size — Swiper would
+    // still lay the cards out left-aligned in a track sized for 4, leaving a lone card stranded
+    // with a dead gap beside it. Below that count there's no reason to pay for the carousel at
+    // all: a plain grid that centers and sizes itself to however many cards actually exist looks
+    // intentional, including at one.
+    const int perView = 4;
+    var useCarousel = Model.Count >= perView;
+}
 
 @if (Model.Count > 0)
 {
@@ -8,35 +20,31 @@
             <a class="home-section__viewall" href="/experiences">@Loc["Home.ViewAll"] &rarr;</a>
         </div>
         <div class="container">
-            <div class="swiper home-carousel" data-swiper data-swiper-per-view="4">
-                <div class="swiper-wrapper">
+            @if (useCarousel)
+            {
+                <div class="swiper home-carousel" data-swiper data-swiper-per-view="@perView">
+                    <div class="swiper-wrapper">
+                        @foreach (var e in Model)
+                        {
+                            <div class="swiper-slide">
+                                <partial name="_UpcomingCard" model="e" />
+                            </div>
+                        }
+                    </div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            }
+            else
+            {
+                <div class="home-upcoming__grid">
                     @foreach (var e in Model)
                     {
-                        <div class="swiper-slide">
-                            <a class="home-upcoming__card" href="/experiences/@e.Slug">
-                                <div class="home-upcoming__image">
-                                    @* Decorative: the card's own heading names the experience, so a
-                                       described image would just repeat it to a screen reader. *@
-                                    <partial name="_CoverImage" model="@(new CoverImageViewModel {
-                                        Url = e.CoverImageUrl,
-                                        Ratio = "4x3",
-                                        Sizes = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw",
-                                    })" />
-                                    <span class="home-upcoming__badge">@Loc[e.StatusKey]</span>
-                                </div>
-                                <div class="home-upcoming__body">
-                                    <span class="home-upcoming__date">@e.StartAtUtc.ToString("d MMM")–@e.EndAtUtc.ToString("d MMM yyyy")</span>
-                                    <h3>The VI House — @e.City</h3>
-                                    <span class="home-upcoming__meta">@e.City, @e.Country</span>
-                                </div>
-                            </a>
-                        </div>
+                        <partial name="_UpcomingCard" model="e" />
                     }
                 </div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-pagination"></div>
-            </div>
+            }
         </div>
     </section>
 }

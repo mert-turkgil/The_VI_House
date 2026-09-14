@@ -3,125 +3,155 @@
     ViewData["Title"] = "Request Access";
 }
 
-<div class="apply-header">
-    <div class="container">
+<section class="apply-header">
+    @if (!string.IsNullOrWhiteSpace(Model.ExperienceCoverImageUrl))
+    {
+        @* Decorative: everything the photo could tell a screen reader — city, dates — is already
+           in the heading and meta row beside it in text. *@
+        <div class="apply-header__media" aria-hidden="true">
+            <partial name="_CoverImage" model="@(new CoverImageViewModel {
+                Url = Model.ExperienceCoverImageUrl,
+                Ratio = "hero",
+                Sizes = "100vw",
+                Eager = true,
+            })" />
+            <span class="apply-header__scrim"></span>
+        </div>
+    }
+    <div class="container apply-header__inner">
         <span class="apply-header__eyebrow">@Loc["Apply.Eyebrow"]</span>
         <h1>The VI House — @Model.ExperienceCity</h1>
-        <p>@Model.ExperienceStartAtUtc.ToString("d MMM")–@Model.ExperienceEndAtUtc.ToString("d MMM yyyy") &middot; @Model.ExperienceCity, @Countries.NameFor(Model.ExperienceCountry)</p>
+        <p class="apply-header__meta">
+            <span class="apply-header__meta-item">
+                <partial name="_Icon" model="@("calendar")" />
+                @Model.ExperienceStartAtUtc.ToString("d MMM")&ndash;@Model.ExperienceEndAtUtc.ToString("d MMM yyyy")
+            </span>
+            <span class="apply-header__meta-item">
+                <partial name="_Icon" model="@("map-pin")" />
+                @Model.ExperienceCity, @Countries.NameFor(Model.ExperienceCountry)
+            </span>
+        </p>
     </div>
-</div>
+</section>
 
 <div class="container apply-body">
-    <form asp-action="Index" method="post" class="apply-form" novalidate>
-        <div asp-validation-summary="ModelOnly" class="apply-form__summary"></div>
+    <p class="apply-form__intro">@Loc["Apply.Intro"]</p>
 
-        <input type="hidden" asp-for="ExperienceId" />
-        <input type="hidden" asp-for="ExperienceSlug" />
-        <input type="hidden" asp-for="ExperienceTitle" />
-        <input type="hidden" asp-for="ExperienceCity" />
-        <input type="hidden" asp-for="ExperienceCountry" />
-        <input type="hidden" asp-for="ExperienceStartAtUtc" />
-        <input type="hidden" asp-for="ExperienceEndAtUtc" />
-        <input type="hidden" asp-for="ReferralCode" />
+    <div class="apply-card">
+        <form asp-action="Index" method="post" class="apply-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="apply-form__summary"></div>
 
-        <p class="apply-form__intro">@Loc["Apply.Intro"]</p>
+            <input type="hidden" asp-for="ExperienceId" />
+            <input type="hidden" asp-for="ExperienceSlug" />
+            <input type="hidden" asp-for="ExperienceTitle" />
+            <input type="hidden" asp-for="ExperienceCity" />
+            <input type="hidden" asp-for="ExperienceCountry" />
+            <input type="hidden" asp-for="ExperienceStartAtUtc" />
+            <input type="hidden" asp-for="ExperienceEndAtUtc" />
+            <input type="hidden" asp-for="ReferralCode" />
 
-        <fieldset class="apply-form__section">
-            <legend>@Loc["Form.Section.You"]</legend>
-            <div class="apply-form__grid apply-form__grid--2">
+            <fieldset class="apply-form__section">
+                <legend>@Loc["Form.Section.You"]</legend>
+                <div class="apply-form__grid apply-form__grid--2">
+                    <div class="apply-field">
+                        <label asp-for="FirstName">@Loc["Form.FirstName"]</label>
+                        <input asp-for="FirstName" autocomplete="given-name" />
+                        <span asp-validation-for="FirstName" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="LastName">@Loc["Form.LastName"]</label>
+                        <input asp-for="LastName" autocomplete="family-name" />
+                        <span asp-validation-for="LastName" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="Email">@Loc["Form.Email"]</label>
+                        <input asp-for="Email" type="email" autocomplete="email" />
+                        <span asp-validation-for="Email" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="JobTitle">@Loc["Form.JobTitle"]</label>
+                        <input asp-for="JobTitle" autocomplete="organization-title" placeholder="@Loc["Form.JobTitle.Placeholder"]" />
+                        <span asp-validation-for="JobTitle" class="apply-field__error"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="apply-form__section">
+                <legend>@Loc["Form.Section.Address"]</legend>
+                <div class="apply-form__grid apply-form__grid--2">
+                    <div class="apply-field">
+                        <label asp-for="AddressLine1">@Loc["Form.AddressLine1"]</label>
+                        <input asp-for="AddressLine1" autocomplete="address-line1" />
+                        <span asp-validation-for="AddressLine1" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="AddressLine2">@Loc["Form.AddressLine2"]</label>
+                        <input asp-for="AddressLine2" autocomplete="address-line2" />
+                        <span asp-validation-for="AddressLine2" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="PostalCode">@Loc["Form.PostalCode"]</label>
+                        <input asp-for="PostalCode" autocomplete="postal-code" />
+                        <span asp-validation-for="PostalCode" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="City">@Loc["Form.City"]</label>
+                        <input asp-for="City" autocomplete="address-level2" />
+                        <span asp-validation-for="City" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
+                        <label asp-for="Country">@Loc["Form.Country"]</label>
+                        <select asp-for="Country" asp-items='@Countries.SelectList(Model.Country, Loc["Form.ChooseCountry"].Value)' autocomplete="country"></select>
+                        <span asp-validation-for="Country" class="apply-field__error"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="apply-form__section">
+                <legend>@Loc["Form.Section.About"]</legend>
                 <div class="apply-field">
-                    <label asp-for="FirstName">@Loc["Form.FirstName"]</label>
-                    <input asp-for="FirstName" autocomplete="given-name" />
-                    <span asp-validation-for="FirstName" class="apply-field__error"></span>
+                    <label asp-for="AboutStatement">@Loc["Form.About"] <span class="apply-field__required" aria-hidden="true">*</span></label>
+                    <textarea asp-for="AboutStatement" rows="4" placeholder="@Loc["Form.About.Placeholder"]" required></textarea>
+                    <span asp-validation-for="AboutStatement" class="apply-field__error"></span>
                 </div>
                 <div class="apply-field">
-                    <label asp-for="LastName">@Loc["Form.LastName"]</label>
-                    <input asp-for="LastName" autocomplete="family-name" />
-                    <span asp-validation-for="LastName" class="apply-field__error"></span>
+                    <label asp-for="ExpectationsStatement">@Loc["Form.Expectations"] <span class="apply-field__required" aria-hidden="true">*</span></label>
+                    <textarea asp-for="ExpectationsStatement" rows="4" placeholder="@Loc["Form.Expectations.Placeholder"]" required></textarea>
+                    <span asp-validation-for="ExpectationsStatement" class="apply-field__error"></span>
                 </div>
-                <div class="apply-field">
-                    <label asp-for="Email">@Loc["Form.Email"]</label>
-                    <input asp-for="Email" type="email" autocomplete="email" />
-                    <span asp-validation-for="Email" class="apply-field__error"></span>
+                <div class="apply-form__grid apply-form__grid--2">
+                    <div class="apply-field">
+                        <label asp-for="EarningsBand">@Loc["Form.EarningsBand"]</label>
+                        <select asp-for="EarningsBand">
+                            <option value="">@Loc["Form.EarningsBand.Choose"]</option>
+                            @foreach (var band in EarningsBand.All)
+                            {
+                                <option value="@band.Code" selected="@(band.Code == Model.EarningsBand)">@band.Label</option>
+                            }
+                        </select>
+                        <span class="apply-field__hint">@Loc["Form.EarningsBand.Hint"]</span>
+                        <span asp-validation-for="EarningsBand" class="apply-field__error"></span>
+                    </div>
                 </div>
-                <div class="apply-field">
-                    <label asp-for="JobTitle">@Loc["Form.JobTitle"]</label>
-                    <input asp-for="JobTitle" autocomplete="organization-title" placeholder="@Loc["Form.JobTitle.Placeholder"]" />
-                    <span asp-validation-for="JobTitle" class="apply-field__error"></span>
-                </div>
+            </fieldset>
+
+            <div class="apply-field apply-field--checkbox">
+                <label>
+                    <input asp-for="AgreeToTerms" type="checkbox" />
+                    <span>@Loc["Form.AgreePrefix"] <a href="/legal/terms" target="_blank" rel="noopener">@Loc["Form.Terms"]</a> @Loc["Form.And"] <a href="/legal/privacy" target="_blank" rel="noopener">@Loc["Form.Privacy"]</a>.</span>
+                </label>
+                <span asp-validation-for="AgreeToTerms" class="apply-field__error"></span>
             </div>
-        </fieldset>
 
-        <fieldset class="apply-form__section">
-            <legend>@Loc["Form.Section.Address"]</legend>
-            <div class="apply-form__grid apply-form__grid--2">
-                <div class="apply-field">
-                    <label asp-for="AddressLine1">@Loc["Form.AddressLine1"]</label>
-                    <input asp-for="AddressLine1" autocomplete="address-line1" />
-                    <span asp-validation-for="AddressLine1" class="apply-field__error"></span>
-                </div>
-                <div class="apply-field">
-                    <label asp-for="AddressLine2">@Loc["Form.AddressLine2"]</label>
-                    <input asp-for="AddressLine2" autocomplete="address-line2" />
-                    <span asp-validation-for="AddressLine2" class="apply-field__error"></span>
-                </div>
-                <div class="apply-field">
-                    <label asp-for="PostalCode">@Loc["Form.PostalCode"]</label>
-                    <input asp-for="PostalCode" autocomplete="postal-code" />
-                    <span asp-validation-for="PostalCode" class="apply-field__error"></span>
-                </div>
-                <div class="apply-field">
-                    <label asp-for="City">@Loc["Form.City"]</label>
-                    <input asp-for="City" autocomplete="address-level2" />
-                    <span asp-validation-for="City" class="apply-field__error"></span>
-                </div>
-                <div class="apply-field">
-                    <label asp-for="Country">@Loc["Form.Country"]</label>
-                    <select asp-for="Country" asp-items='@Countries.SelectList(Model.Country, Loc["Form.ChooseCountry"].Value)' autocomplete="country"></select>
-                    <span asp-validation-for="Country" class="apply-field__error"></span>
-                </div>
+            <div class="apply-form__footer">
+                <button type="submit" class="btn btn--primary apply-form__submit">@Loc["Apply.Submit"]</button>
+                <p class="apply-form__note">
+                    <partial name="_Icon" model="@("check")" />
+                    @Loc["Apply.Note"]
+                </p>
             </div>
-        </fieldset>
-
-        <fieldset class="apply-form__section">
-            <legend>@Loc["Form.Section.About"]</legend>
-            <div class="apply-field">
-                <label asp-for="AboutStatement">@Loc["Form.About"] <span class="apply-field__required" aria-hidden="true">*</span></label>
-                <textarea asp-for="AboutStatement" rows="4" placeholder="@Loc["Form.About.Placeholder"]" required></textarea>
-                <span asp-validation-for="AboutStatement" class="apply-field__error"></span>
-            </div>
-            <div class="apply-field">
-                <label asp-for="ExpectationsStatement">@Loc["Form.Expectations"] <span class="apply-field__required" aria-hidden="true">*</span></label>
-                <textarea asp-for="ExpectationsStatement" rows="4" placeholder="@Loc["Form.Expectations.Placeholder"]" required></textarea>
-                <span asp-validation-for="ExpectationsStatement" class="apply-field__error"></span>
-            </div>
-            <div class="apply-form__grid apply-form__grid--2">
-                <div class="apply-field">
-                    <label asp-for="EarningsBand">@Loc["Form.EarningsBand"]</label>
-                    <select asp-for="EarningsBand">
-                        <option value="">@Loc["Form.EarningsBand.Choose"]</option>
-                        @foreach (var band in EarningsBand.All)
-                        {
-                            <option value="@band.Code" selected="@(band.Code == Model.EarningsBand)">@band.Label</option>
-                        }
-                    </select>
-                    <span class="apply-field__hint">@Loc["Form.EarningsBand.Hint"]</span>
-                    <span asp-validation-for="EarningsBand" class="apply-field__error"></span>
-                </div>
-            </div>
-        </fieldset>
-
-        <div class="apply-field apply-field--checkbox">
-            <label>
-                <input asp-for="AgreeToTerms" type="checkbox" />
-                <span>@Loc["Form.AgreePrefix"] <a href="/legal/terms" target="_blank" rel="noopener">@Loc["Form.Terms"]</a> @Loc["Form.And"] <a href="/legal/privacy" target="_blank" rel="noopener">@Loc["Form.Privacy"]</a>.</span>
-            </label>
-            <span asp-validation-for="AgreeToTerms" class="apply-field__error"></span>
-        </div>
-
-        <button type="submit" class="btn btn--primary apply-form__submit">@Loc["Apply.Submit"]</button>
-        <p class="apply-form__note">@Loc["Apply.Note"]</p>
-    </form>
+        </form>
+    </div>
 </div>
 
 @section Scripts {

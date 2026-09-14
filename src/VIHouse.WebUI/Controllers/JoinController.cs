@@ -82,6 +82,11 @@ public class JoinController(
         if (form.PlanId == Guid.Empty)
             ModelState.AddModelError(nameof(form.PlanId), "Choose a plan to continue.");
 
+        // Recovers a browser-autofilled country name ("Cyprus") back to its code ("CY") — see
+        // Countries.Normalize and ApplicationController's identical fix for why ModelState.Remove
+        // matters here too.
+        form.Country = Countries.Normalize(form.Country);
+        ModelState.Remove(nameof(form.Country));
         if (!Countries.IsValid(form.Country))
             ModelState.AddModelError(nameof(form.Country), "Choose your country.");
 

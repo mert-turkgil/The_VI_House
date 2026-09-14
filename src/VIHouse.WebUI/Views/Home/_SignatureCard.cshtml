@@ -1,0 +1,25 @@
+@model ExperienceCardViewModel
+@*
+    One card from the "Signature experiences" strip — pulled out of _Signature.cshtml for the same
+    reason _UpcomingCard.cshtml was: identical markup, rendered either inside a Swiper slide or a
+    plain grid cell depending on whether there's enough content to actually scroll. See
+    _Signature.cshtml for which one gets picked.
+*@
+<a class="home-signature__card" href="/experiences/@Model.Slug">
+    <div class="home-signature__image">
+        <partial name="_CoverImage" model="@(new CoverImageViewModel {
+            Url = Model.CoverImageUrl,
+            Ratio = "16x9",
+            Sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+        })" />
+        <span class="home-signature__badge">@Loc["Home.Signature.Badge"]</span>
+    </div>
+    <div class="home-signature__body">
+        <h3>The VI House — @Model.City</h3>
+        <span class="home-signature__meta">@Model.City, @Model.Country &middot; @Loc[Model.DurationKey, Model.DurationDays]</span>
+        @if (Model.FromPriceMinor is not null)
+        {
+            <span class="home-signature__price">From @MoneyFormatter.Format(Model.FromPriceMinor.Value, Model.Currency!)</span>
+        }
+    </div>
+</a>

@@ -33,8 +33,8 @@ public class ProfileFormViewModel
     [StringLength(100)]
     public string? City { get; set; }
 
+    // See ApplyFormViewModel.Country for why there is no [StringLength] here.
     [Required(ErrorMessage = "Choose your country.")]
-    [StringLength(2, MinimumLength = 2)]
     public string Country { get; set; } = default!;
 
     [Required(ErrorMessage = "Tell us a little about yourself or your business.")]

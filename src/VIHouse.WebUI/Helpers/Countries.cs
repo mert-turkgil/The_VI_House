@@ -72,6 +72,37 @@ public static class Countries
 
     public static bool IsValid(string? code) => code is not null && Codes.Contains(code);
 
+    /// <summary>
+    /// Best-effort recovery for a submitted value that is not one of our 2-letter codes.
+    ///
+    /// The reason this exists at all: several browsers' address autofill, when it cannot cleanly
+    /// map a saved address to one of a &lt;select autocomplete="country"&gt;'s actual option
+    /// values, fills the control with the country's full name instead of matching an &lt;option&gt;
+    /// by value — Chrome and Edge both do this. The visible dropdown then shows "Cyprus" correctly
+    /// selected, but the browser posts the literal string "Cyprus", not "CY", and a validator that
+    /// only checks for a known 2-letter code rejects a submission the visitor did nothing wrong to
+    /// produce. Matching the posted text against our own name list (English first, then whatever
+    /// the current UI culture's localised name is, since a non-English browser profile can just as
+    /// easily autofill in Turkish or German) turns that into a silent recovery instead of a dead
+    /// end. A value that matches nothing here — genuine garbage — is returned unchanged, so it
+    /// still fails <see cref="IsValid"/> exactly as it should.
+    /// </summary>
+    public static string Normalize(string? input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return input ?? "";
+
+        var trimmed = input.Trim();
+        if (IsValid(trimmed)) return trimmed.ToUpperInvariant();
+
+        foreach (var (code, name) in All)
+        {
+            if (string.Equals(name, trimmed, StringComparison.OrdinalIgnoreCase)) return code;
+            if (string.Equals(Localise(code, name), trimmed, StringComparison.OrdinalIgnoreCase)) return code;
+        }
+
+        return trimmed;
+    }
+
     /// <summary>The name for a stored code in the current UI culture, or the code itself when it
     /// is not one we know — an old row is still a row.</summary>
     public static string NameFor(string? code)

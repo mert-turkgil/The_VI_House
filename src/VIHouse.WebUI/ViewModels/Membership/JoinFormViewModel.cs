@@ -46,8 +46,8 @@ public class JoinFormViewModel
     [Display(Name = "City")]
     public string? City { get; set; }
 
+    // See ApplyFormViewModel.Country for why there is no [StringLength] here.
     [Required(ErrorMessage = "Choose your country.")]
-    [StringLength(2, MinimumLength = 2)]
     [Display(Name = "Country")]
     public string Country { get; set; } = default!;
 

@@ -1,0 +1,24 @@
+@model ExperienceCardViewModel
+@*
+    One card from the "Upcoming experiences" strip — pulled out of _Upcoming.cshtml so the exact
+    same markup renders whether it sits inside a Swiper slide (there's more than fit on screen) or
+    a plain grid cell (there isn't, so a carousel with dead space and inert arrows would be worse
+    than no carousel at all — see _Upcoming.cshtml).
+*@
+<a class="home-upcoming__card" href="/experiences/@Model.Slug">
+    <div class="home-upcoming__image">
+        @* Decorative: the card's own heading names the experience, so a described image would
+           just repeat it to a screen reader. *@
+        <partial name="_CoverImage" model="@(new CoverImageViewModel {
+            Url = Model.CoverImageUrl,
+            Ratio = "4x3",
+            Sizes = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw",
+        })" />
+        <span class="home-upcoming__badge">@Loc[Model.StatusKey]</span>
+    </div>
+    <div class="home-upcoming__body">
+        <span class="home-upcoming__date">@Model.StartAtUtc.ToString("d MMM")–@Model.EndAtUtc.ToString("d MMM yyyy")</span>
+        <h3>The VI House — @Model.City</h3>
+        <span class="home-upcoming__meta">@Model.City, @Model.Country</span>
+    </div>
+</a>

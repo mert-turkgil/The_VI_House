@@ -1048,6 +1048,19 @@
   color: #666;
 }
 
+// The non-carousel path — see _Upcoming.cshtml. auto-fit collapses unused tracks instead of
+// leaving them empty, so 1 card centers alone, 2 sit together, 3 fill most of the row, all without
+// any of them stretching to some huge, out-of-family width the way a bare 1fr column would at 4
+// cards' worth of container. min(260px, 100%) is the same trick _experiences.scss uses for its
+// grid: a bare 260px floor overflows a ~310px-wide phone screen once the container's own side
+// padding is subtracted, so the floor has to be able to give way before that happens.
+.home-upcoming__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 320px));
+  justify-content: center;
+  gap: 24px;
+}
+
 // --- Signature grid --------------------------------------------------------------------------
 .home-signature__card {
   display: flex;
@@ -1106,6 +1119,16 @@
   margin-top: 6px;
   font-weight: 600;
   font-size: 0.9375rem;
+}
+
+// The non-carousel path — see _Signature.cshtml and the matching comment on .home-upcoming__grid,
+// which explains the auto-fit/minmax choice. Wider cap than Upcoming's: these cards carry a 16x9
+// image plus a price line and read as cramped below the 300px Signature already uses at 3-per-row.
+.home-signature__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 380px));
+  justify-content: center;
+  gap: 24px;
 }
 
 // --- Trust strip -----------------------------------------------------------------------------

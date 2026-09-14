@@ -1,4 +1,13 @@
+@use '../breakpoints' as bp;
+
+// Shared by two pages that ask someone to act on an experience: this file (Apply) and
+// Views/Invitation/Show.cshtml (the post-approval checkout). That second page never renders
+// .apply-header__media/__inner/__meta — it wraps its heading in a bare .container — so every new
+// rule below that targets those classes specifically is invisible there, and everything already
+// on .apply-header/.apply-header h1/.apply-header p stays exactly where it was for both pages.
 .apply-header {
+  position: relative;
+  overflow: hidden;
   background: var(--vih-green-950);
   color: var(--vih-cream);
   padding: 64px 0 40px;
@@ -26,6 +35,71 @@
   margin: 0;
 }
 
+// The experience's own cover photograph as a backdrop — only rendered when one exists (see
+// Views/Application/Index.cshtml), so a request-access page for an experience with no photo yet
+// keeps the plain dark band above instead of an empty grey box.
+.apply-header__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  // .cover--hero sets its own clamp()'d height so it works as a standalone banner elsewhere
+  // (see _cover.scss) — here it's filling an absolutely-positioned box instead, so that height
+  // needs to yield to the parent's, not fight it.
+  .cover,
+  .cover__img {
+    height: 100%;
+  }
+}
+
+// Two gradients, matching the same reasoning _auth.scss's backdrop scrim gives: a flat overlay
+// dark enough to hold the cream heading would flatten the photograph everywhere else, so this
+// keeps the middle of the frame the lightest and only darkens toward the text.
+.apply-header__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--vih-green-950) 55%, transparent) 0%,
+    color-mix(in srgb, var(--vih-green-950) 30%, transparent) 45%,
+    color-mix(in srgb, var(--vih-green-950) 78%, transparent) 100%
+  );
+}
+
+.apply-header__inner {
+  position: relative;
+  z-index: 2;
+}
+
+.apply-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
+}
+
+.apply-header__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  .icon {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    opacity: 0.85;
+  }
+}
+
+// A photograph behind it earns this section noticeably more height than the flat-colour version
+// ever needed — otherwise the crop reads as a sliver rather than a hero.
+.apply-header:has(.apply-header__media) {
+  @include bp.from(bp.$sm) {
+    padding-block: 96px 56px;
+  }
+}
+
 .apply-body {
   // padding-block, not the padding shorthand: this element also carries .container, and a
   // shorthand resets padding-inline to 0 — which silently threw away the page gutter and
@@ -34,10 +108,31 @@
   max-width: 720px;
 }
 
+// The white panel the form sits in on /apply. Invitation/Show.cshtml's checkout form deliberately
+// does not get this — its .apply-form sits directly in .apply-body exactly as before — this is
+// additive to Application/Index.cshtml only, never edited into that page's markup.
+.apply-card {
+  background: var(--vih-surface);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-2xl);
+  box-shadow: var(--vih-shadow-lg);
+  padding: 40px;
+
+  @include bp.until(bp.$sm) {
+    padding: 24px;
+    border-radius: var(--vih-radius-xl);
+  }
+}
+
 .apply-form {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  // Numbers the sections below via the legend's ::before — one counter shared by every
+  // .apply-form__section inside, in document order. Invitation/Show.cshtml's single section
+  // picks this up too (a lone "1"), which is a fine, honest read rather than an inconsistency to
+  // route around.
+  counter-reset: apply-section;
 }
 
 .apply-form__summary {
@@ -60,9 +155,28 @@
   gap: 16px;
 
   legend {
+    counter-increment: apply-section;
+    display: flex;
+    align-items: center;
+    gap: 12px;
     padding: 0 0 8px;
     font-family: var(--vih-font-serif);
     font-size: 1.1875rem;
+
+    &::before {
+      content: counter(apply-section);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--vih-green-950);
+      color: var(--vih-gold-light);
+      font-family: var(--vih-font-sans);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
   }
 }
 
@@ -70,10 +184,17 @@
   display: grid;
   gap: 16px;
 
+  // Was a hard "@media (min-width: 560px) { 1fr 1fr }" — two columns the instant the viewport
+  // crossed 560px, with no regard for how much of that width the surrounding chrome had already
+  // spent. Inside .apply-card's own padding (and again, differently, inside Profile's own layout
+  // in Views/Account/Profile.cshtml, the other consumer of this class), the space actually left
+  // for the grid is not the viewport width, so a fixed viewport breakpoint could land mid-cramped
+  // in one context and be fine in another. auto-fit sizes off the space the grid itself has, not
+  // the viewport, so it drops to one column exactly when two would be tight regardless of which
+  // page or how much padding sits around it — the same technique _experiences.scss's card grid
+  // already uses for the same reason.
   &--2 {
-    @media (min-width: 560px) {
-      grid-template-columns: 1fr 1fr;
-    }
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   }
 }
 
@@ -101,10 +222,12 @@
     color: var(--vih-ink);
     background: var(--vih-white);
     resize: vertical;
+    transition: border-color 0.15s var(--vih-ease), box-shadow 0.15s var(--vih-ease);
 
     &:focus {
       outline: none;
       border-color: var(--vih-gold);
+      box-shadow: var(--vih-shadow-focus);
     }
   }
 
@@ -134,7 +257,10 @@
 }
 
 .apply-form__intro {
-  margin: 0;
+  // Was inside .apply-form, spaced by that flex container's own gap; now sits directly in
+  // .apply-body, above .apply-card, so it needs its own bottom margin to hold that same
+  // breathing room instead of relying on a parent it's no longer inside.
+  margin: 0 0 24px;
   font-size: 0.9375rem;
   line-height: 1.65;
   color: var(--vih-text-secondary);
@@ -177,15 +303,33 @@
   }
 }
 
+// Wraps the submit button + note on /apply only (Views/Application/Index.cshtml) — Invitation/
+// Show.cshtml's own button/note pair sits directly in .apply-form, unwrapped, exactly as before.
+.apply-form__footer {
+  margin-top: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--vih-line-on-light);
+}
+
 .apply-form__submit {
   margin-top: 8px;
   align-self: flex-start;
 }
 
 .apply-form__note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.8125rem;
   color: #666;
-  margin: 4px 0 0;
+  margin: 12px 0 0;
+
+  .icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: var(--vih-gold);
+  }
 }
 
 // --- Checkout / invitation ticket picker ----------------------------------------------------

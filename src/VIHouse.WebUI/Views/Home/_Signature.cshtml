@@ -1,4 +1,9 @@
 @model List<ExperienceCardViewModel>
+@{
+    // Same reasoning as _Upcoming.cshtml, at this strip's own per-view count of 3.
+    const int perView = 3;
+    var useCarousel = Model.Count >= perView;
+}
 
 @if (Model.Count > 0)
 {
@@ -8,36 +13,31 @@
             <a class="home-section__viewall" href="/experiences">@Loc["Home.ViewAll"] &rarr;</a>
         </div>
         <div class="container">
-            <div class="swiper home-carousel" data-swiper data-swiper-per-view="3">
-                <div class="swiper-wrapper">
+            @if (useCarousel)
+            {
+                <div class="swiper home-carousel" data-swiper data-swiper-per-view="@perView">
+                    <div class="swiper-wrapper">
+                        @foreach (var e in Model)
+                        {
+                            <div class="swiper-slide">
+                                <partial name="_SignatureCard" model="e" />
+                            </div>
+                        }
+                    </div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            }
+            else
+            {
+                <div class="home-signature__grid">
                     @foreach (var e in Model)
                     {
-                        <div class="swiper-slide">
-                            <a class="home-signature__card" href="/experiences/@e.Slug">
-                                <div class="home-signature__image">
-                                    <partial name="_CoverImage" model="@(new CoverImageViewModel {
-                                        Url = e.CoverImageUrl,
-                                        Ratio = "16x9",
-                                        Sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
-                                    })" />
-                                    <span class="home-signature__badge">@Loc["Home.Signature.Badge"]</span>
-                                </div>
-                                <div class="home-signature__body">
-                                    <h3>The VI House — @e.City</h3>
-                                    <span class="home-signature__meta">@e.City, @e.Country &middot; @Loc[e.DurationKey, e.DurationDays]</span>
-                                    @if (e.FromPriceMinor is not null)
-                                    {
-                                        <span class="home-signature__price">From @MoneyFormatter.Format(e.FromPriceMinor.Value, e.Currency!)</span>
-                                    }
-                                </div>
-                            </a>
-                        </div>
+                        <partial name="_SignatureCard" model="e" />
                     }
                 </div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-pagination"></div>
-            </div>
+            }
         </div>
     </section>
 }

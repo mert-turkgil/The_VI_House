@@ -69,6 +69,14 @@ public class ApplicationController(IExperienceService experienceService, IApplic
             ModelState.AddModelError(nameof(form.AgreeToTerms), "You must agree to the Terms & Conditions and Privacy Policy to apply.");
         }
 
+        // Recovers a browser-autofilled country name ("Cyprus") back to its code ("CY") before
+        // checking it — see Countries.Normalize. ModelState.Remove matters here, not just cosmetic:
+        // <select asp-for> prefers ModelState's raw posted value over the model property when
+        // redisplaying a form, so without this, a validation failure on some OTHER field (missed
+        // the terms checkbox, say) would redisplay the dropdown with nothing selected — the tag
+        // helper looking for an option whose value is literally "Cyprus" and finding none.
+        form.Country = Countries.Normalize(form.Country);
+        ModelState.Remove(nameof(form.Country));
         if (!Countries.IsValid(form.Country))
             ModelState.AddModelError(nameof(form.Country), "Choose your country.");
 
@@ -137,6 +145,8 @@ public class ApplicationController(IExperienceService experienceService, IApplic
         ExperienceCountry = exp.Country,
         ExperienceStartAtUtc = exp.StartAtUtc,
         ExperienceEndAtUtc = exp.EndAtUtc,
+        ExperienceCoverImageUrl = exp.CoverImageUrl,
+        ExperienceCoverImageAlt = exp.CoverImageAlt,
     };
 
     private static void RefreshExperienceFields(ApplyFormViewModel form, Experience exp)
@@ -148,5 +158,7 @@ public class ApplicationController(IExperienceService experienceService, IApplic
         form.ExperienceCountry = exp.Country;
         form.ExperienceStartAtUtc = exp.StartAtUtc;
         form.ExperienceEndAtUtc = exp.EndAtUtc;
+        form.ExperienceCoverImageUrl = exp.CoverImageUrl;
+        form.ExperienceCoverImageAlt = exp.CoverImageAlt;
     }
 }

@@ -18,6 +18,13 @@ public class ApplyFormViewModel
     public DateTimeOffset ExperienceStartAtUtc { get; set; }
     public DateTimeOffset ExperienceEndAtUtc { get; set; }
 
+    // Not posted back (no hidden <input> for these — see Index.cshtml): the hero photo is the
+    // experience's own, re-read from the database on every GET and on every failed-POST
+    // redisplay via RefreshExperienceFields, the same as every other Experience* field above. A
+    // hidden field would let a visitor swap in an arbitrary image URL for their own request.
+    public string? ExperienceCoverImageUrl { get; set; }
+    public string? ExperienceCoverImageAlt { get; set; }
+
     // Personal
     [Required, StringLength(100)]
     public string FirstName { get; set; } = default!;
@@ -44,8 +51,11 @@ public class ApplyFormViewModel
     [StringLength(100)]
     public string? City { get; set; }
 
+    // No [StringLength] here on purpose: the real check is Countries.IsValid in the controller,
+    // run after Countries.Normalize has a chance to recover a browser-autofilled country name
+    // (e.g. "Cyprus") back into its code ("CY") — see Countries.Normalize's own comment. A length
+    // attribute here would reject that value before the controller ever saw it.
     [Required(ErrorMessage = "Choose your country.")]
-    [StringLength(2, MinimumLength = 2)]
     public string Country { get; set; } = default!;
 
     // About
