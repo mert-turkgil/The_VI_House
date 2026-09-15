@@ -1,6 +1,18 @@
 @model AdminAmbassadorEditViewModel
 @{
     ViewData["Title"] = Model.Name;
+    var stats = Model.Stats;
+    var purchases = stats is null ? 0 : stats.TicketPurchases + stats.MembershipPurchases;
+    // Visits are only counted on /r/{code}; a typed code converts without one, so the rate is capped rather than shown above 100.
+    var conversionRate = stats is { Visits: > 0 } ? Math.Min(100, (double)purchases / stats.Visits * 100) : 0;
+
+    string KindLabel(ReferralConversionKind kind) => kind switch
+    {
+        ReferralConversionKind.Application => "Applied to an experience",
+        ReferralConversionKind.Approved => "Application approved",
+        ReferralConversionKind.TicketPurchase => "Bought a ticket",
+        _ => "Became a member",
+    };
 }
 
 @if (TempData["StatusMessage"] is string status)
@@ -8,21 +20,94 @@
     <div class="admin-status-message">@status</div>
 }
 
+<div class="admin-toolbar" style="justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+    <div style="display:flex; align-items:center; gap:10px;">
+        <span class="admin-badge @(Model.Status == AmbassadorStatus.Active ? "admin-badge--open" : "admin-badge--draft")">@Model.Status</span>
+        <span class="admin-table__sub">Ambassador since @Model.CreatedAt.ToString("d MMM yyyy")</span>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a class="admin-btn admin-btn--ghost" asp-controller="AdminUsers" asp-action="Details" asp-route-id="@Model.UserId">Open user record</a>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; All ambassadors</a>
+    </div>
+</div>
+
 <div class="admin-review-grid">
     <div class="admin-review-main">
-        <div class="admin-card">
-            <h2>Ambassador</h2>
-            <dl class="admin-detail-list">
-                <div><dt>Code</dt><dd>@Model.Code</dd></div>
-                <div><dt>Referral Link</dt><dd>/r/@Model.Code</dd></div>
-                <div><dt>Email</dt><dd>@(Model.Email ?? "—")</dd></div>
-            </dl>
+
+        @* --- The link ------------------------------------------------------------------------ *@
+        <div class="admin-card referral-card">
+            <div class="referral-card__main">
+                <h2>Referral link</h2>
+                <p class="admin-hint" style="margin-top:0;">Absolute, ready to paste. Anyone who lands on it is cookied for 30 days and credited to @Model.Name when they apply, join or pay.</p>
+
+                <div class="referral-card__link">
+                    <code data-referral-url="@Model.ReferralUrl">@Model.ReferralUrl</code>
+                    <button type="button" class="admin-btn admin-btn--sm" data-copy="@Model.ReferralUrl" data-copied-label="Copied">Copy link</button>
+                </div>
+
+                <div class="referral-card__row">
+                    <span class="referral-card__code">Code <strong data-copy="@Model.Code" data-copied-label="Copied" role="button" tabindex="0" title="Click to copy">@Model.Code</strong></span>
+                    <a class="admin-btn admin-btn--ghost admin-btn--sm" href="@Model.ReferralUrl" target="_blank" rel="noopener">Open in new tab</a>
+                </div>
+
+                @if (Model.Email is not null)
+                {
+                    @* One click, from the House, with the absolute URL and the code — instead of an
+                       admin pasting "/r/CODE" into a mail by hand. *@
+                    <details class="referral-card__send">
+                        <summary class="admin-btn admin-btn--sm">Email the link to @Model.Email</summary>
+                        <form asp-action="SendLink" asp-route-id="@Model.Id" method="post" class="admin-form" style="margin-top:12px;">
+                            <div class="admin-field">
+                                <label for="send-note">Personal note (optional)</label>
+                                <textarea id="send-note" name="note" rows="3" maxlength="600" placeholder="e.g. Lovely to have you on board — here is your link for the launch post."></textarea>
+                            </div>
+                            <button type="submit" class="admin-btn admin-btn--sm">Send email</button>
+                        </form>
+                    </details>
+                }
+            </div>
+            <figure class="referral-card__qr" aria-label="QR code for the referral link">
+                @Html.Raw(Model.QrSvg)
+                <figcaption>Scan or drop on a slide</figcaption>
+            </figure>
         </div>
 
+        @* --- Tracked links -------------------------------------------------------------------- *@
+        <div class="admin-card" data-utm-builder data-utm-base="@Model.ReferralUrl">
+            <h2>Tracked link for a channel</h2>
+            <p class="admin-hint" style="margin-top:0;">Give each channel its own link so "Visits by source" below shows where the traffic comes from. Tags are appended as UTM parameters and recorded on every visit.</p>
+            <div class="admin-form__grid">
+                <div class="admin-field">
+                    <label for="utm-source">Source</label>
+                    <input id="utm-source" data-utm="source" list="utm-sources" placeholder="instagram" autocomplete="off" />
+                    <datalist id="utm-sources">
+                        <option value="instagram"></option><option value="linkedin"></option><option value="youtube"></option>
+                        <option value="tiktok"></option><option value="newsletter"></option><option value="podcast"></option><option value="whatsapp"></option>
+                    </datalist>
+                </div>
+                <div class="admin-field">
+                    <label for="utm-medium">Medium</label>
+                    <input id="utm-medium" data-utm="medium" list="utm-mediums" placeholder="story" autocomplete="off" />
+                    <datalist id="utm-mediums">
+                        <option value="post"></option><option value="story"></option><option value="bio"></option><option value="video"></option><option value="email"></option>
+                    </datalist>
+                </div>
+                <div class="admin-field">
+                    <label for="utm-campaign">Campaign</label>
+                    <input id="utm-campaign" data-utm="campaign" placeholder="lisbon-2026" autocomplete="off" />
+                </div>
+            </div>
+            <div class="referral-card__link">
+                <code data-utm-preview>@Model.ReferralUrl</code>
+                <button type="button" class="admin-btn admin-btn--sm" data-copy="@Model.ReferralUrl" data-utm-copy data-copied-label="Copied">Copy tracked link</button>
+            </div>
+        </div>
+
+        @* --- Performance ---------------------------------------------------------------------- *@
         <div class="admin-card">
-            <h2>Stats</h2>
-            <p style="font-size:0.75rem; color:#999; margin-top:-8px;">Counts and revenue only — no names or contact details of referred people are shown here (brief §49).</p>
-            @if (Model.Stats is { } stats)
+            <h2>Performance</h2>
+            <p class="admin-hint" style="margin-top:0;">Counts and revenue only — no names or contact details of referred people are shown (brief §49).</p>
+            @if (stats is not null)
             {
                 <div class="admin-kpi-grid">
                     <div class="admin-kpi-card">
@@ -38,8 +123,12 @@
                         <div class="admin-kpi-card__label">Approved</div>
                     </div>
                     <div class="admin-kpi-card">
-                        <div class="admin-kpi-card__value">@(stats.TicketPurchases + stats.MembershipPurchases)</div>
-                        <div class="admin-kpi-card__label">Purchases</div>
+                        <div class="admin-kpi-card__value">@purchases</div>
+                        <div class="admin-kpi-card__label">Purchases <span class="admin-table__sub">(@stats.TicketPurchases tickets · @stats.MembershipPurchases memberships)</span></div>
+                    </div>
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-card__value">@conversionRate.ToString("0.#")%</div>
+                        <div class="admin-kpi-card__label">Visit → purchase</div>
                     </div>
                     @foreach (var (currency, amountMinor) in stats.RevenueByCurrency)
                     {
@@ -50,37 +139,103 @@
                     }
                     @foreach (var (currency, amountMinor) in stats.CommissionByCurrency)
                     {
-                        <div class="admin-kpi-card">
+                        <div class="admin-kpi-card admin-kpi-card--accent">
                             <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
-                            <div class="admin-kpi-card__label">Commission Owed (@currency)</div>
+                            <div class="admin-kpi-card__label">Commission owed (@currency)</div>
                         </div>
                     }
                 </div>
             }
+
+            <div class="referral-split">
+                <section>
+                    <h3>Visits by source</h3>
+                    @if (Model.VisitSources.Count == 0)
+                    {
+                        <p class="admin-hint" style="margin-top:0;">No visits yet.</p>
+                    }
+                    else
+                    {
+                        <table class="admin-table admin-table--compact">
+                            <thead><tr><th>Source</th><th>Medium</th><th style="text-align:right;">Visits</th></tr></thead>
+                            <tbody>
+                                @foreach (var s in Model.VisitSources)
+                                {
+                                    <tr>
+                                        <td>@(s.Source ?? "direct / untagged")</td>
+                                        <td>@(s.Medium ?? "—")</td>
+                                        <td style="text-align:right;">@s.Visits</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </section>
+                <section>
+                    <h3>Recent activity</h3>
+                    @if (Model.Conversions.Count == 0)
+                    {
+                        <p class="admin-hint" style="margin-top:0;">Nothing yet. Each application, approval and purchase through the link will appear here as it happens.</p>
+                    }
+                    else
+                    {
+                        <ol class="ambassador-timeline">
+                            @foreach (var c in Model.Conversions)
+                            {
+                                <li class="ambassador-timeline__item">
+                                    <time datetime="@c.OccurredAt.ToString("o")">@c.OccurredAt.ToString("d MMM yyyy, HH:mm")</time>
+                                    <span class="ambassador-timeline__what">@KindLabel(c.Kind)</span>
+                                    @if (c.AmountMinor is { } amount && c.Currency is not null)
+                                    {
+                                        <span class="ambassador-timeline__money">
+                                            @MoneyFormatter.Format(amount, c.Currency)
+                                            @if (c.CommissionMinor is { } commission)
+                                            {
+                                                <em>&middot; commission @MoneyFormatter.Format(commission, c.Currency)</em>
+                                            }
+                                        </span>
+                                    }
+                                </li>
+                            }
+                        </ol>
+                    }
+                </section>
+            </div>
         </div>
     </div>
 
     <div class="admin-review-side">
         <div class="admin-card">
-            <h2>Edit</h2>
+            <h2>Settings</h2>
             <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
                 <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
                 <div class="admin-field">
-                    <label asp-for="Name"></label>
+                    <label asp-for="Name">Display name</label>
                     <input asp-for="Name" />
                     <span asp-validation-for="Name" class="field-validation-error"></span>
                 </div>
                 <div class="admin-field">
                     <label asp-for="CommissionPercent">Commission %</label>
-                    <input asp-for="CommissionPercent" type="number" step="0.01" />
+                    <input asp-for="CommissionPercent" type="number" step="0.01" min="0" max="100" />
+                    <p class="admin-field__hint">Applied to every purchase attributed to the link, at the rate in force when it happens.</p>
                     <span asp-validation-for="CommissionPercent" class="field-validation-error"></span>
                 </div>
                 <div class="admin-field">
                     <label asp-for="Status"></label>
                     <select asp-for="Status" asp-items="Html.GetEnumSelectList<AmbassadorStatus>()"></select>
+                    <p class="admin-field__hint">Inactive: visits to the link stop being recorded; the account and history stay.</p>
                 </div>
-                <button type="submit" class="admin-btn" style="width:100%;">Save Changes</button>
+                <button type="submit" class="admin-btn" style="width:100%;">Save changes</button>
             </form>
+        </div>
+
+        <div class="admin-card">
+            <h2>Account</h2>
+            <dl class="admin-detail-list">
+                <div><dt>Email</dt><dd>@(Model.Email ?? "—")</dd></div>
+                <div><dt>Code</dt><dd><code>@Model.Code</code> <span class="admin-table__sub">(fixed — links already shared depend on it)</span></dd></div>
+                <div><dt>Their dashboard</dt><dd><a href="/ambassador" target="_blank" rel="noopener">/ambassador</a> <span class="admin-table__sub">(what they see when signed in)</span></dd></div>
+            </dl>
         </div>
     </div>
 </div>

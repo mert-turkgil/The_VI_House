@@ -35,6 +35,10 @@ public interface IAmbassadorService
     Task RecordConversionAsync(string? referralCode, ReferralConversionKind kind, string sourceEntityType, Guid sourceEntityId,
         long? amountMinor = null, string? currency = null, CancellationToken ct = default);
 
+    /// <summary>Visits to /r/{code} grouped by utm_source (blank = no tag), most first — which
+    /// channel the ambassador's link is actually being shared on.</summary>
+    Task<List<ReferralSourceCount>> GetVisitSourcesAsync(Guid ambassadorId, CancellationToken ct = default);
+
     /// <summary>The ledger, newest first — what the dashboard's timeline shows.</summary>
     Task<List<ReferralConversion>> GetConversionsAsync(Guid ambassadorId, int take = 50, CancellationToken ct = default);
 }
@@ -44,6 +48,8 @@ public record AmbassadorCreationResult(bool Success, Ambassador? Ambassador, Gui
     public static AmbassadorCreationResult Ok(Ambassador ambassador, Guid userId) => new(true, ambassador, userId, null);
     public static AmbassadorCreationResult Fail(string error) => new(false, null, null, error);
 }
+
+public record ReferralSourceCount(string? Source, string? Medium, int Visits);
 
 public record AmbassadorStats(
     int Visits,

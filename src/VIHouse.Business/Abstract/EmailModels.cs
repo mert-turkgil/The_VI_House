@@ -56,6 +56,10 @@ public record WelcomeSetupEmailModel(string FirstName, string SetupUrl, string? 
 /// what it is worth, never who.</summary>
 public record ReferralConvertedEmailModel(string Name, string What, string? Amount, string? Commission, string DashboardUrl);
 
+/// <summary>An admin sends the ambassador their referral link (and code) — the same thing the
+/// account page shows, delivered so it can be forwarded from the inbox.</summary>
+public record AmbassadorLinkEmailModel(string Name, string ReferralUrl, string Code, decimal CommissionPercent, string DashboardUrl, string? Note);
+
 public record AdminInviteEmailModel(string FirstName, string SetupUrl, string InvitedBy, string RoleSummary);
 
 /// <summary>Sent the moment a seminar enrolment is confirmed — free, membership-covered or paid.

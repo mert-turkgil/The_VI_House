@@ -50,7 +50,9 @@
             </div>
         </header>
 
-        @if (!Model.ProfileComplete)
+        @* Staff are not asked for the founder's statements — they are not applicants. The notice
+           returns the moment they book or enrol as a guest, which is when it is needed. *@
+        @if (!Model.ProfileComplete && (Model.Standing != AccountStanding.Staff || Model.TotalSessionCount > 0 || Model.TotalBookingCount > 0))
         {
             <div class="account-notice" role="status">
                 <div>
@@ -170,6 +172,13 @@
                     <div class="account-membership__actions">
                         <a class="btn btn--primary" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">@Loc["Account.NavAdminPanel"]</a>
                     </div>
+                    @* The sections this role may open, straight from the table the panel uses. *@
+                    <nav class="account-staff__links" aria-label="@Loc["Account.NavAdminPanel"]">
+                        @foreach (var door in VIHouse.WebUI.Areas.Admin.AdminSections.VisibleTo(User).Skip(1))
+                        {
+                            <a asp-area="Admin" asp-controller="@door.Controller" asp-action="@door.Action">@door.Label</a>
+                        }
+                    </nav>
                 </div>
             </section>
         }

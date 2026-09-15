@@ -1,29 +1,74 @@
-﻿@page
+@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = Loc["Manage.Account.Title"];
     ViewData["ActivePage"] = ManageNavPages.Index;
+    var initial = string.IsNullOrWhiteSpace(Model.FullName) ? Model.Email[..1] : Model.FullName[..1];
 }
 
-<h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
-        <form id="profile-form" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
-                <label asp-for="Username" class="form-label"></label>
+
+<h1 class="account-security__title">@ViewData["Title"]</h1>
+<p class="account-security__lede">@Loc["Manage.Account.Lede"]</p>
+
+@* --- Who this account is ------------------------------------------------------------------- *@
+<section class="account-identity" aria-labelledby="identity-heading">
+    <span class="account-identity__avatar" aria-hidden="true">@initial.ToUpperInvariant()</span>
+    <div class="account-identity__body">
+        <h2 id="identity-heading">@(string.IsNullOrWhiteSpace(Model.FullName) ? Model.Email : Model.FullName)</h2>
+        <p class="account-identity__email">
+            @Model.Email
+            <span class="account-pill @(Model.EmailConfirmed ? "account-pill--ok" : "account-pill--warn")">
+                @(Model.EmailConfirmed ? Loc["Manage.Account.EmailConfirmed"] : Loc["Manage.Account.EmailUnconfirmed"])
+            </span>
+        </p>
+        <dl class="account-identity__facts">
+            <div>
+                <dt>@Loc["Manage.Account.TwoFactor"]</dt>
+                <dd>
+                    <span class="account-pill @(Model.TwoFactorEnabled ? "account-pill--ok" : "account-pill--warn")">@(Model.TwoFactorEnabled ? Loc["Manage.Account.On"] : Loc["Manage.Account.Off"])</span>
+                    <a asp-page="./TwoFactorAuthentication">@Loc["Manage.Account.Manage"]</a>
+                </dd>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            <div>
+                <dt>@Loc["Manage.Account.Password"]</dt>
+                <dd>
+                    @(Model.HasPassword ? Loc["Manage.Account.PasswordSet"] : Loc["Manage.Account.PasswordNone"])
+                    <a asp-page="./ChangePassword">@(Model.HasPassword ? Loc["Manage.Account.Change"] : Loc["Manage.Account.Set"])</a>
+                </dd>
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </form>
+            <div>
+                <dt>@Loc["Manage.Account.MemberSince"]</dt>
+                <dd>@Model.CreatedAt.ToString("d MMMM yyyy")</dd>
+            </div>
+            @if (Model.LastLoginAt is { } last)
+            {
+                <div>
+                    <dt>@Loc["Manage.Account.LastSignIn"]</dt>
+                    <dd>@last.ToString("d MMM yyyy, HH:mm") UTC</dd>
+                </div>
+            }
+        </dl>
+        <p class="account-identity__note">
+            @Loc["Manage.Account.ProfileNote"] <a asp-area="" asp-controller="Account" asp-action="Profile">@Loc["Account.NavProfile"] &rarr;</a>
+        </p>
     </div>
-</div>
+</section>
+
+@* --- The one editable thing here ----------------------------------------------------------- *@
+<form id="profile-form" method="post" class="auth-form account-security__form">
+    <h2 class="account-security__subtitle">@Loc["Manage.Account.Contact"]</h2>
+    <div asp-validation-summary="ModelOnly" class="auth-field__error" role="alert"></div>
+    <div class="auth-field">
+        <label asp-for="Input.PhoneNumber" class="auth-field__label">@Loc["Manage.Account.Phone"]</label>
+        <input asp-for="Input.PhoneNumber" class="auth-field__input" type="tel" autocomplete="tel" inputmode="tel" placeholder="+44 7700 900000" />
+        <span class="auth-field__hint">@Loc["Manage.Account.PhoneHint"]</span>
+        <span asp-validation-for="Input.PhoneNumber" class="auth-field__error"></span>
+    </div>
+    <div class="auth-form__submit-row">
+        <button id="update-profile-button" type="submit" class="btn btn--primary">@Loc["Manage.Account.Save"]</button>
+    </div>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

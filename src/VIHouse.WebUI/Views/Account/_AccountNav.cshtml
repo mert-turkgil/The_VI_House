@@ -9,6 +9,9 @@
 @{
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     string NavClass(string action) => string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+    // The security pages are Razor Pages under /Identity/Account/Manage, so they have no action —
+    // they are recognised by their page path instead.
+    var onSecurityPages = ViewContext.RouteData.Values["page"]?.ToString()?.StartsWith("/Account/Manage", StringComparison.OrdinalIgnoreCase) == true;
 
     // The Member role is granted to anyone who pays — including a single-event ticket holder — so it
     // can't decide whether to show the members-only links. Only an active Membership can. Showing a
@@ -54,5 +57,5 @@
            FeatureOptions.MembershipSales. *@
         <a asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Account.NavJoinTheHouse"]</a>
     }
-    <a asp-area="Identity" asp-page="/Account/Manage/Index">@Loc["Account.NavSecurity"]</a>
+    <a class="@(onSecurityPages ? "active" : "")" asp-area="Identity" asp-page="/Account/Manage/Index">@Loc["Account.NavSecurity"]</a>
 </nav>

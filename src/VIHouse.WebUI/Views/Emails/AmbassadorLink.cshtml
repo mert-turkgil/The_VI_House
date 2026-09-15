@@ -1,0 +1,31 @@
+@model AmbassadorLinkEmailModel
+
+<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">Your VI House referral link</h1>
+<p style="margin:0 0 16px;">Hi @Model.Name,</p>
+<p style="margin:0 0 16px;">
+    Here is the link that credits everyone you send to The VI House to you. Share it anywhere —
+    a post, a story, a message, a slide.
+</p>
+
+<p style="margin:0 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:0.06em; color:#666;">Your link</p>
+<p style="margin:0 0 16px; padding:12px 14px; background:#f4f0e6; border-radius:6px; font-size:16px; word-break:break-all;">
+    <a href="@Model.ReferralUrl" style="color:#00230a; font-weight:600;">@Model.ReferralUrl</a>
+</p>
+
+<p style="margin:0 0 16px;">
+    If someone would rather type it, your code is <strong>@Model.Code</strong> — it works in the
+    referral box on the application and join forms.
+</p>
+
+@if (!string.IsNullOrWhiteSpace(Model.Note))
+{
+    <p style="margin:0 0 16px; padding:12px 14px; border-left:3px solid #b8955a;">@Model.Note</p>
+}
+
+<p style="margin:0 0 16px;">
+    You earn @Model.CommissionPercent% of what your referrals pay. Every application, approval and
+    purchase is listed on <a href="@Model.DashboardUrl" style="color:#00230a;">your dashboard</a>,
+    and you will be emailed the moment each one happens.
+</p>
+
+<p style="margin:0;">&mdash; The VI House</p>

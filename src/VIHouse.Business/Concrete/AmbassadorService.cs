@@ -92,6 +92,13 @@ public class AmbassadorService(
         }
     }
 
+    public async Task<List<ReferralSourceCount>> GetVisitSourcesAsync(Guid ambassadorId, CancellationToken ct = default) =>
+        (await visits.FindAsync(v => v.AmbassadorId == ambassadorId, ct))
+            .GroupBy(v => (Source: v.UtmSource?.Trim().ToLowerInvariant(), Medium: v.UtmMedium?.Trim().ToLowerInvariant()))
+            .Select(g => new ReferralSourceCount(g.Key.Source, g.Key.Medium, g.Count()))
+            .OrderByDescending(s => s.Visits)
+            .ToList();
+
     public async Task<List<ReferralConversion>> GetConversionsAsync(Guid ambassadorId, int take = 50, CancellationToken ct = default) =>
         (await conversions.FindAsync(c => c.AmbassadorId == ambassadorId, ct))
             .OrderByDescending(c => c.OccurredAt)

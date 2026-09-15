@@ -32,6 +32,15 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public string Username { get; set; }
 
+        // --- What the page shows about the account, beside the one thing it can change here ------
+        public string FullName { get; set; } = "";
+        public string Email { get; set; } = "";
+        public bool EmailConfirmed { get; set; }
+        public bool TwoFactorEnabled { get; set; }
+        public bool HasPassword { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? LastLoginAt { get; set; }
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -67,7 +76,13 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
             Username = userName;
-
+            FullName = string.Join(" ", new[] { user.FirstName, user.LastName }.Where(s => !string.IsNullOrWhiteSpace(s)));
+            Email = user.Email ?? userName;
+            EmailConfirmed = user.EmailConfirmed;
+            TwoFactorEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
+            HasPassword = await _userManager.HasPasswordAsync(user);
+            CreatedAt = user.CreatedAt;
+            LastLoginAt = user.LastLoginAt;
             Input = new InputModel
             {
                 PhoneNumber = phoneNumber

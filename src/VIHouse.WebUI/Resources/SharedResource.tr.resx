@@ -680,6 +680,46 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Manage.TwoFactor.Forget" xml:space="preserve"><value>Bu tarayıcıyı unut</value></data>
   <data name="Manage.TwoFactor.Disable" xml:space="preserve"><value>İki adımlı doğrulamayı kapat</value></data>
   <data name="Manage.Danger.Heading" xml:space="preserve"><value>Bunlara dikkat</value></data>
+  <data name="Manage.Nav.Account" xml:space="preserve"><value>Hesap</value></data>
+  <data name="Manage.Nav.Email" xml:space="preserve"><value>E-posta</value></data>
+  <data name="Manage.Nav.Password" xml:space="preserve"><value>Şifre</value></data>
+  <data name="Manage.Nav.TwoFactor" xml:space="preserve"><value>İki adımlı doğrulama</value></data>
+  <data name="Manage.Nav.External" xml:space="preserve"><value>Giriş sağlayıcıları</value></data>
+  <data name="Manage.Nav.Data" xml:space="preserve"><value>Verileriniz</value></data>
+  <data name="Manage.Account.Title" xml:space="preserve"><value>Hesabınız</value></data>
+  <data name="Manage.Account.Lede" xml:space="preserve"><value>Hesabınızın giriş tarafı. Adınız, unvanınız ve adresiniz profilinizde.</value></data>
+  <data name="Manage.Account.EmailConfirmed" xml:space="preserve"><value>Onaylı</value></data>
+  <data name="Manage.Account.EmailUnconfirmed" xml:space="preserve"><value>Onaylanmadı</value></data>
+  <data name="Manage.Account.TwoFactor" xml:space="preserve"><value>İki adımlı doğrulama</value></data>
+  <data name="Manage.Account.Password" xml:space="preserve"><value>Şifre</value></data>
+  <data name="Manage.Account.PasswordSet" xml:space="preserve"><value>Ayarlı</value></data>
+  <data name="Manage.Account.PasswordNone" xml:space="preserve"><value>Henüz yok</value></data>
+  <data name="Manage.Account.Manage" xml:space="preserve"><value>Yönet</value></data>
+  <data name="Manage.Account.Change" xml:space="preserve"><value>Değiştir</value></data>
+  <data name="Manage.Account.Set" xml:space="preserve"><value>Belirle</value></data>
+  <data name="Manage.Account.MemberSince" xml:space="preserve"><value>Hesap oluşturuldu</value></data>
+  <data name="Manage.Account.LastSignIn" xml:space="preserve"><value>Son giriş</value></data>
+  <data name="Manage.Account.ProfileNote" xml:space="preserve"><value>Adınızı, unvanınızı veya adresinizi mi arıyorsunuz?</value></data>
+  <data name="Manage.Account.Contact" xml:space="preserve"><value>İletişim numarası</value></data>
+  <data name="Manage.Account.Phone" xml:space="preserve"><value>Telefon numarası</value></data>
+  <data name="Manage.Account.PhoneHint" xml:space="preserve"><value>İsteğe bağlı. Yalnızca ödeme bağlantısı veya kayıtlı olduğunuz bir şeyde acil bir değişiklik için — asla pazarlama için değil.</value></data>
+  <data name="Manage.Account.Save" xml:space="preserve"><value>Kaydet</value></data>
+  <data name="Manage.Account.On" xml:space="preserve"><value>Açık</value></data>
+  <data name="Manage.Account.Off" xml:space="preserve"><value>Kapalı</value></data>
+  <data name="Manage.Email.Title" xml:space="preserve"><value>E-posta adresi</value></data>
+  <data name="Manage.Email.Lede" xml:space="preserve"><value>Makbuzlarınız, oturum bağlantılarınız ve giriş kodlarınız buraya gider. Değiştirmek önce yeni adrese bir onay gönderir.</value></data>
+  <data name="Manage.Email.Current" xml:space="preserve"><value>Mevcut adres</value></data>
+  <data name="Manage.Email.Resend" xml:space="preserve"><value>Onay e-postasını yeniden gönder</value></data>
+  <data name="Manage.Email.New" xml:space="preserve"><value>Yeni adres</value></data>
+  <data name="Manage.Email.NewHint" xml:space="preserve"><value>Bu adrese değişikliği onaylamanız için bir bağlantı göndereceğiz; tıklayana kadar hiçbir şey değişmez.</value></data>
+  <data name="Manage.Email.Change" xml:space="preserve"><value>E-postayı değiştir</value></data>
+  <data name="Manage.Password.Title" xml:space="preserve"><value>Şifre</value></data>
+  <data name="Manage.Password.Lede" xml:space="preserve"><value>Başka hiçbir yerde kullanmadığınız uzun bir şey seçin. Burada oturumunuz açık kalır.</value></data>
+  <data name="Manage.Password.Current" xml:space="preserve"><value>Mevcut şifre</value></data>
+  <data name="Manage.Password.New" xml:space="preserve"><value>Yeni şifre</value></data>
+  <data name="Manage.Password.Rules" xml:space="preserve"><value>Harf, rakam ve sembol karışımıyla en az 8 karakter.</value></data>
+  <data name="Manage.Password.Confirm" xml:space="preserve"><value>Yeni şifreyi onaylayın</value></data>
+  <data name="Manage.Password.Update" xml:space="preserve"><value>Şifreyi güncelle</value></data>
 
   <data name="Home.Upcoming.Heading" xml:space="preserve"><value>Yaklaşan deneyimler</value></data>
   <data name="Home.Signature.Heading" xml:space="preserve"><value>İmza deneyimler</value></data>

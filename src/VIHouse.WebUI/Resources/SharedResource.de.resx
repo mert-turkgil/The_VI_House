@@ -680,6 +680,46 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Manage.TwoFactor.Forget" xml:space="preserve"><value>Diesen Browser vergessen</value></data>
   <data name="Manage.TwoFactor.Disable" xml:space="preserve"><value>Zwei-Schritt-Bestätigung ausschalten</value></data>
   <data name="Manage.Danger.Heading" xml:space="preserve"><value>Vorsicht mit diesen</value></data>
+  <data name="Manage.Nav.Account" xml:space="preserve"><value>Konto</value></data>
+  <data name="Manage.Nav.Email" xml:space="preserve"><value>E-Mail</value></data>
+  <data name="Manage.Nav.Password" xml:space="preserve"><value>Passwort</value></data>
+  <data name="Manage.Nav.TwoFactor" xml:space="preserve"><value>Zwei-Schritt-Verifizierung</value></data>
+  <data name="Manage.Nav.External" xml:space="preserve"><value>Anmeldeanbieter</value></data>
+  <data name="Manage.Nav.Data" xml:space="preserve"><value>Ihre Daten</value></data>
+  <data name="Manage.Account.Title" xml:space="preserve"><value>Ihr Konto</value></data>
+  <data name="Manage.Account.Lede" xml:space="preserve"><value>Die Anmeldeseite Ihres Kontos. Name, Titel und Adresse finden Sie in Ihrem Profil.</value></data>
+  <data name="Manage.Account.EmailConfirmed" xml:space="preserve"><value>Bestätigt</value></data>
+  <data name="Manage.Account.EmailUnconfirmed" xml:space="preserve"><value>Nicht bestätigt</value></data>
+  <data name="Manage.Account.TwoFactor" xml:space="preserve"><value>Zwei-Schritt-Verifizierung</value></data>
+  <data name="Manage.Account.Password" xml:space="preserve"><value>Passwort</value></data>
+  <data name="Manage.Account.PasswordSet" xml:space="preserve"><value>Gesetzt</value></data>
+  <data name="Manage.Account.PasswordNone" xml:space="preserve"><value>Noch keines</value></data>
+  <data name="Manage.Account.Manage" xml:space="preserve"><value>Verwalten</value></data>
+  <data name="Manage.Account.Change" xml:space="preserve"><value>Ändern</value></data>
+  <data name="Manage.Account.Set" xml:space="preserve"><value>Festlegen</value></data>
+  <data name="Manage.Account.MemberSince" xml:space="preserve"><value>Konto erstellt</value></data>
+  <data name="Manage.Account.LastSignIn" xml:space="preserve"><value>Letzte Anmeldung</value></data>
+  <data name="Manage.Account.ProfileNote" xml:space="preserve"><value>Suchen Sie Name, Titel oder Adresse?</value></data>
+  <data name="Manage.Account.Contact" xml:space="preserve"><value>Telefonnummer</value></data>
+  <data name="Manage.Account.Phone" xml:space="preserve"><value>Telefonnummer</value></data>
+  <data name="Manage.Account.PhoneHint" xml:space="preserve"><value>Optional. Nur für einen Zahlungslink oder eine dringende Änderung an einer Buchung — nie für Werbung.</value></data>
+  <data name="Manage.Account.Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="Manage.Account.On" xml:space="preserve"><value>An</value></data>
+  <data name="Manage.Account.Off" xml:space="preserve"><value>Aus</value></data>
+  <data name="Manage.Email.Title" xml:space="preserve"><value>E-Mail-Adresse</value></data>
+  <data name="Manage.Email.Lede" xml:space="preserve"><value>Dorthin gehen Belege, Session-Links und Anmeldecodes. Bei einer Änderung wird zuerst die neue Adresse bestätigt.</value></data>
+  <data name="Manage.Email.Current" xml:space="preserve"><value>Aktuelle Adresse</value></data>
+  <data name="Manage.Email.Resend" xml:space="preserve"><value>Bestätigungs-E-Mail erneut senden</value></data>
+  <data name="Manage.Email.New" xml:space="preserve"><value>Neue Adresse</value></data>
+  <data name="Manage.Email.NewHint" xml:space="preserve"><value>Wir senden an diese Adresse einen Bestätigungslink; erst mit dem Klick wird umgestellt.</value></data>
+  <data name="Manage.Email.Change" xml:space="preserve"><value>E-Mail ändern</value></data>
+  <data name="Manage.Password.Title" xml:space="preserve"><value>Passwort</value></data>
+  <data name="Manage.Password.Lede" xml:space="preserve"><value>Wählen Sie etwas Langes, das Sie nirgendwo sonst verwenden. Sie bleiben hier angemeldet.</value></data>
+  <data name="Manage.Password.Current" xml:space="preserve"><value>Aktuelles Passwort</value></data>
+  <data name="Manage.Password.New" xml:space="preserve"><value>Neues Passwort</value></data>
+  <data name="Manage.Password.Rules" xml:space="preserve"><value>Mindestens 8 Zeichen, mit Buchstaben, Zahlen und Symbolen.</value></data>
+  <data name="Manage.Password.Confirm" xml:space="preserve"><value>Neues Passwort bestätigen</value></data>
+  <data name="Manage.Password.Update" xml:space="preserve"><value>Passwort aktualisieren</value></data>
 
   <data name="Home.Upcoming.Heading" xml:space="preserve"><value>Kommende Experiences</value></data>
   <data name="Home.Signature.Heading" xml:space="preserve"><value>Signature-Experiences</value></data>

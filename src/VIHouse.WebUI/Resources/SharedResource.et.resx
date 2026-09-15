@@ -680,6 +680,46 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Manage.TwoFactor.Forget" xml:space="preserve"><value>Unusta see brauser</value></data>
   <data name="Manage.TwoFactor.Disable" xml:space="preserve"><value>Lülita kaheastmeline kinnitamine välja</value></data>
   <data name="Manage.Danger.Heading" xml:space="preserve"><value>Ole nendega ettevaatlik</value></data>
+  <data name="Manage.Nav.Account" xml:space="preserve"><value>Konto</value></data>
+  <data name="Manage.Nav.Email" xml:space="preserve"><value>E-post</value></data>
+  <data name="Manage.Nav.Password" xml:space="preserve"><value>Parool</value></data>
+  <data name="Manage.Nav.TwoFactor" xml:space="preserve"><value>Kaheastmeline kinnitamine</value></data>
+  <data name="Manage.Nav.External" xml:space="preserve"><value>Sisselogimisteenused</value></data>
+  <data name="Manage.Nav.Data" xml:space="preserve"><value>Teie andmed</value></data>
+  <data name="Manage.Account.Title" xml:space="preserve"><value>Teie konto</value></data>
+  <data name="Manage.Account.Lede" xml:space="preserve"><value>Teie konto sisselogimispool. Nimi, ametinimetus ja aadress on teie profiilil.</value></data>
+  <data name="Manage.Account.EmailConfirmed" xml:space="preserve"><value>Kinnitatud</value></data>
+  <data name="Manage.Account.EmailUnconfirmed" xml:space="preserve"><value>Kinnitamata</value></data>
+  <data name="Manage.Account.TwoFactor" xml:space="preserve"><value>Kaheastmeline kinnitamine</value></data>
+  <data name="Manage.Account.Password" xml:space="preserve"><value>Parool</value></data>
+  <data name="Manage.Account.PasswordSet" xml:space="preserve"><value>Määratud</value></data>
+  <data name="Manage.Account.PasswordNone" xml:space="preserve"><value>Veel puudub</value></data>
+  <data name="Manage.Account.Manage" xml:space="preserve"><value>Halda</value></data>
+  <data name="Manage.Account.Change" xml:space="preserve"><value>Muuda</value></data>
+  <data name="Manage.Account.Set" xml:space="preserve"><value>Määra</value></data>
+  <data name="Manage.Account.MemberSince" xml:space="preserve"><value>Konto loodud</value></data>
+  <data name="Manage.Account.LastSignIn" xml:space="preserve"><value>Viimane sisselogimine</value></data>
+  <data name="Manage.Account.ProfileNote" xml:space="preserve"><value>Otsite oma nime, ametinimetust või aadressi?</value></data>
+  <data name="Manage.Account.Contact" xml:space="preserve"><value>Kontaktnumber</value></data>
+  <data name="Manage.Account.Phone" xml:space="preserve"><value>Telefoninumber</value></data>
+  <data name="Manage.Account.PhoneHint" xml:space="preserve"><value>Valikuline. Kasutatakse ainult makselingi või kiireloomulise muudatuse jaoks broneeringus — mitte kunagi turunduseks.</value></data>
+  <data name="Manage.Account.Save" xml:space="preserve"><value>Salvesta</value></data>
+  <data name="Manage.Account.On" xml:space="preserve"><value>Sees</value></data>
+  <data name="Manage.Account.Off" xml:space="preserve"><value>Väljas</value></data>
+  <data name="Manage.Email.Title" xml:space="preserve"><value>E-posti aadress</value></data>
+  <data name="Manage.Email.Lede" xml:space="preserve"><value>Siia saabuvad teie kviitungid, seansilingid ja sisselogimiskoodid. Muutmisel saadetakse esmalt kinnitus uuele aadressile.</value></data>
+  <data name="Manage.Email.Current" xml:space="preserve"><value>Praegune aadress</value></data>
+  <data name="Manage.Email.Resend" xml:space="preserve"><value>Saada kinnituskiri uuesti</value></data>
+  <data name="Manage.Email.New" xml:space="preserve"><value>Uus aadress</value></data>
+  <data name="Manage.Email.NewHint" xml:space="preserve"><value>Saadame sellele aadressile kinnituslingi; enne klõpsamist ei muutu midagi.</value></data>
+  <data name="Manage.Email.Change" xml:space="preserve"><value>Muuda e-posti</value></data>
+  <data name="Manage.Password.Title" xml:space="preserve"><value>Parool</value></data>
+  <data name="Manage.Password.Lede" xml:space="preserve"><value>Valige midagi pikka, mida te mujal ei kasuta. Siin jääte sisse logituks.</value></data>
+  <data name="Manage.Password.Current" xml:space="preserve"><value>Praegune parool</value></data>
+  <data name="Manage.Password.New" xml:space="preserve"><value>Uus parool</value></data>
+  <data name="Manage.Password.Rules" xml:space="preserve"><value>Vähemalt 8 märki, tähtede, numbrite ja sümbolite seguga.</value></data>
+  <data name="Manage.Password.Confirm" xml:space="preserve"><value>Kinnita uus parool</value></data>
+  <data name="Manage.Password.Update" xml:space="preserve"><value>Uuenda parooli</value></data>
 
   <data name="Home.Upcoming.Heading" xml:space="preserve"><value>Tulevased elamused</value></data>
   <data name="Home.Signature.Heading" xml:space="preserve"><value>Signatuurelamused</value></data>

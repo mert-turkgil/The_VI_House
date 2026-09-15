@@ -5,12 +5,12 @@
  * anyway, so selecting it by hand still works.
  */
 export function initCopyButtons(): void {
-  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-copy]'));
+  const buttons = Array.from(document.querySelectorAll<HTMLElement>('[data-copy]'));
   if (buttons.length === 0 || !navigator.clipboard) return;
 
   buttons.forEach((button) => {
     const original = button.textContent ?? '';
-    button.addEventListener('click', async () => {
+    const activate = async () => {
       const value = button.dataset.copy ?? '';
       try {
         await navigator.clipboard.writeText(value);
@@ -23,6 +23,13 @@ export function initCopyButtons(): void {
         button.textContent = original;
         button.classList.remove('is-copied');
       }, 1800);
-    });
+    };
+    button.addEventListener('click', activate);
+    // A non-button element carrying data-copy (a <code> with role="button") needs the keyboard path too.
+    if (button.tagName !== 'BUTTON') {
+      button.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); void activate(); }
+      });
+    }
   });
 }

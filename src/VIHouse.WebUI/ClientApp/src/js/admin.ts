@@ -7,6 +7,8 @@ import { initAdminNav } from './modules/adminNav';
 import { initToasts } from './modules/toasts';
 import { initTranslationEditor } from './modules/translations';
 import { initScrollReveal } from './modules/reveal';
+import { initCopyButtons } from './modules/copy';
+import { initUtmBuilder } from './modules/utmBuilder';
 
 // Every init is called unconditionally and guards itself on the data attribute or element it needs,
 // which is the convention both entry points already follow — there is no page router.
@@ -23,4 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initRowLinks();
   initTranslationEditor();
   initScrollReveal();
+  initCopyButtons();
+  initUtmBuilder();
 });

@@ -1342,3 +1342,219 @@
     margin: 0;
   }
 }
+
+// --- Security & Login (Areas/Identity/Pages/Account/Manage) -----------------------------------------
+// Same shell as the rest of the account; the security pages are tabs inside one section.
+
+.account-security__head {
+  margin-bottom: var(--vih-space-md);
+}
+
+.account-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: var(--vih-space-2xs);
+  padding-bottom: var(--vih-space-2xs);
+  border-bottom: 1px solid var(--vih-line-on-light);
+
+  a {
+    padding: 8px 12px;
+    border-radius: var(--vih-radius-pill);
+    font-size: var(--vih-text-sm);
+    font-weight: 600;
+    color: var(--vih-text-secondary);
+    text-decoration: none;
+    transition: background var(--vih-dur-base) var(--vih-ease-out), color var(--vih-dur-base) var(--vih-ease-out);
+
+    &:hover {
+      background: var(--vih-cream);
+      color: var(--vih-green-900);
+    }
+
+    &.active {
+      background: var(--vih-green-900);
+      color: var(--vih-cream);
+    }
+  }
+}
+
+.account-security__title {
+  margin: 0 0 var(--vih-space-3xs);
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-3xl);
+  color: var(--vih-green-900);
+}
+
+.account-security__subtitle {
+  margin: 0 0 var(--vih-space-sm);
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-xl);
+  color: var(--vih-green-900);
+}
+
+.account-security__lede {
+  margin: 0 0 var(--vih-space-md);
+  max-width: 60ch;
+  font-size: var(--vih-text-md);
+  line-height: 1.6;
+  color: var(--vih-text-muted);
+}
+
+.account-security__form {
+  max-width: 520px;
+}
+
+.account-security__inline {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+
+  .auth-field__input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// The identity card at the top of the Account page: who this is, and the state of the things
+// that keep the account safe, each with the link to where it is changed.
+.account-identity {
+  display: flex;
+  gap: var(--vih-space-sm);
+  margin-bottom: var(--vih-space-lg);
+  padding: var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+
+  h2 {
+    margin: 0 0 2px;
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-xl);
+    color: var(--vih-green-900);
+  }
+
+  @media (max-width: 559px) {
+    flex-direction: column;
+  }
+}
+
+.account-identity__avatar {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--vih-green-900);
+  color: var(--vih-gold-light);
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-2xl);
+}
+
+.account-identity__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.account-identity__email {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+  margin: 0 0 var(--vih-space-sm);
+  font-size: var(--vih-text-base);
+  color: var(--vih-text-secondary);
+  word-break: break-all;
+}
+
+.account-identity__facts {
+  display: grid;
+  gap: var(--vih-space-xs) var(--vih-space-md);
+  margin: 0;
+  padding-top: var(--vih-space-sm);
+  border-top: 1px solid var(--vih-line-on-light);
+
+  @media (min-width: 560px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  dt {
+    font-size: var(--vih-text-2xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vih-text-muted);
+  }
+
+  dd {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--vih-space-2xs);
+    margin: 4px 0 0;
+    font-size: var(--vih-text-base);
+
+    a {
+      font-size: var(--vih-text-sm);
+      font-weight: 600;
+      color: var(--vih-green-900);
+    }
+  }
+}
+
+.account-identity__note {
+  margin: var(--vih-space-sm) 0 0;
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+
+  a {
+    font-weight: 600;
+    color: var(--vih-green-900);
+  }
+}
+
+.account-pill {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: var(--vih-radius-pill);
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  &--ok {
+    background: rgba(28, 66, 41, 0.1);
+    color: var(--vih-green-700);
+  }
+
+  &--warn {
+    background: rgba(184, 149, 90, 0.16);
+    color: #7a5f2e;
+  }
+}
+
+// Staff on the overview: the panel's doors, filtered to what their role may open.
+.account-staff__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+  margin-top: var(--vih-space-sm);
+
+  a {
+    padding: 7px 12px;
+    border-radius: var(--vih-radius-pill);
+    border: 1px solid var(--vih-line-on-light);
+    background: var(--vih-white);
+    font-size: var(--vih-text-sm);
+    font-weight: 600;
+    color: var(--vih-green-900);
+    text-decoration: none;
+    transition: border-color var(--vih-dur-base) var(--vih-ease-out), transform var(--vih-dur-base) var(--vih-ease-out);
+
+    &:hover {
+      border-color: var(--vih-green-900);
+      transform: translateY(-1px);
+    }
+  }
+}

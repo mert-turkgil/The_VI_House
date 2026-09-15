@@ -2,12 +2,12 @@
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
-<a class="@ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profile</a>
-<a class="@ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a>
-<a class="@ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a>
+<a class="@ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">@Loc["Manage.Nav.Account"]</a>
+<a class="@ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">@Loc["Manage.Nav.Email"]</a>
+<a class="@ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">@Loc["Manage.Nav.Password"]</a>
+<a class="@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">@Loc["Manage.Nav.TwoFactor"]</a>
 @if (hasExternalLogins)
 {
-    <a id="external-login" class="@ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External logins</a>
+    <a id="external-login" class="@ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">@Loc["Manage.Nav.External"]</a>
 }
-<a class="@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-factor authentication</a>
-<a class="@ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal data</a>
+<a class="@ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">@Loc["Manage.Nav.Data"]</a>

@@ -21,6 +21,21 @@ public class AdminAmbassadorEditViewModel
 
     public AmbassadorStats? Stats { get; set; }
 
+    // --- Read-only, for the page ----------------------------------------------------------------
+
+    public Guid UserId { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+
+    /// <summary>The absolute /r/{code} link — what an admin copies or emails. Built from
+    /// Site:BaseUrl so it is the public host even when the panel is opened by IP or locally.</summary>
+    public string ReferralUrl { get; set; } = "";
+
+    /// <summary>The link as an inline SVG QR code, for a slide or a printed card.</summary>
+    public string QrSvg { get; set; } = "";
+
+    public List<ReferralConversion> Conversions { get; set; } = [];
+    public List<ReferralSourceCount> VisitSources { get; set; } = [];
+
     public static AdminAmbassadorEditViewModel FromEntity(Ambassador a, string? email) => new()
     {
         Id = a.Id,
@@ -29,6 +44,8 @@ public class AdminAmbassadorEditViewModel
         Name = a.Name,
         CommissionPercent = a.CommissionPercent,
         Status = a.Status,
+        UserId = a.UserId,
+        CreatedAt = a.CreatedAt,
     };
 
     public Ambassador ToEntity() => new()

@@ -8,12 +8,20 @@
         Layout = "/Views/Shared/_Layout.cshtml";
     }
 }
-
+@*
+    The same shell as /account — the account nav on the left, so "Security & Login" is one section
+    of the account rather than a second, unrelated settings site with its own six-link menu. The
+    security pages themselves are a row of tabs above the content.
+*@
 <div class="account-manage">
-    <nav class="account-manage__nav" aria-label="Account settings">
-        <partial name="_ManageNav" />
-    </nav>
-    <div class="account-manage__content">
+    <partial name="/Views/Account/_AccountNav.cshtml" />
+    <div class="account-manage__content account-security">
+        <header class="account-security__head">
+            <span class="account-dash__eyebrow">@Loc["Account.NavSecurity"]</span>
+            <nav class="account-subnav" aria-label="@Loc["Account.NavSecurity"]">
+                <partial name="_ManageNav" />
+            </nav>
+        </header>
         @RenderBody()
     </div>
 </div>
