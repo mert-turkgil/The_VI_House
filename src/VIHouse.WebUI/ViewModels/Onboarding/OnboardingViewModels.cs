@@ -37,6 +37,9 @@ public class TwoFactorSetupViewModel
     /// <summary>otpauth:// URI encoded into the QR code.</summary>
     public string AuthenticatorUri { get; set; } = "";
 
+    /// <summary>The QR code itself, as inline SVG markup — see Helpers/AuthenticatorQr.</summary>
+    public string QrSvg { get; set; } = "";
+
     // ErrorMessage/Name are resource *keys*, not literals: Program.cs points the DataAnnotations
     // localizer at SharedResource, so these resolve per-culture the same way the view strings do.
     // A key with no translation falls back to the key itself, which is why every one used here has

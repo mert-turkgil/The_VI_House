@@ -94,8 +94,23 @@ public class SeminarService(
 
         // The "free if you're subscribed" rule. Read live rather than from a claim, so a lapsed
         // membership stops covering seminars the moment it lapses rather than at next sign-in.
-        if (seminar.IncludedWithMembership && await membershipService.GetCurrentMembershipAsync(userId.Value, ct) is not null)
+        var isMember = (seminar.IncludedWithMembership || seminar.MemberDiscountPercent > 0)
+            && await membershipService.GetCurrentMembershipAsync(userId.Value, ct) is not null;
+
+        if (seminar.IncludedWithMembership && isMember)
             return new SeminarAccessInfo(SeminarAccessOutcome.IncludedInMembership, seminar.PriceMinor, seminar.Currency, seatsRemaining) { ProfileIncomplete = profileIncomplete };
+
+        // Not covered, but a member: the member price. PriceMinor on the result is what they pay,
+        // and EnrolAsync charges exactly that figure.
+        if (isMember && seminar.MemberDiscountPercent > 0)
+        {
+            return new SeminarAccessInfo(SeminarAccessOutcome.RequiresPayment, MemberPricing.Apply(seminar.PriceMinor, seminar.MemberDiscountPercent), seminar.Currency, seatsRemaining)
+            {
+                ProfileIncomplete = profileIncomplete,
+                MemberDiscountPercent = seminar.MemberDiscountPercent,
+                FullPriceMinor = seminar.PriceMinor,
+            };
+        }
 
         return new SeminarAccessInfo(SeminarAccessOutcome.RequiresPayment, seminar.PriceMinor, seminar.Currency, seatsRemaining) { ProfileIncomplete = profileIncomplete };
     }
@@ -212,7 +227,7 @@ public class SeminarService(
         var enrollment = await UpsertEnrollmentAsync(seminarId, userId, ct);
         enrollment.Status = SeminarEnrollmentStatus.Pending;
         enrollment.GrantedVia = SeminarAccessGrant.Purchase;
-        enrollment.AmountMinor = seminar.PriceMinor;
+        enrollment.AmountMinor = access.PriceMinor; // the member price when one applies — see GetAccessAsync
         enrollment.Currency = seminar.Currency;
         enrollment.ConfirmedAt = null;
         // Placeholder, unique — replaced the moment the provider hands back a session id. The row
@@ -230,7 +245,7 @@ public class SeminarService(
                 CustomerEmail: user.Email!,
                 ProductName: $"The VI House Session — {translation?.Title ?? seminar.Slug}",
                 ProductDescription: translation?.Summary,
-                AmountMinor: seminar.PriceMinor,
+                AmountMinor: access.PriceMinor,
                 Currency: seminar.Currency,
                 SuccessUrl: successUrl,
                 CancelUrl: cancelUrl,
@@ -366,6 +381,7 @@ public class SeminarService(
         existing.PriceMinor = updated.PriceMinor;
         existing.Currency = updated.Currency;
         existing.IncludedWithMembership = updated.IncludedWithMembership;
+        existing.MemberDiscountPercent = updated.MemberDiscountPercent;
         existing.SortOrder = updated.SortOrder;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
 

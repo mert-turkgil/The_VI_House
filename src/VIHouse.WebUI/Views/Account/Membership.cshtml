@@ -165,9 +165,28 @@
                                     }
                                 </ul>
                             }
-                            <form asp-controller="Membership" asp-action="Checkout" asp-route-planId="@plan.Id" method="post">
-                                <button type="submit" class="btn btn--primary" style="width:100%;">@Loc["Membership.Join"]</button>
-                            </form>
+                            @if (plan.IsFull)
+                            {
+                                <p class="membership-plan-card__seats membership-plan-card__seats--full">@Loc["Membership.Plan.Full"]</p>
+                                <form asp-controller="Membership" asp-action="Waitlist" asp-route-planId="@plan.Id" method="post" class="membership-waitlist">
+                                    <button type="submit" class="btn btn--ghost-dark" style="width:100%;">@Loc["Membership.Waitlist.Cta"]</button>
+                                </form>
+                            }
+                            else
+                            {
+                                @if (plan.ShowRemaining)
+                                {
+                                    <p class="membership-plan-card__seats">@Loc[plan.Remaining == 1 ? "Membership.Plan.Remaining.One" : "Membership.Plan.Remaining", plan.Remaining!]</p>
+                                }
+                                <form asp-controller="Membership" asp-action="Checkout" asp-route-planId="@plan.Id" method="post" class="membership-checkout">
+                                    <details class="membership-checkout__promo">
+                                        <summary>@Loc["Join.PromoCode.Have"]</summary>
+                                        <label class="visually-hidden" for="promo-@plan.Id">@Loc["Join.PromoCode"]</label>
+                                        <input id="promo-@plan.Id" name="promoCode" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="@Loc["Join.PromoCode.Placeholder"]" maxlength="40" />
+                                    </details>
+                                    <button type="submit" class="btn btn--primary" style="width:100%;">@Loc["Membership.Join"]</button>
+                                </form>
+                            }
                         </div>
                     }
                 </div>

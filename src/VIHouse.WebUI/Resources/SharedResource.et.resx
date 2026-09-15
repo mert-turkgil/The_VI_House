@@ -210,6 +210,12 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Membership.OneTime" xml:space="preserve"><value>ühekordne</value></data>
   <data name="Membership.NoPlans" xml:space="preserve"><value>Liikmelisuse plaanid ei ole veel avatud — vaata varsti uuesti.</value></data>
   <data name="Membership.Join" xml:space="preserve"><value>Liitu</value></data>
+  <data name="Membership.Plan.Full" xml:space="preserve"><value>See plaan on täis</value></data>
+  <data name="Membership.Plan.Remaining" xml:space="preserve"><value>{0} kohta jäänud</value></data>
+  <data name="Membership.Plan.Remaining.One" xml:space="preserve"><value>1 koht jäänud</value></data>
+  <data name="Membership.Waitlist.Cta" xml:space="preserve"><value>Liitu ootenimekirjaga</value></data>
+  <data name="Membership.Waitlist.Email" xml:space="preserve"><value>Teie e-posti aadress</value></data>
+  <data name="Membership.Waitlist.Thanks" xml:space="preserve"><value>Olete ootenimekirjas. Saadame teile e-kirja kohe, kui koht vabaneb.</value></data>
   <data name="Membership.LogInToJoin" xml:space="preserve"><value>Liitumiseks logi sisse</value></data>
   <data name="Membership.Confirmed" xml:space="preserve"><value>Liikmelisus kinnitatud</value></data>
   <data name="Membership.Processing" xml:space="preserve"><value>Sinu liikmelisust kinnitatakse</value></data>
@@ -362,6 +368,7 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Seminars.Access.Included.Heading" xml:space="preserve"><value>Sisaldub sinu liikmesuses</value></data>
   <data name="Seminars.Access.Included.Body" xml:space="preserve"><value>See sessioon maksab tavaliselt {0}. Sinu liikmesus katab selle — registreeru ja see avaneb kohe.</value></data>
   <data name="Seminars.Access.Pay.Heading" xml:space="preserve"><value>Võta oma koht — {0}</value></data>
+  <data name="Seminars.Access.MemberPrice" xml:space="preserve"><value>Liikmehind — {0}% soodsam tavahinnast {1}</value></data>
   <data name="Seminars.Access.Pay.Body" xml:space="preserve"><value>Saad terve sessiooni koos kõige salvestatuga, mille juurde saad alati naasta.</value></data>
   <data name="Seminars.Access.Pay.MembershipHint" xml:space="preserve"><value>Liikmetele on see lisatasuta.</value></data>
   <data name="Seminars.Access.Pending.Heading" xml:space="preserve"><value>Makse on pooleli</value></data>
@@ -428,6 +435,8 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Admin.Seminar.Location.Hint" xml:space="preserve"><value>Kuvatakse kaardil ja lehel — nt "Zoom" või toimumiskoht.</value></data>
   <data name="Admin.Seminar.Price.Hint" xml:space="preserve"><value>Täisühikutes, nt 49.00. Sisesta 0, et see oleks tasuta kõigile, kes seda näevad.</value></data>
   <data name="Admin.Seminar.IncludedWithMembership.Hint" xml:space="preserve"><value>Kui see on sees, registreerub aktiivse liikmesusega liige ühe klõpsuga ega satu kunagi maksma. Kõik teised maksavad ülaltoodud hinna.</value></data>
+  <data name="Admin.Seminar.MemberDiscount" xml:space="preserve"><value>Liikmesoodustus (%)</value></data>
+  <data name="Admin.Seminar.MemberDiscount.Hint" xml:space="preserve"><value>Kasutatakse ainult siis, kui seanss ei kuulu liikmesusse: liikmed maksavad ülaltoodud hinnast nii palju vähem. 0 tähendab täishinda.</value></data>
   <data name="Admin.Seminar.Summary.Hint" xml:space="preserve"><value>Loetakse enne registreerumist — see osa peab sessiooni üksinda müüma.</value></data>
   <data name="Admin.Seminar.Body.Hint" xml:space="preserve"><value>Seda saavad lugeda ainult registreerunud. Lohista pildid ja GIF-id otse redaktorisse; video ja slaidid laadi üles allolevas meediakogus.</value></data>
   <data name="Admin.Seminar.Index.Title" xml:space="preserve"><value>Sessioonid</value></data>
@@ -560,6 +569,7 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Experiences.Programme.Day" xml:space="preserve"><value>{0}. päev</value></data>
   <data name="Experiences.Programme.LocalTimes" xml:space="preserve"><value>Kõik kellaajad on {0} kohaliku aja järgi.</value></data>
   <data name="Experiences.Tickets.Title" xml:space="preserve"><value>Elamuse valikud</value></data>
+  <data name="Experiences.Tickets.MemberDiscount" xml:space="preserve"><value>Liikmed säästavad {0}%</value></data>
   <data name="Experiences.Tickets.None" xml:space="preserve"><value>Valikud kinnitatakse koos kutsega.</value></data>
   <data name="Experiences.Tickets.PlacesLeft" xml:space="preserve"><value>Jäänud {0} kohta</value></data>
   <data name="Experiences.Tickets.Note" xml:space="preserve"><value>Kandideerimisi vaadatakse käsitsi läbi. Sinult ei võeta tasu enne, kui koht on pakutud ja sa oled selle vastu võtnud.</value></data>
@@ -1006,6 +1016,10 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Join.ChoosePlan" xml:space="preserve"><value>Valige oma plaan</value></data>
   <data name="Join.NoPlans" xml:space="preserve"><value>Praegu ei ole ühtegi plaani avatud. Palun vaadake peagi uuesti.</value></data>
   <data name="Join.RenewsNote" xml:space="preserve"><value>Uueneb automaatselt kuni tühistamiseni — hallake või tühistage igal ajal oma kontolt.</value></data>
+  <data name="Join.PromoCode" xml:space="preserve"><value>Sooduskood</value></data>
+  <data name="Join.PromoCode.Placeholder" xml:space="preserve"><value>Valikuline</value></data>
+  <data name="Join.PromoCode.Hint" xml:space="preserve"><value>Kui teile anti kood, sisestage see siia — soodustus rakendatakse makselehel.</value></data>
+  <data name="Join.PromoCode.Have" xml:space="preserve"><value>Kas teil on sooduskood?</value></data>
   <data name="Join.EmailHint" xml:space="preserve"><value>Siia saadame teie kviitungi ja konto seadistamise lingi.</value></data>
   <data name="Join.Submit" xml:space="preserve"><value>Jätka maksmisega</value></data>
   <data name="Join.Secure" xml:space="preserve"><value>Makse töötleb Stripe. Me ei näe ega salvesta kunagi teie kaardiandmeid.</value></data>

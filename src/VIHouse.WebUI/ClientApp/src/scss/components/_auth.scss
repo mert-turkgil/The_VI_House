@@ -262,7 +262,7 @@
   border: 1px solid var(--vih-line-on-light);
   border-radius: var(--vih-radius-md);
 
-  canvas { display: block; }
+  svg { display: block; width: 200px; height: 200px; max-width: 100%; }
 }
 
 .auth-form__submit {

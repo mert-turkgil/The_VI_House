@@ -33,6 +33,72 @@
   }
 }
 
+// Seat count under the price: "N places left" only when it is genuinely few, "full" in the
+// danger colour, both small so they read as a fact rather than a sales push.
+.membership-plan-card__seats {
+  margin: -8px 0 16px;
+  font-size: var(--vih-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+
+  &--full {
+    color: var(--vih-danger);
+  }
+}
+
+.membership-waitlist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: var(--vih-radius-md);
+    font: inherit;
+    background: var(--vih-white);
+  }
+}
+
+// "Have a promo code?" folded away under the Join button's form: most people don't, and an
+// always-open empty field reads as a demand.
+.membership-checkout__promo {
+  margin-bottom: 10px;
+  font-size: var(--vih-text-sm);
+
+  summary {
+    cursor: pointer;
+    color: var(--vih-text-muted);
+    list-style: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+
+    &::-webkit-details-marker { display: none; }
+  }
+
+  input {
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: var(--vih-radius-md);
+    font: inherit;
+    text-transform: uppercase;
+    background: var(--vih-white);
+  }
+}
+
+.membership-waitlist__notice {
+  padding: 12px 16px;
+  border: 1px solid var(--vih-gold);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-warning-bg);
+  color: var(--vih-green-900);
+}
+
 .membership-plan-card__price {
   font-family: var(--vih-font-serif);
   font-size: 2rem;

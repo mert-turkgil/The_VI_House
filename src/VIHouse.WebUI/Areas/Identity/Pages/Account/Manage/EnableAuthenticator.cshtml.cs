@@ -47,6 +47,9 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public string AuthenticatorUri { get; set; }
 
+        /// <summary>The QR code as inline SVG — see Helpers/AuthenticatorQr.</summary>
+        public string QrSvg { get; set; } = "";
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -157,6 +160,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
 
             var email = await _userManager.GetEmailAsync(user);
             AuthenticatorUri = GenerateQrCodeUri(email, unformattedKey);
+            QrSvg = VIHouse.WebUI.Helpers.AuthenticatorQr.Svg(AuthenticatorUri);
         }
 
         private string FormatKey(string unformattedKey)

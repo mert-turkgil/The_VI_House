@@ -105,7 +105,7 @@ public class AccountController(
         model.UpcomingBookings = model.UpcomingBookings.OrderBy(b => b.StartAtUtc).Take(3).ToList();
 
         if (membership is null && features.Value.MembershipSales)
-            model.Plans = (await membershipService.GetActivePlansAsync(ct)).Select(MembershipPlanCardViewModel.FromEntity).ToList();
+            model.Plans = await PlanCardsAsync(ct);
 
         ViewData["Title"] = "My Account";
         return View(model);
@@ -206,9 +206,7 @@ public class AccountController(
             CanManageBilling = current is { HasProviderSubscription: true, Membership.ProviderCustomerId: not null },
             MemberNumber = current is null ? null : MemberNumberFor(current.Membership.Id),
             SalesOpen = features.Value.MembershipSales,
-            Plans = current is null && features.Value.MembershipSales
-                ? (await membershipService.GetActivePlansAsync(ct)).Select(MembershipPlanCardViewModel.FromEntity).ToList()
-                : [],
+            Plans = current is null && features.Value.MembershipSales ? await PlanCardsAsync(ct) : [],
         };
 
         ViewData["Title"] = "My Membership";
@@ -431,4 +429,17 @@ public class AccountController(
         $"VIH-{membershipId:N}".Substring(0, 12).ToUpperInvariant();
 
     private Guid CurrentUserId() => Guid.Parse(userManager.GetUserId(User)!);
+
+    /// <summary>The plan cards with seat availability, so a full plan is offered as a waitlist
+    /// here too rather than a checkout that would only be refused.</summary>
+    private async Task<List<MembershipPlanCardViewModel>> PlanCardsAsync(CancellationToken ct)
+    {
+        var cards = new List<MembershipPlanCardViewModel>();
+        foreach (var plan in await membershipService.GetActivePlansAsync(ct))
+        {
+            var availability = plan.MaxMembers is null ? null : await membershipService.GetPlanAvailabilityAsync(plan.Id, ct);
+            cards.Add(MembershipPlanCardViewModel.FromEntity(plan, availability));
+        }
+        return cards;
+    }
 }

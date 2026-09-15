@@ -10,6 +10,7 @@ using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Experiences;
+using VIHouse.Entities.Membership;
 using VIHouse.Entities.Users;
 using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.Services;
@@ -54,12 +55,25 @@ public class JoinController(
             PlanId = plan ?? Guid.Empty,
             OpenExperiences = await LoadOpenExperiencesAsync(ct),
         };
+        form.FullPlanIds = await FullPlanIdsAsync(form.Plans, ct);
+        if (form.FullPlanIds.Contains(form.PlanId)) form.PlanId = Guid.Empty;
 
         if (Request.Cookies.TryGetValue(ReferralCookie.Name, out var referral))
             form.ReferralCode = referral;
 
         ViewData["Title"] = "Join The VI House";
         return View(form);
+    }
+
+    private async Task<HashSet<Guid>> FullPlanIdsAsync(IEnumerable<MembershipPlan> plans, CancellationToken ct)
+    {
+        var full = new HashSet<Guid>();
+        foreach (var plan in plans.Where(p => p.MaxMembers is not null))
+        {
+            if ((await membershipService.GetPlanAvailabilityAsync(plan.Id, ct)).IsFull)
+                full.Add(plan.Id);
+        }
+        return full;
     }
 
     /// <summary>
@@ -107,6 +121,7 @@ public class JoinController(
         if (!ModelState.IsValid)
         {
             form.Plans = await membershipService.GetActivePlansAsync(ct);
+            form.FullPlanIds = await FullPlanIdsAsync(form.Plans, ct);
             form.OpenExperiences = await LoadOpenExperiencesAsync(ct);
             ViewData["Title"] = "Join The VI House";
             return View(form);
@@ -130,6 +145,7 @@ public class JoinController(
                 Expectations = form.Expectations.Trim(),
                 EarningsBand = form.EarningsBand,
                 IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                PromoCode = form.PromoCode,
             },
             SuccessUrl(), CancelUrlTemplate(), ct);
 
@@ -137,6 +153,7 @@ public class JoinController(
         {
             ModelState.AddModelError(string.Empty, result.Error!);
             form.Plans = await membershipService.GetActivePlansAsync(ct);
+            form.FullPlanIds = await FullPlanIdsAsync(form.Plans, ct);
             form.OpenExperiences = await LoadOpenExperiencesAsync(ct);
             ViewData["Title"] = "Join The VI House";
             return View(form);

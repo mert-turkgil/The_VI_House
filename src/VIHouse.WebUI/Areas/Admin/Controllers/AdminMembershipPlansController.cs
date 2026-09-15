@@ -22,6 +22,10 @@ public class AdminMembershipPlansController(
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var plans = await membershipService.GetAllPlansAsync(ct);
+        var availability = new Dictionary<Guid, PlanAvailability>();
+        foreach (var plan in plans)
+            availability[plan.Id] = await membershipService.GetPlanAvailabilityAsync(plan.Id, ct);
+        ViewBag.Availability = availability;
         ViewData["StripeConfigured"] = !string.IsNullOrWhiteSpace(stripe.Value.SecretKey);
         ViewData["StripeLive"] = stripe.Value.SecretKey.StartsWith("sk_live_", StringComparison.Ordinal);
         return View(plans);

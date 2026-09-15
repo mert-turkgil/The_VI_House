@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = Model.Id is null ? "New Promo Code" : $"Promo Code — {Model.Code}";
     var experiences = ViewData["Experiences"] as List<SelectListItem> ?? [];
+    var plans = ViewData["Plans"] as List<SelectListItem> ?? [];
     var redemptions = ViewData["RedemptionCount"] as int?;
 }
 
@@ -39,10 +40,37 @@
     </div>
 
     <div class="admin-field">
+        <label asp-for="Scope"></label>
+        <select asp-for="Scope" asp-items="Html.GetEnumSelectList<PromoScope>()"></select>
+        <p class="admin-field__hint">A code is for experience tickets or for membership checkout, not both.</p>
+    </div>
+
+    <div class="admin-field" data-promo-scope="Experiences">
         <label asp-for="ExperienceId"></label>
         <select asp-for="ExperienceId" asp-items="experiences">
             <option value="">Any experience</option>
         </select>
+    </div>
+
+    <div class="admin-form__grid" data-promo-scope="Memberships">
+        <div class="admin-field">
+            <label asp-for="MembershipPlanId"></label>
+            <select asp-for="MembershipPlanId" asp-items="plans">
+                <option value="">Any plan</option>
+            </select>
+        </div>
+        <div class="admin-field">
+            <label asp-for="MembershipDuration"></label>
+            <select asp-for="MembershipDuration" asp-items="Html.GetEnumSelectList<PromoDuration>()"></select>
+            <p class="admin-field__hint">Applied as a coupon on the Stripe checkout. "Forever" keeps discounting every renewal.</p>
+        </div>
+    </div>
+
+    <div class="admin-field">
+        <label asp-for="RestrictedToEmail"></label>
+        <input asp-for="RestrictedToEmail" type="email" placeholder="name@example.com" />
+        <p class="admin-field__hint">Reserve the code for one person. They must check out with this exact address.</p>
+        <span asp-validation-for="RestrictedToEmail" class="field-validation-error"></span>
     </div>
 
     <div class="admin-form__grid">

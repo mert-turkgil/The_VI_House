@@ -44,9 +44,16 @@ public record InvitationLandingInfo(
 {
     public static InvitationLandingInfo Invalid(string reason) =>
         new(false, reason, null, null, null, null, default, default, []);
+
+    /// <summary>Non-zero when every option's PriceMinor is already the member price.</summary>
+    public int MemberDiscountPercent { get; init; }
 }
 
-public record TicketTypeOption(Guid Id, string Title, string? Description, long PriceMinor, string Currency, string? PerksText, bool IsSoldOut);
+public record TicketTypeOption(Guid Id, string Title, string? Description, long PriceMinor, string Currency, string? PerksText, bool IsSoldOut)
+{
+    /// <summary>The undiscounted price, set only when PriceMinor is a member price.</summary>
+    public long? FullPriceMinor { get; init; }
+}
 
 public record BookingConfirmationInfo(
     bool IsConfirmed,

@@ -118,6 +118,7 @@ public class ExperienceService(
         existing.CoverImageAlt = updated.CoverImageAlt;
         existing.AudienceTags = updated.AudienceTags;
         existing.IsSignature = updated.IsSignature;
+        existing.MemberDiscountPercent = updated.MemberDiscountPercent;
         existing.SortOrder = updated.SortOrder;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
 

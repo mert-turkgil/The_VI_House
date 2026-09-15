@@ -63,7 +63,19 @@ else
                                 }
                             </span>
                             <span class="checkout-ticket-option__price">
-                                @(ticket.IsSoldOut ? "Sold Out" : MoneyFormatter.Format(ticket.PriceMinor, ticket.Currency))
+                                @if (ticket.IsSoldOut)
+                                {
+                                    <text>Sold Out</text>
+                                }
+                                else
+                                {
+                                    @MoneyFormatter.Format(ticket.PriceMinor, ticket.Currency)
+                                    @if (ticket.FullPriceMinor is { } full && full != ticket.PriceMinor)
+                                    {
+                                        <s class="checkout-ticket-option__full">@MoneyFormatter.Format(full, ticket.Currency)</s>
+                                        <small class="checkout-ticket-option__member">Member price</small>
+                                    }
+                                }
                             </span>
                         </label>
                     }

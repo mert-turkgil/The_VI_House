@@ -21,6 +21,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 public class AdminPromoCodesController(
     IPromoCodeRepository promoCodes,
     IExperienceService experienceService,
+    IMembershipService membershipService,
     IAuditLogRepository auditLogs,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
@@ -28,6 +29,7 @@ public class AdminPromoCodesController(
     {
         var all = await promoCodes.GetAllAsync(ct);
         var experiences = await experienceService.GetAllForAdminAsync(ct);
+        var plans = await membershipService.GetAllPlansAsync(ct);
 
         var model = all
             .OrderByDescending(c => c.CreatedAt)
@@ -39,6 +41,10 @@ public class AdminPromoCodesController(
                 Value = c.Value,
                 Currency = c.Currency,
                 ExperienceTitle = experiences.FirstOrDefault(e => e.Id == c.ExperienceId)?.Title,
+                AppliesTo = c.Scope == PromoScope.Memberships
+                    ? (plans.FirstOrDefault(p => p.Id == c.MembershipPlanId)?.Name ?? "Any plan") + " (membership)"
+                    : experiences.FirstOrDefault(e => e.Id == c.ExperienceId)?.Title ?? "Any experience",
+                RestrictedToEmail = c.RestrictedToEmail?.ToLowerInvariant(),
                 RedemptionCount = c.RedemptionCount,
                 MaxRedemptions = c.MaxRedemptions,
                 ExpiresAt = c.ExpiresAt,
@@ -98,6 +104,17 @@ public class AdminPromoCodesController(
             existing.Value = updated.Value;
             existing.Currency = updated.Currency;
             existing.ExperienceId = updated.ExperienceId;
+            existing.Scope = updated.Scope;
+            existing.MembershipPlanId = updated.MembershipPlanId;
+            existing.RestrictedToEmail = updated.RestrictedToEmail;
+            existing.MembershipDuration = updated.MembershipDuration;
+            // The provider coupon mirrors type/value/duration; a change to any of them means the
+            // next use must mint a fresh one rather than reuse the old figures.
+            if (existing.Type != updated.Type || existing.Value != updated.Value || existing.Currency != updated.Currency
+                || existing.MembershipDuration != updated.MembershipDuration)
+            {
+                existing.ProviderCouponId = null;
+            }
             existing.MaxRedemptions = updated.MaxRedemptions;
             existing.ExpiresAt = updated.ExpiresAt;
             existing.IsActive = updated.IsActive;
@@ -168,6 +185,10 @@ public class AdminPromoCodesController(
         ViewData["Experiences"] = experiences
             .OrderBy(e => e.Title)
             .Select(e => new SelectListItem($"{e.Title} — {e.City}", e.Id.ToString()))
+            .ToList();
+
+        ViewData["Plans"] = (await membershipService.GetAllPlansAsync(ct))
+            .Select(p => new SelectListItem($"{p.Name} ({p.Currency} {p.PriceMinor / 100m:0.##})", p.Id.ToString()))
             .ToList();
     }
 

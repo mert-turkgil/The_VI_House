@@ -230,8 +230,11 @@
   margin: 4px 0 16px;
   min-height: 40px;
 
-  canvas {
+  svg {
     display: block;
+    width: 200px;
+    height: 200px;
+    max-width: 100%;
   }
 
   &--failed {
@@ -614,6 +617,37 @@
   font-size: 0.75rem;
   color: var(--vih-gold);
   font-weight: 600;
+}
+
+// A plan at its member limit: still listed, so the choice on offer is honest, but not selectable.
+.join__plan:has(input:disabled) {
+  cursor: not-allowed;
+
+  .join__plan-body {
+    opacity: 0.6;
+  }
+}
+
+.join__field--promo {
+  margin-top: 8px;
+  max-width: 320px;
+
+  input {
+    text-transform: uppercase;
+  }
+}
+
+.join__plan-full {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--vih-danger);
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
 }
 
 .join__row {

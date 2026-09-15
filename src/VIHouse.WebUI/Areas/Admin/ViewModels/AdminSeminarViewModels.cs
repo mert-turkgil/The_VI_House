@@ -77,6 +77,10 @@ public class AdminSeminarFormViewModel
     [Display(Name = "Admin.Seminar.IncludedWithMembership")]
     public bool IncludedWithMembership { get; set; } = true;
 
+    [Range(0, 100)]
+    [Display(Name = "Admin.Seminar.MemberDiscount")]
+    public int MemberDiscountPercent { get; set; }
+
     [Display(Name = "Admin.Seminar.SortOrder")]
     public int SortOrder { get; set; }
 
@@ -97,6 +101,7 @@ public class AdminSeminarFormViewModel
         PriceMinor = (long)Math.Round(Price * 100m, MidpointRounding.AwayFromZero),
         Currency = Currency.ToUpperInvariant(),
         IncludedWithMembership = IncludedWithMembership,
+        MemberDiscountPercent = MemberDiscountPercent,
         SortOrder = SortOrder,
     };
 
@@ -117,6 +122,7 @@ public class AdminSeminarFormViewModel
         Price = s.PriceMinor / 100m,
         Currency = s.Currency,
         IncludedWithMembership = s.IncludedWithMembership,
+        MemberDiscountPercent = s.MemberDiscountPercent,
         SortOrder = s.SortOrder,
     };
 

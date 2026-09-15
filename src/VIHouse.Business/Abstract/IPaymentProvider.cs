@@ -43,7 +43,20 @@ public interface IPaymentProvider
     /// reached so the caller can leave a trail for a human.
     /// </summary>
     Task<bool> CancelSubscriptionAsync(string subscriptionId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Creates a coupon at the provider mirroring a local promo code, and returns its id — the
+    /// checkout then references it (see <see cref="CreateCheckoutSessionRequest.ProviderCouponId"/>)
+    /// so a subscription's renewals carry the discount without any local price arithmetic. Throws
+    /// on failure; the caller decides whether to sell at full price or stop.
+    /// </summary>
+    Task<string> CreateCouponAsync(CouponRequest request, CancellationToken ct = default);
 }
+
+/// <param name="PercentOff">1–100, or null when it is a fixed amount.</param>
+/// <param name="AmountOffMinor">Minor units, with <paramref name="Currency"/>; null for a percentage.</param>
+/// <param name="Forever">Applies to every renewal; otherwise the first payment only.</param>
+public record CouponRequest(string Name, int? PercentOff, long? AmountOffMinor, string? Currency, bool Forever);
 
 public record CreateCheckoutSessionRequest(
     string CustomerEmail,
@@ -73,6 +86,10 @@ public record CreateCheckoutSessionRequest(
     /// product.
     /// </summary>
     public string? ProviderPriceId { get; init; }
+
+    /// <summary>A coupon at the provider to apply to this checkout — see
+    /// <see cref="IPaymentProvider.CreateCouponAsync"/>. Null for no discount.</summary>
+    public string? ProviderCouponId { get; init; }
 }
 
 public enum RecurringInterval

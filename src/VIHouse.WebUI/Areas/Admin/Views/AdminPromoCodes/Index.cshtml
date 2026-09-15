@@ -43,7 +43,13 @@ else
                 <tr>
                     <td><a asp-action="Edit" asp-route-id="@code.Id"><code>@code.Code</code></a></td>
                     <td>@code.ValueLabel</td>
-                    <td>@(code.ExperienceTitle ?? "Any experience")</td>
+                    <td>
+                        @code.AppliesTo
+                        @if (code.RestrictedToEmail is not null)
+                        {
+                            <span class="admin-table__sub">for @code.RestrictedToEmail</span>
+                        }
+                    </td>
                     <td>@code.RedemptionCount@(code.MaxRedemptions is null ? "" : $" / {code.MaxRedemptions}")</td>
                     <td style="font-size:0.75rem;">@(code.ExpiresAt?.ToString("d MMM yyyy") ?? "—")</td>
                     <td>

@@ -23,4 +23,8 @@ public class MembershipPayment : BaseEntity
 
     /// <summary>Captured from the referral cookie at checkout time — mirrors Application.ReferralCode, which serves the same purpose for ticket purchases (a membership purchase has no Application to carry it instead).</summary>
     public string? ReferralCode { get; set; }
+
+    /// <summary>The promo code applied at checkout, if any — the provider's coupon did the
+    /// arithmetic, this is the record of which code it was.</summary>
+    public Guid? PromoCodeId { get; set; }
 }

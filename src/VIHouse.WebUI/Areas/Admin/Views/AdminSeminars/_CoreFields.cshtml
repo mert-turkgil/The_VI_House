@@ -91,6 +91,13 @@
     <p class="admin-field__hint">@Loc["Admin.Seminar.IncludedWithMembership.Hint"]</p>
 </div>
 
+<div class="admin-field" style="max-width:220px;">
+    <label asp-for="MemberDiscountPercent">@Loc["Admin.Seminar.MemberDiscount"]</label>
+    <input asp-for="MemberDiscountPercent" type="number" min="0" max="100" />
+    <p class="admin-field__hint">@Loc["Admin.Seminar.MemberDiscount.Hint"]</p>
+    <span asp-validation-for="MemberDiscountPercent" class="field-validation-error"></span>
+</div>
+
 <div class="admin-field">
     <label asp-for="SortOrder"></label>
     <input asp-for="SortOrder" type="number" />

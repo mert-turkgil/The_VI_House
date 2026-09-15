@@ -76,6 +76,13 @@ public class Seminar : BaseEntity
     /// </summary>
     public bool IncludedWithMembership { get; set; } = true;
 
+    /// <summary>
+    /// Percentage off <see cref="PriceMinor"/> for a current member when the session is NOT
+    /// included with membership — the middle ground between "free for members" and "everyone pays
+    /// the same". Ignored while IncludedWithMembership is true. 0 for no discount.
+    /// </summary>
+    public int MemberDiscountPercent { get; set; }
+
     /// <summary>Set once, the first time Status flips to Published; a later unpublish/republish
     /// cycle does not reset it. Drives "newest first" ordering — same rule as JournalPost.</summary>
     public DateTimeOffset? PublishedAt { get; set; }

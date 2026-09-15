@@ -70,8 +70,14 @@ public class JoinFormViewModel
 
     public string? ReferralCode { get; set; }
 
+    [StringLength(40)]
+    public string? PromoCode { get; set; }
+
     /// <summary>Repopulated on every render — the plan cards are part of the form, not a separate page.</summary>
     public List<MembershipPlan> Plans { get; set; } = [];
+
+    /// <summary>Plans at their member limit — rendered disabled with a note, never selectable.</summary>
+    public HashSet<Guid> FullPlanIds { get; set; } = [];
 
     /// <summary>The single-event alternative, offered on the same page so a visitor who only wants
     /// one gathering doesn't have to guess that /apply exists.</summary>

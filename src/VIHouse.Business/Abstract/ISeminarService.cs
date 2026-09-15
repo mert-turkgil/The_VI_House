@@ -187,6 +187,11 @@ public record SeminarAccessInfo(
     /// <summary>True only when the body and media should actually be rendered.</summary>
     public bool HasAccess => Outcome == SeminarAccessOutcome.Enrolled;
 
+    /// <summary>Set when PriceMinor is a member price: the percentage taken off, and the price
+    /// everyone else pays, so the page can say so.</summary>
+    public int MemberDiscountPercent { get; init; }
+    public long? FullPriceMinor { get; init; }
+
     /// <summary>The viewer's confirmed enrolment, when <see cref="HasAccess"/> — what the page
     /// reads to tell a paying attendee's interface from a member's or a free one's.</summary>
     public SeminarEnrollment? Enrollment { get; init; }

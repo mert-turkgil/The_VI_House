@@ -107,6 +107,10 @@ public class AdminExperienceFormViewModel
     [Display(Name = "Show in homepage Signature grid")]
     public bool IsSignature { get; set; }
 
+    [Range(0, 100)]
+    [Display(Name = "Member discount (%)", Description = "Percentage off every ticket for current members. 0 means members pay full price. Who may attend is set by Visibility and the admitted plans, not here.")]
+    public int MemberDiscountPercent { get; set; }
+
     public int SortOrder { get; set; }
 
     public Experience ToEntity() => new()
@@ -137,6 +141,7 @@ public class AdminExperienceFormViewModel
         SeoDescription = SeoDescription,
         SeoOgImageUrl = SeoOgImageUrl,
         IsSignature = IsSignature,
+        MemberDiscountPercent = MemberDiscountPercent,
         SortOrder = SortOrder,
     };
 
@@ -168,6 +173,7 @@ public class AdminExperienceFormViewModel
         SeoDescription = e.SeoDescription,
         SeoOgImageUrl = e.SeoOgImageUrl,
         IsSignature = e.IsSignature,
+        MemberDiscountPercent = e.MemberDiscountPercent,
         SortOrder = e.SortOrder,
     };
 

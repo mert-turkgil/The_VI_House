@@ -247,6 +247,17 @@
   color: rgba(18, 22, 15, 0.5) !important;
 }
 
+// The member price line under the pay heading: gold, small — the price above is already the
+// member's, this only says what it would otherwise have been.
+.seminar-access__member-price {
+  margin: -6px 0 12px !important;
+  font-size: 0.78rem !important;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vih-gold) !important;
+}
+
 // --- Materials ---------------------------------------------------------------------------------------
 .seminar-media {
   margin-top: 48px;

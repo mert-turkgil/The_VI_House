@@ -78,6 +78,7 @@ else
                 <th>Price</th>
                 <th>Billing</th>
                 <th>Status</th>
+                <th>Seats</th>
                 <th>Stripe</th>
             </tr>
         </thead>
@@ -95,6 +96,19 @@ else
                     <td>@MoneyFormatter.Format(plan.PriceMinor, plan.Currency) <span class="admin-table__sub">@PeriodLabel(plan.BillingPeriod)</span></td>
                     <td>@plan.BillingPeriod</td>
                     <td><span class="@(plan.Status == MembershipPlanStatus.Active ? "admin-badge admin-badge--open" : "admin-badge admin-badge--closed")">@plan.Status</span></td>
+                    <td>
+                        @if (ViewBag.Availability is Dictionary<Guid, VIHouse.Business.Abstract.PlanAvailability> availability && availability.TryGetValue(plan.Id, out var seats))
+                        {
+                            if (seats.Max is { } max)
+                            {
+                                <span class="@(seats.IsFull ? "admin-badge admin-badge--closed" : "")">@seats.Taken / @max</span>
+                            }
+                            else
+                            {
+                                <span class="admin-table__sub">@seats.Taken · unlimited</span>
+                            }
+                        }
+                    </td>
                     <td>
                         @if (plan.ProviderSyncError is not null)
                         {

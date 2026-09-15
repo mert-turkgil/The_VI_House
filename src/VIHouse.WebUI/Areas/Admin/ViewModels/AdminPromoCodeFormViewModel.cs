@@ -37,8 +37,21 @@ public class AdminPromoCodeFormViewModel
     [Display(Name = "Currency", Description = "For a fixed amount. Leave blank for a percentage.")]
     public string? Currency { get; set; } = "GBP";
 
+    [Display(Name = "Applies to")]
+    public PromoScope Scope { get; set; } = PromoScope.Experiences;
+
     [Display(Name = "Experience", Description = "Restrict the code to one experience, or leave blank for any.")]
     public Guid? ExperienceId { get; set; }
+
+    [Display(Name = "Membership plan", Description = "Restrict the code to one plan, or leave blank for any.")]
+    public Guid? MembershipPlanId { get; set; }
+
+    [EmailAddress, StringLength(320)]
+    [Display(Name = "Reserved for", Description = "An email address only this person can use the code from. Blank for anyone.")]
+    public string? RestrictedToEmail { get; set; }
+
+    [Display(Name = "Lasts", Description = "For a recurring plan: the first payment only, or every renewal too.")]
+    public PromoDuration MembershipDuration { get; set; } = PromoDuration.FirstPayment;
 
     [Display(Name = "Maximum redemptions", Description = "Blank for unlimited.")]
     [Range(1, 100000)]
@@ -64,7 +77,11 @@ public class AdminPromoCodeFormViewModel
         Currency = Type == PromoCodeType.Percentage || string.IsNullOrWhiteSpace(Currency)
             ? null
             : Currency.Trim().ToUpperInvariant(),
-        ExperienceId = ExperienceId,
+        Scope = Scope,
+        ExperienceId = Scope == PromoScope.Experiences ? ExperienceId : null,
+        MembershipPlanId = Scope == PromoScope.Memberships ? MembershipPlanId : null,
+        RestrictedToEmail = string.IsNullOrWhiteSpace(RestrictedToEmail) ? null : RestrictedToEmail.Trim().ToUpperInvariant(),
+        MembershipDuration = MembershipDuration,
         MaxRedemptions = MaxRedemptions,
         ExpiresAt = ExpiresAt is null ? null : new DateTimeOffset(DateTime.SpecifyKind(ExpiresAt.Value, DateTimeKind.Utc)),
         IsActive = IsActive,
@@ -77,7 +94,11 @@ public class AdminPromoCodeFormViewModel
         Type = c.Type,
         Value = c.Type == PromoCodeType.Percentage ? c.Value : c.Value / 100m,
         Currency = c.Currency,
+        Scope = c.Scope,
         ExperienceId = c.ExperienceId,
+        MembershipPlanId = c.MembershipPlanId,
+        RestrictedToEmail = c.RestrictedToEmail?.ToLowerInvariant(),
+        MembershipDuration = c.MembershipDuration,
         MaxRedemptions = c.MaxRedemptions,
         ExpiresAt = c.ExpiresAt?.UtcDateTime,
         IsActive = c.IsActive,
@@ -85,16 +106,22 @@ public class AdminPromoCodeFormViewModel
 
     /// <summary>Validates the pair the attributes above cannot see together: a percentage has to be
     /// a percentage.</summary>
-    public string? Validate() =>
-        Type == PromoCodeType.Percentage && Value is < 1 or > 100
-            ? "A percentage discount must be between 1 and 100."
-            : null;
+    public string? Validate()
+    {
+        if (Type == PromoCodeType.Percentage && Value is < 1 or > 100)
+            return "A percentage discount must be between 1 and 100.";
+        if (Scope == PromoScope.Memberships && Type == PromoCodeType.Fixed && string.IsNullOrWhiteSpace(Currency))
+            return "A fixed-amount membership code needs a currency — it must match the plan's.";
+        return null;
+    }
 }
 
 /// <summary>One row of the promo code index.</summary>
 public class AdminPromoCodeListItemViewModel
 {
     public Guid Id { get; set; }
+    public string AppliesTo { get; set; } = "";
+    public string? RestrictedToEmail { get; set; }
     public string Code { get; set; } = default!;
     public PromoCodeType Type { get; set; }
     public int Value { get; set; }

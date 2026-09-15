@@ -947,6 +947,29 @@
     width: 100%;
   }
 
+  // Until Swiper has run (it adds .swiper-initialized), the slides are a plain row and each would
+  // take the full container width — one card, one enormous photograph. Cap them at the same widths
+  // the non-carousel grids use, so the page looks the same with or without the script.
+  &:not(.swiper-initialized) {
+    .swiper-wrapper {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .swiper-slide {
+      flex: 0 1 320px;
+      max-width: 320px;
+    }
+
+    .swiper-button-prev,
+    .swiper-button-next,
+    .swiper-pagination {
+      display: none;
+    }
+  }
+
   .swiper-button-prev,
   .swiper-button-next {
     width: 38px;
@@ -1124,6 +1147,11 @@
 // The non-carousel path — see _Signature.cshtml and the matching comment on .home-upcoming__grid,
 // which explains the auto-fit/minmax choice. Wider cap than Upcoming's: these cards carry a 16x9
 // image plus a price line and read as cramped below the 300px Signature already uses at 3-per-row.
+.home-section--tinted .home-carousel:not(.swiper-initialized) .swiper-slide {
+  flex-basis: 380px;
+  max-width: 380px;
+}
+
 .home-signature__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 380px));

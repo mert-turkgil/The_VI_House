@@ -12,8 +12,19 @@ public class MembershipPlanCardViewModel
     public MembershipBillingPeriod BillingPeriod { get; set; }
     public List<string> Features { get; set; } = [];
 
-    public static MembershipPlanCardViewModel FromEntity(MembershipPlan p) => new()
+    /// <summary>Null when the plan has no limit.</summary>
+    public int? MaxMembers { get; set; }
+    public int? Remaining { get; set; }
+    public bool IsFull { get; set; }
+
+    /// <summary>Scarcity only when it is real — the same rule the ticket panel applies.</summary>
+    public bool ShowRemaining => Remaining is > 0 and <= 10;
+
+    public static MembershipPlanCardViewModel FromEntity(MembershipPlan p, VIHouse.Business.Abstract.PlanAvailability? availability = null) => new()
     {
+        MaxMembers = p.MaxMembers,
+        Remaining = availability?.Remaining,
+        IsFull = availability?.IsFull ?? false,
         Id = p.Id,
         Name = p.Name,
         Description = p.Description,

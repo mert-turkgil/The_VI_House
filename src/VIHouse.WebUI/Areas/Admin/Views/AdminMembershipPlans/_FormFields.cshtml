@@ -45,3 +45,10 @@
     <label asp-for="SortOrder">Sort order</label>
     <input asp-for="SortOrder" type="number" />
 </div>
+
+<div class="admin-field" style="max-width:260px;">
+    <label asp-for="MaxMembers">Maximum members</label>
+    <input asp-for="MaxMembers" type="number" min="1" placeholder="Unlimited" />
+    <p class="admin-field__hint">Leave blank for no limit. When the plan is full, visitors are offered the waitlist instead of checkout; change the number at any time.</p>
+    <span asp-validation-for="MaxMembers" class="field-validation-error"></span>
+</div>

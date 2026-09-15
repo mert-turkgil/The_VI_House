@@ -22,15 +22,9 @@
         </li>
         <li>
             <p>Scan the QR Code or enter this key <kbd>@Model.SharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
-            @* Bound to [data-qr-uri], which is what ClientApp/src/js/modules/qr.ts actually looks
-               for — the scaffold's #qrCodeData[data-url] matched nothing, so this QR code was never
-               drawn on any deployment of this site. The label and error strings are passed in
-               because the bundle cannot read the .resx files. The setup key above stays visible
-               regardless, which is the fallback when the canvas cannot be drawn. *@
-            <div class="auth-qr"
-                 data-qr-uri="@Model.AuthenticatorUri"
-                 data-qr-label="@Loc["Onboarding.TwoFactor.QrLabel"]"
-                 data-qr-error="@Loc["Onboarding.TwoFactor.QrError"]"></div>
+            @* Inline SVG rendered on the server (Helpers/AuthenticatorQr) — same as the onboarding
+               page. The setup key above stays visible regardless. *@
+            <div class="auth-qr" role="img" aria-label="@Loc["Onboarding.TwoFactor.QrLabel"]">@Html.Raw(Model.QrSvg)</div>
         </li>
         <li>
             <p>

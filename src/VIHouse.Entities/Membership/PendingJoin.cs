@@ -48,6 +48,10 @@ public class PendingJoin : BaseEntity
     public string? EarningsBand { get; set; }
     public string? ReferralCode { get; set; }
 
+    /// <summary>A promo code redeemed for this join, so a resumed checkout carries the same
+    /// discount without a second redemption.</summary>
+    public Guid? PromoCodeId { get; set; }
+
     /// <summary>Where the terms were accepted from, for the ConsentRecord written on payment.</summary>
     public string? IpAddress { get; set; }
 

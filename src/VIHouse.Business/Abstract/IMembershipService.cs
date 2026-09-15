@@ -48,6 +48,14 @@ public interface IMembershipService
 
     // --- Membership (member) -----------------------------------------------------------------------
 
+    /// <summary>
+    /// How many of a plan's seats are taken, against its MaxMembers. "Taken" includes seats in
+    /// checkout — a pending join with a live provider session, a signed-in checkout opened in the
+    /// last day — the same way a ticket hold counts against inventory, so two people cannot both
+    /// be sold the last place. Unlimited plans report IsFull = false and Remaining = null.
+    /// </summary>
+    Task<PlanAvailability> GetPlanAvailabilityAsync(Guid planId, CancellationToken ct = default);
+
     /// <summary>Most recent Active membership for a user, if any — null means never purchased or lapsed.</summary>
     Task<Membership?> GetCurrentMembershipAsync(Guid userId, CancellationToken ct = default);
 
@@ -64,7 +72,7 @@ public interface IMembershipService
     Task<string?> CreateBillingPortalUrlAsync(Guid userId, string returnUrl, CancellationToken ct = default);
 
     /// <summary>For a visitor who is already signed in. referralCode comes from the /r/{code} cookie, if present — see Application.ReferralCode for the equivalent on the ticket-purchase side.</summary>
-    Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string? referralCode, string successUrl, string cancelUrl, CancellationToken ct = default);
+    Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string? referralCode, string? promoCode, string successUrl, string cancelUrl, CancellationToken ct = default);
 
     /// <summary>
     /// Join-and-pay in one step for someone with no account yet. The form is held as a PendingJoin
@@ -115,6 +123,20 @@ public record MembershipCheckoutResult(bool Success, string? CheckoutUrl, string
 {
     public static MembershipCheckoutResult Ok(string url) => new(true, url, null);
     public static MembershipCheckoutResult Fail(string error) => new(false, null, error);
+
+    /// <summary>True when the failure is the plan being at its member limit — the page offers
+    /// the waitlist rather than an error line.</summary>
+    public bool PlanFull { get; init; }
+
+    public static MembershipCheckoutResult Full(string error) => new(false, null, error) { PlanFull = true };
+}
+
+/// <param name="Max">The plan's limit; null when unlimited.</param>
+/// <param name="Taken">Current members plus seats held by checkouts in progress.</param>
+public record PlanAvailability(int? Max, int Taken)
+{
+    public int? Remaining => Max is { } max ? Math.Max(0, max - Taken) : null;
+    public bool IsFull => Max is { } max && Taken >= max;
 }
 
 public record MembershipConfirmationInfo(bool IsConfirmed, string? PlanName, long AmountMinor, string Currency, DateTimeOffset? ExpiresAt)
@@ -153,6 +175,9 @@ public record JoinRequest(
     /// <summary>Where the terms were accepted from — recorded on the ConsentRecord written when
     /// the account is created.</summary>
     public string? IpAddress { get; init; }
+
+    /// <summary>A promo code typed on the form; validated and redeemed when checkout opens.</summary>
+    public string? PromoCode { get; init; }
 }
 
 /// <summary>A membership row resolved against its plan, ready to display.</summary>

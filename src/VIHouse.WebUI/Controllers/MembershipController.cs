@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -47,10 +48,16 @@ public class MembershipController(
             SalesOpen = features.Value.MembershipSales,
             CommunityEnabled = features.Value.Community,
             DirectoryEnabled = features.Value.MemberDirectory,
-            Plans = features.Value.MembershipSales
-                ? (await membershipService.GetActivePlansAsync(ct)).Select(MembershipPlanCardViewModel.FromEntity).ToList()
-                : [],
         };
+
+        if (features.Value.MembershipSales)
+        {
+            foreach (var plan in await membershipService.GetActivePlansAsync(ct))
+            {
+                var availability = plan.MaxMembers is null ? null : await membershipService.GetPlanAvailabilityAsync(plan.Id, ct);
+                model.Plans.Add(MembershipPlanCardViewModel.FromEntity(plan, availability));
+            }
+        }
 
         if (model.IsAuthenticated && Guid.TryParse(userManager.GetUserId(User), out var userId))
         {
@@ -74,7 +81,7 @@ public class MembershipController(
     [HttpPost("checkout/{planId:guid}")]
     [ValidateAntiForgeryToken]
     [EnableRateLimiting("checkout")]
-    public async Task<IActionResult> Checkout(Guid planId, CancellationToken ct)
+    public async Task<IActionResult> Checkout(Guid planId, string? promoCode, CancellationToken ct)
     {
         // Closed alongside the plan cards. A form that is not rendered can still be posted, and a
         // subscription bought while the House is application-only would be a real charge for a
@@ -88,7 +95,7 @@ public class MembershipController(
         var cancelUrl = Url.Action(nameof(Cancel), "Membership", null, Request.Scheme)!;
 
         var referralCode = Request.Cookies[ReferralCookie.Name];
-        var result = await membershipService.InitiateCheckoutAsync(planId, userId, referralCode, successUrl, cancelUrl, ct);
+        var result = await membershipService.InitiateCheckoutAsync(planId, userId, referralCode, promoCode, successUrl, cancelUrl, ct);
         if (!result.Success)
         {
             TempData["MembershipError"] = result.Error;
@@ -96,6 +103,32 @@ public class MembershipController(
         }
 
         return Redirect(result.CheckoutUrl!);
+    }
+
+    /// <summary>
+    /// A full plan's stand-in for checkout. Lands in the same table as the launch list (source
+    /// "waitlist:{plan name}"), so admins see who is waiting for which plan on the page they already
+    /// have, and the same address is never stored twice.
+    /// </summary>
+    [HttpPost("waitlist/{planId:guid}")]
+    [ValidateAntiForgeryToken]
+    [EnableRateLimiting("application-submit")]
+    public async Task<IActionResult> Waitlist(Guid planId, string? email, [FromServices] INotifySignupService signups, CancellationToken ct)
+    {
+        if (!features.Value.MembershipSales) return NotFound();
+
+        var plan = await membershipService.GetPlanAsync(planId, ct);
+        if (plan is null) return NotFound();
+
+        // A signed-in visitor's own address, always — the form field is only shown to guests.
+        if (User.Identity?.IsAuthenticated == true && await userManager.GetUserAsync(User) is { } user)
+            email = user.Email;
+
+        var key = await signups.SubscribeAsync(email, CultureInfo.CurrentUICulture.Name, source: $"waitlist:{plan.Name}"[..Math.Min(50, 9 + plan.Name.Length)], ct);
+
+        TempData["WaitlistMessage"] = loc[key ?? "Membership.Waitlist.Thanks"].Value;
+        TempData["WaitlistOk"] = key is null || key == "ComingSoon.Notify.Already";
+        return Redirect(Url.Action(nameof(Index), "Membership") + "#membership-plans");
     }
 
     [HttpGet("success")]

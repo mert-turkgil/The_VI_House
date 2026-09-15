@@ -57,9 +57,13 @@
                 @foreach (var plan in Model.Plans)
                 {
                     <label class="join__plan">
-                        <input type="radio" asp-for="PlanId" value="@plan.Id" />
+                        <input type="radio" asp-for="PlanId" value="@plan.Id" disabled="@Model.FullPlanIds.Contains(plan.Id)" />
                         <span class="join__plan-body">
                             <span class="join__plan-name">@plan.Name</span>
+                            @if (Model.FullPlanIds.Contains(plan.Id))
+                            {
+                                <span class="join__plan-full">@Loc["Membership.Plan.Full"] &middot; <a asp-controller="Membership" asp-action="Index" asp-fragment="membership-plans">@Loc["Membership.Waitlist.Cta"]</a></span>
+                            }
                             <span class="join__plan-price">
                                 @MoneyFormatter.Format(plan.PriceMinor, plan.Currency)
                                 <em>@PeriodLabel(plan.BillingPeriod)</em>
@@ -75,6 +79,12 @@
                         </span>
                     </label>
                 }
+                <div class="join__field join__field--promo">
+                    <label asp-for="PromoCode">@Loc["Join.PromoCode"]</label>
+                    <input asp-for="PromoCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="@Loc["Join.PromoCode.Placeholder"]" />
+                    <span class="join__hint">@Loc["Join.PromoCode.Hint"]</span>
+                    <span asp-validation-for="PromoCode" class="join__field-error"></span>
+                </div>
             </fieldset>
 
             <fieldset class="join__details">

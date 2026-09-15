@@ -13,6 +13,7 @@ public class StripePaymentProvider : IPaymentProvider
     private readonly SessionService sessionService;
     private readonly Stripe.BillingPortal.SessionService portalService;
     private readonly SubscriptionService subscriptionService;
+    private readonly CouponService couponService;
     private readonly ILogger<StripePaymentProvider> logger;
 
     public StripePaymentProvider(IOptions<StripeOptions> options, ILogger<StripePaymentProvider> logger)
@@ -23,6 +24,7 @@ public class StripePaymentProvider : IPaymentProvider
         sessionService = new SessionService();
         portalService = new Stripe.BillingPortal.SessionService();
         subscriptionService = new SubscriptionService();
+        couponService = new CouponService();
     }
 
     public async Task<CheckoutSessionResult> CreateCheckoutSessionAsync(CreateCheckoutSessionRequest request, CancellationToken ct = default)
@@ -48,6 +50,13 @@ public class StripePaymentProvider : IPaymentProvider
             createOptions.ExpiresAt = DateTime.UtcNow.AddMinutes(30);
         }
 
+        // A coupon and AllowPromotionCodes are mutually exclusive at Stripe; this site never sets
+        // the latter, so the discount is always ours to decide.
+        if (!string.IsNullOrWhiteSpace(request.ProviderCouponId))
+        {
+            createOptions.Discounts = [new SessionDiscountOptions { Coupon = request.ProviderCouponId }];
+        }
+
         var session = await sessionService.CreateAsync(createOptions, cancellationToken: ct);
         return new CheckoutSessionResult(session.Id, session.Url, ToUtc(session.ExpiresAt));
     }
@@ -67,6 +76,20 @@ public class StripePaymentProvider : IPaymentProvider
             // back as an error, and that outcome is exactly what the caller wanted anyway.
             logger.LogWarning(ex, "Could not expire Stripe checkout session {SessionId}", sessionId);
         }
+    }
+
+    public async Task<string> CreateCouponAsync(CouponRequest request, CancellationToken ct = default)
+    {
+        var coupon = await couponService.CreateAsync(new CouponCreateOptions
+        {
+            Name = request.Name,
+            PercentOff = request.PercentOff,
+            AmountOff = request.AmountOffMinor,
+            Currency = request.AmountOffMinor is null ? null : request.Currency?.ToLowerInvariant(),
+            Duration = request.Forever ? "forever" : "once",
+        }, cancellationToken: ct);
+
+        return coupon.Id;
     }
 
     public async Task<bool> CancelSubscriptionAsync(string subscriptionId, CancellationToken ct = default)

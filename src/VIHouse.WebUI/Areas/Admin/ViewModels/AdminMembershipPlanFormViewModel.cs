@@ -38,6 +38,11 @@ public class AdminMembershipPlanFormViewModel
 
     public int SortOrder { get; set; }
 
+    /// <summary>Seat limit; blank means unlimited. Adjustable at any time — raising it reopens
+    /// sales, lowering it below the current count stops new joins without touching anyone.</summary>
+    [Range(1, 1_000_000)]
+    public int? MaxMembers { get; set; }
+
     // --- Read-only: the state of the Stripe mirror, shown on the edit page --------------------
 
     public string? ProviderProductId { get; set; }
@@ -67,6 +72,7 @@ public class AdminMembershipPlanFormViewModel
         Features = Features,
         Status = Status,
         SortOrder = SortOrder,
+        MaxMembers = MaxMembers,
     };
 
     public static AdminMembershipPlanFormViewModel FromEntity(MembershipPlan p) => new()
@@ -80,6 +86,7 @@ public class AdminMembershipPlanFormViewModel
         Features = p.Features,
         Status = p.Status,
         SortOrder = p.SortOrder,
+        MaxMembers = p.MaxMembers,
         ProviderProductId = p.ProviderProductId,
         ProviderPriceId = p.ProviderPriceId,
         ProviderSyncedAt = p.ProviderSyncedAt,

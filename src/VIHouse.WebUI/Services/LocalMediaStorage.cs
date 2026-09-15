@@ -1,4 +1,10 @@
 using Microsoft.Extensions.Options;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Formats.Webp;
+using SixLabors.ImageSharp.Processing;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
 
@@ -58,7 +64,10 @@ public class LocalMediaStorage(IOptions<MediaOptions> options, ILogger<LocalMedi
             await using (var destination = new FileStream(
                 fullPath, FileMode.CreateNew, FileAccess.Write, FileShare.None, 81920, useAsync: true))
             {
-                await upload.Content.CopyToAsync(destination, ct);
+                if (IsResizable(extension))
+                    await WriteDownscaledAsync(upload.Content, destination, extension, ct);
+                else
+                    await upload.Content.CopyToAsync(destination, ct);
             }
 
             return MediaSaveResult.Ok(storageKey, contentType, new FileInfo(fullPath).Length);
@@ -69,6 +78,61 @@ public class LocalMediaStorage(IOptions<MediaOptions> options, ILogger<LocalMedi
             // did wrong — logged with detail, reported to them as a plain "that didn't save".
             logger.LogError(ex, "Failed to store uploaded media {FileName} under {Folder}.", upload.FileName, safeFolder);
             return MediaSaveResult.Fail("Seminar.Error.MediaFailed");
+        }
+    }
+
+    /// <summary>Longest edge a stored photograph may have. Every place the site shows one is at
+    /// most a full-width hero on a 2× display, and 2400px covers that; a straight-from-camera
+    /// 6000px original is eight times the bytes for nothing anyone can see.</summary>
+    private const int MaxImageEdge = 2400;
+
+    private static bool IsResizable(string extension) =>
+        extension.ToLowerInvariant() is ".jpg" or ".jpeg" or ".png" or ".webp";
+
+    /// <summary>
+    /// Re-encodes the image no larger than <see cref="MaxImageEdge"/> on its longest side, keeping
+    /// the ratio and never upscaling, in the same format it arrived in — so the storage key,
+    /// extension and content type are unaffected. Orientation metadata is applied first, so a
+    /// phone photo taken sideways comes out the right way up instead of relying on every browser
+    /// to honour the EXIF tag. Anything that cannot be decoded as an image falls back to being
+    /// stored as-is: this is an optimisation, not a validation step.
+    /// </summary>
+    private static async Task WriteDownscaledAsync(Stream source, Stream destination, string extension, CancellationToken ct)
+    {
+        // The upload stream may not be seekable, and a failed decode must be able to fall back to
+        // the original bytes — so it is buffered once.
+        using var buffer = new MemoryStream();
+        await source.CopyToAsync(buffer, ct);
+        buffer.Position = 0;
+
+        try
+        {
+            using var image = await Image.LoadAsync(buffer, ct);
+            image.Mutate(x => x.AutoOrient());
+
+            if (image.Width > MaxImageEdge || image.Height > MaxImageEdge)
+            {
+                image.Mutate(x => x.Resize(new ResizeOptions
+                {
+                    Mode = ResizeMode.Max,
+                    Size = new Size(MaxImageEdge, MaxImageEdge),
+                    Sampler = KnownResamplers.Lanczos3,
+                }));
+            }
+
+            IImageEncoder encoder = extension.ToLowerInvariant() switch
+            {
+                ".png" => new PngEncoder(),
+                ".webp" => new WebpEncoder { Quality = 82 },
+                _ => new JpegEncoder { Quality = 82 },
+            };
+
+            await image.SaveAsync(destination, encoder, ct);
+        }
+        catch (Exception ex) when (ex is UnknownImageFormatException or InvalidImageContentException or NotSupportedException)
+        {
+            buffer.Position = 0;
+            await buffer.CopyToAsync(destination, ct);
         }
     }
 

@@ -386,6 +386,24 @@
   font-family: var(--vih-font-serif);
   font-size: 1.0625rem;
   white-space: nowrap;
+  text-align: right;
+}
+
+// Member price: the full price struck through beside it, and a small label saying why.
+.checkout-ticket-option__full {
+  margin-left: 6px;
+  font-size: 0.875rem;
+  color: var(--vih-text-muted);
+}
+
+.checkout-ticket-option__member {
+  display: block;
+  font-family: var(--vih-font-sans);
+  font-size: var(--vih-text-3xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
 }
 
 // --- Confirmation ------------------------------------------------------------------------------

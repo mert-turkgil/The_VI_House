@@ -188,6 +188,12 @@ else
         <div class="apply-form__summary" role="alert">@error</div>
     </div>
 }
+@if (TempData["WaitlistMessage"] is string waitlistMessage)
+{
+    <div class="container" style="padding-top:24px;">
+        <div class="@(TempData["WaitlistOk"] is true ? "membership-waitlist__notice" : "apply-form__summary")" role="status">@waitlistMessage</div>
+    </div>
+}
 
 @* --- What membership unlocks ------------------------------------------------------------------ *@
 <section class="membership-section" id="membership-benefits" data-reveal>
@@ -352,6 +358,14 @@ else
                         @MoneyFormatter.Format(plan.PriceMinor, plan.Currency)
                         <span>@BillingLabel(plan.BillingPeriod)</span>
                     </div>
+                    @if (plan.IsFull)
+                    {
+                        <p class="membership-plan-card__seats membership-plan-card__seats--full">@Loc["Membership.Plan.Full"]</p>
+                    }
+                    else if (plan.ShowRemaining)
+                    {
+                        <p class="membership-plan-card__seats">@Loc[plan.Remaining == 1 ? "Membership.Plan.Remaining.One" : "Membership.Plan.Remaining", plan.Remaining!]</p>
+                    }
                     @if (!string.IsNullOrWhiteSpace(plan.Description))
                     {
                         <p class="membership-plan-card__description">@plan.Description</p>
@@ -375,9 +389,26 @@ else
                            running — a second checkout would open a second subscription. *@
                         <a class="btn btn--ghost-dark" style="width:100%;" href="/contact">@Loc["Membership.Member.AskToChange"]</a>
                     }
+                    else if (plan.IsFull)
+                    {
+                        @* The waitlist is the launch list under another source; see MembershipController.Waitlist. *@
+                        <form asp-action="Waitlist" asp-route-planId="@plan.Id" method="post" class="membership-waitlist">
+                            @if (!isAuthenticated)
+                            {
+                                <label class="visually-hidden" for="waitlist-email-@plan.Id">@Loc["Membership.Waitlist.Email"]</label>
+                                <input id="waitlist-email-@plan.Id" name="email" type="email" required autocomplete="email" placeholder="@Loc["Membership.Waitlist.Email"]" />
+                            }
+                            <button type="submit" class="btn btn--ghost-dark" style="width:100%;">@Loc["Membership.Waitlist.Cta"]</button>
+                        </form>
+                    }
                     else if (isAuthenticated)
                     {
-                        <form asp-action="Checkout" asp-route-planId="@plan.Id" method="post">
+                        <form asp-action="Checkout" asp-route-planId="@plan.Id" method="post" class="membership-checkout">
+                            <details class="membership-checkout__promo">
+                                <summary>@Loc["Join.PromoCode.Have"]</summary>
+                                <label class="visually-hidden" for="promo-@plan.Id">@Loc["Join.PromoCode"]</label>
+                                <input id="promo-@plan.Id" name="promoCode" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="@Loc["Join.PromoCode.Placeholder"]" maxlength="40" />
+                            </details>
                             <button type="submit" class="btn btn--primary" style="width:100%;">@Loc["Membership.Join"]</button>
                         </form>
                     }

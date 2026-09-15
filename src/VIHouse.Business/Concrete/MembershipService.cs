@@ -23,6 +23,7 @@ public class MembershipService(
     IRepository<Membership> memberships,
     IMembershipPaymentRepository membershipPayments,
     IPendingJoinRepository pendingJoins,
+    IPromoCodeRepository promoCodes,
     IProfileRepository profiles,
     IRepository<ConsentRecord> consentRecords,
     IPaymentProvider paymentProvider,
@@ -79,6 +80,7 @@ public class MembershipService(
         existing.Features = updated.Features;
         existing.Status = updated.Status;
         existing.SortOrder = updated.SortOrder;
+        existing.MaxMembers = updated.MaxMembers;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
 
         await LogAsync("MembershipPlanUpdated", existing.Id, adminUserId, ipAddress, before, Snapshot(existing), ct);
@@ -308,6 +310,40 @@ public class MembershipService(
     /// therefore derived from the date rather than trusted to a column somebody has to remember to
     /// update.
     /// </summary>
+    public Task<PlanAvailability> GetPlanAvailabilityAsync(Guid planId, CancellationToken ct = default) =>
+        GetPlanAvailabilityAsync(planId, excludePendingJoinId: null, ct);
+
+    /// <param name="excludePendingJoinId">A pending join that is being (re)opened right now — its
+    /// own earlier session must not count against the person resuming it.</param>
+    private async Task<PlanAvailability> GetPlanAvailabilityAsync(Guid planId, Guid? excludePendingJoinId, CancellationToken ct)
+    {
+        var plan = await plans.GetByIdAsync(planId, ct);
+        if (plan?.MaxMembers is not { } max)
+            return new PlanAvailability(null, 0);
+
+        var now = DateTimeOffset.UtcNow;
+        var dayAgo = now.AddDays(-1);
+
+        var members = await memberships.CountAsync(m => m.PlanId == planId
+            && (m.Status == MembershipStatus.Active || m.Status == MembershipStatus.PastDue)
+            && (m.ExpiresAt == null || m.ExpiresAt > now), ct);
+
+        // Seats in checkout. A join whose provider session is still payable, and a signed-in
+        // checkout opened recently — the provider's own session window is a day, so anything
+        // older than that is abandoned, not pending.
+        var inJoinCheckout = await pendingJoins.CountAsync(p => p.PlanId == planId
+            && p.Status == PendingJoinStatus.Pending
+            && p.ProviderSessionId != null && p.SessionExpiresAt > now
+            && (excludePendingJoinId == null || p.Id != excludePendingJoinId), ct);
+
+        var inMemberCheckout = await membershipPayments.CountAsync(mp => mp.PlanId == planId
+            && mp.Status == PaymentStatus.Created && mp.CreatedAt > dayAgo, ct);
+
+        return new PlanAvailability(max, members + inJoinCheckout + inMemberCheckout);
+    }
+
+    private const string PlanFullMessage = "This plan is full at the moment. Join the waitlist and we'll let you know the moment a place opens.";
+
     public async Task<Membership?> GetCurrentMembershipAsync(Guid userId, CancellationToken ct = default)
     {
         var now = DateTimeOffset.UtcNow;
@@ -355,7 +391,7 @@ public class MembershipService(
         return await paymentProvider.CreateBillingPortalUrlAsync(membership.ProviderCustomerId, returnUrl, ct);
     }
 
-    public async Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string? referralCode, string successUrl, string cancelUrl, CancellationToken ct = default)
+    public async Task<MembershipCheckoutResult> InitiateCheckoutAsync(Guid planId, Guid userId, string? referralCode, string? promoCode, string successUrl, string cancelUrl, CancellationToken ct = default)
     {
         var plan = await plans.GetByIdAsync(planId, ct);
         if (plan is null || plan.Status != MembershipPlanStatus.Active)
@@ -374,7 +410,14 @@ public class MembershipService(
                 : "You already hold an active membership. To change plan, manage your billing from your account page or contact us.");
         }
 
-        return await StartCheckoutAsync(plan, user, referralCode, successUrl, cancelUrl, ct);
+        if ((await GetPlanAvailabilityAsync(plan.Id, ct)).IsFull)
+            return MembershipCheckoutResult.Full(PlanFullMessage);
+
+        var (promo, promoError) = await ResolveMembershipPromoAsync(promoCode, plan, user.Email!, ct);
+        if (promoError is not null)
+            return MembershipCheckoutResult.Fail(promoError);
+
+        return await StartCheckoutAsync(plan, user, referralCode, promo, successUrl, cancelUrl, ct);
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -423,6 +466,11 @@ public class MembershipService(
         if (join is { Status: PendingJoinStatus.Pending, CheckoutUrl: not null } && join.HasLiveSession(now) && join.PlanId == plan.Id)
             return MembershipCheckoutResult.Ok(join.CheckoutUrl);
 
+        // Checked here, once the shortcut above has ruled out "this person already holds a seat in
+        // checkout" — their own row must not be the thing that makes the plan look full to them.
+        if ((await GetPlanAvailabilityAsync(plan.Id, join?.Id, ct)).IsFull)
+            return MembershipCheckoutResult.Full(PlanFullMessage);
+
         if (join is null)
         {
             join = new PendingJoin
@@ -453,6 +501,22 @@ public class MembershipService(
         join.ReferralCode = request.ReferralCode;
         join.IpAddress = request.IpAddress;
         join.PurgedAt = null;
+
+        // The code already redeemed for this row is kept if it is the same one typed again; a
+        // different one is validated and redeemed afresh; none clears it.
+        var typed = request.PromoCode?.Trim().ToUpperInvariant();
+        var existingPromo = join.PromoCodeId is { } promoId ? await promoCodes.GetByIdAsync(promoId, ct) : null;
+        if (string.IsNullOrEmpty(typed))
+        {
+            join.PromoCodeId = null;
+        }
+        else if (existingPromo is null || existingPromo.Code != typed || existingPromo.MembershipPlanId is { } onlyPlan && onlyPlan != plan.Id)
+        {
+            var (promo, promoError) = await ResolveMembershipPromoAsync(typed, plan, email, ct);
+            if (promoError is not null)
+                return MembershipCheckoutResult.Fail(promoError);
+            join.PromoCodeId = promo?.Id;
+        }
 
         return await OpenJoinSessionAsync(join, plan, successUrl, cancelUrlTemplate, ct);
     }
@@ -497,6 +561,12 @@ public class MembershipService(
                 return MembershipCheckoutResult.Fail(AlreadyMemberMessage);
         }
 
+        // A lapsed session no longer holds a seat, so a resume competes for one like anyone else —
+        // except against its own row, which may still be live.
+        if (!(join.HasLiveSession(DateTimeOffset.UtcNow) && join.PlanId == plan.Id)
+            && (await GetPlanAvailabilityAsync(plan.Id, join.Id, ct)).IsFull)
+            return MembershipCheckoutResult.Full(PlanFullMessage);
+
         return await OpenJoinSessionAsync(join, plan, successUrl, cancelUrlTemplate, ct);
     }
 
@@ -530,6 +600,14 @@ public class MembershipService(
         if (previousSessionId is not null)
             await paymentProvider.ExpireCheckoutSessionAsync(previousSessionId, ct);
 
+        string? couponId = null;
+        if (join.PromoCodeId is { } joinPromoId && await promoCodes.GetByIdAsync(joinPromoId, ct) is { } joinPromo)
+        {
+            couponId = await EnsureCouponAsync(joinPromo, ct);
+            if (couponId is null)
+                return MembershipCheckoutResult.Fail("We couldn't apply your promo code just now — please try again in a moment.");
+        }
+
         try
         {
             var session = await paymentProvider.CreateCheckoutSessionAsync(new CreateCheckoutSessionRequest(
@@ -549,6 +627,7 @@ public class MembershipService(
             {
                 Recurring = ToRecurringInterval(plan.BillingPeriod),
                 ProviderPriceId = plan.IsProviderSynced ? plan.ProviderPriceId : null,
+                ProviderCouponId = couponId,
             }, ct);
 
             join.ProviderSessionId = session.SessionId;
@@ -565,6 +644,75 @@ public class MembershipService(
         {
             logger.LogWarning(ex, "Could not open a checkout session for pending join {PendingJoinId}", join.Id);
             return MembershipCheckoutResult.Fail("We couldn't reach the payment provider — please try again in a moment.");
+        }
+    }
+
+    /// <summary>
+    /// Validates and redeems a membership promo code. Mirrors PaymentService.TryApplyPromoAsync
+    /// for tickets, plus the membership-only rules: scope, plan, the person it is reserved for,
+    /// and (for a fixed amount) the plan's currency. Redemption is atomic and happens here, once,
+    /// when a checkout is opened; the pending join remembers the code so a resume does not spend
+    /// it twice. Returns (null, null) for no code.
+    /// </summary>
+    private async Task<(PromoCode? Promo, string? Error)> ResolveMembershipPromoAsync(string? code, MembershipPlan plan, string email, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(code)) return (null, null);
+
+        var promo = await promoCodes.GetByCodeAsync(code.Trim().ToUpperInvariant(), ct);
+        if (promo is null || !promo.IsActive)
+            return (null, "That promo code isn't valid.");
+        if (promo.ExpiresAt is { } expires && expires < DateTimeOffset.UtcNow)
+            return (null, "That promo code has expired.");
+        if (promo.Scope != PromoScope.Memberships)
+            return (null, "That promo code is for experience tickets, not membership.");
+        if (promo.MembershipPlanId is { } onlyPlan && onlyPlan != plan.Id)
+            return (null, "That promo code doesn't apply to this plan.");
+        if (promo.RestrictedToEmail is { } reservedFor && reservedFor != NormalizeEmail(email))
+            return (null, "That promo code is reserved for a different email address.");
+        if (promo.Type == PromoCodeType.Fixed && !string.Equals(promo.Currency, plan.Currency, StringComparison.OrdinalIgnoreCase))
+            return (null, "That promo code isn't valid for this plan's currency.");
+
+        if (!await promoCodes.TryRedeemAsync(promo.Id, ct))
+            return (null, "That promo code has reached its redemption limit.");
+
+        return (promo, null);
+    }
+
+    /// <summary>What the first payment comes to after the promo, for the local payment row. The
+    /// provider applied the coupon and is the record of what was actually charged; this keeps the
+    /// admin's payment list from showing full price against a discounted sale.</summary>
+    private static long DiscountedFirstPayment(MembershipPlan plan, PromoCode? promo) => promo switch
+    {
+        null => plan.PriceMinor,
+        { Type: PromoCodeType.Percentage } => Math.Max(0, plan.PriceMinor - (long)Math.Round(plan.PriceMinor * Math.Min(100, promo.Value) / 100m, MidpointRounding.AwayFromZero)),
+        _ => Math.Max(0, plan.PriceMinor - promo.Value),
+    };
+
+    /// <summary>The provider's coupon for a promo code, created on first use and remembered. Null
+    /// when the provider could not be reached — the caller then refuses rather than silently
+    /// selling at full price to someone who typed a valid code.</summary>
+    private async Task<string?> EnsureCouponAsync(PromoCode promo, CancellationToken ct)
+    {
+        if (promo.ProviderCouponId is not null) return promo.ProviderCouponId;
+
+        try
+        {
+            var id = await paymentProvider.CreateCouponAsync(new CouponRequest(
+                Name: promo.Code,
+                PercentOff: promo.Type == PromoCodeType.Percentage ? promo.Value : null,
+                AmountOffMinor: promo.Type == PromoCodeType.Fixed ? promo.Value : null,
+                Currency: promo.Currency,
+                Forever: promo.MembershipDuration == PromoDuration.Forever), ct);
+
+            promo.ProviderCouponId = id;
+            promo.UpdatedAt = DateTimeOffset.UtcNow;
+            await promoCodes.SaveChangesAsync(ct);
+            return id;
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Could not create a provider coupon for promo code {Code}", promo.Code);
+            return null;
         }
     }
 
@@ -612,16 +760,25 @@ public class MembershipService(
     /// <summary>Shared tail of the signed-in checkout entry point: the local payment row first,
     /// then the provider session, then the row updated with the session id it must be matched on.</summary>
     private async Task<MembershipCheckoutResult> StartCheckoutAsync(
-        MembershipPlan plan, ApplicationUser user, string? referralCode, string successUrl, string cancelUrl, CancellationToken ct)
+        MembershipPlan plan, ApplicationUser user, string? referralCode, PromoCode? promo, string successUrl, string cancelUrl, CancellationToken ct)
     {
+        string? couponId = null;
+        if (promo is not null)
+        {
+            couponId = await EnsureCouponAsync(promo, ct);
+            if (couponId is null)
+                return MembershipCheckoutResult.Fail("We couldn't apply your promo code just now — please try again in a moment.");
+        }
+
         var payment = new MembershipPayment
         {
             UserId = user.Id,
             PlanId = plan.Id,
-            AmountMinor = plan.PriceMinor,
+            AmountMinor = DiscountedFirstPayment(plan, promo),
             Currency = plan.Currency,
             Status = PaymentStatus.Created,
             ReferralCode = referralCode,
+            PromoCodeId = promo?.Id,
         };
         payment.ProviderReference = $"pending_{payment.Id:N}"; // placeholder, unique — replaced once Stripe returns a session id
         await membershipPayments.AddAsync(payment, ct);
@@ -651,6 +808,7 @@ public class MembershipService(
                 // Sell by the mirrored Stripe price when there is one, so the sale lands under the
                 // named product in Stripe's reporting; the inline amount remains the fallback.
                 ProviderPriceId = plan.IsProviderSynced ? plan.ProviderPriceId : null,
+                ProviderCouponId = couponId,
             }, ct);
 
             payment.ProviderReference = session.SessionId;
@@ -878,15 +1036,17 @@ public class MembershipService(
         var payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct);
         if (payment is null)
         {
+            var joinPromo = join.PromoCodeId is { } paidPromoId ? await promoCodes.GetByIdAsync(paidPromoId, ct) : null;
             payment = new MembershipPayment
             {
                 UserId = user.Id,
                 PlanId = plan.Id,
-                AmountMinor = plan.PriceMinor,
+                AmountMinor = DiscountedFirstPayment(plan, joinPromo),
                 Currency = plan.Currency,
                 Status = PaymentStatus.Paid,
                 ProviderReference = sessionId,
                 ReferralCode = join.ReferralCode,
+                PromoCodeId = join.PromoCodeId,
             };
             await membershipPayments.AddAsync(payment, ct);
             await membershipPayments.SaveChangesAsync(ct);
@@ -1033,6 +1193,26 @@ public class MembershipService(
             };
             await memberships.AddAsync(membership, ct);
             await memberships.SaveChangesAsync(ct);
+
+            // Money that arrived is never refused, but two checkouts racing for the last seat can
+            // both land. Leave a trail rather than a silent overshoot.
+            if (plan.MaxMembers is { } max)
+            {
+                var availability = await GetPlanAvailabilityAsync(plan.Id, ct);
+                if (availability.Taken > max)
+                {
+                    logger.LogWarning("Plan {PlanId} is over its member limit ({Taken}/{Max}) after membership {MembershipId}.", plan.Id, availability.Taken, max, membership.Id);
+                    await auditLogs.AddAsync(new AuditLogEntry
+                    {
+                        AdminUserId = Guid.Empty,
+                        Action = "MembershipCapExceeded",
+                        EntityType = nameof(MembershipPlan),
+                        EntityId = plan.Id,
+                        DataAfter = JsonSerializer.Serialize(new { MembershipId = membership.Id, availability.Taken, Max = max }),
+                    }, ct);
+                    await auditLogs.SaveChangesAsync(ct);
+                }
+            }
         }
 
         if (payment.MembershipId != membership.Id)
@@ -1299,7 +1479,7 @@ public class MembershipService(
 
     private static object Snapshot(MembershipPlan plan) => new
     {
-        plan.Name, plan.PriceMinor, plan.Currency, plan.BillingPeriod, plan.Status, plan.ProviderProductId, plan.ProviderPriceId,
+        plan.Name, plan.PriceMinor, plan.Currency, plan.BillingPeriod, plan.Status, plan.MaxMembers, plan.ProviderProductId, plan.ProviderPriceId,
     };
 
     private static string Truncate(string value, int max) => value.Length <= max ? value : value[..max];

@@ -3,7 +3,6 @@ import { initNav, initDismissableDropdown, initSiteSearch } from './modules/nav'
 import { initScrollReveal } from './modules/reveal';
 import { initStatCounters } from './modules/counter';
 import { initCarousels, initHeroSlider } from './modules/carousel';
-import { initAuthenticatorQr } from './modules/qr';
 import { initRecoveryCodeDownload } from './modules/recoveryCodes';
 import { initExperienceFilters } from './modules/filters';
 import { initSubnav } from './modules/subnav';
@@ -12,24 +11,34 @@ import { initExperienceGate } from './modules/gate';
 import { initAuthBackdrop } from './modules/authBackdrop';
 import { initPasswordToggle } from './modules/passwordToggle';
 
+// Each module is started on its own so that one throwing — a page shape it did not expect, a
+// browser quirk — cannot take the rest of the page's behaviour down with it. Before this, one
+// failure early in the list meant no carousel, no nav panel and no password toggle on that page.
+function run(name: string, init: () => void): void {
+  try {
+    init();
+  } catch (error) {
+    console.error(`[vih] ${name} failed to initialise`, error);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  initNav();
-  initDismissableDropdown('.lang-switch');
-  initDismissableDropdown('.notif-bell');
-  initDismissableDropdown('.site-search');
-  initSiteSearch();
-  initScrollReveal();
-  initStatCounters();
-  initCarousels();
-  initHeroSlider();
-  initAuthenticatorQr();
-  initRecoveryCodeDownload();
-  initExperienceFilters();
-  initSubnav();
-  initVideoEmbeds();
-  initExperienceGate();
-  initAuthBackdrop();
-  initPasswordToggle();
+  run('nav', initNav);
+  run('lang-switch', () => initDismissableDropdown('.lang-switch'));
+  run('notif-bell', () => initDismissableDropdown('.notif-bell'));
+  run('site-search-dropdown', () => initDismissableDropdown('.site-search'));
+  run('site-search', initSiteSearch);
+  run('reveal', initScrollReveal);
+  run('counters', initStatCounters);
+  run('carousels', initCarousels);
+  run('hero', initHeroSlider);
+  run('recovery-codes', initRecoveryCodeDownload);
+  run('filters', initExperienceFilters);
+  run('subnav', initSubnav);
+  run('video', initVideoEmbeds);
+  run('gate', initExperienceGate);
+  run('auth-backdrop', initAuthBackdrop);
+  run('password-toggle', initPasswordToggle);
 });
 
 // PWA (brief §65) — registered on every page (Admin included, harmlessly; the service worker

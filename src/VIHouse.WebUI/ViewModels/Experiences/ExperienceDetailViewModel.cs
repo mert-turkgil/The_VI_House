@@ -22,6 +22,7 @@ public class ExperienceDetailViewModel
     public ExperienceStatus Status { get; set; }
 
     public List<TicketType> TicketTypes { get; set; } = [];
+    public int MemberDiscountPercent { get; set; }
     public List<ExperienceProgramDay> ProgramDays { get; set; } = [];
     public List<ExperienceInclusion> Included { get; set; } = [];
     public List<ExperienceInclusion> NotIncluded { get; set; } = [];
@@ -143,6 +144,7 @@ public class ExperienceDetailViewModel
             ? [.. tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)]
             : [],
         TicketTypes = e.TicketTypes.OrderBy(t => t.SortOrder).ToList(),
+        MemberDiscountPercent = e.MemberDiscountPercent,
         ProgramDays = [.. ExperienceContent.ForCulture(e.ProgramDays, culture, d => d.Culture).OrderBy(d => d.SortOrder)],
         // The whole list in the reader's language, or the default's — never a mix.
         Included = [.. ExperienceContent.ForCulture(e.Inclusions, culture, i => i.Culture).Where(i => i.IsIncluded).OrderBy(i => i.SortOrder)],

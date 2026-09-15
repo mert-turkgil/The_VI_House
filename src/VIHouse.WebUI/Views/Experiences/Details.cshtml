@@ -309,6 +309,10 @@
            render inside the bar itself. *@
             <aside class="experience-ticket-panel" id="tickets">
                 <h2 class="experience-ticket-panel__title">@Loc["Experiences.Tickets.Title"]</h2>
+                @if (Model.MemberDiscountPercent > 0 && Model.TicketTypes.Count > 0)
+                {
+                    <p class="experience-ticket-panel__member-note">@Loc["Experiences.Tickets.MemberDiscount", Model.MemberDiscountPercent]</p>
+                }
 
                 @if (Model.TicketTypes.Count == 0)
                 {

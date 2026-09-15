@@ -89,6 +89,14 @@ public class Experience : BaseEntity
     public bool IsSignature { get; set; }
     public int SortOrder { get; set; }
 
+    /// <summary>
+    /// Percentage off for anyone holding a current membership, 0 for none. Independent of the
+    /// access rules (Visibility, admitted plans): access decides who may come, this decides what a
+    /// member pays when they do. Applied to every ticket type alike.
+    /// </summary>
+    public int MemberDiscountPercent { get; set; }
+
+
     public List<TicketType> TicketTypes { get; set; } = [];
     public List<ExperienceProgramDay> ProgramDays { get; set; } = [];
     public List<ExperienceInclusion> Inclusions { get; set; } = [];

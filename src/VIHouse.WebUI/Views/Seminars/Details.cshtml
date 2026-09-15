@@ -249,6 +249,10 @@
 
                 case SeminarAccessOutcome.RequiresPayment:
                     <h2>@Loc["Seminars.Access.Pay.Heading", MoneyFormatter.Format(access.PriceMinor, access.Currency)]</h2>
+                    @if (access.MemberDiscountPercent > 0 && access.FullPriceMinor is { } fullPrice)
+                    {
+                        <p class="seminar-access__member-price">@Loc["Seminars.Access.MemberPrice", access.MemberDiscountPercent, MoneyFormatter.Format(fullPrice, access.Currency)]</p>
+                    }
                     <p>
                         @Loc["Seminars.Access.Pay.Body"]
                         @if (Model.IncludedWithMembership)

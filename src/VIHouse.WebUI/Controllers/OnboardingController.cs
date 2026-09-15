@@ -11,6 +11,7 @@ using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
+using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.ViewModels.Onboarding;
 
 namespace VIHouse.WebUI.Controllers;
@@ -278,14 +279,17 @@ public class OnboardingController(
 
         var email = await userManager.GetEmailAsync(user) ?? user.UserName!;
 
+        var authenticatorUri = string.Format(
+            AuthenticatorUriFormat,
+            urlEncoder.Encode("The VI House"),
+            urlEncoder.Encode(email),
+            key);
+
         return new TwoFactorSetupViewModel
         {
             SharedKey = FormatKey(key!),
-            AuthenticatorUri = string.Format(
-                AuthenticatorUriFormat,
-                urlEncoder.Encode("The VI House"),
-                urlEncoder.Encode(email),
-                key),
+            AuthenticatorUri = authenticatorUri,
+            QrSvg = AuthenticatorQr.Svg(authenticatorUri),
         };
     }
 

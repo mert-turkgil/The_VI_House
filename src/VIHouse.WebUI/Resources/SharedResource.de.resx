@@ -210,6 +210,12 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Membership.OneTime" xml:space="preserve"><value>einmalig</value></data>
   <data name="Membership.NoPlans" xml:space="preserve"><value>Mitgliedschaften sind noch nicht verfügbar — schauen Sie bald wieder vorbei.</value></data>
   <data name="Membership.Join" xml:space="preserve"><value>Beitreten</value></data>
+  <data name="Membership.Plan.Full" xml:space="preserve"><value>Dieser Plan ist ausgebucht</value></data>
+  <data name="Membership.Plan.Remaining" xml:space="preserve"><value>Noch {0} Plätze</value></data>
+  <data name="Membership.Plan.Remaining.One" xml:space="preserve"><value>Noch 1 Platz</value></data>
+  <data name="Membership.Waitlist.Cta" xml:space="preserve"><value>Auf die Warteliste</value></data>
+  <data name="Membership.Waitlist.Email" xml:space="preserve"><value>Ihre E-Mail-Adresse</value></data>
+  <data name="Membership.Waitlist.Thanks" xml:space="preserve"><value>Sie stehen auf der Warteliste. Wir melden uns per E-Mail, sobald ein Platz frei wird.</value></data>
   <data name="Membership.LogInToJoin" xml:space="preserve"><value>Zum Beitreten anmelden</value></data>
   <data name="Membership.Confirmed" xml:space="preserve"><value>Mitgliedschaft bestätigt</value></data>
   <data name="Membership.Processing" xml:space="preserve"><value>Ihre Mitgliedschaft wird bestätigt</value></data>
@@ -362,6 +368,7 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Seminars.Access.Included.Heading" xml:space="preserve"><value>In Ihrer Mitgliedschaft enthalten</value></data>
   <data name="Seminars.Access.Included.Body" xml:space="preserve"><value>Diese Session kostet normalerweise {0}. Ihre Mitgliedschaft deckt sie ab — melden Sie sich an und sie öffnet sich sofort.</value></data>
   <data name="Seminars.Access.Pay.Heading" xml:space="preserve"><value>Platz sichern — {0}</value></data>
+  <data name="Seminars.Access.MemberPrice" xml:space="preserve"><value>Mitgliederpreis — {0} % unter dem üblichen Preis von {1}</value></data>
   <data name="Seminars.Access.Pay.Body" xml:space="preserve"><value>Sie erhalten die vollständige Session samt aller Aufzeichnungen — jederzeit wieder abrufbar.</value></data>
   <data name="Seminars.Access.Pay.MembershipHint" xml:space="preserve"><value>Für Mitglieder ist sie ohne Aufpreis enthalten.</value></data>
   <data name="Seminars.Access.Pending.Heading" xml:space="preserve"><value>Zahlung läuft</value></data>
@@ -428,6 +435,8 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Admin.Seminar.Location.Hint" xml:space="preserve"><value>Wird auf der Karte und der Seite angezeigt — z. B. "Zoom" oder der Veranstaltungsort.</value></data>
   <data name="Admin.Seminar.Price.Hint" xml:space="preserve"><value>In ganzen Einheiten, z. B. 49,00. 0 macht sie für alle kostenlos, die sie sehen können.</value></data>
   <data name="Admin.Seminar.IncludedWithMembership.Hint" xml:space="preserve"><value>Ist dies aktiviert, meldet sich ein Mitglied mit aktiver Mitgliedschaft mit einem Klick an und wird nie zur Kasse geschickt. Alle anderen zahlen den obigen Preis.</value></data>
+  <data name="Admin.Seminar.MemberDiscount" xml:space="preserve"><value>Mitgliederrabatt (%)</value></data>
+  <data name="Admin.Seminar.MemberDiscount.Hint" xml:space="preserve"><value>Gilt nur, wenn die Session nicht in der Mitgliedschaft enthalten ist: Mitglieder zahlen so viel weniger als den obigen Preis. 0 bedeutet voller Preis.</value></data>
   <data name="Admin.Seminar.Summary.Hint" xml:space="preserve"><value>Wird vor jeder Anmeldung gelesen — dieser Teil muss die Session allein verkaufen.</value></data>
   <data name="Admin.Seminar.Body.Hint" xml:space="preserve"><value>Nur angemeldete Personen können dies lesen. Bilder und GIFs direkt in den Editor ziehen; Video und Folien unten in der Medienbibliothek hochladen.</value></data>
   <data name="Admin.Seminar.Index.Title" xml:space="preserve"><value>Sessions</value></data>
@@ -560,6 +569,7 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Experiences.Programme.Day" xml:space="preserve"><value>Tag {0}</value></data>
   <data name="Experiences.Programme.LocalTimes" xml:space="preserve"><value>Alle Zeiten in Ortszeit von {0}.</value></data>
   <data name="Experiences.Tickets.Title" xml:space="preserve"><value>Optionen</value></data>
+  <data name="Experiences.Tickets.MemberDiscount" xml:space="preserve"><value>Mitglieder sparen {0} %</value></data>
   <data name="Experiences.Tickets.None" xml:space="preserve"><value>Die Optionen werden mit Ihrer Einladung bestätigt.</value></data>
   <data name="Experiences.Tickets.PlacesLeft" xml:space="preserve"><value>Noch {0} Plätze</value></data>
   <data name="Experiences.Tickets.Note" xml:space="preserve"><value>Bewerbungen werden von Hand geprüft. Ihnen wird nichts berechnet, bevor Ihnen ein Platz angeboten und von Ihnen angenommen wurde.</value></data>
@@ -1006,6 +1016,10 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Join.ChoosePlan" xml:space="preserve"><value>Wählen Sie Ihren Plan</value></data>
   <data name="Join.NoPlans" xml:space="preserve"><value>Derzeit sind keine Pläne verfügbar. Bitte schauen Sie bald wieder vorbei.</value></data>
   <data name="Join.RenewsNote" xml:space="preserve"><value>Verlängert sich automatisch bis zur Kündigung — jederzeit über Ihr Konto verwalten oder kündigen.</value></data>
+  <data name="Join.PromoCode" xml:space="preserve"><value>Aktionscode</value></data>
+  <data name="Join.PromoCode.Placeholder" xml:space="preserve"><value>Optional</value></data>
+  <data name="Join.PromoCode.Hint" xml:space="preserve"><value>Wenn Sie einen Code erhalten haben, geben Sie ihn hier ein — der Rabatt wird auf der Zahlungsseite abgezogen.</value></data>
+  <data name="Join.PromoCode.Have" xml:space="preserve"><value>Haben Sie einen Aktionscode?</value></data>
   <data name="Join.EmailHint" xml:space="preserve"><value>Hierhin senden wir Ihre Quittung und den Link zur Kontoeinrichtung.</value></data>
   <data name="Join.Submit" xml:space="preserve"><value>Weiter zur Zahlung</value></data>
   <data name="Join.Secure" xml:space="preserve"><value>Die Zahlung wird über Stripe abgewickelt. Wir sehen oder speichern Ihre Kartendaten nie.</value></data>

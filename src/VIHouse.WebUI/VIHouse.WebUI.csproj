@@ -13,6 +13,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="QRCoder" Version="1.8.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="4.1.2" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -72,10 +74,7 @@
 
     Skipped for design-time builds: the IDE runs those constantly, and nothing in them needs the CSS.
   -->
-  <Target Name="ViteBuild"
-          BeforeTargets="ResolveProjectStaticWebAssets"
-          DependsOnTargets="NpmInstall"
-          Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="ViteBuild" BeforeTargets="ResolveProjectStaticWebAssets" DependsOnTargets="NpmInstall" Condition="'$(DesignTimeBuild)' != 'true'">
     <Exec Command="npm run build" WorkingDirectory="ClientApp" />
     <ItemGroup>
       <Content Remove="wwwroot\dist\**" />

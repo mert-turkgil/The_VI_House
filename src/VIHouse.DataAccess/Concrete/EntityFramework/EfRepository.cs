@@ -19,6 +19,9 @@ public class EfRepository<T>(VIHouseDbContext db) : IRepository<T> where T : Bas
     public virtual async Task<List<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default) =>
         await Set.Where(predicate).ToListAsync(ct);
 
+    public virtual Task<int> CountAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default) =>
+        Set.CountAsync(predicate, ct);
+
     public virtual async Task AddAsync(T entity, CancellationToken ct = default) =>
         await Set.AddAsync(entity, ct);
 

@@ -210,6 +210,12 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Membership.OneTime" xml:space="preserve"><value>tek seferlik</value></data>
   <data name="Membership.NoPlans" xml:space="preserve"><value>Üyelik planları henüz açık değil — yakında tekrar kontrol edin.</value></data>
   <data name="Membership.Join" xml:space="preserve"><value>Katıl</value></data>
+  <data name="Membership.Plan.Full" xml:space="preserve"><value>Bu plan dolu</value></data>
+  <data name="Membership.Plan.Remaining" xml:space="preserve"><value>{0} yer kaldı</value></data>
+  <data name="Membership.Plan.Remaining.One" xml:space="preserve"><value>1 yer kaldı</value></data>
+  <data name="Membership.Waitlist.Cta" xml:space="preserve"><value>Bekleme listesine katıl</value></data>
+  <data name="Membership.Waitlist.Email" xml:space="preserve"><value>E-posta adresiniz</value></data>
+  <data name="Membership.Waitlist.Thanks" xml:space="preserve"><value>Bekleme listesindesiniz. Bir yer açıldığında size e-posta göndereceğiz.</value></data>
   <data name="Membership.LogInToJoin" xml:space="preserve"><value>Katılmak için Giriş Yap</value></data>
   <data name="Membership.Confirmed" xml:space="preserve"><value>Üyelik Onaylandı</value></data>
   <data name="Membership.Processing" xml:space="preserve"><value>Üyeliğiniz Onaylanıyor</value></data>
@@ -362,6 +368,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Seminars.Access.Included.Heading" xml:space="preserve"><value>Üyeliğinize dahil</value></data>
   <data name="Seminars.Access.Included.Body" xml:space="preserve"><value>Bu oturum normalde {0} tutarındadır. Üyeliğiniz bunu kapsıyor — kaydolun, hemen açılır.</value></data>
   <data name="Seminars.Access.Pay.Heading" xml:space="preserve"><value>Yerinizi alın — {0}</value></data>
+  <data name="Seminars.Access.MemberPrice" xml:space="preserve"><value>Üye fiyatı — normal fiyat {1} üzerinden %{0} indirim</value></data>
   <data name="Seminars.Access.Pay.Body" xml:space="preserve"><value>Oturumun tamamına ve onunla birlikte kaydedilen her şeye, istediğiniz zaman dönebilecek şekilde erişirsiniz.</value></data>
   <data name="Seminars.Access.Pay.MembershipHint" xml:space="preserve"><value>Üyeler için ek ücret yoktur.</value></data>
   <data name="Seminars.Access.Pending.Heading" xml:space="preserve"><value>Ödeme sürüyor</value></data>
@@ -428,6 +435,8 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Admin.Seminar.Location.Hint" xml:space="preserve"><value>Kartta ve sayfada gösterilir — örneğin "Zoom" veya mekân.</value></data>
   <data name="Admin.Seminar.Price.Hint" xml:space="preserve"><value>Tam birim olarak, örneğin 49,00. Görebilen herkes için ücretsiz yapmak üzere 0 girin.</value></data>
   <data name="Admin.Seminar.IncludedWithMembership.Hint" xml:space="preserve"><value>Bu açıkken, aktif üyeliği olan bir üye tek tıkla kaydolur ve hiçbir zaman ödeme adımına gönderilmez. Diğer herkes yukarıdaki fiyatı öder.</value></data>
+  <data name="Admin.Seminar.MemberDiscount" xml:space="preserve"><value>Üye indirimi (%)</value></data>
+  <data name="Admin.Seminar.MemberDiscount.Hint" xml:space="preserve"><value>Yalnızca oturum üyeliğe dahil değilken kullanılır: üyeler yukarıdaki fiyattan bu kadar az öder. 0, üyelerin tam fiyat ödediği anlamına gelir.</value></data>
   <data name="Admin.Seminar.Summary.Hint" xml:space="preserve"><value>Kimse kaydolmadan önce okunur — oturumu tek başına satması gereken kısım budur.</value></data>
   <data name="Admin.Seminar.Body.Hint" xml:space="preserve"><value>Bunu yalnızca kaydolanlar okuyabilir. Görselleri ve GIF'leri doğrudan editöre bırakın; video ve slaytları aşağıdaki medya kitaplığından yükleyin.</value></data>
   <data name="Admin.Seminar.Index.Title" xml:space="preserve"><value>Oturumlar</value></data>
@@ -560,6 +569,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Experiences.Programme.Day" xml:space="preserve"><value>{0}. gün</value></data>
   <data name="Experiences.Programme.LocalTimes" xml:space="preserve"><value>Tüm saatler {0} yerel saatidir.</value></data>
   <data name="Experiences.Tickets.Title" xml:space="preserve"><value>Deneyim seçenekleri</value></data>
+  <data name="Experiences.Tickets.MemberDiscount" xml:space="preserve"><value>Üyeler %{0} tasarruf eder</value></data>
   <data name="Experiences.Tickets.None" xml:space="preserve"><value>Seçenekler davetinizle birlikte kesinleşir.</value></data>
   <data name="Experiences.Tickets.PlacesLeft" xml:space="preserve"><value>{0} yer kaldı</value></data>
   <data name="Experiences.Tickets.Note" xml:space="preserve"><value>Başvurular elle incelenir. Size bir yer teklif edilip kabul etmediğiniz sürece ücret alınmaz.</value></data>
@@ -1006,6 +1016,10 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Join.ChoosePlan" xml:space="preserve"><value>Planınızı seçin</value></data>
   <data name="Join.NoPlans" xml:space="preserve"><value>Şu anda açık plan yok. Lütfen kısa süre sonra tekrar bakın.</value></data>
   <data name="Join.RenewsNote" xml:space="preserve"><value>İptal edilene kadar otomatik yenilenir — hesabınızdan istediğiniz zaman yönetin veya iptal edin.</value></data>
+  <data name="Join.PromoCode" xml:space="preserve"><value>Promosyon kodu</value></data>
+  <data name="Join.PromoCode.Placeholder" xml:space="preserve"><value>İsteğe bağlı</value></data>
+  <data name="Join.PromoCode.Hint" xml:space="preserve"><value>Size bir kod verildiyse buraya girin — indirim ödeme sayfasında uygulanır.</value></data>
+  <data name="Join.PromoCode.Have" xml:space="preserve"><value>Promosyon kodunuz var mı?</value></data>
   <data name="Join.EmailHint" xml:space="preserve"><value>Makbuzunuz ve hesap kurulum bağlantınız buraya gönderilir.</value></data>
   <data name="Join.Submit" xml:space="preserve"><value>Ödemeye devam et</value></data>
   <data name="Join.Secure" xml:space="preserve"><value>Ödeme Stripe tarafından işlenir. Kart bilgilerinizi asla görmez veya saklamayız.</value></data>

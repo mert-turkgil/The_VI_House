@@ -33,8 +33,19 @@ public class PaymentService(
     ISmsService smsService,
     INotificationService notificationService,
     IOptions<SiteOptions> siteOptions,
+    IMembershipService membershipService,
     UserManager<ApplicationUser> userManager) : IPaymentService
 {
+    /// <summary>The experience's member discount, if the applicant's address belongs to a current
+    /// member; 0 otherwise. Read live, so a lapsed membership stops discounting the moment it lapses.</summary>
+    private async Task<int> MemberDiscountForAsync(Experience experience, string applicantEmail, CancellationToken ct)
+    {
+        if (experience.MemberDiscountPercent <= 0) return 0;
+        var user = await userManager.FindByEmailAsync(applicantEmail);
+        if (user is null) return 0;
+        return await membershipService.GetCurrentMembershipAsync(user.Id, ct) is null ? 0 : experience.MemberDiscountPercent;
+    }
+
     public async Task<InvitationLandingInfo> GetInvitationLandingAsync(string invitationCode, CancellationToken ct = default)
     {
         var invitation = await invitations.GetByCodeAsync(invitationCode, ct);
@@ -55,16 +66,23 @@ public class PaymentService(
 
         var availableTicketTypes = await ticketTypes.GetByExperienceAsync(application.ExperienceId, ct);
         var now = DateTimeOffset.UtcNow;
+        var memberDiscount = await MemberDiscountForAsync(experience, application.Email, ct);
 
         var options = availableTicketTypes
             .Where(t => t.SalesStartAt is null || t.SalesStartAt <= now)
             .Where(t => t.SalesEndAt is null || t.SalesEndAt >= now)
-            .Select(t => new TicketTypeOption(t.Id, t.Title, t.Description, t.PriceMinor, t.Currency, t.PerksText, t.Inventory <= 0))
+            .Select(t => new TicketTypeOption(t.Id, t.Title, t.Description, MemberPricing.Apply(t.PriceMinor, memberDiscount), t.Currency, t.PerksText, t.Inventory <= 0)
+            {
+                FullPriceMinor = memberDiscount > 0 ? t.PriceMinor : null,
+            })
             .ToList();
 
         return new InvitationLandingInfo(
             true, null, application.FirstName, experience.Title, experience.City, experience.Country,
-            experience.StartAtUtc, experience.EndAtUtc, options);
+            experience.StartAtUtc, experience.EndAtUtc, options)
+        {
+            MemberDiscountPercent = memberDiscount,
+        };
     }
 
     public async Task<CheckoutInitiationResult> InitiateCheckoutAsync(
@@ -96,12 +114,13 @@ public class PaymentService(
         if (experience is null)
             return CheckoutInitiationResult.Fail("This experience is no longer available.");
 
-        // Amount, with an optional promo code applied — redeemed atomically (same no-oversell
-        // pattern as ticket inventory) before we ever reserve capacity or talk to Stripe.
-        var amountMinor = ticketType.PriceMinor;
+        // Amount: the member price first (the same figure the invitation page showed), then an
+        // optional promo code on top — redeemed atomically (same no-oversell pattern as ticket
+        // inventory) before we ever reserve capacity or talk to Stripe.
+        var amountMinor = MemberPricing.Apply(ticketType.PriceMinor, await MemberDiscountForAsync(experience, application.Email, ct));
         if (!string.IsNullOrWhiteSpace(promoCode))
         {
-            var promoResult = await TryApplyPromoAsync(promoCode.Trim(), application.ExperienceId, amountMinor, ct);
+            var promoResult = await TryApplyPromoAsync(promoCode.Trim(), application.ExperienceId, application.Email, amountMinor, ct);
             if (promoResult.Error is not null)
                 return CheckoutInitiationResult.Fail(promoResult.Error);
             amountMinor = promoResult.AmountMinor;
@@ -357,15 +376,19 @@ public class PaymentService(
             nameof(Booking), booking.Id, ct);
     }
 
-    private async Task<(long AmountMinor, string? Error)> TryApplyPromoAsync(string code, Guid experienceId, long baseAmountMinor, CancellationToken ct)
+    private async Task<(long AmountMinor, string? Error)> TryApplyPromoAsync(string code, Guid experienceId, string applicantEmail, long baseAmountMinor, CancellationToken ct)
     {
-        var promo = await promoCodes.GetByCodeAsync(code, ct);
+        var promo = await promoCodes.GetByCodeAsync(code.ToUpperInvariant(), ct);
         if (promo is null || !promo.IsActive)
             return (baseAmountMinor, "That promo code isn't valid.");
         if (promo.ExpiresAt is { } expires && expires < DateTimeOffset.UtcNow)
             return (baseAmountMinor, "That promo code has expired.");
+        if (promo.Scope != PromoScope.Experiences)
+            return (baseAmountMinor, "That promo code is for membership, not experience tickets.");
         if (promo.ExperienceId is { } restrictedTo && restrictedTo != experienceId)
             return (baseAmountMinor, "That promo code doesn't apply to this experience.");
+        if (promo.RestrictedToEmail is { } reservedFor && reservedFor != applicantEmail.Trim().ToUpperInvariant())
+            return (baseAmountMinor, "That promo code is reserved for a different email address.");
 
         var redeemed = await promoCodes.TryRedeemAsync(promo.Id, ct);
         if (!redeemed)

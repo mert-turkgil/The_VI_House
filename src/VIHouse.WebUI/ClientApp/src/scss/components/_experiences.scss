@@ -869,6 +869,16 @@
   color: var(--vih-danger);
 }
 
+// "Members save 20%" under the panel title — gold, small, a fact not a banner.
+.experience-ticket-panel__member-note {
+  margin: 0 0 var(--vih-space-sm);
+  font-size: var(--vih-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+}
+
 .experience-ticket-panel__note {
   margin: var(--vih-space-sm) 0 0;
   font-size: var(--vih-text-sm);

@@ -26,6 +26,13 @@ public class MembershipPlan : BaseEntity
     public MembershipPlanStatus Status { get; set; } = MembershipPlanStatus.Active;
     public int SortOrder { get; set; }
 
+    /// <summary>
+    /// How many people may hold this plan at once; null is unlimited. Counted against current
+    /// memberships plus seats in checkout (see IMembershipService.GetPlanAvailabilityAsync), and
+    /// enforced when a checkout is opened — never in the webhook, which must not refuse money.
+    /// </summary>
+    public int? MaxMembers { get; set; }
+
     /// <summary>The provider's Product id ("prod_…" at Stripe). Null until the first successful sync.</summary>
     public string? ProviderProductId { get; set; }
 

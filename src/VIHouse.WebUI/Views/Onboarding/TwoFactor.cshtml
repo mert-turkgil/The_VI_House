@@ -19,11 +19,9 @@
                 <h2>@Loc["Onboarding.TwoFactor.Step2.Title"]</h2>
                 <p>@Loc["Onboarding.TwoFactor.Step2.Body"]</p>
 
-                @* Rendered client-side from the otpauth:// URI (see ClientApp modules/qr.ts) so the
-                   secret never travels through a third-party QR image service. *@
-                <div class="onboarding__qr" data-qr-uri="@Model.AuthenticatorUri" aria-hidden="false"
-                     data-qr-label="@Loc["Onboarding.TwoFactor.QrLabel"]"
-                     data-qr-error="@Loc["Onboarding.TwoFactor.QrError"]"></div>
+                @* Inline SVG rendered on the server (Helpers/AuthenticatorQr) — no script, no
+                   third-party image service, nothing that can fail to load. *@
+                <div class="onboarding__qr" role="img" aria-label="@Loc["Onboarding.TwoFactor.QrLabel"]">@Html.Raw(Model.QrSvg)</div>
 
                 <p class="onboarding__hint">@Loc["Onboarding.TwoFactor.Step2.CantScan"]</p>
                 <p class="onboarding__key"><code>@Model.SharedKey</code></p>
