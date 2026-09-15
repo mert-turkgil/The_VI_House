@@ -14,8 +14,12 @@
 
 <div class="container content-body">
     <div class="status-card" style="margin-top:0;">
-        <p style="margin:0 0 8px; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.04em; color:#888;">Your Referral Link</p>
-        <p style="font-size:1.0625rem; font-weight:600; word-break:break-all;">@referralUrl</p>
+        <p style="margin:0 0 8px; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.04em; color:#888;">@Loc["Ambassador.Panel.Title"]</p>
+        <p style="font-size:1.0625rem; font-weight:600; word-break:break-all;"><code>@referralUrl</code></p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+            <button type="button" class="btn btn--primary" data-copy="@referralUrl" data-copied-label="@Loc["Ambassador.Panel.Copied"]">@Loc["Ambassador.Panel.Copy"]</button>
+            <button type="button" class="btn btn--ghost-dark" data-copy="@Model.Code" data-copied-label="@Loc["Ambassador.Panel.Copied"]">@Loc["Ambassador.Panel.CopyCode"] @Model.Code</button>
+        </div>
     </div>
 
     <h2 style="margin-top:40px;">Performance</h2>
@@ -57,5 +61,40 @@
     @if (Model.Stats.Visits == 0)
     {
         <p style="margin-top:32px; color:#666;">Share your referral link above to start tracking visits, applications and commission.</p>
+    }
+
+    <h2 style="margin-top:40px;">@Loc["Ambassador.Conversions.Heading"]</h2>
+    @if (Model.Conversions.Count == 0)
+    {
+        <p style="font-size:0.9375rem; color:#666;">@Loc["Ambassador.Conversions.None"]</p>
+    }
+    else
+    {
+        <ol class="ambassador-timeline">
+            @foreach (var c in Model.Conversions)
+            {
+                var what = c.Kind switch
+                {
+                    VIHouse.Entities.Referrals.ReferralConversionKind.Application => Loc["Ambassador.Conversions.Application"].Value,
+                    VIHouse.Entities.Referrals.ReferralConversionKind.Approved => Loc["Ambassador.Conversions.Approved"].Value,
+                    VIHouse.Entities.Referrals.ReferralConversionKind.TicketPurchase => Loc["Ambassador.Conversions.Ticket"].Value,
+                    _ => Loc["Ambassador.Conversions.Membership"].Value,
+                };
+                <li class="ambassador-timeline__item ambassador-timeline__item--@c.Kind.ToString().ToLowerInvariant()">
+                    <time datetime="@c.OccurredAt.ToString("o")">@c.OccurredAt.ToString("d MMM yyyy, HH:mm")</time>
+                    <span class="ambassador-timeline__what">@what</span>
+                    @if (c.AmountMinor is { } amount && c.Currency is not null)
+                    {
+                        <span class="ambassador-timeline__money">
+                            @MoneyFormatter.Format(amount, c.Currency)
+                            @if (c.CommissionMinor is { } commission)
+                            {
+                                <em>&middot; @Loc["Ambassador.Conversions.Commission"] @MoneyFormatter.Format(commission, c.Currency)</em>
+                            }
+                        </span>
+                    }
+                </li>
+            }
+        </ol>
     }
 </div>

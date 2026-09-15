@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Communication;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -18,6 +21,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// Neither table stores a body — only recipient, subject and template — so this screen cannot leak
 /// the contents of anyone's mail, or the single-use invitation URL inside a text message.
 /// </summary>
+[Authorize(Roles = AdminSections.RolesFor.Communications)]
 public class AdminEmailsController(
     IEmailLogRepository emailLogs,
     ISmsLogRepository smsLogs,

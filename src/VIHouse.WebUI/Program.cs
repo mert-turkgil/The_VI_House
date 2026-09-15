@@ -270,6 +270,7 @@ builder.Services.Configure<SiteOptions>(builder.Configuration.GetSection("Site")
 // off, so a deployment that forgets the section launches with the application route only, which is
 // the brief's Phase 1 rather than an accident.
 builder.Services.Configure<FeatureOptions>(builder.Configuration.GetSection("Features"));
+builder.Services.Configure<SecurityOptions>(builder.Configuration.GetSection("Security"));
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IEmailTemplateRenderer, RazorEmailTemplateRenderer>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -280,6 +281,11 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // Nothing is texted until Sms:Enabled is on with an endpoint behind it — see SmsOptions.
 builder.Services.Configure<SmsOptions>(builder.Configuration.GetSection("Sms"));
 builder.Services.AddHttpClient<ISmsSender, HttpSmsSender>(c => c.Timeout = TimeSpan.FromSeconds(15));
+
+// Single-use Discord invites for the community links — optional; without a bot token the links
+// fall back to their static URLs. See DiscordOptions.
+builder.Services.Configure<DiscordOptions>(builder.Configuration.GetSection("Discord"));
+builder.Services.AddHttpClient<IDiscordInviteService, DiscordInviteService>(c => c.Timeout = TimeSpan.FromSeconds(10));
 builder.Services.AddScoped<ISmsService, SmsService>();
 
 // Releases abandoned TicketHolds back to inventory every 60s (brief §177-179) — a safety net

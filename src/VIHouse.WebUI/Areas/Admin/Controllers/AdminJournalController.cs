@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -8,6 +9,8 @@ using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Journal;
 using VIHouse.Entities.Seminars;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -20,6 +23,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// file re-posts — and can therefore silently clobber — an article someone is halfway through
 /// writing in another tab.
 /// </summary>
+[Authorize(Roles = AdminSections.RolesFor.Content)]
 public class AdminJournalController(
     IJournalService journalService,
     UserManager<ApplicationUser> userManager,

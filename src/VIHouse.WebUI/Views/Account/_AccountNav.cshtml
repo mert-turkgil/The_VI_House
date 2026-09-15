@@ -13,8 +13,10 @@
     // The Member role is granted to anyone who pays — including a single-event ticket holder — so it
     // can't decide whether to show the members-only links. Only an active Membership can. Showing a
     // link that immediately bounces the visitor back is worse than not showing it.
-    var hasMembership = await MemberAccess.HasActiveMembershipAsync(User, MembershipService, UserManager);
+    var entitlements = await MemberAccess.GetEntitlementsAsync(User, MembershipService, UserManager);
+    var hasMembership = entitlements is not null;
     var isAdmin = Roles.AdminRoles.Any(User.IsInRole);
+    var isAmbassador = User.IsInRole(Roles.Ambassador);
 }
 <nav class="account-manage__nav" aria-label="Account">
     @if (isAdmin)
@@ -26,17 +28,23 @@
     <a class="@NavClass("Membership")" asp-controller="Account" asp-action="Membership">@Loc["Account.NavMembership"]</a>
     <a class="@NavClass("Bookings")" asp-controller="Account" asp-action="Bookings">@Loc["Account.NavBookings"]</a>
     <a class="@NavClass("Sessions")" asp-controller="Account" asp-action="Sessions">@Loc["Account.NavSessions"]</a>
-    @if (hasMembership)
+    @* Each members-only door follows the tier (MembershipPlan's entitlement flags), not just
+       "has a membership" — plans differ in what they include. *@
+    @if (entitlements is { MemberCard: true })
     {
         <a class="@NavClass("Card")" asp-controller="Account" asp-action="Card">@Loc["Card.NavLabel"]</a>
-        @if (Features.Value.Community)
-        {
-            <a class="@NavClass("Community")" asp-controller="Account" asp-action="Community">@Loc["Account.NavCommunity"]</a>
-        }
-        @if (Features.Value.MemberDirectory)
-        {
-            <a asp-controller="MemberDirectory" asp-action="Index">@Loc["Nav.Members"]</a>
-        }
+    }
+    @if (entitlements is { Community: true } && Features.Value.Community)
+    {
+        <a class="@NavClass("Community")" asp-controller="Account" asp-action="Community">@Loc["Account.NavCommunity"]</a>
+    }
+    @if (entitlements is { Directory: true } && Features.Value.MemberDirectory)
+    {
+        <a asp-controller="MemberDirectory" asp-action="Index">@Loc["Nav.Members"]</a>
+    }
+    @if (isAmbassador)
+    {
+        <a asp-controller="Ambassador" asp-action="Index">@Loc["Ambassador.Nav"]</a>
     }
     <a class="@NavClass("Notifications")" asp-controller="Account" asp-action="Notifications">@Loc["Notif.Title"]</a>
     @if (!hasMembership && !Features.Value.MembershipSales)

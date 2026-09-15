@@ -34,6 +34,13 @@ public class Experience : BaseEntity
     /// </summary>
     public ExperienceAttendanceMode AttendanceMode { get; set; } = ExperienceAttendanceMode.InPerson;
 
+    /// <summary>For Online / Both: the two-way room (Zoom, Meet) ticket holders join.</summary>
+    public string? MeetingUrl { get; set; }
+
+    /// <summary>For Online / Both: a YouTube live URL, embedded on the holder's account hub from
+    /// shortly before StartAtUtc. See Seminar.LiveStreamUrl.</summary>
+    public string? LiveStreamUrl { get; set; }
+
     /// <summary>
     /// The membership plans that may join this experience without applying. Empty — the state every
     /// existing experience is in — means everyone goes through the application form.

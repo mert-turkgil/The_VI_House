@@ -16,6 +16,8 @@ using VIHouse.Entities.Membership;
 using VIHouse.Entities.Notifications;
 using VIHouse.Entities.Users;
 
+using VIHouse.Entities.Referrals;
+
 namespace VIHouse.Business.Concrete;
 
 public class MembershipService(
@@ -31,6 +33,7 @@ public class MembershipService(
     IEmailService emailService,
     INotificationService notificationService,
     IAuditLogRepository auditLogs,
+    IAmbassadorService ambassadorService,
     IOptions<SiteOptions> siteOptions,
     ISiteSettingsService siteSettings,
     UserManager<ApplicationUser> userManager,
@@ -81,6 +84,11 @@ public class MembershipService(
         existing.Status = updated.Status;
         existing.SortOrder = updated.SortOrder;
         existing.MaxMembers = updated.MaxMembers;
+        existing.IncludesCommunity = updated.IncludesCommunity;
+        existing.IncludesSessions = updated.IncludesSessions;
+        existing.IncludesDirectory = updated.IncludesDirectory;
+        existing.IncludesMemberCard = updated.IncludesMemberCard;
+        existing.DiscordRoleId = updated.DiscordRoleId;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
 
         await LogAsync("MembershipPlanUpdated", existing.Id, adminUserId, ipAddress, before, Snapshot(existing), ct);
@@ -344,6 +352,103 @@ public class MembershipService(
 
     private const string PlanFullMessage = "This plan is full at the moment. Join the waitlist and we'll let you know the moment a place opens.";
 
+    public async Task<PlanMutationResult> GrantComplimentaryAsync(Guid userId, Guid planId, DateTimeOffset? expiresAt, bool overrideCap, string? note, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null) return PlanMutationResult.Fail("That account no longer exists.");
+
+        var plan = await plans.GetByIdAsync(planId, ct);
+        if (plan is null || plan.Status != MembershipPlanStatus.Active)
+            return PlanMutationResult.Fail("Choose an active plan.");
+
+        if (await GetCurrentMembershipAsync(userId, ct) is not null)
+            return PlanMutationResult.Fail("They already hold a current membership — revoke it first.");
+
+        var now = DateTimeOffset.UtcNow;
+        if (expiresAt is { } until && until <= now)
+            return PlanMutationResult.Fail("The expiry date has to be in the future.");
+
+        var availability = await GetPlanAvailabilityAsync(planId, ct);
+        if (availability.IsFull && !overrideCap)
+            return PlanMutationResult.Fail($"{plan.Name} is at its member limit ({availability.Taken}/{plan.MaxMembers}). Tick the override to grant a seat anyway.");
+
+        expiresAt ??= plan.BillingPeriod switch
+        {
+            MembershipBillingPeriod.Monthly => now.AddMonths(1),
+            MembershipBillingPeriod.Annual => now.AddYears(1),
+            _ => null,
+        };
+
+        var membership = new Membership
+        {
+            UserId = userId,
+            PlanId = planId,
+            StartAt = now,
+            // No RenewalAt: nothing renews a complimentary membership, it simply ends.
+            ExpiresAt = expiresAt,
+            Status = MembershipStatus.Active,
+            IsComplimentary = true,
+            GrantedByUserId = adminUserId,
+            GrantNote = string.IsNullOrWhiteSpace(note) ? null : note.Trim(),
+        };
+        await memberships.AddAsync(membership, ct);
+        await memberships.SaveChangesAsync(ct);
+
+        if (!await userManager.IsInRoleAsync(user, Roles.Member))
+            await userManager.AddToRoleAsync(user, Roles.Member);
+        if (user.MemberStatus != MemberStatus.Active)
+        {
+            user.MemberStatus = MemberStatus.Active;
+            await userManager.UpdateAsync(user);
+        }
+
+        await LogAsync("MembershipGranted", membership.Id, adminUserId, ipAddress, null,
+            new { UserId = userId, PlanId = planId, plan.Name, ExpiresAt = expiresAt, Note = membership.GrantNote, OverrodeCap = availability.IsFull && overrideCap }, ct);
+        if (availability.IsFull && overrideCap)
+            await LogAsync("MembershipCapExceeded", planId, adminUserId, ipAddress, null,
+                new { MembershipId = membership.Id, Taken = availability.Taken + 1, Max = plan.MaxMembers }, ct);
+        await auditLogs.SaveChangesAsync(ct);
+
+        await notificationService.CreateForUserAsync(userId, NotificationType.Payment,
+            $"Welcome to {plan.Name}",
+            expiresAt is { } e ? $"Your membership is active until {e:d MMMM yyyy}." : "Your membership is active.",
+            "/account", ct);
+
+        return PlanMutationResult.Ok(expiresAt is { } x
+            ? $"{plan.Name} granted to {user.Email} until {x:d MMM yyyy}."
+            : $"{plan.Name} granted to {user.Email} with no expiry.");
+    }
+
+    public async Task<PlanMutationResult> RevokeMembershipAsync(Guid userId, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var membership = await GetCurrentMembershipAsync(userId, ct);
+        if (membership is null) return PlanMutationResult.Fail("They have no current membership.");
+
+        if (membership.ProviderSubscriptionId is not null && !membership.IsComplimentary)
+            return PlanMutationResult.Fail("This membership is billed by Stripe. Cancel the subscription there (or have the member do it from their billing page) and it will end here automatically.");
+
+        var now = DateTimeOffset.UtcNow;
+        var before = new { membership.Status, membership.ExpiresAt };
+        membership.Status = MembershipStatus.Cancelled;
+        membership.CancelledAt = now;
+        membership.ExpiresAt = now;
+        membership.UpdatedAt = now;
+        await memberships.SaveChangesAsync(ct);
+
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is not null && user.MemberStatus == MemberStatus.Active)
+        {
+            user.MemberStatus = MemberStatus.Cancelled;
+            await userManager.UpdateAsync(user);
+        }
+
+        await LogAsync("MembershipRevoked", membership.Id, adminUserId, ipAddress, before,
+            new { membership.Status, membership.ExpiresAt, UserId = userId }, ct);
+        await auditLogs.SaveChangesAsync(ct);
+
+        return PlanMutationResult.Ok("Membership ended.");
+    }
+
     public async Task<Membership?> GetCurrentMembershipAsync(Guid userId, CancellationToken ct = default)
     {
         var now = DateTimeOffset.UtcNow;
@@ -358,6 +463,9 @@ public class MembershipService(
             .OrderByDescending(m => m.StartAt)
             .FirstOrDefault();
     }
+
+    public async Task<MemberEntitlements?> GetEntitlementsAsync(Guid userId, CancellationToken ct = default) =>
+        (await GetMembershipSummaryAsync(userId, ct))?.Entitlements;
 
     public async Task<MembershipSummary?> GetMembershipSummaryAsync(Guid userId, CancellationToken ct = default)
     {
@@ -1222,6 +1330,9 @@ public class MembershipService(
         }
         await membershipPayments.SaveChangesAsync(ct);
 
+        await ambassadorService.RecordConversionAsync(payment.ReferralCode, ReferralConversionKind.MembershipPurchase,
+            nameof(MembershipPayment), payment.Id, payment.AmountMinor, payment.Currency, ct);
+
         if (user is null) return membership;
 
         if (!await userManager.IsInRoleAsync(user, Roles.Member))
@@ -1480,6 +1591,7 @@ public class MembershipService(
     private static object Snapshot(MembershipPlan plan) => new
     {
         plan.Name, plan.PriceMinor, plan.Currency, plan.BillingPeriod, plan.Status, plan.MaxMembers, plan.ProviderProductId, plan.ProviderPriceId,
+        plan.IncludesCommunity, plan.IncludesSessions, plan.IncludesDirectory, plan.IncludesMemberCard, plan.DiscordRoleId,
     };
 
     private static string Truncate(string value, int max) => value.Length <= max ? value : value[..max];

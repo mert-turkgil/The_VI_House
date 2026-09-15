@@ -41,6 +41,8 @@ public class AccountController(
     IMembershipService membershipService,
     INotificationService notificationService,
     IRepository<CommunityLink> communityLinks,
+    IAmbassadorService ambassadorService,
+    IDiscordInviteService discordInvites,
     IOptions<FeatureOptions> features) : Controller
 {
     // --- Dashboard -----------------------------------------------------------------------------
@@ -107,8 +109,46 @@ public class AccountController(
         if (membership is null && features.Value.MembershipSales)
             model.Plans = await PlanCardsAsync(ct);
 
+        model.Entitlements = membership?.Entitlements;
+        model.Hubs = await BuildHubsAsync(myBookings, enrolments, culture, now, ct);
+        model.ReferralCode = (await ambassadorService.GetByUserIdAsync(userId, ct))?.Code;
+
         ViewData["Title"] = "My Account";
         return View(model);
+    }
+
+    /// <summary>
+    /// The hub cards: everything online the person holds a place on that has not ended, with its
+    /// links. Scoped community links (CommunityLink.ExperienceId / SeminarId) ride along here so a
+    /// ticket holder sees their event's channel without a membership. In-person-only things with
+    /// no links produce no card — there is nothing to open.
+    /// </summary>
+    private async Task<List<AccessHub>> BuildHubsAsync(
+        IEnumerable<Booking> myBookings, IEnumerable<SeminarEnrolment> enrolments, string culture, DateTimeOffset now, CancellationToken ct)
+    {
+        var hubs = new List<AccessHub>();
+        var activeLinks = (await communityLinks.FindAsync(l => l.IsActive && (l.ExperienceId != null || l.SeminarId != null), ct)).ToList();
+
+        foreach (var booking in myBookings.Where(b => b.Status == BookingStatus.Confirmed))
+        {
+            var e = await experienceService.GetForAdminEditAsync(booking.ExperienceId, ct);
+            if (e is null || e.EndAtUtc < now) continue;
+            var links = activeLinks.Where(l => l.ExperienceId == e.Id).OrderBy(l => l.SortOrder).ToList();
+            var hub = new AccessHub("experience", $"The VI House — {e.City}", $"/experiences/{e.Slug}",
+                e.StartAtUtc, e.EndAtUtc, e.LiveStreamUrl, e.MeetingUrl, links);
+            if (hub.HasAnythingToOpen) hubs.Add(hub);
+        }
+
+        foreach (var (seminar, _) in enrolments)
+        {
+            if (seminar.StartAtUtc is { } start && (seminar.EndAtUtc ?? start.AddHours(2)) < now) continue;
+            var links = activeLinks.Where(l => l.SeminarId == seminar.Id).OrderBy(l => l.SortOrder).ToList();
+            var hub = new AccessHub("session", SeminarContent.Title(seminar, culture), $"/sessions/{seminar.Slug}",
+                seminar.StartAtUtc, seminar.EndAtUtc, seminar.LiveStreamUrl, seminar.MeetingUrl, links);
+            if (hub.HasAnythingToOpen) hubs.Add(hub);
+        }
+
+        return hubs.OrderBy(h => h.StartAtUtc ?? DateTimeOffset.MaxValue).ToList();
     }
 
     // --- Profile ------------------------------------------------------------------------------
@@ -246,6 +286,11 @@ public class AccountController(
         }
 
         var plan = await membershipService.GetPlanAsync(membership.PlanId, ct);
+        if (plan is { IncludesMemberCard: false })
+        {
+            TempData["MembershipError"] = $"The digital card is not part of {plan.Name}.";
+            return RedirectToAction(nameof(Membership));
+        }
         var user = await userManager.FindByIdAsync(userId.ToString());
 
         ViewData["Title"] = "My Membership Card";
@@ -275,20 +320,66 @@ public class AccountController(
         if (!features.Value.Community) return NotFound();
 
         var userId = CurrentUserId();
-        var membership = await membershipService.GetCurrentMembershipAsync(userId, ct);
-        if (membership is null)
+        var entitlements = await membershipService.GetEntitlementsAsync(userId, ct);
+        if (entitlements is null)
         {
             TempData["MembershipError"] = "The community channels are open to members. Your ticket covers the event itself.";
             return RedirectToAction(nameof(Membership));
         }
+        if (!entitlements.Community)
+        {
+            TempData["MembershipError"] = $"The community channels are not part of {entitlements.PlanName}.";
+            return RedirectToAction(nameof(Membership));
+        }
 
-        var links = (await communityLinks.FindAsync(l => l.IsActive, ct))
+        // Links for every member, plus the ones reserved for this plan. Experience- and
+        // session-scoped links live on the dashboard hubs, next to the thing they belong to.
+        var links = (await communityLinks.FindAsync(l => l.IsActive && l.ExperienceId == null && l.SeminarId == null, ct))
+            .Where(l => l.MembershipPlanId is null || l.MembershipPlanId == entitlements.PlanId)
             .OrderBy(l => l.SortOrder)
             .ThenBy(l => l.Label)
             .ToList();
 
         ViewData["Title"] = "Community";
+        ViewData["DiscordConfigured"] = discordInvites.IsConfigured;
         return View(links);
+    }
+
+    /// <summary>
+    /// Mints a single-use Discord invite for one community link and sends the member straight to
+    /// it. Access is re-checked here, not trusted from the page: a link belongs to every member,
+    /// to a plan, to an experience or to a session, and only someone who holds that thing gets a
+    /// key. Falls back to the static URL when the bot is not configured or Discord is unreachable.
+    /// </summary>
+    [HttpPost("community/invite/{linkId:guid}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CommunityInvite(Guid linkId, string? returnUrl, CancellationToken ct)
+    {
+        var link = await communityLinks.GetByIdAsync(linkId, ct);
+        if (link is null || !link.IsActive) return NotFound();
+
+        var userId = CurrentUserId();
+        if (!await MayOpenLinkAsync(userId, link, ct)) return Forbid();
+
+        var url = link.DiscordChannelId is { } channel
+            ? await discordInvites.CreateInviteAsync(userId, channel, ct) ?? link.Url
+            : link.Url;
+
+        // An external redirect must be to a URL the admin entered or Discord returned — never to
+        // anything from the request.
+        return Redirect(url);
+    }
+
+    private async Task<bool> MayOpenLinkAsync(Guid userId, CommunityLink link, CancellationToken ct)
+    {
+        if (link.ExperienceId is { } experienceId)
+            return (await bookings.GetByUserAsync(userId, ct)).Any(b => b.ExperienceId == experienceId && b.Status == BookingStatus.Confirmed);
+        if (link.SeminarId is { } seminarId)
+            return (await seminarService.GetEnrolmentsForUserAsync(userId, ct)).Any(e => e.Seminar.Id == seminarId);
+
+        var entitlements = await membershipService.GetEntitlementsAsync(userId, ct);
+        if (entitlements is null || !entitlements.Community) return false;
+        return link.MembershipPlanId is null || link.MembershipPlanId == entitlements.PlanId;
     }
 
     // --- Notifications ------------------------------------------------------------------------

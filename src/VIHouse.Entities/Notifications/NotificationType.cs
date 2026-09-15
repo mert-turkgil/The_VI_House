@@ -11,5 +11,9 @@ public enum NotificationType
 
     /// <summary>A place on a VI House Session is confirmed — free, membership-covered or paid.
     /// Appended rather than slotted in, so the stored ordinals of the four above are unchanged.</summary>
-    SeminarEnrolled
+    SeminarEnrolled,
+
+    /// <summary>To an ambassador: someone who came through their link applied, was approved, or
+    /// paid. Appended for the same reason as the one above.</summary>
+    ReferralConverted
 }

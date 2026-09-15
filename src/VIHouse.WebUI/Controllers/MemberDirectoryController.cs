@@ -35,7 +35,7 @@ public class MemberDirectoryController(
 {
     private async Task<bool> MayViewAsync(CancellationToken ct) =>
         features.Value.MemberDirectory
-        && await MemberAccess.HasActiveMembershipAsync(User, membershipService, userManager, ct);
+        && (await MemberAccess.GetEntitlementsAsync(User, membershipService, userManager, ct))?.Directory == true;
 
     [HttpGet("")]
     public async Task<IActionResult> Index(string? profession, string? city, string? country, string? search, CancellationToken ct)

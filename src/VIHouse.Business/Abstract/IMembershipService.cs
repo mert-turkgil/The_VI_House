@@ -46,6 +46,24 @@ public interface IMembershipService
     /// be deleted, and what the admin screen shows next to the delete button.</summary>
     Task<PlanUsage> GetPlanUsageAsync(Guid id, CancellationToken ct = default);
 
+    // --- Membership (admin) ------------------------------------------------------------------------
+
+    /// <summary>
+    /// Gives a user a membership without a purchase. Refused while they already hold a current
+    /// one (revoke first — two overlapping memberships would make "which plan am I on" ambiguous)
+    /// and, unless <paramref name="overrideCap"/>, while the plan is at its member limit. A null
+    /// <paramref name="expiresAt"/> means the plan's own period from today; for a one-time plan
+    /// that is "never".
+    /// </summary>
+    Task<PlanMutationResult> GrantComplimentaryAsync(Guid userId, Guid planId, DateTimeOffset? expiresAt, bool overrideCap, string? note, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>
+    /// Ends the user's current membership today. Refused when the provider holds a live
+    /// subscription for it: cancelling locally while Stripe keeps billing would charge someone
+    /// for nothing, so that one is ended from the billing portal and arrives here as a webhook.
+    /// </summary>
+    Task<PlanMutationResult> RevokeMembershipAsync(Guid userId, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
     // --- Membership (member) -----------------------------------------------------------------------
 
     /// <summary>
@@ -58,6 +76,11 @@ public interface IMembershipService
 
     /// <summary>Most recent Active membership for a user, if any — null means never purchased or lapsed.</summary>
     Task<Membership?> GetCurrentMembershipAsync(Guid userId, CancellationToken ct = default);
+
+    /// <summary>What the user's current plan opens — the tier flags on MembershipPlan, resolved
+    /// for one person. Null when they hold no current membership. This is what the account area,
+    /// the directory and the sessions gate read; "has a membership" alone no longer decides.</summary>
+    Task<MemberEntitlements?> GetEntitlementsAsync(Guid userId, CancellationToken ct = default);
 
     /// <summary>The current membership together with its plan, for the account and membership
     /// pages. Null when there is no current membership.</summary>
@@ -180,9 +203,18 @@ public record JoinRequest(
     public string? PromoCode { get; init; }
 }
 
+/// <summary>The doors a tier opens, for one member. See MembershipPlan's entitlement flags.</summary>
+public record MemberEntitlements(Guid PlanId, string PlanName, bool Community, bool Sessions, bool Directory, bool MemberCard, string? DiscordRoleId)
+{
+    public static MemberEntitlements From(MembershipPlan plan) =>
+        new(plan.Id, plan.Name, plan.IncludesCommunity, plan.IncludesSessions, plan.IncludesDirectory, plan.IncludesMemberCard, plan.DiscordRoleId);
+}
+
 /// <summary>A membership row resolved against its plan, ready to display.</summary>
 public record MembershipSummary(Membership Membership, MembershipPlan Plan)
 {
+    public MemberEntitlements Entitlements => MemberEntitlements.From(Plan);
+
     public bool IsRecurring => Plan.BillingPeriod != MembershipBillingPeriod.OneTime;
 
     /// <summary>True while the membership is in good standing — Active, or PastDue with the paid
@@ -192,6 +224,8 @@ public record MembershipSummary(Membership Membership, MembershipPlan Plan)
         && (Membership.ExpiresAt is null || Membership.ExpiresAt > DateTimeOffset.UtcNow);
 
     public bool IsPastDue => Membership.Status == MembershipStatus.PastDue;
+
+    public bool IsComplimentary => Membership.IsComplimentary;
 
     /// <summary>True when the provider holds a live subscription for this row — what makes
     /// "manage billing" and "renews on" meaningful. PastDue counts: that is exactly the member who

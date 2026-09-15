@@ -35,4 +35,14 @@ public class Membership : BaseEntity
 
     /// <summary>When the provider reported the subscription ended, for a status of Cancelled.</summary>
     public DateTimeOffset? CancelledAt { get; set; }
+
+    /// <summary>True when an admin granted the membership without a purchase — an influencer, a
+    /// partner, a make-good. No provider ids, no payment row, and it never renews: it lasts until
+    /// ExpiresAt, or for good when that is null.</summary>
+    public bool IsComplimentary { get; set; }
+
+    /// <summary>Who granted a complimentary membership, and why — shown on the admin record so
+    /// the reason survives staff turnover.</summary>
+    public Guid? GrantedByUserId { get; set; }
+    public string? GrantNote { get; set; }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -7,6 +8,8 @@ using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Commerce;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -18,6 +21,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// Every change is audit-logged: a promo code is money, and "who issued the one that took €250 off
 /// twelve bookings" is a question that gets asked after the fact, not before.
 /// </summary>
+[Authorize(Roles = AdminSections.RolesFor.Money)]
 public class AdminPromoCodesController(
     IPromoCodeRepository promoCodes,
     IExperienceService experienceService,

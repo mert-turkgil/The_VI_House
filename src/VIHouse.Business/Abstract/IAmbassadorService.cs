@@ -24,6 +24,19 @@ public interface IAmbassadorService
     /// not a separately-maintained ledger, so it can never drift from the real records.
     /// </summary>
     Task<AmbassadorStats> GetStatsAsync(Guid ambassadorId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Writes one line to the ambassador's ledger and tells them — bell notification and email —
+    /// that something happened because of their link. A null, blank or unknown code is a no-op,
+    /// as is a repeat for the same source row and kind (the ledger is unique on that), so the
+    /// callers in the webhook handlers can call it unconditionally. Never throws: a failure here
+    /// must not undo a payment that has already landed.
+    /// </summary>
+    Task RecordConversionAsync(string? referralCode, ReferralConversionKind kind, string sourceEntityType, Guid sourceEntityId,
+        long? amountMinor = null, string? currency = null, CancellationToken ct = default);
+
+    /// <summary>The ledger, newest first — what the dashboard's timeline shows.</summary>
+    Task<List<ReferralConversion>> GetConversionsAsync(Guid ambassadorId, int take = 50, CancellationToken ct = default);
 }
 
 public record AmbassadorCreationResult(bool Success, Ambassador? Ambassador, Guid? UserId, string? Error)

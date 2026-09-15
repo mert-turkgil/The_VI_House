@@ -1,0 +1,23 @@
+@*
+    A live broadcast for someone who holds access. YouTube URLs become the same click-to-play
+    embed the journal uses (modules/video.ts swaps the poster for the player — nothing from
+    Google loads until the viewer asks); any other URL becomes a plain "Watch live" button, so a
+    Vimeo or Twitch link still works, just without the inline player.
+
+    Model: (string Url, string Label)
+*@
+@model (string Url, string Label)
+
+@if (VIHouse.Business.Concrete.YouTubeUrl.TryParseId(Model.Url, out var videoId))
+{
+    <div class="video-embed video-embed--live" data-video-id="@videoId">
+        <button type="button" class="video-embed__play" aria-label="@Model.Label">
+            <img class="video-embed__poster" src="@VIHouse.Business.Concrete.YouTubeUrl.ThumbnailUrl(videoId)" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+            <span class="video-embed__icon" aria-hidden="true"></span>
+        </button>
+    </div>
+}
+else
+{
+    <a class="btn btn--primary" href="@Model.Url" target="_blank" rel="noopener noreferrer">@Model.Label</a>
+}

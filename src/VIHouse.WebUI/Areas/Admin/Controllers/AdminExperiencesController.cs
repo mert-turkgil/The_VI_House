@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -11,8 +12,11 @@ using VIHouse.Entities.Membership;
 using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
 
+using VIHouse.WebUI.Areas.Admin;
+
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
+[Authorize(Roles = AdminSections.RolesFor.Events)]
 public class AdminExperiencesController(
     IExperienceService experienceService,
     INotificationService notificationService,

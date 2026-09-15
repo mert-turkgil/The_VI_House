@@ -2063,3 +2063,11 @@ kbd {
     transition: none !important;
   }
 }
+
+// Shown under a textarea when CKEditor could not take over (licence/domain mismatch, CDN down) —
+// the field still works, this just says why it looks plain. See modules/editor.ts.
+.admin-editor-notice {
+  margin: 6px 0 0;
+  font-size: 0.8125rem;
+  color: var(--vih-danger, #9a3324);
+}

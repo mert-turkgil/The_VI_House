@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.Business.Abstract;
@@ -6,11 +7,14 @@ using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Commerce;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
 
+using VIHouse.WebUI.Areas.Admin;
+
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
 /// <summary>Read-only mirror of Payment rows — refunds/disputes/manual capture stay in the Stripe
 /// dashboard itself once live keys are in place; this screen exists so Finance/Support can see
 /// payment status without database access.</summary>
+[Authorize(Roles = AdminSections.RolesFor.Money)]
 public class AdminPaymentsController(
     IPaymentRepository payments,
     IBookingRepository bookings,

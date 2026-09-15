@@ -40,11 +40,22 @@
                                 <p>@link.Description</p>
                             }
                         </div>
-                        @* rel=noopener because these open in a new tab and target=_blank otherwise
-                           hands the destination a scriptable reference back to this page. *@
-                        <a class="btn btn--primary" href="@link.Url" target="_blank" rel="noopener noreferrer">
-                            Open @KindLabel(link.Kind)
-                        </a>
+                        @if (link.DiscordChannelId is not null && ViewData["DiscordConfigured"] is true)
+                        {
+                            @* A fresh single-use invite minted for this member on click — see
+                               AccountController.CommunityInvite. Nothing here is a bearer link. *@
+                            <form asp-action="CommunityInvite" asp-route-linkId="@link.Id" method="post">
+                                <button type="submit" class="btn btn--primary">@Loc["Community.GenerateInvite"]</button>
+                            </form>
+                        }
+                        else
+                        {
+                            @* rel=noopener because these open in a new tab and target=_blank otherwise
+                               hands the destination a scriptable reference back to this page. *@
+                            <a class="btn btn--primary" href="@link.Url" target="_blank" rel="noopener noreferrer">
+                                Open @KindLabel(link.Kind)
+                            </a>
+                        }
                     </li>
                 }
             </ul>

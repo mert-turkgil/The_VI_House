@@ -910,6 +910,13 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar(400)");
 
+                    b.Property<string>("DiscordChannelId")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<Guid?>("ExperienceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -920,6 +927,12 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
+
+                    b.Property<Guid?>("MembershipPlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("SeminarId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");
@@ -933,6 +946,12 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ExperienceId");
+
+                    b.HasIndex("MembershipPlanId");
+
+                    b.HasIndex("SeminarId");
 
                     b.HasIndex("IsActive", "SortOrder");
 
@@ -1315,6 +1334,14 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.Property<bool>("IsSignature")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LiveStreamUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("MeetingUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("MemberDiscountPercent")
                         .HasColumnType("int");
@@ -1933,6 +1960,15 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<DateTimeOffset?>("ExpiresAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("GrantNote")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("GrantedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsComplimentary")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("PlanId")
                         .HasColumnType("uniqueidentifier");
 
@@ -2051,9 +2087,24 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<string>("DiscordRoleId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Features")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
+
+                    b.Property<bool>("IncludesCommunity")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IncludesDirectory")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IncludesMemberCard")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IncludesSessions")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("MaxMembers")
                         .HasColumnType("int");
@@ -2319,6 +2370,57 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.ToTable("Ambassadors", (string)null);
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Referrals.ReferralConversion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AmbassadorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long?>("AmountMinor")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("CommissionMinor")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Currency")
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("SourceEntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SourceEntityType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AmbassadorId", "OccurredAt");
+
+                    b.HasIndex("SourceEntityType", "SourceEntityId", "Kind")
+                        .IsUnique();
+
+                    b.ToTable("ReferralConversions", (string)null);
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Referrals.ReferralVisit", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2393,6 +2495,10 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.Property<bool>("IsOnline")
                         .HasColumnType("bit");
+
+                    b.Property<string>("LiveStreamUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Location")
                         .HasMaxLength(200)
@@ -3200,6 +3306,15 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Referrals.ReferralConversion", b =>
+                {
+                    b.HasOne("VIHouse.Entities.Referrals.Ambassador", null)
+                        .WithMany()
+                        .HasForeignKey("AmbassadorId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

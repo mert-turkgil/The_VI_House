@@ -59,6 +59,47 @@ public class AccountDashboardViewModel
 
     public bool CommunityEnabled { get; set; }
     public bool DirectoryEnabled { get; set; }
+
+    /// <summary>What the member's tier opens; null for a guest, prospect or staff. The view gates
+    /// the perks list on this rather than on "has a membership".</summary>
+    public MemberEntitlements? Entitlements { get; set; }
+
+    /// <summary>
+    /// One card per online thing the person holds a place on — an experience they have a ticket
+    /// for, a session they are enrolled on — with its live stream, meeting room and community
+    /// links. This is how a ticket holder without a membership still gets a door to what they
+    /// bought, and how a member finds tonight's session without hunting.
+    /// </summary>
+    public List<AccessHub> Hubs { get; set; } = [];
+
+    /// <summary>Set when the signed-in person is an ambassador: their link, for the panel on the
+    /// dashboard. Full stats live on /ambassador.</summary>
+    public string? ReferralCode { get; set; }
+}
+
+public record AccessHub(
+    string Kind,
+    string Title,
+    string Href,
+    DateTimeOffset? StartAtUtc,
+    DateTimeOffset? EndAtUtc,
+    string? LiveStreamUrl,
+    string? MeetingUrl,
+    List<VIHouse.Entities.Community.CommunityLink> Links)
+{
+    /// <summary>Within the window the stream is worth embedding: a quarter-hour before the start
+    /// until the end (or two hours after the start when no end is set).</summary>
+    public bool IsLiveNow
+    {
+        get
+        {
+            if (StartAtUtc is not { } start) return LiveStreamUrl is not null; // on demand
+            var now = DateTimeOffset.UtcNow;
+            return now >= start.AddMinutes(-15) && now <= (EndAtUtc ?? start.AddHours(2));
+        }
+    }
+
+    public bool HasAnythingToOpen => LiveStreamUrl is not null || MeetingUrl is not null || Links.Count > 0;
 }
 
 public record DashboardSessionItem(

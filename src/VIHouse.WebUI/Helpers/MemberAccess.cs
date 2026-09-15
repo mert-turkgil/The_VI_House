@@ -28,6 +28,23 @@ public static class MemberAccess
     /// True when the signed-in person holds an active membership. False for an anonymous visitor and
     /// for a ticket-holder, which is the distinction the whole helper exists to make.
     /// </summary>
+    /// <summary>
+    /// The tier's entitlements for the signed-in person, or null when they hold no membership.
+    /// Prefer this over <see cref="HasActiveMembershipAsync"/> wherever a specific door is being
+    /// opened — the directory, the card, the community — because plans differ in what they include.
+    /// </summary>
+    public static async Task<MemberEntitlements?> GetEntitlementsAsync(
+        ClaimsPrincipal user,
+        IMembershipService membershipService,
+        UserManager<ApplicationUser> userManager,
+        CancellationToken ct = default)
+    {
+        if (user.Identity?.IsAuthenticated != true) return null;
+        return userManager.GetUserId(user) is { } id && Guid.TryParse(id, out var userId)
+            ? await membershipService.GetEntitlementsAsync(userId, ct)
+            : null;
+    }
+
     public static async Task<bool> HasActiveMembershipAsync(
         ClaimsPrincipal user,
         IMembershipService membershipService,

@@ -1075,3 +1075,270 @@
     animation: none;
   }
 }
+
+// --- Hubs: the online things the person holds a place on -----------------------------------------
+// One card per experience ticket or session enrolment with something to open — the broadcast, the
+// meeting room, the channel. Rendered for guests and members alike; see AccountController.BuildHubsAsync.
+
+.account-hubs {
+  margin-bottom: var(--vih-space-lg);
+
+  .account-panel__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--vih-space-3xs);
+
+    p {
+      margin: 0;
+      font-size: var(--vih-text-base);
+      color: var(--vih-text-muted);
+    }
+  }
+}
+
+.account-hubs__grid {
+  display: grid;
+  gap: var(--vih-space-sm);
+
+  @include bp.from(bp.$md) {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+.account-hub {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-2xs);
+  padding: var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+  transition: border-color var(--vih-dur-base) var(--vih-ease-out), box-shadow var(--vih-dur-base) var(--vih-ease-out);
+
+  h3 {
+    margin: 0;
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-xl);
+    line-height: 1.2;
+
+    a {
+      color: var(--vih-green-900);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+    }
+  }
+
+  // Tonight's: a gold rim and the pulsing dot, so the one that matters now is found at a glance.
+  &--live {
+    border-color: var(--vih-gold);
+    box-shadow: var(--vih-shadow-gold);
+  }
+}
+
+.account-hub__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vih-space-2xs);
+}
+
+.account-hub__kind {
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+}
+
+.account-hub__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-danger);
+}
+
+.account-hub__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: vih-live-pulse 1.4s ease-in-out infinite;
+}
+
+.account-hub__when {
+  margin: 0;
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+.account-hub__stream {
+  margin-top: var(--vih-space-2xs);
+
+  .video-embed {
+    margin: 0;
+  }
+}
+
+.account-hub__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+  margin-top: auto;
+  padding-top: var(--vih-space-xs);
+}
+
+.account-hub__link {
+  display: inline;
+}
+
+.account-hub__pending {
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+// A perk the tier does not include: named, greyed, with the way up beside it.
+.account-membership__perk--locked {
+  color: var(--vih-cream-dim);
+  opacity: 0.7;
+
+  &::before {
+    background: transparent !important;
+    border: 1px solid currentColor;
+  }
+
+  a {
+    margin-left: 6px;
+    font-size: var(--vih-text-xs);
+    font-weight: 600;
+    color: var(--vih-gold-light);
+  }
+}
+
+// --- Referral link panel (ambassadors) -------------------------------------------------------------
+
+.account-referral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vih-space-sm);
+  margin-bottom: var(--vih-space-lg);
+  padding: var(--vih-space-md);
+  border: 1px solid rgba(184, 149, 90, 0.45);
+  border-radius: var(--vih-radius-xl);
+  background: rgba(184, 149, 90, 0.08);
+
+  h2 {
+    margin: 0 0 var(--vih-space-3xs);
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-xl);
+    color: var(--vih-green-900);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--vih-text-base);
+    line-height: 1.55;
+    color: var(--vih-text-secondary);
+  }
+
+  @include bp.from(bp.$lg) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.account-referral__link {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+
+  code {
+    padding: 8px 12px;
+    border-radius: var(--vih-radius-md);
+    background: var(--vih-white);
+    border: 1px solid var(--vih-line-on-light);
+    font-size: var(--vih-text-sm);
+    word-break: break-all;
+  }
+}
+
+.is-copied {
+  background: var(--vih-gold) !important;
+}
+
+// --- Ambassador dashboard timeline -------------------------------------------------------------------
+
+.ambassador-timeline {
+  list-style: none;
+  margin: var(--vih-space-sm) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ambassador-timeline__item {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: var(--vih-space-2xs) var(--vih-space-sm);
+  align-items: baseline;
+  padding: var(--vih-space-xs) 0;
+  border-bottom: 1px solid var(--vih-line-on-light);
+  font-size: var(--vih-text-md);
+
+  time {
+    font-size: var(--vih-text-xs);
+    color: var(--vih-text-muted);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 559px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ambassador-timeline__money {
+  grid-column: 2;
+  font-weight: 600;
+  color: var(--vih-green-900);
+
+  em {
+    font-style: normal;
+    font-weight: 400;
+    color: var(--vih-text-muted);
+  }
+
+  @media (max-width: 559px) {
+    grid-column: 1;
+  }
+}
+
+.ambassador-timeline__item--membershippurchase .ambassador-timeline__what,
+.ambassador-timeline__item--ticketpurchase .ambassador-timeline__what {
+  font-weight: 600;
+}
+
+// The broadcast inside the attendee block on a session page (Views/Seminars/Details.cshtml).
+.seminar-attendee__stream {
+  margin-top: var(--vih-space-sm);
+  padding-top: var(--vih-space-sm);
+  border-top: 1px solid var(--vih-line-on-light);
+
+  .seminar-attendee__label {
+    display: block;
+    margin-bottom: var(--vih-space-2xs);
+  }
+
+  .video-embed {
+    margin: 0;
+  }
+}

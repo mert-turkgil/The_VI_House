@@ -1,7 +1,13 @@
+@using VIHouse.Entities.Membership
+@using VIHouse.Entities.Referrals
 @model AdminCustomerDetailViewModel
 @{
     ViewData["Title"] = Model.Email;
     var allRoles = VIHouse.DataAccess.Identity.Roles.All;
+    var isSuperAdmin = User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin);
+    // Every form on this page is a SuperAdmin action on someone else's account. A protected
+    // account (Security:ProtectedAccounts) shows none of them; the controller refuses the POSTs too.
+    var canChange = isSuperAdmin && !Model.IsProtected;
 }
 
 @if (TempData["StatusMessage"] is string status)
@@ -9,9 +15,16 @@
     <div class="admin-status-message">@status</div>
 }
 
+@if (Model.IsProtected)
+{
+    <div class="admin-status-message admin-status-message--error">
+        <strong>Protected account.</strong> Roles, two-factor, membership and referral status cannot be changed from the panel for this account — by anyone.
+    </div>
+}
+
 <div class="admin-toolbar" style="justify-content: space-between; align-items: center;">
     <span></span>
-    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; Back to Customers</a>
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; Back to Users</a>
 </div>
 
 <div class="admin-review-grid">
@@ -35,6 +48,146 @@
                 <div><dt>Annual earnings</dt><dd>@(EarningsBand.LabelFor(Model.Profile?.EarningsBand) ?? "—")</dd></div>
                 <div><dt>Profile</dt><dd>@(Model.Profile?.IsComplete == true ? "Complete" : "Incomplete — the required statements are missing")</dd></div>
             </dl>
+        </div>
+
+        <div class="admin-card">
+            <h2>Membership</h2>
+            @if (Model.Membership is { } m)
+            {
+                <dl class="admin-detail-list">
+                    <div><dt>Plan</dt><dd>@m.Plan.Name</dd></div>
+                    <div>
+                        <dt>Status</dt>
+                        <dd>
+                            <span class="admin-badge @(m.IsPastDue ? "admin-badge--closed" : "admin-badge--open")">@m.Membership.Status</span>
+                            @if (m.IsComplimentary)
+                            {
+                                <span class="admin-badge admin-badge--draft">Complimentary</span>
+                            }
+                        </dd>
+                    </div>
+                    <div><dt>Since</dt><dd>@m.Membership.StartAt.ToString("d MMM yyyy")</dd></div>
+                    <div><dt>@(m.IsRecurring && !m.IsComplimentary ? "Renews" : "Ends")</dt><dd>@(m.Membership.ExpiresAt?.ToString("d MMM yyyy") ?? "Never")</dd></div>
+                    @if (m.IsComplimentary && !string.IsNullOrWhiteSpace(m.Membership.GrantNote))
+                    {
+                        <div><dt>Granted because</dt><dd>@m.Membership.GrantNote</dd></div>
+                    }
+                </dl>
+                @if (canChange)
+                {
+                    <form asp-action="RevokeMembership" asp-route-id="@Model.UserId" method="post" class="admin-inline-form" style="margin-top:12px;"
+                          onsubmit="return confirm('End @m.Plan.Name for @Model.Email today?');">
+                        <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">End membership</button>
+                    </form>
+                    @if (m.HasProviderSubscription && !m.IsComplimentary)
+                    {
+                        <p class="admin-hint">Billed by Stripe — ending it here is refused; cancel the subscription at Stripe and the webhook ends it.</p>
+                    }
+                }
+            }
+            else
+            {
+                <p class="admin-hint" style="margin-top:0;">No current membership.</p>
+                @if (canChange && Model.Plans.Count > 0)
+                {
+                    @* Influencers, partners, make-goods: a real membership with no purchase. *@
+                    <form asp-action="GrantMembership" asp-route-id="@Model.UserId" method="post" class="admin-form" style="margin-top:12px;">
+                        <div class="admin-form__grid">
+                            <div class="admin-field">
+                                <label for="grant-plan">Grant plan</label>
+                                <select id="grant-plan" name="PlanId">
+                                    @foreach (var plan in Model.Plans)
+                                    {
+                                        <option value="@plan.Id">@plan.Name — @MoneyFormatter.Format(plan.PriceMinor, plan.Currency)@(plan.MaxMembers is { } max ? $" · limit {max}" : "")</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="admin-field">
+                                <label for="grant-until">Valid until</label>
+                                <input id="grant-until" name="ExpiresOn" type="date" min="@DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd")" />
+                                <p class="admin-hint">Blank = the plan's own period from today (no expiry for a one-time plan).</p>
+                            </div>
+                        </div>
+                        <div class="admin-field">
+                            <label for="grant-note">Reason (kept on the record)</label>
+                            <input id="grant-note" name="Note" maxlength="500" placeholder="e.g. Content partner — 12-month collaboration" />
+                        </div>
+                        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem; margin-bottom:12px;">
+                            <input type="checkbox" name="OverrideCap" value="true" />
+                            Grant even if the plan is at its member limit
+                        </label>
+                        <button type="submit" class="admin-btn">Grant membership</button>
+                    </form>
+                }
+            }
+            @if (Model.MembershipHistory.Count > 1 || (Model.MembershipHistory.Count == 1 && Model.Membership is null))
+            {
+                <h3 style="margin-top:20px;">History</h3>
+                <table class="admin-table">
+                    <thead><tr><th>Plan</th><th>Status</th><th>From</th><th>To</th><th>Source</th></tr></thead>
+                    <tbody>
+                        @foreach (var h in Model.MembershipHistory)
+                        {
+                            <tr>
+                                <td>@h.Plan.Name</td>
+                                <td>@h.Membership.Status</td>
+                                <td>@h.Membership.StartAt.ToString("d MMM yyyy")</td>
+                                <td>@(h.Membership.ExpiresAt?.ToString("d MMM yyyy") ?? "—")</td>
+                                <td>@(h.IsComplimentary ? "Complimentary" : "Paid")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <div class="admin-card">
+            <h2>Referral link</h2>
+            @if (Model.Ambassador is { } amb)
+            {
+                <dl class="admin-detail-list">
+                    <div><dt>Link</dt><dd><code>/r/@amb.Code</code></dd></div>
+                    <div><dt>Commission</dt><dd>@amb.CommissionPercent%</dd></div>
+                    <div>
+                        <dt>Status</dt>
+                        <dd><span class="admin-badge @(amb.Status == AmbassadorStatus.Active ? "admin-badge--open" : "admin-badge--draft")">@amb.Status</span></dd>
+                    </div>
+                </dl>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+                    <a class="admin-btn admin-btn--ghost admin-btn--sm" asp-controller="AdminAmbassadors" asp-action="Edit" asp-route-id="@amb.Id">Performance &amp; settings</a>
+                    @if (canChange)
+                    {
+                        <form asp-action="SetAmbassadorStatus" asp-route-id="@Model.UserId" method="post" class="admin-inline-form">
+                            <input type="hidden" name="status" value="@(amb.Status == AmbassadorStatus.Active ? AmbassadorStatus.Inactive : AmbassadorStatus.Active)" />
+                            <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">@(amb.Status == AmbassadorStatus.Active ? "Pause link" : "Re-activate link")</button>
+                        </form>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="admin-hint" style="margin-top:0;">No referral link. Only admins can assign one; the person then finds it on their account page.</p>
+                @if (canChange)
+                {
+                    <form asp-action="MakeAmbassador" asp-route-id="@Model.UserId" method="post" class="admin-form" style="margin-top:12px;">
+                        <div class="admin-form__grid">
+                            <div class="admin-field">
+                                <label asp-for="AmbassadorForm.Name">Display name</label>
+                                <input asp-for="AmbassadorForm.Name" name="Name" />
+                            </div>
+                            <div class="admin-field">
+                                <label asp-for="AmbassadorForm.Code">Code (/r/{code})</label>
+                                <input asp-for="AmbassadorForm.Code" name="Code" placeholder="VI-ANTON" />
+                            </div>
+                            <div class="admin-field">
+                                <label asp-for="AmbassadorForm.CommissionPercent">Commission %</label>
+                                <input asp-for="AmbassadorForm.CommissionPercent" name="CommissionPercent" type="number" step="0.01" min="0" max="100" />
+                            </div>
+                        </div>
+                        <button type="submit" class="admin-btn">Create referral link</button>
+                    </form>
+                }
+            }
         </div>
 
         @if (!string.IsNullOrWhiteSpace(Model.Profile?.About) || !string.IsNullOrWhiteSpace(Model.Profile?.Expectations))
@@ -166,7 +319,7 @@
                         @* SuperAdmin-only, and only worth offering once there is a pairing to clear.
                            Covers the lost-phone case, and is what makes a first-login enrolment
                            repeatable when rehearsing the flow before launch. *@
-                        @if (Model.TwoFactorEnabled && User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin))
+                        @if (Model.TwoFactorEnabled && canChange)
                         {
                             <form asp-action="ResetTwoFactor" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
                                   onsubmit="return confirm('Reset two-factor for @Model.Email? They will be signed out everywhere and must pair a new authenticator app on their next sign-in.');">
@@ -196,18 +349,25 @@
 
         <div class="admin-card">
             <h2>Roles</h2>
-            <form asp-action="UpdateRoles" asp-route-id="@Model.UserId" method="post">
-                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
-                    @foreach (var role in allRoles)
-                    {
-                        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;">
-                            <input type="checkbox" name="roles" value="@role" checked="@Model.Roles.Contains(role)" />
-                            @role
-                        </label>
-                    }
-                </div>
-                <button type="submit" class="admin-btn" style="width:100%;">Save Roles</button>
-            </form>
+            @if (canChange)
+            {
+                <form asp-action="UpdateRoles" asp-route-id="@Model.UserId" method="post">
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+                        @foreach (var role in allRoles)
+                        {
+                            <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;">
+                                <input type="checkbox" name="roles" value="@role" checked="@Model.Roles.Contains(role)" />
+                                @role
+                            </label>
+                        }
+                    </div>
+                    <button type="submit" class="admin-btn" style="width:100%;">Save Roles</button>
+                </form>
+            }
+            else
+            {
+                <p style="margin:0; font-size:0.875rem;">@(Model.Roles.Count == 0 ? "—" : string.Join(", ", Model.Roles))</p>
+            }
         </div>
     </div>
 </div>

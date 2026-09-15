@@ -141,6 +141,18 @@
                 </div>
             }
 
+            @if (Model.LiveStreamUrl is not null && (Model.IsLiveNow || Model.StartAtUtc is null))
+            {
+                <div class="seminar-attendee__stream">
+                    <span class="seminar-attendee__label">@Loc["Sessions.WatchLive"]</span>
+                    <partial name="_LiveStream" model="@((Model.LiveStreamUrl, Loc["Sessions.WatchLive"].Value))" />
+                </div>
+            }
+            else if (Model.LiveStreamUrl is not null)
+            {
+                <p class="seminar-attendee__pending">@Loc["Sessions.StreamLater"]</p>
+            }
+
             <p class="seminar-attendee__portal">
                 <a asp-controller="Account" asp-action="Sessions">@Loc["Seminars.Attendee.AllSessions"] &rarr;</a>
             </p>

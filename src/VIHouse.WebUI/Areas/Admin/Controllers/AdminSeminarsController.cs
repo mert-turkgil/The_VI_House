@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -7,6 +8,8 @@ using VIHouse.Business.Options;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Seminars;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -22,6 +25,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// Every failure that can reach an admin comes back from SeminarService as a resource key and is
 /// resolved through <see cref="Localised"/>, so the panel speaks whichever language the admin set.
 /// </summary>
+[Authorize(Roles = AdminSections.RolesFor.Events)]
 public class AdminSeminarsController(
     ISeminarService seminarService,
     UserManager<ApplicationUser> userManager,

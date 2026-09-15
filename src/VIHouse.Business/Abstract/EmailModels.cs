@@ -52,6 +52,10 @@ public record WelcomeSetupEmailModel(string FirstName, string SetupUrl, string? 
 /// <summary>Sent when an existing SuperAdmin creates a staff account. Carries the one-time link the
 /// new admin uses to set a password; no credential is ever emailed, and the account cannot be used
 /// until they also confirm the address and switch on two-factor.</summary>
+/// <summary>To an ambassador when their link converts. Deliberately anonymous — what happened and
+/// what it is worth, never who.</summary>
+public record ReferralConvertedEmailModel(string Name, string What, string? Amount, string? Commission, string DashboardUrl);
+
 public record AdminInviteEmailModel(string FirstName, string SetupUrl, string InvitedBy, string RoleSummary);
 
 /// <summary>Sent the moment a seminar enrolment is confirmed — free, membership-covered or paid.

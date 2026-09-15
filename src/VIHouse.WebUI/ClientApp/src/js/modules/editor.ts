@@ -25,6 +25,8 @@
  *  full API would be a maintenance burden with no payoff. */
 interface CKEditorInstance {
   getData(): string;
+  isReadOnly: boolean;
+  destroy(): Promise<void>;
   model: {
     document: { on(event: string, callback: () => void): void };
     insertContent(content: unknown): void;
@@ -159,6 +161,20 @@ export function initRichTextEditors(): void {
       .then((editor) => {
         editors.set(textarea, editor);
 
+        // A licence problem — key for another domain, expired, wrong distribution channel — does
+        // not reject create(). CKEditor resolves the editor, switches it to read-only and throws
+        // from a timer, which leaves a toolbar that looks fine and accepts nothing. Read-only
+        // straight after creation can only mean that, so the editor is taken down and the plain
+        // textarea (a working field) is left with a note saying why.
+        window.setTimeout(() => {
+          if (!editor.isReadOnly) return;
+          editors.delete(textarea);
+          editor.destroy().catch(() => undefined);
+          textarea.hidden = false;
+          textarea.style.display = '';
+          showEditorNotice(textarea, 'Rich text editor unavailable — the CKEditor licence key does not cover this domain. Plain HTML editing still works and saves normally.');
+        }, 0);
+
         // ClassicEditor.create on a <textarea> already syncs back on form submit, but the admin
         // forms are validated by jQuery unobtrusive validation, which reads the field's value
         // before submit fires — without this the [Required] check sees the original (possibly
@@ -171,8 +187,19 @@ export function initRichTextEditors(): void {
         // Leaving the plain textarea in place is a working fallback, so this must never take the
         // page down with it — but it should be visible to whoever is debugging.
         console.error('Rich text editor failed to load; falling back to plain textarea.', error);
+        showEditorNotice(textarea, 'Rich text editor failed to load. Plain HTML editing still works and saves normally.');
       });
   });
+}
+
+/** One line under the field, once — the admin should know why the toolbar is missing. */
+function showEditorNotice(textarea: HTMLTextAreaElement, message: string): void {
+  if (textarea.nextElementSibling?.classList.contains('admin-editor-notice')) return;
+  const notice = document.createElement('p');
+  notice.className = 'admin-editor-notice';
+  notice.setAttribute('role', 'status');
+  notice.textContent = message;
+  textarea.insertAdjacentElement('afterend', notice);
 }
 
 /**

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,8 +7,11 @@ using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
 
+using VIHouse.WebUI.Areas.Admin;
+
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
+[Authorize(Roles = AdminSections.RolesFor.Marketing)]
 public class AdminAmbassadorsController(IAmbassadorService ambassadorService, UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
     public async Task<IActionResult> Index(CancellationToken ct)

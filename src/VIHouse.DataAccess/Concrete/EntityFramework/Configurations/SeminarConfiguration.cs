@@ -20,6 +20,7 @@ public class SeminarConfiguration : IEntityTypeConfiguration<Seminar>
         builder.Property(s => s.HostTitle).HasMaxLength(150);
         builder.Property(s => s.Location).HasMaxLength(200);
         builder.Property(s => s.MeetingUrl).HasMaxLength(500);
+        builder.Property(s => s.LiveStreamUrl).HasMaxLength(500);
         builder.Property(s => s.TimeZoneId).HasMaxLength(100).IsRequired();
         builder.Property(s => s.Currency).HasMaxLength(3).IsRequired();
 

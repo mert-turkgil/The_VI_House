@@ -68,6 +68,12 @@
         <p class="admin-field__hint">@Loc["Admin.Seminar.MeetingUrl.Hint"]</p>
         <span asp-validation-for="MeetingUrl" class="field-validation-error"></span>
     </div>
+    <div class="admin-field">
+        <label asp-for="LiveStreamUrl"></label>
+        <input asp-for="LiveStreamUrl" type="url" placeholder="https://www.youtube.com/watch?v=…" />
+        <p class="admin-field__hint">@Loc["Admin.Seminar.LiveStreamUrl.Hint"]</p>
+        <span asp-validation-for="LiveStreamUrl" class="field-validation-error"></span>
+    </div>
 </div>
 
 <div class="admin-form__grid">

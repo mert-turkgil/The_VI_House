@@ -31,6 +31,7 @@ public class AmbassadorController(IAmbassadorService ambassadorService, UserMana
             Code = ambassador.Code,
             CommissionPercent = ambassador.CommissionPercent,
             Stats = stats,
+            Conversions = await ambassadorService.GetConversionsAsync(ambassador.Id, 50, ct),
         });
     }
 }

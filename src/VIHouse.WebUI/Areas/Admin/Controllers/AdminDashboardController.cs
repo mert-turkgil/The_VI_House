@@ -1,11 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Applications;
 using VIHouse.Entities.Commerce;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
 
+using VIHouse.WebUI.Areas.Admin;
+
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
+[Authorize(Roles = AdminSections.RolesFor.Everyone)]
 public class AdminDashboardController(
     IApplicationRepository applications,
     IBookingRepository bookings,

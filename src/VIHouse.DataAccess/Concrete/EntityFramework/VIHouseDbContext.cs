@@ -65,6 +65,7 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
 
     public DbSet<Ambassador> Ambassadors => Set<Ambassador>();
     public DbSet<ReferralVisit> ReferralVisits => Set<ReferralVisit>();
+    public DbSet<ReferralConversion> ReferralConversions => Set<ReferralConversion>();
 
     public DbSet<Seminar> Seminars => Set<Seminar>();
     public DbSet<SeminarTranslation> SeminarTranslations => Set<SeminarTranslation>();

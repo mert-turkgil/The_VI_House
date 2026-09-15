@@ -94,10 +94,14 @@ public class SeminarService(
 
         // The "free if you're subscribed" rule. Read live rather than from a claim, so a lapsed
         // membership stops covering seminars the moment it lapses rather than at next sign-in.
-        var isMember = (seminar.IncludedWithMembership || seminar.MemberDiscountPercent > 0)
-            && await membershipService.GetCurrentMembershipAsync(userId.Value, ct) is not null;
+        var entitlements = (seminar.IncludedWithMembership || seminar.MemberDiscountPercent > 0)
+            ? await membershipService.GetEntitlementsAsync(userId.Value, ct)
+            : null;
+        var isMember = entitlements is not null;
 
-        if (seminar.IncludedWithMembership && isMember)
+        // The free seat is a tier feature (MembershipPlan.IncludesSessions); a member on a tier
+        // without it is still a member for the discount below, just not for the free seat.
+        if (seminar.IncludedWithMembership && isMember && entitlements!.Sessions)
             return new SeminarAccessInfo(SeminarAccessOutcome.IncludedInMembership, seminar.PriceMinor, seminar.Currency, seatsRemaining) { ProfileIncomplete = profileIncomplete };
 
         // Not covered, but a member: the member price. PriceMinor on the result is what they pay,
@@ -373,6 +377,7 @@ public class SeminarService(
         existing.HostTitle = updated.HostTitle;
         existing.IsOnline = updated.IsOnline;
         existing.MeetingUrl = updated.MeetingUrl;
+        existing.LiveStreamUrl = updated.LiveStreamUrl;
         existing.Location = updated.Location;
         existing.TimeZoneId = updated.TimeZoneId;
         existing.StartAtUtc = updated.StartAtUtc;

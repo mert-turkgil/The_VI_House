@@ -10,6 +10,10 @@ public static class Roles
     public const string Concierge = "Concierge";
     public const string Support = "Support";
 
+    /// <summary>Writes and publishes content — experiences, sessions, journal, CMS pages, hero
+    /// slides — and nothing operational: no applications, money, or accounts.</summary>
+    public const string Editor = "Editor";
+
     /// <summary>Applied to every approved/paid customer, distinct from the admin-side roles above.</summary>
     public const string Member = "Member";
 
@@ -18,11 +22,11 @@ public static class Roles
 
     public static readonly string[] AdminRoles =
     [
-        SuperAdmin, EventManager, Finance, Marketing, Concierge, Support
+        SuperAdmin, Editor, EventManager, Finance, Marketing, Concierge, Support
     ];
 
     public static readonly string[] All =
     [
-        SuperAdmin, EventManager, Finance, Marketing, Concierge, Support, Member, Ambassador
+        SuperAdmin, Editor, EventManager, Finance, Marketing, Concierge, Support, Member, Ambassador
     ];
 }

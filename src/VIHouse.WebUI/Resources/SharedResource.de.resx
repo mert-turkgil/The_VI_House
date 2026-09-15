@@ -16,6 +16,21 @@
   <data name="Nav.LanguageLabel" xml:space="preserve"><value>Sprache</value></data>
   <data name="Nav.MyAccount" xml:space="preserve"><value>Mein Konto</value></data>
   <data name="Nav.AmbassadorDashboard" xml:space="preserve"><value>Ambassador-Dashboard</value></data>
+  <data name="Ambassador.Nav" xml:space="preserve"><value>Empfehlungslink</value></data>
+  <data name="Ambassador.Panel.Eyebrow" xml:space="preserve"><value>Botschafter</value></data>
+  <data name="Ambassador.Panel.Title" xml:space="preserve"><value>Ihr Empfehlungslink</value></data>
+  <data name="Ambassador.Panel.Body" xml:space="preserve"><value>Teilen Sie ihn überall. Wer darüber kommt und beitritt, sich bewirbt oder kauft, wird Ihnen zugerechnet — Sie erfahren es sofort.</value></data>
+  <data name="Ambassador.Panel.Copy" xml:space="preserve"><value>Link kopieren</value></data>
+  <data name="Ambassador.Panel.CopyCode" xml:space="preserve"><value>Code kopieren</value></data>
+  <data name="Ambassador.Panel.Copied" xml:space="preserve"><value>Kopiert</value></data>
+  <data name="Ambassador.Panel.Dashboard" xml:space="preserve"><value>Leistung ansehen</value></data>
+  <data name="Ambassador.Conversions.Heading" xml:space="preserve"><value>Letzte Aktivität</value></data>
+  <data name="Ambassador.Conversions.None" xml:space="preserve"><value>Noch nichts. Jede Bewerbung, Zusage und jeder Kauf über Ihren Link erscheint hier — ohne Namen, aber mit Zahlen.</value></data>
+  <data name="Ambassador.Conversions.Application" xml:space="preserve"><value>Bewerbung für ein Erlebnis</value></data>
+  <data name="Ambassador.Conversions.Approved" xml:space="preserve"><value>Bewerbung angenommen</value></data>
+  <data name="Ambassador.Conversions.Ticket" xml:space="preserve"><value>Ticket gekauft</value></data>
+  <data name="Ambassador.Conversions.Membership" xml:space="preserve"><value>Mitglied geworden</value></data>
+  <data name="Ambassador.Conversions.Commission" xml:space="preserve"><value>Ihre Provision</value></data>
   <data name="Nav.LogOut" xml:space="preserve"><value>Abmelden</value></data>
   <data name="Nav.LogIn" xml:space="preserve"><value>Anmelden</value></data>
   <data name="Nav.ApplyToJoin" xml:space="preserve"><value>Jetzt bewerben</value></data>
@@ -1066,6 +1081,13 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Account.Perk.Directory" xml:space="preserve"><value>Mitgliederverzeichnis</value></data>
   <data name="Account.Perk.Community" xml:space="preserve"><value>Community-Kanäle</value></data>
   <data name="Account.Perk.Experiences" xml:space="preserve"><value>Vorrang bei Erlebnissen</value></data>
+  <data name="Account.Perk.NotInPlan" xml:space="preserve"><value>Nicht in Ihrem Plan — upgraden</value></data>
+  <data name="Account.Hubs.Heading" xml:space="preserve"><value>Ihre Räume</value></data>
+  <data name="Account.Hubs.Lede" xml:space="preserve"><value>Alles Online, wofür Sie einen Platz haben — Übertragung, Meetingraum und Kanal für jedes davon.</value></data>
+  <data name="Account.Hubs.Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Account.Hubs.Experience" xml:space="preserve"><value>Erlebnis</value></data>
+  <data name="Account.Hubs.OnDemand" xml:space="preserve"><value>Jederzeit verfügbar</value></data>
+  <data name="Community.GenerateInvite" xml:space="preserve"><value>Meine Einladung holen</value></data>
   <data name="Account.Staff.Heading" xml:space="preserve"><value>Sie gehören zum House-Team.</value></data>
   <data name="Account.Staff.Body" xml:space="preserve"><value>Ihr Konto öffnet das Admin-Panel. Alles, was Sie als Gast buchen oder belegen, erscheint auch hier.</value></data>
   <data name="Account.Guest.Heading" xml:space="preserve"><value>Sie sind Gast des House.</value></data>
@@ -1120,6 +1142,8 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Sessions.Grant.Comped" xml:space="preserve"><value>Auf Einladung</value></data>
   <data name="Sessions.JoinLink" xml:space="preserve"><value>Session beitreten</value></data>
   <data name="Sessions.LinkPending" xml:space="preserve"><value>Der Link kommt vor der Session</value></data>
+  <data name="Sessions.WatchLive" xml:space="preserve"><value>Live ansehen</value></data>
+  <data name="Sessions.StreamLater" xml:space="preserve"><value>Der Livestream erscheint hier kurz vor Beginn</value></data>
   <data name="Sessions.LiveNow" xml:space="preserve"><value>Jetzt live</value></data>
   <data name="Sessions.Open" xml:space="preserve"><value>Öffnen</value></data>
   <data name="Sessions.WatchAgain" xml:space="preserve"><value>Erneut ansehen</value></data>
@@ -1174,4 +1198,6 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Directory.ProfessionLabel" xml:space="preserve"><value>Beruf</value></data>
   <data name="Admin.Seminar.MeetingUrl" xml:space="preserve"><value>Meeting-Link</value></data>
   <data name="Admin.Seminar.MeetingUrl.Hint" xml:space="preserve"><value>Zoom-/Meet-/Teams-Link für einen Online-Termin. Nur bestätigten Teilnehmern in ihrem Portal und auf der Seite nach Anmeldung angezeigt — nie auf der öffentlichen Karte.</value></data>
+  <data name="Admin.Seminar.LiveStreamUrl" xml:space="preserve"><value>Livestream (YouTube)</value></data>
+  <data name="Admin.Seminar.LiveStreamUrl.Hint" xml:space="preserve"><value>Eine YouTube-Live- oder Premiere-URL. Wird Teilnehmern ab einer Stunde vor Beginn auf der Session-Seite und im Konto eingebettet; nie auf der öffentlichen Karte.</value></data>
 </root>

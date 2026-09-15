@@ -11,6 +11,8 @@ using VIHouse.Entities.Compliance;
 using VIHouse.Entities.Experiences;
 using VIHouse.Entities.Notifications;
 
+using VIHouse.Entities.Referrals;
+
 namespace VIHouse.Business.Concrete;
 
 /// <summary>
@@ -29,6 +31,7 @@ public class ApplicationService(
     IEmailService emailService,
     ISmsService smsService,
     INotificationService notificationService,
+    IAmbassadorService ambassadorService,
     IOptions<SiteOptions> siteOptions) : IApplicationService
 {
     private const string InvitationAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I ambiguity
@@ -75,6 +78,9 @@ public class ApplicationService(
 
         await applications.SaveChangesAsync(ct);
 
+        await ambassadorService.RecordConversionAsync(application.ReferralCode, ReferralConversionKind.Application,
+            nameof(Application), application.Id, ct: ct);
+
         var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
         if (experience is not null)
         {
@@ -112,6 +118,9 @@ public class ApplicationService(
         };
         await invitations.AddAsync(invitation, ct);
         await applications.SaveChangesAsync(ct);
+
+        await ambassadorService.RecordConversionAsync(application.ReferralCode, ReferralConversionKind.Approved,
+            nameof(Application), application.Id, ct: ct);
 
         var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
         if (experience is null)

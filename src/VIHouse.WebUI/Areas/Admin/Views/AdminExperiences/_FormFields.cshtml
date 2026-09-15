@@ -92,6 +92,21 @@
         </div>
     </div>
 
+    <div class="admin-form__grid">
+        <div class="admin-field">
+            <label asp-for="MeetingUrl"></label>
+            <input asp-for="MeetingUrl" type="url" placeholder="https://zoom.us/j/…" />
+            <p class="admin-field__hint">Online / both only. Shown to confirmed ticket holders on their account page — never on the public page.</p>
+            <span asp-validation-for="MeetingUrl" class="field-validation-error"></span>
+        </div>
+        <div class="admin-field">
+            <label asp-for="LiveStreamUrl"></label>
+            <input asp-for="LiveStreamUrl" type="url" placeholder="https://www.youtube.com/watch?v=…" />
+            <p class="admin-field__hint">A YouTube live or premiere. Embedded on the holder's account page from 15 minutes before the start.</p>
+            <span asp-validation-for="LiveStreamUrl" class="field-validation-error"></span>
+        </div>
+    </div>
+
     @{
         // The Cover image panel above this form owns the upload. When one exists it wins outright, so the
         // path box is disabled rather than left looking editable while changing nothing.

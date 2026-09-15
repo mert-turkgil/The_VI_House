@@ -190,6 +190,8 @@ jobs:
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
           SMS_USERNAME: ${{ secrets.SMS_USERNAME }}
           SMS_PASSWORD: ${{ secrets.SMS_PASSWORD }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
@@ -211,6 +213,8 @@ jobs:
             --arg     stripeWebhook     "$STRIPE_WEBHOOK_SECRET" \
             --arg     googleClientId    "$GOOGLE_CLIENT_ID" \
             --arg     googleSecret      "$GOOGLE_CLIENT_SECRET" \
+            --arg     discordToken      "$DISCORD_BOT_TOKEN" \
+            --arg     discordGuild      "$DISCORD_GUILD_ID" \
             --argjson smsEnabled        "$SMS_ENABLED" \
             --arg     smsEndpoint       "$SMS_ENDPOINT" \
             --arg     smsFrom           "$SMS_FROM" \
@@ -251,6 +255,7 @@ jobs:
                 WebhookSecret: $stripeWebhook
               },
               Authentication: { Google: { ClientId: $googleClientId, ClientSecret: $googleSecret } },
+              Discord: { BotToken: $discordToken, GuildId: $discordGuild },
               Sms: {
                 Enabled: $smsEnabled, Endpoint: $smsEndpoint, From: $smsFrom,
                 Username: $smsUsername, Password: $smsPassword,

@@ -94,6 +94,10 @@ public class SeminarDetailViewModel
     /// (or a staff preview), so the public page never carries it.</summary>
     public string? MeetingUrl { get; set; }
 
+    /// <summary>The broadcast (YouTube live), only for someone with access. Embedded in the
+    /// attendee block from an hour before the start; before that it is just announced.</summary>
+    public string? LiveStreamUrl { get; set; }
+
     /// <summary>True from an hour before the start until the end: the window in which the join
     /// button leads the page.</summary>
     public bool IsLiveNow { get; set; }
@@ -125,6 +129,7 @@ public class SeminarDetailViewModel
         return new SeminarDetailViewModel
         {
             MeetingUrl = showContent && s.IsOnline ? s.MeetingUrl : null,
+            LiveStreamUrl = showContent ? s.LiveStreamUrl : null,
             IsLiveNow = s.StartAtUtc is { } start && end is { } finish && now >= start.AddHours(-1) && now <= finish,
             Enrollment = access.Enrollment,
             Slug = s.Slug,

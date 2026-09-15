@@ -9,36 +9,11 @@
     var currentUser = User.Identity?.IsAuthenticated == true ? await UserManager.GetUserAsync(User) : null;
     var pageTitle = ViewData["Title"]?.ToString() ?? "Admin";
 
-    var navItems = new[]
-    {
-        (Controller: "AdminDashboard", Action: "Index", Label: "Dashboard", Icon: "layout-dashboard"),
-        (Controller: "AdminApplications", Action: "Index", Label: "Applications", Icon: "file-text"),
-        (Controller: "AdminUsers", Action: "Index", Label: "Customers", Icon: "user-round"),
-        (Controller: "AdminExperiences", Action: "Index", Label: "Experiences", Icon: "sparkles"),
-        (Controller: "AdminBookings", Action: "Index", Label: "Bookings", Icon: "calendar"),
-        (Controller: "AdminPayments", Action: "Index", Label: "Payments", Icon: "credit-card"),
-        (Controller: "AdminPromoCodes", Action: "Index", Label: "Promo Codes", Icon: "tag"),
-        (Controller: "AdminAmbassadors", Action: "Index", Label: "Ambassadors", Icon: "megaphone"),
-        (Controller: "AdminMembershipPlans", Action: "Index", Label: "Membership Plans", Icon: "layers"),
-        (Controller: "AdminCms", Action: "Index", Label: "Content", Icon: "pen-square"),
-        (Controller: "AdminHeroSlides", Action: "Index", Label: "Hero Slides", Icon: "image"),
-        (Controller: "AdminSeminars", Action: "Index", Label: "Sessions", Icon: "calendar"),
-        (Controller: "AdminJournal", Action: "Index", Label: "Journal", Icon: "book-open"),
-        (Controller: "AdminCommunity", Action: "Index", Label: "Community", Icon: "messages-square"),
-        (Controller: "AdminEmails", Action: "Index", Label: "Emails & SMS", Icon: "mail"),
-        (Controller: "AdminNotifySignups", Action: "Index", Label: "Launch List", Icon: "bell"),
-        (Controller: "AdminTranslations", Action: "Index", Label: "Translations", Icon: "languages"),
-        (Controller: "AdminSiteSettings", Action: "Index", Label: "Site & SEO", Icon: "settings"),
-    };
-
-    var quickActions = new[]
-    {
-        (Area: "Admin", Controller: "AdminApplications", Action: "Index", Label: "Review queue"),
-        (Area: "Admin", Controller: "AdminExperiences", Action: "Create", Label: "New experience"),
-        (Area: "Admin", Controller: "AdminSeminars", Action: "Create", Label: "New session"),
-        (Area: "Admin", Controller: "AdminJournal", Action: "Create", Label: "New article"),
-    };
-
+    // What this person may open, in sidebar order — one table drives both the menu and the
+    // controllers' [Authorize] attributes, see Areas/Admin/AdminSections.cs.
+    var navItems = VIHouse.WebUI.Areas.Admin.AdminSections.VisibleTo(User).ToList();
+    var quickActions = VIHouse.WebUI.Areas.Admin.AdminSections.QuickActionsFor(User)
+        .Select(q => (Area: "Admin", q.Controller, q.Action, q.Label)).ToList();
     string NavClass(string controllerName) =>
         string.Equals(currentController, controllerName, StringComparison.OrdinalIgnoreCase) ? "admin-sidebar__link active" : "admin-sidebar__link";
 
@@ -47,8 +22,8 @@
             ? "A live view of applications, bookings, content and revenue."
             : "Fast, guided admin workflows for everyday operations.";
 
-    var activeNav = navItems.FirstOrDefault(item => string.Equals(item.Controller, currentController, StringComparison.OrdinalIgnoreCase));
-    var activeNavLabel = activeNav == default ? pageTitle : activeNav.Label;
+    var activeNav = VIHouse.WebUI.Areas.Admin.AdminSections.Find(currentController);
+    var activeNavLabel = activeNav?.Label ?? pageTitle;
 }
 <!DOCTYPE html>
 <html lang="en">

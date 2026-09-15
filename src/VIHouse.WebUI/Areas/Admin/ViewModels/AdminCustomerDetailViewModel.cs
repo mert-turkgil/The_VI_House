@@ -2,6 +2,8 @@ using VIHouse.Entities.Applications;
 using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Membership;
 using VIHouse.Entities.Users;
+using VIHouse.Business.Abstract;
+using VIHouse.Entities.Referrals;
 
 namespace VIHouse.WebUI.Areas.Admin.ViewModels;
 
@@ -24,6 +26,22 @@ public class AdminCustomerDetailViewModel
     // The two questions support actually gets asked ("why can't they log in?", "are they still
     // active?") that previously needed a database query to answer.
     public MemberStatus MemberStatus { get; set; }
+
+    // --- What the panel may do to this account ------------------------------------------------
+
+    /// <summary>Security:ProtectedAccounts — every form on the page is hidden and every POST
+    /// refused. See AdminUsersController.RefuseIfProtected.</summary>
+    public bool IsProtected { get; set; }
+
+    /// <summary>The current membership, paid or complimentary; null when they hold none.</summary>
+    public MembershipSummary? Membership { get; set; }
+    public List<MembershipSummary> MembershipHistory { get; set; } = [];
+
+    /// <summary>Plans an admin may grant — the active ones.</summary>
+    public List<MembershipPlan> Plans { get; set; } = [];
+
+    public Ambassador? Ambassador { get; set; }
+    public AdminMakeAmbassadorViewModel AmbassadorForm { get; set; } = new();
     public bool TwoFactorEnabled { get; set; }
     public bool EmailConfirmed { get; set; }
     public bool IsLockedOut { get; set; }

@@ -104,6 +104,8 @@ public class ExperienceService(
         existing.Status = updated.Status;
         existing.Visibility = updated.Visibility;
         existing.AttendanceMode = updated.AttendanceMode;
+        existing.MeetingUrl = updated.MeetingUrl;
+        existing.LiveStreamUrl = updated.LiveStreamUrl;
         existing.CoverImageUrl = updated.CoverImageUrl;
         existing.ApplicationOpenAt = updated.ApplicationOpenAt;
         existing.ApplicationCloseAt = updated.ApplicationCloseAt;

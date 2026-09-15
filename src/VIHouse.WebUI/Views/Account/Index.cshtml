@@ -107,7 +107,10 @@
                         &middot; @Loc["Card.MemberSince"] @m.Membership.StartAt.ToString("MMMM yyyy")
                     </p>
                     <div class="account-membership__actions">
-                        <a class="btn btn--primary" asp-action="Card">@Loc["Card.ViewCard"]</a>
+                        @if (Model.Entitlements is { MemberCard: true })
+                        {
+                            <a class="btn btn--primary" asp-action="Card">@Loc["Card.ViewCard"]</a>
+                        }
                         <a class="btn btn--ghost-dark" asp-action="Membership">@Loc["Account.MembershipDetails"]</a>
                         @if (Model.CanManageBilling)
                         {
@@ -117,15 +120,41 @@
                         }
                     </div>
                 </div>
+                @{
+                    var ent = Model.Entitlements;
+                }
                 <ul class="account-membership__perks" aria-label="@Loc["Account.MembershipUnlocks"]">
-                    <li><a asp-controller="Seminars" asp-action="Index">@Loc["Account.Perk.Sessions"]</a></li>
+                    @* What the tier opens is a link; what it does not is said plainly, with the way
+                       up — a perk that silently bounces reads as a fault. *@
+                    @if (ent is { Sessions: true })
+                    {
+                        <li><a asp-controller="Seminars" asp-action="Index">@Loc["Account.Perk.Sessions"]</a></li>
+                    }
+                    else
+                    {
+                        <li class="account-membership__perk--locked"><span>@Loc["Account.Perk.Sessions"]</span> <a asp-controller="Membership" asp-action="Index" asp-fragment="membership-plans">@Loc["Account.Perk.NotInPlan"]</a></li>
+                    }
                     @if (Model.DirectoryEnabled)
                     {
-                        <li><a asp-controller="MemberDirectory" asp-action="Index">@Loc["Account.Perk.Directory"]</a></li>
+                        @if (ent is { Directory: true })
+                        {
+                            <li><a asp-controller="MemberDirectory" asp-action="Index">@Loc["Account.Perk.Directory"]</a></li>
+                        }
+                        else
+                        {
+                            <li class="account-membership__perk--locked"><span>@Loc["Account.Perk.Directory"]</span> <a asp-controller="Membership" asp-action="Index" asp-fragment="membership-plans">@Loc["Account.Perk.NotInPlan"]</a></li>
+                        }
                     }
                     @if (Model.CommunityEnabled)
                     {
-                        <li><a asp-action="Community">@Loc["Account.Perk.Community"]</a></li>
+                        @if (ent is { Community: true })
+                        {
+                            <li><a asp-action="Community">@Loc["Account.Perk.Community"]</a></li>
+                        }
+                        else
+                        {
+                            <li class="account-membership__perk--locked"><span>@Loc["Account.Perk.Community"]</span> <a asp-controller="Membership" asp-action="Index" asp-fragment="membership-plans">@Loc["Account.Perk.NotInPlan"]</a></li>
+                        }
                     }
                     <li><a asp-controller="Experiences" asp-action="Index">@Loc["Account.Perk.Experiences"]</a></li>
                 </ul>
@@ -174,6 +203,84 @@
                         }
                         <a class="btn btn--ghost-dark" asp-controller="Membership" asp-action="Index">@Loc["Account.WhatMembershipIs"]</a>
                     </div>
+                </div>
+            </section>
+        }
+
+        @* --- Live hubs: the online things they hold a place on ----------------------------- *@
+        @if (Model.Hubs.Count > 0)
+        {
+            <section class="account-hubs" aria-labelledby="hubs-heading">
+                <header class="account-panel__head">
+                    <h2 id="hubs-heading">@Loc["Account.Hubs.Heading"]</h2>
+                    <p>@Loc["Account.Hubs.Lede"]</p>
+                </header>
+                <div class="account-hubs__grid">
+                    @foreach (var hub in Model.Hubs)
+                    {
+                        <article class="account-hub @(hub.IsLiveNow ? "account-hub--live" : "")">
+                            <div class="account-hub__head">
+                                <span class="account-hub__kind">@(hub.Kind == "session" ? Loc["Account.Hubs.Session"] : Loc["Account.Hubs.Experience"])</span>
+                                @if (hub.IsLiveNow && hub.StartAtUtc is not null)
+                                {
+                                    <span class="account-hub__live"><span class="account-hub__dot" aria-hidden="true"></span> @Loc["Sessions.LiveNow"]</span>
+                                }
+                            </div>
+                            <h3><a href="@hub.Href">@hub.Title</a></h3>
+                            @if (hub.StartAtUtc is { } start)
+                            {
+                                <p class="account-hub__when">@start.ToString("ddd d MMM yyyy, HH:mm") UTC</p>
+                            }
+                            else
+                            {
+                                <p class="account-hub__when">@Loc["Account.Hubs.OnDemand"]</p>
+                            }
+
+                            @if (hub.LiveStreamUrl is not null && hub.IsLiveNow)
+                            {
+                                <div class="account-hub__stream">
+                                    <partial name="_LiveStream" model="@((hub.LiveStreamUrl, Loc["Sessions.WatchLive"].Value))" />
+                                </div>
+                            }
+
+                            <div class="account-hub__actions">
+                                @if (hub.MeetingUrl is not null)
+                                {
+                                    <a class="btn btn--primary" href="@hub.MeetingUrl" target="_blank" rel="noopener">@Loc["Sessions.JoinLink"]</a>
+                                }
+                                @if (hub.LiveStreamUrl is not null && !hub.IsLiveNow)
+                                {
+                                    <span class="account-hub__pending">@Loc["Sessions.StreamLater"]</span>
+                                }
+                                @foreach (var link in hub.Links)
+                                {
+                                    @* Discord links are minted per person when the bot is configured
+                                       (AccountController.CommunityInvite); the static URL is the fallback. *@
+                                    <form asp-action="CommunityInvite" asp-route-linkId="@link.Id" method="post" class="account-hub__link">
+                                        <button type="submit" class="btn btn--ghost">@link.Label</button>
+                                    </form>
+                                }
+                            </div>
+                        </article>
+                    }
+                </div>
+            </section>
+        }
+
+        @* --- Referral link, for ambassadors ---------------------------------------------------- *@
+        @if (Model.ReferralCode is { } referralCode)
+        {
+            var referralUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/r/{referralCode}";
+            <section class="account-referral" aria-labelledby="referral-heading">
+                <div class="account-referral__body">
+                    <span class="account-dash__eyebrow">@Loc["Ambassador.Panel.Eyebrow"]</span>
+                    <h2 id="referral-heading">@Loc["Ambassador.Panel.Title"]</h2>
+                    <p>@Loc["Ambassador.Panel.Body"]</p>
+                </div>
+                <div class="account-referral__link">
+                    <code data-copy-source>@referralUrl</code>
+                    <button type="button" class="btn btn--primary" data-copy="@referralUrl" data-copied-label="@Loc["Ambassador.Panel.Copied"]">@Loc["Ambassador.Panel.Copy"]</button>
+                    <a class="btn btn--ghost" asp-controller="Ambassador" asp-action="Index">@Loc["Ambassador.Panel.Dashboard"]</a>
                 </div>
             </section>
         }

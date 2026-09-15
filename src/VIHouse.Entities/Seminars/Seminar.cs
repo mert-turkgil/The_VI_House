@@ -52,6 +52,11 @@ public class Seminar : BaseEntity
     /// </summary>
     public string? MeetingUrl { get; set; }
 
+    /// <summary>A YouTube (live or premiere) URL. Embedded on the session page and the account hub
+    /// for everyone with access, from shortly before StartAtUtc; MeetingUrl is the two-way room
+    /// (Zoom, Meet), this is the broadcast.</summary>
+    public string? LiveStreamUrl { get; set; }
+
     /// <summary>IANA zone (e.g. "Europe/London"), so a start time is never persisted as a bare,
     /// zone-less "19:00" — same rule as Experience (brief §68).</summary>
     public string TimeZoneId { get; set; } = "Europe/London";

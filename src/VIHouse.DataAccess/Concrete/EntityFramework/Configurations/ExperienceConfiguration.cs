@@ -13,6 +13,8 @@ public class ExperienceConfiguration : IEntityTypeConfiguration<Experience>
         builder.HasIndex(e => new { e.Status, e.StartAtUtc });
 
         builder.Property(e => e.Slug).HasMaxLength(200).IsRequired();
+        builder.Property(e => e.MeetingUrl).HasMaxLength(500);
+        builder.Property(e => e.LiveStreamUrl).HasMaxLength(500);
         builder.Property(e => e.Title).HasMaxLength(200).IsRequired();
         builder.Property(e => e.City).HasMaxLength(100).IsRequired();
         builder.Property(e => e.Country).HasMaxLength(2).IsRequired(); // ISO 3166-1 alpha-2

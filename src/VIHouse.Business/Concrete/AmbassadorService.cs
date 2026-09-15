@@ -8,6 +8,10 @@ using VIHouse.Entities.Applications;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Referrals;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using VIHouse.Business.Options;
+using VIHouse.Entities.Notifications;
 
 namespace VIHouse.Business.Concrete;
 
@@ -18,8 +22,90 @@ public class AmbassadorService(
     IPaymentRepository payments,
     IMembershipPaymentRepository membershipPayments,
     IAuditLogRepository auditLogs,
+    IRepository<ReferralConversion> conversions,
+    INotificationService notificationService,
+    IEmailService emailService,
+    IOptions<SiteOptions> siteOptions,
+    ILogger<AmbassadorService> logger,
     UserManager<ApplicationUser> userManager) : IAmbassadorService
 {
+    public async Task RecordConversionAsync(string? referralCode, ReferralConversionKind kind, string sourceEntityType, Guid sourceEntityId,
+        long? amountMinor = null, string? currency = null, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(referralCode)) return;
+        try
+        {
+            var ambassador = await ambassadors.GetByCodeAsync(referralCode.Trim(), ct);
+            if (ambassador is null) return;
+
+            var already = await conversions.FindAsync(
+                c => c.SourceEntityType == sourceEntityType && c.SourceEntityId == sourceEntityId && c.Kind == kind, ct);
+            if (already.Count > 0) return;
+
+            long? commission = amountMinor is { } amount
+                ? (long)Math.Round(amount * ambassador.CommissionPercent / 100m, MidpointRounding.AwayFromZero)
+                : null;
+
+            await conversions.AddAsync(new ReferralConversion
+            {
+                AmbassadorId = ambassador.Id,
+                Kind = kind,
+                OccurredAt = DateTimeOffset.UtcNow,
+                AmountMinor = amountMinor,
+                Currency = currency,
+                CommissionMinor = commission,
+                SourceEntityType = sourceEntityType,
+                SourceEntityId = sourceEntityId,
+            }, ct);
+            await conversions.SaveChangesAsync(ct);
+
+            var what = kind switch
+            {
+                ReferralConversionKind.Application => "Someone who came through your link has applied to an experience.",
+                ReferralConversionKind.Approved => "An application that came through your link has been approved.",
+                ReferralConversionKind.TicketPurchase => "Someone who came through your link has bought a ticket.",
+                _ => "Someone who came through your link has become a member.",
+            };
+            var amountText = amountMinor is { } a && currency is not null ? FormatMoney(a, currency) : null;
+            var commissionText = commission is { } c && currency is not null ? FormatMoney(c, currency) : null;
+
+            await notificationService.CreateForUserAsync(ambassador.UserId, NotificationType.ReferralConverted,
+                "Your link just worked",
+                amountText is null ? what : $"{what} {amountText}{(commissionText is null ? "" : $" — your commission {commissionText}")}.",
+                "/ambassador", ct);
+
+            var user = await userManager.FindByIdAsync(ambassador.UserId.ToString());
+            if (user?.Email is not null)
+            {
+                await emailService.SendAsync("ReferralConverted", user.Email, "Your referral link just worked",
+                    new ReferralConvertedEmailModel(ambassador.Name, what, amountText, commissionText,
+                        $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/ambassador"),
+                    nameof(Ambassador), ambassador.Id, ct);
+            }
+        }
+        catch (Exception ex)
+        {
+            // The purchase or approval that triggered this has already happened; a ledger hiccup
+            // must not roll it back or surface to the customer.
+            logger.LogError(ex, "Failed to record referral conversion {Kind} for code {Code} ({SourceType} {SourceId}).",
+                kind, referralCode, sourceEntityType, sourceEntityId);
+        }
+    }
+
+    public async Task<List<ReferralConversion>> GetConversionsAsync(Guid ambassadorId, int take = 50, CancellationToken ct = default) =>
+        (await conversions.FindAsync(c => c.AmbassadorId == ambassadorId, ct))
+            .OrderByDescending(c => c.OccurredAt)
+            .Take(take)
+            .ToList();
+
+    /// <summary>Minor units to "£1,500.00" — the same shape the site's MoneyFormatter produces,
+    /// kept here because the Business layer cannot reach the WebUI helper.</summary>
+    private static string FormatMoney(long minor, string currency)
+    {
+        var symbol = currency.ToUpperInvariant() switch { "GBP" => "£", "EUR" => "€", "USD" => "$", var c => c + " " };
+        return $"{symbol}{minor / 100m:N2}";
+    }
+
     public Task<List<Ambassador>> GetAllAsync(CancellationToken ct = default) => ambassadors.GetAllAsync(ct);
 
     public Task<Ambassador?> GetByIdAsync(Guid id, CancellationToken ct = default) => ambassadors.GetByIdAsync(id, ct);

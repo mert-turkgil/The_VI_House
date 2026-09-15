@@ -33,6 +33,27 @@ public class MembershipPlan : BaseEntity
     /// </summary>
     public int? MaxMembers { get; set; }
 
+    // --- Entitlements ------------------------------------------------------------------------------
+    // What the tier actually opens, as flags the account area can read — Features above is prose
+    // for the plan card, and prose cannot gate a page. A plan with none of these ticked is a badge
+    // and a discount; every tick adds a door.
+
+    /// <summary>The members' community channels (Discord, calls, broadcasts) under /account/community.</summary>
+    public bool IncludesCommunity { get; set; } = true;
+
+    /// <summary>Every session marked IncludedWithMembership, at no charge.</summary>
+    public bool IncludesSessions { get; set; } = true;
+
+    /// <summary>The member directory.</summary>
+    public bool IncludesDirectory { get; set; } = true;
+
+    /// <summary>The digital member card.</summary>
+    public bool IncludesMemberCard { get; set; } = true;
+
+    /// <summary>Optional: the Discord role the bot grants to this tier's members, when the bot is
+    /// configured (DiscordOptions). Free text because it is an id in someone else's system.</summary>
+    public string? DiscordRoleId { get; set; }
+
     /// <summary>The provider's Product id ("prod_…" at Stripe). Null until the first successful sync.</summary>
     public string? ProviderProductId { get; set; }
 

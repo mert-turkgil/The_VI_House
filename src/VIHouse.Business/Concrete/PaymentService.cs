@@ -13,6 +13,8 @@ using VIHouse.Entities.Experiences;
 using VIHouse.Entities.Notifications;
 using VIHouse.Entities.Users;
 
+using VIHouse.Entities.Referrals;
+
 namespace VIHouse.Business.Concrete;
 
 public class PaymentService(
@@ -34,6 +36,7 @@ public class PaymentService(
     INotificationService notificationService,
     IOptions<SiteOptions> siteOptions,
     IMembershipService membershipService,
+    IAmbassadorService ambassadorService,
     UserManager<ApplicationUser> userManager) : IPaymentService
 {
     /// <summary>The experience's member discount, if the applicant's address belongs to a current
@@ -263,6 +266,8 @@ public class PaymentService(
         await payments.SaveChangesAsync(ct);
 
         var confirmedApplication = await applications.GetByIdAsync(payment.ApplicationId, ct);
+        await ambassadorService.RecordConversionAsync(confirmedApplication?.ReferralCode, ReferralConversionKind.TicketPurchase,
+            nameof(Payment), payment.Id, payment.AmountMinor, payment.Currency, ct);
         var confirmedExperience = await experiences.GetByIdAsync(payment.ExperienceId, ct);
 
         // The money has landed — this is the moment the account becomes one its owner can use.

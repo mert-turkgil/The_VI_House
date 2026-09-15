@@ -16,6 +16,21 @@
   <data name="Nav.LanguageLabel" xml:space="preserve"><value>Dil</value></data>
   <data name="Nav.MyAccount" xml:space="preserve"><value>Hesabım</value></data>
   <data name="Nav.AmbassadorDashboard" xml:space="preserve"><value>Ambassador Paneli</value></data>
+  <data name="Ambassador.Nav" xml:space="preserve"><value>Referans bağlantısı</value></data>
+  <data name="Ambassador.Panel.Eyebrow" xml:space="preserve"><value>Elçi</value></data>
+  <data name="Ambassador.Panel.Title" xml:space="preserve"><value>Referans bağlantınız</value></data>
+  <data name="Ambassador.Panel.Body" xml:space="preserve"><value>Her yerde paylaşın. Bu bağlantıyla gelip katılan, başvuran veya satın alan herkes size yazılır — olduğu anda haber alırsınız.</value></data>
+  <data name="Ambassador.Panel.Copy" xml:space="preserve"><value>Bağlantıyı kopyala</value></data>
+  <data name="Ambassador.Panel.CopyCode" xml:space="preserve"><value>Kodu kopyala</value></data>
+  <data name="Ambassador.Panel.Copied" xml:space="preserve"><value>Kopyalandı</value></data>
+  <data name="Ambassador.Panel.Dashboard" xml:space="preserve"><value>Performansı gör</value></data>
+  <data name="Ambassador.Conversions.Heading" xml:space="preserve"><value>Son etkinlik</value></data>
+  <data name="Ambassador.Conversions.None" xml:space="preserve"><value>Henüz bir şey yok. Bağlantınızdan gelen her başvuru, onay ve satın alma burada listelenir — isimsiz, ama rakamlarla.</value></data>
+  <data name="Ambassador.Conversions.Application" xml:space="preserve"><value>Bir deneyime başvurdu</value></data>
+  <data name="Ambassador.Conversions.Approved" xml:space="preserve"><value>Başvuru onaylandı</value></data>
+  <data name="Ambassador.Conversions.Ticket" xml:space="preserve"><value>Bilet aldı</value></data>
+  <data name="Ambassador.Conversions.Membership" xml:space="preserve"><value>Üye oldu</value></data>
+  <data name="Ambassador.Conversions.Commission" xml:space="preserve"><value>komisyonunuz</value></data>
   <data name="Nav.LogOut" xml:space="preserve"><value>Çıkış Yap</value></data>
   <data name="Nav.LogIn" xml:space="preserve"><value>Giriş Yap</value></data>
   <data name="Nav.ApplyToJoin" xml:space="preserve"><value>Başvur</value></data>
@@ -1066,6 +1081,13 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Account.Perk.Directory" xml:space="preserve"><value>Üye rehberi</value></data>
   <data name="Account.Perk.Community" xml:space="preserve"><value>Topluluk kanalları</value></data>
   <data name="Account.Perk.Experiences" xml:space="preserve"><value>Deneyimlerde öncelik</value></data>
+  <data name="Account.Perk.NotInPlan" xml:space="preserve"><value>Planınıza dahil değil — yükseltin</value></data>
+  <data name="Account.Hubs.Heading" xml:space="preserve"><value>Odalarınız</value></data>
+  <data name="Account.Hubs.Lede" xml:space="preserve"><value>Yer aldığınız her çevrimiçi şey — her biri için yayın, toplantı odası ve kanal.</value></data>
+  <data name="Account.Hubs.Session" xml:space="preserve"><value>Oturum</value></data>
+  <data name="Account.Hubs.Experience" xml:space="preserve"><value>Deneyim</value></data>
+  <data name="Account.Hubs.OnDemand" xml:space="preserve"><value>İstediğiniz zaman izlenebilir</value></data>
+  <data name="Community.GenerateInvite" xml:space="preserve"><value>Davetimi al</value></data>
   <data name="Account.Staff.Heading" xml:space="preserve"><value>House ekibindesiniz.</value></data>
   <data name="Account.Staff.Body" xml:space="preserve"><value>Hesabınız yönetim panelini açar. Misafir olarak ayırttığınız veya kaydolduğunuz her şey de burada görünür.</value></data>
   <data name="Account.Guest.Heading" xml:space="preserve"><value>House'un misafirisiniz.</value></data>
@@ -1120,6 +1142,8 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Sessions.Grant.Comped" xml:space="preserve"><value>Davetli</value></data>
   <data name="Sessions.JoinLink" xml:space="preserve"><value>Oturuma katıl</value></data>
   <data name="Sessions.LinkPending" xml:space="preserve"><value>Katılım bağlantısı oturumdan önce gelir</value></data>
+  <data name="Sessions.WatchLive" xml:space="preserve"><value>Canlı izle</value></data>
+  <data name="Sessions.StreamLater" xml:space="preserve"><value>Canlı yayın başlangıçtan kısa süre önce burada görünecek</value></data>
   <data name="Sessions.LiveNow" xml:space="preserve"><value>Şu an canlı</value></data>
   <data name="Sessions.Open" xml:space="preserve"><value>Aç</value></data>
   <data name="Sessions.WatchAgain" xml:space="preserve"><value>Tekrar izle</value></data>
@@ -1174,4 +1198,6 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Directory.ProfessionLabel" xml:space="preserve"><value>Meslek</value></data>
   <data name="Admin.Seminar.MeetingUrl" xml:space="preserve"><value>Toplantı bağlantısı</value></data>
   <data name="Admin.Seminar.MeetingUrl.Hint" xml:space="preserve"><value>Çevrimiçi oturum için Zoom / Meet / Teams bağlantısı. Yalnızca onaylı katılımcılara, portallarında ve kaydolduktan sonra sayfada gösterilir — herkese açık kartta asla.</value></data>
+  <data name="Admin.Seminar.LiveStreamUrl" xml:space="preserve"><value>Canlı yayın (YouTube)</value></data>
+  <data name="Admin.Seminar.LiveStreamUrl.Hint" xml:space="preserve"><value>Bir YouTube canlı yayın veya prömiyer adresi. Katılımcılara oturum sayfasında ve hesaplarında başlangıçtan bir saat önce gömülür; herkese açık kartta asla.</value></data>
 </root>

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.Business.Abstract;
@@ -7,8 +8,11 @@ using VIHouse.Entities.Applications;
 using VIHouse.Entities.Commerce;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
 
+using VIHouse.WebUI.Areas.Admin;
+
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
+[Authorize(Roles = AdminSections.RolesFor.Applications)]
 public class AdminApplicationsController(
     IApplicationService applicationService,
     IExperienceService experienceService,

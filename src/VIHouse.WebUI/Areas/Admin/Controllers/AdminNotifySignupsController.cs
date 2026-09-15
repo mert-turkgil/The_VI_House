@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -14,6 +17,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// Not hidden when <c>Features:ComingSoon</c> goes off. The moment the curtain comes down is exactly
 /// when this list is most useful, so tying its visibility to the flag would hide it on launch day.
 /// </summary>
+[Authorize(Roles = AdminSections.RolesFor.Marketing)]
 public class AdminNotifySignupsController(INotifySignupRepository signups) : AdminControllerBase
 {
     private const int PageSize = 50;

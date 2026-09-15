@@ -16,6 +16,21 @@
   <data name="Nav.LanguageLabel" xml:space="preserve"><value>Keel</value></data>
   <data name="Nav.MyAccount" xml:space="preserve"><value>Minu konto</value></data>
   <data name="Nav.AmbassadorDashboard" xml:space="preserve"><value>Ambassadori vaade</value></data>
+  <data name="Ambassador.Nav" xml:space="preserve"><value>Soovituslink</value></data>
+  <data name="Ambassador.Panel.Eyebrow" xml:space="preserve"><value>Saadik</value></data>
+  <data name="Ambassador.Panel.Title" xml:space="preserve"><value>Teie soovituslink</value></data>
+  <data name="Ambassador.Panel.Body" xml:space="preserve"><value>Jagage seda kõikjal. Igaüks, kes selle kaudu liitub, kandideerib või ostab, arvestatakse teile — saate sellest kohe teada.</value></data>
+  <data name="Ambassador.Panel.Copy" xml:space="preserve"><value>Kopeeri link</value></data>
+  <data name="Ambassador.Panel.CopyCode" xml:space="preserve"><value>Kopeeri kood</value></data>
+  <data name="Ambassador.Panel.Copied" xml:space="preserve"><value>Kopeeritud</value></data>
+  <data name="Ambassador.Panel.Dashboard" xml:space="preserve"><value>Vaata tulemusi</value></data>
+  <data name="Ambassador.Conversions.Heading" xml:space="preserve"><value>Viimane tegevus</value></data>
+  <data name="Ambassador.Conversions.None" xml:space="preserve"><value>Veel midagi pole. Iga teie lingi kaudu tulnud taotlus, kinnitus ja ost ilmub siia — ilma nimedeta, aga numbritega.</value></data>
+  <data name="Ambassador.Conversions.Application" xml:space="preserve"><value>Kandideeris elamusele</value></data>
+  <data name="Ambassador.Conversions.Approved" xml:space="preserve"><value>Taotlus kinnitatud</value></data>
+  <data name="Ambassador.Conversions.Ticket" xml:space="preserve"><value>Ostis pileti</value></data>
+  <data name="Ambassador.Conversions.Membership" xml:space="preserve"><value>Sai liikmeks</value></data>
+  <data name="Ambassador.Conversions.Commission" xml:space="preserve"><value>teie komisjonitasu</value></data>
   <data name="Nav.LogOut" xml:space="preserve"><value>Logi välja</value></data>
   <data name="Nav.LogIn" xml:space="preserve"><value>Logi sisse</value></data>
   <data name="Nav.ApplyToJoin" xml:space="preserve"><value>Kandideeri</value></data>
@@ -1066,6 +1081,13 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Account.Perk.Directory" xml:space="preserve"><value>Liikmete kataloog</value></data>
   <data name="Account.Perk.Community" xml:space="preserve"><value>Kogukonna kanalid</value></data>
   <data name="Account.Perk.Experiences" xml:space="preserve"><value>Eelisõigus elamustele</value></data>
+  <data name="Account.Perk.NotInPlan" xml:space="preserve"><value>Ei kuulu teie plaani — uuenda</value></data>
+  <data name="Account.Hubs.Heading" xml:space="preserve"><value>Teie ruumid</value></data>
+  <data name="Account.Hubs.Lede" xml:space="preserve"><value>Kõik veebis, kus teil on koht — ülekanne, koosolekuruum ja kanal iga jaoks.</value></data>
+  <data name="Account.Hubs.Session" xml:space="preserve"><value>Seanss</value></data>
+  <data name="Account.Hubs.Experience" xml:space="preserve"><value>Elamus</value></data>
+  <data name="Account.Hubs.OnDemand" xml:space="preserve"><value>Saadaval igal ajal</value></data>
+  <data name="Community.GenerateInvite" xml:space="preserve"><value>Hangi minu kutse</value></data>
   <data name="Account.Staff.Heading" xml:space="preserve"><value>Olete House'i meeskonnas.</value></data>
   <data name="Account.Staff.Body" xml:space="preserve"><value>Teie konto avab halduspaneeli. Kõik, mida külalisena broneerite või millele registreerute, kuvatakse ka siin.</value></data>
   <data name="Account.Guest.Heading" xml:space="preserve"><value>Olete House'i külaline.</value></data>
@@ -1120,6 +1142,8 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Sessions.Grant.Comped" xml:space="preserve"><value>Kutsutud</value></data>
   <data name="Sessions.JoinLink" xml:space="preserve"><value>Liitu sessiooniga</value></data>
   <data name="Sessions.LinkPending" xml:space="preserve"><value>Liitumislink saabub enne sessiooni</value></data>
+  <data name="Sessions.WatchLive" xml:space="preserve"><value>Vaata otse</value></data>
+  <data name="Sessions.StreamLater" xml:space="preserve"><value>Otseülekanne ilmub siia veidi enne algust</value></data>
   <data name="Sessions.LiveNow" xml:space="preserve"><value>Praegu otse</value></data>
   <data name="Sessions.Open" xml:space="preserve"><value>Ava</value></data>
   <data name="Sessions.WatchAgain" xml:space="preserve"><value>Vaata uuesti</value></data>
@@ -1174,4 +1198,6 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Directory.ProfessionLabel" xml:space="preserve"><value>Elukutse</value></data>
   <data name="Admin.Seminar.MeetingUrl" xml:space="preserve"><value>Koosoleku link</value></data>
   <data name="Admin.Seminar.MeetingUrl.Hint" xml:space="preserve"><value>Zoom / Meet / Teams link veebisessiooni jaoks. Kuvatakse ainult kinnitatud osalejatele nende portaalis ja lehel pärast registreerumist — mitte kunagi avalikul kaardil.</value></data>
+  <data name="Admin.Seminar.LiveStreamUrl" xml:space="preserve"><value>Otseülekanne (YouTube)</value></data>
+  <data name="Admin.Seminar.LiveStreamUrl.Hint" xml:space="preserve"><value>YouTube'i otseülekande või esilinastuse URL. Manustatakse osalejatele seansi lehel ja kontol tund enne algust; mitte kunagi avalikul kaardil.</value></data>
 </root>

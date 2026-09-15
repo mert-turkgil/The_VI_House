@@ -44,6 +44,10 @@ public class AdminSeminarFormViewModel
     [Display(Name = "Admin.Seminar.MeetingUrl")]
     public string? MeetingUrl { get; set; }
 
+    [Url, StringLength(500)]
+    [Display(Name = "Admin.Seminar.LiveStreamUrl")]
+    public string? LiveStreamUrl { get; set; }
+
     [Required, StringLength(100)]
     [Display(Name = "Admin.Seminar.TimeZone")]
     public string TimeZoneId { get; set; } = "Europe/London";
@@ -94,6 +98,7 @@ public class AdminSeminarFormViewModel
         IsOnline = IsOnline,
         Location = Location,
         MeetingUrl = string.IsNullOrWhiteSpace(MeetingUrl) ? null : MeetingUrl.Trim(),
+        LiveStreamUrl = string.IsNullOrWhiteSpace(LiveStreamUrl) ? null : LiveStreamUrl.Trim(),
         TimeZoneId = TimeZoneId,
         StartAtUtc = ToUtcOffset(StartAtUtc),
         EndAtUtc = ToUtcOffset(EndAtUtc),
@@ -115,6 +120,7 @@ public class AdminSeminarFormViewModel
         IsOnline = s.IsOnline,
         Location = s.Location,
         MeetingUrl = s.MeetingUrl,
+        LiveStreamUrl = s.LiveStreamUrl,
         TimeZoneId = s.TimeZoneId,
         StartAtUtc = s.StartAtUtc?.UtcDateTime,
         EndAtUtc = s.EndAtUtc?.UtcDateTime,

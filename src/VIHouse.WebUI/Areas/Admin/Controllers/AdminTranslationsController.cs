@@ -11,6 +11,8 @@ using VIHouse.Entities.Audit;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
 using VIHouse.WebUI.Localization;
 
+using VIHouse.WebUI.Areas.Admin;
+
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
 /// <summary>
@@ -25,7 +27,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// the translations live in: if someone mangles a key, the message telling them so must not itself
 /// be mangled.
 /// </summary>
-[Authorize(Roles = $"{Roles.SuperAdmin},{Roles.Marketing}")]
+[Authorize(Roles = AdminSections.RolesFor.Marketing)]
 public class AdminTranslationsController(
     ResxCatalog catalog,
     IAuditLogRepository auditLogs,

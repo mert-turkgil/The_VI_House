@@ -1,10 +1,17 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Community;
+using VIHouse.Business.Abstract;
+using VIHouse.Entities.Experiences;
+using VIHouse.Entities.Seminars;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -16,11 +23,27 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// Every change is audit-logged with the URL, because handing out or withdrawing an invite link is a
 /// real access-control action even though it looks like content editing.
 /// </summary>
+[Authorize(Roles = AdminSections.RolesFor.Marketing)]
 public class AdminCommunityController(
     IRepository<CommunityLink> links,
     IAuditLogRepository auditLogs,
+    IMembershipService membershipService,
+    IRepository<Experience> experiences,
+    IRepository<Seminar> seminars,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
+    /// <summary>The three "only for…" selects on the form. Loaded on every render of it so a
+    /// validation round-trip does not come back with empty dropdowns.</summary>
+    private async Task LoadScopeOptionsAsync(CancellationToken ct)
+    {
+        ViewBag.Plans = (await membershipService.GetAllPlansAsync(ct))
+            .OrderBy(p => p.SortOrder).Select(p => new SelectListItem(p.Name, p.Id.ToString())).ToList();
+        ViewBag.Experiences = (await experiences.GetAllAsync(ct))
+            .OrderByDescending(e => e.StartAtUtc).Select(e => new SelectListItem($"{e.City} — {e.StartAtUtc:MMM yyyy}", e.Id.ToString())).ToList();
+        ViewBag.Seminars = (await seminars.GetAllAsync(ct))
+            .OrderByDescending(s => s.StartAtUtc ?? DateTimeOffset.MinValue).Select(s => new SelectListItem(s.Slug, s.Id.ToString())).ToList();
+    }
+
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var all = await links.GetAllAsync(ct);
@@ -28,14 +51,18 @@ public class AdminCommunityController(
     }
 
     [HttpGet]
-    public IActionResult Create() => View("Edit", new AdminCommunityLinkFormViewModel());
+    public async Task<IActionResult> Create(CancellationToken ct)
+    {
+        await LoadScopeOptionsAsync(ct);
+        return View("Edit", new AdminCommunityLinkFormViewModel());
+    }
 
     [HttpGet]
     public async Task<IActionResult> Edit(Guid id, CancellationToken ct)
     {
         var link = await links.GetByIdAsync(id, ct);
         if (link is null) return NotFound();
-
+        await LoadScopeOptionsAsync(ct);
         return View(AdminCommunityLinkFormViewModel.FromEntity(link));
     }
 
@@ -43,7 +70,13 @@ public class AdminCommunityController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save(AdminCommunityLinkFormViewModel form, CancellationToken ct)
     {
-        if (!ModelState.IsValid) return View("Edit", form);
+        if (form.ScopeError() is { } scopeError)
+            ModelState.AddModelError(nameof(form.MembershipPlanId), scopeError);
+        if (!ModelState.IsValid)
+        {
+            await LoadScopeOptionsAsync(ct);
+            return View("Edit", form);
+        }
 
         var (adminId, ip) = CurrentActor();
 
@@ -57,6 +90,10 @@ public class AdminCommunityController(
             existing.Kind = form.Kind;
             existing.IsActive = form.IsActive;
             existing.SortOrder = form.SortOrder;
+            existing.MembershipPlanId = form.MembershipPlanId;
+            existing.ExperienceId = form.ExperienceId;
+            existing.SeminarId = form.SeminarId;
+            existing.DiscordChannelId = string.IsNullOrWhiteSpace(form.DiscordChannelId) ? null : form.DiscordChannelId.Trim();
             existing.UpdatedAt = DateTimeOffset.UtcNow;
 
             await LogAsync("CommunityLinkUpdated", existing.Id, adminId, ip,

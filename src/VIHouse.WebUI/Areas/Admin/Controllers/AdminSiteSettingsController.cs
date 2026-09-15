@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.Business.Abstract;
@@ -5,6 +6,8 @@ using VIHouse.Business.Options;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Settings;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -20,6 +23,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// experience and seminar editors — the URL being shareable is the point, so a half-written German
 /// draft can be bookmarked and handed to whoever actually writes the German.
 /// </summary>
+[Authorize(Roles = AdminSections.RolesFor.Marketing)]
 public class AdminSiteSettingsController(
     ISiteSettingsService settingsService,
     ISitemapService sitemap,

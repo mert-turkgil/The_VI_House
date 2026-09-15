@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,8 @@ using VIHouse.Entities.Content;
 using VIHouse.Entities.Seminars;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
 using VIHouse.Business.Concrete;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -29,6 +32,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 ///
 /// English-only: CMS content stays outside the four-language scope (see Program.cs).
 /// </summary>
+[Authorize(Roles = AdminSections.RolesFor.Content)]
 public class AdminCmsController(
     IContentService contentService,
     IRepository<MediaAsset> assets,

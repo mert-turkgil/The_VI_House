@@ -32,6 +32,39 @@
         <span asp-validation-for="Description" class="field-validation-error"></span>
     </div>
 
+    <div class="admin-field">
+        <label asp-for="DiscordChannelId"></label>
+        <input asp-for="DiscordChannelId" placeholder="Optional — e.g. 1234567890123456789" />
+        <p class="admin-field__hint">When the Discord bot is configured, members get a fresh single-use invite to this channel instead of the URL above (which then only serves as the fallback). Right-click the channel in Discord with developer mode on to copy its id.</p>
+        <span asp-validation-for="DiscordChannelId" class="field-validation-error"></span>
+    </div>
+
+    <fieldset class="admin-field" style="border:none; padding:0; margin:0 0 16px;">
+        <legend style="font-weight:600; font-size:0.875rem; margin-bottom:8px;">Who sees it</legend>
+        <p class="admin-field__hint" style="margin-top:0;">Leave all three blank for every member whose plan includes the community. Pick one to attach the link to a plan, an experience (its ticket holders) or a session (its attendees).</p>
+        <span asp-validation-for="MembershipPlanId" class="field-validation-error"></span>
+        <div class="admin-form__grid">
+            <div class="admin-field">
+                <label asp-for="MembershipPlanId"></label>
+                <select asp-for="MembershipPlanId" asp-items="@((List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Plans)">
+                    <option value="">— any —</option>
+                </select>
+            </div>
+            <div class="admin-field">
+                <label asp-for="ExperienceId"></label>
+                <select asp-for="ExperienceId" asp-items="@((List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Experiences)">
+                    <option value="">— any —</option>
+                </select>
+            </div>
+            <div class="admin-field">
+                <label asp-for="SeminarId"></label>
+                <select asp-for="SeminarId" asp-items="@((List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Seminars)">
+                    <option value="">— any —</option>
+                </select>
+            </div>
+        </div>
+    </fieldset>
+
     <div class="admin-form__grid">
         <div class="admin-field">
             <label asp-for="SortOrder"></label>

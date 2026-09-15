@@ -15,5 +15,9 @@ public class CommunityLinkConfiguration : IEntityTypeConfiguration<CommunityLink
         builder.Property(l => l.Label).HasMaxLength(120).IsRequired();
         builder.Property(l => l.Description).HasMaxLength(400);
         builder.Property(l => l.Url).HasMaxLength(500).IsRequired();
+        builder.Property(l => l.DiscordChannelId).HasMaxLength(40);
+        builder.HasIndex(l => l.MembershipPlanId);
+        builder.HasIndex(l => l.ExperienceId);
+        builder.HasIndex(l => l.SeminarId);
     }
 }

@@ -25,4 +25,20 @@ public class CommunityLink : BaseEntity
     public bool IsActive { get; set; } = true;
 
     public int SortOrder { get; set; }
+
+    // --- Who sees it -------------------------------------------------------------------------------
+    // All three null: every member whose plan includes the community. Otherwise the link belongs
+    // to one plan, one experience or one session, and appears on that thing's hub for the people
+    // who hold it — a ticket holder sees their experience's channel without being a member.
+
+    public Guid? MembershipPlanId { get; set; }
+    public Guid? ExperienceId { get; set; }
+    public Guid? SeminarId { get; set; }
+
+    /// <summary>
+    /// When set and the Discord bot is configured, the account page offers a single-use invite
+    /// minted on demand for this channel instead of the static Url — so a link that leaks is
+    /// worthless. Url stays as the fallback when the bot is not configured or Discord is down.
+    /// </summary>
+    public string? DiscordChannelId { get; set; }
 }

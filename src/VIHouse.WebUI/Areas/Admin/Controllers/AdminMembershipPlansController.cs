@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -5,6 +6,8 @@ using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -14,6 +17,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// delete — and shows the state of the mirror so an admin can see at a glance whether the price
 /// on the public page is the price Stripe will charge.
 /// </summary>
+[Authorize(Roles = AdminSections.RolesFor.Money)]
 public class AdminMembershipPlansController(
     IMembershipService membershipService,
     UserManager<ApplicationUser> userManager,

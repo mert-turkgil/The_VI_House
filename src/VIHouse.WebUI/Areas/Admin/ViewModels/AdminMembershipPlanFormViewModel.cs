@@ -43,6 +43,15 @@ public class AdminMembershipPlanFormViewModel
     [Range(1, 1_000_000)]
     public int? MaxMembers { get; set; }
 
+    // --- Entitlements: what the tier opens in the account area --------------------------------
+    public bool IncludesCommunity { get; set; } = true;
+    public bool IncludesSessions { get; set; } = true;
+    public bool IncludesDirectory { get; set; } = true;
+    public bool IncludesMemberCard { get; set; } = true;
+
+    [StringLength(40)]
+    public string? DiscordRoleId { get; set; }
+
     // --- Read-only: the state of the Stripe mirror, shown on the edit page --------------------
 
     public string? ProviderProductId { get; set; }
@@ -73,6 +82,11 @@ public class AdminMembershipPlanFormViewModel
         Status = Status,
         SortOrder = SortOrder,
         MaxMembers = MaxMembers,
+        IncludesCommunity = IncludesCommunity,
+        IncludesSessions = IncludesSessions,
+        IncludesDirectory = IncludesDirectory,
+        IncludesMemberCard = IncludesMemberCard,
+        DiscordRoleId = string.IsNullOrWhiteSpace(DiscordRoleId) ? null : DiscordRoleId.Trim(),
     };
 
     public static AdminMembershipPlanFormViewModel FromEntity(MembershipPlan p) => new()
@@ -87,6 +101,11 @@ public class AdminMembershipPlanFormViewModel
         Status = p.Status,
         SortOrder = p.SortOrder,
         MaxMembers = p.MaxMembers,
+        IncludesCommunity = p.IncludesCommunity,
+        IncludesSessions = p.IncludesSessions,
+        IncludesDirectory = p.IncludesDirectory,
+        IncludesMemberCard = p.IncludesMemberCard,
+        DiscordRoleId = p.DiscordRoleId,
         ProviderProductId = p.ProviderProductId,
         ProviderPriceId = p.ProviderPriceId,
         ProviderSyncedAt = p.ProviderSyncedAt,

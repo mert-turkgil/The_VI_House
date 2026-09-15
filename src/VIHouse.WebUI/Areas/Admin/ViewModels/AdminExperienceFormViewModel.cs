@@ -58,6 +58,16 @@ public class AdminExperienceFormViewModel
     [Display(Name = "How can it be attended?")]
     public ExperienceAttendanceMode AttendanceMode { get; set; } = ExperienceAttendanceMode.InPerson;
 
+    /// <summary>Online / Both only: the room ticket holders join, shown on their account hub.</summary>
+    [Url, StringLength(500)]
+    [Display(Name = "Meeting link")]
+    public string? MeetingUrl { get; set; }
+
+    /// <summary>Online / Both only: a YouTube live URL embedded on the holder's hub near start time.</summary>
+    [Url, StringLength(500)]
+    [Display(Name = "Live stream (YouTube)")]
+    public string? LiveStreamUrl { get; set; }
+
     [StringLength(1000)]
     [SiteImageUrl]
     [Display(Name = "Cover image URL")]
@@ -130,6 +140,8 @@ public class AdminExperienceFormViewModel
         Status = Status,
         Visibility = Visibility,
         AttendanceMode = AttendanceMode,
+        MeetingUrl = string.IsNullOrWhiteSpace(MeetingUrl) ? null : MeetingUrl.Trim(),
+        LiveStreamUrl = string.IsNullOrWhiteSpace(LiveStreamUrl) ? null : LiveStreamUrl.Trim(),
         CoverImageUrl = CoverImageUrl,
         CoverImageAlt = CoverImageAlt,
         AudienceTags = AudienceTags,
@@ -162,6 +174,8 @@ public class AdminExperienceFormViewModel
         Status = e.Status,
         Visibility = e.Visibility,
         AttendanceMode = e.AttendanceMode,
+        MeetingUrl = e.MeetingUrl,
+        LiveStreamUrl = e.LiveStreamUrl,
         CoverImageUrl = e.CoverImageUrl,
         CoverImageAlt = e.CoverImageAlt,
         AudienceTags = e.AudienceTags,

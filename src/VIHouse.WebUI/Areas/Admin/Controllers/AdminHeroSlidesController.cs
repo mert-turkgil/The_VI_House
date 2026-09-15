@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
@@ -10,6 +11,8 @@ using VIHouse.Entities.Audit;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Seminars;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -24,6 +27,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 ///
 /// Ordinary content editing, so it inherits the base class's role list rather than narrowing it.
 /// </summary>
+[Authorize(Roles = AdminSections.RolesFor.Content)]
 public class AdminHeroSlidesController(
     IHeroSlideRepository slides,
     IMediaStorage mediaStorage,

@@ -11,9 +11,10 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// the role table in brief §96.
 /// </summary>
 [Area("Admin")]
-[Authorize(Roles = RolesCsv)]
+[Authorize(Roles = AdminSections.RolesFor.Everyone)]
 public abstract class AdminControllerBase : Controller
 {
-    protected const string RolesCsv =
-        $"{Roles.SuperAdmin},{Roles.EventManager},{Roles.Finance},{Roles.Marketing},{Roles.Concierge},{Roles.Support}";
+    /// <summary>Every admin-side role — the outer gate. Each controller narrows to its section
+    /// with <see cref="AdminSections.RolesFor"/>, which is also what draws the sidebar.</summary>
+    protected const string RolesCsv = AdminSections.RolesFor.Everyone;
 }

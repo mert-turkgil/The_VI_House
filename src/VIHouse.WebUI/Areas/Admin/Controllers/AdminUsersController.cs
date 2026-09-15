@@ -10,7 +10,12 @@ using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Users;
+using Microsoft.Extensions.Options;
+using VIHouse.Business.Options;
+using VIHouse.Entities.Referrals;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
+
+using VIHouse.WebUI.Areas.Admin;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -18,6 +23,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// with just enough cross-linked context (profile, applications, bookings) to answer support
 /// questions without database access. Role assignment lives here too since promoting/demoting an
 /// admin is an operational necessity, not scope creep on top of "view a customer".</summary>
+[Authorize(Roles = AdminSections.RolesFor.Users)]
 public class AdminUsersController(
     UserManager<ApplicationUser> userManager,
     IApplicationRepository applications,
@@ -26,8 +32,25 @@ public class AdminUsersController(
     IMembershipPaymentRepository membershipPayments,
     IProfileRepository profiles,
     IEmailService emailService,
-    IAuditLogRepository auditLogs) : AdminControllerBase
+    IAuditLogRepository auditLogs,
+    IMembershipService membershipService,
+    IAmbassadorService ambassadorService,
+    IOptions<SecurityOptions> security) : AdminControllerBase
 {
+    /// <summary>
+    /// The owner lock. Every action that changes an account goes through here first; a protected
+    /// account (Security:ProtectedAccounts) is refused with a 403 no matter who asks — including
+    /// another SuperAdmin — so no staff login can alter the owner's access. Reads are unaffected.
+    /// The page hides the forms too; this is the check that holds when someone posts anyway.
+    /// </summary>
+    private IActionResult? RefuseIfProtected(ApplicationUser user)
+    {
+        if (!security.Value.IsProtected(user.Email)) return null;
+        TempData["StatusMessage"] = $"{user.Email} is a protected account and cannot be changed from the panel.";
+        Response.Headers["X-Protected-Account"] = "1";
+        return RedirectToAction(nameof(Details), new { id = user.Id });
+    }
+
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var users = await userManager.Users.ToListAsync(ct);
@@ -60,9 +83,19 @@ public class AdminUsersController(
         var allApplications = await applications.GetAllAsync(ct);
         var allBookings = await bookings.GetAllAsync(ct);
         var allPayments = await payments.GetAllAsync(ct);
-
+        var ambassador = await ambassadorService.GetByUserIdAsync(id, ct);
         return View(new AdminCustomerDetailViewModel
         {
+            IsProtected = security.Value.IsProtected(user.Email),
+            Membership = await membershipService.GetMembershipSummaryAsync(id, ct),
+            MembershipHistory = await membershipService.GetMembershipHistoryAsync(id, ct),
+            Plans = await membershipService.GetActivePlansAsync(ct),
+            Ambassador = ambassador,
+            AmbassadorForm = new AdminMakeAmbassadorViewModel
+            {
+                Name = string.Join(" ", new[] { user.FirstName, user.LastName }.Where(s => !string.IsNullOrWhiteSpace(s))),
+                Code = SuggestCode(user),
+            },
             UserId = user.Id,
             Email = user.Email ?? user.UserName ?? "—",
             Roles = (await userManager.GetRolesAsync(user)).ToList(),
@@ -93,6 +126,7 @@ public class AdminUsersController(
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
 
         var current = await userManager.GetRolesAsync(user);
         var requested = roles.Intersect(Roles.All).ToList();
@@ -153,6 +187,7 @@ public class AdminUsersController(
     {
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
 
         var wasEnabled = await userManager.GetTwoFactorEnabledAsync(user);
 
@@ -172,6 +207,100 @@ public class AdminUsersController(
             "five minutes, and they'll pair a new authenticator app when they sign in again.";
         return RedirectToAction(nameof(Details), new { id });
     }
+
+    // --- Membership without a purchase ------------------------------------------------------------
+    // Influencers, partners, make-goods: an admin grants the plan, the member sees exactly what a
+    // paying member sees, and nothing touches Stripe. SuperAdmin only, like everything else here
+    // that changes what an account is entitled to.
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.SuperAdmin)]
+    public async Task<IActionResult> GrantMembership(Guid id, AdminGrantMembershipViewModel form, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
+
+        DateTimeOffset? expiresAt = form.ExpiresOn is { } date
+            ? new DateTimeOffset(date.ToDateTime(new TimeOnly(23, 59, 59)), TimeSpan.Zero)
+            : null;
+
+        var result = await membershipService.GrantComplimentaryAsync(
+            id, form.PlanId, expiresAt, form.OverrideCap, form.Note, CurrentAdminId(), Ip(), ct);
+        TempData["StatusMessage"] = result.Message;
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.SuperAdmin)]
+    public async Task<IActionResult> RevokeMembership(Guid id, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
+
+        var result = await membershipService.RevokeMembershipAsync(id, CurrentAdminId(), Ip(), ct);
+        TempData["StatusMessage"] = result.Message;
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    // --- Ambassador status ------------------------------------------------------------------------
+    // The same record an admin would create under Ambassadors, reached from the person rather
+    // than from the code. Only admins hand out referral links; a user cannot ask for one.
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.SuperAdmin)]
+    public async Task<IActionResult> MakeAmbassador(Guid id, AdminMakeAmbassadorViewModel form, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null || user.Email is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
+
+        if (await ambassadorService.GetByUserIdAsync(id, ct) is not null)
+        {
+            TempData["StatusMessage"] = "They already have a referral link.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var result = await ambassadorService.CreateAsync(
+            user.Email, form.Name.Trim(), form.Code.Trim().ToUpperInvariant(), form.CommissionPercent, CurrentAdminId(), Ip(), ct);
+        TempData["StatusMessage"] = result.Success
+            ? $"Referral link created: /r/{result.Ambassador!.Code}. They can copy it from their account page."
+            : result.Error;
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.SuperAdmin)]
+    public async Task<IActionResult> SetAmbassadorStatus(Guid id, AmbassadorStatus status, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
+
+        var ambassador = await ambassadorService.GetByUserIdAsync(id, ct);
+        if (ambassador is null) return NotFound();
+
+        ambassador.Status = status;
+        await ambassadorService.UpdateAsync(ambassador, CurrentAdminId(), Ip(), ct);
+        TempData["StatusMessage"] = status == AmbassadorStatus.Active ? "Referral link re-activated." : "Referral link paused — visits to it no longer count.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    /// <summary>A starting point for the code — first name, upper-cased, letters only — that the
+    /// admin can overwrite. "VI-" prefixes are the convention from the brief (§47: VI-ANTON).</summary>
+    private static string SuggestCode(ApplicationUser user)
+    {
+        var stem = new string((user.FirstName ?? "").Where(char.IsLetterOrDigit).ToArray()).ToUpperInvariant();
+        return stem.Length == 0 ? "" : $"VI-{stem}";
+    }
+
+    private Guid CurrentAdminId() => Guid.Parse(userManager.GetUserId(User)!);
+    private string? Ip() => HttpContext.Connection.RemoteIpAddress?.ToString();
 
     // --- Inviting a new admin -------------------------------------------------------------------
 

@@ -31,8 +31,9 @@
     // including a single-ticket holder — so it cannot decide whether to offer members-only
     // destinations. Views/Account/_AccountNav.cshtml has made this distinction all along; the top
     // nav had not, which is how a ticket-holder ended up being shown the member directory.
-    var hasMembership = await MemberAccess.HasActiveMembershipAsync(User, MembershipService, UserManager);
-    var showDirectory = Features.Value.MemberDirectory && hasMembership;
+    var entitlements = await MemberAccess.GetEntitlementsAsync(User, MembershipService, UserManager);
+    var hasMembership = entitlements is not null;
+    var showDirectory = Features.Value.MemberDirectory && entitlements is { Directory: true };
     var isAmbassador = User.IsInRole(Roles.Ambassador);
 
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();

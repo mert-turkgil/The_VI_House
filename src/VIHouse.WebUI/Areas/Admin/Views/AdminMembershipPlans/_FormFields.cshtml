@@ -52,3 +52,21 @@
     <p class="admin-field__hint">Leave blank for no limit. When the plan is full, visitors are offered the waitlist instead of checkout; change the number at any time.</p>
     <span asp-validation-for="MaxMembers" class="field-validation-error"></span>
 </div>
+
+<fieldset class="admin-field" style="border:none; padding:0; margin:0 0 16px;">
+    <legend style="font-weight:600; font-size:0.875rem; margin-bottom:8px;">What this tier includes</legend>
+    <p class="admin-field__hint" style="margin-top:0;">These decide what a member on this plan sees in their account area — the feature list above is only the words on the card.</p>
+    <div style="display:grid; gap:8px; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));">
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesSessions" /> Sessions marked "included with membership"</label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesCommunity" /> Community channels (Discord, calls)</label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesDirectory" /> Member directory</label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesMemberCard" /> Digital member card</label>
+    </div>
+</fieldset>
+
+<div class="admin-field" style="max-width:320px;">
+    <label asp-for="DiscordRoleId">Discord role id</label>
+    <input asp-for="DiscordRoleId" placeholder="Optional" />
+    <p class="admin-field__hint">Only used when the Discord bot is configured: members of this tier are given this role when they accept a generated invite.</p>
+    <span asp-validation-for="DiscordRoleId" class="field-validation-error"></span>
+</div>
