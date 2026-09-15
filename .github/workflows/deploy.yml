@@ -194,7 +194,7 @@ jobs:
           SMS_PASSWORD: ${{ secrets.SMS_PASSWORD }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          CKEDITOR_LICENSE_KEY: ${{ secrets.CKEDITOR_DEV_LICENSE_KEY }}
+          CKEDITOR_LICENSE_KEY: ${{ secrets.CKEDITOR_LICENSE_KEY }}
           SEED_ADMIN_EMAIL: ${{ secrets.SEED_ADMIN_EMAIL }}
           SEED_ADMIN_PASSWORD: ${{ secrets.SEED_ADMIN_PASSWORD }}
           SEED_ADMINS_JSON: ${{ secrets.SEED_ADMINS_JSON }}

@@ -1891,13 +1891,28 @@ kbd {
 .admin-btn {
   position: relative;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--vih-green-900), var(--vih-green-700));
   overflow: hidden;
   transition:
     background-color var(--vih-dur-base) var(--vih-ease),
     border-color var(--vih-dur-base) var(--vih-ease),
     transform 0.3s ease,
     box-shadow 0.3s ease;
+
+  // The gradient belongs to the solid button only. Put on the base class it also covered the
+  // ghost and danger variants, whose dark text then sat on a dark ground and disappeared —
+  // the quick-action pills and "View on the site" were unreadable.
+  &:not(.admin-btn--ghost):not(.admin-btn--danger) {
+    background: linear-gradient(135deg, var(--vih-green-900), var(--vih-green-700));
+  }
+
+  &--ghost {
+    background: var(--vih-white);
+
+    &:hover {
+      background: var(--vih-white);
+      box-shadow: var(--vih-shadow-sm);
+    }
+  }
 
   &::after {
     content: '';
