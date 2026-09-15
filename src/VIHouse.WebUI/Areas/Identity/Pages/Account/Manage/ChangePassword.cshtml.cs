@@ -1,3 +1,4 @@
+using VIHouse.Business.Abstract;
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
@@ -18,15 +19,18 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
+        private readonly ISecurityAlertService _securityAlerts;
 
         public ChangePasswordModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<ChangePasswordModel> logger)
+            ILogger<ChangePasswordModel> logger,
+            ISecurityAlertService securityAlerts)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _securityAlerts = securityAlerts;
         }
 
         /// <summary>
@@ -119,6 +123,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             }
 
             await _signInManager.RefreshSignInAsync(user);
+            await _securityAlerts.PasswordChangedAsync(user.Id, HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
             _logger.LogInformation("User changed their password successfully.");
             StatusMessage = "Your password has been changed.";
 

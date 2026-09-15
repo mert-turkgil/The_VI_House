@@ -1558,3 +1558,210 @@
     }
   }
 }
+
+
+// --- Page head, groups, empty state (shared by Experiences and Sessions) ------------------------
+.account-page__head {
+  margin-bottom: var(--vih-space-md);
+
+  h1 {
+    margin: 0 0 var(--vih-space-3xs);
+  }
+}
+
+.account-page__lede {
+  margin: 0;
+  max-width: 60ch;
+  font-size: var(--vih-text-md);
+  line-height: 1.6;
+  color: var(--vih-text-muted);
+}
+
+.account-page__foot {
+  margin: var(--vih-space-lg) 0 0;
+  font-size: var(--vih-text-base);
+
+  a {
+    font-weight: 600;
+    color: var(--vih-green-900);
+  }
+}
+
+.account-group + .account-group {
+  margin-top: var(--vih-space-lg);
+}
+
+.account-section-heading__count {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 9px;
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-cream);
+  font-family: var(--vih-font-sans);
+  font-size: var(--vih-text-xs);
+  font-weight: 700;
+  color: var(--vih-text-secondary);
+  vertical-align: middle;
+}
+
+.account-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+  padding: var(--vih-space-2xl) var(--vih-space-md);
+  border: 1px dashed var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  text-align: center;
+
+  h2 {
+    margin: 0;
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-xl);
+    color: var(--vih-green-900);
+  }
+
+  p {
+    margin: 0 0 var(--vih-space-sm);
+    max-width: 44ch;
+    color: var(--vih-text-muted);
+  }
+}
+
+.account-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--vih-space-2xs);
+  border-radius: 50%;
+  background: var(--vih-cream);
+  color: var(--vih-gold);
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+// --- Bookings as cards (Views/Account/Bookings.cshtml) -----------------------------------------
+.booking-grid {
+  display: grid;
+  gap: var(--vih-space-sm);
+
+  @include bp.from(bp.$md) {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+.booking-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-white);
+  overflow: hidden;
+  transition:
+    transform var(--vih-dur-slow) var(--vih-ease-out),
+    box-shadow var(--vih-dur-slow) var(--vih-ease-out),
+    border-color var(--vih-dur-slow) var(--vih-ease-out);
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: rgba(184, 149, 90, 0.5);
+    box-shadow: var(--vih-shadow-md);
+  }
+
+  h3 {
+    margin: 2px 0;
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-lg);
+    color: var(--vih-green-900);
+  }
+
+  &--past {
+    .cover__img { filter: grayscale(0.4); }
+    h3 { color: var(--vih-text-secondary); }
+  }
+}
+
+.booking-card__media {
+  position: relative;
+  display: block;
+}
+
+.booking-card__status {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: var(--vih-radius-pill);
+  font-size: var(--vih-text-3xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(18, 22, 15, 0.72);
+  color: var(--vih-cream);
+
+  &--confirmed { background: var(--vih-green-700); }
+  &--pending { background: var(--vih-gold); color: var(--vih-green-950); }
+  &--cancelled,
+  &--refunded { background: rgba(18, 22, 15, 0.55); }
+}
+
+.booking-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--vih-space-sm);
+  flex: 1;
+}
+
+.booking-card__date {
+  font-size: var(--vih-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+}
+
+.booking-card__meta {
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+.booking-card__facts {
+  display: flex;
+  gap: var(--vih-space-md);
+  margin: var(--vih-space-xs) 0 0;
+  padding-top: var(--vih-space-xs);
+  border-top: 1px solid var(--vih-line-on-light);
+
+  dt {
+    font-size: var(--vih-text-2xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vih-text-muted);
+  }
+
+  dd {
+    margin: 2px 0 0;
+    font-size: var(--vih-text-sm);
+
+    code {
+      font-size: var(--vih-text-sm);
+      background: var(--vih-cream);
+      padding: 1px 6px;
+      border-radius: var(--vih-radius-xs);
+    }
+  }
+}
+
+.booking-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+  margin-top: auto;
+  padding-top: var(--vih-space-sm);
+}

@@ -1,3 +1,4 @@
+using VIHouse.Business.Abstract;
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
@@ -21,6 +22,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<EnableAuthenticatorModel> _logger;
+        private readonly ISecurityAlertService _securityAlerts;
         private readonly UrlEncoder _urlEncoder;
 
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
@@ -28,10 +30,12 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
         public EnableAuthenticatorModel(
             UserManager<ApplicationUser> userManager,
             ILogger<EnableAuthenticatorModel> logger,
-            UrlEncoder urlEncoder)
+            UrlEncoder urlEncoder,
+            ISecurityAlertService securityAlerts)
         {
             _userManager = userManager;
             _logger = logger;
+            _securityAlerts = securityAlerts;
             _urlEncoder = urlEncoder;
         }
 
@@ -130,6 +134,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
 
             await _userManager.SetTwoFactorEnabledAsync(user, true);
             var userId = await _userManager.GetUserIdAsync(user);
+            await _securityAlerts.TwoFactorChangedAsync(user.Id, "Two-step verification was switched on", HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
             _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
 
             StatusMessage = "Your authenticator app has been verified.";

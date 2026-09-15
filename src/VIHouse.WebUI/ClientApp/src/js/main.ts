@@ -13,6 +13,7 @@ import { initPasswordToggle } from './modules/passwordToggle';
 import { initViewTransitions } from './modules/transitions';
 import { initJoinPage } from './modules/join';
 import { initCopyButtons } from './modules/copy';
+import { initAccountNav } from './modules/accountNav';
 
 // Each module is started on its own so that one throwing — a page shape it did not expect, a
 // browser quirk — cannot take the rest of the page's behaviour down with it. Before this, one
@@ -45,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
   run('view-transitions', initViewTransitions);
   run('join', initJoinPage);
   run('copy', initCopyButtons);
+  run('account-nav', initAccountNav);
 });
 
 // PWA (brief §65) — registered on every page (Admin included, harmlessly; the service worker

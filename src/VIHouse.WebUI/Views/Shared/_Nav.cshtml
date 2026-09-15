@@ -184,10 +184,8 @@
                     </div>
                 </details>
 
-                @if (isAmbassador)
-                {
-                    <a class="site-header__login" asp-area="" asp-controller="Ambassador" asp-action="Index">@Loc["Nav.AmbassadorDashboard"]</a>
-                }
+                @* The ambassador dashboard is reached from the account nav ("Referral link") — a
+                   second entry up here crowded the bar for anyone who is both a member and a partner. *@
                 <a class="site-header__login" asp-area="" asp-controller="Account" asp-action="Index">@Loc["Nav.MyAccount"]</a>
                 <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" class="site-header__logout-form">
                     <button type="submit" class="btn btn--primary site-header__cta">@Loc["Nav.LogOut"]</button>
@@ -235,10 +233,6 @@
     <div class="site-mobile-nav__actions">
         @if (isAuthenticated)
         {
-            @if (isAmbassador)
-            {
-                <a class="btn btn--ghost-dark" asp-area="" asp-controller="Ambassador" asp-action="Index">@Loc["Nav.AmbassadorDashboard"]</a>
-            }
             <a class="btn btn--primary" asp-area="" asp-controller="Account" asp-action="Index">@Loc["Nav.MyAccount"]</a>
             <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
                 <button type="submit" class="btn btn--ghost-dark" style="width:100%;">@Loc["Nav.LogOut"]</button>

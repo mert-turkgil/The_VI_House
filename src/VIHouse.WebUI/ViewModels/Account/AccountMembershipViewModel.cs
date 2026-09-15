@@ -14,5 +14,10 @@ public class AccountMembershipViewModel
     /// route in is an application, and the page says so instead of showing an empty plan grid.</summary>
     public bool SalesOpen { get; set; }
 
+    /// <summary>Every active plan. For a member, the ones other than their own are shown as
+    /// "other plans"; for a prospect, all of them are the offer.</summary>
     public List<Membership.MembershipPlanCardViewModel> Plans { get; set; } = [];
+
+    public bool CommunityEnabled { get; set; }
+    public bool DirectoryEnabled { get; set; }
 }

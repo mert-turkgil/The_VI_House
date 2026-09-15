@@ -226,6 +226,7 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IMembershipService, MembershipService>();
 builder.Services.AddScoped<IAmbassadorService, AmbassadorService>();
+builder.Services.AddScoped<ISecurityAlertService, SecurityAlertService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
 builder.Services.AddScoped<ISeminarService, SeminarService>();
@@ -504,9 +505,14 @@ static List<SeedAdminAccount> ReadSeedAdmins(IConfiguration configuration)
 // --- HTTP pipeline --------------------------------------------------------------------------------
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/error/500");
     app.UseHsts();
 }
+
+// A 404 (or any other bare status) re-executes the pipeline against /error/{code}, so a mistyped
+// URL gets the House's own page rather than an empty response. Responses that already carry a body
+// — an MVC NotFound() with a view, an API result — are left alone. See ErrorController.
+app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 app.UseHttpsRedirection();
 

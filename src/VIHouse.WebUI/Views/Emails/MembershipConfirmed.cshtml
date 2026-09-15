@@ -1,12 +1,36 @@
+@using VIHouse.Business.Abstract
 @model MembershipConfirmedEmailModel
-
-<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">Welcome to The VI House</h1>
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
-<p style="margin:0 0 16px;">
-    You're confirmed as a <strong>@Model.PlanName</strong>.
-    @if (Model.ExpiresAt is not null)
+@{
+    var (heading, lede) = Model.Status switch
     {
-        <text>Your membership runs until @Model.ExpiresAt.Value.ToString("d MMMM yyyy").</text>
+        MembershipEmailStatus.Renewed => ("Your membership has renewed", $"Your <strong>{Model.PlanName}</strong> membership carries straight on — your access, your card and your place in the room are unchanged."),
+        MembershipEmailStatus.Granted => ("Welcome to The VI House", $"You have been given a <strong>{Model.PlanName}</strong> membership by the House. There is nothing to pay; everything a member has is now yours."),
+        _ => ("Welcome to The VI House", $"You're confirmed as a <strong>{Model.PlanName}</strong>. Thank you — we are glad to have you in the room."),
+    };
+    ViewData["Preheader"] = Model.Status == MembershipEmailStatus.Renewed ? $"{Model.PlanName} renewed" : $"You're a {Model.PlanName}";
+    var rows = new List<(string, string)> { ("Plan", Model.PlanName) };
+    if (Model.MemberNumber is not null) rows.Add(("Member number", Model.MemberNumber));
+    if (Model.AmountMinor is { } amount && Model.Currency is not null) rows.Add((Model.Status == MembershipEmailStatus.Renewed ? "Charged" : "Paid", VIHouse.WebUI.Helpers.MoneyFormatter.Format(amount, Model.Currency)));
+    rows.Add((Model.Status == MembershipEmailStatus.Renewed ? "Runs until" : "Valid until", Model.ExpiresAt?.ToString("d MMMM yyyy") ?? "No expiry"));
+}
+
+<p style="margin:0 0 6px; color:#b8955a; font-size:11px; font-weight:bold; letter-spacing:2px; text-transform:uppercase;">Membership</p>
+<h1 style="font-family:Georgia,'Times New Roman',serif; font-size:26px; line-height:1.2; margin:0 0 18px; color:#00230a;">@heading</h1>
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 20px;">@Html.Raw(lede)</p>
+
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+
+@if (Model.AccountUrl is not null)
+{
+    <partial name="/Views/Emails/_EmailButton.cshtml" model="@((Model.AccountUrl, "Open your membership"))" />
+}
+
+<p style="margin:0 0 16px; color:#4a4f45;">
+    Your sessions, your card, the community channels and your bookings all live on your account page.
+    @if (Model.Status == MembershipEmailStatus.Renewed)
+    {
+        <text>You can change your card, download invoices or cancel at any time from there.</text>
     }
 </p>
 <p style="margin:0;">&mdash; The VI House</p>

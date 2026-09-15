@@ -189,13 +189,35 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Status.Cancelled.Detail" xml:space="preserve"><value>See taotlus on tühistatud. Kui arvad, et tegemist on veaga, võta meiega ühendust.</value></data>
 
   <data name="Account.NavProfile" xml:space="preserve"><value>Profiil</value></data>
-  <data name="Account.NavBookings" xml:space="preserve"><value>Minu broneeringud</value></data>
+  <data name="Account.NavBookings" xml:space="preserve"><value>Elamused</value></data>
   <data name="Account.NavSecurity" xml:space="preserve"><value>Turvalisus ja sisselogimine</value></data>
+  <data name="Account.NavAria" xml:space="preserve"><value>Konto</value></data>
   <data name="Account.NavAdminPanel" xml:space="preserve"><value>Halduspaneel</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>Minu profiil</value></data>
   <data name="Account.SaveProfile" xml:space="preserve"><value>Salvesta profiil</value></data>
-  <data name="Account.BookingsTitle" xml:space="preserve"><value>Minu broneeringud</value></data>
+  <data name="Account.BookingsTitle" xml:space="preserve"><value>Minu elamused</value></data>
   <data name="Account.NoBookings" xml:space="preserve"><value>Sul ei ole veel broneeringuid.</value></data>
+  <data name="Error.NotFound.Title" xml:space="preserve"><value>Lehte ei leitud</value></data>
+  <data name="Error.NotFound.Heading" xml:space="preserve"><value>See tuba ei ole kaardil.</value></data>
+  <data name="Error.NotFound.Body" xml:space="preserve"><value>Otsitud leht on kolinud või pole kunagi olemas olnud. Midagi pole kadunud — teie konto ja kõik selles on täpselt seal, kuhu te selle jätsite.</value></data>
+  <data name="Error.Server.Title" xml:space="preserve"><value>Midagi läks valesti</value></data>
+  <data name="Error.Server.Heading" xml:space="preserve"><value>Meie poolel läks midagi valesti.</value></data>
+  <data name="Error.Server.Body" xml:space="preserve"><value>Meid on teavitatud ja me uurime seda. Palun proovige hetke pärast uuesti; kui see kordub, kirjutage meile ja lisage allolev viide.</value></data>
+  <data name="Error.BackToDashboard" xml:space="preserve"><value>Tagasi töölauale</value></data>
+  <data name="Error.BackHome" xml:space="preserve"><value>Tagasi esiuksele</value></data>
+  <data name="Error.BrowseExperiences" xml:space="preserve"><value>Sirvi elamusi</value></data>
+  <data name="Error.Contact" xml:space="preserve"><value>Võtke ühendust</value></data>
+  <data name="Error.RequestId" xml:space="preserve"><value>Viide</value></data>
+  <data name="Account.NoBookings.Body" xml:space="preserve"><value>Kui teil on elamuse pilet, on see siin — koos üksikasjade, viite ja sissepääsuga.</value></data>
+  <data name="Account.Bookings.Lede" xml:space="preserve"><value>Iga elamus, kus teil on koht — möödunud ja tulevased.</value></data>
+  <data name="Account.Bookings.Upcoming" xml:space="preserve"><value>Tulemas</value></data>
+  <data name="Account.Bookings.Past" xml:space="preserve"><value>Möödunud</value></data>
+  <data name="Account.ViewTicket" xml:space="preserve"><value>Vaata piletit</value></data>
+  <data name="Account.ExperiencePage" xml:space="preserve"><value>Elamuse leht</value></data>
+  <data name="Account.Booking.Confirmed" xml:space="preserve"><value>Kinnitatud</value></data>
+  <data name="Account.Booking.Pending" xml:space="preserve"><value>Ootel</value></data>
+  <data name="Account.Booking.Cancelled" xml:space="preserve"><value>Tühistatud</value></data>
+  <data name="Account.Booking.Refunded" xml:space="preserve"><value>Tagastatud</value></data>
   <data name="Account.BookingReference" xml:space="preserve"><value>Viide</value></data>
   <data name="Account.BookingExperience" xml:space="preserve"><value>Elamus</value></data>
   <data name="Account.BookingDate" xml:space="preserve"><value>Kuupäev</value></data>
@@ -1122,6 +1144,18 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Account.Perk.Community" xml:space="preserve"><value>Kogukonna kanalid</value></data>
   <data name="Account.Perk.Experiences" xml:space="preserve"><value>Eelisõigus elamustele</value></data>
   <data name="Account.Perk.NotInPlan" xml:space="preserve"><value>Ei kuulu teie plaani — uuenda</value></data>
+  <data name="Account.Plan.Yours" xml:space="preserve"><value>See on teie plaan</value></data>
+  <data name="Account.Benefit.Open" xml:space="preserve"><value>Ava</value></data>
+  <data name="Account.Benefit.Sessions" xml:space="preserve"><value>Seansid kaasas</value></data>
+  <data name="Account.Benefit.Sessions.Body" xml:space="preserve"><value>Iga seanss märkega „liikmesusega kaasas“, otse ja järelvaadatav, tasuta.</value></data>
+  <data name="Account.Benefit.Experiences" xml:space="preserve"><value>Eelisõigus elamustele</value></data>
+  <data name="Account.Benefit.Experiences.Body" xml:space="preserve"><value>Esimene pilk uutele linnadele ja liikmehind piletitele.</value></data>
+  <data name="Account.Benefit.Community" xml:space="preserve"><value>Kogukonna kanalid</value></data>
+  <data name="Account.Benefit.Community.Body" xml:space="preserve"><value>Liikmete Discord, kõned ja ülekanded kohtumiste vahel.</value></data>
+  <data name="Account.Benefit.Directory" xml:space="preserve"><value>Liikmete kataloog</value></data>
+  <data name="Account.Benefit.Directory.Body" xml:space="preserve"><value>Leia ja võta ühendust teiste Maja liikmetega.</value></data>
+  <data name="Account.Benefit.Card" xml:space="preserve"><value>Digitaalne liikmekaart</value></data>
+  <data name="Account.Benefit.Card.Body" xml:space="preserve"><value>Teie liikmesus telefonis, ukse jaoks.</value></data>
   <data name="Account.Hubs.Heading" xml:space="preserve"><value>Teie ruumid</value></data>
   <data name="Account.Hubs.Lede" xml:space="preserve"><value>Kõik veebis, kus teil on koht — ülekanne, koosolekuruum ja kanal iga jaoks.</value></data>
   <data name="Account.Hubs.Session" xml:space="preserve"><value>Seanss</value></data>

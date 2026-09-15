@@ -280,7 +280,14 @@ public class PaymentService(
                 "BookingConfirmed", confirmedApplication.Email, $"You're confirmed — booking {booking.BookingReference}",
                 new BookingConfirmedEmailModel(
                     confirmedApplication.FirstName, booking.BookingReference, confirmedExperience.Title, confirmedExperience.City,
-                    confirmedExperience.StartAtUtc, confirmedExperience.EndAtUtc, booking.AmountMinor, booking.Currency),
+                    confirmedExperience.StartAtUtc, confirmedExperience.EndAtUtc, booking.AmountMinor, booking.Currency)
+                {
+                    Venue = confirmedExperience.Venue,
+                    IsOnline = confirmedExperience.AttendanceMode == ExperienceAttendanceMode.Online,
+                    TimeZoneId = confirmedExperience.TimeZoneId,
+                    TicketUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/account/bookings/{booking.BookingReference}",
+                    ExperienceUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/experiences/{confirmedExperience.Slug}",
+                },
                 nameof(Booking), booking.Id, ct);
 
             await notificationService.CreateForUserAsync(

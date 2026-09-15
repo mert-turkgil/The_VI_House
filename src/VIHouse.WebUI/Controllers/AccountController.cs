@@ -246,7 +246,9 @@ public class AccountController(
             CanManageBilling = current is { HasProviderSubscription: true, Membership.ProviderCustomerId: not null },
             MemberNumber = current is null ? null : MemberNumberFor(current.Membership.Id),
             SalesOpen = features.Value.MembershipSales,
-            Plans = current is null && features.Value.MembershipSales ? await PlanCardsAsync(ct) : [],
+            Plans = features.Value.MembershipSales ? await PlanCardsAsync(ct) : [],
+            CommunityEnabled = features.Value.Community,
+            DirectoryEnabled = features.Value.MemberDirectory,
         };
 
         ViewData["Title"] = "My Membership";
@@ -428,14 +430,19 @@ public class AccountController(
             {
                 BookingReference = booking.BookingReference,
                 ExperienceLabel = experience is null ? "—" : $"The VI House — {experience.City}",
+                Slug = experience?.Slug,
+                CoverImageUrl = experience is null ? null : ExperienceService.CoverUrl(experience),
+                City = experience?.City,
+                Country = experience?.Country,
                 StartAtUtc = experience?.StartAtUtc ?? booking.CreatedAt,
+                EndAtUtc = experience?.EndAtUtc,
                 Status = booking.Status,
                 AmountMinor = booking.AmountMinor,
                 Currency = booking.Currency,
             });
         }
 
-        ViewData["Title"] = "My Bookings";
+        ViewData["Title"] = "My Experiences";
         return View(model);
     }
 

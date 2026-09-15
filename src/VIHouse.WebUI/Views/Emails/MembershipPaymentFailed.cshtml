@@ -1,32 +1,20 @@
 @model MembershipPaymentFailedEmailModel
-
-<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">Your Membership Payment Didn't Go Through</h1>
+@{
+    ViewData["Preheader"] = "Your card was declined — nothing changes yet, but please update it";
+}
+<p style="margin:0 0 6px; color:#9a3324; font-size:11px; font-weight:bold; letter-spacing:2px; text-transform:uppercase;">Action needed</p>
+<h1 style="font-family:Georgia,'Times New Roman',serif; font-size:26px; line-height:1.2; margin:0 0 18px; color:#00230a;">Your membership payment didn't go through</h1>
 <p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
 <p style="margin:0 0 16px;">
     We tried to renew your <strong>@Model.PlanName</strong> membership, but the payment was declined.
     This usually means a card has expired or been replaced.
 </p>
-@if (Model.AccessUntil is { } until)
-{
-    <p style="margin:0 0 16px;">
-        Nothing changes straight away: your membership stays active until
-        <strong>@until.ToString("d MMMM yyyy")</strong>, the end of the period you've already paid for.
-    </p>
+@{
+    var rows = new List<(string, string)> { ("Plan", Model.PlanName) };
+    if (Model.AccessUntil is { } until) rows.Add(("Access continues until", until.ToString("d MMMM yyyy")));
+    if (Model.NextAttemptAt is { } next) rows.Add(("We'll try again on", next.ToString("d MMMM yyyy")));
 }
-@if (Model.NextAttemptAt is { } next)
-{
-    <p style="margin:0 0 16px;">
-        We'll try the card again on <strong>@next.ToString("d MMMM yyyy")</strong>. To avoid an
-        interruption, update your payment details before then:
-    </p>
-}
-else
-{
-    <p style="margin:0 0 16px;">To keep your membership, update your payment details:</p>
-}
-<p style="margin:0 0 16px;">
-    <a href="@Model.ActionUrl" style="display:inline-block; padding:12px 24px; background-color:#b8955a; color:#001a02; text-decoration:none; font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; border-radius:24px;">
-        Update Payment
-    </a>
-</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+<p style="margin:0 0 8px;">To avoid an interruption, update your payment details before then:</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@((Model.ActionUrl, "Update payment"))" />
 <p style="margin:0;">&mdash; The VI House</p>

@@ -30,19 +30,22 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
+        private readonly VIHouse.Business.Abstract.ISecurityAlertService _securityAlerts;
 
         public ExternalLoginModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            VIHouse.Business.Abstract.ISecurityAlertService securityAlerts)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _logger = logger;
+            _securityAlerts = securityAlerts;
             _emailSender = emailSender;
         }
 
@@ -122,6 +125,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                 {
                     signedInUser.LastLoginAt = DateTimeOffset.UtcNow;
                     await _userManager.UpdateAsync(signedInUser);
+                    await _securityAlerts.RecordSignInAsync(signedInUser.Id, HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
                 }
 
                 return LocalRedirect(returnUrl);

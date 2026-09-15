@@ -35,14 +35,11 @@
 
         @if (Model.Total == 0)
         {
-            <div class="account-membership account-membership--invite">
-                <div class="account-membership__body">
-                    <h2>@Loc["Account.NoSessions"]</h2>
-                    <p class="account-membership__term">@Loc["Sessions.Portal.Empty"]</p>
-                    <div class="account-membership__actions">
-                        <a class="btn btn--primary" asp-controller="Seminars" asp-action="Index">@Loc["Account.BrowseSessions"]</a>
-                    </div>
-                </div>
+            <div class="account-empty">
+                <span class="account-empty__icon"><partial name="_Icon" model='@("calendar")' /></span>
+                <h2>@Loc["Account.NoSessions"]</h2>
+                <p>@Loc["Sessions.Portal.Empty"]</p>
+                <a class="btn btn--primary" asp-controller="Seminars" asp-action="Index">@Loc["Account.BrowseSessions"]</a>
             </div>
         }
 
@@ -50,7 +47,7 @@
         @if (Model.Upcoming.Count > 0)
         {
             <section class="session-portal__group" aria-labelledby="upcoming-heading">
-                <h2 id="upcoming-heading" class="account-section-heading">@Loc["Sessions.Upcoming"]</h2>
+                <h2 id="upcoming-heading" class="account-section-heading">@Loc["Sessions.Upcoming"] <span class="account-section-heading__count">@Model.Upcoming.Count</span></h2>
                 <ul class="session-portal__list">
                     @foreach (var s in Model.Upcoming)
                     {
@@ -86,7 +83,11 @@
                                 {
                                     <a class="btn @(s.IsLiveNow ? "btn--primary" : "btn--ghost-dark")" href="@s.MeetingUrl" target="_blank" rel="noopener">@Loc["Sessions.JoinLink"]</a>
                                 }
-                                else if (s.IsOnline)
+                                @if (s.LiveStreamUrl is not null && s.IsLiveNow)
+                                {
+                                    <a class="btn btn--ghost-dark" asp-controller="Seminars" asp-action="Details" asp-route-slug="@s.Slug" asp-fragment="watch">@Loc["Sessions.WatchLive"]</a>
+                                }
+                                @if (s.MeetingUrl is null && s.IsOnline)
                                 {
                                     <span class="session-row__pending">@Loc["Sessions.LinkPending"]</span>
                                 }
@@ -102,7 +103,7 @@
         @if (Model.OnDemand.Count > 0)
         {
             <section class="session-portal__group" aria-labelledby="ondemand-heading">
-                <h2 id="ondemand-heading" class="account-section-heading">@Loc["Sessions.Library"]</h2>
+                <h2 id="ondemand-heading" class="account-section-heading">@Loc["Sessions.Library"] <span class="account-section-heading__count">@Model.OnDemand.Count</span></h2>
                 <div class="seminar-grid seminar-grid--compact">
                     @foreach (var s in Model.OnDemand)
                     {
@@ -135,7 +136,7 @@
         @if (Model.Past.Count > 0)
         {
             <section class="session-portal__group" aria-labelledby="past-heading">
-                <h2 id="past-heading" class="account-section-heading">@Loc["Sessions.PastHeading"]</h2>
+                <h2 id="past-heading" class="account-section-heading">@Loc["Sessions.PastHeading"] <span class="account-section-heading__count">@Model.Past.Count</span></h2>
                 <ul class="session-portal__list session-portal__list--past">
                     @foreach (var s in Model.Past)
                     {

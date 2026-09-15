@@ -560,39 +560,169 @@
 // .auth-page, so until now it received none of the above.
 .account-manage__content { @include identity-scaffold-compat; }
 
-// --- Member account "Manage" shell (2FA, password, profile) --------------------------------------
+// --- Member account shell --------------------------------------------------------------------------
+// Sidebar + content. Below 720px the sidebar folds behind a toggle that names the current section
+// (modules/accountNav.ts); from 720px it is a sticky column with icons.
 .account-manage {
-  max-width: 880px;
+  max-width: 1080px;
   margin: 0 auto;
   // The same gutter .container scales, rather than a second flat 24px that would stop matching the
   // rest of the site the moment one of them was tuned. These pages carry no .container of their
   // own, so this is their only edge padding.
-  padding: 56px var(--vih-gutter) 96px;
+  padding: 40px var(--vih-gutter) 96px;
   display: grid;
-  gap: 40px;
+  gap: 32px;
 
   @media (min-width: 720px) {
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 236px minmax(0, 1fr);
+    gap: 48px;
+    padding-top: 56px;
+  }
+}
+
+// Both grid tracks are allowed to shrink below their content's natural width: a long unbroken
+// string anywhere in the content (a URL, a reference) would otherwise widen the column past the
+// phone screen and put the whole page on a horizontal scroll.
+.account-manage__content {
+  min-width: 0;
+}
+
+.account-manage__aside {
+  min-width: 0;
+
+  @media (min-width: 720px) {
+    position: sticky;
+    top: calc(var(--vih-header-height) + 24px);
+    align-self: start;
+  }
+}
+
+// Mobile only: the button the nav folds behind.
+.account-manage__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-white);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--vih-green-900);
+  cursor: pointer;
+
+  &[aria-expanded='true'] {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-color: transparent;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--vih-shadow-focus);
+  }
+
+  @media (min-width: 720px) {
+    display: none;
+  }
+}
+
+.account-manage__toggle-icon svg {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--vih-dur-base) var(--vih-ease-out);
+
+  [aria-expanded='true'] & {
+    transform: rotate(180deg);
   }
 }
 
 .account-manage__nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 
-  a {
-    padding: 10px 4px;
-    font-size: 0.875rem;
-    color: #555;
-    border-left: 2px solid transparent;
+  // Folded on phones until the toggle opens it; a panel that continues the toggle's box.
+  @media (max-width: 719px) {
+    display: none;
+    padding: 6px;
+    border: 1px solid var(--vih-line-on-light);
+    border-top: 0;
+    border-radius: 0 0 var(--vih-radius-lg) var(--vih-radius-lg);
+    background: var(--vih-white);
 
-    &.active {
-      color: var(--vih-ink);
-      border-left-color: var(--vih-gold);
-      font-weight: 600;
+    &.is-open {
+      display: flex;
+      animation: account-nav-open 0.25s var(--vih-ease-out);
     }
   }
+}
+
+@keyframes account-nav-open {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.account-manage__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--vih-radius-md);
+  border-left: 2px solid transparent;
+  font-size: 0.875rem;
+  color: #555;
+  text-decoration: none;
+  transition:
+    background var(--vih-dur-base) var(--vih-ease-out),
+    color var(--vih-dur-base) var(--vih-ease-out),
+    border-color var(--vih-dur-base) var(--vih-ease-out);
+
+  &:hover {
+    background: var(--vih-cream);
+    color: var(--vih-green-900);
+  }
+
+  &.active {
+    color: var(--vih-ink);
+    background: var(--vih-cream);
+    border-left-color: var(--vih-gold);
+    font-weight: 600;
+
+    .account-manage__icon { color: var(--vih-gold); }
+  }
+
+  &--admin {
+    margin-bottom: 6px;
+    color: var(--vih-green-900);
+    font-weight: 600;
+  }
+}
+
+.account-manage__icon {
+  flex-shrink: 0;
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  color: var(--vih-text-muted);
+  transition: color var(--vih-dur-base) var(--vih-ease-out);
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .account-manage__link:hover & {
+    color: var(--vih-green-900);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .account-manage__nav.is-open { animation: none; }
+  .account-manage__toggle-icon svg { transition: none; }
 }
 
 .account-manage__content h1,

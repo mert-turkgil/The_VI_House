@@ -1,3 +1,4 @@
+using VIHouse.Business.Abstract;
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
@@ -17,15 +18,18 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ResetAuthenticatorModel> _logger;
+        private readonly ISecurityAlertService _securityAlerts;
 
         public ResetAuthenticatorModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<ResetAuthenticatorModel> logger)
+            ILogger<ResetAuthenticatorModel> logger,
+            ISecurityAlertService securityAlerts)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _securityAlerts = securityAlerts;
         }
 
         /// <summary>
@@ -56,6 +60,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
 
             await _userManager.SetTwoFactorEnabledAsync(user, false);
             await _userManager.ResetAuthenticatorKeyAsync(user);
+            await _securityAlerts.TwoFactorChangedAsync(user.Id, "Your authenticator app was reset", HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
             var userId = await _userManager.GetUserIdAsync(user);
             _logger.LogInformation("User with ID '{UserId}' has reset their authentication app key.", user.Id);
 

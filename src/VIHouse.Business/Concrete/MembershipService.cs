@@ -409,6 +409,19 @@ public class MembershipService(
                 new { MembershipId = membership.Id, Taken = availability.Taken + 1, Max = plan.MaxMembers }, ct);
         await auditLogs.SaveChangesAsync(ct);
 
+        if (user.Email is not null)
+        {
+            await emailService.SendAsync(
+                "MembershipConfirmed", user.Email, $"Welcome — you're a {plan.Name}",
+                new MembershipConfirmedEmailModel(user.FirstName, plan.Name, expiresAt)
+                {
+                    Status = MembershipEmailStatus.Granted,
+                    MemberNumber = $"VIH-{membership.Id:N}"[..12].ToUpperInvariant(),
+                    AccountUrl = $"{BaseUrl}/account/membership",
+                },
+                nameof(Membership), membership.Id, ct);
+        }
+
         await notificationService.CreateForUserAsync(userId, NotificationType.Payment,
             $"Welcome to {plan.Name}",
             expiresAt is { } e ? $"Your membership is active until {e:d MMMM yyyy}." : "Your membership is active.",
@@ -1364,7 +1377,13 @@ public class MembershipService(
 
         await emailService.SendAsync(
             "MembershipConfirmed", user.Email!, $"Welcome — you're a {plan.Name}",
-            new MembershipConfirmedEmailModel(user.FirstName, plan.Name, membership.ExpiresAt),
+            new MembershipConfirmedEmailModel(user.FirstName, plan.Name, membership.ExpiresAt)
+            {
+                AmountMinor = payment.AmountMinor,
+                Currency = payment.Currency,
+                MemberNumber = $"VIH-{membership.Id:N}"[..12].ToUpperInvariant(),
+                AccountUrl = $"{BaseUrl}/account/membership",
+            },
             nameof(Membership), membership.Id, ct);
 
         await notificationService.CreateForUserAsync(

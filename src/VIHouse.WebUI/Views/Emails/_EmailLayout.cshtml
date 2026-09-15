@@ -5,50 +5,75 @@
    what the parent ViewImports happens to contain today. *@
 @inject VIHouse.WebUI.Helpers.SeoResolver Seo
 @{
-    // Deliberately plain, table-free, inline-styled HTML — brief §70: "logo -> short message -> CTA
-    // -> contact is enough," and heavy/complex HTML risks spam filters. Not pixel-perfect on every
-    // legacy Outlook build, but renders cleanly on webmail/mobile, which covers the vast majority of
-    // where these are actually opened.
+    // Deliberately plain, table-based, inline-styled HTML — brief §70: "logo -> short message -> CTA
+    // -> contact is enough," and heavy/complex HTML risks spam filters. Every colour and font is
+    // inline so it survives clients that strip <style>; the one <style> block only collapses the
+    // two-column detail rows on narrow screens, and losing it costs nothing but that.
     //
-    // The contact address used to be a literal here, independent of the coming-soon page and the
-    // JSON-LD block, which both read SiteSetting.ContactEmail — the one address an admin actually
-    // edits (Admin > Site & SEO). Reading the same source here means changing it there now moves
-    // every footer in the same deploy, not three-out-of-four.
+    // The contact address is read from SiteSetting.ContactEmail — the one address an admin actually
+    // edits (Admin > Site & SEO) — so changing it there moves every footer in the same deploy.
     var settings = await Seo.SettingsAsync();
     var contactEmail = settings.ContactEmail;
+    // A line the inbox preview shows after the subject; set per template via ViewData["Preheader"].
+    var preheader = ViewData["Preheader"] as string;
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta name="color-scheme" content="light" />
     <title>The VI House</title>
+    <style>
+        @@media only screen and (max-width: 600px) {
+            .vih-stack { display: block !important; width: 100% !important; text-align: left !important; }
+            .vih-stack-label { padding-bottom: 2px !important; border-bottom: 0 !important; }
+            .vih-stack-value { padding-top: 0 !important; padding-bottom: 12px !important; }
+            .vih-pad { padding-left: 20px !important; padding-right: 20px !important; }
+        }
+    </style>
 </head>
-<body style="margin:0; padding:0; background-color:#f4f0e6; font-family:Georgia,'Times New Roman',serif; color:#12160f;">
+<body style="margin:0; padding:0; background-color:#f4f0e6; font-family:Arial,Helvetica,sans-serif; color:#12160f; -webkit-text-size-adjust:100%;">
+    @if (!string.IsNullOrWhiteSpace(preheader))
+    {
+        <div style="display:none; max-height:0; overflow:hidden; font-size:1px; line-height:1px; color:#f4f0e6; opacity:0;">@preheader</div>
+    }
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f0e6; padding:32px 16px;">
         <tr>
             <td align="center">
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px; background-color:#ffffff; border-radius:8px; overflow:hidden;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px; background-color:#ffffff; border-radius:10px; overflow:hidden;">
+                    @* Header: the wordmark on the House green, a gold hairline under it. *@
                     <tr>
-                        <td style="background-color:#00230a; padding:28px 32px;">
-                            <span style="color:#f4f0e6; font-size:14px; letter-spacing:2px; text-transform:uppercase; font-family:Georgia,serif;">The VI House</span>
+                        <td class="vih-pad" style="background-color:#00230a; padding:26px 36px; border-bottom:2px solid #b8955a;">
+                            <table role="presentation" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="vertical-align:middle; padding-right:12px;">
+                                        <table role="presentation" cellpadding="0" cellspacing="0" style="width:34px; height:34px; border:1px solid #b8955a; border-radius:17px;">
+                                            <tr><td align="center" style="color:#d7bd8a; font-family:Georgia,'Times New Roman',serif; font-size:13px; font-weight:bold; letter-spacing:1px; line-height:32px;">VI</td></tr>
+                                        </table>
+                                    </td>
+                                    <td style="vertical-align:middle; color:#f4f0e6; font-family:Georgia,'Times New Roman',serif; font-size:15px; letter-spacing:3px; text-transform:uppercase;">The VI House</td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding:36px 32px; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.6; color:#12160f;">
+                        <td class="vih-pad" style="padding:36px 36px 28px; font-family:Arial,Helvetica,sans-serif; font-size:15px; line-height:1.65; color:#12160f;">
                             @RenderBody()
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding:20px 32px; background-color:#f4f0e6; font-family:Arial,Helvetica,sans-serif; font-size:12px; color:#666666; border-top:1px solid #e9e3d3;">
-                            The VI House &mdash; a private global community for founders, operators and investors.<br />
+                        <td class="vih-pad" style="padding:22px 36px; background-color:#00230a; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.6; color:#c7c9c2;">
+                            <span style="color:#d7bd8a; font-family:Georgia,'Times New Roman',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase;">The VI House</span><br />
+                            A private global community for founders, operators and investors.<br />
                             @if (string.IsNullOrWhiteSpace(contactEmail))
                             {
                                 @: Questions? Reply to this email and we'll get back to you.
                             }
                             else
                             {
-                                @: Questions? Reply to this email or contact us at <a href="mailto:@contactEmail" style="color:#7a5f2f;">@contactEmail</a>.
+                                @: Questions? Reply to this email or write to <a href="mailto:@contactEmail" style="color:#d7bd8a;">@contactEmail</a>.
                             }
                         </td>
                     </tr>

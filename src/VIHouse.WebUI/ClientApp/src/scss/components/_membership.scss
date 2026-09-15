@@ -691,3 +691,172 @@
     animation: none;
   }
 }
+
+
+// --- Account → Membership carousels (Views/Account/Membership.cshtml) --------------------------
+// The same Swiper skin as the homepage strips; equal-height slides, room for the hover shadow.
+.account-carousel {
+  margin-top: var(--vih-space-lg);
+}
+
+.account-carousel__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--vih-space-sm);
+  margin-bottom: var(--vih-space-sm);
+
+  .account-section-heading {
+    margin: 0;
+  }
+}
+
+.account-carousel__lede {
+  margin: 4px 0 0;
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+.account-carousel__track {
+  padding: 6px 6px 6px;
+  margin: -6px;
+
+  .swiper-slide {
+    height: auto;
+    display: flex;
+  }
+
+  .membership-plan-card,
+  .benefit-card {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  &:not(.swiper-initialized) .swiper-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  &:not(.swiper-initialized) .swiper-slide {
+    flex: 0 1 300px;
+    max-width: 320px;
+  }
+}
+
+// A plan card inside the carousel: tighter than the /membership grid card, with the lift-and-gold
+// hover the brief asks for, and its call to action pinned to the bottom so the row lines up.
+.membership-plan-card--carousel {
+  position: relative;
+  padding: 24px;
+  box-shadow: var(--vih-shadow-sm);
+  transition:
+    transform var(--vih-dur-slow) var(--vih-ease-out),
+    box-shadow var(--vih-dur-slow) var(--vih-ease-out),
+    border-color var(--vih-dur-slow) var(--vih-ease-out);
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: var(--vih-gold);
+    box-shadow: var(--vih-shadow-gold);
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  .membership-plan-card__features {
+    font-size: var(--vih-text-sm);
+  }
+
+  &.membership-plan-card--current {
+    border-color: var(--vih-gold);
+  }
+}
+
+.membership-plan-card__foot {
+  margin-top: auto;
+  padding-top: var(--vih-space-sm);
+}
+
+// One benefit the tier opens (or, greyed, one it does not).
+.benefit-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 12px;
+  background: var(--vih-white);
+  box-shadow: var(--vih-shadow-sm);
+  transition:
+    transform var(--vih-dur-slow) var(--vih-ease-out),
+    box-shadow var(--vih-dur-slow) var(--vih-ease-out),
+    border-color var(--vih-dur-slow) var(--vih-ease-out);
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: var(--vih-gold);
+    box-shadow: var(--vih-shadow-gold);
+  }
+
+  h3 {
+    margin: 0;
+    font-family: var(--vih-font-serif);
+    font-size: 1.0625rem;
+    color: var(--vih-green-900);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--vih-text-sm);
+    line-height: 1.5;
+    color: var(--vih-text-secondary);
+  }
+
+  &--locked {
+    background: var(--vih-cream);
+
+    h3 { color: var(--vih-text-muted); }
+    .benefit-card__icon { color: var(--vih-text-muted); background: var(--vih-white); }
+
+    &:hover {
+      transform: none;
+      border-color: var(--vih-line-on-light);
+      box-shadow: var(--vih-shadow-sm);
+    }
+  }
+}
+
+.benefit-card__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--vih-green-900);
+  color: var(--vih-gold-light);
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.benefit-card__link {
+  margin-top: auto;
+  padding-top: 6px;
+  font-size: var(--vih-text-sm);
+  font-weight: 600;
+  color: var(--vih-green-900);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  &--upgrade {
+    color: var(--vih-gold);
+  }
+}

@@ -73,6 +73,7 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
     public DbSet<SeminarEnrollment> SeminarEnrollments => Set<SeminarEnrollment>();
 
     public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<SignInRecord> SignInRecords => Set<SignInRecord>();
     public DbSet<JournalPost> JournalPosts => Set<JournalPost>();
     public DbSet<JournalPostTranslation> JournalPostTranslations => Set<JournalPostTranslation>();
     public DbSet<JournalPostMedia> JournalPostMedia => Set<JournalPostMedia>();

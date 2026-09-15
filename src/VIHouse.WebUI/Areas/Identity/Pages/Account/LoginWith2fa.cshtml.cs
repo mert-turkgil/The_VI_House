@@ -1,3 +1,4 @@
+using VIHouse.Business.Abstract;
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
@@ -22,15 +23,18 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<LoginWith2faModel> _logger;
+        private readonly ISecurityAlertService _securityAlerts;
 
         public LoginWith2faModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            ILogger<LoginWith2faModel> logger)
+            ILogger<LoginWith2faModel> logger,
+            ISecurityAlertService securityAlerts)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
+            _securityAlerts = securityAlerts;
         }
 
         /// <summary>
@@ -118,6 +122,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                 _logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", user.Id);
                 user.LastLoginAt = DateTimeOffset.UtcNow;
                 await _userManager.UpdateAsync(user);
+                await _securityAlerts.RecordSignInAsync(user.Id, HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
                 return LocalRedirect(returnUrl);
             }
             else if (result.IsLockedOut)

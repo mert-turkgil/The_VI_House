@@ -25,6 +25,21 @@
         "active" => Loc["Account.Status.Active"].Value,
         _ => Loc["Account.Status.Expired"].Value,
     };
+    // The benefit cards for a member — assembled here so the carousel below is just markup.
+    var benefits = new List<(string Icon, string Title, string Body, string? Href, bool Included)>();
+    if (m is not null)
+    {
+        var ent = m.Entitlements;
+        benefits.Add(("calendar", Loc["Account.Benefit.Sessions"].Value, Loc["Account.Benefit.Sessions.Body"].Value, Url.Action("Index", "Seminars"), ent.Sessions));
+        benefits.Add(("sparkles", Loc["Account.Benefit.Experiences"].Value, Loc["Account.Benefit.Experiences.Body"].Value, Url.Action("Index", "Experiences"), true));
+        if (Model.CommunityEnabled) benefits.Add(("messages-square", Loc["Account.Benefit.Community"].Value, Loc["Account.Benefit.Community.Body"].Value, Url.Action("Community", "Account"), ent.Community));
+        if (Model.DirectoryEnabled) benefits.Add(("users", Loc["Account.Benefit.Directory"].Value, Loc["Account.Benefit.Directory.Body"].Value, Url.Action("Index", "MemberDirectory"), ent.Directory));
+        benefits.Add(("credit-card", Loc["Account.Benefit.Card"].Value, Loc["Account.Benefit.Card.Body"].Value, Url.Action("Card", "Account"), ent.MemberCard));
+        foreach (var feature in m.Plan.Features?.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? [])
+        {
+            benefits.Add(("check", feature, "", null, true));
+        }
+    }
 }
 
 <div class="account-manage">
@@ -110,16 +125,69 @@
                         <p class="account-membership__note">@Loc["Account.ManageBilling.Unavailable"]</p>
                     }
                 </div>
-                @if (m.Plan.Features is { } features && !string.IsNullOrWhiteSpace(features))
-                {
-                    <ul class="account-membership__perks" aria-label="@Loc["Account.MembershipUnlocks"]">
-                        @foreach (var feature in features.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-                        {
-                            <li>@feature</li>
-                        }
-                    </ul>
-                }
             </section>
+
+            @* --- What the tier opens, as cards -------------------------------------------------- *@
+            @* Swiper: `data-swiper` is picked up by modules/carousel.ts (initCarousels), which reads
+               `data-swiper-per-view` for the desktop count, wires the arrows and progress bar from
+               the [data-swiper-controls] cluster inside this [data-swiper-scope], and hides that
+               cluster whenever every card already fits. Without JS the cards sit in a wrapped row. *@
+            <section class="account-carousel" data-swiper-scope aria-labelledby="benefits-heading">
+                <header class="account-carousel__head">
+                    <h2 id="benefits-heading" class="account-section-heading">@Loc["Account.MembershipUnlocks"]</h2>
+                    <partial name="~/Views/Home/_CarouselControls.cshtml" model="@((Loc["Home.Hero.Previous"].Value, Loc["Home.Hero.Next"].Value))" />
+                </header>
+                <div class="swiper account-carousel__track" data-swiper data-swiper-per-view="3"
+                     data-swiper-prev-label="@Loc["Home.Hero.Previous"]" data-swiper-next-label="@Loc["Home.Hero.Next"]">
+                    <div class="swiper-wrapper">
+                        @foreach (var b in benefits)
+                        {
+                            <div class="swiper-slide">
+                                <article class="benefit-card @(b.Included ? "" : "benefit-card--locked")">
+                                    <span class="benefit-card__icon"><partial name="_Icon" model="@b.Icon" /></span>
+                                    <h3>@b.Title</h3>
+                                    @if (!string.IsNullOrWhiteSpace(b.Body))
+                                    {
+                                        <p>@b.Body</p>
+                                    }
+                                    @if (!b.Included)
+                                    {
+                                        <a class="benefit-card__link benefit-card__link--upgrade" asp-controller="Membership" asp-action="Index" asp-fragment="membership-plans">@Loc["Account.Perk.NotInPlan"]</a>
+                                    }
+                                    else if (b.Href is not null)
+                                    {
+                                        <a class="benefit-card__link" href="@b.Href">@Loc["Account.Benefit.Open"] &rarr;</a>
+                                    }
+                                </article>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+
+            @if (Model.Plans.Count(p => p.Id != m.Plan.Id) > 0)
+            {
+                <section class="account-carousel" data-swiper-scope aria-labelledby="other-plans-heading">
+                    <header class="account-carousel__head">
+                        <div>
+                            <h2 id="other-plans-heading" class="account-section-heading">@Loc["Membership.Member.OtherPlans"]</h2>
+                            <p class="account-carousel__lede">@Loc["Membership.Member.OtherPlans.Note"]</p>
+                        </div>
+                        <partial name="~/Views/Home/_CarouselControls.cshtml" model="@((Loc["Home.Hero.Previous"].Value, Loc["Home.Hero.Next"].Value))" />
+                    </header>
+                    <div class="swiper account-carousel__track" data-swiper data-swiper-per-view="2"
+                         data-swiper-prev-label="@Loc["Home.Hero.Previous"]" data-swiper-next-label="@Loc["Home.Hero.Next"]">
+                        <div class="swiper-wrapper">
+                            @foreach (var plan in Model.Plans.Where(p => p.Id != m.Plan.Id))
+                            {
+                                <div class="swiper-slide">
+                                    <partial name="_PlanCard" model="plan" view-data='@(new ViewDataDictionary(ViewData) { { "CurrentPlanId", m.Plan.Id }, { "HasMembership", true } })' />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </section>
+            }
         }
         else
         {
@@ -142,54 +210,24 @@
 
             @if (Model.Plans.Count > 0)
             {
-                <h2 class="account-section-heading">@Loc["Account.ChooseAPlan"]</h2>
-                <div class="membership-plan-grid membership-plan-grid--compact">
-                    @foreach (var plan in Model.Plans)
-                    {
-                        <div class="membership-plan-card">
-                            <h3>@plan.Name</h3>
-                            <div class="membership-plan-card__price">
-                                @MoneyFormatter.Format(plan.PriceMinor, plan.Currency)
-                                <span>@BillingLabel(plan.BillingPeriod)</span>
-                            </div>
-                            @if (!string.IsNullOrWhiteSpace(plan.Description))
+                @* Same carousel as the member view — see the Swiper note above. *@
+                <section class="account-carousel" data-swiper-scope aria-labelledby="choose-plan-heading">
+                    <header class="account-carousel__head">
+                        <h2 id="choose-plan-heading" class="account-section-heading">@Loc["Account.ChooseAPlan"]</h2>
+                        <partial name="~/Views/Home/_CarouselControls.cshtml" model="@((Loc["Home.Hero.Previous"].Value, Loc["Home.Hero.Next"].Value))" />
+                    </header>
+                    <div class="swiper account-carousel__track" data-swiper data-swiper-per-view="2"
+                         data-swiper-prev-label="@Loc["Home.Hero.Previous"]" data-swiper-next-label="@Loc["Home.Hero.Next"]">
+                        <div class="swiper-wrapper">
+                            @foreach (var plan in Model.Plans)
                             {
-                                <p class="membership-plan-card__description">@plan.Description</p>
-                            }
-                            @if (plan.Features.Count > 0)
-                            {
-                                <ul class="membership-plan-card__features">
-                                    @foreach (var feature in plan.Features)
-                                    {
-                                        <li>@feature</li>
-                                    }
-                                </ul>
-                            }
-                            @if (plan.IsFull)
-                            {
-                                <p class="membership-plan-card__seats membership-plan-card__seats--full">@Loc["Membership.Plan.Full"]</p>
-                                <form asp-controller="Membership" asp-action="Waitlist" asp-route-planId="@plan.Id" method="post" class="membership-waitlist">
-                                    <button type="submit" class="btn btn--ghost-dark" style="width:100%;">@Loc["Membership.Waitlist.Cta"]</button>
-                                </form>
-                            }
-                            else
-                            {
-                                @if (plan.ShowRemaining)
-                                {
-                                    <p class="membership-plan-card__seats">@Loc[plan.Remaining == 1 ? "Membership.Plan.Remaining.One" : "Membership.Plan.Remaining", plan.Remaining!]</p>
-                                }
-                                <form asp-controller="Membership" asp-action="Checkout" asp-route-planId="@plan.Id" method="post" class="membership-checkout">
-                                    <details class="membership-checkout__promo">
-                                        <summary>@Loc["Join.PromoCode.Have"]</summary>
-                                        <label class="visually-hidden" for="promo-@plan.Id">@Loc["Join.PromoCode"]</label>
-                                        <input id="promo-@plan.Id" name="promoCode" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="@Loc["Join.PromoCode.Placeholder"]" maxlength="40" />
-                                    </details>
-                                    <button type="submit" class="btn btn--primary" style="width:100%;">@Loc["Membership.Join"]</button>
-                                </form>
+                                <div class="swiper-slide">
+                                    <partial name="_PlanCard" model="plan" view-data='@(new ViewDataDictionary(ViewData) { { "HasMembership", false } })' />
+                                </div>
                             }
                         </div>
-                    }
-                </div>
+                    </div>
+                </section>
             }
         }
 

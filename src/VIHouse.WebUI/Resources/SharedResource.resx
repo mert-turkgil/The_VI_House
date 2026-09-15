@@ -189,13 +189,35 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Status.Cancelled.Detail" xml:space="preserve"><value>This application has been cancelled. Contact us if you believe this is a mistake.</value></data>
 
   <data name="Account.NavProfile" xml:space="preserve"><value>Profile</value></data>
-  <data name="Account.NavBookings" xml:space="preserve"><value>My Bookings</value></data>
+  <data name="Account.NavBookings" xml:space="preserve"><value>Experiences</value></data>
   <data name="Account.NavSecurity" xml:space="preserve"><value>Security &amp; Login</value></data>
+  <data name="Account.NavAria" xml:space="preserve"><value>Account</value></data>
   <data name="Account.NavAdminPanel" xml:space="preserve"><value>Admin Panel</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>My Profile</value></data>
   <data name="Account.SaveProfile" xml:space="preserve"><value>Save Profile</value></data>
-  <data name="Account.BookingsTitle" xml:space="preserve"><value>My Bookings</value></data>
+  <data name="Account.BookingsTitle" xml:space="preserve"><value>My Experiences</value></data>
   <data name="Account.NoBookings" xml:space="preserve"><value>You don't have any bookings yet.</value></data>
+  <data name="Error.NotFound.Title" xml:space="preserve"><value>Page not found</value></data>
+  <data name="Error.NotFound.Heading" xml:space="preserve"><value>This room isn’t on the map.</value></data>
+  <data name="Error.NotFound.Body" xml:space="preserve"><value>The page you were looking for has moved, or never existed. Nothing is lost — your account and everything in it are exactly where you left them.</value></data>
+  <data name="Error.Server.Title" xml:space="preserve"><value>Something went wrong</value></data>
+  <data name="Error.Server.Heading" xml:space="preserve"><value>Something went wrong on our side.</value></data>
+  <data name="Error.Server.Body" xml:space="preserve"><value>We have been told, and we will look into it. Please try again in a moment; if it keeps happening, write to us and quote the reference below.</value></data>
+  <data name="Error.BackToDashboard" xml:space="preserve"><value>Back to your dashboard</value></data>
+  <data name="Error.BackHome" xml:space="preserve"><value>Back to the front door</value></data>
+  <data name="Error.BrowseExperiences" xml:space="preserve"><value>Browse experiences</value></data>
+  <data name="Error.Contact" xml:space="preserve"><value>Contact us</value></data>
+  <data name="Error.RequestId" xml:space="preserve"><value>Reference</value></data>
+  <data name="Account.NoBookings.Body" xml:space="preserve"><value>When you hold a ticket to an experience, it will be here — with the details, the reference and the way in.</value></data>
+  <data name="Account.Bookings.Lede" xml:space="preserve"><value>Every experience you hold a place on, past and to come.</value></data>
+  <data name="Account.Bookings.Upcoming" xml:space="preserve"><value>Coming up</value></data>
+  <data name="Account.Bookings.Past" xml:space="preserve"><value>Past</value></data>
+  <data name="Account.ViewTicket" xml:space="preserve"><value>View ticket</value></data>
+  <data name="Account.ExperiencePage" xml:space="preserve"><value>Experience page</value></data>
+  <data name="Account.Booking.Confirmed" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Account.Booking.Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Account.Booking.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Account.Booking.Refunded" xml:space="preserve"><value>Refunded</value></data>
   <data name="Account.BookingReference" xml:space="preserve"><value>Reference</value></data>
   <data name="Account.BookingExperience" xml:space="preserve"><value>Experience</value></data>
   <data name="Account.BookingDate" xml:space="preserve"><value>Date</value></data>
@@ -1122,6 +1144,18 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Account.Perk.Community" xml:space="preserve"><value>Community channels</value></data>
   <data name="Account.Perk.Experiences" xml:space="preserve"><value>Priority on experiences</value></data>
   <data name="Account.Perk.NotInPlan" xml:space="preserve"><value>Not in your plan — upgrade</value></data>
+  <data name="Account.Plan.Yours" xml:space="preserve"><value>This is your plan</value></data>
+  <data name="Account.Benefit.Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Account.Benefit.Sessions" xml:space="preserve"><value>Sessions, included</value></data>
+  <data name="Account.Benefit.Sessions.Body" xml:space="preserve"><value>Every session marked “included with membership”, live and on demand, at no charge.</value></data>
+  <data name="Account.Benefit.Experiences" xml:space="preserve"><value>Priority on experiences</value></data>
+  <data name="Account.Benefit.Experiences.Body" xml:space="preserve"><value>First look at new cities and member pricing on tickets.</value></data>
+  <data name="Account.Benefit.Community" xml:space="preserve"><value>Community channels</value></data>
+  <data name="Account.Benefit.Community.Body" xml:space="preserve"><value>The members’ Discord, calls and broadcasts between gatherings.</value></data>
+  <data name="Account.Benefit.Directory" xml:space="preserve"><value>Member directory</value></data>
+  <data name="Account.Benefit.Directory.Body" xml:space="preserve"><value>Find and reach other members of the House.</value></data>
+  <data name="Account.Benefit.Card" xml:space="preserve"><value>Digital member card</value></data>
+  <data name="Account.Benefit.Card.Body" xml:space="preserve"><value>Your membership, on your phone, for the door.</value></data>
   <data name="Account.Hubs.Heading" xml:space="preserve"><value>Your rooms</value></data>
   <data name="Account.Hubs.Lede" xml:space="preserve"><value>Everything online you hold a place on — the broadcast, the meeting room and the channel for each.</value></data>
   <data name="Account.Hubs.Session" xml:space="preserve"><value>Session</value></data>

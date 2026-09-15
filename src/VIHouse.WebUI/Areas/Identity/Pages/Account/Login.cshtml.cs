@@ -1,3 +1,4 @@
+using VIHouse.Business.Abstract;
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
@@ -26,11 +27,13 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly ISecurityAlertService _securityAlerts;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, ISecurityAlertService securityAlerts)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _securityAlerts = securityAlerts;
         }
 
         /// <summary>
@@ -155,6 +158,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
 
             user.LastLoginAt = DateTimeOffset.UtcNow;
             await _signInManager.UserManager.UpdateAsync(user);
+            await _securityAlerts.RecordSignInAsync(user.Id, HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
         }
     }
 }

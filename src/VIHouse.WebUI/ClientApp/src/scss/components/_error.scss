@@ -1,0 +1,71 @@
+// Error pages (Views/Shared/NotFound.cshtml, Error.cshtml). Cream ground, the crest as the only
+// picture, one heading, one sentence, two buttons.
+
+.error-page {
+  display: grid;
+  place-items: center;
+  min-height: min(64vh, 620px);
+  padding: var(--vih-section-y) var(--vih-gutter);
+  background: var(--vih-cream);
+}
+
+.error-page__inner {
+  max-width: 520px;
+  text-align: center;
+
+  h1 {
+    margin: 0 0 var(--vih-space-xs);
+    font-family: var(--vih-font-serif);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    line-height: 1.15;
+    color: var(--vih-green-900);
+  }
+
+  p {
+    margin: 0 0 var(--vih-space-md);
+    font-size: var(--vih-text-lg);
+    line-height: 1.6;
+    color: var(--vih-text-secondary);
+  }
+}
+
+.error-page__crest {
+  display: inline-block;
+  width: 96px;
+  margin-bottom: var(--vih-space-sm);
+  color: var(--vih-green-900);
+  opacity: 0.18;
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.error-page__code {
+  display: block;
+  margin-bottom: var(--vih-space-2xs);
+  font-size: var(--vih-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--vih-gold);
+}
+
+.error-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--vih-space-2xs);
+}
+
+.error-page__ref {
+  margin-top: var(--vih-space-lg);
+  font-size: var(--vih-text-xs);
+  color: var(--vih-text-muted);
+
+  code {
+    padding: 2px 6px;
+    border-radius: var(--vih-radius-xs);
+    background: var(--vih-white);
+  }
+}

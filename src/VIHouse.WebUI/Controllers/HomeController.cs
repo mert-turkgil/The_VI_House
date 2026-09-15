@@ -108,11 +108,9 @@ public class HomeController(
         return View();
     }
 
+    /// <summary>Kept for old links; the error pages live under /error/{code} (ErrorController).</summary>
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
+    public IActionResult Error() => RedirectToAction("Index", "Error", new { code = 500 });
 
     /// <summary>
     /// Flattens each slide to the reader's culture. The culture comes from CurrentUICulture, which

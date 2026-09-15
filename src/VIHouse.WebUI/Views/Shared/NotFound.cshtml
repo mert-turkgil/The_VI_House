@@ -1,18 +1,20 @@
-@model ErrorViewModel
 @{
-    ViewData["Title"] = Loc["Error.Server.Title"];
+    ViewData["Title"] = Loc["Error.NotFound.Title"];
     var signedIn = User.Identity?.IsAuthenticated == true;
 }
-@* Anything that is not a 404 — a fault on our side. Same page as NotFound, different words, plus
-   the request id support can match to a log line. *@
+@*
+    404. The crest at low opacity is the whole illustration — the brand mark is the picture, not a
+    cartoon of a broken page — and the copy is one polite sentence with the two useful exits: back
+    to your own dashboard (or the front door when signed out) and the experiences.
+*@
 <div class="error-page">
     <div class="error-page__inner">
         <div class="error-page__crest" aria-hidden="true">
             <partial name="_Crest" />
         </div>
-        <span class="error-page__code">@Context.Response.StatusCode</span>
-        <h1>@Loc["Error.Server.Heading"]</h1>
-        <p>@Loc["Error.Server.Body"]</p>
+        <span class="error-page__code">404</span>
+        <h1>@Loc["Error.NotFound.Heading"]</h1>
+        <p>@Loc["Error.NotFound.Body"]</p>
         <div class="error-page__actions">
             @if (signedIn)
             {
@@ -22,11 +24,7 @@
             {
                 <a class="btn btn--primary" asp-area="" asp-controller="Home" asp-action="Index">@Loc["Error.BackHome"]</a>
             }
-            <a class="btn btn--ghost" href="/contact">@Loc["Error.Contact"]</a>
+            <a class="btn btn--ghost" asp-area="" asp-controller="Experiences" asp-action="Index">@Loc["Error.BrowseExperiences"]</a>
         </div>
-        @if (Model?.ShowRequestId == true)
-        {
-            <p class="error-page__ref">@Loc["Error.RequestId"] <code>@Model.RequestId</code></p>
-        }
     </div>
 </div>

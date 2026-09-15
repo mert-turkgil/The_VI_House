@@ -1,3 +1,4 @@
+using VIHouse.Business.Abstract;
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
@@ -16,13 +17,16 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<Disable2faModel> _logger;
+        private readonly ISecurityAlertService _securityAlerts;
 
         public Disable2faModel(
             UserManager<ApplicationUser> userManager,
-            ILogger<Disable2faModel> logger)
+            ILogger<Disable2faModel> logger,
+            ISecurityAlertService securityAlerts)
         {
             _userManager = userManager;
             _logger = logger;
+            _securityAlerts = securityAlerts;
         }
 
         /// <summary>
@@ -63,6 +67,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             }
 
             _logger.LogInformation("User with ID '{UserId}' has disabled 2fa.", _userManager.GetUserId(User));
+            await _securityAlerts.TwoFactorChangedAsync(user.Id, "Two-step verification was switched off", HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
             StatusMessage = "2fa has been disabled. You can reenable 2fa when you setup an authenticator app";
             return RedirectToPage("./TwoFactorAuthentication");
         }

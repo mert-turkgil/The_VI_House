@@ -20,42 +20,90 @@
     var hasMembership = entitlements is not null;
     var isAdmin = Roles.AdminRoles.Any(User.IsInRole);
     var isAmbassador = User.IsInRole(Roles.Ambassador);
+
+    // The mobile toggle names the section the visitor is on; a bare "Menu" says nothing.
+    var currentLabel = onSecurityPages ? Loc["Account.NavSecurity"].Value : currentAction switch
+    {
+        "Profile" => Loc["Account.NavProfile"].Value,
+        "Membership" => Loc["Account.NavMembership"].Value,
+        "Bookings" => Loc["Account.NavBookings"].Value,
+        "Sessions" => Loc["Account.NavSessions"].Value,
+        "Card" => Loc["Card.NavLabel"].Value,
+        "Community" => Loc["Account.NavCommunity"].Value,
+        "Notifications" => Loc["Notif.Title"].Value,
+        _ => Loc["Account.NavOverview"].Value,
+    };
 }
-<nav class="account-manage__nav" aria-label="Account">
-    @if (isAdmin)
-    {
-        <a asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">@Loc["Account.NavAdminPanel"]</a>
-    }
-    <a class="@NavClass("Index")" asp-controller="Account" asp-action="Index">@Loc["Account.NavOverview"]</a>
-    <a class="@NavClass("Profile")" asp-controller="Account" asp-action="Profile">@Loc["Account.NavProfile"]</a>
-    <a class="@NavClass("Membership")" asp-controller="Account" asp-action="Membership">@Loc["Account.NavMembership"]</a>
-    <a class="@NavClass("Bookings")" asp-controller="Account" asp-action="Bookings">@Loc["Account.NavBookings"]</a>
-    <a class="@NavClass("Sessions")" asp-controller="Account" asp-action="Sessions">@Loc["Account.NavSessions"]</a>
-    @* Each members-only door follows the tier (MembershipPlan's entitlement flags), not just
-       "has a membership" — plans differ in what they include. *@
-    @if (entitlements is { MemberCard: true })
-    {
-        <a class="@NavClass("Card")" asp-controller="Account" asp-action="Card">@Loc["Card.NavLabel"]</a>
-    }
-    @if (entitlements is { Community: true } && Features.Value.Community)
-    {
-        <a class="@NavClass("Community")" asp-controller="Account" asp-action="Community">@Loc["Account.NavCommunity"]</a>
-    }
-    @if (entitlements is { Directory: true } && Features.Value.MemberDirectory)
-    {
-        <a asp-controller="MemberDirectory" asp-action="Index">@Loc["Nav.Members"]</a>
-    }
-    @if (isAmbassador)
-    {
-        <a asp-controller="Ambassador" asp-action="Index">@Loc["Ambassador.Nav"]</a>
-    }
-    <a class="@NavClass("Notifications")" asp-controller="Account" asp-action="Notifications">@Loc["Notif.Title"]</a>
-    @if (!hasMembership && !Features.Value.MembershipSales)
-    {
-        @* Membership is not sold; it is applied for. This points at the experiences that are open
-           for applications rather than at a plan list — see Controllers/MembershipController and
-           FeatureOptions.MembershipSales. *@
-        <a asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Account.NavJoinTheHouse"]</a>
-    }
-    <a class="@(onSecurityPages ? "active" : "")" asp-area="Identity" asp-page="/Account/Manage/Index">@Loc["Account.NavSecurity"]</a>
-</nav>
+@* The same links at every width. Below 720px they fold behind the toggle (modules/accountNav.ts);
+   above it the toggle is hidden and the nav is the sticky left column. Icons give the sidebar a
+   silhouette a reader can scan without reading — see _Icon.cshtml for the set. *@
+<div class="account-manage__aside" data-account-nav-root>
+    <button type="button" class="account-manage__toggle" data-account-nav-toggle aria-controls="account-nav" aria-expanded="false">
+        <span class="account-manage__toggle-label">@currentLabel</span>
+        <span class="account-manage__toggle-icon" aria-hidden="true"><partial name="_Icon" model='@("chevron-down")' /></span>
+    </button>
+    <nav class="account-manage__nav" id="account-nav" data-account-nav aria-label="@Loc["Account.NavAria"]">
+        @if (isAdmin)
+        {
+            <a class="account-manage__link account-manage__link--admin" asp-area="Admin" asp-controller="AdminDashboard" asp-action="Index">
+                <span class="account-manage__icon"><partial name="_Icon" model='@("panel-left-open")' /></span><span>@Loc["Account.NavAdminPanel"]</span>
+            </a>
+        }
+        <a class="account-manage__link @NavClass("Index")" asp-controller="Account" asp-action="Index">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("layout-dashboard")' /></span><span>@Loc["Account.NavOverview"]</span>
+        </a>
+        <a class="account-manage__link @NavClass("Profile")" asp-controller="Account" asp-action="Profile">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("user-round")' /></span><span>@Loc["Account.NavProfile"]</span>
+        </a>
+        <a class="account-manage__link @NavClass("Membership")" asp-controller="Account" asp-action="Membership">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("layers")' /></span><span>@Loc["Account.NavMembership"]</span>
+        </a>
+        <a class="account-manage__link @NavClass("Bookings")" asp-controller="Account" asp-action="Bookings">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("sparkles")' /></span><span>@Loc["Account.NavBookings"]</span>
+        </a>
+        <a class="account-manage__link @NavClass("Sessions")" asp-controller="Account" asp-action="Sessions">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("calendar")' /></span><span>@Loc["Account.NavSessions"]</span>
+        </a>
+        @* Each members-only door follows the tier (MembershipPlan's entitlement flags), not just
+           "has a membership" — plans differ in what they include. *@
+        @if (entitlements is { MemberCard: true })
+        {
+            <a class="account-manage__link @NavClass("Card")" asp-controller="Account" asp-action="Card">
+                <span class="account-manage__icon"><partial name="_Icon" model='@("credit-card")' /></span><span>@Loc["Card.NavLabel"]</span>
+            </a>
+        }
+        @if (entitlements is { Community: true } && Features.Value.Community)
+        {
+            <a class="account-manage__link @NavClass("Community")" asp-controller="Account" asp-action="Community">
+                <span class="account-manage__icon"><partial name="_Icon" model='@("messages-square")' /></span><span>@Loc["Account.NavCommunity"]</span>
+            </a>
+        }
+        @if (entitlements is { Directory: true } && Features.Value.MemberDirectory)
+        {
+            <a class="account-manage__link" asp-controller="MemberDirectory" asp-action="Index">
+                <span class="account-manage__icon"><partial name="_Icon" model='@("users")' /></span><span>@Loc["Nav.Members"]</span>
+            </a>
+        }
+        @if (isAmbassador)
+        {
+            <a class="account-manage__link" asp-controller="Ambassador" asp-action="Index">
+                <span class="account-manage__icon"><partial name="_Icon" model='@("megaphone")' /></span><span>@Loc["Ambassador.Nav"]</span>
+            </a>
+        }
+        <a class="account-manage__link @NavClass("Notifications")" asp-controller="Account" asp-action="Notifications">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("bell")' /></span><span>@Loc["Notif.Title"]</span>
+        </a>
+        @if (!hasMembership && !Features.Value.MembershipSales)
+        {
+            @* Membership is not sold; it is applied for. This points at the experiences that are open
+               for applications rather than at a plan list — see Controllers/MembershipController and
+               FeatureOptions.MembershipSales. *@
+            <a class="account-manage__link" asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">
+                <span class="account-manage__icon"><partial name="_Icon" model='@("ticket")' /></span><span>@Loc["Account.NavJoinTheHouse"]</span>
+            </a>
+        }
+        <a class="account-manage__link @(onSecurityPages ? "active" : "")" asp-area="Identity" asp-page="/Account/Manage/Index">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("settings")' /></span><span>@Loc["Account.NavSecurity"]</span>
+        </a>
+    </nav>
+</div>

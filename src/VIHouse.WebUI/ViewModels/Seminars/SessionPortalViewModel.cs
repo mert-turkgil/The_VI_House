@@ -34,6 +34,9 @@ public class PortalSessionViewModel
     /// the public card — the link is the ticket.</summary>
     public string? MeetingUrl { get; set; }
 
+    /// <summary>The broadcast, when the session has one — offered beside the meeting link.</summary>
+    public string? LiveStreamUrl { get; set; }
+
     /// <summary>True from an hour before the start until the end — when the "join" button should
     /// be the loudest thing on the page.</summary>
     public bool IsLiveNow { get; set; }
@@ -64,6 +67,7 @@ public class PortalSessionViewModel
             Currency = e.Enrollment.Currency,
             ConfirmedAt = e.Enrollment.ConfirmedAt,
             MeetingUrl = s.IsOnline ? s.MeetingUrl : null,
+            LiveStreamUrl = s.LiveStreamUrl,
             IsLiveNow = s.StartAtUtc is { } start && end is { } finish
                 && now >= start.AddHours(-1) && now <= finish,
         };

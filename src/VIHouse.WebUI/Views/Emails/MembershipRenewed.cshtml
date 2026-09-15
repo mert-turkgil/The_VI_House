@@ -1,13 +1,16 @@
 @model MembershipRenewedEmailModel
-
-<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">Your membership has renewed</h1>
+@{
+    ViewData["Preheader"] = $"{Model.PlanName} renewed until {Model.ExpiresAt:d MMMM yyyy}";
+}
+<p style="margin:0 0 6px; color:#b8955a; font-size:11px; font-weight:bold; letter-spacing:2px; text-transform:uppercase;">Membership</p>
+<h1 style="font-family:Georgia,'Times New Roman',serif; font-size:26px; line-height:1.2; margin:0 0 18px; color:#00230a;">Your membership has renewed</h1>
 <p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
-<p style="margin:0 0 16px;">
-    Your <strong>@Model.PlanName</strong> membership has been renewed and now runs until
-    @Model.ExpiresAt.ToString("d MMMM yyyy"). Nothing else changes &mdash; your access, your card and
+<p style="margin:0 0 20px;">
+    Your <strong>@Model.PlanName</strong> membership has been renewed. Nothing else changes &mdash; your access, your card and
     your place in the room carry straight on.
 </p>
-<p style="margin:0 0 16px;">
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { ("Plan", Model.PlanName), ("Runs until", Model.ExpiresAt.ToString("d MMMM yyyy")) })" />
+<p style="margin:0 0 16px; color:#4a4f45;">
     You can change your card, download invoices or cancel at any time from your account page.
 </p>
 <p style="margin:0;">&mdash; The VI House</p>

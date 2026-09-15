@@ -189,13 +189,35 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Status.Cancelled.Detail" xml:space="preserve"><value>Bu başvuru iptal edildi. Bunun bir hata olduğunu düşünüyorsanız bizimle iletişime geçin.</value></data>
 
   <data name="Account.NavProfile" xml:space="preserve"><value>Profil</value></data>
-  <data name="Account.NavBookings" xml:space="preserve"><value>Rezervasyonlarım</value></data>
+  <data name="Account.NavBookings" xml:space="preserve"><value>Deneyimler</value></data>
   <data name="Account.NavSecurity" xml:space="preserve"><value>Güvenlik ve Giriş</value></data>
+  <data name="Account.NavAria" xml:space="preserve"><value>Hesap</value></data>
   <data name="Account.NavAdminPanel" xml:space="preserve"><value>Yönetim Paneli</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>Profilim</value></data>
   <data name="Account.SaveProfile" xml:space="preserve"><value>Profili Kaydet</value></data>
-  <data name="Account.BookingsTitle" xml:space="preserve"><value>Rezervasyonlarım</value></data>
+  <data name="Account.BookingsTitle" xml:space="preserve"><value>Deneyimlerim</value></data>
   <data name="Account.NoBookings" xml:space="preserve"><value>Henüz bir rezervasyonunuz yok.</value></data>
+  <data name="Error.NotFound.Title" xml:space="preserve"><value>Sayfa bulunamadı</value></data>
+  <data name="Error.NotFound.Heading" xml:space="preserve"><value>Bu oda haritada yok.</value></data>
+  <data name="Error.NotFound.Body" xml:space="preserve"><value>Aradığınız sayfa taşınmış ya da hiç var olmamış. Hiçbir şey kaybolmadı — hesabınız ve içindeki her şey bıraktığınız yerde.</value></data>
+  <data name="Error.Server.Title" xml:space="preserve"><value>Bir şeyler ters gitti</value></data>
+  <data name="Error.Server.Heading" xml:space="preserve"><value>Bizim tarafımızda bir şeyler ters gitti.</value></data>
+  <data name="Error.Server.Body" xml:space="preserve"><value>Haberimiz oldu ve inceleyeceğiz. Lütfen birazdan tekrar deneyin; devam ederse aşağıdaki referansı belirterek bize yazın.</value></data>
+  <data name="Error.BackToDashboard" xml:space="preserve"><value>Panonuza dönün</value></data>
+  <data name="Error.BackHome" xml:space="preserve"><value>Ana kapıya dönün</value></data>
+  <data name="Error.BrowseExperiences" xml:space="preserve"><value>Deneyimlere göz atın</value></data>
+  <data name="Error.Contact" xml:space="preserve"><value>Bize ulaşın</value></data>
+  <data name="Error.RequestId" xml:space="preserve"><value>Referans</value></data>
+  <data name="Account.NoBookings.Body" xml:space="preserve"><value>Bir deneyim için biletiniz olduğunda burada olacak — ayrıntılar, referans ve giriş yoluyla.</value></data>
+  <data name="Account.Bookings.Lede" xml:space="preserve"><value>Yer aldığınız her deneyim, geçmiş ve gelecek.</value></data>
+  <data name="Account.Bookings.Upcoming" xml:space="preserve"><value>Yaklaşan</value></data>
+  <data name="Account.Bookings.Past" xml:space="preserve"><value>Geçmiş</value></data>
+  <data name="Account.ViewTicket" xml:space="preserve"><value>Bileti gör</value></data>
+  <data name="Account.ExperiencePage" xml:space="preserve"><value>Deneyim sayfası</value></data>
+  <data name="Account.Booking.Confirmed" xml:space="preserve"><value>Onaylandı</value></data>
+  <data name="Account.Booking.Pending" xml:space="preserve"><value>Beklemede</value></data>
+  <data name="Account.Booking.Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Account.Booking.Refunded" xml:space="preserve"><value>İade edildi</value></data>
   <data name="Account.BookingReference" xml:space="preserve"><value>Referans</value></data>
   <data name="Account.BookingExperience" xml:space="preserve"><value>Deneyim</value></data>
   <data name="Account.BookingDate" xml:space="preserve"><value>Tarih</value></data>
@@ -1122,6 +1144,18 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Account.Perk.Community" xml:space="preserve"><value>Topluluk kanalları</value></data>
   <data name="Account.Perk.Experiences" xml:space="preserve"><value>Deneyimlerde öncelik</value></data>
   <data name="Account.Perk.NotInPlan" xml:space="preserve"><value>Planınıza dahil değil — yükseltin</value></data>
+  <data name="Account.Plan.Yours" xml:space="preserve"><value>Bu sizin planınız</value></data>
+  <data name="Account.Benefit.Open" xml:space="preserve"><value>Aç</value></data>
+  <data name="Account.Benefit.Sessions" xml:space="preserve"><value>Oturumlar dahil</value></data>
+  <data name="Account.Benefit.Sessions.Body" xml:space="preserve"><value>“Üyeliğe dahil” işaretli her oturum, canlı ve istendiğinde, ücretsiz.</value></data>
+  <data name="Account.Benefit.Experiences" xml:space="preserve"><value>Deneyimlerde öncelik</value></data>
+  <data name="Account.Benefit.Experiences.Body" xml:space="preserve"><value>Yeni şehirlere ilk bakış ve biletlerde üye fiyatı.</value></data>
+  <data name="Account.Benefit.Community" xml:space="preserve"><value>Topluluk kanalları</value></data>
+  <data name="Account.Benefit.Community.Body" xml:space="preserve"><value>Buluşmalar arasında üyelerin Discord’u, görüşmeleri ve yayınları.</value></data>
+  <data name="Account.Benefit.Directory" xml:space="preserve"><value>Üye rehberi</value></data>
+  <data name="Account.Benefit.Directory.Body" xml:space="preserve"><value>Evin diğer üyelerini bulun ve ulaşın.</value></data>
+  <data name="Account.Benefit.Card" xml:space="preserve"><value>Dijital üye kartı</value></data>
+  <data name="Account.Benefit.Card.Body" xml:space="preserve"><value>Üyeliğiniz, telefonunuzda, kapı için.</value></data>
   <data name="Account.Hubs.Heading" xml:space="preserve"><value>Odalarınız</value></data>
   <data name="Account.Hubs.Lede" xml:space="preserve"><value>Yer aldığınız her çevrimiçi şey — her biri için yayın, toplantı odası ve kanal.</value></data>
   <data name="Account.Hubs.Session" xml:space="preserve"><value>Oturum</value></data>

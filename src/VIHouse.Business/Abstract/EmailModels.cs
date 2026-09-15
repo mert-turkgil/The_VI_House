@@ -20,14 +20,38 @@ public record ExperienceWaitlistEmailModel(string FirstName, string ExperienceTi
 
 public record BookingConfirmedEmailModel(
     string FirstName, string BookingReference, string ExperienceTitle, string ExperienceCity,
-    DateTimeOffset StartAtUtc, DateTimeOffset EndAtUtc, long AmountMinor, string Currency);
+    DateTimeOffset StartAtUtc, DateTimeOffset EndAtUtc, long AmountMinor, string Currency)
+{
+    public string? Venue { get; init; }
+    public bool IsOnline { get; init; }
+    public string? TimeZoneId { get; init; }
+    public string? TicketUrl { get; init; }
+    public string? ExperienceUrl { get; init; }
+}
+
+/// <summary>Something changed on the account's sign-in side, or someone signed in from somewhere
+/// new. What happened and where from; the way to lock things down if it was not them.</summary>
+public record SecurityAlertEmailModel(
+    string FirstName, string Event, string Detail, DateTimeOffset WhenUtc,
+    string? IpAddress, string? UserAgent, string ActionUrl, string ActionLabel);
 
 public record PaymentFailedEmailModel(string FirstName, string ExperienceTitle, string InvitationUrl);
 
 /// <summary>Internal notification sent to Site:ContactEmail when a visitor submits the public Contact page form.</summary>
 public record ContactMessageEmailModel(string Name, string Email, string? Subject, string Message);
 
-public record MembershipConfirmedEmailModel(string FirstName, string PlanName, DateTimeOffset? ExpiresAt);
+public enum MembershipEmailStatus { Confirmed, Renewed, Granted }
+
+/// <summary>The membership status email — a new membership, a renewal, or one granted by an admin.
+/// The positional members are what every send has; the rest fill the details card when known.</summary>
+public record MembershipConfirmedEmailModel(string FirstName, string PlanName, DateTimeOffset? ExpiresAt)
+{
+    public MembershipEmailStatus Status { get; init; } = MembershipEmailStatus.Confirmed;
+    public long? AmountMinor { get; init; }
+    public string? Currency { get; init; }
+    public string? MemberNumber { get; init; }
+    public string? AccountUrl { get; init; }
+}
 
 /// <summary>Sent when the provider bills a recurring membership for a further period.</summary>
 public record MembershipRenewedEmailModel(string FirstName, string PlanName, DateTimeOffset ExpiresAt);

@@ -1,0 +1,74 @@
+@using VIHouse.Entities.Membership
+@model VIHouse.WebUI.ViewModels.Membership.MembershipPlanCardViewModel
+@{
+    // ViewData: "CurrentPlanId" (Guid?) marks the member's own plan; "HasMembership" (bool) decides
+    // whether the card offers checkout (prospect) or a "talk to us" route (member changing plan).
+    var currentPlanId = ViewData["CurrentPlanId"] as Guid?;
+    var hasMembership = ViewData["HasMembership"] as bool? ?? false;
+    var isMine = currentPlanId == Model.Id;
+
+    string BillingLabel(MembershipBillingPeriod period) => period switch
+    {
+        MembershipBillingPeriod.Monthly => Loc["Membership.PerMonth"].Value,
+        MembershipBillingPeriod.Annual => Loc["Membership.PerYear"].Value,
+        _ => Loc["Membership.OneTime"].Value,
+    };
+}
+<article class="membership-plan-card membership-plan-card--carousel @(isMine ? "membership-plan-card--current" : "")">
+    @if (isMine)
+    {
+        <span class="membership-plan-card__badge">@Loc["Membership.Member.YourPlan"]</span>
+    }
+    <h3>@Model.Name</h3>
+    <div class="membership-plan-card__price">
+        @MoneyFormatter.Format(Model.PriceMinor, Model.Currency)
+        <span>@BillingLabel(Model.BillingPeriod)</span>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <p class="membership-plan-card__description">@Model.Description</p>
+    }
+    @if (Model.Features.Count > 0)
+    {
+        <ul class="membership-plan-card__features">
+            @foreach (var feature in Model.Features.Take(5))
+            {
+                <li>@feature</li>
+            }
+        </ul>
+    }
+    <div class="membership-plan-card__foot">
+        @if (isMine)
+        {
+            <span class="membership-plan-card__seats">@Loc["Account.Plan.Yours"]</span>
+        }
+        else if (Model.IsFull)
+        {
+            <p class="membership-plan-card__seats membership-plan-card__seats--full">@Loc["Membership.Plan.Full"]</p>
+            <form asp-controller="Membership" asp-action="Waitlist" asp-route-planId="@Model.Id" method="post" class="membership-waitlist">
+                <button type="submit" class="btn btn--ghost" style="width:100%;">@Loc["Membership.Waitlist.Cta"]</button>
+            </form>
+        }
+        else if (hasMembership)
+        {
+            @* Changing plan is a billing-portal or concierge job while a subscription is running —
+               a second checkout would open a second subscription. *@
+            <a class="btn btn--ghost" style="width:100%;" href="/contact">@Loc["Membership.Member.AskToChange"]</a>
+        }
+        else
+        {
+            @if (Model.ShowRemaining)
+            {
+                <p class="membership-plan-card__seats">@Loc[Model.Remaining == 1 ? "Membership.Plan.Remaining.One" : "Membership.Plan.Remaining", Model.Remaining!]</p>
+            }
+            <form asp-controller="Membership" asp-action="Checkout" asp-route-planId="@Model.Id" method="post" class="membership-checkout">
+                <details class="membership-checkout__promo">
+                    <summary>@Loc["Join.PromoCode.Have"]</summary>
+                    <label class="visually-hidden" for="promo-@Model.Id">@Loc["Join.PromoCode"]</label>
+                    <input id="promo-@Model.Id" name="promoCode" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="@Loc["Join.PromoCode.Placeholder"]" maxlength="40" />
+                </details>
+                <button type="submit" class="btn btn--primary" style="width:100%;">@Loc["Membership.Join"]</button>
+            </form>
+        }
+    </div>
+</article>

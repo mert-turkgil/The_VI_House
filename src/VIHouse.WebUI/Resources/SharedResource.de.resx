@@ -189,13 +189,35 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Status.Cancelled.Detail" xml:space="preserve"><value>Diese Bewerbung wurde storniert. Kontaktieren Sie uns, wenn Sie glauben, dass dies ein Fehler ist.</value></data>
 
   <data name="Account.NavProfile" xml:space="preserve"><value>Profil</value></data>
-  <data name="Account.NavBookings" xml:space="preserve"><value>Meine Buchungen</value></data>
+  <data name="Account.NavBookings" xml:space="preserve"><value>Erlebnisse</value></data>
   <data name="Account.NavSecurity" xml:space="preserve"><value>Sicherheit &amp; Anmeldung</value></data>
+  <data name="Account.NavAria" xml:space="preserve"><value>Konto</value></data>
   <data name="Account.NavAdminPanel" xml:space="preserve"><value>Admin-Bereich</value></data>
   <data name="Account.ProfileTitle" xml:space="preserve"><value>Mein Profil</value></data>
   <data name="Account.SaveProfile" xml:space="preserve"><value>Profil speichern</value></data>
-  <data name="Account.BookingsTitle" xml:space="preserve"><value>Meine Buchungen</value></data>
+  <data name="Account.BookingsTitle" xml:space="preserve"><value>Meine Erlebnisse</value></data>
   <data name="Account.NoBookings" xml:space="preserve"><value>Sie haben noch keine Buchungen.</value></data>
+  <data name="Error.NotFound.Title" xml:space="preserve"><value>Seite nicht gefunden</value></data>
+  <data name="Error.NotFound.Heading" xml:space="preserve"><value>Dieser Raum steht nicht auf der Karte.</value></data>
+  <data name="Error.NotFound.Body" xml:space="preserve"><value>Die gesuchte Seite wurde verschoben oder hat nie existiert. Nichts ist verloren — Ihr Konto und alles darin sind genau dort, wo Sie es gelassen haben.</value></data>
+  <data name="Error.Server.Title" xml:space="preserve"><value>Etwas ist schiefgelaufen</value></data>
+  <data name="Error.Server.Heading" xml:space="preserve"><value>Auf unserer Seite ist etwas schiefgelaufen.</value></data>
+  <data name="Error.Server.Body" xml:space="preserve"><value>Wir wurden benachrichtigt und kümmern uns darum. Bitte versuchen Sie es gleich noch einmal; falls es weiterhin passiert, schreiben Sie uns und nennen Sie die Referenz unten.</value></data>
+  <data name="Error.BackToDashboard" xml:space="preserve"><value>Zurück zu Ihrem Dashboard</value></data>
+  <data name="Error.BackHome" xml:space="preserve"><value>Zurück zur Eingangstür</value></data>
+  <data name="Error.BrowseExperiences" xml:space="preserve"><value>Erlebnisse ansehen</value></data>
+  <data name="Error.Contact" xml:space="preserve"><value>Kontakt</value></data>
+  <data name="Error.RequestId" xml:space="preserve"><value>Referenz</value></data>
+  <data name="Account.NoBookings.Body" xml:space="preserve"><value>Sobald Sie ein Ticket für ein Erlebnis haben, erscheint es hier — mit Details, Referenz und dem Weg hinein.</value></data>
+  <data name="Account.Bookings.Lede" xml:space="preserve"><value>Jedes Erlebnis, für das Sie einen Platz haben, vergangen und bevorstehend.</value></data>
+  <data name="Account.Bookings.Upcoming" xml:space="preserve"><value>Demnächst</value></data>
+  <data name="Account.Bookings.Past" xml:space="preserve"><value>Vergangen</value></data>
+  <data name="Account.ViewTicket" xml:space="preserve"><value>Ticket ansehen</value></data>
+  <data name="Account.ExperiencePage" xml:space="preserve"><value>Erlebnisseite</value></data>
+  <data name="Account.Booking.Confirmed" xml:space="preserve"><value>Bestätigt</value></data>
+  <data name="Account.Booking.Pending" xml:space="preserve"><value>Ausstehend</value></data>
+  <data name="Account.Booking.Cancelled" xml:space="preserve"><value>Storniert</value></data>
+  <data name="Account.Booking.Refunded" xml:space="preserve"><value>Erstattet</value></data>
   <data name="Account.BookingReference" xml:space="preserve"><value>Referenz</value></data>
   <data name="Account.BookingExperience" xml:space="preserve"><value>Erlebnis</value></data>
   <data name="Account.BookingDate" xml:space="preserve"><value>Datum</value></data>
@@ -1122,6 +1144,18 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Account.Perk.Community" xml:space="preserve"><value>Community-Kanäle</value></data>
   <data name="Account.Perk.Experiences" xml:space="preserve"><value>Vorrang bei Erlebnissen</value></data>
   <data name="Account.Perk.NotInPlan" xml:space="preserve"><value>Nicht in Ihrem Plan — upgraden</value></data>
+  <data name="Account.Plan.Yours" xml:space="preserve"><value>Das ist Ihr Plan</value></data>
+  <data name="Account.Benefit.Open" xml:space="preserve"><value>Öffnen</value></data>
+  <data name="Account.Benefit.Sessions" xml:space="preserve"><value>Sessions inklusive</value></data>
+  <data name="Account.Benefit.Sessions.Body" xml:space="preserve"><value>Jede Session mit „in der Mitgliedschaft enthalten“, live und auf Abruf, ohne Aufpreis.</value></data>
+  <data name="Account.Benefit.Experiences" xml:space="preserve"><value>Vorrang bei Erlebnissen</value></data>
+  <data name="Account.Benefit.Experiences.Body" xml:space="preserve"><value>Erster Blick auf neue Städte und Mitgliederpreise für Tickets.</value></data>
+  <data name="Account.Benefit.Community" xml:space="preserve"><value>Community-Kanäle</value></data>
+  <data name="Account.Benefit.Community.Body" xml:space="preserve"><value>Discord, Calls und Übertragungen der Mitglieder zwischen den Treffen.</value></data>
+  <data name="Account.Benefit.Directory" xml:space="preserve"><value>Mitgliederverzeichnis</value></data>
+  <data name="Account.Benefit.Directory.Body" xml:space="preserve"><value>Andere Mitglieder des Hauses finden und erreichen.</value></data>
+  <data name="Account.Benefit.Card" xml:space="preserve"><value>Digitale Mitgliedskarte</value></data>
+  <data name="Account.Benefit.Card.Body" xml:space="preserve"><value>Ihre Mitgliedschaft auf dem Telefon, für die Tür.</value></data>
   <data name="Account.Hubs.Heading" xml:space="preserve"><value>Ihre Räume</value></data>
   <data name="Account.Hubs.Lede" xml:space="preserve"><value>Alles Online, wofür Sie einen Platz haben — Übertragung, Meetingraum und Kanal für jedes davon.</value></data>
   <data name="Account.Hubs.Session" xml:space="preserve"><value>Session</value></data>

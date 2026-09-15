@@ -1,44 +1,81 @@
+@using VIHouse.Entities.Commerce
 @model List<BookingListItemViewModel>
 @{
     ViewData["Title"] = Loc["Account.BookingsTitle"];
+    var upcoming = Model.Where(b => !b.IsPast).OrderBy(b => b.StartAtUtc).ToList();
+    var past = Model.Where(b => b.IsPast).OrderByDescending(b => b.StartAtUtc).ToList();
+
+    string StatusLabel(BookingStatus s) => s switch
+    {
+        BookingStatus.Confirmed => Loc["Account.Booking.Confirmed"].Value,
+        BookingStatus.Pending => Loc["Account.Booking.Pending"].Value,
+        BookingStatus.Refunded => Loc["Account.Booking.Refunded"].Value,
+        _ => Loc["Account.Booking.Cancelled"].Value,
+    };
 }
 
 <div class="account-manage">
     <partial name="_AccountNav" />
     <div class="account-manage__content">
-        <h1>@Loc["Account.BookingsTitle"]</h1>
+        <header class="account-page__head">
+            <h1>@Loc["Account.BookingsTitle"]</h1>
+            <p class="account-page__lede">@Loc["Account.Bookings.Lede"]</p>
+        </header>
 
         @if (Model.Count == 0)
         {
-            <p>@Loc["Account.NoBookings"]</p>
+            <div class="account-empty">
+                <span class="account-empty__icon"><partial name="_Icon" model='@("sparkles")' /></span>
+                <h2>@Loc["Account.NoBookings"]</h2>
+                <p>@Loc["Account.NoBookings.Body"]</p>
+                <a class="btn btn--primary" asp-controller="Experiences" asp-action="Index">@Loc["Account.BrowseExperiences"]</a>
+            </div>
         }
         else
         {
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>@Loc["Account.BookingReference"]</th>
-                        <th>@Loc["Account.BookingExperience"]</th>
-                        <th>@Loc["Account.BookingDate"]</th>
-                        <th>@Loc["Account.BookingStatus"]</th>
-                        <th>@Loc["Account.BookingAmount"]</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var b in Model)
-                    {
-                        <tr>
-                            <td><a asp-action="Ticket" asp-route-reference="@b.BookingReference">@b.BookingReference</a></td>
-                            <td>@b.ExperienceLabel</td>
-                            <td>@b.StartAtUtc.ToString("dd MMM yyyy")</td>
-                            <td>@b.Status</td>
-                            <td>@MoneyFormatter.Format(b.AmountMinor, b.Currency)</td>
-                            <td><a class="btn btn--ghost btn--sm" asp-action="Ticket" asp-route-reference="@b.BookingReference">View ticket</a></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            @foreach (var (group, heading) in new[] { (upcoming, Loc["Account.Bookings.Upcoming"].Value), (past, Loc["Account.Bookings.Past"].Value) })
+            {
+                if (group.Count == 0) { continue; }
+                <section class="account-group" aria-label="@heading">
+                    <h2 class="account-section-heading">@heading <span class="account-section-heading__count">@group.Count</span></h2>
+                    <div class="booking-grid">
+                        @foreach (var b in group)
+                        {
+                            <article class="booking-card @(b.IsPast ? "booking-card--past" : "")">
+                                <a class="booking-card__media" href="@(b.Slug is null ? "#" : $"/experiences/{b.Slug}")" tabindex="-1" aria-hidden="true">
+                                    <partial name="_CoverImage" model="@(new CoverImageViewModel { Url = b.CoverImageUrl, Ratio = "16x9", Sizes = "(min-width: 720px) 40vw, 100vw", Zoom = true })" />
+                                    <span class="booking-card__status booking-card__status--@b.Status.ToString().ToLowerInvariant()">@StatusLabel(b.Status)</span>
+                                </a>
+                                <div class="booking-card__body">
+                                    <span class="booking-card__date">
+                                        @b.StartAtUtc.ToString("d MMM")@(b.EndAtUtc is { } end && end.Date != b.StartAtUtc.Date ? $"–{end:d MMM yyyy}" : $" {b.StartAtUtc:yyyy}")
+                                    </span>
+                                    <h3>@b.ExperienceLabel</h3>
+                                    @if (b.City is not null)
+                                    {
+                                        <span class="booking-card__meta">@b.City, @Countries.NameFor(b.Country ?? "")</span>
+                                    }
+                                    <dl class="booking-card__facts">
+                                        <div><dt>@Loc["Account.BookingReference"]</dt><dd><code>@b.BookingReference</code></dd></div>
+                                        <div><dt>@Loc["Account.BookingAmount"]</dt><dd>@MoneyFormatter.Format(b.AmountMinor, b.Currency)</dd></div>
+                                    </dl>
+                                    <div class="booking-card__actions">
+                                        <a class="btn btn--primary btn--sm" asp-action="Ticket" asp-route-reference="@b.BookingReference">@Loc["Account.ViewTicket"]</a>
+                                        @if (b.Slug is not null)
+                                        {
+                                            <a class="btn btn--ghost btn--sm" href="/experiences/@b.Slug">@Loc["Account.ExperiencePage"]</a>
+                                        }
+                                    </div>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                </section>
+            }
+
+            <p class="account-page__foot">
+                <a asp-controller="Experiences" asp-action="Index">@Loc["Account.BrowseExperiences"] &rarr;</a>
+            </p>
         }
     </div>
 </div>
