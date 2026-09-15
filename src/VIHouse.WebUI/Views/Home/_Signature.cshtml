@@ -7,10 +7,16 @@
 
 @if (Model.Count > 0)
 {
-    <section class="home-section home-section--tinted" data-reveal>
+    <section class="home-section home-section--tinted" data-reveal data-swiper-scope>
         <div class="container home-section__header">
             <h2>@Loc["Home.Signature.Heading"]</h2>
-            <a class="home-section__viewall" href="/experiences">@Loc["Home.ViewAll"] &rarr;</a>
+            <div class="home-section__tools">
+                @if (useCarousel)
+                {
+                    <partial name="_CarouselControls" model="@((Loc["Home.Hero.Previous"].Value, Loc["Home.Hero.Next"].Value))" />
+                }
+                <a class="home-section__viewall" href="/experiences">@Loc["Home.ViewAll"] &rarr;</a>
+            </div>
         </div>
         <div class="container">
             @if (useCarousel)
@@ -24,9 +30,6 @@
                             </div>
                         }
                     </div>
-                    <div class="swiper-button-prev"></div>
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-pagination"></div>
                 </div>
             }
             else

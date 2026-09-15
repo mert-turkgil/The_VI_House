@@ -5,7 +5,7 @@
     a plain grid cell (there isn't, so a carousel with dead space and inert arrows would be worse
     than no carousel at all — see _Upcoming.cshtml).
 *@
-<a class="home-upcoming__card" href="/experiences/@Model.Slug">
+<a class="home-upcoming__card" href="/experiences/@Model.Slug" data-vt-cover>
     <div class="home-upcoming__image">
         @* Decorative: the card's own heading names the experience, so a described image would
            just repeat it to a screen reader. *@
@@ -13,8 +13,10 @@
             Url = Model.CoverImageUrl,
             Ratio = "4x3",
             Sizes = "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw",
+            Zoom = true,
         })" />
         <span class="home-upcoming__badge">@Loc[Model.StatusKey]</span>
+        <span class="card-peek" aria-hidden="true">@Loc["Home.Card.View"] <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
     <div class="home-upcoming__body">
         <span class="home-upcoming__date">@Model.StartAtUtc.ToString("d MMM")–@Model.EndAtUtc.ToString("d MMM yyyy")</span>

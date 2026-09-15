@@ -26,6 +26,20 @@ public record CoverImageViewModel
     /// <summary>True for an above-the-fold hero: skips lazy-loading and hints high priority.</summary>
     public bool Eager { get; init; }
 
+    /// <summary>True on covers inside a linked card: the photograph pushes in slowly on hover
+    /// (.cover--zoom). Off by default because a hero or a gallery frame that zooms on hover reads
+    /// as a fault, not a flourish.</summary>
+    public bool Zoom { get; init; }
+
+    /// <summary>
+    /// A view-transition-name for the frame, so the browser can morph this cover into the one on
+    /// the next page (a card's photograph growing into the detail hero). Only one element per page
+    /// may carry a given name — a duplicate makes the browser skip the whole transition — so cards
+    /// never set it in markup; modules/transitions.ts names the single clicked card at click time
+    /// and only the hero declares it here.
+    /// </summary>
+    public string? TransitionName { get; init; }
+
     /// <summary>Widths the fetch script produces. Kept in step with media-manifest.json's "widths".</summary>
     private static readonly int[] AvailableWidths = [800, 1600];
 

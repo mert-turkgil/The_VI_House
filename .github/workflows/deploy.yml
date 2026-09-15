@@ -164,6 +164,21 @@ jobs:
       - name: Restore
         run: dotnet restore VIHouse.slnx
 
+      # ImageSharp 4.x validates a Six Labors licence at build time and treats a missing one as an
+      # error in Release. The Community licence file (free, see sixlabors.com/pricing) is held in
+      # the SIXLABORS_LICENSE secret as its full text and written next to the project, where the
+      # package's targets search for it (**/sixlabors.lic). Never committed — see .gitignore.
+      - name: Write Six Labors licence
+        working-directory: src/VIHouse.WebUI
+        env:
+          SIXLABORS_LICENSE: ${{ secrets.SIXLABORS_LICENSE }}
+        run: |
+          if [ -z "$SIXLABORS_LICENSE" ]; then
+            echo "::error::Repository secret SIXLABORS_LICENSE is not set — ImageSharp refuses a Release build without it."
+            exit 1
+          fi
+          printf '%s' "$SIXLABORS_LICENSE" > sixlabors.lic
+
       # Written before publish so the Web SDK picks it up like any other appsettings*.json.
       # jq --arg does the JSON escaping, so passwords with quotes/backslashes/% survive intact.
       - name: Write appsettings.Production.json
@@ -288,6 +303,14 @@ jobs:
           for route in dist/main.css dist/main.js dist/admin.css dist/admin.js brand/coming-soon.jpg video/auth-backdrop.mp4; do
             jq -e --arg r "$route" 'any(.Endpoints[]; .Route == $r)' "$manifest" > /dev/null \
               || { echo "::error::$route is not in the static web assets manifest — it would 302 to /coming-soon in production."; exit 1; }
+          done
+          # The bundles import shared chunks by relative path at runtime. A chunk that is on disk but
+          # not in the manifest is redirected to /coming-soon, the browser gets HTML where it expected
+          # a module, and every script on the site dies with it — so each one is checked too.
+          for chunk in wwwroot/dist/chunks/*.js; do
+            [ -e "$chunk" ] || continue
+            route="${chunk#wwwroot/}"
+            jq -e --arg r "$route" 'any(.Endpoints[]; .Route == $r)' "$manifest" > /dev/null               || { echo "::error::$route is not in the static web assets manifest."; exit 1; }
           done
           echo "manifest routes: $(jq '.Endpoints | length' "$manifest") (dist/: $(jq '[.Endpoints[] | select(.Route | startswith("dist/"))] | length' "$manifest"))"
 

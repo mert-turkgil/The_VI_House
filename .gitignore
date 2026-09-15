@@ -53,3 +53,6 @@ npm-debug.log*
 Thumbs.db
 .idea/
 *.swp
+
+# Six Labors (ImageSharp) licence — per-developer / GitHub Secret, never committed
+sixlabors.lic

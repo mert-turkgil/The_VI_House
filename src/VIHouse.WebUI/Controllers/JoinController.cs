@@ -51,11 +51,10 @@ public class JoinController(
 
         var form = new JoinFormViewModel
         {
-            Plans = await membershipService.GetActivePlansAsync(ct),
+            Plans = await LoadPlanCardsAsync(ct),
             PlanId = plan ?? Guid.Empty,
             OpenExperiences = await LoadOpenExperiencesAsync(ct),
         };
-        form.FullPlanIds = await FullPlanIdsAsync(form.Plans, ct);
         if (form.FullPlanIds.Contains(form.PlanId)) form.PlanId = Guid.Empty;
 
         if (Request.Cookies.TryGetValue(ReferralCookie.Name, out var referral))
@@ -65,15 +64,17 @@ public class JoinController(
         return View(form);
     }
 
-    private async Task<HashSet<Guid>> FullPlanIdsAsync(IEnumerable<MembershipPlan> plans, CancellationToken ct)
+    /// <summary>The plan cards with their seat counts. Availability is only looked up for plans
+    /// that have a limit — an unlimited plan has nothing to count.</summary>
+    private async Task<List<MembershipPlanCardViewModel>> LoadPlanCardsAsync(CancellationToken ct)
     {
-        var full = new HashSet<Guid>();
-        foreach (var plan in plans.Where(p => p.MaxMembers is not null))
+        var cards = new List<MembershipPlanCardViewModel>();
+        foreach (var plan in await membershipService.GetActivePlansAsync(ct))
         {
-            if ((await membershipService.GetPlanAvailabilityAsync(plan.Id, ct)).IsFull)
-                full.Add(plan.Id);
+            var availability = plan.MaxMembers is null ? null : await membershipService.GetPlanAvailabilityAsync(plan.Id, ct);
+            cards.Add(MembershipPlanCardViewModel.FromEntity(plan, availability));
         }
-        return full;
+        return cards;
     }
 
     /// <summary>
@@ -120,8 +121,7 @@ public class JoinController(
 
         if (!ModelState.IsValid)
         {
-            form.Plans = await membershipService.GetActivePlansAsync(ct);
-            form.FullPlanIds = await FullPlanIdsAsync(form.Plans, ct);
+            form.Plans = await LoadPlanCardsAsync(ct);
             form.OpenExperiences = await LoadOpenExperiencesAsync(ct);
             ViewData["Title"] = "Join The VI House";
             return View(form);
@@ -152,8 +152,7 @@ public class JoinController(
         if (!result.Success)
         {
             ModelState.AddModelError(string.Empty, result.Error!);
-            form.Plans = await membershipService.GetActivePlansAsync(ct);
-            form.FullPlanIds = await FullPlanIdsAsync(form.Plans, ct);
+            form.Plans = await LoadPlanCardsAsync(ct);
             form.OpenExperiences = await LoadOpenExperiencesAsync(ct);
             ViewData["Title"] = "Join The VI House";
             return View(form);

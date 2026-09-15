@@ -8,49 +8,112 @@ import 'swiper/css/effect-fade';
 /**
  * Turns any `[data-swiper]` element into a carousel.
  *
- * The markup is authored so that it degrades to a plain horizontal row without JS — the Swiper
- * classes only take effect once Swiper itself initialises — so a failed bundle costs the arrows and
- * the drag behaviour, not the content.
+ * The markup is authored so that it degrades to a plain row without JS — the Swiper classes only
+ * take effect once Swiper itself initialises — so a failed bundle costs the arrows and the drag
+ * behaviour, not the content.
  *
  * `data-swiper-per-view` sets the desktop slide count; smaller breakpoints step down from it, since
  * every carousel on the site shows the same kind of card and only differs in how many fit.
+ *
+ * Controls live in one of two places. A `[data-swiper-controls]` cluster inside the nearest
+ * `[data-swiper-scope]` (the section header, so the arrows never sit on top of a photograph) is
+ * preferred; failing that, Swiper's own `.swiper-button-*` / `.swiper-pagination` children of the
+ * container (the gallery on the experience page). Either way the controls are hidden outright
+ * while everything fits — Swiper's `watchOverflow` locks them, and a locked arrow beside four
+ * cards that already fit reads as broken rather than idle.
  */
 export function initCarousels(): void {
   const containers = Array.from(document.querySelectorAll<HTMLElement>('[data-swiper]'));
   if (containers.length === 0) return;
 
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   containers.forEach((container) => {
     const perView = Number(container.dataset.swiperPerView ?? '3');
+    const scope = container.closest<HTMLElement>('[data-swiper-scope]');
+    const cluster = scope?.querySelector<HTMLElement>('[data-swiper-controls]') ?? null;
 
-    new Swiper(container, {
+    const prevEl = cluster?.querySelector<HTMLElement>('[data-swiper-prev]')
+      ?? container.querySelector<HTMLElement>('.swiper-button-prev');
+    const nextEl = cluster?.querySelector<HTMLElement>('[data-swiper-next]')
+      ?? container.querySelector<HTMLElement>('.swiper-button-next');
+    const paginationEl = cluster?.querySelector<HTMLElement>('[data-swiper-pagination]')
+      ?? container.querySelector<HTMLElement>('.swiper-pagination');
+
+    const swiper = new Swiper(container, {
       modules: [Navigation, Pagination, A11y, Keyboard],
-      slidesPerView: 1.1,
-      spaceBetween: 20,
+      slidesPerView: 1.15,
+      spaceBetween: 16,
+      speed: prefersReducedMotion ? 0 : 650,
       grabCursor: true,
-      keyboard: { enabled: true },
+      keyboard: { enabled: true, onlyInViewport: true },
       // Only paginate when there's more to see than fits — a "carousel" of two cards on a wide
       // screen showing dead arrows and a single dot looks broken rather than interactive.
       watchOverflow: true,
+      watchSlidesProgress: true,
       breakpoints: {
         640: { slidesPerView: Math.min(2, perView), spaceBetween: 24 },
         1024: { slidesPerView: perView, spaceBetween: 28 },
       },
-      navigation: {
-        nextEl: container.querySelector<HTMLElement>('.swiper-button-next'),
-        prevEl: container.querySelector<HTMLElement>('.swiper-button-prev'),
-      },
+      navigation: { nextEl, prevEl },
       pagination: {
-        el: container.querySelector<HTMLElement>('.swiper-pagination'),
-        clickable: true,
+        el: paginationEl,
+        // The header cluster carries a thin progress bar rather than dots: it says "you are a
+        // third of the way along" without a row of bullets competing with the section title.
+        type: cluster ? 'progressbar' : 'bullets',
+        clickable: !cluster,
       },
 
       a11y: {
-        // Read from data attributes rather than hardcoded, the same way qr.ts takes its localized
-        // strings — the bundle cannot see the .resx files, and this is a four-language site.
+        // Read from data attributes rather than hardcoded — the bundle cannot see the .resx files,
+        // and this is a four-language site.
         prevSlideMessage: container.dataset.swiperPrevLabel || 'Previous slide',
         nextSlideMessage: container.dataset.swiperNextLabel || 'Next slide',
       },
+      on: {
+        // Swiper toggles its own lock classes on the buttons; the cluster as a whole follows
+        // suit so the progress bar disappears with them rather than sitting alone at 100%.
+        init: (s) => { if (cluster) cluster.hidden = s.isLocked; markPeeking(s); },
+        lock: () => { if (cluster) cluster.hidden = true; },
+        unlock: () => { if (cluster) cluster.hidden = false; },
+        // setTranslate fires as the move begins and transitionEnd once it has settled; a drag
+        // produces only the former, an arrow press both.
+        setTranslate: markPeeking,
+        transitionEnd: markPeeking,
+        resize: markPeeking,
+      },
     });
+
+    // The last card is partly cut off at the track's edge by design (it invites the swipe); a
+    // click on it should bring it fully into view rather than start a navigation the reader
+    // cannot yet see the target of.
+    container.addEventListener('click', (event) => {
+      const slide = (event.target as HTMLElement).closest<HTMLElement>('.swiper-slide');
+      if (!slide || swiper.isLocked || !slide.classList.contains('is-peeking')) return;
+      event.preventDefault();
+      const index = Array.from(slide.parentElement?.children ?? []).indexOf(slide);
+      const visible = swiper.slides.filter((el) => !el.classList.contains('is-peeking')).length;
+      swiper.slideTo(index > swiper.activeIndex ? Math.max(0, index - Math.max(1, visible) + 1) : index);
+    });
+  });
+}
+
+/**
+ * Marks the slides that are partly outside the track with `is-peeking`, which the stylesheet dims.
+ * Swiper's own `swiper-slide-fully-visible` is computed from slide progress and misses the last
+ * card in view by a sub-pixel more often than not, so the geometry is measured directly instead.
+ * Nothing is marked while the carousel is locked — every card fits, so none is cut off.
+ */
+function markPeeking(swiper: Swiper): void {
+  const box = swiper.el.getBoundingClientRect();
+  swiper.slides.forEach((slide) => {
+    if (swiper.isLocked) {
+      slide.classList.remove('is-peeking');
+      return;
+    }
+    const rect = slide.getBoundingClientRect();
+    const peeking = rect.left < box.left - 1 || rect.right > box.right + 1;
+    slide.classList.toggle('is-peeking', peeking);
   });
 }
 

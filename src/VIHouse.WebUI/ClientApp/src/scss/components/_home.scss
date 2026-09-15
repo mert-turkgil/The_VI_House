@@ -902,7 +902,16 @@
   }
 }
 
+// The right-hand side of a strip's header: the carousel's arrows (when there is something to
+// scroll) and the "view all" link, on one baseline.
+.home-section__tools {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
 .home-section__viewall {
+  position: relative;
   font-size: 0.8125rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -910,8 +919,160 @@
   color: var(--vih-green-800);
   white-space: nowrap;
 
-  &:hover {
-    text-decoration: underline;
+  // A gold rule that draws in from the left on hover, instead of a browser underline.
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3px;
+    height: 1px;
+    background: var(--vih-gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    transform: scaleX(1);
+  }
+}
+
+// --- Carousel controls (Views/Home/_CarouselControls.cshtml) -------------------------------------
+// Sits in the section header, hidden entirely by modules/carousel.ts while everything fits.
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  // The script sets the attribute while everything fits; display:flex above would otherwise win.
+  &[hidden] {
+    display: none;
+  }
+}
+
+// Swiper styles the progress bar as an absolute strip along the top of the track, and its fill
+// as an absolute box inside it. Here the bar is an inline element in the header, so it has to be
+// re-anchored — and it must stay positioned, or the fill's containing block becomes whatever is
+// positioned above it and the fill paints the whole section. The three-class selector outranks
+// Swiper's own two-class rule regardless of stylesheet order.
+.carousel-controls > .carousel-controls__bar.swiper-pagination-progressbar {
+  position: relative;
+  inset: auto;
+  width: 72px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(18, 22, 15, 0.14);
+  overflow: hidden;
+  margin-right: 8px;
+  --swiper-pagination-color: var(--vih-gold);
+
+  .swiper-pagination-progressbar-fill {
+    transition: transform 0.5s var(--vih-ease-out);
+  }
+
+  @media (max-width: 559px) {
+    display: none;
+  }
+}
+
+.carousel-controls__btn {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(18, 22, 15, 0.18);
+  background: var(--vih-white);
+  color: var(--vih-green-900);
+  cursor: pointer;
+  transition:
+    background var(--vih-dur-base) var(--vih-ease-out),
+    color var(--vih-dur-base) var(--vih-ease-out),
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    transform var(--vih-dur-base) var(--vih-ease-out),
+    opacity var(--vih-dur-base) var(--vih-ease-out);
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform var(--vih-dur-base) var(--vih-ease-out);
+  }
+
+  &:hover:not(:disabled):not(.swiper-button-disabled) {
+    background: var(--vih-green-900);
+    border-color: var(--vih-green-900);
+    color: var(--vih-cream);
+    transform: translateY(-1px);
+
+    &[data-swiper-prev] svg { transform: translateX(-2px); }
+    &[data-swiper-next] svg { transform: translateX(2px); }
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--vih-shadow-focus);
+  }
+
+  // Swiper adds this at either end of the track. Still visible, so the pair keeps its shape, but
+  // clearly not something to press.
+  &.swiper-button-disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+}
+
+// The "View →" chip that slides up from the corner of a card's photograph on hover, so the whole
+// card reads as a door rather than a picture with a caption. aria-hidden: the card's own title is
+// the link text.
+.card-peek {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--vih-cream);
+  color: var(--vih-green-900);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--vih-dur-slow) var(--vih-ease-out),
+    transform var(--vih-dur-slow) var(--vih-ease-out);
+  pointer-events: none;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  a:hover > * > &,
+  a:focus-visible > * > & {
+    opacity: 1;
+    transform: none;
+  }
+
+  // Touch has no hover; the chip would only ever cover the photograph's corner.
+  @media (hover: none) {
+    display: none;
   }
 }
 
@@ -947,6 +1108,20 @@
     width: 100%;
   }
 
+  // The card that is partly off the track's edge (modules/carousel.ts marks it) is dimmed a touch
+  // so the cut-off reads as "more this way" rather than a layout that ran out of room. A custom
+  // property rather than opacity directly, so the entrance animation below can land on the same
+  // value.
+  &.swiper-initialized .swiper-slide {
+    --card-opacity: 1;
+    opacity: var(--card-opacity);
+    transition: opacity var(--vih-dur-slow) var(--vih-ease-out);
+  }
+
+  &.swiper-initialized .swiper-slide.is-peeking {
+    --card-opacity: 0.55;
+  }
+
   // Until Swiper has run (it adds .swiper-initialized), the slides are a plain row and each would
   // take the full container width — one card, one enormous photograph. Cap them at the same widths
   // the non-carousel grids use, so the page looks the same with or without the script.
@@ -962,51 +1137,49 @@
       flex: 0 1 320px;
       max-width: 320px;
     }
-
-    .swiper-button-prev,
-    .swiper-button-next,
-    .swiper-pagination {
-      display: none;
-    }
-  }
-
-  .swiper-button-prev,
-  .swiper-button-next {
-    width: 38px;
-    height: 38px;
-    // Centre on the card's image rather than the whole card, so the control doesn't straddle the
-    // boundary between the artwork and the title block.
-    top: 38%;
-    border-radius: 50%;
-    background: var(--vih-white);
-    border: 1px solid var(--vih-line-on-light);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-    transition: background 0.2s var(--vih-ease), color 0.2s var(--vih-ease);
-
-    &:hover {
-      background: var(--vih-green-900);
-      --swiper-navigation-color: var(--vih-cream);
-    }
-
-    &::after {
-      font-size: var(--swiper-navigation-size);
-      font-weight: 700;
-    }
-  }
-
-  .swiper-pagination {
-    bottom: 8px;
   }
 }
 
-// Arrows are a pointer affordance; on touch widths the swipe itself is the interaction and they
-// only crowd the cards.
-@media (max-width: 767px) {
-  .home-carousel {
-    .swiper-button-prev,
-    .swiper-button-next {
-      display: none;
-    }
+// Cards arrive one after another as the strip scrolls into view — the section's own reveal
+// (modules/reveal.ts) fades the block; this staggers what is inside it. Scoped to .reveal so a
+// page without the script never hides a card. An animation with a backwards fill, not a
+// transition: once it has played, opacity is free to follow the off-screen dimming above without
+// dragging the entrance delay along with it.
+.reveal .home-carousel .swiper-slide,
+.reveal .home-upcoming__grid > *,
+.reveal .home-signature__grid > * {
+  opacity: 0;
+}
+
+.reveal.is-visible .home-carousel .swiper-slide,
+.reveal.is-visible .home-upcoming__grid > *,
+.reveal.is-visible .home-signature__grid > * {
+  opacity: var(--card-opacity, 1);
+  animation: card-enter 0.6s var(--vih-ease-out) backwards;
+  animation-delay: calc(120ms + var(--stagger, 0) * 90ms);
+
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) { --stagger: #{$i - 1}; }
+  }
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: var(--card-opacity, 1);
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal .home-carousel .swiper-slide,
+  .reveal .home-upcoming__grid > *,
+  .reveal .home-signature__grid > * {
+    opacity: var(--card-opacity, 1);
+    animation: none;
   }
 }
 
@@ -1017,11 +1190,29 @@
   border-radius: 10px;
   overflow: hidden;
   background: var(--vih-white);
-  transition: box-shadow 0.2s var(--vih-ease), transform 0.2s var(--vih-ease);
+  transition:
+    box-shadow var(--vih-dur-slow) var(--vih-ease-out),
+    transform var(--vih-dur-slow) var(--vih-ease-out),
+    border-color var(--vih-dur-slow) var(--vih-ease-out);
 
-  &:hover {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+  &:hover,
+  &:focus-visible {
+    box-shadow: var(--vih-shadow-md);
+    transform: translateY(-4px);
+    border-color: rgba(184, 149, 90, 0.5);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--vih-shadow-focus), var(--vih-shadow-md);
+  }
+
+  &:hover h3 {
+    color: var(--vih-green-700);
+  }
+
+  h3 {
+    transition: color var(--vih-dur-base) var(--vih-ease-out);
   }
 }
 
@@ -1092,11 +1283,29 @@
   overflow: hidden;
   background: var(--vih-white);
   border: 1px solid var(--vih-line-on-light);
-  transition: box-shadow 0.2s var(--vih-ease), transform 0.2s var(--vih-ease);
+  transition:
+    box-shadow var(--vih-dur-slow) var(--vih-ease-out),
+    transform var(--vih-dur-slow) var(--vih-ease-out),
+    border-color var(--vih-dur-slow) var(--vih-ease-out);
 
-  &:hover {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+  &:hover,
+  &:focus-visible {
+    box-shadow: var(--vih-shadow-md);
+    transform: translateY(-4px);
+    border-color: rgba(184, 149, 90, 0.5);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--vih-shadow-focus), var(--vih-shadow-md);
+  }
+
+  h3 {
+    transition: color var(--vih-dur-base) var(--vih-ease-out);
+  }
+
+  &:hover h3 {
+    color: var(--vih-green-700);
   }
 }
 

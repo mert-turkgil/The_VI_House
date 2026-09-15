@@ -692,6 +692,7 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Home.Filter.Topic.Funding" xml:space="preserve"><value>Finanzierung</value></data>
   <data name="Home.Hero.Previous" xml:space="preserve"><value>Vorheriges Bild</value></data>
   <data name="Home.Hero.Next" xml:space="preserve"><value>Nächstes Bild</value></data>
+  <data name="Home.Card.View" xml:space="preserve"><value>Ansehen</value></data>
   <data name="Admin.HeroSlide.Title" xml:space="preserve"><value>Hero-Slides</value></data>
   <data name="Admin.HeroSlide.New" xml:space="preserve"><value>Neuer Slide</value></data>
   <data name="Admin.HeroSlide.Preview" xml:space="preserve"><value>Startseite ansehen</value></data>
@@ -1027,6 +1028,21 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Join.Single.Lede" xml:space="preserve"><value>Keine Mitgliedschaft nötig. Bewerben Sie sich für das Erlebnis, das Sie interessiert — jede Bewerbung wird persönlich gelesen, und gezahlt wird erst nach Zusage.</value></data>
   <data name="Join.Single.None" xml:space="preserve"><value>Derzeit sind keine Erlebnisse für Bewerbungen geöffnet.</value></data>
   <data name="Join.Single.SeeUpcoming" xml:space="preserve"><value>Sehen Sie, was ansteht</value></data>
+  <data name="Join.Route.Single.Count" xml:space="preserve"><value>{0} offen für Bewerbungen</value></data>
+  <data name="Join.Route.Single.Go" xml:space="preserve"><value>Erlebnisse ansehen</value></data>
+  <data name="Join.Step" xml:space="preserve"><value>Schritt {0}</value></data>
+  <data name="Join.Summary.Title" xml:space="preserve"><value>Ihre Mitgliedschaft</value></data>
+  <data name="Join.Summary.None" xml:space="preserve"><value>Wählen Sie einen Plan, und er erscheint hier.</value></data>
+  <data name="Join.Summary.Due" xml:space="preserve"><value>Heute fällig</value></data>
+  <data name="Join.Summary.Promo" xml:space="preserve"><value>Der Code {0} wird auf der Zahlungsseite angewendet.</value></data>
+  <data name="Join.Summary.Next" xml:space="preserve"><value>Wie es weitergeht</value></data>
+  <data name="Join.Summary.Next.1" xml:space="preserve"><value>Sicher über Stripe bezahlen.</value></data>
+  <data name="Join.Summary.Next.2" xml:space="preserve"><value>Ihr Konto wird angelegt, sobald die Zahlung eingegangen ist.</value></data>
+  <data name="Join.Summary.Next.3" xml:space="preserve"><value>Passwort festlegen und das erste Erlebnis auswählen.</value></data>
+  <data name="Join.Plan.Select" xml:space="preserve"><value>Diesen Plan wählen</value></data>
+  <data name="Join.Plan.Selected" xml:space="preserve"><value>Ausgewählt</value></data>
+  <data name="Join.Submitting" xml:space="preserve"><value>Sichere Zahlung wird geöffnet …</value></data>
+  <data name="Join.Single.Browse" xml:space="preserve"><value>Alle offenen Erlebnisse ansehen</value></data>
   <data name="Join.From" xml:space="preserve"><value>ab</value></data>
   <data name="Join.ApplyForThis" xml:space="preserve"><value>Hierfür bewerben</value></data>
   <data name="Join.AlreadyHaveAccount" xml:space="preserve"><value>Sie haben bereits ein Konto?</value></data>

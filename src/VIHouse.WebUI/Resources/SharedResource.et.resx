@@ -692,6 +692,7 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Home.Filter.Topic.Funding" xml:space="preserve"><value>Rahastus</value></data>
   <data name="Home.Hero.Previous" xml:space="preserve"><value>Eelmine slaid</value></data>
   <data name="Home.Hero.Next" xml:space="preserve"><value>Järgmine slaid</value></data>
+  <data name="Home.Card.View" xml:space="preserve"><value>Vaata</value></data>
   <data name="Admin.HeroSlide.Title" xml:space="preserve"><value>Avaslaidid</value></data>
   <data name="Admin.HeroSlide.New" xml:space="preserve"><value>Uus slaid</value></data>
   <data name="Admin.HeroSlide.Preview" xml:space="preserve"><value>Vaata avalehte</value></data>
@@ -1027,6 +1028,21 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Join.Single.Lede" xml:space="preserve"><value>Liikmesust pole vaja. Kandideerige elamusele, mis teid huvitab — iga taotlus loetakse läbi käsitsi ja maksta palutakse alles pärast heakskiitu.</value></data>
   <data name="Join.Single.None" xml:space="preserve"><value>Praegu ei ole ükski elamus kandideerimiseks avatud.</value></data>
   <data name="Join.Single.SeeUpcoming" xml:space="preserve"><value>Vaadake, mis tulemas on</value></data>
+  <data name="Join.Route.Single.Count" xml:space="preserve"><value>{0} avatud taotlusteks</value></data>
+  <data name="Join.Route.Single.Go" xml:space="preserve"><value>Sirvi elamusi</value></data>
+  <data name="Join.Step" xml:space="preserve"><value>Samm {0}</value></data>
+  <data name="Join.Summary.Title" xml:space="preserve"><value>Teie liikmesus</value></data>
+  <data name="Join.Summary.None" xml:space="preserve"><value>Valige plaan ja see ilmub siia.</value></data>
+  <data name="Join.Summary.Due" xml:space="preserve"><value>Tasuda täna</value></data>
+  <data name="Join.Summary.Promo" xml:space="preserve"><value>Kood {0} rakendatakse makselehel.</value></data>
+  <data name="Join.Summary.Next" xml:space="preserve"><value>Mis saab edasi</value></data>
+  <data name="Join.Summary.Next.1" xml:space="preserve"><value>Makske turvaliselt Stripe'i kaudu.</value></data>
+  <data name="Join.Summary.Next.2" xml:space="preserve"><value>Teie konto luuakse kohe, kui makse laekub.</value></data>
+  <data name="Join.Summary.Next.3" xml:space="preserve"><value>Määrake parool ja valige oma esimene elamus.</value></data>
+  <data name="Join.Plan.Select" xml:space="preserve"><value>Vali see plaan</value></data>
+  <data name="Join.Plan.Selected" xml:space="preserve"><value>Valitud</value></data>
+  <data name="Join.Submitting" xml:space="preserve"><value>Avame turvalise makse…</value></data>
+  <data name="Join.Single.Browse" xml:space="preserve"><value>Vaata kõiki avatud elamusi</value></data>
   <data name="Join.From" xml:space="preserve"><value>alates</value></data>
   <data name="Join.ApplyForThis" xml:space="preserve"><value>Kandideeri sellele</value></data>
   <data name="Join.AlreadyHaveAccount" xml:space="preserve"><value>Kas teil on juba konto?</value></data>

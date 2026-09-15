@@ -11,7 +11,10 @@
 // that asp-append-version already adds — so a rebuild that changes a file's content automatically
 // produces a new URL (cache miss -> fetch -> cache), with no manual versioning to maintain here.
 
-const CACHE_NAME = 'vih-static-v1';
+// Bumped to v2: v1 could store a redirect-to-HTML under a /dist/ URL (see the fetch handler), and
+// activating this version deletes that cache, which is the only way to evict a poisoned entry
+// from a browser that already has one.
+const CACHE_NAME = 'vih-static-v2';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
@@ -38,7 +41,15 @@ self.addEventListener('fetch', (event) => {
       if (cached) return cached;
 
       const response = await fetch(request);
-      if (response.ok) cache.put(request, response.clone());
+
+      // Only a genuine script/stylesheet answer is worth keeping. A /dist/ URL that is not in the
+      // static-assets manifest (mid-deploy, a stale chunk name) is redirected to /coming-soon,
+      // which is a 200 HTML page — response.ok alone would cache that page under the JS URL for
+      // ever, and every later page load would then fail at "expected a JavaScript module,
+      // got text/html". That is exactly what happened once; hence the three checks.
+      const type = response.headers.get('content-type') || '';
+      const cacheable = response.ok && !response.redirected && !type.includes('text/html');
+      if (cacheable) cache.put(request, response.clone());
       return response;
     })
   );

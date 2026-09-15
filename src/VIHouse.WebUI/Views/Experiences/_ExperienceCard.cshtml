@@ -6,13 +6,14 @@
 *@
 
 @{ var href = Model.Href ?? Url.Action("Details", "Experiences", new { area = "", slug = Model.Slug }); }
-<a class="experience-card" href="@href">
+<a class="experience-card" href="@href" data-vt-cover>
     <div class="experience-card__media">
         <partial name="_CoverImage" model="@(new CoverImageViewModel {
             Url = Model.CoverImageUrl,
             Alt = Model.CoverImageAlt,
             Ratio = "4x3",
             Sizes = "(min-width: 1200px) 30vw, (min-width: 720px) 45vw, 100vw",
+            Zoom = true,
         })" />
         <span class="experience-card__badge experience-card__badge--@Model.StatusModifier">
             @Loc[Model.StatusKey]

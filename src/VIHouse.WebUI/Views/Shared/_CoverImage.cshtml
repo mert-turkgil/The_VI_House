@@ -24,7 +24,8 @@
 *@
 @model VIHouse.WebUI.ViewModels.Shared.CoverImageViewModel
 
-<div class="cover cover--@Model.Ratio">
+<div class="cover cover--@Model.Ratio @(Model.Zoom ? "cover--zoom" : "")"
+     style="@(Model.TransitionName is null ? null : $"view-transition-name: {Model.TransitionName}")">
     @if (string.IsNullOrWhiteSpace(Model.Url))
     {
         @* No image set. A crest on the brand green reads as a deliberate placeholder rather than a

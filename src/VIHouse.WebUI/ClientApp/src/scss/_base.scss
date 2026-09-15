@@ -5,6 +5,55 @@
   box-sizing: border-box;
 }
 
+// --- Page transitions ------------------------------------------------------------------------
+// Every same-origin navigation cross-fades for a beat instead of flashing white. The one element
+// that does more than fade is a cover photograph: modules/transitions.ts names the card the
+// visitor clicked `experience-cover`, and the detail page's hero declares the same name, so the
+// browser draws the photograph growing from the card into the hero. The header keeps its own name
+// so it stays put rather than fading with the rest. Browsers without the API ignore all of this.
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.28s;
+  animation-timing-function: var(--vih-ease-out);
+}
+
+::view-transition-group(experience-cover) {
+  animation-duration: 0.45s;
+  animation-timing-function: var(--vih-ease-out);
+}
+
+// The two photographs cross-fade inside the moving frame; without this the old one stays opaque
+// and the new one pops in at the end.
+::view-transition-old(experience-cover),
+::view-transition-new(experience-cover) {
+  animation: none;
+  mix-blend-mode: normal;
+  height: 100%;
+  object-fit: cover;
+}
+
+::view-transition-old(experience-cover) {
+  animation: vt-fade-out 0.45s var(--vih-ease-out) forwards;
+}
+
+@keyframes vt-fade-out {
+  to { opacity: 0; }
+}
+
+.site-header {
+  view-transition-name: site-header;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }

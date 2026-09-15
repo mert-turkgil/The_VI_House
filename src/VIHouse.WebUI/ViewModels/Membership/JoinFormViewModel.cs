@@ -73,11 +73,16 @@ public class JoinFormViewModel
     [StringLength(40)]
     public string? PromoCode { get; set; }
 
-    /// <summary>Repopulated on every render — the plan cards are part of the form, not a separate page.</summary>
-    public List<MembershipPlan> Plans { get; set; } = [];
+    /// <summary>Repopulated on every render — the plan cards are part of the form, not a separate
+    /// page. The same card model /membership uses, so seats and features read the same in both.</summary>
+    public List<MembershipPlanCardViewModel> Plans { get; set; } = [];
 
     /// <summary>Plans at their member limit — rendered disabled with a note, never selectable.</summary>
-    public HashSet<Guid> FullPlanIds { get; set; } = [];
+    public HashSet<Guid> FullPlanIds => Plans.Where(p => p.IsFull).Select(p => p.Id).ToHashSet();
+
+    /// <summary>How many experiences are open for applications — the "one experience" route
+    /// tile says so, and links to the listing rather than repeating it here.</summary>
+    public int OpenExperienceCount => OpenExperiences.Count;
 
     /// <summary>The single-event alternative, offered on the same page so a visitor who only wants
     /// one gathering doesn't have to guess that /apply exists.</summary>

@@ -692,6 +692,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Home.Filter.Topic.Funding" xml:space="preserve"><value>Yatırım</value></data>
   <data name="Home.Hero.Previous" xml:space="preserve"><value>Önceki slayt</value></data>
   <data name="Home.Hero.Next" xml:space="preserve"><value>Sonraki slayt</value></data>
+  <data name="Home.Card.View" xml:space="preserve"><value>İncele</value></data>
   <data name="Admin.HeroSlide.Title" xml:space="preserve"><value>Ana Görsel Slaytları</value></data>
   <data name="Admin.HeroSlide.New" xml:space="preserve"><value>Yeni Slayt</value></data>
   <data name="Admin.HeroSlide.Preview" xml:space="preserve"><value>Ana sayfayı gör</value></data>
@@ -1027,6 +1028,21 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Join.Single.Lede" xml:space="preserve"><value>Üyelik gerekmez. İlgilendiğiniz deneyime başvurun — her başvuru elle okunur ve yalnızca onaylandığınızda ödeme istenir.</value></data>
   <data name="Join.Single.None" xml:space="preserve"><value>Şu anda başvuruya açık deneyim yok.</value></data>
   <data name="Join.Single.SeeUpcoming" xml:space="preserve"><value>Yaklaşanlara bakın</value></data>
+  <data name="Join.Route.Single.Count" xml:space="preserve"><value>{0} deneyim başvuruya açık</value></data>
+  <data name="Join.Route.Single.Go" xml:space="preserve"><value>Deneyimlere göz atın</value></data>
+  <data name="Join.Step" xml:space="preserve"><value>Adım {0}</value></data>
+  <data name="Join.Summary.Title" xml:space="preserve"><value>Üyeliğiniz</value></data>
+  <data name="Join.Summary.None" xml:space="preserve"><value>Bir plan seçin, burada görünecek.</value></data>
+  <data name="Join.Summary.Due" xml:space="preserve"><value>Bugün ödenecek</value></data>
+  <data name="Join.Summary.Promo" xml:space="preserve"><value>{0} kodu ödeme sayfasında uygulanacak.</value></data>
+  <data name="Join.Summary.Next" xml:space="preserve"><value>Sırada ne var</value></data>
+  <data name="Join.Summary.Next.1" xml:space="preserve"><value>Stripe üzerinden güvenle ödeyin.</value></data>
+  <data name="Join.Summary.Next.2" xml:space="preserve"><value>Ödeme onaylandığı anda hesabınız oluşturulur.</value></data>
+  <data name="Join.Summary.Next.3" xml:space="preserve"><value>Şifrenizi belirleyin, ardından ilk deneyiminizi seçin.</value></data>
+  <data name="Join.Plan.Select" xml:space="preserve"><value>Bu planı seç</value></data>
+  <data name="Join.Plan.Selected" xml:space="preserve"><value>Seçildi</value></data>
+  <data name="Join.Submitting" xml:space="preserve"><value>Güvenli ödeme açılıyor…</value></data>
+  <data name="Join.Single.Browse" xml:space="preserve"><value>Açık tüm deneyimleri görün</value></data>
   <data name="Join.From" xml:space="preserve"><value>başlangıç</value></data>
   <data name="Join.ApplyForThis" xml:space="preserve"><value>Buna başvur</value></data>
   <data name="Join.AlreadyHaveAccount" xml:space="preserve"><value>Zaten hesabınız var mı?</value></data>

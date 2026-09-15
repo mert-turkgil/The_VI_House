@@ -5,14 +5,16 @@
     plain grid cell depending on whether there's enough content to actually scroll. See
     _Signature.cshtml for which one gets picked.
 *@
-<a class="home-signature__card" href="/experiences/@Model.Slug">
+<a class="home-signature__card" href="/experiences/@Model.Slug" data-vt-cover>
     <div class="home-signature__image">
         <partial name="_CoverImage" model="@(new CoverImageViewModel {
             Url = Model.CoverImageUrl,
             Ratio = "16x9",
             Sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+            Zoom = true,
         })" />
         <span class="home-signature__badge">@Loc["Home.Signature.Badge"]</span>
+        <span class="card-peek" aria-hidden="true">@Loc["Home.Card.View"] <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
     </div>
     <div class="home-signature__body">
         <h3>The VI House — @Model.City</h3>

@@ -1,0 +1,20 @@
+@*
+    The arrows and progress bar for a card carousel, rendered in the section header rather than on
+    top of the photographs. modules/carousel.ts wires them to the nearest [data-swiper] inside the
+    same [data-swiper-scope], and hides the whole cluster when everything already fits (Swiper's
+    own lock state) — a row of four cards on a wide screen has nothing to scroll, and dead arrows
+    beside it read as broken.
+
+    Model: the localised prev/next labels.
+*@
+@model (string Prev, string Next)
+
+<div class="carousel-controls" data-swiper-controls hidden>
+    <div class="carousel-controls__bar" data-swiper-pagination></div>
+    <button type="button" class="carousel-controls__btn" data-swiper-prev aria-label="@Model.Prev">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <button type="button" class="carousel-controls__btn" data-swiper-next aria-label="@Model.Next">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+</div>

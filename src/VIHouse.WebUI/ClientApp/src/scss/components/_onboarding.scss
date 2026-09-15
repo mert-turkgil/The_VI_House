@@ -362,13 +362,20 @@
 }
 
 // --- Join & pay ---------------------------------------------------------------------------------
+// Views/Join/Index.cshtml. A checkout, laid out like one: numbered steps down the left, a summary
+// that follows the choice on the right, plan cards in a strip that snaps (modules/join.ts). All of
+// the motion below is decorative — the form is complete and usable with none of it.
 .join {
   background: var(--vih-cream);
   padding: 56px 0 88px;
 }
 
 .join__inner {
-  max-width: 720px;
+  max-width: 1180px;
+}
+
+.join__head {
+  max-width: 760px;
 
   h1 {
     font-family: var(--vih-font-serif);
@@ -410,7 +417,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
-  margin-bottom: 36px;
+  margin-bottom: 40px;
 
   @media (max-width: 599px) {
     grid-template-columns: 1fr;
@@ -418,13 +425,19 @@
 }
 
 .join__route {
-  display: block;
+  position: relative;
+  display: flex;
+  flex-direction: column;
   padding: 18px 20px;
   border-radius: 12px;
   border: 1px solid var(--vih-line-on-light);
   background: var(--vih-white);
   text-decoration: none;
   color: inherit;
+  transition:
+    border-color var(--vih-dur-slow) var(--vih-ease-out),
+    transform var(--vih-dur-slow) var(--vih-ease-out),
+    box-shadow var(--vih-dur-slow) var(--vih-ease-out);
 
   p {
     margin: 6px 0 0;
@@ -433,14 +446,23 @@
     color: rgba(18, 22, 15, 0.65);
   }
 
-  // The membership route is the one this page performs; the other is a signpost further down.
+  // The membership route is the one this page performs; the other is a door out.
   &--active {
     border-color: var(--vih-gold);
     background: rgba(184, 149, 90, 0.08);
   }
 
-  &:not(&--active):hover {
-    border-color: rgba(18, 22, 15, 0.28);
+  &--link:hover,
+  &--link:focus-visible {
+    border-color: var(--vih-green-900);
+    transform: translateY(-3px);
+    box-shadow: var(--vih-shadow-md);
+    outline: none;
+  }
+
+  &--link:hover .join__route-go svg,
+  &--link:focus-visible .join__route-go svg {
+    transform: translateX(4px);
   }
 }
 
@@ -453,103 +475,214 @@
   color: var(--vih-green-900);
 }
 
-.join__preselected {
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  background: rgba(184, 149, 90, 0.14);
-  border: 1px solid rgba(184, 149, 90, 0.4);
-  font-size: 0.9375rem;
-}
-
-// --- Single-experience section --------------------------------------------------------------------
-.join__single {
-  margin-top: 48px;
-  padding-top: 36px;
+// "N open · Browse experiences →" along the bottom of the link tile.
+.join__route-go {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
   border-top: 1px solid var(--vih-line-on-light);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--vih-green-900);
 
-  h2 {
-    font-family: var(--vih-font-serif);
-    font-size: 1.375rem;
-    margin: 0 0 10px;
-    color: var(--vih-green-900);
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
   }
 }
 
-.join__single-lede {
-  font-size: 0.9375rem;
-  line-height: 1.65;
-  color: rgba(18, 22, 15, 0.7);
-  margin: 0 0 22px;
-}
-
-.join__experiences {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.join__experience {
-  display: flex;
+.join__route-go-label {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 16px 20px;
-  background: var(--vih-white);
-  border: 1px solid var(--vih-line-on-light);
-  border-radius: 12px;
+  gap: 6px;
+  white-space: nowrap;
+}
 
-  h3 {
-    font-family: var(--vih-font-serif);
-    font-size: 1rem;
-    margin: 2px 0 3px;
-    color: var(--vih-green-900);
+.join__route-count {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--vih-green-900);
+  color: var(--vih-cream);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+}
+
+// --- Form + summary -----------------------------------------------------------------------------
+.join__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 40px;
+  align-items: start;
+
+  @media (max-width: 1023px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+}
+
+.join__form {
+  min-width: 0;
+}
+
+// Each step is a white card. They rise into place one after another on load — a plain CSS
+// animation rather than the scroll reveal, because a form that hides its fields until scrolled
+// to feels broken rather than choreographed.
+.join__step {
+  position: relative;
+  padding: 28px;
+  margin: 0 0 20px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 14px;
+  background: var(--vih-white);
+  min-width: 0;
+  animation: join-rise 0.6s var(--vih-ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 90ms);
+
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) { --i: #{$i - 1}; }
   }
 
   @media (max-width: 599px) {
-    flex-direction: column;
-    align-items: stretch;
+    padding: 22px 18px;
   }
 }
 
-.join__experience-date {
-  font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  font-weight: 700;
-  color: var(--vih-gold);
-}
-
-.join__experience-meta {
-  font-size: 0.8125rem;
-  color: rgba(18, 22, 15, 0.6);
+@keyframes join-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .join__form fieldset {
   border: none;
-  padding: 0;
-  margin: 0 0 32px;
+  padding: 28px;
+  min-width: 0;
 
-  legend {
-    font-family: var(--vih-font-serif);
-    font-size: 1.125rem;
-    color: var(--vih-green-900);
-    margin-bottom: 16px;
-    padding: 0;
+  @media (max-width: 599px) {
+    padding: 22px 18px;
   }
 }
 
-.join__plans {
+// The numbered heading. Floated, because a legend that is not floated is drawn on the fieldset's
+// top border — the number would straddle the card's edge — and a floated one becomes an ordinary
+// box inside it. Not flex: legends render oddly as flex containers in more than one browser, so
+// the number and the text are inline-blocks aligned to each other.
+.join__legend {
+  float: left;
   display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 22px;
+}
+
+.join__step > * {
+  clear: both;
+}
+
+.join__legend-num {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  border-radius: 50%;
+  border: 1.5px solid var(--vih-green-900);
+  color: var(--vih-green-900);
+  font-family: var(--vih-font-serif);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  vertical-align: middle;
+  transition:
+    background var(--vih-dur-slow) var(--vih-ease-out),
+    border-color var(--vih-dur-slow) var(--vih-ease-out),
+    color var(--vih-dur-slow) var(--vih-ease-out),
+    transform var(--vih-dur-slow) var(--vih-ease-out);
+
+  .is-complete & {
+    background: var(--vih-gold);
+    border-color: var(--vih-gold);
+    color: var(--vih-white);
+    transform: scale(1.06);
+  }
+}
+
+.join__legend-text {
+  display: inline-block;
+  vertical-align: middle;
+  font-family: var(--vih-font-serif);
+  font-size: 1.1875rem;
+  color: var(--vih-green-900);
+}
+
+.join__legend-step {
+  display: block;
+  font-family: var(--vih-font-sans);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vih-gold);
+  margin-bottom: 2px;
+}
+
+// --- Plan cards (Swiper) --------------------------------------------------------------------------
+.join__plan-strip {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-bottom: 20px;
+
+  .carousel-controls {
+    align-self: flex-end;
+    margin-bottom: 12px;
+  }
+}
+
+.join__plan-swiper {
+  // A flex item's minimum width is its content — here, every card side by side — so without
+  // this the strip would grow to fit all of them and overflow the form instead of scrolling.
+  min-width: 0;
+  width: calc(100% + 12px);
+  // Swiper clips overflow, which would also clip the selected card's glow — the padding gives it
+  // somewhere to land, and the negative margin keeps the cards aligned to the fieldset.
+  padding: 6px;
+  margin: -6px;
+
+  .swiper-slide {
+    width: 300px;
+    max-width: 88%;
+    height: auto;
+    display: flex;
+  }
+
+  // Before the script runs, the slides are a wrapping row; each is still a card, still a radio.
+  &:not(.swiper-initialized) .swiper-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
 }
 
 .join__plan {
-  display: block;
   position: relative;
-  margin-bottom: 12px;
+  display: flex;
+  width: 100%;
   cursor: pointer;
 
   input {
@@ -561,85 +694,131 @@
   // The whole card is the control, not just the radio dot — a bigger, more obvious target,
   // especially on touch.
   .join__plan-body {
-    display: block;
-    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 22px;
     background: var(--vih-white);
     border: 1px solid var(--vih-line-on-light);
-    border-radius: 12px;
-    transition: border-color 0.15s var(--vih-ease), box-shadow 0.15s var(--vih-ease);
+    border-radius: 14px;
+    transition:
+      border-color var(--vih-dur-slow) var(--vih-ease-out),
+      box-shadow var(--vih-dur-slow) var(--vih-ease-out),
+      transform var(--vih-dur-slow) var(--vih-ease-out);
+  }
+
+  &:hover:not(&--full) .join__plan-body {
+    border-color: rgba(18, 22, 15, 0.3);
+    transform: translateY(-3px);
+    box-shadow: var(--vih-shadow-md);
   }
 
   input:checked + .join__plan-body {
     border-color: var(--vih-gold);
-    box-shadow: 0 0 0 1px var(--vih-gold), 0 6px 20px rgba(184, 149, 90, 0.15);
+    box-shadow: 0 0 0 1px var(--vih-gold), var(--vih-shadow-gold);
+    transform: translateY(-3px);
   }
 
   input:focus-visible + .join__plan-body {
     outline: 2px solid var(--vih-gold);
     outline-offset: 2px;
   }
+
+  input:checked + .join__plan-body .join__plan-check {
+    background: var(--vih-gold);
+    border-color: var(--vih-gold);
+    color: var(--vih-white);
+    transform: scale(1);
+
+    svg {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  input:checked + .join__plan-body .join__plan-cta {
+    background: var(--vih-green-900);
+    border-color: var(--vih-green-900);
+    color: var(--vih-cream);
+  }
+
+  input:checked + .join__plan-body .join__plan-cta-idle { display: none; }
+  input:checked + .join__plan-body .join__plan-cta-on { display: inline; }
+}
+
+.join__plan-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
 }
 
 .join__plan-name {
-  display: block;
   font-family: var(--vih-font-serif);
-  font-size: 1.125rem;
+  font-size: 1.1875rem;
+  line-height: 1.25;
   color: var(--vih-green-900);
-  margin-bottom: 4px;
+}
+
+// The tick in the corner: an empty ring until chosen, then gold with the stroke drawing in.
+.join__plan-check {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(18, 22, 15, 0.25);
+  color: transparent;
+  transform: scale(0.92);
+  transition:
+    background var(--vih-dur-slow) var(--vih-ease-out),
+    border-color var(--vih-dur-slow) var(--vih-ease-out),
+    color var(--vih-dur-slow) var(--vih-ease-out),
+    transform var(--vih-dur-slow) var(--vih-ease-out);
+
+  svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    transition: stroke-dashoffset 0.4s var(--vih-ease-out) 0.1s;
+  }
 }
 
 .join__plan-price {
   display: block;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--vih-green-900);
 
   em {
     font-style: normal;
     font-size: 0.8125rem;
     font-weight: 400;
+    letter-spacing: 0;
     color: rgba(18, 22, 15, 0.55);
     margin-left: 4px;
   }
 }
 
-.join__plan-desc {
+.join__plan-seats {
   display: block;
-  margin-top: 8px;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: rgba(18, 22, 15, 0.7);
-}
-
-.join__plan-note {
-  display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 0.75rem;
+  font-weight: 700;
   color: var(--vih-gold);
-  font-weight: 600;
-}
-
-// A plan at its member limit: still listed, so the choice on offer is honest, but not selectable.
-.join__plan:has(input:disabled) {
-  cursor: not-allowed;
-
-  .join__plan-body {
-    opacity: 0.6;
-  }
-}
-
-.join__field--promo {
-  margin-top: 8px;
-  max-width: 320px;
-
-  input {
-    text-transform: uppercase;
-  }
 }
 
 .join__plan-full {
   display: block;
-  margin-top: 4px;
+  margin-top: 6px;
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--vih-danger);
@@ -647,9 +826,105 @@
   a {
     color: inherit;
     text-decoration: underline;
+    pointer-events: auto;
   }
 }
 
+.join__plan-desc {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: rgba(18, 22, 15, 0.7);
+}
+
+.join__plan-features {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--vih-line-on-light);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: rgba(18, 22, 15, 0.8);
+
+  li {
+    position: relative;
+    padding-left: 18px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.5em;
+      width: 9px;
+      height: 5px;
+      border-left: 1.5px solid var(--vih-gold);
+      border-bottom: 1.5px solid var(--vih-gold);
+      transform: rotate(-45deg);
+    }
+  }
+}
+
+.join__plan-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.join__plan-note {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--vih-gold);
+  font-weight: 600;
+}
+
+.join__plan-cta {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--vih-green-900);
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--vih-green-900);
+  transition:
+    background var(--vih-dur-base) var(--vih-ease-out),
+    color var(--vih-dur-base) var(--vih-ease-out);
+
+  .join__plan-cta-on { display: none; }
+}
+
+// A plan at its member limit: still listed, so the choice on offer is honest, but not selectable.
+.join__plan--full {
+  cursor: not-allowed;
+
+  .join__plan-body {
+    opacity: 0.62;
+    background: var(--vih-cream);
+  }
+
+  .join__plan-check {
+    display: none;
+  }
+}
+
+.join__field--promo {
+  max-width: 320px;
+
+  input {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+}
+
+// --- Fields --------------------------------------------------------------------------------------
 .join__row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -662,6 +937,7 @@
 
 .join__field {
   margin-bottom: 16px;
+  min-width: 0;
 
   label {
     display: block;
@@ -682,10 +958,22 @@
     font-family: var(--vih-font-sans);
     font-size: 0.9375rem;
     color: var(--vih-ink);
+    transition:
+      border-color var(--vih-dur-base) var(--vih-ease-out),
+      box-shadow var(--vih-dur-base) var(--vih-ease-out);
+
+    &:hover {
+      border-color: rgba(18, 22, 15, 0.28);
+    }
 
     &:focus {
-      outline: 2px solid var(--vih-gold);
-      outline-offset: 1px;
+      outline: none;
+      border-color: var(--vih-gold);
+      box-shadow: var(--vih-shadow-focus);
+    }
+
+    &.input-validation-error {
+      border-color: #8c2f22;
     }
   }
 
@@ -724,22 +1012,25 @@
   margin-top: 6px;
   font-size: 0.8125rem;
   color: #8c2f22;
+
+  &:empty {
+    display: none;
+  }
 }
 
+// --- Pay -------------------------------------------------------------------------------------------
 .join__consent {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   font-size: 0.875rem;
 
-  // The label is a two-item flex row: the box, and one span holding all the text. The markup
-  // used to put bare text nodes and two anchors straight into this row, and flex laid each of
-  // them out as its own item — "I agree to the", "Terms & Conditions", "and", "Privacy Policy"
-  // spread across the full width with the wrap points in the wrong places. Views/Join/Index.cshtml
-  // now wraps the sentence, and the rule below is the belt to that pair of braces.
+  // The label is a two-item flex row: the box, and one span holding all the text — see the
+  // matching comment in Views/Join/Index.cshtml.
   label {
     display: flex;
     gap: 10px;
     align-items: flex-start;
     line-height: 1.55;
+    cursor: pointer;
 
     > span {
       flex: 1;
@@ -752,19 +1043,313 @@
     margin-top: 3px;
     width: 16px;
     height: 16px;
+    accent-color: var(--vih-gold);
   }
 }
 
 .join__submit {
   width: 100%;
   justify-content: center;
+  gap: 10px;
+  transition:
+    background var(--vih-dur-base) var(--vih-ease-out),
+    transform var(--vih-dur-base) var(--vih-ease-out),
+    opacity var(--vih-dur-base) var(--vih-ease-out);
+
+  .join__submit-arrow {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+  }
+
+  &:hover:not(:disabled) .join__submit-arrow {
+    transform: translateX(4px);
+  }
+
+  // Pressed and waiting for Stripe: the arrow becomes a spinner, the label says so.
+  &.is-busy {
+    opacity: 0.85;
+    cursor: progress;
+
+    .join__submit-arrow {
+      animation: join-spin 0.9s linear infinite;
+      stroke-dasharray: 40 20;
+    }
+  }
+}
+
+@keyframes join-spin {
+  to { transform: rotate(360deg); }
 }
 
 .join__secure {
-  margin: 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 0;
   font-size: 0.75rem;
   color: rgba(18, 22, 15, 0.55);
   text-align: center;
+
+  svg {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+// --- Summary --------------------------------------------------------------------------------------
+.join__aside {
+  position: sticky;
+  top: calc(var(--vih-header-height) + 24px);
+
+  @media (max-width: 1023px) {
+    position: static;
+  }
+}
+
+.join__summary {
+  padding: 26px 26px 24px;
+  border-radius: 14px;
+  background: var(--vih-green-900);
+  color: var(--vih-cream);
+  box-shadow: var(--vih-shadow-lg);
+  animation: join-rise 0.6s var(--vih-ease-out) 0.25s backwards;
+
+  // The flash when the chosen plan changes — a gold rim that fades, so the eye is drawn to the
+  // panel without the panel itself moving.
+  &.is-updated {
+    animation: join-summary-flash 0.9s var(--vih-ease-out);
+  }
+}
+
+@keyframes join-summary-flash {
+  0% { box-shadow: 0 0 0 0 rgba(184, 149, 90, 0.7), var(--vih-shadow-lg); }
+  100% { box-shadow: 0 0 0 14px rgba(184, 149, 90, 0), var(--vih-shadow-lg); }
+}
+
+.join__summary-eyebrow {
+  display: block;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vih-gold-light);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.join__summary-none {
+  margin: 0 0 18px;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: rgba(244, 240, 230, 0.7);
+}
+
+.join__summary-plan {
+  animation: join-rise 0.4s var(--vih-ease-out);
+}
+
+.join__summary-name {
+  display: block;
+  font-family: var(--vih-font-serif);
+  font-size: 1.375rem;
+  line-height: 1.2;
+}
+
+.join__summary-period {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  color: rgba(244, 240, 230, 0.65);
+}
+
+.join__summary-features {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: rgba(244, 240, 230, 0.85);
+
+  li {
+    position: relative;
+    padding-left: 16px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--vih-gold);
+    }
+  }
+}
+
+.join__summary-due {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--vih-line-on-dark);
+  font-size: 0.8125rem;
+  color: rgba(244, 240, 230, 0.7);
+
+  strong {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--vih-cream);
+  }
+}
+
+.join__summary-promo {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(184, 149, 90, 0.16);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--vih-gold-light);
+  animation: join-rise 0.4s var(--vih-ease-out);
+
+  &[hidden] {
+    display: none;
+  }
+
+  svg {
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.join__summary-next {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--vih-line-on-dark);
+
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: join-next;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: rgba(244, 240, 230, 0.8);
+  }
+
+  li {
+    position: relative;
+    padding-left: 30px;
+    counter-increment: join-next;
+
+    &::before {
+      content: counter(join-next);
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1px solid var(--vih-gold);
+      color: var(--vih-gold-light);
+      font-family: var(--vih-font-serif);
+      font-size: 0.6875rem;
+    }
+  }
+}
+
+.join__summary-next-title {
+  display: block;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(244, 240, 230, 0.55);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+// --- One experience instead -----------------------------------------------------------------------
+.join__single {
+  margin-top: 64px;
+  padding-top: 40px;
+  border-top: 1px solid var(--vih-line-on-light);
+
+  h2 {
+    font-family: var(--vih-font-serif);
+    font-size: 1.375rem;
+    margin: 0 0 10px;
+    color: var(--vih-green-900);
+  }
+}
+
+.join__single-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+
+  > div:first-child {
+    max-width: 640px;
+  }
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.join__single-tools {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.join__single-lede {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: rgba(18, 22, 15, 0.7);
+  margin: 0;
+}
+
+.join__single-carousel {
+  // Three cards across in a container that is narrower than the home strip's.
+  padding-bottom: 6px;
 }
 
 .join__alt {
@@ -776,6 +1361,24 @@
 .join__empty {
   font-size: 0.9375rem;
   color: rgba(18, 22, 15, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .join__step,
+  .join__summary,
+  .join__summary-plan,
+  .join__summary-promo,
+  .join__summary.is-updated {
+    animation: none;
+  }
+
+  .join__plan .join__plan-body,
+  .join__route,
+  .join__legend-num,
+  .join__plan-check {
+    transition: none;
+    transform: none;
+  }
 }
 
 // --- Members' community page --------------------------------------------------------------------
