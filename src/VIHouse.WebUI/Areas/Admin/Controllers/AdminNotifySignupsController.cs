@@ -18,9 +18,12 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// when this list is most useful, so tying its visibility to the flag would hide it on launch day.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Marketing)]
+[Route("admin/notify-signups")]
 public class AdminNotifySignupsController(INotifySignupRepository signups) : AdminControllerBase
 {
     private const int PageSize = 50;
+
+    [HttpGet("")]
 
     public async Task<IActionResult> Index(int page, CancellationToken ct)
     {

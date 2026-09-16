@@ -1,3 +1,4 @@
+using VIHouse.Business;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
@@ -79,7 +80,7 @@ public class ApplicationService(
         await applications.SaveChangesAsync(ct);
 
         await ambassadorService.RecordConversionAsync(application.ReferralCode, ReferralConversionKind.Application,
-            nameof(Application), application.Id, ct: ct);
+            nameof(Application), application.Id, targetKind: ReferralTargetKind.Experience, targetId: application.ExperienceId, ct: ct);
 
         var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
         if (experience is not null)
@@ -120,7 +121,7 @@ public class ApplicationService(
         await applications.SaveChangesAsync(ct);
 
         await ambassadorService.RecordConversionAsync(application.ReferralCode, ReferralConversionKind.Approved,
-            nameof(Application), application.Id, ct: ct);
+            nameof(Application), application.Id, targetKind: ReferralTargetKind.Experience, targetId: application.ExperienceId, ct: ct);
 
         var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
         if (experience is null)
@@ -187,7 +188,7 @@ public class ApplicationService(
     private async Task<InvitationDeliveryResult> SendInvitationAsync(
         Application application, Experience experience, Invitation invitation, CancellationToken ct)
     {
-        var invitationUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/invitation/{invitation.Code}";
+        var invitationUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Invitation(invitation.Code));
 
         var emailed = await emailService.SendAsync(
             "ApplicationApproved", application.Email, "You're approved — complete your booking",
@@ -226,8 +227,23 @@ public class ApplicationService(
         _ => "Neither the email nor the text message went out — Emails & SMS has the reason.",
     };
 
-    public Task RejectAsync(Guid id, Guid adminUserId, string? reason, string? ipAddress, CancellationToken ct = default) =>
-        TransitionAsync(id, ApplicationStatus.Rejected, adminUserId, "ApplicationRejected", ipAddress, reason, ct: ct);
+    public async Task RejectAsync(Guid id, Guid adminUserId, string? reason, string? ipAddress, CancellationToken ct = default)
+    {
+        var application = await TransitionAsync(id, ApplicationStatus.Rejected, adminUserId, "ApplicationRejected", ipAddress, reason, ct: ct);
+
+        // The decision goes out by email as well as being recorded. The reason the admin typed is
+        // meant for the applicant — the form says so — and is included only when there is one.
+        var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
+        if (experience is not null)
+        {
+            await emailService.SendAsync(
+                "ApplicationRejected", application.Email, "About your application",
+                new ApplicationRejectedEmailModel(application.FirstName, experience.Title, experience.City,
+                    string.IsNullOrWhiteSpace(reason) ? null : reason.Trim(),
+                    SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Experiences)),
+                nameof(Application), application.Id, ct);
+        }
+    }
 
     public async Task WaitlistAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {

@@ -1,9 +1,11 @@
 @model ContactMessageEmailModel
-
-<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">New Contact Message</h1>
-<p style="margin:0 0 16px;"><strong>From:</strong> @Model.Name (@Model.Email)</p>
-@if (!string.IsNullOrWhiteSpace(Model.Subject))
-{
-    <p style="margin:0 0 16px;"><strong>Subject:</strong> @Model.Subject</p>
+@{
+    ViewData["Preheader"] = $"From {Model.Name}: {(string.IsNullOrWhiteSpace(Model.Subject) ? Model.Message : Model.Subject)}";
+    ViewData["Footnote"] = "Internal: sent to the contact address configured in Admin > Site & SEO.";
+    var rows = new List<(string, string)> { ("From", Model.Name), ("Email", Model.Email) };
+    if (!string.IsNullOrWhiteSpace(Model.Subject)) rows.Add(("Subject", Model.Subject));
 }
-<p style="margin:0 0 16px; white-space:pre-line;">@Model.Message</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Contact form", string.IsNullOrWhiteSpace(Model.Subject) ? "New message" : Model.Subject))" />
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+<partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note(Model.Message, "info", "Message"))" />
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button($"mailto:{Model.Email}", "Reply to " + Model.Name, Secondary: true))" />

@@ -1,20 +1,22 @@
 /**
  * The tracked-link builder on the ambassador admin page: `[data-utm-builder][data-utm-base]` with
- * `[data-utm="source|medium|campaign"]` inputs, a `[data-utm-preview]` element and a
- * `[data-utm-copy]` button. The preview and the copy button's value follow the inputs as they are
- * typed; blank tags are left out so the plain link stays plain.
+ * `[data-utm="source|medium|campaign"]` inputs, an optional `<select data-utm-target>` whose option
+ * values are the base links of the ambassador's other links (one per experience/session), a
+ * `[data-utm-preview]` element and a `[data-utm-copy]` button. The preview and the copy button's
+ * value follow the inputs as they are typed; blank tags are left out so the plain link stays plain.
  */
 export function initUtmBuilder(): void {
   const builders = Array.from(document.querySelectorAll<HTMLElement>('[data-utm-builder]'));
   builders.forEach((builder) => {
-    const base = builder.dataset.utmBase ?? '';
+    const defaultBase = builder.dataset.utmBase ?? '';
     const inputs = Array.from(builder.querySelectorAll<HTMLInputElement>('[data-utm]'));
+    const target = builder.querySelector<HTMLSelectElement>('[data-utm-target]');
     const preview = builder.querySelector<HTMLElement>('[data-utm-preview]');
     const copy = builder.querySelector<HTMLElement>('[data-utm-copy]');
-    if (!base || inputs.length === 0 || !preview) return;
+    if (!defaultBase || inputs.length === 0 || !preview) return;
 
     const render = () => {
-      const url = new URL(base);
+      const url = new URL(target?.value || defaultBase);
       inputs.forEach((input) => {
         const key = `utm_${input.dataset.utm}`;
         // Lower-cased and space-free: a tag that reads "Instagram Story" would fragment the
@@ -28,6 +30,7 @@ export function initUtmBuilder(): void {
     };
 
     inputs.forEach((input) => input.addEventListener('input', render));
+    target?.addEventListener('change', render);
     render();
   });
 }

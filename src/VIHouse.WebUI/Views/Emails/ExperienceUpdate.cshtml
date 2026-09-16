@@ -1,0 +1,10 @@
+@model ExperienceUpdateEmailModel
+@{
+    ViewData["Preheader"] = $"{Model.ExperienceTitle}: {Model.Headline}";
+    ViewData["Footnote"] = "You're receiving this because you have a confirmed place on this experience.";
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Model.ExperienceTitle, Model.Headline))" />
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 20px; white-space:pre-line;">@Model.Body</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ExperienceUrl, "Open the experience page"))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("Your ticket, the programme and everything we have published for this experience are on your account page.")" />

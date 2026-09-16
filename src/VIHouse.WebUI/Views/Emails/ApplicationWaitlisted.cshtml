@@ -1,9 +1,14 @@
 @model ApplicationWaitlistedEmailModel
-
-<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">You're On The Waitlist</h1>
+@{
+    ViewData["Preheader"] = $"You're on the waitlist for {Model.ExperienceTitle}";
+    ViewData["Footnote"] = "You're receiving this because you applied to an experience at The VI House.";
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Waitlist", "You're on the waitlist"))" />
 <p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
 <p style="margin:0 0 16px;">
-    <strong>The VI House &mdash; @Model.ExperienceTitle</strong> is at capacity right now, but we've
-    placed you on the waitlist. If a place opens up, we'll reach out directly.
+    <strong>@Model.ExperienceTitle</strong> is at capacity for this round, so we have placed you on the waitlist
+    rather than say no. Places do open — a change of plans on someone's side is common — and when one does,
+    we come to the waitlist first.
 </p>
-<p style="margin:0;">&mdash; The VI House</p>
+<partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note("If a place opens up we will email you directly with a booking link. There is nothing to do until then.", "info", "What happens next"))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

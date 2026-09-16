@@ -1,0 +1,84 @@
+namespace VIHouse.Business;
+
+/// <summary>
+/// Every site path that is written down somewhere other than a route attribute — in an email, a
+/// notification link, a redirect, or the Identity route map — lives here, once. The Business layer
+/// cannot reach IUrlHelper, and the Identity pages are Razor Pages whose public URLs are assigned
+/// by convention (see WebUI/Routing/IdentityPageRoutes), so a constant is the only thing both sides
+/// can agree on. Paths only, never hosts: <see cref="Absolute"/> joins them to Site:BaseUrl.
+/// </summary>
+public static class SiteUrls
+{
+    public const string Home = "/";
+
+    // Sign-in and account recovery (Identity area, mapped by IdentityCleanRouteConvention).
+    public const string Login = "/login";
+    public const string Logout = "/logout";
+    public const string LoginVerify = "/login/verify";
+    public const string LoginRecoveryCode = "/login/recovery-code";
+    public const string LoginLocked = "/login/locked";
+    public const string LoginHelp = "/login/help";
+    public const string LoginExternal = "/login/external";
+    public const string AccessDenied = "/access-denied";
+    public const string Register = "/register";
+    public const string RegisterConfirmation = "/register/confirmation";
+    public const string ForgotPassword = "/forgot-password";
+    public const string ForgotPasswordSent = "/forgot-password/sent";
+    public const string ResetPasswordPath = "/reset-password";
+    public const string ResetPasswordDone = "/reset-password/done";
+    public const string ConfirmEmail = "/confirm-email";
+    public const string ConfirmEmailChange = "/confirm-email/change";
+    public const string ConfirmEmailResend = "/confirm-email/resend";
+    public const string IdentityError = "/error/sign-in";
+
+    // Security & login settings (Identity Manage pages).
+    public const string Security = "/account/security";
+    public const string SecurityPassword = "/account/security/password";
+    public const string SecuritySetPassword = "/account/security/set-password";
+    public const string SecurityEmail = "/account/security/email";
+    public const string SecurityTwoFactor = "/account/security/two-factor";
+    public const string SecurityAuthenticator = "/account/security/two-factor/authenticator";
+    public const string SecurityResetAuthenticator = "/account/security/two-factor/reset";
+    public const string SecurityDisableTwoFactor = "/account/security/two-factor/disable";
+    public const string SecurityRecoveryCodes = "/account/security/two-factor/recovery-codes";
+    public const string SecurityShowRecoveryCodes = "/account/security/two-factor/recovery-codes/show";
+    public const string SecurityConnections = "/account/security/connections";
+    public const string SecurityData = "/account/security/data";
+    public const string SecurityDataDownload = "/account/security/data/download";
+    public const string SecurityDataDelete = "/account/security/data/delete";
+
+    // Member area (AccountController).
+    public const string Account = "/account";
+    public const string AccountMembership = "/account/membership";
+    public const string AccountBookings = "/account/bookings";
+    public const string AccountSessions = "/account/sessions";
+    public const string AccountNotifications = "/account/notifications";
+
+    // Public pages.
+    public const string Experiences = "/experiences";
+    public const string Sessions = "/sessions";
+    public const string Membership = "/membership";
+    public const string Join = "/join";
+    public const string Apply = "/apply";
+    public const string Contact = "/contact";
+    public const string Ambassador = "/ambassador";
+    public const string Admin = "/admin";
+
+    public static string LoginReturningTo(string returnUrl) => $"{Login}?returnUrl={Uri.EscapeDataString(returnUrl)}";
+    public static string ResetPassword(string code) => $"{ResetPasswordPath}?code={Uri.EscapeDataString(code)}";
+    public static string Booking(string reference) => $"{AccountBookings}/{reference}";
+    public static string Experience(string slug) => $"{Experiences}/{slug}";
+    public static string Session(string slug) => $"{Sessions}/{slug}";
+    public static string Invitation(string code) => $"/invitation/{code}";
+    public static string JoinResume(string code) => $"{Join}/resume/{code}";
+    public static string ApplyFor(string experienceSlug) => $"{Apply}?experience={Uri.EscapeDataString(experienceSlug)}";
+
+    // Referral links — one per thing an ambassador promotes (see ReferralController).
+    public static string Referral(string code) => $"/r/{code}";
+    public static string ReferralExperience(string code, string slug) => $"/r/{code}/e/{slug}";
+    public static string ReferralSession(string code, string slug) => $"/r/{code}/s/{slug}";
+
+    /// <summary>Joins Site:BaseUrl and a path from this class without doubling or losing the slash.</summary>
+    public static string Absolute(string baseUrl, string path) =>
+        baseUrl.TrimEnd('/') + (path.StartsWith('/') ? path : "/" + path);
+}

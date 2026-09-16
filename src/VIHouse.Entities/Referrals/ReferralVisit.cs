@@ -16,4 +16,12 @@ public class ReferralVisit : BaseEntity
     public string? UtmMedium { get; set; }
     public string? UtmCampaign { get; set; }
     public string? UtmContent { get; set; }
+
+    /// <summary>Which link this was — the plain site link, or one scoped to an experience or a
+    /// session — and the id of that experience/session when scoped. See ReferralTargetKind.</summary>
+    public ReferralTargetKind TargetKind { get; set; } = ReferralTargetKind.Site;
+    public Guid? TargetId { get; set; }
+
+    /// <summary>The page the visitor was sent to, as a path — "/experiences/lisbon-2026".</summary>
+    public string? LandingPath { get; set; }
 }

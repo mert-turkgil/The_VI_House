@@ -29,7 +29,8 @@ public class NoIndexFilter : IResultFilter
 
     private static readonly string[] Paths =
     [
-        "/account", "/checkout", "/onboarding", "/identity", "/invitation",
+        "/account", "/checkout", "/onboarding", "/invitation",
+        "/login", "/logout", "/forgot-password", "/reset-password", "/confirm-email", "/access-denied", "/register",
         "/apply", "/join", "/members", "/ambassador", "/r/", "/search",
     ];
 

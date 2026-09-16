@@ -1274,4 +1274,33 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Admin.Seminar.MeetingUrl.Hint" xml:space="preserve"><value>Çevrimiçi oturum için Zoom / Meet / Teams bağlantısı. Yalnızca onaylı katılımcılara, portallarında ve kaydolduktan sonra sayfada gösterilir — herkese açık kartta asla.</value></data>
   <data name="Admin.Seminar.LiveStreamUrl" xml:space="preserve"><value>Canlı yayın (YouTube)</value></data>
   <data name="Admin.Seminar.LiveStreamUrl.Hint" xml:space="preserve"><value>Bir YouTube canlı yayın veya prömiyer adresi. Katılımcılara oturum sayfasında ve hesaplarında başlangıçtan bir saat önce gömülür; herkese açık kartta asla.</value></data>
+  <data name="Ambassador.Dashboard.Welcome" xml:space="preserve"><value>Hoş geldin, {0}</value></data>
+  <data name="Ambassador.Dashboard.Intro" xml:space="preserve"><value>Bağlantıların, QR kodların ve getirdikleri — %{0} komisyon oranıyla.</value></data>
+  <data name="Ambassador.Links.Title" xml:space="preserve"><value>Bağlantıların</value></data>
+  <data name="Ambassador.Links.Intro" xml:space="preserve"><value>Tüm House için tek bağlantı; anlatmak istediğin her deneyim ve oturum için ayrı bir bağlantı. Yapıştır ya da bir hikâye, slayt veya basılı kart için QR kodunu indir. Bu bağlantıdan gelen herkes 30 gün boyunca sana yazılır.</value></data>
+  <data name="Ambassador.Links.Site" xml:space="preserve"><value>Site</value></data>
+  <data name="Ambassador.Links.Experiences" xml:space="preserve"><value>Deneyimler</value></data>
+  <data name="Ambassador.Links.Sessions" xml:space="preserve"><value>Oturumlar</value></data>
+  <data name="Ambassador.Links.Experience" xml:space="preserve"><value>Deneyim</value></data>
+  <data name="Ambassador.Links.Session" xml:space="preserve"><value>Oturum</value></data>
+  <data name="Ambassador.Links.SiteTitle" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Ambassador.Links.SiteBody" xml:space="preserve"><value>Ana sayfaya götürür. Biyografinde ve House'tan genel olarak söz ettiğin her yerde kullan.</value></data>
+  <data name="Ambassador.Links.Copy" xml:space="preserve"><value>Bağlantıyı kopyala</value></data>
+  <data name="Ambassador.Links.Qr" xml:space="preserve"><value>QR kodu</value></data>
+  <data name="Ambassador.Links.DownloadPng" xml:space="preserve"><value>PNG indir</value></data>
+  <data name="Ambassador.Links.DownloadSvg" xml:space="preserve"><value>SVG indir</value></data>
+  <data name="Ambassador.Links.Open" xml:space="preserve"><value>Aç</value></data>
+  <data name="Ambassador.Links.Empty" xml:space="preserve"><value>Şu anda tanıtılacak bir şey yok — yeni deneyimler ve oturumlar yayınlanır yayınlanmaz burada görünür.</value></data>
+  <data name="Ambassador.Links.OnDemand" xml:space="preserve"><value>İstek üzerine</value></data>
+  <data name="Ambassador.Links.Visits" xml:space="preserve"><value>Ziyaret</value></data>
+  <data name="Ambassador.Links.Applications" xml:space="preserve"><value>Başvurular</value></data>
+  <data name="Ambassador.Links.Purchases" xml:space="preserve"><value>Satın almalar</value></data>
+  <data name="Ambassador.Conversions.Session" xml:space="preserve"><value>Bir oturumda yer satın aldı</value></data>
+  <data name="Ambassador.Targets.Heading" xml:space="preserve"><value>Hangi bağlantı işe yarıyor</value></data>
+  <data name="Ambassador.Targets.Link" xml:space="preserve"><value>Bağlantı</value></data>
+  <data name="Ambassador.Performance.Heading" xml:space="preserve"><value>Performans</value></data>
+  <data name="Ambassador.Performance.Privacy" xml:space="preserve"><value>Yalnızca sayılar ve gelir — yönlendirdiğin kişilerin adlarını ya da iletişim bilgilerini asla paylaşmayız.</value></data>
+  <data name="Ambassador.Performance.Revenue" xml:space="preserve"><value>Gelir</value></data>
+  <data name="Ambassador.Performance.Commission" xml:space="preserve"><value>Komisyonun</value></data>
+  <data name="Ambassador.Performance.Empty" xml:space="preserve"><value>Ziyaretleri, başvuruları ve komisyonu burada görmeye başlamak için yukarıdaki bağlantılardan birini paylaş.</value></data>
 </root>

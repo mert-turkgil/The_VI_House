@@ -1,6 +1,7 @@
 @model BookingConfirmedEmailModel
 @{
     ViewData["Preheader"] = $"Confirmed: The VI House — {Model.ExperienceCity}, {Model.StartAtUtc:d MMM yyyy}. Reference {Model.BookingReference}.";
+    ViewData["Footnote"] = "You're receiving this because you booked a place at The VI House.";
     var sameDay = Model.StartAtUtc.Date == Model.EndAtUtc.Date;
     var when = sameDay
         ? $"{Model.StartAtUtc:dddd d MMMM yyyy}, {Model.StartAtUtc:HH:mm}–{Model.EndAtUtc:HH:mm} UTC"
@@ -11,25 +12,20 @@
         ("Experience", Model.ExperienceTitle),
         ("When", when),
         ("Where", where),
-        ("Reference", Model.BookingReference),
-        ("Paid", VIHouse.WebUI.Helpers.MoneyFormatter.Format(Model.AmountMinor, Model.Currency)),
+        ("Paid", MoneyFormatter.Format(Model.AmountMinor, Model.Currency)),
     };
 }
-
-<p style="margin:0 0 6px; color:#b8955a; font-size:11px; font-weight:bold; letter-spacing:2px; text-transform:uppercase;">Booking confirmed</p>
-<h1 style="font-family:Georgia,'Times New Roman',serif; font-size:26px; line-height:1.2; margin:0 0 18px; color:#00230a;">You're in — The VI House, @Model.ExperienceCity</h1>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Booking confirmed", $"You're in — The VI House, {Model.ExperienceCity}"))" />
 <p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
 <p style="margin:0 0 20px;">
     Your place is confirmed. Keep this email &mdash; the reference below is your ticket, and it is also on your account page.
 </p>
-
+<partial name="/Views/Emails/_EmailCode.cshtml" model="@(new Code(Model.BookingReference, "Booking reference"))" />
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
-
 @if (Model.TicketUrl is not null)
 {
-    <partial name="/Views/Emails/_EmailButton.cshtml" model="@((Model.TicketUrl, "View your ticket"))" />
+    <partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.TicketUrl, "View your ticket"))" />
 }
-
 <p style="margin:0 0 16px; color:#4a4f45;">
     We'll send the full programme and any joining details closer to the date.
     @if (Model.ExperienceUrl is not null)
@@ -37,4 +33,4 @@
         <text>Until then, everything we have published is on <a href="@Model.ExperienceUrl" style="color:#00230a;">the experience page</a>.</text>
     }
 </p>
-<p style="margin:0;">&mdash; The VI House</p>
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

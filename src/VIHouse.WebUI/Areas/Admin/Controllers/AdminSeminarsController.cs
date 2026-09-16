@@ -26,12 +26,15 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// resolved through <see cref="Localised"/>, so the panel speaks whichever language the admin set.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Events)]
+[Route("admin/sessions")]
 public class AdminSeminarsController(
     ISeminarService seminarService,
     UserManager<ApplicationUser> userManager,
     IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     // --- Index / create --------------------------------------------------------------------------
+
+    [HttpGet("")]
 
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -54,10 +57,10 @@ public class AdminSeminarsController(
         return View(model);
     }
 
-    [HttpGet]
+    [HttpGet("new")]
     public IActionResult Create() => View(new AdminSeminarCreateViewModel());
 
-    [HttpPost]
+    [HttpPost("new")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(AdminSeminarCreateViewModel form, CancellationToken ct)
     {
@@ -82,7 +85,7 @@ public class AdminSeminarsController(
 
     // --- Edit ------------------------------------------------------------------------------------
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Edit(Guid id, string? culture, CancellationToken ct)
     {
         var seminar = await seminarService.GetForAdminEditAsync(id, ct);
@@ -91,7 +94,7 @@ public class AdminSeminarsController(
         return View(await BuildEditModelAsync(seminar, culture, ct));
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id, AdminSeminarFormViewModel form, CancellationToken ct)
     {
@@ -115,7 +118,7 @@ public class AdminSeminarsController(
 
     // --- Translations ------------------------------------------------------------------------------
 
-    [HttpPost]
+    [HttpPost("{id:guid}/save-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SaveTranslation(Guid id, AdminSeminarTranslationFormViewModel form, CancellationToken ct)
     {
@@ -145,7 +148,7 @@ public class AdminSeminarsController(
         return RedirectToAction(nameof(Edit), new { id, culture = form.Culture });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/delete-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteTranslation(Guid id, string culture, CancellationToken ct)
     {
@@ -161,7 +164,7 @@ public class AdminSeminarsController(
 
     // --- Publishing --------------------------------------------------------------------------------
 
-    [HttpPost]
+    [HttpPost("{id:guid}/set-status")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetStatus(Guid id, SeminarStatus status, CancellationToken ct)
     {
@@ -184,7 +187,7 @@ public class AdminSeminarsController(
     /// it. Behind IIS, request filtering has its own maxAllowedContentLength that must be raised to
     /// match — these attributes do not reach it.
     /// </summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/upload-media")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(MediaPolicy.MaxUploadBytes)]
     [RequestFormLimits(MultipartBodyLengthLimit = MediaPolicy.MaxUploadBytes)]
@@ -218,7 +221,7 @@ public class AdminSeminarsController(
     /// The asset is recorded as inline, so it is access-controlled and cleaned up like everything
     /// else but is not repeated in the gallery under the article.
     /// </summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/upload-inline")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(MediaPolicy.MaxUploadBytes)]
     [RequestFormLimits(MultipartBodyLengthLimit = MediaPolicy.MaxUploadBytes)]
@@ -242,7 +245,7 @@ public class AdminSeminarsController(
         return Json(new { url = Url.Action("Media", "Seminars", new { area = "", id = result.Media.Id }) });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/remove-media")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveMedia(Guid id, Guid mediaId, CancellationToken ct)
     {
@@ -253,7 +256,7 @@ public class AdminSeminarsController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/set-cover")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetCover(Guid id, Guid mediaId, CancellationToken ct)
     {
@@ -265,6 +268,8 @@ public class AdminSeminarsController(
     }
 
     // --- Enrolments / delete ---------------------------------------------------------------------------
+
+    [HttpGet("{id:guid}/enrolments")]
 
     public async Task<IActionResult> Enrolments(Guid id, CancellationToken ct)
     {
@@ -291,7 +296,7 @@ public class AdminSeminarsController(
         });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {

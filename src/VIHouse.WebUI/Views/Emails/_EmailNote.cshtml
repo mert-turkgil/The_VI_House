@@ -1,0 +1,22 @@
+@* A callout. Tone "info" (cream, a gold rule), "warning" (amber), "success" (green tint). Body is
+   rendered as text, never as markup — it may be an admin's free-text note. Model: EmailParts.Note. *@
+@model VIHouse.WebUI.Helpers.EmailParts.Note
+@{
+    var (background, rule, labelColour) = Model.Tone switch
+    {
+        "warning" => ("#fdf3e7", "#c9873a", "#8a5a1e"),
+        "success" => ("#eef5ec", "#3f7d4e", "#2c5a38"),
+        _ => ("#f4f0e6", "#b8955a", "#7a5f2e"),
+    };
+}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px; background-color:@background; border-left:4px solid @rule; border-radius:0 8px 8px 0;">
+    <tr>
+        <td style="padding:14px 18px; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:1.6; color:#12160f;">
+            @if (!string.IsNullOrWhiteSpace(Model.Label))
+            {
+                <p style="margin:0 0 4px; color:@labelColour; font-size:11px; font-weight:bold; letter-spacing:1.5px; text-transform:uppercase;">@Model.Label</p>
+            }
+            <p style="margin:0; white-space:pre-line;">@Model.Body</p>
+        </td>
+    </tr>
+</table>

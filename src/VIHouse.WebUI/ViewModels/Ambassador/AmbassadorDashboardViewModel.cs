@@ -11,4 +11,7 @@ public class AmbassadorDashboardViewModel
 
     /// <summary>The ledger, newest first — see IAmbassadorService.GetConversionsAsync.</summary>
     public List<VIHouse.Entities.Referrals.ReferralConversion> Conversions { get; set; } = [];
+
+    /// <summary>The site link plus one link per experience and session, with QR codes.</summary>
+    public ReferralLinksViewModel Links { get; set; } = default!;
 }

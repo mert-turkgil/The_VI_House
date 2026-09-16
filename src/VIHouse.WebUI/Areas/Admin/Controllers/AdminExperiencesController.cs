@@ -17,6 +17,7 @@ using VIHouse.WebUI.Areas.Admin;
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
 [Authorize(Roles = AdminSections.RolesFor.Events)]
+[Route("admin/experiences")]
 public class AdminExperiencesController(
     IExperienceService experienceService,
     INotificationService notificationService,
@@ -24,6 +25,7 @@ public class AdminExperiencesController(
     IStringLocalizer<SharedResource> loc,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
+    [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var experiences = await experienceService.GetAllForAdminAsync(ct);
@@ -46,10 +48,10 @@ public class AdminExperiencesController(
         return View(model);
     }
 
-    [HttpGet]
+    [HttpGet("new")]
     public IActionResult Create() => View(new AdminExperienceFormViewModel());
 
-    [HttpPost]
+    [HttpPost("new")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(AdminExperienceFormViewModel form, CancellationToken ct)
     {
@@ -63,7 +65,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id = entity.Id });
     }
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Edit(Guid id, string? culture, CancellationToken ct)
     {
         var experience = await experienceService.GetForAdminEditAsync(id, ct);
@@ -90,7 +92,7 @@ public class AdminExperiencesController(
         return View(model);
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id, AdminExperienceFormViewModel form, CancellationToken ct)
     {
@@ -115,7 +117,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
@@ -128,7 +130,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost("add-ticket-type")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddTicketType(AddTicketTypeInputModel input, CancellationToken ct)
     {
@@ -150,7 +152,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id = input.ExperienceId });
     }
 
-    [HttpPost]
+    [HttpPost("remove-ticket-type")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveTicketType(Guid experienceId, Guid ticketTypeId, CancellationToken ct)
     {
@@ -162,7 +164,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id = experienceId });
     }
 
-    [HttpPost]
+    [HttpPost("add-inclusion")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddInclusion(AddInclusionInputModel input, CancellationToken ct)
     {
@@ -180,7 +182,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id = input.ExperienceId, culture = input.Culture });
     }
 
-    [HttpPost]
+    [HttpPost("remove-inclusion")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveInclusion(Guid experienceId, Guid inclusionId, CancellationToken ct)
     {
@@ -189,7 +191,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id = experienceId });
     }
 
-    [HttpPost]
+    [HttpPost("add-faq")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddFaq(AddFaqInputModel input, CancellationToken ct)
     {
@@ -207,7 +209,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id = input.ExperienceId, culture = input.Culture });
     }
 
-    [HttpPost]
+    [HttpPost("remove-faq")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveFaq(Guid experienceId, Guid faqId, CancellationToken ct)
     {
@@ -216,7 +218,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id = experienceId });
     }
 
-    [HttpPost]
+    [HttpPost("remove-waitlist-entry")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveWaitlistEntry(Guid experienceId, Guid entryId, CancellationToken ct)
     {
@@ -225,7 +227,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id = experienceId });
     }
 
-    [HttpPost]
+    [HttpPost("notify-attendees")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> NotifyAttendees(NotifyAttendeesInputModel input, CancellationToken ct)
     {
@@ -248,7 +250,7 @@ public class AdminExperiencesController(
 
     // --- Cover image --------------------------------------------------------------------------------
 
-    [HttpPost]
+    [HttpPost("{id:guid}/upload-cover")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(MediaPolicy.MaxUploadBytes)]
     [RequestFormLimits(MultipartBodyLengthLimit = MediaPolicy.MaxUploadBytes)]
@@ -269,7 +271,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/remove-cover")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveCover(Guid id, CancellationToken ct)
     {
@@ -281,7 +283,7 @@ public class AdminExperiencesController(
 
     // --- Gallery ------------------------------------------------------------------------------------
 
-    [HttpPost]
+    [HttpPost("{id:guid}/add-gallery-image")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(MediaPolicy.MaxUploadBytes)]
     [RequestFormLimits(MultipartBodyLengthLimit = MediaPolicy.MaxUploadBytes)]
@@ -311,7 +313,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/update-gallery-image")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateGalleryImage(Guid id, Guid imageId, string? altText, CancellationToken ct)
     {
@@ -320,7 +322,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/remove-gallery-image")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveGalleryImage(Guid id, Guid imageId, CancellationToken ct)
     {
@@ -329,7 +331,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/move-gallery-image")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> MoveGalleryImage(Guid id, Guid imageId, int delta, CancellationToken ct)
     {
@@ -340,7 +342,7 @@ public class AdminExperiencesController(
 
     // --- Programme ----------------------------------------------------------------------------------
 
-    [HttpPost]
+    [HttpPost("{id:guid}/add-program-day")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddProgramDay(Guid id, int dayNumber, string title, string? dateLabel, string? culture, CancellationToken ct)
     {
@@ -361,7 +363,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id, culture });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/remove-program-day")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveProgramDay(Guid id, Guid dayId, CancellationToken ct)
     {
@@ -370,7 +372,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/add-session")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddSession(
         Guid id, Guid dayId, string title, TimeSpan startTime, TimeSpan endTime,
@@ -394,7 +396,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/remove-session")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveSession(Guid id, Guid sessionId, CancellationToken ct)
     {
@@ -405,7 +407,7 @@ public class AdminExperiencesController(
 
     // --- Editing existing child rows ------------------------------------------------------------------
 
-    [HttpPost]
+    [HttpPost("{id:guid}/update-ticket-type")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateTicketType(Guid id, TicketType input, CancellationToken ct)
     {
@@ -415,7 +417,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/update-inclusion")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateInclusion(Guid id, Guid inclusionId, string text, bool isIncluded, int sortOrder, CancellationToken ct)
     {
@@ -425,7 +427,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/update-faq")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateFaq(Guid id, Guid faqId, string question, string answer, int sortOrder, CancellationToken ct)
     {
@@ -435,7 +437,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/set-member-access")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetMemberAccess(Guid id, Guid[]? planIds, CancellationToken ct)
     {
@@ -445,7 +447,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/save-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SaveTranslation(Guid id, AdminExperienceTranslationForm form, CancellationToken ct)
     {
@@ -505,7 +507,7 @@ public class AdminExperiencesController(
         return RedirectToAction(nameof(Edit), new { id, culture = form.Culture });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/delete-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteTranslation(Guid id, string culture, CancellationToken ct)
     {

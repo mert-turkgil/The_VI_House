@@ -1,0 +1,19 @@
+@model ApplicationRejectedEmailModel
+@{
+    ViewData["Preheader"] = $"About your application for The VI House — {Model.ExperienceCity}";
+    ViewData["Footnote"] = "You're receiving this because you applied to an experience at The VI House.";
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Your application", $"About The VI House — {Model.ExperienceCity}"))" />
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    Thank you for applying to <strong>@Model.ExperienceTitle</strong>. We read every application carefully, and
+    this time we are not able to offer you a place. Each room is put together with a particular mix in mind,
+    and that is a judgement about the room, not about you.
+</p>
+@if (!string.IsNullOrWhiteSpace(Model.Reason))
+{
+    <partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note(Model.Reason, "info", "A note from the team"))" />
+}
+<p style="margin:0 0 16px;">Other experiences are open for applications through the year, and we would be glad to see your name again.</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ExperiencesUrl, "See upcoming experiences", Secondary: true))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

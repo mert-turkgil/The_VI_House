@@ -1,3 +1,4 @@
+using VIHouse.Business;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,7 @@ using VIHouse.Entities.Applications;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Referrals;
+using VIHouse.Entities.Seminars;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Options;
@@ -23,6 +25,9 @@ public class AmbassadorService(
     IMembershipPaymentRepository membershipPayments,
     IAuditLogRepository auditLogs,
     IRepository<ReferralConversion> conversions,
+    IExperienceRepository experiences,
+    ISeminarRepository seminars,
+    ISeminarEnrollmentRepository seminarEnrollments,
     INotificationService notificationService,
     IEmailService emailService,
     IOptions<SiteOptions> siteOptions,
@@ -30,13 +35,16 @@ public class AmbassadorService(
     UserManager<ApplicationUser> userManager) : IAmbassadorService
 {
     public async Task RecordConversionAsync(string? referralCode, ReferralConversionKind kind, string sourceEntityType, Guid sourceEntityId,
-        long? amountMinor = null, string? currency = null, CancellationToken ct = default)
+        long? amountMinor = null, string? currency = null,
+        ReferralTargetKind targetKind = ReferralTargetKind.Site, Guid? targetId = null, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(referralCode)) return;
         try
         {
             var ambassador = await ambassadors.GetByCodeAsync(referralCode.Trim(), ct);
-            if (ambassador is null) return;
+            // Same rule as RecordVisitAsync: a switched-off ambassador earns nothing new. The code
+            // stays on the application/payment row for the record; it just does not reach the ledger.
+            if (ambassador is null || ambassador.Status != AmbassadorStatus.Active) return;
 
             var already = await conversions.FindAsync(
                 c => c.SourceEntityType == sourceEntityType && c.SourceEntityId == sourceEntityId && c.Kind == kind, ct);
@@ -56,6 +64,8 @@ public class AmbassadorService(
                 CommissionMinor = commission,
                 SourceEntityType = sourceEntityType,
                 SourceEntityId = sourceEntityId,
+                TargetKind = targetKind,
+                TargetId = targetId,
             }, ct);
             await conversions.SaveChangesAsync(ct);
 
@@ -64,6 +74,7 @@ public class AmbassadorService(
                 ReferralConversionKind.Application => "Someone who came through your link has applied to an experience.",
                 ReferralConversionKind.Approved => "An application that came through your link has been approved.",
                 ReferralConversionKind.TicketPurchase => "Someone who came through your link has bought a ticket.",
+                ReferralConversionKind.SessionPurchase => "Someone who came through your link has bought a place on a session.",
                 _ => "Someone who came through your link has become a member.",
             };
             var amountText = amountMinor is { } a && currency is not null ? FormatMoney(a, currency) : null;
@@ -72,14 +83,14 @@ public class AmbassadorService(
             await notificationService.CreateForUserAsync(ambassador.UserId, NotificationType.ReferralConverted,
                 "Your link just worked",
                 amountText is null ? what : $"{what} {amountText}{(commissionText is null ? "" : $" — your commission {commissionText}")}.",
-                "/ambassador", ct);
+                SiteUrls.Ambassador, ct);
 
             var user = await userManager.FindByIdAsync(ambassador.UserId.ToString());
             if (user?.Email is not null)
             {
                 await emailService.SendAsync("ReferralConverted", user.Email, "Your referral link just worked",
                     new ReferralConvertedEmailModel(ambassador.Name, what, amountText, commissionText,
-                        $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/ambassador"),
+                        SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Ambassador)),
                     nameof(Ambassador), ambassador.Id, ct);
             }
         }
@@ -188,7 +199,8 @@ public class AmbassadorService(
         await ambassadors.SaveChangesAsync(ct);
     }
 
-    public async Task RecordVisitAsync(string code, string? utmSource, string? utmMedium, string? utmCampaign, string? utmContent, CancellationToken ct = default)
+    public async Task RecordVisitAsync(string code, ReferralTargetKind targetKind, Guid? targetId, string? landingPath,
+        string? utmSource, string? utmMedium, string? utmCampaign, string? utmContent, CancellationToken ct = default)
     {
         var ambassador = await ambassadors.GetByCodeAsync(code, ct);
         if (ambassador is null || ambassador.Status != AmbassadorStatus.Active) return;
@@ -196,19 +208,47 @@ public class AmbassadorService(
         await visits.AddAsync(new ReferralVisit
         {
             AmbassadorId = ambassador.Id,
-            UtmSource = utmSource,
-            UtmMedium = utmMedium,
-            UtmCampaign = utmCampaign,
-            UtmContent = utmContent,
+            TargetKind = targetKind,
+            TargetId = targetId,
+            LandingPath = landingPath is { Length: > 200 } ? landingPath[..200] : landingPath,
+            UtmSource = Clip(utmSource),
+            UtmMedium = Clip(utmMedium),
+            UtmCampaign = Clip(utmCampaign),
+            UtmContent = Clip(utmContent),
         }, ct);
         await visits.SaveChangesAsync(ct);
+
+        // The columns are 100 wide and the values come straight off a query string.
+        static string? Clip(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Length > 100 ? value[..100] : value;
+    }
+
+    public async Task<List<ReferralLinkTarget>> GetLinkTargetsAsync(CancellationToken ct = default)
+    {
+        var targets = new List<ReferralLinkTarget>();
+
+        foreach (var e in await experiences.GetPublicListingAsync(new ExperienceFilter { Take = 200 }, ct))
+        {
+            targets.Add(new ReferralLinkTarget(ReferralTargetKind.Experience, e.Id, e.Slug,
+                ExperienceContent.Title(e, SiteCultures.Default), e.City, e.StartAtUtc));
+        }
+
+        // Members-only sessions are included: the link is a way in for someone who then joins, and
+        // the page itself explains what it takes to attend.
+        foreach (var s in await seminars.GetPublicListingAsync(new SeminarFilter { IncludeMembersOnly = true, Take = 200 }, ct))
+        {
+            targets.Add(new ReferralLinkTarget(ReferralTargetKind.Session, s.Id, s.Slug,
+                SeminarContent.Title(s, SiteCultures.Default), s.IsOnline ? "Online" : s.Location, s.StartAtUtc));
+        }
+
+        // Soonest sitting first; on-demand sessions (no date) last.
+        return targets.OrderBy(t => t.StartAtUtc is null).ThenBy(t => t.StartAtUtc).ToList();
     }
 
     public async Task<AmbassadorStats> GetStatsAsync(Guid ambassadorId, CancellationToken ct = default)
     {
         var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
         if (ambassador is null)
-            return new AmbassadorStats(0, 0, 0, 0, 0, [], []);
+            return new AmbassadorStats(0, 0, 0, 0, 0, 0, [], [], []);
 
         var allVisits = await visits.FindAsync(v => v.AmbassadorId == ambassadorId, ct);
 
@@ -226,12 +266,19 @@ public class AmbassadorService(
             .Where(p => p.Status == PaymentStatus.Paid && p.ReferralCode == ambassador.Code)
             .ToList();
 
+        var referredSessionPurchases = (await seminarEnrollments.GetAllAsync(ct))
+            .Where(e => e.ReferralCode == ambassador.Code && e.Status == SeminarEnrollmentStatus.Confirmed && e.GrantedVia == SeminarAccessGrant.Purchase)
+            .ToList();
+
         var revenueByCurrency = new Dictionary<string, long>();
         void AddRevenue(string currency, long amountMinor) =>
             revenueByCurrency[currency] = revenueByCurrency.GetValueOrDefault(currency) + amountMinor;
 
         foreach (var p in referredTicketPayments) AddRevenue(p.Currency, p.AmountMinor);
         foreach (var p in referredMembershipPayments) AddRevenue(p.Currency, p.AmountMinor);
+        foreach (var e in referredSessionPurchases) AddRevenue(e.Currency, e.AmountMinor);
+
+        var targets = await BuildTargetStatsAsync(ambassadorId, allVisits, ct);
 
         var commissionByCurrency = revenueByCurrency.ToDictionary(
             kv => kv.Key,
@@ -243,8 +290,68 @@ public class AmbassadorService(
             ApprovedApplications: approvedCount,
             TicketPurchases: referredTicketPayments.Count,
             MembershipPurchases: referredMembershipPayments.Count,
+            SessionPurchases: referredSessionPurchases.Count,
             RevenueByCurrency: revenueByCurrency,
-            CommissionByCurrency: commissionByCurrency);
+            CommissionByCurrency: commissionByCurrency,
+            Targets: targets);
+    }
+
+    /// <summary>
+    /// Per link: which post brought the visits, and what those visits turned into. Visits are
+    /// grouped by the target recorded at /r/{code}/…, conversions by the target on the ledger row —
+    /// so a ticket bought after an experience-scoped link counts under that experience even if the
+    /// buyer wandered around the site first.
+    /// </summary>
+    private async Task<List<ReferralTargetStats>> BuildTargetStatsAsync(Guid ambassadorId, List<ReferralVisit> allVisits, CancellationToken ct)
+    {
+        var ledger = await conversions.FindAsync(c => c.AmbassadorId == ambassadorId, ct);
+        var keys = allVisits.Select(v => (v.TargetKind, v.TargetId))
+            .Concat(ledger.Select(c => (c.TargetKind, c.TargetId)))
+            .Distinct()
+            .ToList();
+
+        var experienceIds = keys.Where(k => k.TargetKind == ReferralTargetKind.Experience && k.TargetId is not null).Select(k => k.TargetId!.Value).ToHashSet();
+        var seminarIds = keys.Where(k => k.TargetKind == ReferralTargetKind.Session && k.TargetId is not null).Select(k => k.TargetId!.Value).ToList();
+        var experiencesById = experienceIds.Count == 0
+            ? new Dictionary<Guid, Entities.Experiences.Experience>()
+            : (await experiences.GetAllAsync(ct)).Where(e => experienceIds.Contains(e.Id)).ToDictionary(e => e.Id);
+        var seminarsById = seminarIds.Count == 0
+            ? new Dictionary<Guid, Seminar>()
+            : (await seminars.GetByIdsAsync(seminarIds, ct)).ToDictionary(s => s.Id);
+
+        var targets = new List<ReferralTargetStats>();
+        foreach (var (kind, id) in keys)
+        {
+            string title;
+            string? slug = null;
+            if (kind == ReferralTargetKind.Experience && id is not null && experiencesById.TryGetValue(id.Value, out var experience))
+            {
+                title = ExperienceContent.Title(experience, SiteCultures.Default);
+                slug = experience.Slug;
+            }
+            else if (kind == ReferralTargetKind.Session && id is not null && seminarsById.TryGetValue(id.Value, out var seminar))
+            {
+                title = SeminarContent.Title(seminar, SiteCultures.Default);
+                slug = seminar.Slug;
+            }
+            else
+            {
+                title = kind switch
+                {
+                    ReferralTargetKind.Experience => "An experience that is no longer listed",
+                    ReferralTargetKind.Session => "A session that is no longer listed",
+                    _ => "Site link",
+                };
+            }
+
+            targets.Add(new ReferralTargetStats(kind, id, title, slug,
+                Visits: allVisits.Count(v => v.TargetKind == kind && v.TargetId == id),
+                Applications: ledger.Count(c => c.Kind == ReferralConversionKind.Application && c.TargetKind == kind && c.TargetId == id),
+                Purchases: ledger.Count(c => c.TargetKind == kind && c.TargetId == id
+                    && c.Kind is ReferralConversionKind.TicketPurchase or ReferralConversionKind.MembershipPurchase or ReferralConversionKind.SessionPurchase)));
+        }
+
+        return targets.OrderByDescending(t => t.Purchases).ThenByDescending(t => t.Applications).ThenByDescending(t => t.Visits).ToList();
     }
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>

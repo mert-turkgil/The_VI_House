@@ -18,11 +18,13 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// on the public page is the price Stripe will charge.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Money)]
+[Route("admin/plans")]
 public class AdminMembershipPlansController(
     IMembershipService membershipService,
     UserManager<ApplicationUser> userManager,
     IOptions<StripeOptions> stripe) : AdminControllerBase
 {
+    [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var plans = await membershipService.GetAllPlansAsync(ct);
@@ -35,10 +37,10 @@ public class AdminMembershipPlansController(
         return View(plans);
     }
 
-    [HttpGet]
+    [HttpGet("new")]
     public IActionResult Create() => View(new AdminMembershipPlanFormViewModel());
 
-    [HttpPost]
+    [HttpPost("new")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(AdminMembershipPlanFormViewModel form, CancellationToken ct)
     {
@@ -54,7 +56,7 @@ public class AdminMembershipPlansController(
         return RedirectToAction(nameof(Edit), new { id = created.Id });
     }
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Edit(Guid id, CancellationToken ct)
     {
         var plan = await membershipService.GetPlanAsync(id, ct);
@@ -66,7 +68,7 @@ public class AdminMembershipPlansController(
         return View(form);
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id, AdminMembershipPlanFormViewModel form, CancellationToken ct)
     {
@@ -87,7 +89,7 @@ public class AdminMembershipPlansController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/archive")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Archive(Guid id, CancellationToken ct)
     {
@@ -97,7 +99,7 @@ public class AdminMembershipPlansController(
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
@@ -108,7 +110,7 @@ public class AdminMembershipPlansController(
         return result.Success ? RedirectToAction(nameof(Index)) : RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/sync")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Sync(Guid id, CancellationToken ct)
     {
@@ -118,7 +120,7 @@ public class AdminMembershipPlansController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("sync-all")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SyncAll(CancellationToken ct)
     {
@@ -133,7 +135,7 @@ public class AdminMembershipPlansController(
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost("import")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Import(CancellationToken ct)
     {

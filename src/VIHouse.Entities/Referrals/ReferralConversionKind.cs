@@ -11,4 +11,6 @@ public enum ReferralConversionKind
     TicketPurchase,
     /// <summary>A membership was paid for.</summary>
     MembershipPurchase,
+    /// <summary>A place on a session (seminar) was paid for.</summary>
+    SessionPurchase,
 }

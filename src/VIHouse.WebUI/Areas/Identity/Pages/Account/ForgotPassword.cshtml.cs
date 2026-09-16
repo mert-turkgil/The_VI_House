@@ -22,12 +22,15 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
     public class ForgotPasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        private readonly VIHouse.Business.Abstract.IEmailService _emails;
 
-        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        /// <summary>Matches DataProtectionTokenProviderOptions.TokenLifespan (the framework default).</summary>
+        private const int ResetLinkHours = 24;
+
+        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, VIHouse.Business.Abstract.IEmailService emails)
         {
             _userManager = userManager;
-            _emailSender = emailSender;
+            _emails = emails;
         }
 
         /// <summary>
@@ -73,10 +76,11 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
-                await _emailSender.SendEmailAsync(
-                    Input.Email,
-                    "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                // Through the site's own pipeline — templated, logged under EmailLogs, and actually
+                // delivered; the Identity UI's IEmailSender is a silent no-op by default.
+                await _emails.SendAsync("PasswordReset", Input.Email, "Reset your password",
+                    new VIHouse.Business.Abstract.PasswordResetEmailModel(user.FirstName, callbackUrl!, ResetLinkHours),
+                    nameof(ApplicationUser), user.Id);
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }

@@ -10,12 +10,14 @@ using VIHouse.WebUI.Areas.Admin;
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
 [Authorize(Roles = AdminSections.RolesFor.Everyone)]
+[Route("admin")]
 public class AdminDashboardController(
     IApplicationRepository applications,
     IBookingRepository bookings,
     IPaymentRepository payments,
     IMembershipPaymentRepository membershipPayments) : AdminControllerBase
 {
+    [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var submitted = await applications.GetByStatusAsync(ApplicationStatus.Submitted, ct);

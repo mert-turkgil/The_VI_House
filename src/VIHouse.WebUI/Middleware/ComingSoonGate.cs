@@ -59,6 +59,10 @@ public class ComingSoonGate(RequestDelegate next, IOptionsMonitor<FeatureOptions
         // The curtain's own og:image resolves to /media/site-og/{id}, so gating this breaks the
         // link preview of the one page anyone is meant to share.
         "Media",
+        // UseExceptionHandler("/error/500") and UseStatusCodePagesWithReExecute("/error/{code}")
+        // re-execute the request through this middleware. Gate it and any exception raised on the
+        // curtain becomes 500 -> 302 -> 500, forever. The page shows nothing a curtain should hide.
+        "Error",
     };
 
     /// <summary>
@@ -141,9 +145,6 @@ public class ComingSoonGate(RequestDelegate next, IOptionsMonitor<FeatureOptions
 
         return action switch
         {
-            // UseExceptionHandler("/Home/Error") re-executes the request through this middleware.
-            // Gate it and any exception raised on the curtain becomes 500 -> 302 -> 500, forever.
-            ControllerActionDescriptor { ControllerName: "Home", ActionName: "Error" } => true,
             ControllerActionDescriptor controller => OpenControllers.Contains(controller.ControllerName),
             PageActionDescriptor => values["page"] as string is { } page && OpenPages.Contains(page),
             _ => false,

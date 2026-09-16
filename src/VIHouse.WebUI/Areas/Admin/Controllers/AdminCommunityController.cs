@@ -24,6 +24,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// real access-control action even though it looks like content editing.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Marketing)]
+[Route("admin/community")]
 public class AdminCommunityController(
     IRepository<CommunityLink> links,
     IAuditLogRepository auditLogs,
@@ -44,20 +45,22 @@ public class AdminCommunityController(
             .OrderByDescending(s => s.StartAtUtc ?? DateTimeOffset.MinValue).Select(s => new SelectListItem(s.Slug, s.Id.ToString())).ToList();
     }
 
+    [HttpGet("")]
+
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var all = await links.GetAllAsync(ct);
         return View(all.OrderBy(l => l.SortOrder).ThenBy(l => l.Label).ToList());
     }
 
-    [HttpGet]
+    [HttpGet("new")]
     public async Task<IActionResult> Create(CancellationToken ct)
     {
         await LoadScopeOptionsAsync(ct);
         return View("Edit", new AdminCommunityLinkFormViewModel());
     }
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Edit(Guid id, CancellationToken ct)
     {
         var link = await links.GetByIdAsync(id, ct);
@@ -66,7 +69,7 @@ public class AdminCommunityController(
         return View(AdminCommunityLinkFormViewModel.FromEntity(link));
     }
 
-    [HttpPost]
+    [HttpPost("save")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save(AdminCommunityLinkFormViewModel form, CancellationToken ct)
     {
@@ -116,7 +119,7 @@ public class AdminCommunityController(
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {

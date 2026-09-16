@@ -21,12 +21,12 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
     public class ResendEmailConfirmationModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        private readonly VIHouse.Business.Abstract.IEmailService _emails;
 
-        public ResendEmailConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        public ResendEmailConfirmationModel(UserManager<ApplicationUser> userManager, VIHouse.Business.Abstract.IEmailService emails)
         {
             _userManager = userManager;
-            _emailSender = emailSender;
+            _emails = emails;
         }
 
         /// <summary>
@@ -77,10 +77,9 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                 pageHandler: null,
                 values: new { userId = userId, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                Input.Email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            await _emails.SendAsync("ConfirmEmail", Input.Email, "Confirm your email",
+                new VIHouse.Business.Abstract.ConfirmEmailAddressEmailModel(user.FirstName, callbackUrl!),
+                nameof(ApplicationUser), user.Id);
 
             ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
             return Page();

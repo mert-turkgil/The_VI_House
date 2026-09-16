@@ -33,6 +33,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// English-only: CMS content stays outside the four-language scope (see Program.cs).
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Content)]
+[Route("admin/content")]
 public class AdminCmsController(
     IContentService contentService,
     IRepository<MediaAsset> assets,
@@ -51,11 +52,15 @@ public class AdminCmsController(
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
+    [HttpGet("")]
+
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var pages = await contentService.GetAllPagesAsync(ct);
         return View(pages);
     }
+
+    [HttpGet("{id}")]
 
     public async Task<IActionResult> Edit(string id, CancellationToken ct)
     {
@@ -70,7 +75,7 @@ public class AdminCmsController(
     /// form rather than through a bound model, because the fields differ per section and the schema
     /// — not the request — decides which ones are kept.
     /// </summary>
-    [HttpPost]
+    [HttpPost("update-section")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateSection(AdminContentBlockFormModel form, CancellationToken ct)
     {
@@ -120,7 +125,7 @@ public class AdminCmsController(
     /// Saves one language's copy of one section — the screen that finally lets the homepage below
     /// the hero speak anything other than English.
     /// </summary>
-    [HttpPost]
+    [HttpPost("save-section-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SaveSectionTranslation(
         AdminContentTranslationForm form, string pageSlug, CancellationToken ct)
@@ -151,7 +156,7 @@ public class AdminCmsController(
     }
 
     /// <summary>Drops one language's copy, so the section falls back to English again.</summary>
-    [HttpPost]
+    [HttpPost("remove-section-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveSectionTranslation(
         Guid blockId, string culture, string pageSlug, CancellationToken ct)
@@ -163,7 +168,7 @@ public class AdminCmsController(
         return RedirectToAction(nameof(Edit), new { id = pageSlug });
     }
 
-    [HttpPost]
+    [HttpPost("add-block")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddBlock(AdminContentBlockFormModel form, CancellationToken ct)
     {
@@ -182,7 +187,7 @@ public class AdminCmsController(
         return RedirectToAction(nameof(Edit), new { id = form.PageSlug });
     }
 
-    [HttpPost]
+    [HttpPost("remove-block")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveBlock(Guid pageId, Guid blockId, string pageSlug, CancellationToken ct)
     {
@@ -199,7 +204,7 @@ public class AdminCmsController(
     /// MediaController, never written into wwwroot — see MediaAsset for why that distinction is not
     /// cosmetic.
     /// </summary>
-    [HttpPost]
+    [HttpPost("upload-asset")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(MediaPolicy.MaxUploadBytes)]
     [RequestFormLimits(MultipartBodyLengthLimit = MediaPolicy.MaxUploadBytes)]
@@ -256,7 +261,7 @@ public class AdminCmsController(
         return RedirectToAction(nameof(Edit), new { id = pageSlug });
     }
 
-    [HttpPost]
+    [HttpPost("delete-asset")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAsset(Guid id, string pageSlug, CancellationToken ct)
     {

@@ -12,6 +12,7 @@ public class ReferralConversionConfiguration : IEntityTypeConfiguration<Referral
         builder.Property(c => c.Currency).HasMaxLength(3);
         builder.Property(c => c.SourceEntityType).HasMaxLength(50).IsRequired();
         builder.Property(c => c.Kind).HasConversion<string>().HasMaxLength(30);
+        builder.Property(c => c.TargetKind).HasConversion<string>().HasMaxLength(20);
         // One conversion per source row per step: a webhook delivered twice, or an approval
         // clicked twice, must not become two lines on the ambassador's timeline.
         builder.HasIndex(c => new { c.SourceEntityType, c.SourceEntityId, c.Kind }).IsUnique();

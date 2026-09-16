@@ -15,6 +15,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// dashboard itself once live keys are in place; this screen exists so Finance/Support can see
 /// payment status without database access.</summary>
 [Authorize(Roles = AdminSections.RolesFor.Money)]
+[Route("admin/payments")]
 public class AdminPaymentsController(
     IPaymentRepository payments,
     IBookingRepository bookings,
@@ -22,6 +23,7 @@ public class AdminPaymentsController(
     IPaymentProvider paymentProvider,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
+    [HttpGet("")]
     public async Task<IActionResult> Index(PaymentStatus? status, CancellationToken ct)
     {
         var all = await payments.GetAllAsync(ct);
@@ -48,6 +50,8 @@ public class AdminPaymentsController(
         ViewData["SelectedStatus"] = status;
         return View(model);
     }
+
+    [HttpGet("{id:guid}")]
 
     public async Task<IActionResult> Details(Guid id, CancellationToken ct)
     {

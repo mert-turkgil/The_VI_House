@@ -1,24 +1,24 @@
 @model SeminarEnrolledEmailModel
 @{
     ViewData["Preheader"] = $"Your place on {Model.SeminarTitle} is confirmed";
+    ViewData["Footnote"] = "You're receiving this because you enrolled on a session at The VI House.";
     var rows = new List<(string, string)> { ("Session", Model.SeminarTitle) };
     rows.Add(("When", Model.StartAtUtc is { } start ? $"{start:dddd d MMMM yyyy}, {start:HH:mm} UTC" : "On demand — open it whenever suits you"));
     rows.Add(("Where", Model.IsOnline ? "Online" : Model.Location ?? "In person"));
 }
-<p style="margin:0 0 6px; color:#b8955a; font-size:11px; font-weight:bold; letter-spacing:2px; text-transform:uppercase;">Session</p>
-<h1 style="font-family:Georgia,'Times New Roman',serif; font-size:26px; line-height:1.2; margin:0 0 18px; color:#00230a;">You're enrolled</h1>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Session", "You're enrolled"))" />
 <p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
 <p style="margin:0 0 20px;">Your place on <strong>@Model.SeminarTitle</strong> is confirmed.</p>
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
-<partial name="/Views/Emails/_EmailButton.cshtml" model="@((Model.SeminarUrl, "Open the session"))" />
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.SeminarUrl, "Open the session"))" />
 <p style="margin:0 0 16px; color:#4a4f45;">
     @if (Model.IsOnline && Model.StartAtUtc is not null)
     {
-        <text>The joining link appears on the session page and your account from an hour before the start.</text>
+        <text>The joining link appears on the session page and under My Sessions on your account from an hour before the start.</text>
     }
     else
     {
         <text>It is listed under My Sessions on your account page.</text>
     }
 </p>
-<p style="margin:0;">&mdash; The VI House</p>
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

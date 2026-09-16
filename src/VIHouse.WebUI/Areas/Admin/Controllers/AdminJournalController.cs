@@ -24,12 +24,15 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// writing in another tab.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Content)]
+[Route("admin/journal")]
 public class AdminJournalController(
     IJournalService journalService,
     UserManager<ApplicationUser> userManager,
     IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     // --- Index / create ----------------------------------------------------------------------------
+
+    [HttpGet("")]
 
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -49,10 +52,10 @@ public class AdminJournalController(
         return View(model);
     }
 
-    [HttpGet]
+    [HttpGet("new")]
     public IActionResult Create() => View(new AdminJournalCreateViewModel());
 
-    [HttpPost]
+    [HttpPost("new")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(AdminJournalCreateViewModel model, CancellationToken ct)
     {
@@ -74,7 +77,7 @@ public class AdminJournalController(
 
     // --- Edit --------------------------------------------------------------------------------------
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Edit(Guid id, string? culture, CancellationToken ct)
     {
         var post = await journalService.GetForAdminEditAsync(id, ct);
@@ -83,7 +86,7 @@ public class AdminJournalController(
         return View(BuildEditModel(post, culture));
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id, AdminJournalPostFormViewModel form, CancellationToken ct)
     {
@@ -116,7 +119,7 @@ public class AdminJournalController(
 
     // --- Translations ------------------------------------------------------------------------------
 
-    [HttpPost]
+    [HttpPost("{id:guid}/save-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SaveTranslation(Guid id, AdminJournalTranslationFormViewModel form, CancellationToken ct)
     {
@@ -143,7 +146,7 @@ public class AdminJournalController(
         return RedirectToAction(nameof(Edit), new { id, culture = form.Culture });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/delete-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteTranslation(Guid id, string culture, CancellationToken ct)
     {
@@ -163,7 +166,7 @@ public class AdminJournalController(
     /// The library uploader: photographs, GIFs and audio an author wants to place by hand. Its own
     /// multipart form, so it never carries the article's copy with it.
     /// </summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/upload-media")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(MediaPolicy.MaxUploadBytes)]
     [RequestFormLimits(MultipartBodyLengthLimit = MediaPolicy.MaxUploadBytes)]
@@ -196,7 +199,7 @@ public class AdminJournalController(
     ///
     /// Recorded as inline, which is what makes it eligible for pruning once no body references it.
     /// </summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/upload-inline")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(MediaPolicy.MaxUploadBytes)]
     [RequestFormLimits(MultipartBodyLengthLimit = MediaPolicy.MaxUploadBytes)]
@@ -218,7 +221,7 @@ public class AdminJournalController(
         return Json(new { url = JournalService.MediaUrl(result.Media.Id) });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/remove-media")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveMedia(Guid id, Guid mediaId, CancellationToken ct)
     {
@@ -229,7 +232,7 @@ public class AdminJournalController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/set-cover")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SetCover(Guid id, Guid mediaId, CancellationToken ct)
     {
@@ -241,7 +244,7 @@ public class AdminJournalController(
     }
 
     /// <summary>Uploads a cover and drops the one it replaces — file included.</summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/upload-cover")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(MediaPolicy.MaxUploadBytes)]
     [RequestFormLimits(MultipartBodyLengthLimit = MediaPolicy.MaxUploadBytes)]
@@ -263,7 +266,7 @@ public class AdminJournalController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/remove-cover")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveCover(Guid id, CancellationToken ct)
     {
@@ -276,7 +279,7 @@ public class AdminJournalController(
 
     // --- Delete ------------------------------------------------------------------------------------
 
-    [HttpPost]
+    [HttpPost("{id:guid}/delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {

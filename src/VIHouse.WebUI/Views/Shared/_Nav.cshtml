@@ -193,7 +193,7 @@
             }
             else
             {
-                <a class="site-header__login" href="/Identity/Account/Login">@Loc["Nav.LogIn"]</a>
+                <a class="site-header__login" asp-area="Identity" asp-page="/Account/Login">@Loc["Nav.LogIn"]</a>
                 <a class="btn btn--primary site-header__cta" href="@joinHref">@Loc["Nav.ApplyToJoin"]</a>
             }
             <button type="button" class="site-header__burger" data-nav-burger aria-label="@Loc["Nav.OpenMenu"]" aria-expanded="false" aria-controls="mobile-nav">
@@ -241,7 +241,7 @@
         else
         {
             <a class="btn btn--primary" href="@joinHref">@Loc["Nav.ApplyToJoin"]</a>
-            <a class="btn btn--ghost-dark" href="/Identity/Account/Login">@Loc["Nav.LogIn"]</a>
+            <a class="btn btn--ghost-dark" asp-area="Identity" asp-page="/Account/Login">@Loc["Nav.LogIn"]</a>
         }
     </div>
 </div>

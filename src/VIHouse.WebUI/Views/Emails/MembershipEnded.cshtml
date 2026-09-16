@@ -1,0 +1,21 @@
+@model MembershipEndedEmailModel
+@{
+    ViewData["Preheader"] = $"Your {Model.PlanName} membership has ended";
+    ViewData["Footnote"] = "You're receiving this because you had a membership at The VI House.";
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Membership", "Your membership has ended"))" />
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    @if (Model.WasRevoked)
+    {
+        <text>Your <strong>@Model.PlanName</strong> membership was closed by the House on @Model.EndedAt.ToString("d MMMM yyyy").</text>
+    }
+    else
+    {
+        <text>Your <strong>@Model.PlanName</strong> membership ran to the end of its paid period and has now ended, on @Model.EndedAt.ToString("d MMMM yyyy").</text>
+    }
+    Member sessions, the community channels and your member card are no longer available; your account, your bookings and your history stay exactly as they were.
+</p>
+<p style="margin:0 0 16px;">You are welcome back at any time &mdash; rejoining takes a minute and picks up where you left off.</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.RejoinUrl, "See membership plans", Secondary: true))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("If this is a surprise, reply to this email and a person will look into it.")" />

@@ -1,14 +1,13 @@
 @model PaymentFailedEmailModel
-
-<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">We Couldn't Complete Your Payment</h1>
+@{
+    ViewData["Preheader"] = $"Your checkout for {Model.ExperienceTitle} timed out — nothing was charged";
+    ViewData["Footnote"] = "You're receiving this because you started a booking at The VI House.";
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Checkout not completed", "We couldn't complete your payment", "warning"))" />
 <p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
 <p style="margin:0 0 16px;">
-    Your checkout for <strong>@Model.ExperienceTitle</strong> wasn't completed in time, so no payment was
-    taken and your held place has been released. You can start a new checkout below.
+    Your checkout for <strong>@Model.ExperienceTitle</strong> wasn't completed in time, so no payment was taken and
+    the place we were holding has been released. Your approval still stands — start a new checkout below.
 </p>
-<p style="margin:0 0 16px;">
-    <a href="@Model.InvitationUrl" style="display:inline-block; padding:12px 24px; background-color:#b8955a; color:#001a02; text-decoration:none; font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; border-radius:24px;">
-        Try Again
-    </a>
-</p>
-<p style="margin:0;">&mdash; The VI House</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.InvitationUrl, "Try again"))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("If the card was declined, your bank may be able to say why; if you'd rather pay another way, reply to this email.")" />

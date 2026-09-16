@@ -34,7 +34,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
         {
             if (userId == null || code == null)
             {
-                return RedirectToPage("/Index");
+                return RedirectToAction("Index", "Home", new { area = "" });
             }
 
             var user = await _userManager.FindByIdAsync(userId);

@@ -24,6 +24,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// questions without database access. Role assignment lives here too since promoting/demoting an
 /// admin is an operational necessity, not scope creep on top of "view a customer".</summary>
 [Authorize(Roles = AdminSections.RolesFor.Users)]
+[Route("admin/users")]
 public class AdminUsersController(
     UserManager<ApplicationUser> userManager,
     IApplicationRepository applications,
@@ -51,6 +52,8 @@ public class AdminUsersController(
         return RedirectToAction(nameof(Details), new { id = user.Id });
     }
 
+    [HttpGet("")]
+
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var users = await userManager.Users.ToListAsync(ct);
@@ -74,6 +77,8 @@ public class AdminUsersController(
 
         return View(model);
     }
+
+    [HttpGet("{id:guid}")]
 
     public async Task<IActionResult> Details(Guid id, CancellationToken ct)
     {
@@ -119,7 +124,7 @@ public class AdminUsersController(
     /// this a Support or Marketing account could grant itself SuperAdmin and take over the panel —
     /// granting roles is a different privilege from using them.
     /// </summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/update-roles")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = Roles.SuperAdmin)]
     public async Task<IActionResult> UpdateRoles(Guid id, string[] roles, CancellationToken ct)
@@ -180,7 +185,7 @@ public class AdminUsersController(
     /// sooner than that: OnboardingRequirementFilter re-reads two-factor state from the database on
     /// every authorized request, so the panel shuts on their very next click.
     /// </summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/reset-two-factor")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = Roles.SuperAdmin)]
     public async Task<IActionResult> ResetTwoFactor(Guid id, CancellationToken ct)
@@ -213,7 +218,7 @@ public class AdminUsersController(
     // paying member sees, and nothing touches Stripe. SuperAdmin only, like everything else here
     // that changes what an account is entitled to.
 
-    [HttpPost]
+    [HttpPost("{id:guid}/grant-membership")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = Roles.SuperAdmin)]
     public async Task<IActionResult> GrantMembership(Guid id, AdminGrantMembershipViewModel form, CancellationToken ct)
@@ -232,7 +237,7 @@ public class AdminUsersController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/revoke-membership")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = Roles.SuperAdmin)]
     public async Task<IActionResult> RevokeMembership(Guid id, CancellationToken ct)
@@ -250,7 +255,7 @@ public class AdminUsersController(
     // The same record an admin would create under Ambassadors, reached from the person rather
     // than from the code. Only admins hand out referral links; a user cannot ask for one.
 
-    [HttpPost]
+    [HttpPost("{id:guid}/make-ambassador")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = Roles.SuperAdmin)]
     public async Task<IActionResult> MakeAmbassador(Guid id, AdminMakeAmbassadorViewModel form, CancellationToken ct)
@@ -273,7 +278,7 @@ public class AdminUsersController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/set-ambassador-status")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = Roles.SuperAdmin)]
     public async Task<IActionResult> SetAmbassadorStatus(Guid id, AmbassadorStatus status, CancellationToken ct)
@@ -304,11 +309,11 @@ public class AdminUsersController(
 
     // --- Inviting a new admin -------------------------------------------------------------------
 
-    [HttpGet]
     [Authorize(Roles = Roles.SuperAdmin)]
+    [HttpGet("invite")]
     public IActionResult Invite() => View(new AdminInviteViewModel());
 
-    [HttpPost]
+    [HttpPost("invite")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = Roles.SuperAdmin)]
     public async Task<IActionResult> Invite(AdminInviteViewModel form, CancellationToken ct)

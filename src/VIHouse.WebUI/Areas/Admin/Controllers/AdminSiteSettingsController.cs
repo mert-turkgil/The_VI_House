@@ -24,6 +24,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// draft can be bookmarked and handed to whoever actually writes the German.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Marketing)]
+[Route("admin/settings")]
 public class AdminSiteSettingsController(
     ISiteSettingsService settingsService,
     ISitemapService sitemap,
@@ -32,6 +33,8 @@ public class AdminSiteSettingsController(
     /// <summary>Who is making the change, for the audit log. Same helper every admin controller has.</summary>
     private (Guid AdminId, string? IpAddress) CurrentActor() =>
         (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
+
+    [HttpGet("")]
 
     public async Task<IActionResult> Index(string? culture, CancellationToken ct)
     {
@@ -81,7 +84,7 @@ public class AdminSiteSettingsController(
         return View(model);
     }
 
-    [HttpPost]
+    [HttpPost("")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Index(AdminSiteSettingsForm form, string? culture, CancellationToken ct)
     {
@@ -98,7 +101,7 @@ public class AdminSiteSettingsController(
         return RedirectToAction(nameof(Index), new { culture });
     }
 
-    [HttpPost]
+    [HttpPost("save-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SaveTranslation(AdminSiteSettingsTranslationForm form, CancellationToken ct)
     {
@@ -121,7 +124,7 @@ public class AdminSiteSettingsController(
     // The size limits and form limits are the established pair on every upload action in the admin;
     // without both, a large file fails at a different layer with a far less useful message.
 
-    [HttpPost]
+    [HttpPost("upload-og-image")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(8 * 1024 * 1024)]
     [RequestFormLimits(MultipartBodyLengthLimit = 8 * 1024 * 1024)]
@@ -147,7 +150,7 @@ public class AdminSiteSettingsController(
         return RedirectToAction(nameof(Index), new { culture });
     }
 
-    [HttpPost]
+    [HttpPost("remove-og-image")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveOgImage(string? culture, CancellationToken ct)
     {
@@ -158,7 +161,7 @@ public class AdminSiteSettingsController(
         return RedirectToAction(nameof(Index), new { culture });
     }
 
-    [HttpPost]
+    [HttpPost("upload-logo")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(8 * 1024 * 1024)]
     [RequestFormLimits(MultipartBodyLengthLimit = 8 * 1024 * 1024)]
@@ -180,7 +183,7 @@ public class AdminSiteSettingsController(
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost("remove-logo")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveLogo(CancellationToken ct)
     {

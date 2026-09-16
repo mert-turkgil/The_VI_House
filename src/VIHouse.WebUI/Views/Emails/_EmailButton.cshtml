@@ -1,10 +1,16 @@
 @* A bulletproof button: a table cell with the colour on it, so it draws in Outlook and in clients
-   that ignore padding on links. Model: (string Url, string Label) *@
-@model (string Url, string Label)
-<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 24px;">
+   that ignore padding on links. Secondary = outlined, for the lesser of two actions.
+   Model: EmailParts.Button. *@
+@model VIHouse.WebUI.Helpers.EmailParts.Button
+@{
+    var background = Model.Secondary ? "#ffffff" : "#b8955a";
+    var colour = Model.Secondary ? "#00230a" : "#001a02";
+    var border = Model.Secondary ? "1px solid #00230a" : "1px solid #b8955a";
+}
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px;">
     <tr>
-        <td align="center" style="background-color:#b8955a; border-radius:26px;">
-            <a href="@Model.Url" style="display:inline-block; padding:14px 28px; color:#001a02; text-decoration:none; font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; letter-spacing:1.5px; text-transform:uppercase; border-radius:26px;">@Model.Label</a>
+        <td align="center" style="background-color:@background; border:@border; border-radius:26px; mso-padding-alt:14px 28px;">
+            <a href="@Model.Url" style="display:inline-block; padding:13px 27px; color:@colour; text-decoration:none; font-family:Arial,Helvetica,sans-serif; font-size:13px; font-weight:bold; letter-spacing:1.5px; text-transform:uppercase; border-radius:26px;">@Model.Label</a>
         </td>
     </tr>
 </table>

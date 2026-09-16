@@ -20,7 +20,11 @@ namespace VIHouse.WebUI.Controllers;
 [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class ErrorController : Controller
 {
-    [HttpGet("{code:int}")]
+    // [Route], not [HttpGet]: UseStatusCodePagesWithReExecute re-runs the pipeline with the
+    // original request's method, so a POST that ended in a bare 400 (an antiforgery failure, say)
+    // arrives here as POST /error/400. With a GET-only template that became a 405 with an empty
+    // body — the real status lost, and no page shown.
+    [Route("{code:int}")]
     public IActionResult Index(int code)
     {
         Response.StatusCode = code is >= 400 and < 600 ? code : 500;

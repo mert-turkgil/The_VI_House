@@ -20,16 +20,16 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IEmailSender _emailSender;
+        private readonly VIHouse.Business.Abstract.IEmailService _emails;
 
         public EmailModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IEmailSender emailSender)
+            VIHouse.Business.Abstract.IEmailService emails)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _emailSender = emailSender;
+            _emails = emails;
         }
 
         /// <summary>
@@ -124,10 +124,9 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
                     pageHandler: null,
                     values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
                     protocol: Request.Scheme);
-                await _emailSender.SendEmailAsync(
-                    Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                await _emails.SendAsync("EmailChange", Input.NewEmail, "Confirm your new email address",
+                    new VIHouse.Business.Abstract.EmailChangeEmailModel(user.FirstName, Input.NewEmail, callbackUrl!),
+                    nameof(ApplicationUser), user.Id);
 
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
                 return RedirectToPage();
@@ -160,10 +159,9 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            await _emails.SendAsync("ConfirmEmail", email!, "Confirm your email",
+                new VIHouse.Business.Abstract.ConfirmEmailAddressEmailModel(user.FirstName, callbackUrl!),
+                nameof(ApplicationUser), user.Id);
 
             StatusMessage = "Verification email sent. Please check your email.";
             return RedirectToPage();

@@ -2,7 +2,8 @@
 @{
     ViewData["Title"] = Model.Name;
     var stats = Model.Stats;
-    var purchases = stats is null ? 0 : stats.TicketPurchases + stats.MembershipPurchases;
+    var purchases = stats?.Purchases ?? 0;
+    var titleByTarget = stats?.Targets.ToDictionary(t => (t.Kind, t.Id), t => t.Title) ?? [];
     // Visits are only counted on /r/{code}; a typed code converts without one, so the rate is capped rather than shown above 100.
     var conversionRate = stats is { Visits: > 0 } ? Math.Min(100, (double)purchases / stats.Visits * 100) : 0;
 
@@ -11,6 +12,7 @@
         ReferralConversionKind.Application => "Applied to an experience",
         ReferralConversionKind.Approved => "Application approved",
         ReferralConversionKind.TicketPurchase => "Bought a ticket",
+        ReferralConversionKind.SessionPurchase => "Bought a place on a session",
         _ => "Became a member",
     };
 }
@@ -72,11 +74,34 @@
             </figure>
         </div>
 
+        @* --- One link per experience and session --------------------------------------------- *@
+        @if (Model.Links is not null)
+        {
+            <div class="admin-card">
+                <h2>Links per experience and session</h2>
+                <p class="admin-hint" style="margin-top:0;">Each published experience and session has its own link and QR code. A visitor lands straight on that page, the visit is counted against it, and whatever they do next — apply, buy a ticket, enrol — is credited to @Model.Name under that link. These are the same links and downloads @Model.Name sees on their own dashboard.</p>
+                <partial name="/Views/Shared/_ReferralLinks.cshtml" model="Model.Links" />
+            </div>
+        }
+
         @* --- Tracked links -------------------------------------------------------------------- *@
         <div class="admin-card" data-utm-builder data-utm-base="@Model.ReferralUrl">
             <h2>Tracked link for a channel</h2>
             <p class="admin-hint" style="margin-top:0;">Give each channel its own link so "Visits by source" below shows where the traffic comes from. Tags are appended as UTM parameters and recorded on every visit.</p>
             <div class="admin-form__grid">
+                @if (Model.Links is not null && Model.Links.Targets.Count > 0)
+                {
+                    <div class="admin-field">
+                        <label for="utm-target">Link</label>
+                        <select id="utm-target" data-utm-target>
+                            <option value="@Model.ReferralUrl">Site link</option>
+                            @foreach (var t in Model.Links.Targets)
+                            {
+                                <option value="@Model.Links.LinkFor(t)">@(t.Kind == ReferralTargetKind.Experience ? "Experience" : "Session"): @t.Title</option>
+                            }
+                        </select>
+                    </div>
+                }
                 <div class="admin-field">
                     <label for="utm-source">Source</label>
                     <input id="utm-source" data-utm="source" list="utm-sources" placeholder="instagram" autocomplete="off" />
@@ -124,7 +149,7 @@
                     </div>
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-card__value">@purchases</div>
-                        <div class="admin-kpi-card__label">Purchases <span class="admin-table__sub">(@stats.TicketPurchases tickets · @stats.MembershipPurchases memberships)</span></div>
+                        <div class="admin-kpi-card__label">Purchases <span class="admin-table__sub">(@stats.TicketPurchases tickets · @stats.MembershipPurchases memberships · @stats.SessionPurchases sessions)</span></div>
                     </div>
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-card__value">@conversionRate.ToString("0.#")%</div>
@@ -145,6 +170,25 @@
                         </div>
                     }
                 </div>
+            }
+
+            @if (stats is { Targets.Count: > 0 })
+            {
+                <h3>Which link is working</h3>
+                <table class="admin-table admin-table--compact">
+                    <thead><tr><th>Link</th><th style="text-align:right;">Visits</th><th style="text-align:right;">Applications</th><th style="text-align:right;">Purchases</th></tr></thead>
+                    <tbody>
+                        @foreach (var t in stats.Targets)
+                        {
+                            <tr>
+                                <td><span class="admin-badge admin-badge--draft">@t.Kind</span> @t.Title</td>
+                                <td style="text-align:right;">@t.Visits</td>
+                                <td style="text-align:right;">@t.Applications</td>
+                                <td style="text-align:right;">@t.Purchases</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             }
 
             <div class="referral-split">
@@ -184,7 +228,13 @@
                             {
                                 <li class="ambassador-timeline__item">
                                     <time datetime="@c.OccurredAt.ToString("o")">@c.OccurredAt.ToString("d MMM yyyy, HH:mm")</time>
-                                    <span class="ambassador-timeline__what">@KindLabel(c.Kind)</span>
+                                    <span class="ambassador-timeline__what">
+                                        @KindLabel(c.Kind)
+                                        @if (c.TargetKind != ReferralTargetKind.Site && titleByTarget.TryGetValue((c.TargetKind, c.TargetId), out var about))
+                                        {
+                                            <em class="ambassador-timeline__about">&middot; @about</em>
+                                        }
+                                    </span>
                                     @if (c.AmountMinor is { } amount && c.Currency is not null)
                                     {
                                         <span class="ambassador-timeline__money">
@@ -234,7 +284,7 @@
             <dl class="admin-detail-list">
                 <div><dt>Email</dt><dd>@(Model.Email ?? "—")</dd></div>
                 <div><dt>Code</dt><dd><code>@Model.Code</code> <span class="admin-table__sub">(fixed — links already shared depend on it)</span></dd></div>
-                <div><dt>Their dashboard</dt><dd><a href="/ambassador" target="_blank" rel="noopener">/ambassador</a> <span class="admin-table__sub">(what they see when signed in)</span></dd></div>
+                <div><dt>Their dashboard</dt><dd><a asp-area="" asp-controller="Ambassador" asp-action="Index" target="_blank" rel="noopener">/ambassador</a> <span class="admin-table__sub">(what they see when signed in)</span></dd></div>
             </dl>
         </div>
     </div>

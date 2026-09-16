@@ -73,18 +73,38 @@ public record ConfirmEmailAddressEmailModel(string FirstName, string ConfirmUrl)
 /// ever emails a credential.</summary>
 public record WelcomeSetupEmailModel(string FirstName, string SetupUrl, string? PlanName);
 
-/// <summary>Sent when an existing SuperAdmin creates a staff account. Carries the one-time link the
-/// new admin uses to set a password; no credential is ever emailed, and the account cannot be used
-/// until they also confirm the address and switch on two-factor.</summary>
 /// <summary>To an ambassador when their link converts. Deliberately anonymous — what happened and
 /// what it is worth, never who.</summary>
 public record ReferralConvertedEmailModel(string Name, string What, string? Amount, string? Commission, string DashboardUrl);
 
 /// <summary>An admin sends the ambassador their referral link (and code) — the same thing the
-/// account page shows, delivered so it can be forwarded from the inbox.</summary>
+/// dashboard shows, delivered so it can be forwarded from the inbox.</summary>
 public record AmbassadorLinkEmailModel(string Name, string ReferralUrl, string Code, decimal CommissionPercent, string DashboardUrl, string? Note);
 
+/// <summary>Sent when an existing SuperAdmin creates a staff account. Carries the one-time link the
+/// new admin uses to set a password; no credential is ever emailed, and the account cannot be used
+/// until they also confirm the address and switch on two-factor.</summary>
 public record AdminInviteEmailModel(string FirstName, string SetupUrl, string InvitedBy, string RoleSummary);
+
+/// <summary>"Forgot your password?" — the one-time reset link. Sent through the same pipeline as
+/// every other mail (logged, templated); the Identity UI's own sender is a no-op and is never used.</summary>
+public record PasswordResetEmailModel(string FirstName, string ResetUrl, int ExpiresInHours);
+
+/// <summary>Sent to the <em>new</em> address when a member changes their email, so the change only
+/// takes effect once whoever owns that inbox confirms it.</summary>
+public record EmailChangeEmailModel(string FirstName, string NewEmail, string ConfirmUrl);
+
+/// <summary>The subscription has ended (cancelled and now past its paid period, or revoked by the
+/// House). Tells the member plainly what they lose and how to come back.</summary>
+public record MembershipEndedEmailModel(string FirstName, string PlanName, DateTimeOffset EndedAt, string RejoinUrl, bool WasRevoked);
+
+/// <summary>A decision, delivered gently. Reason is only present when the admin typed one meant for
+/// the applicant; otherwise the mail says no more than that this round did not work out.</summary>
+public record ApplicationRejectedEmailModel(string FirstName, string ExperienceTitle, string ExperienceCity, string? Reason, string ExperiencesUrl);
+
+/// <summary>An update from the House to everyone confirmed on an experience — a schedule change, a
+/// venue detail, a reminder — paired with the in-app notification of the same text.</summary>
+public record ExperienceUpdateEmailModel(string FirstName, string ExperienceTitle, string Headline, string Body, string ExperienceUrl);
 
 /// <summary>Sent the moment a seminar enrolment is confirmed — free, membership-covered or paid.
 /// StartAtUtc is null for on-demand content, which has nothing to turn up to.</summary>

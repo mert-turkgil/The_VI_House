@@ -1,3 +1,6 @@
+using VIHouse.Business;
+using VIHouse.Business.Options;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -13,7 +16,10 @@ namespace VIHouse.Business.Concrete;
 public class NotificationService(
     INotificationRepository notifications,
     IBookingRepository bookings,
+    IExperienceRepository experiences,
     IAuditLogRepository auditLogs,
+    IEmailService emailService,
+    IOptions<SiteOptions> siteOptions,
     UserManager<ApplicationUser> userManager,
     ILogger<NotificationService> logger) : INotificationService
 {
@@ -88,8 +94,22 @@ public class NotificationService(
             .Distinct()
             .ToList();
 
+        // The same words in the inbox as in the bell: an attendee who does not open the site before
+        // the change matters still hears about it. The experience page is the link in both.
+        var experience = await experiences.GetByIdAsync(experienceId, ct);
+        var experienceUrl = experience is null ? null : SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Experience(experience.Slug));
+
         foreach (var userId in attendeeUserIds)
-            await CreateForUserAsync(userId, type, title, body, link, ct);
+        {
+            await CreateForUserAsync(userId, type, title, body, link ?? (experience is null ? null : SiteUrls.Experience(experience.Slug)), ct);
+
+            if (experience is null) continue;
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            if (user?.Email is null) continue;
+            await emailService.SendAsync("ExperienceUpdate", user.Email, $"{experience.Title}: {title}",
+                new ExperienceUpdateEmailModel(user.FirstName, experience.Title, title, body, experienceUrl!),
+                "Experience", experienceId, ct);
+        }
 
         await auditLogs.AddAsync(new AuditLogEntry
         {

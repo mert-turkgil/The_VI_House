@@ -1,3 +1,4 @@
+using VIHouse.Business;
 using System.Buffers.Text;
 using System.Security.Cryptography;
 using System.Text;
@@ -267,7 +268,8 @@ public class PaymentService(
 
         var confirmedApplication = await applications.GetByIdAsync(payment.ApplicationId, ct);
         await ambassadorService.RecordConversionAsync(confirmedApplication?.ReferralCode, ReferralConversionKind.TicketPurchase,
-            nameof(Payment), payment.Id, payment.AmountMinor, payment.Currency, ct);
+            nameof(Payment), payment.Id, payment.AmountMinor, payment.Currency,
+            ReferralTargetKind.Experience, payment.ExperienceId, ct);
         var confirmedExperience = await experiences.GetByIdAsync(payment.ExperienceId, ct);
 
         // The money has landed — this is the moment the account becomes one its owner can use.
@@ -285,15 +287,15 @@ public class PaymentService(
                     Venue = confirmedExperience.Venue,
                     IsOnline = confirmedExperience.AttendanceMode == ExperienceAttendanceMode.Online,
                     TimeZoneId = confirmedExperience.TimeZoneId,
-                    TicketUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/account/bookings/{booking.BookingReference}",
-                    ExperienceUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/experiences/{confirmedExperience.Slug}",
+                    TicketUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Booking(booking.BookingReference)),
+                    ExperienceUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Experience(confirmedExperience.Slug)),
                 },
                 nameof(Booking), booking.Id, ct);
 
             await notificationService.CreateForUserAsync(
                 payment.UserId!.Value, NotificationType.Payment,
                 "Booking Confirmed", $"You're confirmed for The VI House — {confirmedExperience.City}. Reference {booking.BookingReference}.",
-                "/account/bookings", ct);
+                SiteUrls.AccountBookings, ct);
         }
     }
 
@@ -320,7 +322,7 @@ public class PaymentService(
         var experience = await experiences.GetByIdAsync(payment.ExperienceId, ct);
         if (application is not null && experience is not null && invitation is not null)
         {
-            var invitationUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/invitation/{invitation.Code}";
+            var invitationUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Invitation(invitation.Code));
             await emailService.SendAsync(
                 "PaymentFailed", application.Email, "We couldn't complete your payment",
                 new PaymentFailedEmailModel(application.FirstName, experience.Title, invitationUrl),
@@ -365,7 +367,7 @@ public class PaymentService(
             // ResetPassword page decodes with — using the framework primitive here would drag
             // ASP.NET Core into the Business layer. MembershipService does the same, for the same reason.
             var encoded = Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
-            var setupUrl = $"{siteOptions.Value.BaseUrl.TrimEnd('/')}/Identity/Account/ResetPassword?code={encoded}";
+            var setupUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.ResetPassword(encoded));
 
             // The success page shows this link too, but that tab is easily lost — closed at the bank,
             // opened on a phone that then rang. Without this email a paid-up member's only way in is

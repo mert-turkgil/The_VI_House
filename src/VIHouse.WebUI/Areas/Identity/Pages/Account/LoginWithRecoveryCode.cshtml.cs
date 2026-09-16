@@ -67,7 +67,9 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new InvalidOperationException($"Unable to load two-factor authentication user.");
+                // No half-finished sign-in behind this request (the 2FA cookie expired, or the URL
+                // was opened directly): start over rather than answer with a 500.
+                return RedirectToPage("./Login", new { returnUrl });
             }
 
             ReturnUrl = returnUrl;
@@ -85,7 +87,9 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new InvalidOperationException($"Unable to load two-factor authentication user.");
+                // No half-finished sign-in behind this request (the 2FA cookie expired, or the URL
+                // was opened directly): start over rather than answer with a 500.
+                return RedirectToPage("./Login", new { returnUrl });
             }
 
             var recoveryCode = Input.RecoveryCode.Replace(" ", string.Empty);

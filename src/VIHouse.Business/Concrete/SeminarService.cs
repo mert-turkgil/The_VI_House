@@ -1,3 +1,4 @@
+using VIHouse.Business;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -7,6 +8,7 @@ using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Notifications;
+using VIHouse.Entities.Referrals;
 using VIHouse.Entities.Seminars;
 
 namespace VIHouse.Business.Concrete;
@@ -29,6 +31,7 @@ public class SeminarService(
     IMediaStorage mediaStorage,
     IEmailService emailService,
     INotificationService notificationService,
+    IAmbassadorService ambassadorService,
     IAuditLogRepository auditLogs,
     IOptions<SiteOptions> siteOptions,
     UserManager<ApplicationUser> userManager) : ISeminarService
@@ -150,7 +153,7 @@ public class SeminarService(
 
     // --- Enrolment -----------------------------------------------------------------------------
 
-    public async Task<SeminarEnrollmentResult> EnrollAsync(Guid seminarId, Guid userId, CancellationToken ct = default)
+    public async Task<SeminarEnrollmentResult> EnrollAsync(Guid seminarId, Guid userId, string? referralCode = null, CancellationToken ct = default)
     {
         // WithDetail rather than GetById: the confirmation email and notification both need the
         // seminar's title, which lives on its translations.
@@ -194,6 +197,9 @@ public class SeminarService(
         enrollment.ProviderReference = null;
         enrollment.ConfirmedAt = DateTimeOffset.UtcNow;
         enrollment.UpdatedAt = DateTimeOffset.UtcNow;
+        // Kept for the ambassador's counts even though nothing was paid — there is no commission
+        // on a free place, so it never reaches the conversion ledger.
+        enrollment.ReferralCode ??= NormaliseReferral(referralCode);
 
         await enrollments.SaveChangesAsync(ct);
         await AnnounceEnrolmentAsync(seminar, userId, ct);
@@ -202,7 +208,7 @@ public class SeminarService(
     }
 
     public async Task<SeminarEnrollmentResult> InitiateCheckoutAsync(
-        Guid seminarId, Guid userId, string successUrl, string cancelUrl, CancellationToken ct = default)
+        Guid seminarId, Guid userId, string successUrl, string cancelUrl, string? referralCode = null, CancellationToken ct = default)
     {
         var seminar = await seminars.GetWithDetailAsync(seminarId, ct);
         if (seminar is null) return SeminarEnrollmentResult.Fail("Seminar.Error.NotFound");
@@ -239,6 +245,7 @@ public class SeminarService(
         // locally to attach it to (brief §32).
         enrollment.ProviderReference = $"pending_{enrollment.Id:N}";
         enrollment.UpdatedAt = DateTimeOffset.UtcNow;
+        enrollment.ReferralCode ??= NormaliseReferral(referralCode);
         await enrollments.SaveChangesAsync(ct);
 
         var translation = SeminarContent.Resolve(seminar, SiteCultures.Default);
@@ -313,9 +320,22 @@ public class SeminarService(
         enrollment.UpdatedAt = DateTimeOffset.UtcNow;
         await enrollments.SaveChangesAsync(ct);
 
+        // Money has landed, so this is the moment the ambassador is credited. Keyed on the
+        // enrolment row, so the double delivery Stripe is entitled to make still writes one line.
+        await ambassadorService.RecordConversionAsync(enrollment.ReferralCode, ReferralConversionKind.SessionPurchase,
+            nameof(SeminarEnrollment), enrollment.Id, enrollment.AmountMinor, enrollment.Currency,
+            ReferralTargetKind.Session, enrollment.SeminarId, ct);
+
         var seminar = await seminars.GetWithDetailAsync(enrollment.SeminarId, ct);
         if (seminar is not null)
             await AnnounceEnrolmentAsync(seminar, enrollment.UserId, ct);
+    }
+
+    /// <summary>Column is 40 wide; the value is whatever the cookie held.</summary>
+    private static string? NormaliseReferral(string? code)
+    {
+        var trimmed = code?.Trim();
+        return string.IsNullOrEmpty(trimmed) ? null : trimmed.Length > 40 ? trimmed[..40] : trimmed;
     }
 
     private async Task HandleCheckoutExpiredAsync(string sessionId, CancellationToken ct)
@@ -717,7 +737,7 @@ public class SeminarService(
         if (user is null) return;
 
         var title = SeminarContent.Title(seminar, SiteCultures.Default);
-        var link = $"/sessions/{seminar.Slug}";
+        var link = SiteUrls.Session(seminar.Slug);
 
         await notificationService.CreateForUserAsync(
             userId, NotificationType.SeminarEnrolled,

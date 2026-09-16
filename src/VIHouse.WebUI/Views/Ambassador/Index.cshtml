@@ -1,100 +1,145 @@
+@using VIHouse.Entities.Referrals
 @model AmbassadorDashboardViewModel
 @{
     ViewData["Title"] = "Ambassador Dashboard";
-    var referralUrl = $"{Context.Request.Scheme}://{Context.Request.Host}/r/{Model.Code}";
+    var stats = Model.Stats;
+    var titleByTarget = stats.Targets.ToDictionary(t => (t.Kind, t.Id), t => t.Title);
+
+    string KindLabel(ReferralConversionKind kind) => kind switch
+    {
+        ReferralConversionKind.Application => Loc["Ambassador.Conversions.Application"].Value,
+        ReferralConversionKind.Approved => Loc["Ambassador.Conversions.Approved"].Value,
+        ReferralConversionKind.TicketPurchase => Loc["Ambassador.Conversions.Ticket"].Value,
+        ReferralConversionKind.SessionPurchase => Loc["Ambassador.Conversions.Session"].Value,
+        _ => Loc["Ambassador.Conversions.Membership"].Value,
+    };
 }
 
 <div class="content-hero">
     <div class="container">
-        <span class="content-hero__eyebrow">Ambassador</span>
-        <h1>Welcome, @Model.Name</h1>
-        <p>Your referral link and performance — commission rate: @Model.CommissionPercent%.</p>
+        <span class="content-hero__eyebrow">@Loc["Ambassador.Panel.Eyebrow"]</span>
+        <h1>@Loc["Ambassador.Dashboard.Welcome", Model.Name]</h1>
+        <p>@Loc["Ambassador.Dashboard.Intro", Model.CommissionPercent.ToString("0.##")]</p>
     </div>
 </div>
 
 <div class="container content-body">
-    <div class="status-card" style="margin-top:0;">
-        <p style="margin:0 0 8px; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.04em; color:#888;">@Loc["Ambassador.Panel.Title"]</p>
-        <p style="font-size:1.0625rem; font-weight:600; word-break:break-all;"><code>@referralUrl</code></p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-            <button type="button" class="btn btn--primary" data-copy="@referralUrl" data-copied-label="@Loc["Ambassador.Panel.Copied"]">@Loc["Ambassador.Panel.Copy"]</button>
-            <button type="button" class="btn btn--ghost-dark" data-copy="@Model.Code" data-copied-label="@Loc["Ambassador.Panel.Copied"]">@Loc["Ambassador.Panel.CopyCode"] @Model.Code</button>
-        </div>
-    </div>
+    @* --- Links --------------------------------------------------------------------------------- *@
+    <section class="ambassador-section" id="referral-links">
+        <h2>@Loc["Ambassador.Links.Title"]</h2>
+        <p class="ambassador-section__lede">@Loc["Ambassador.Links.Intro"]</p>
+        <partial name="_ReferralLinks" model="Model.Links" />
+    </section>
 
-    <h2 style="margin-top:40px;">Performance</h2>
-    <p style="font-size:0.8125rem; color:#888; margin-top:-12px;">Aggregate counts and revenue only — we don't share the names or contact details of the people you refer.</p>
+    @* --- Performance ---------------------------------------------------------------------------- *@
+    <section class="ambassador-section">
+        <h2>@Loc["Ambassador.Performance.Heading"]</h2>
+        <p class="ambassador-section__lede">@Loc["Ambassador.Performance.Privacy"]</p>
 
-    <div class="admin-kpi-grid" style="margin-top:20px;">
-        <div class="admin-kpi-card">
-            <div class="admin-kpi-card__value">@Model.Stats.Visits</div>
-            <div class="admin-kpi-card__label">Link Visits</div>
-        </div>
-        <div class="admin-kpi-card">
-            <div class="admin-kpi-card__value">@Model.Stats.Applications</div>
-            <div class="admin-kpi-card__label">Applications</div>
-        </div>
-        <div class="admin-kpi-card">
-            <div class="admin-kpi-card__value">@Model.Stats.ApprovedApplications</div>
-            <div class="admin-kpi-card__label">Approved</div>
-        </div>
-        <div class="admin-kpi-card">
-            <div class="admin-kpi-card__value">@(Model.Stats.TicketPurchases + Model.Stats.MembershipPurchases)</div>
-            <div class="admin-kpi-card__label">Purchases</div>
-        </div>
-        @foreach (var (currency, amountMinor) in Model.Stats.RevenueByCurrency)
-        {
+        <div class="admin-kpi-grid">
             <div class="admin-kpi-card">
-                <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
-                <div class="admin-kpi-card__label">Revenue (@currency)</div>
+                <div class="admin-kpi-card__value">@stats.Visits</div>
+                <div class="admin-kpi-card__label">@Loc["Ambassador.Links.Visits"]</div>
             </div>
-        }
-        @foreach (var (currency, amountMinor) in Model.Stats.CommissionByCurrency)
-        {
             <div class="admin-kpi-card">
-                <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
-                <div class="admin-kpi-card__label">Your Commission (@currency)</div>
+                <div class="admin-kpi-card__value">@stats.Applications</div>
+                <div class="admin-kpi-card__label">@Loc["Ambassador.Links.Applications"]</div>
             </div>
-        }
-    </div>
-
-    @if (Model.Stats.Visits == 0)
-    {
-        <p style="margin-top:32px; color:#666;">Share your referral link above to start tracking visits, applications and commission.</p>
-    }
-
-    <h2 style="margin-top:40px;">@Loc["Ambassador.Conversions.Heading"]</h2>
-    @if (Model.Conversions.Count == 0)
-    {
-        <p style="font-size:0.9375rem; color:#666;">@Loc["Ambassador.Conversions.None"]</p>
-    }
-    else
-    {
-        <ol class="ambassador-timeline">
-            @foreach (var c in Model.Conversions)
+            <div class="admin-kpi-card">
+                <div class="admin-kpi-card__value">@stats.ApprovedApplications</div>
+                <div class="admin-kpi-card__label">@Loc["Ambassador.Conversions.Approved"]</div>
+            </div>
+            <div class="admin-kpi-card">
+                <div class="admin-kpi-card__value">@stats.Purchases</div>
+                <div class="admin-kpi-card__label">@Loc["Ambassador.Links.Purchases"] <span class="admin-table__sub">(@stats.TicketPurchases &middot; @stats.MembershipPurchases &middot; @stats.SessionPurchases)</span></div>
+            </div>
+            @foreach (var (currency, amountMinor) in stats.RevenueByCurrency)
             {
-                var what = c.Kind switch
+                <div class="admin-kpi-card">
+                    <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
+                    <div class="admin-kpi-card__label">@Loc["Ambassador.Performance.Revenue"] (@currency)</div>
+                </div>
+            }
+            @foreach (var (currency, amountMinor) in stats.CommissionByCurrency)
+            {
+                <div class="admin-kpi-card admin-kpi-card--accent">
+                    <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
+                    <div class="admin-kpi-card__label">@Loc["Ambassador.Performance.Commission"] (@currency)</div>
+                </div>
+            }
+        </div>
+
+        @if (stats.Targets.Count > 0)
+        {
+            <h3 class="ambassador-section__sub">@Loc["Ambassador.Targets.Heading"]</h3>
+            <div class="table-scroll">
+                <table class="referral-targets">
+                    <thead>
+                        <tr>
+                            <th>@Loc["Ambassador.Targets.Link"]</th>
+                            <th class="is-num">@Loc["Ambassador.Links.Visits"]</th>
+                            <th class="is-num">@Loc["Ambassador.Links.Applications"]</th>
+                            <th class="is-num">@Loc["Ambassador.Links.Purchases"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in stats.Targets)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="referral-targets__kind">@(t.Kind == ReferralTargetKind.Site ? Loc["Ambassador.Links.Site"].Value : t.Kind == ReferralTargetKind.Experience ? Loc["Ambassador.Links.Experience"].Value : Loc["Ambassador.Links.Session"].Value)</span>
+                                    @t.Title
+                                </td>
+                                <td class="is-num">@t.Visits</td>
+                                <td class="is-num">@t.Applications</td>
+                                <td class="is-num">@t.Purchases</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="ambassador-section__empty">@Loc["Ambassador.Performance.Empty"]</p>
+        }
+    </section>
+
+    @* --- Timeline ------------------------------------------------------------------------------- *@
+    <section class="ambassador-section">
+        <h2>@Loc["Ambassador.Conversions.Heading"]</h2>
+        @if (Model.Conversions.Count == 0)
+        {
+            <p class="ambassador-section__empty">@Loc["Ambassador.Conversions.None"]</p>
+        }
+        else
+        {
+            <ol class="ambassador-timeline">
+                @foreach (var c in Model.Conversions)
                 {
-                    VIHouse.Entities.Referrals.ReferralConversionKind.Application => Loc["Ambassador.Conversions.Application"].Value,
-                    VIHouse.Entities.Referrals.ReferralConversionKind.Approved => Loc["Ambassador.Conversions.Approved"].Value,
-                    VIHouse.Entities.Referrals.ReferralConversionKind.TicketPurchase => Loc["Ambassador.Conversions.Ticket"].Value,
-                    _ => Loc["Ambassador.Conversions.Membership"].Value,
-                };
-                <li class="ambassador-timeline__item ambassador-timeline__item--@c.Kind.ToString().ToLowerInvariant()">
-                    <time datetime="@c.OccurredAt.ToString("o")">@c.OccurredAt.ToString("d MMM yyyy, HH:mm")</time>
-                    <span class="ambassador-timeline__what">@what</span>
-                    @if (c.AmountMinor is { } amount && c.Currency is not null)
-                    {
-                        <span class="ambassador-timeline__money">
-                            @MoneyFormatter.Format(amount, c.Currency)
-                            @if (c.CommissionMinor is { } commission)
+                    titleByTarget.TryGetValue((c.TargetKind, c.TargetId), out var about);
+                    <li class="ambassador-timeline__item ambassador-timeline__item--@c.Kind.ToString().ToLowerInvariant()">
+                        <time datetime="@c.OccurredAt.ToString("o")">@c.OccurredAt.ToString("d MMM yyyy, HH:mm")</time>
+                        <span class="ambassador-timeline__what">
+                            @KindLabel(c.Kind)
+                            @if (about is not null && c.TargetKind != ReferralTargetKind.Site)
                             {
-                                <em>&middot; @Loc["Ambassador.Conversions.Commission"] @MoneyFormatter.Format(commission, c.Currency)</em>
+                                <em class="ambassador-timeline__about">&middot; @about</em>
                             }
                         </span>
-                    }
-                </li>
-            }
-        </ol>
-    }
+                        @if (c.AmountMinor is { } amount && c.Currency is not null)
+                        {
+                            <span class="ambassador-timeline__money">
+                                @MoneyFormatter.Format(amount, c.Currency)
+                                @if (c.CommissionMinor is { } commission)
+                                {
+                                    <em>&middot; @Loc["Ambassador.Conversions.Commission"] @MoneyFormatter.Format(commission, c.Currency)</em>
+                                }
+                            </span>
+                        }
+                    </li>
+                }
+            </ol>
+        }
+    </section>
 </div>

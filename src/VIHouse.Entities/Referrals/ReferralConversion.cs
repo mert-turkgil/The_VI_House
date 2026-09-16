@@ -26,4 +26,10 @@ public class ReferralConversion : BaseEntity
     /// <summary>The row this came from — "Application", "Payment", "MembershipPayment" — and its id.</summary>
     public string SourceEntityType { get; set; } = default!;
     public Guid SourceEntityId { get; set; }
+
+    /// <summary>The experience or session this conversion is about, when it is about one — an
+    /// application's experience, a ticket's experience, a session purchase's seminar. Lets the
+    /// timeline name it and the per-link table count it.</summary>
+    public ReferralTargetKind TargetKind { get; set; } = ReferralTargetKind.Site;
+    public Guid? TargetId { get; set; }
 }

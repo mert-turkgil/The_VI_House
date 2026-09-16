@@ -331,7 +331,7 @@ public class OnboardingController(
             new { userId = user.Id, code = encoded }, Request.Scheme)!;
 
         await emailService.SendAsync(
-            "ConfirmEmail", user.Email!, "Confirm your email — The VI House",
+            "ConfirmEmail", user.Email!, "Confirm your email",
             new ConfirmEmailAddressEmailModel(user.FirstName, link),
             nameof(ApplicationUser), user.Id, ct);
     }

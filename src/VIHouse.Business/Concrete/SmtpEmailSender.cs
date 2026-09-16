@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text.RegularExpressions;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -7,7 +9,7 @@ using VIHouse.Business.Options;
 
 namespace VIHouse.Business.Concrete;
 
-public class SmtpEmailSender(IOptions<SmtpOptions> options) : IEmailSender
+public partial class SmtpEmailSender(IOptions<SmtpOptions> options) : IEmailSender
 {
     private readonly SmtpOptions opts = options.Value;
 
@@ -17,7 +19,12 @@ public class SmtpEmailSender(IOptions<SmtpOptions> options) : IEmailSender
         message.From.Add(new MailboxAddress(opts.FromName, opts.FromEmail));
         message.To.Add(MailboxAddress.Parse(toEmail));
         message.Subject = subject;
-        message.Body = new TextPart("html") { Text = htmlBody };
+
+        // multipart/alternative — the HTML plus a plain-text rendering of it. Filters score an
+        // HTML-only message worse, some clients (and every screen reader in "text" mode) prefer
+        // the text part, and the fallback costs nothing: it is derived from the HTML at send time.
+        var builder = new BodyBuilder { HtmlBody = htmlBody, TextBody = ToPlainText(htmlBody) };
+        message.Body = builder.ToMessageBody();
 
         using var client = new SmtpClient();
         // Port decides the TLS handshake, not just the UseSsl flag: 465 is implicit TLS from the
@@ -36,4 +43,46 @@ public class SmtpEmailSender(IOptions<SmtpOptions> options) : IEmailSender
         await client.SendAsync(message, ct);
         await client.DisconnectAsync(true, ct);
     }
+
+    /// <summary>
+    /// A readable text version of a template's HTML: hidden preheader and styles dropped, links
+    /// written as "label (url)", block elements as line breaks, entities decoded, whitespace
+    /// collapsed. Good enough to act on — every button's URL survives — without a second template
+    /// per email to keep in step.
+    /// </summary>
+    public static string ToPlainText(string html)
+    {
+        var text = HiddenBlocks().Replace(html, "");
+        text = Anchors().Replace(text, m =>
+        {
+            var href = m.Groups["href"].Value;
+            var label = Tags().Replace(m.Groups["label"].Value, "").Trim();
+            if (href.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase)) return label;
+            return string.IsNullOrEmpty(label) || label == href ? href : $"{label} ({href})";
+        });
+        text = LineBreaks().Replace(text, "\n");
+        text = Tags().Replace(text, "");
+        text = WebUtility.HtmlDecode(text);
+        text = HorizontalSpace().Replace(text, " ");
+        text = BlankLines().Replace(text, "\n\n");
+        return string.Join('\n', text.Split('\n').Select(l => l.Trim())).Trim();
+    }
+
+    [GeneratedRegex(@"<(head|style|script)\b[^>]*>.*?</\1>|<div[^>]*display:none[^>]*>.*?</div>", RegexOptions.IgnoreCase | RegexOptions.Singleline)]
+    private static partial Regex HiddenBlocks();
+
+    [GeneratedRegex(@"<a\b[^>]*href=[""'](?<href>[^""']+)[""'][^>]*>(?<label>.*?)</a>", RegexOptions.IgnoreCase | RegexOptions.Singleline)]
+    private static partial Regex Anchors();
+
+    [GeneratedRegex(@"<br\s*/?>|</(p|tr|h[1-6]|li|div|table)>", RegexOptions.IgnoreCase)]
+    private static partial Regex LineBreaks();
+
+    [GeneratedRegex(@"<[^>]+>")]
+    private static partial Regex Tags();
+
+    [GeneratedRegex(@"[ \t ]+")]
+    private static partial Regex HorizontalSpace();
+
+    [GeneratedRegex(@"\n\s*\n(\s*\n)+")]
+    private static partial Regex BlankLines();
 }

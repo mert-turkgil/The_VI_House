@@ -1,3 +1,4 @@
+using VIHouse.Business;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,12 +25,12 @@ public class SecurityAlertService(
     public Task PasswordChangedAsync(Guid userId, string? ipAddress, string? userAgent, CancellationToken ct = default) =>
         SendAsync(userId, "Your password was changed",
             "The password on your VI House account was just changed. If that was you, there is nothing to do.",
-            $"{BaseUrl}/Identity/Account/ForgotPassword", "Reset your password", ipAddress, userAgent, ct);
+            SiteUrls.Absolute(BaseUrl, SiteUrls.ForgotPassword), "Reset your password", ipAddress, userAgent, ct);
 
     public Task TwoFactorChangedAsync(Guid userId, string what, string? ipAddress, string? userAgent, CancellationToken ct = default) =>
         SendAsync(userId, what,
             "The two-step verification settings on your VI House account were just changed. If that was you, there is nothing to do.",
-            $"{BaseUrl}/Identity/Account/Manage/TwoFactorAuthentication", "Review two-step verification", ipAddress, userAgent, ct);
+            SiteUrls.Absolute(BaseUrl, SiteUrls.SecurityTwoFactor), "Review two-step verification", ipAddress, userAgent, ct);
 
     public async Task RecordSignInAsync(Guid userId, string? ipAddress, string? userAgent, CancellationToken ct = default)
     {
@@ -64,7 +65,7 @@ public class SecurityAlertService(
 
             await SendAsync(userId, "New sign-in to your account",
                 "Your VI House account was just signed in to from an address it has not used in the last thirty days. If that was you — a new phone, a trip, a different network — there is nothing to do.",
-                $"{BaseUrl}/Identity/Account/Manage/ChangePassword", "Change your password", ip, userAgent, ct);
+                SiteUrls.Absolute(BaseUrl, SiteUrls.SecurityPassword), "Change your password", ip, userAgent, ct);
         }
         catch (Exception ex)
         {
@@ -80,7 +81,7 @@ public class SecurityAlertService(
             if (user?.Email is null) return;
 
             await emailService.SendAsync(
-                "SecurityAlert", user.Email, $"{eventTitle} — The VI House",
+                "SecurityAlert", user.Email, eventTitle,
                 new SecurityAlertEmailModel(user.FirstName, eventTitle, detail, DateTimeOffset.UtcNow,
                     ip, Summarise(userAgent), actionUrl, actionLabel),
                 nameof(ApplicationUser), user.Id, ct);

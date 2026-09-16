@@ -1765,3 +1765,39 @@
   margin-top: auto;
   padding-top: var(--vih-space-sm);
 }
+
+// --- Ambassador dashboard sections (Views/Ambassador/Index) ------------------------------------------
+.ambassador-section {
+  margin-top: 40px;
+
+  &:first-child { margin-top: 0; }
+
+  > h2 { margin-bottom: 6px; }
+}
+
+.ambassador-section__lede {
+  margin: 0 0 18px;
+  max-width: 64ch;
+  font-size: 0.9375rem;
+  color: var(--vih-text-secondary);
+}
+
+.ambassador-section__sub {
+  margin: 28px 0 10px;
+  font-size: 1rem;
+}
+
+.ambassador-section__empty {
+  margin: 12px 0 0;
+  font-size: 0.9375rem;
+  color: var(--vih-text-muted);
+}
+
+.ambassador-timeline__about {
+  font-style: normal;
+  color: var(--vih-text-secondary);
+}
+
+.table-scroll {
+  overflow-x: auto;
+}

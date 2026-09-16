@@ -28,6 +28,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// Ordinary content editing, so it inherits the base class's role list rather than narrowing it.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Content)]
+[Route("admin/hero-slides")]
 public class AdminHeroSlidesController(
     IHeroSlideRepository slides,
     IMediaStorage mediaStorage,
@@ -39,6 +40,8 @@ public class AdminHeroSlidesController(
     private const string StorageFolder = "hero";
 
     // --- Index ------------------------------------------------------------------------------------
+
+    [HttpGet("")]
 
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -65,7 +68,7 @@ public class AdminHeroSlidesController(
 
     // --- Create ------------------------------------------------------------------------------------
 
-    [HttpGet]
+    [HttpGet("new")]
     public async Task<IActionResult> Create(CancellationToken ct) =>
         View(new AdminHeroSlideCreateViewModel
         {
@@ -77,7 +80,7 @@ public class AdminHeroSlidesController(
     /// language is not something the homepage can render, and HeroSlideContent would skip it. The
     /// other three languages are filled in on the edit screen afterwards.
     /// </summary>
-    [HttpPost]
+    [HttpPost("new")]
     [ValidateAntiForgeryToken]
     // The parameter is `model`, not `form`: a parameter whose name matches a property on the bound
     // type (AdminHeroSlideCreateViewModel.Form) changes how the binder reads the request and warns
@@ -106,7 +109,7 @@ public class AdminHeroSlidesController(
 
     // --- Edit ------------------------------------------------------------------------------------
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Edit(Guid id, string? culture, CancellationToken ct)
     {
         var slide = await slides.GetByIdWithTranslationsAsync(id, ct);
@@ -115,7 +118,7 @@ public class AdminHeroSlidesController(
         return View(BuildEditModel(slide, culture));
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/save")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save(Guid id, AdminHeroSlideFormViewModel form, CancellationToken ct)
     {
@@ -145,7 +148,7 @@ public class AdminHeroSlidesController(
 
     // --- Translations ------------------------------------------------------------------------------
 
-    [HttpPost]
+    [HttpPost("{id:guid}/save-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SaveTranslation(Guid id, AdminHeroSlideTranslationFormViewModel form, CancellationToken ct)
     {
@@ -191,7 +194,7 @@ public class AdminHeroSlidesController(
         return RedirectToAction(nameof(Edit), new { id, culture = form.Culture });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/delete-translation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteTranslation(Guid id, string culture, CancellationToken ct)
     {
@@ -227,7 +230,7 @@ public class AdminHeroSlidesController(
     /// Stores an uploaded photograph and points the slide at it. Uploads go to the media root
     /// rather than wwwroot — see MediaController — and are streamed back out from there.
     /// </summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/upload-image")]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(MediaPolicy.MaxUploadBytes)]
     [RequestFormLimits(MultipartBodyLengthLimit = MediaPolicy.MaxUploadBytes)]
@@ -280,7 +283,7 @@ public class AdminHeroSlidesController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/remove-image")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveImage(Guid id, CancellationToken ct)
     {
@@ -310,7 +313,7 @@ public class AdminHeroSlidesController(
     /// ever matter relative to each other — and because two slides sharing a position fall back to
     /// ordering by CreatedAt, which is not what the admin who typed them meant.
     /// </summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/move")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Move(Guid id, int direction, CancellationToken ct)
     {
@@ -334,7 +337,7 @@ public class AdminHeroSlidesController(
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {

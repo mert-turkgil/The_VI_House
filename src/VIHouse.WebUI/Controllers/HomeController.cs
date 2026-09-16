@@ -14,6 +14,12 @@ using Microsoft.Extensions.Localization;
 
 namespace VIHouse.WebUI.Controllers;
 
+/// <summary>
+/// The site root. Attribute-routed like every other controller — there is no conventional route to
+/// fall back on — so the class owns "" and Index owns "", and CulturePrefixConvention adds /{culture}
+/// for the localised homepages. Nothing else may live here without its own template.
+/// </summary>
+[Route("")]
 public class HomeController(
     IExperienceService experienceService,
     IContentPageRepository contentPages,
@@ -22,6 +28,7 @@ public class HomeController(
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
+    [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         // Passed as fallbacks, not as the title and description themselves: whatever an admin
@@ -102,15 +109,6 @@ public class HomeController(
 
         return View(model);
     }
-
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
-    /// <summary>Kept for old links; the error pages live under /error/{code} (ErrorController).</summary>
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error() => RedirectToAction("Index", "Error", new { code = 500 });
 
     /// <summary>
     /// Flattens each slide to the reader's culture. The culture comes from CurrentUICulture, which

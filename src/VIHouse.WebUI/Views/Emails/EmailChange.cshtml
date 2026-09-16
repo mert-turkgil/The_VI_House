@@ -1,0 +1,15 @@
+@model EmailChangeEmailModel
+@{
+    ViewData["Preheader"] = $"Confirm {Model.NewEmail} as the new address for your account";
+    ViewData["Footnote"] = "You're receiving this because someone asked to move a VI House account to this address.";
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Your account", "Confirm your new email address"))" />
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    You asked to change the email on your VI House account to <strong>@Model.NewEmail</strong>. The change
+    only takes effect once you confirm it from this inbox.
+</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ConfirmUrl, "Confirm new address"))" />
+<p style="margin:0 0 6px; font-size:13px; color:#5a5f55;">If the button doesn't work, copy this into your browser:</p>
+<partial name="/Views/Emails/_EmailCode.cshtml" model="@(new Code(Model.ConfirmUrl, Href: Model.ConfirmUrl))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("If you didn't ask for this, ignore this email — your account keeps its current address.")" />

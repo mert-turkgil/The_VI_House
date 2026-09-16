@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using VIHouse.Business;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
@@ -20,6 +21,7 @@ using VIHouse.WebUI.Helpers;
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
 [Authorize(Roles = AdminSections.RolesFor.Marketing)]
+[Route("admin/ambassadors")]
 public class AdminAmbassadorsController(
     IAmbassadorService ambassadorService,
     UserManager<ApplicationUser> userManager,
@@ -28,12 +30,10 @@ public class AdminAmbassadorsController(
 {
     /// <summary>The public referral link. Site:BaseUrl when configured (the host visitors use),
     /// otherwise whatever this request came in on — right locally, right enough elsewhere.</summary>
-    private string ReferralUrlFor(string code)
-    {
-        var baseUrl = siteOptions.Value.BaseUrl?.TrimEnd('/');
-        if (string.IsNullOrWhiteSpace(baseUrl)) baseUrl = $"{Request.Scheme}://{Request.Host}";
-        return $"{baseUrl}/r/{code}";
-    }
+    private string ReferralUrlFor(string code) => SiteUrls.Absolute(BaseUrl, SiteUrls.Referral(code));
+
+    private string BaseUrl =>
+        string.IsNullOrWhiteSpace(siteOptions.Value.BaseUrl) ? $"{Request.Scheme}://{Request.Host}" : siteOptions.Value.BaseUrl;
 
     private async Task<AdminAmbassadorEditViewModel> BuildEditModelAsync(Ambassador ambassador, AdminAmbassadorEditViewModel? form, CancellationToken ct)
     {
@@ -49,8 +49,18 @@ public class AdminAmbassadorsController(
         model.Stats = await ambassadorService.GetStatsAsync(ambassador.Id, ct);
         model.Conversions = await ambassadorService.GetConversionsAsync(ambassador.Id, 30, ct);
         model.VisitSources = await ambassadorService.GetVisitSourcesAsync(ambassador.Id, ct);
+        model.Links = new VIHouse.WebUI.ViewModels.Ambassador.ReferralLinksViewModel
+        {
+            Code = ambassador.Code,
+            BaseUrl = BaseUrl,
+            Targets = await ambassadorService.GetLinkTargetsAsync(ct),
+            Stats = model.Stats.Targets,
+            Style = "admin",
+        };
         return model;
     }
+
+    [HttpGet("")]
 
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -58,10 +68,10 @@ public class AdminAmbassadorsController(
         return View(ambassadors.OrderBy(a => a.Name).ToList());
     }
 
-    [HttpGet]
+    [HttpGet("new")]
     public IActionResult Create() => View(new AdminAmbassadorCreateViewModel());
 
-    [HttpPost]
+    [HttpPost("new")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(AdminAmbassadorCreateViewModel form, CancellationToken ct)
     {
@@ -91,7 +101,7 @@ public class AdminAmbassadorsController(
         return RedirectToAction(nameof(Edit), new { id = result.Ambassador!.Id });
     }
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Edit(Guid id, CancellationToken ct)
     {
         var ambassador = await ambassadorService.GetByIdAsync(id, ct);
@@ -105,7 +115,7 @@ public class AdminAmbassadorsController(
     /// pasting it into a mail by hand; this sends the absolute URL, the code and a personal
     /// note, from the House, to the address on the account.
     /// </summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/send-link")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> SendLink(Guid id, string? note, CancellationToken ct)
     {
@@ -132,7 +142,7 @@ public class AdminAmbassadorsController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Guid id, AdminAmbassadorEditViewModel form, CancellationToken ct)
     {

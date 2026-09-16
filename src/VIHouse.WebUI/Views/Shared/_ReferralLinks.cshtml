@@ -1,0 +1,122 @@
+@using VIHouse.Entities.Referrals
+@model VIHouse.WebUI.ViewModels.Ambassador.ReferralLinksViewModel
+@{
+    // One partial for both the ambassador's dashboard and the admin's ambassador page. The only
+    // difference is the button vocabulary of the two shells.
+    var btn = Model.Style == "admin" ? "admin-btn admin-btn--sm" : "btn btn--primary btn--sm";
+    var ghost = Model.Style == "admin" ? "admin-btn admin-btn--ghost admin-btn--sm" : "btn btn--ghost btn--sm";
+    var experiences = Model.Experiences.ToList();
+    var sessions = Model.Sessions.ToList();
+    var siteStats = Model.StatsFor(ReferralTargetKind.Site, null);
+}
+
+<div class="referral-links" data-referral-links>
+    <div class="referral-links__tabs" role="tablist" aria-label="@Loc["Ambassador.Links.Title"]">
+        <button type="button" class="referral-links__tab is-active" role="tab" aria-selected="true" aria-controls="referral-panel-site" data-referral-tab="site">@Loc["Ambassador.Links.Site"]</button>
+        <button type="button" class="referral-links__tab" role="tab" aria-selected="false" aria-controls="referral-panel-experiences" data-referral-tab="experiences">@Loc["Ambassador.Links.Experiences"] <span class="referral-links__count">@experiences.Count</span></button>
+        <button type="button" class="referral-links__tab" role="tab" aria-selected="false" aria-controls="referral-panel-sessions" data-referral-tab="sessions">@Loc["Ambassador.Links.Sessions"] <span class="referral-links__count">@sessions.Count</span></button>
+    </div>
+
+    @* --- The plain site link ------------------------------------------------------------------ *@
+    <section id="referral-panel-site" class="referral-links__panel" role="tabpanel" data-referral-panel="site">
+        <article class="referral-link">
+            <div class="referral-link__body">
+                <h3 class="referral-link__title">@Loc["Ambassador.Links.SiteTitle"]</h3>
+                <p class="referral-link__meta">@Loc["Ambassador.Links.SiteBody"]</p>
+                <div class="referral-link__url">
+                    <code>@Model.SiteLink</code>
+                    <button type="button" class="@btn" data-copy="@Model.SiteLink" data-copied-label="@Loc["Ambassador.Panel.Copied"]">@Loc["Ambassador.Links.Copy"]</button>
+                </div>
+                <div class="referral-link__actions">
+                    <a class="@ghost" href="@Model.QrUrl("png")" download>@Loc["Ambassador.Links.DownloadPng"]</a>
+                    <a class="@ghost" href="@Model.QrUrl("svg")" download>@Loc["Ambassador.Links.DownloadSvg"]</a>
+                    <a class="@ghost" href="@Model.SiteLink" target="_blank" rel="noopener">@Loc["Ambassador.Links.Open"]</a>
+                </div>
+                @if (siteStats is not null)
+                {
+                    <partial name="_ReferralLinkStats" model="siteStats" />
+                }
+            </div>
+            <figure class="referral-link__qr">
+                <img src="@Model.QrUrl("svg")" alt="@Loc["Ambassador.Links.Qr"]: @Model.SiteLink" width="160" height="160" loading="lazy" />
+                <figcaption>@Loc["Ambassador.Links.Qr"]</figcaption>
+            </figure>
+        </article>
+    </section>
+
+    @* --- One link per experience --------------------------------------------------------------- *@
+    <section id="referral-panel-experiences" class="referral-links__panel" role="tabpanel" data-referral-panel="experiences" hidden>
+        @if (experiences.Count == 0)
+        {
+            <p class="referral-links__empty">@Loc["Ambassador.Links.Empty"]</p>
+        }
+        @foreach (var t in experiences)
+        {
+            var link = Model.LinkFor(t);
+            <article class="referral-link">
+                <div class="referral-link__body">
+                    <h3 class="referral-link__title">@t.Title</h3>
+                    <p class="referral-link__meta">
+                        @if (!string.IsNullOrWhiteSpace(t.Subtitle)) { <span>@t.Subtitle</span> }
+                        @if (t.StartAtUtc is { } when) { <span>&middot; @when.ToString("d MMM yyyy")</span> }
+                    </p>
+                    <div class="referral-link__url">
+                        <code>@link</code>
+                        <button type="button" class="@btn" data-copy="@link" data-copied-label="@Loc["Ambassador.Panel.Copied"]">@Loc["Ambassador.Links.Copy"]</button>
+                    </div>
+                    <div class="referral-link__actions">
+                        <a class="@ghost" href="@Model.QrUrl("png", t)" download>@Loc["Ambassador.Links.DownloadPng"]</a>
+                        <a class="@ghost" href="@Model.QrUrl("svg", t)" download>@Loc["Ambassador.Links.DownloadSvg"]</a>
+                        <a class="@ghost" href="@link" target="_blank" rel="noopener">@Loc["Ambassador.Links.Open"]</a>
+                    </div>
+                    @if (Model.StatsFor(t.Kind, t.Id) is { } s)
+                    {
+                        <partial name="_ReferralLinkStats" model="s" />
+                    }
+                </div>
+                <figure class="referral-link__qr">
+                    <img src="@Model.QrUrl("svg", t)" alt="@Loc["Ambassador.Links.Qr"]: @t.Title" width="160" height="160" loading="lazy" />
+                    <figcaption>@Loc["Ambassador.Links.Qr"]</figcaption>
+                </figure>
+            </article>
+        }
+    </section>
+
+    @* --- One link per session ------------------------------------------------------------------ *@
+    <section id="referral-panel-sessions" class="referral-links__panel" role="tabpanel" data-referral-panel="sessions" hidden>
+        @if (sessions.Count == 0)
+        {
+            <p class="referral-links__empty">@Loc["Ambassador.Links.Empty"]</p>
+        }
+        @foreach (var t in sessions)
+        {
+            var link = Model.LinkFor(t);
+            <article class="referral-link">
+                <div class="referral-link__body">
+                    <h3 class="referral-link__title">@t.Title</h3>
+                    <p class="referral-link__meta">
+                        @if (!string.IsNullOrWhiteSpace(t.Subtitle)) { <span>@t.Subtitle</span> }
+                        @if (t.StartAtUtc is { } when) { <span>&middot; @when.ToString("d MMM yyyy, HH:mm") UTC</span> } else { <span>&middot; @Loc["Ambassador.Links.OnDemand"]</span> }
+                    </p>
+                    <div class="referral-link__url">
+                        <code>@link</code>
+                        <button type="button" class="@btn" data-copy="@link" data-copied-label="@Loc["Ambassador.Panel.Copied"]">@Loc["Ambassador.Links.Copy"]</button>
+                    </div>
+                    <div class="referral-link__actions">
+                        <a class="@ghost" href="@Model.QrUrl("png", t)" download>@Loc["Ambassador.Links.DownloadPng"]</a>
+                        <a class="@ghost" href="@Model.QrUrl("svg", t)" download>@Loc["Ambassador.Links.DownloadSvg"]</a>
+                        <a class="@ghost" href="@link" target="_blank" rel="noopener">@Loc["Ambassador.Links.Open"]</a>
+                    </div>
+                    @if (Model.StatsFor(t.Kind, t.Id) is { } s)
+                    {
+                        <partial name="_ReferralLinkStats" model="s" />
+                    }
+                </div>
+                <figure class="referral-link__qr">
+                    <img src="@Model.QrUrl("svg", t)" alt="@Loc["Ambassador.Links.Qr"]: @t.Title" width="160" height="160" loading="lazy" />
+                    <figcaption>@Loc["Ambassador.Links.Qr"]</figcaption>
+                </figure>
+            </article>
+        }
+    </section>
+</div>

@@ -1,0 +1,8 @@
+@* The closing line. One place, so every mail ends the same way. Model: an optional last sentence
+   in the quieter grey, or null for just the signature. *@
+@model string?
+@if (!string.IsNullOrWhiteSpace(Model))
+{
+    <p style="margin:0 0 16px; color:#4a4f45;">@Model</p>
+}
+<p style="margin:0;">&mdash; The VI House</p>

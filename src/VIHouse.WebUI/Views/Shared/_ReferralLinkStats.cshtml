@@ -1,0 +1,8 @@
+@model VIHouse.Business.Abstract.ReferralTargetStats
+@* The three numbers a single link has produced. Zero rows are still shown: "0 visits" on a link
+   that was posted a week ago is information. *@
+<dl class="referral-link__stats">
+    <div><dt>@Loc["Ambassador.Links.Visits"]</dt><dd>@Model.Visits</dd></div>
+    <div><dt>@Loc["Ambassador.Links.Applications"]</dt><dd>@Model.Applications</dd></div>
+    <div><dt>@Loc["Ambassador.Links.Purchases"]</dt><dd>@Model.Purchases</dd></div>
+</dl>

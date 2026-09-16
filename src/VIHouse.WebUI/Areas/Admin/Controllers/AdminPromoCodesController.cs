@@ -22,6 +22,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// twelve bookings" is a question that gets asked after the fact, not before.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Money)]
+[Route("admin/promo-codes")]
 public class AdminPromoCodesController(
     IPromoCodeRepository promoCodes,
     IExperienceService experienceService,
@@ -29,6 +30,7 @@ public class AdminPromoCodesController(
     IAuditLogRepository auditLogs,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
+    [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var all = await promoCodes.GetAllAsync(ct);
@@ -59,14 +61,14 @@ public class AdminPromoCodesController(
         return View(model);
     }
 
-    [HttpGet]
+    [HttpGet("new")]
     public async Task<IActionResult> Create(CancellationToken ct)
     {
         await PopulateExperiencesAsync(ct);
         return View("Edit", new AdminPromoCodeFormViewModel());
     }
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Edit(Guid id, CancellationToken ct)
     {
         var code = await promoCodes.GetByIdAsync(id, ct);
@@ -77,7 +79,7 @@ public class AdminPromoCodesController(
         return View(AdminPromoCodeFormViewModel.FromEntity(code));
     }
 
-    [HttpPost]
+    [HttpPost("save")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save(AdminPromoCodeFormViewModel form, CancellationToken ct)
     {
@@ -149,7 +151,7 @@ public class AdminPromoCodesController(
     /// of the record behind a discounted booking; removing the row would leave that booking's price
     /// unexplainable.
     /// </summary>
-    [HttpPost]
+    [HttpPost("{id:guid}/delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {

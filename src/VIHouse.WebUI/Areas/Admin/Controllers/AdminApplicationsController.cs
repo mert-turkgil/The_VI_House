@@ -13,6 +13,7 @@ using VIHouse.WebUI.Areas.Admin;
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
 [Authorize(Roles = AdminSections.RolesFor.Applications)]
+[Route("admin/applications")]
 public class AdminApplicationsController(
     IApplicationService applicationService,
     IExperienceService experienceService,
@@ -24,6 +25,7 @@ public class AdminApplicationsController(
     ISmsService smsService,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
+    [HttpGet("")]
     public async Task<IActionResult> Index(ApplicationStatus? status, CancellationToken ct)
     {
         var applications = await applicationService.GetByStatusAsync(status, ct);
@@ -47,6 +49,8 @@ public class AdminApplicationsController(
         ViewData["SelectedStatus"] = status;
         return View(model);
     }
+
+    [HttpGet("{id:guid}")]
 
     public async Task<IActionResult> Details(Guid id, CancellationToken ct)
     {
@@ -85,7 +89,7 @@ public class AdminApplicationsController(
         return View(model);
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/mark-under-review")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> MarkUnderReview(Guid id, CancellationToken ct)
     {
@@ -93,7 +97,7 @@ public class AdminApplicationsController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/shortlist")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Shortlist(Guid id, CancellationToken ct)
     {
@@ -101,7 +105,7 @@ public class AdminApplicationsController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/approve")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Approve(Guid id, CancellationToken ct)
     {
@@ -122,7 +126,7 @@ public class AdminApplicationsController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/resend-invitation")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ResendInvitation(Guid id, CancellationToken ct)
     {
@@ -141,7 +145,7 @@ public class AdminApplicationsController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/reject")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Reject(Guid id, string? reason, CancellationToken ct)
     {
@@ -149,7 +153,7 @@ public class AdminApplicationsController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/waitlist")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Waitlist(Guid id, CancellationToken ct)
     {
@@ -157,7 +161,7 @@ public class AdminApplicationsController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/update-notes")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateNotes(Guid id, string? internalNotes, CancellationToken ct)
     {
@@ -167,7 +171,7 @@ public class AdminApplicationsController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/add-tag")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddTag(Guid id, string label, CancellationToken ct)
     {
@@ -180,7 +184,7 @@ public class AdminApplicationsController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [HttpPost]
+    [HttpPost("{id:guid}/remove-tag")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RemoveTag(Guid id, Guid tagId, CancellationToken ct)
     {

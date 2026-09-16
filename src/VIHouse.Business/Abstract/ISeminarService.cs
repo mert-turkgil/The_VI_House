@@ -38,11 +38,13 @@ public interface ISeminarService
     /// Enrols without a payment — for a free session, or one an active membership already covers.
     /// Re-checks entitlement itself and refuses if the seminar actually needs paying for.
     /// </summary>
-    Task<SeminarEnrollmentResult> EnrollAsync(Guid seminarId, Guid userId, CancellationToken ct = default);
+    Task<SeminarEnrollmentResult> EnrollAsync(Guid seminarId, Guid userId, string? referralCode = null, CancellationToken ct = default);
 
-    /// <summary>Opens a checkout session for a seminar this member has to pay for.</summary>
+    /// <summary>Opens a checkout session for a seminar this member has to pay for. The referral
+    /// code (from the vih_ref cookie, if any) is kept on the enrolment and credited to the
+    /// ambassador once the payment lands.</summary>
     Task<SeminarEnrollmentResult> InitiateCheckoutAsync(
-        Guid seminarId, Guid userId, string successUrl, string cancelUrl, CancellationToken ct = default);
+        Guid seminarId, Guid userId, string successUrl, string cancelUrl, string? referralCode = null, CancellationToken ct = default);
 
     /// <summary>Reads LOCAL state only for the success-page redirect — never trusts the browser's
     /// return from the provider on its own (brief §32). IsConfirmed is false until the webhook has

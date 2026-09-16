@@ -33,6 +33,9 @@ public class AdminAmbassadorEditViewModel
     /// <summary>The link as an inline SVG QR code, for a slide or a printed card.</summary>
     public string QrSvg { get; set; } = "";
 
+    /// <summary>The site link plus one per experience and session — see Views/Shared/_ReferralLinks.</summary>
+    public VIHouse.WebUI.ViewModels.Ambassador.ReferralLinksViewModel? Links { get; set; }
+
     public List<ReferralConversion> Conversions { get; set; } = [];
     public List<ReferralSourceCount> VisitSources { get; set; } = [];
 

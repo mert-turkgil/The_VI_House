@@ -1274,4 +1274,33 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Admin.Seminar.MeetingUrl.Hint" xml:space="preserve"><value>Zoom / Meet / Teams link veebisessiooni jaoks. Kuvatakse ainult kinnitatud osalejatele nende portaalis ja lehel pärast registreerumist — mitte kunagi avalikul kaardil.</value></data>
   <data name="Admin.Seminar.LiveStreamUrl" xml:space="preserve"><value>Otseülekanne (YouTube)</value></data>
   <data name="Admin.Seminar.LiveStreamUrl.Hint" xml:space="preserve"><value>YouTube'i otseülekande või esilinastuse URL. Manustatakse osalejatele seansi lehel ja kontol tund enne algust; mitte kunagi avalikul kaardil.</value></data>
+  <data name="Ambassador.Dashboard.Welcome" xml:space="preserve"><value>Tere tulemast, {0}</value></data>
+  <data name="Ambassador.Dashboard.Intro" xml:space="preserve"><value>Sinu lingid, QR-koodid ja see, mida need toovad — komisjonimääraga {0}%.</value></data>
+  <data name="Ambassador.Links.Title" xml:space="preserve"><value>Sinu lingid</value></data>
+  <data name="Ambassador.Links.Intro" xml:space="preserve"><value>Üks link kogu House'ile ja üks iga kogemuse ja sessiooni jaoks, millest rääkida tahad. Kleebi see või laadi alla QR-kood story, slaidi või trükitud kaardi jaoks. Kes selle kaudu tuleb, arvestatakse 30 päeva jooksul sinu arvele.</value></data>
+  <data name="Ambassador.Links.Site" xml:space="preserve"><value>Veebileht</value></data>
+  <data name="Ambassador.Links.Experiences" xml:space="preserve"><value>Kogemused</value></data>
+  <data name="Ambassador.Links.Sessions" xml:space="preserve"><value>Sessioonid</value></data>
+  <data name="Ambassador.Links.Experience" xml:space="preserve"><value>Kogemus</value></data>
+  <data name="Ambassador.Links.Session" xml:space="preserve"><value>Sessioon</value></data>
+  <data name="Ambassador.Links.SiteTitle" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Ambassador.Links.SiteBody" xml:space="preserve"><value>Viib avalehele. Kasuta seda oma profiilis ja kõikjal, kus räägid House'ist üldiselt.</value></data>
+  <data name="Ambassador.Links.Copy" xml:space="preserve"><value>Kopeeri link</value></data>
+  <data name="Ambassador.Links.Qr" xml:space="preserve"><value>QR-kood</value></data>
+  <data name="Ambassador.Links.DownloadPng" xml:space="preserve"><value>Laadi alla PNG</value></data>
+  <data name="Ambassador.Links.DownloadSvg" xml:space="preserve"><value>Laadi alla SVG</value></data>
+  <data name="Ambassador.Links.Open" xml:space="preserve"><value>Ava</value></data>
+  <data name="Ambassador.Links.Empty" xml:space="preserve"><value>Praegu pole midagi reklaamida — uued kogemused ja sessioonid ilmuvad siia kohe, kui need avaldatakse.</value></data>
+  <data name="Ambassador.Links.OnDemand" xml:space="preserve"><value>Nõudmisel</value></data>
+  <data name="Ambassador.Links.Visits" xml:space="preserve"><value>Külastused</value></data>
+  <data name="Ambassador.Links.Applications" xml:space="preserve"><value>Taotlused</value></data>
+  <data name="Ambassador.Links.Purchases" xml:space="preserve"><value>Ostud</value></data>
+  <data name="Ambassador.Conversions.Session" xml:space="preserve"><value>Ostis koha sessioonil</value></data>
+  <data name="Ambassador.Targets.Heading" xml:space="preserve"><value>Milline link toimib</value></data>
+  <data name="Ambassador.Targets.Link" xml:space="preserve"><value>Link</value></data>
+  <data name="Ambassador.Performance.Heading" xml:space="preserve"><value>Tulemused</value></data>
+  <data name="Ambassador.Performance.Privacy" xml:space="preserve"><value>Ainult arvud ja tulu — me ei jaga kunagi sinu soovitatud inimeste nimesid ega kontaktandmeid.</value></data>
+  <data name="Ambassador.Performance.Revenue" xml:space="preserve"><value>Tulu</value></data>
+  <data name="Ambassador.Performance.Commission" xml:space="preserve"><value>Sinu komisjon</value></data>
+  <data name="Ambassador.Performance.Empty" xml:space="preserve"><value>Jaga ülal olevat linki, et näha siin külastusi, taotlusi ja komisjoni.</value></data>
 </root>

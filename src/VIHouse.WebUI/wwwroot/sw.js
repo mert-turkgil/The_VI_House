@@ -2,8 +2,8 @@
 //
 // This exists to make the site installable, not to make it an offline app. It ONLY caches the
 // fingerprinted static assets under /dist/ (main.css / main.js, versioned via asp-append-version's
-// content-hash query string) — it never touches HTML pages, /checkout, /webhooks, /Admin, or
-// /Identity, and never intercepts anything but GET. Caching an HTML page would mean serving a
+// content-hash query string) — it never touches HTML pages, /checkout, /webhooks, /admin, or
+// /login, and never intercepts anything but GET. Caching an HTML page would mean serving a
 // stale antiforgery token that fails on the next POST; on a payment-processing site that's a real
 // correctness risk, not just unnecessary scope.
 //

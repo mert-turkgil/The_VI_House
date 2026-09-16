@@ -28,11 +28,13 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// be mangled.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Marketing)]
+[Route("admin/translations")]
 public class AdminTranslationsController(
     ResxCatalog catalog,
     IAuditLogRepository auditLogs,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
+    [HttpGet("")]
     public IActionResult Index(string? section, string? q, bool untranslated)
     {
         var english = catalog.GetAll(ResxCatalog.NeutralSuffix);
@@ -99,7 +101,7 @@ public class AdminTranslationsController(
         });
     }
 
-    [HttpPost]
+    [HttpPost("save")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Save(string key, string culture, string value, string? original, CancellationToken ct)
     {
@@ -168,6 +170,7 @@ public class AdminTranslationsController(
     /// the one value it was asked to, that diff is the edits and nothing else.
     /// </summary>
     [Authorize(Roles = Roles.SuperAdmin)]
+    [HttpGet("export")]
     public async Task<IActionResult> Export(CancellationToken ct)
     {
         var buffer = new MemoryStream();

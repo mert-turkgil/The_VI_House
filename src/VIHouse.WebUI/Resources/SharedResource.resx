@@ -1274,4 +1274,33 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Admin.Seminar.MeetingUrl.Hint" xml:space="preserve"><value>Zoom / Meet / Teams link for an online sitting. Shown only to confirmed attendees, in their portal and on the page once enrolled — never on the public card.</value></data>
   <data name="Admin.Seminar.LiveStreamUrl" xml:space="preserve"><value>Live stream (YouTube)</value></data>
   <data name="Admin.Seminar.LiveStreamUrl.Hint" xml:space="preserve"><value>A YouTube live or premiere URL. Embedded for attendees on the session page and their account from an hour before the start; never on the public card.</value></data>
+  <data name="Ambassador.Dashboard.Welcome" xml:space="preserve"><value>Welcome, {0}</value></data>
+  <data name="Ambassador.Dashboard.Intro" xml:space="preserve"><value>Your links, your QR codes and what they bring in — at a commission rate of {0}%.</value></data>
+  <data name="Ambassador.Links.Title" xml:space="preserve"><value>Your links</value></data>
+  <data name="Ambassador.Links.Intro" xml:space="preserve"><value>One link for the whole House, and one for every experience and session you want to talk about. Paste it, or download the QR code for a story, a slide or a printed card. Anyone who arrives through it is credited to you for 30 days.</value></data>
+  <data name="Ambassador.Links.Site" xml:space="preserve"><value>Site</value></data>
+  <data name="Ambassador.Links.Experiences" xml:space="preserve"><value>Experiences</value></data>
+  <data name="Ambassador.Links.Sessions" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Ambassador.Links.Experience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Ambassador.Links.Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Ambassador.Links.SiteTitle" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Ambassador.Links.SiteBody" xml:space="preserve"><value>Lands on the homepage. Use it in your bio and anywhere you talk about the House in general.</value></data>
+  <data name="Ambassador.Links.Copy" xml:space="preserve"><value>Copy link</value></data>
+  <data name="Ambassador.Links.Qr" xml:space="preserve"><value>QR code</value></data>
+  <data name="Ambassador.Links.DownloadPng" xml:space="preserve"><value>Download PNG</value></data>
+  <data name="Ambassador.Links.DownloadSvg" xml:space="preserve"><value>Download SVG</value></data>
+  <data name="Ambassador.Links.Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Ambassador.Links.Empty" xml:space="preserve"><value>Nothing is open for promotion right now — new experiences and sessions appear here as soon as they are published.</value></data>
+  <data name="Ambassador.Links.OnDemand" xml:space="preserve"><value>On demand</value></data>
+  <data name="Ambassador.Links.Visits" xml:space="preserve"><value>Visits</value></data>
+  <data name="Ambassador.Links.Applications" xml:space="preserve"><value>Applications</value></data>
+  <data name="Ambassador.Links.Purchases" xml:space="preserve"><value>Purchases</value></data>
+  <data name="Ambassador.Conversions.Session" xml:space="preserve"><value>Bought a place on a session</value></data>
+  <data name="Ambassador.Targets.Heading" xml:space="preserve"><value>Which link is working</value></data>
+  <data name="Ambassador.Targets.Link" xml:space="preserve"><value>Link</value></data>
+  <data name="Ambassador.Performance.Heading" xml:space="preserve"><value>Performance</value></data>
+  <data name="Ambassador.Performance.Privacy" xml:space="preserve"><value>Counts and revenue only — we never share the names or contact details of the people you refer.</value></data>
+  <data name="Ambassador.Performance.Revenue" xml:space="preserve"><value>Revenue</value></data>
+  <data name="Ambassador.Performance.Commission" xml:space="preserve"><value>Your commission</value></data>
+  <data name="Ambassador.Performance.Empty" xml:space="preserve"><value>Share a link above to start seeing visits, applications and commission here.</value></data>
 </root>

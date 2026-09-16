@@ -23,7 +23,9 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.Localization;
 using VIHouse.WebUI.Middleware;
+using VIHouse.WebUI.Routing;
 using VIHouse.WebUI.Services;
+using VIHouse.Business;
 
 // Process-wide fallback only (background services like TicketHoldExpiryService run with no HTTP
 // request, so there's no per-request culture to fall back to) — the real per-request culture for
@@ -62,6 +64,16 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     .AddEntityFrameworkStores<VIHouseDbContext>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
+
+// The sign-in URLs the cookie challenges to. AddDefaultUI sets /Identity/Account/* through its own
+// named Configure, and named-options delegates run in registration order, so this must sit after
+// it. The pages themselves live at these paths via IdentityCleanRouteConvention.
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = SiteUrls.Login;
+    options.LogoutPath = SiteUrls.Logout;
+    options.AccessDeniedPath = SiteUrls.AccessDenied;
+});
 
 // How quickly a revoked account actually loses its session. The framework default is 30 minutes:
 // the auth cookie is taken at face value until then, so "reset this admin's two-factor" (see
@@ -275,6 +287,8 @@ builder.Services.Configure<SecurityOptions>(builder.Configuration.GetSection("Se
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IEmailTemplateRenderer, RazorEmailTemplateRenderer>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+// The Identity UI's own sender is a no-op unless one is registered — see IdentityEmailSenderAdapter.
+builder.Services.AddScoped<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, IdentityEmailSenderAdapter>();
 
 // SMS carries the private payment link alongside the email (brief §25's "Private Payment Link" —
 // one link, two ways to reach it, because an approval lost to a spam folder is an empty seat).
@@ -364,6 +378,15 @@ builder.Services.AddControllersWithViews(options =>
     // three of them are invisible to search.
     options.Conventions.Add(new CulturePrefixConvention());
 
+    // The admin panel (Areas/Admin) lives on its own subdomain in production, not at
+    // thevihouse.com/admin. AdminHost is unset in Development, so localhost stays unrestricted —
+    // set it in appsettings.Production.json (the "AdminHost" key) to gate it for real.
+    var adminHost = builder.Configuration["AdminHost"];
+    if (!string.IsNullOrWhiteSpace(adminHost))
+    {
+        options.Conventions.Add(new AdminHostConvention([adminHost, "localhost:*", "127.0.0.1:*"]));
+    }
+
     // Keeps the account area, the funnel and the search results out of the index. Self-scoping on
     // the request path, so the public site is untouched — see NoIndexFilter.
     options.Filters.Add(typeof(NoIndexFilter));
@@ -380,9 +403,15 @@ builder.Services.AddControllersWithViews(options =>
 // [Required] on their page models stays English, so half of each form localises and half does not.
 builder.Services.AddRazorPages(options =>
     {
+        // Order is load-bearing. The clean-URL convention replaces each Identity page's selector
+        // (/Identity/Account/Login -> /login) and the culture convention then builds the /tr/login
+        // twin from whatever selector it finds. Reversed, the twin is built from the old template
+        // and cleared, and every language-prefixed sign-in URL is a 404.
+        options.Conventions.Add(new IdentityCleanRouteConvention());
+
         // The Identity screens are Razor Pages, so CulturePrefixConvention — which walks controllers
-        // — never reached them. Without this, /tr/Identity/Account/Login is a 404 and the language
-        // switcher is a dead end on every sign-in and account screen.
+        // — never reached them. Without this, /tr/login is a 404 and the language switcher is a dead
+        // end on every sign-in and account screen.
         options.Conventions.Add(new CulturePageRouteConvention());
     })
     .AddDataAnnotationsLocalization(options =>
@@ -520,6 +549,10 @@ app.UseHttpsRedirection();
 // bounced to their language's root. Only "/", and only when a cookie says so — see the class.
 app.UseMiddleware<RootLanguageRedirect>();
 
+// Also before routing: the old /Identity/Account/…, /Admin/… and /Home/… URLs no longer exist as
+// endpoints, so they are answered here with a 301 to their replacements. See LegacyUrlRedirect.
+app.UseMiddleware<LegacyUrlRedirect>();
+
 app.UseRouting();
 
 // After UseRouting, not before: RouteCultureProvider reads the {culture} route value, which does
@@ -561,34 +594,24 @@ app.Use(async (context, next) =>
 
 app.MapStaticAssets();
 
-// The admin panel (Areas/Admin) is meant to live on its own subdomain, not be discoverable by
-// crawling the public site (e.g. https://admin.thevihouse.com rather than thevihouse.com/Admin/...).
-// AdminHost is unset in Development, so this route stays unrestricted on localhost — set it in
-// appsettings.Production.json (see the "AdminHost" key) to gate it for real.
-var adminHost = builder.Configuration["AdminHost"];
-var adminRoute = app.MapControllerRoute(
-    name: "areas",
-    pattern: "{area:exists}/{controller=AdminDashboard}/{action=Index}/{id?}")
-    .WithStaticAssets();
-if (!string.IsNullOrWhiteSpace(adminHost))
-{
-    adminRoute.RequireHost(adminHost, "localhost:*", "127.0.0.1:*");
-}
-
-// The language-prefixed twin of the default route, for the one public controller that is routed
-// conventionally rather than by attribute (Home). Registered first so /de resolves to the German
-// homepage; CulturePrefixConvention handles every attribute-routed controller.
-app.MapControllerRoute(
-    name: "default-culture",
-    pattern: "{culture:sitelang}/{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+// Attribute routes only — deliberately no {controller}/{action} conventional route, for either the
+// public site or the admin area. Every URL is therefore a template someone wrote down (a lowercase
+// slug; see the assertion below), and /Home/Index or /Admin/AdminUsers/Details/{id} simply do not
+// exist. The old shapes are 301'd by LegacyUrlRedirect. The admin host restriction that used to hang
+// on the area route is now AdminHostConvention.
+app.MapControllers()
     .WithStaticAssets();
 
 app.MapRazorPages()
     .WithStaticAssets();
+
+if (app.Environment.IsDevelopment())
+{
+    // An action inside a [Route]-decorated controller that forgets its own [HttpGet("…")] silently
+    // inherits the controller template and shadows Index; a template with a capital letter would be
+    // the first mixed-case URL on the site. Both are cheap to catch at startup and expensive to find
+    // in production, so Development refuses to boot with either.
+    RouteTemplateAssertions.Run(app.Services);
+}
 
 app.Run();

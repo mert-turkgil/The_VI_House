@@ -2408,6 +2408,14 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid?>("TargetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TargetKind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -2433,6 +2441,18 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("LandingPath")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid?>("TargetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TargetKind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -2454,7 +2474,7 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AmbassadorId");
+                    b.HasIndex("AmbassadorId", "TargetKind", "TargetId");
 
                     b.ToTable("ReferralVisits", (string)null);
                 });
@@ -2578,6 +2598,10 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<string>("ProviderReference")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ReferralCode")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
 
                     b.Property<Guid>("SeminarId")
                         .HasColumnType("uniqueidentifier");

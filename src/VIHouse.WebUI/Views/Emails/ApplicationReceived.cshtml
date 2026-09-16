@@ -1,9 +1,14 @@
 @model ApplicationReceivedEmailModel
-
-<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">Application Received</h1>
+@{
+    ViewData["Preheader"] = $"We have your application for The VI House — {Model.ExperienceCity}";
+    ViewData["Footnote"] = "You're receiving this because you applied to an experience at The VI House.";
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Application received", "Thank you — we have it"))" />
 <p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
 <p style="margin:0 0 16px;">
-    Thank you for applying to <strong>The VI House &mdash; @Model.ExperienceCity</strong>.
-    Every application is reviewed by hand — we'll be in touch within a few days.
+    Your application for <strong>The VI House &mdash; @Model.ExperienceCity</strong> (@Model.ExperienceTitle) has arrived.
+    Every application is read by a person, not a filter, so it takes a little time.
 </p>
-<p style="margin:0;">&mdash; The VI House</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { ("Experience", Model.ExperienceTitle), ("City", Model.ExperienceCity), ("What happens next", "A decision by email, usually within a few days") })" />
+<p style="margin:0 0 16px; color:#4a4f45;">There is nothing you need to do now. If your plans change in the meantime, just reply to this email.</p>
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

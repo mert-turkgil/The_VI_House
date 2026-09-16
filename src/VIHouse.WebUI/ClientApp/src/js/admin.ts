@@ -9,6 +9,7 @@ import { initTranslationEditor } from './modules/translations';
 import { initScrollReveal } from './modules/reveal';
 import { initCopyButtons } from './modules/copy';
 import { initUtmBuilder } from './modules/utmBuilder';
+import { initReferralLinks } from './modules/referralLinks';
 
 // Every init is called unconditionally and guards itself on the data attribute or element it needs,
 // which is the convention both entry points already follow — there is no page router.
@@ -27,4 +28,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initCopyButtons();
   initUtmBuilder();
+  initReferralLinks();
 });

@@ -12,12 +12,14 @@ using VIHouse.WebUI.Areas.Admin;
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
 [Authorize(Roles = AdminSections.RolesFor.Bookings)]
+[Route("admin/bookings")]
 public class AdminBookingsController(
     IBookingRepository bookings,
     IPaymentRepository payments,
     IExperienceService experienceService,
     UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
+    [HttpGet("")]
     public async Task<IActionResult> Index(BookingStatus? status, CancellationToken ct)
     {
         var all = await bookings.GetAllAsync(ct);
@@ -45,6 +47,8 @@ public class AdminBookingsController(
         ViewData["SelectedStatus"] = status;
         return View(model);
     }
+
+    [HttpGet("{id:guid}")]
 
     public async Task<IActionResult> Details(Guid id, CancellationToken ct)
     {

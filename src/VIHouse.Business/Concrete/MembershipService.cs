@@ -1,3 +1,4 @@
+using VIHouse.Business;
 using System.Buffers.Text;
 using System.Security.Cryptography;
 using System.Text;
@@ -417,7 +418,7 @@ public class MembershipService(
                 {
                     Status = MembershipEmailStatus.Granted,
                     MemberNumber = $"VIH-{membership.Id:N}"[..12].ToUpperInvariant(),
-                    AccountUrl = $"{BaseUrl}/account/membership",
+                    AccountUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.AccountMembership),
                 },
                 nameof(Membership), membership.Id, ct);
         }
@@ -425,7 +426,7 @@ public class MembershipService(
         await notificationService.CreateForUserAsync(userId, NotificationType.Payment,
             $"Welcome to {plan.Name}",
             expiresAt is { } e ? $"Your membership is active until {e:d MMMM yyyy}." : "Your membership is active.",
-            "/account", ct);
+            SiteUrls.Account, ct);
 
         return PlanMutationResult.Ok(expiresAt is { } x
             ? $"{plan.Name} granted to {user.Email} until {x:d MMM yyyy}."
@@ -453,6 +454,12 @@ public class MembershipService(
         {
             user.MemberStatus = MemberStatus.Cancelled;
             await userManager.UpdateAsync(user);
+        }
+
+        if (user is not null)
+        {
+            var revokedPlan = await plans.GetByIdAsync(membership.PlanId, ct);
+            await AnnounceMembershipEndedAsync(user, revokedPlan?.Name ?? "membership", now, wasRevoked: true, ct);
         }
 
         await LogAsync("MembershipRevoked", membership.Id, adminUserId, ipAddress, before,
@@ -1344,7 +1351,7 @@ public class MembershipService(
         await membershipPayments.SaveChangesAsync(ct);
 
         await ambassadorService.RecordConversionAsync(payment.ReferralCode, ReferralConversionKind.MembershipPurchase,
-            nameof(MembershipPayment), payment.Id, payment.AmountMinor, payment.Currency, ct);
+            nameof(MembershipPayment), payment.Id, payment.AmountMinor, payment.Currency, ct: ct);
 
         if (user is null) return membership;
 
@@ -1367,7 +1374,7 @@ public class MembershipService(
             // ResetPassword page decodes with — using the framework primitive here keeps the
             // Business layer free of an ASP.NET Core dependency.
             var encoded = Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
-            var setupUrl = $"{BaseUrl}/Identity/Account/ResetPassword?code={encoded}";
+            var setupUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.ResetPassword(encoded));
 
             await emailService.SendAsync(
                 "WelcomeSetup", user.Email!, "Set up your VI House account",
@@ -1382,14 +1389,14 @@ public class MembershipService(
                 AmountMinor = payment.AmountMinor,
                 Currency = payment.Currency,
                 MemberNumber = $"VIH-{membership.Id:N}"[..12].ToUpperInvariant(),
-                AccountUrl = $"{BaseUrl}/account/membership",
+                AccountUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.AccountMembership),
             },
             nameof(Membership), membership.Id, ct);
 
         await notificationService.CreateForUserAsync(
             user.Id, NotificationType.Payment,
             "Membership Confirmed", $"You're confirmed as a {plan.Name}.",
-            "/account", ct);
+            SiteUrls.Account, ct);
 
         return membership;
     }
@@ -1424,7 +1431,7 @@ public class MembershipService(
         if (await userManager.FindByEmailAsync(join.Email) is { } user && await GetCurrentMembershipAsync(user.Id, ct) is not null) return;
 
         var plan = await plans.GetByIdAsync(join.PlanId, ct);
-        var resumeUrl = $"{BaseUrl}/join/resume/{join.Code}";
+        var resumeUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.JoinResume(join.Code));
 
         await emailService.SendAsync(
             "MembershipResume", join.Email, "Pick up where you left off",
@@ -1501,7 +1508,7 @@ public class MembershipService(
                 user.Id, NotificationType.Payment,
                 wasPastDue ? "Payment Received" : "Membership Renewed",
                 $"Your {plan?.Name ?? "membership"} now runs until {newExpiry:d MMMM yyyy}.",
-                "/account", ct);
+                SiteUrls.Account, ct);
         }
     }
 
@@ -1526,7 +1533,7 @@ public class MembershipService(
         if (user is null) return;
 
         var plan = await plans.GetByIdAsync(membership.PlanId, ct);
-        var accountUrl = $"{BaseUrl}/account/membership";
+        var accountUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.AccountMembership);
 
         // The hosted invoice is a direct "pay this" page and needs nothing configured; the billing
         // portal is the fallback (it returns null until it has been set up in the dashboard); the
@@ -1547,7 +1554,7 @@ public class MembershipService(
             membership.ExpiresAt is { } until
                 ? $"Your {plan?.Name ?? "membership"} renewal was declined. Update your card to keep access beyond {until:d MMMM yyyy}."
                 : $"Your {plan?.Name ?? "membership"} renewal was declined. Please update your card.",
-            "/account/membership", ct);
+            SiteUrls.AccountMembership, ct);
     }
 
     /// <summary>
@@ -1574,10 +1581,24 @@ public class MembershipService(
         if (await userManager.FindByIdAsync(membership.UserId.ToString()) is { } user)
         {
             var plan = await plans.GetByIdAsync(membership.PlanId, ct);
-            await notificationService.CreateForUserAsync(
-                user.Id, NotificationType.Payment,
-                "Membership Ended", $"Your {plan?.Name ?? "membership"} has ended. You're welcome back any time.",
-                "/membership", ct);
+            await AnnounceMembershipEndedAsync(user, plan?.Name ?? "membership", now, wasRevoked: false, ct);
+        }
+    }
+
+    /// <summary>The in-app line and the email, together — a membership ending is the one event a
+    /// member most needs to hear about in plain words, whichever way it happened.</summary>
+    private async Task AnnounceMembershipEndedAsync(ApplicationUser user, string planName, DateTimeOffset endedAt, bool wasRevoked, CancellationToken ct)
+    {
+        await notificationService.CreateForUserAsync(
+            user.Id, NotificationType.Payment,
+            "Membership Ended", $"Your {planName} has ended. You're welcome back any time.",
+            SiteUrls.Membership, ct);
+
+        if (user.Email is not null)
+        {
+            await emailService.SendAsync("MembershipEnded", user.Email, "Your membership has ended",
+                new MembershipEndedEmailModel(user.FirstName, planName, endedAt, SiteUrls.Absolute(BaseUrl, SiteUrls.Membership), wasRevoked),
+                nameof(ApplicationUser), user.Id, ct);
         }
     }
 

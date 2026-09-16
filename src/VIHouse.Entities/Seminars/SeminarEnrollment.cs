@@ -28,4 +28,9 @@ public class SeminarEnrollment : BaseEntity
     public string? ProviderReference { get; set; }
 
     public DateTimeOffset? ConfirmedAt { get; set; }
+
+    /// <summary>The ambassador code from the referral cookie at enrolment, if any — same shape as
+    /// Application.ReferralCode. Kept for every enrolment, paid or not, so the stats can count it;
+    /// only a paid one becomes a conversion on the ledger.</summary>
+    public string? ReferralCode { get; set; }
 }

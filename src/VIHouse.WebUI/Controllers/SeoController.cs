@@ -133,8 +133,9 @@ public class SeoController(
 
         foreach (var path in new[]
         {
-            "/admin/", "/Admin/", "/account/", "/checkout/", "/onboarding/", "/identity/",
-            "/Identity/", "/invitation/", "/r/", "/webhooks/", "/culture/", "/search",
+            "/admin/", "/account/", "/checkout/", "/onboarding/",
+            "/login", "/logout", "/forgot-password", "/reset-password", "/confirm-email", "/access-denied", "/register",
+            "/invitation/", "/r/", "/webhooks/", "/culture/", "/search",
         })
         {
             builder.AppendLine($"Disallow: {path}");

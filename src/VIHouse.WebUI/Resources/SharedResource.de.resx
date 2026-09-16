@@ -1274,4 +1274,33 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Admin.Seminar.MeetingUrl.Hint" xml:space="preserve"><value>Zoom-/Meet-/Teams-Link für einen Online-Termin. Nur bestätigten Teilnehmern in ihrem Portal und auf der Seite nach Anmeldung angezeigt — nie auf der öffentlichen Karte.</value></data>
   <data name="Admin.Seminar.LiveStreamUrl" xml:space="preserve"><value>Livestream (YouTube)</value></data>
   <data name="Admin.Seminar.LiveStreamUrl.Hint" xml:space="preserve"><value>Eine YouTube-Live- oder Premiere-URL. Wird Teilnehmern ab einer Stunde vor Beginn auf der Session-Seite und im Konto eingebettet; nie auf der öffentlichen Karte.</value></data>
+  <data name="Ambassador.Dashboard.Welcome" xml:space="preserve"><value>Willkommen, {0}</value></data>
+  <data name="Ambassador.Dashboard.Intro" xml:space="preserve"><value>Ihre Links, Ihre QR-Codes und was sie einbringen – bei einer Provision von {0} %.</value></data>
+  <data name="Ambassador.Links.Title" xml:space="preserve"><value>Ihre Links</value></data>
+  <data name="Ambassador.Links.Intro" xml:space="preserve"><value>Ein Link für das ganze House und einer für jede Experience und jede Session, über die Sie sprechen möchten. Einfügen oder den QR-Code für eine Story, eine Folie oder eine gedruckte Karte herunterladen. Wer darüber kommt, wird Ihnen 30 Tage lang zugerechnet.</value></data>
+  <data name="Ambassador.Links.Site" xml:space="preserve"><value>Website</value></data>
+  <data name="Ambassador.Links.Experiences" xml:space="preserve"><value>Experiences</value></data>
+  <data name="Ambassador.Links.Sessions" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Ambassador.Links.Experience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Ambassador.Links.Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Ambassador.Links.SiteTitle" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Ambassador.Links.SiteBody" xml:space="preserve"><value>Führt auf die Startseite. Für Ihre Bio und überall dort, wo Sie allgemein über das House sprechen.</value></data>
+  <data name="Ambassador.Links.Copy" xml:space="preserve"><value>Link kopieren</value></data>
+  <data name="Ambassador.Links.Qr" xml:space="preserve"><value>QR-Code</value></data>
+  <data name="Ambassador.Links.DownloadPng" xml:space="preserve"><value>PNG herunterladen</value></data>
+  <data name="Ambassador.Links.DownloadSvg" xml:space="preserve"><value>SVG herunterladen</value></data>
+  <data name="Ambassador.Links.Open" xml:space="preserve"><value>Öffnen</value></data>
+  <data name="Ambassador.Links.Empty" xml:space="preserve"><value>Derzeit gibt es nichts zu bewerben – neue Experiences und Sessions erscheinen hier, sobald sie veröffentlicht sind.</value></data>
+  <data name="Ambassador.Links.OnDemand" xml:space="preserve"><value>Auf Abruf</value></data>
+  <data name="Ambassador.Links.Visits" xml:space="preserve"><value>Besuche</value></data>
+  <data name="Ambassador.Links.Applications" xml:space="preserve"><value>Bewerbungen</value></data>
+  <data name="Ambassador.Links.Purchases" xml:space="preserve"><value>Käufe</value></data>
+  <data name="Ambassador.Conversions.Session" xml:space="preserve"><value>Hat einen Platz in einer Session gekauft</value></data>
+  <data name="Ambassador.Targets.Heading" xml:space="preserve"><value>Welcher Link wirkt</value></data>
+  <data name="Ambassador.Targets.Link" xml:space="preserve"><value>Link</value></data>
+  <data name="Ambassador.Performance.Heading" xml:space="preserve"><value>Leistung</value></data>
+  <data name="Ambassador.Performance.Privacy" xml:space="preserve"><value>Nur Zahlen und Umsatz – die Namen und Kontaktdaten der von Ihnen vermittelten Personen geben wir nie weiter.</value></data>
+  <data name="Ambassador.Performance.Revenue" xml:space="preserve"><value>Umsatz</value></data>
+  <data name="Ambassador.Performance.Commission" xml:space="preserve"><value>Ihre Provision</value></data>
+  <data name="Ambassador.Performance.Empty" xml:space="preserve"><value>Teilen Sie oben einen Link, um hier Besuche, Bewerbungen und Provision zu sehen.</value></data>
 </root>

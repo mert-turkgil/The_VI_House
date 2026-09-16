@@ -11,6 +11,8 @@ using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.ViewModels.Seminars;
 
+using VIHouse.WebUI.Services;
+
 namespace VIHouse.WebUI.Controllers;
 
 /// <summary>
@@ -81,13 +83,16 @@ public class SeminarsController(
 
         var access = await seminarService.GetAccessAsync(seminar, userId, ct);
 
+        // Same attribution the apply and join forms use: whoever's link brought this visitor here.
+        var referralCode = Request.Cookies[ReferralCookie.Name];
+
         var result = access.Outcome == SeminarAccessOutcome.RequiresPayment
             ? await seminarService.InitiateCheckoutAsync(
                 seminar.Id, userId.Value,
                 Url.Action(nameof(Success), "Seminars", null, Request.Scheme)! + "?session_id={CHECKOUT_SESSION_ID}",
                 Url.Action(nameof(Cancelled), "Seminars", new { slug }, Request.Scheme)!,
-                ct)
-            : await seminarService.EnrollAsync(seminar.Id, userId.Value, ct);
+                referralCode, ct)
+            : await seminarService.EnrollAsync(seminar.Id, userId.Value, referralCode, ct);
 
         if (!result.Success)
         {

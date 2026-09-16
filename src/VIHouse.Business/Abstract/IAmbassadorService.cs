@@ -14,8 +14,18 @@ public interface IAmbassadorService
 
     Task UpdateAsync(Ambassador updated, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 
-    /// <summary>Fire-and-forget from the /r/{code} redirect — a bad/unknown code is simply not recorded, never an error shown to the visitor.</summary>
-    Task RecordVisitAsync(string code, string? utmSource, string? utmMedium, string? utmCampaign, string? utmContent, CancellationToken ct = default);
+    /// <summary>Fire-and-forget from the /r/{code}[/e|s/{slug}] redirect — a bad/unknown code is simply
+    /// not recorded, never an error shown to the visitor. The target says which of the ambassador's
+    /// links this was (the plain site link, or one scoped to an experience/session).</summary>
+    Task RecordVisitAsync(string code, ReferralTargetKind targetKind, Guid? targetId, string? landingPath,
+        string? utmSource, string? utmMedium, string? utmCampaign, string? utmContent, CancellationToken ct = default);
+
+    /// <summary>
+    /// Everything an ambassador can be given a link for right now: every published experience and
+    /// every publicly listed session, soonest sitting first. The dashboard and the admin page render
+    /// one link + QR per entry (see ReferralController).
+    /// </summary>
+    Task<List<ReferralLinkTarget>> GetLinkTargetsAsync(CancellationToken ct = default);
 
     /// <summary>
     /// Aggregate-only stats (brief §49: "customer private data ambassador'a gösterilmemelidir") —
@@ -33,7 +43,8 @@ public interface IAmbassadorService
     /// must not undo a payment that has already landed.
     /// </summary>
     Task RecordConversionAsync(string? referralCode, ReferralConversionKind kind, string sourceEntityType, Guid sourceEntityId,
-        long? amountMinor = null, string? currency = null, CancellationToken ct = default);
+        long? amountMinor = null, string? currency = null,
+        ReferralTargetKind targetKind = ReferralTargetKind.Site, Guid? targetId = null, CancellationToken ct = default);
 
     /// <summary>Visits to /r/{code} grouped by utm_source (blank = no tag), most first — which
     /// channel the ambassador's link is actually being shared on.</summary>
@@ -57,5 +68,17 @@ public record AmbassadorStats(
     int ApprovedApplications,
     int TicketPurchases,
     int MembershipPurchases,
+    int SessionPurchases,
     Dictionary<string, long> RevenueByCurrency,
-    Dictionary<string, long> CommissionByCurrency);
+    Dictionary<string, long> CommissionByCurrency,
+    List<ReferralTargetStats> Targets)
+{
+    public int Purchases => TicketPurchases + MembershipPurchases + SessionPurchases;
+}
+
+/// <summary>One experience or session an ambassador can promote with its own link.</summary>
+public record ReferralLinkTarget(ReferralTargetKind Kind, Guid Id, string Slug, string Title, string? Subtitle, DateTimeOffset? StartAtUtc);
+
+/// <summary>How one of the ambassador's links performed: visits it brought and what came of them.
+/// Kind = Site with a null Id is the plain /r/{code} link.</summary>
+public record ReferralTargetStats(ReferralTargetKind Kind, Guid? Id, string Title, string? Slug, int Visits, int Applications, int Purchases);

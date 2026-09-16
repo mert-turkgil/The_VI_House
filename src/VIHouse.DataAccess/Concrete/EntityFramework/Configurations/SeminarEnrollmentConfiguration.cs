@@ -24,6 +24,7 @@ public class SeminarEnrollmentConfiguration : IEntityTypeConfiguration<SeminarEn
 
         builder.Property(e => e.ProviderReference).HasMaxLength(200);
         builder.Property(e => e.Currency).HasMaxLength(3).IsRequired();
+        builder.Property(e => e.ReferralCode).HasMaxLength(40);
 
         // Restrict, not Cascade, on both sides: an enrolment is a financial record. Deleting a
         // seminar someone paid for should fail loudly rather than quietly erase the evidence —

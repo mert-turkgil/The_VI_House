@@ -1,19 +1,15 @@
 @model ConfirmEmailAddressEmailModel
-
-<h1 style="font-family:Georgia,serif; font-size:22px; margin:0 0 16px;">Confirm your email address</h1>
+@{
+    ViewData["Preheader"] = "One click to confirm this is you";
+    ViewData["Footnote"] = "You're receiving this because this address was used to create an account at The VI House.";
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Your account", "Confirm your email address"))" />
 <p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
 <p style="margin:0 0 16px;">
-    Please confirm this is the right address for your VI House account. It's where your tickets,
-    event details and receipts will be sent.
+    Please confirm this is the right address for your VI House account. It's where your tickets, event details
+    and receipts will be sent.
 </p>
-<p style="margin:0 0 24px;">
-    <a href="@Model.ConfirmUrl" style="display:inline-block; background:#00230a; color:#f4f0e6; padding:12px 22px; border-radius:999px; text-decoration:none; font-weight:600;">Confirm my email</a>
-</p>
-<p style="margin:0 0 16px; font-size:13px; color:#5a5f55;">
-    This link is valid for 24 hours. If the button doesn't work, copy this into your browser:<br />
-    <span style="word-break:break-all;">@Model.ConfirmUrl</span>
-</p>
-<p style="margin:0 0 16px; font-size:13px; color:#5a5f55;">
-    If you didn't sign up for The VI House, you can ignore this email.
-</p>
-<p style="margin:0;">&mdash; The VI House</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ConfirmUrl, "Confirm my email"))" />
+<p style="margin:0 0 6px; font-size:13px; color:#5a5f55;">If the button doesn't work, copy this into your browser:</p>
+<partial name="/Views/Emails/_EmailCode.cshtml" model="@(new Code(Model.ConfirmUrl, Href: Model.ConfirmUrl))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("The link is valid for 24 hours. If you didn't sign up for The VI House, you can ignore this email.")" />

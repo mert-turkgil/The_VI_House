@@ -22,12 +22,15 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// the contents of anyone's mail, or the single-use invitation URL inside a text message.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Communications)]
+[Route("admin/emails")]
 public class AdminEmailsController(
     IEmailLogRepository emailLogs,
     ISmsLogRepository smsLogs,
     ISmsService smsService) : AdminControllerBase
 {
     private const int PageSize = 50;
+
+    [HttpGet("")]
 
     public async Task<IActionResult> Index(string? channel, string? status, int page, CancellationToken ct)
     {
