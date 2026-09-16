@@ -3,6 +3,8 @@
 .admin-shell {
   min-height: 100vh;
   display: flex;
+  // _base.scss makes every body a column for the sticky footer; the panel is sidebar + main.
+  flex-direction: row;
   background: var(--vih-surface-tinted);
   color: var(--vih-ink);
 }
