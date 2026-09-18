@@ -86,7 +86,7 @@ env:
   SMS_ENABLED: 'false'
   SMS_ENDPOINT: 'https://api.twilio.com/2010-04-01/Accounts/REPLACE_WITH_ACCOUNT_SID/Messages.json'
   SMS_FROM: ''
-  SMS_DEFAULT_COUNTRY_CODE: ''
+  SMS_DEFAULT_COUNTRY_CODE: '+44'
 
   # --- Deployment mechanics ------------------------------------------------------------------------
   # How long to wait after app_offline.htm lands before uploading DLLs. IIS on shared hosting can be

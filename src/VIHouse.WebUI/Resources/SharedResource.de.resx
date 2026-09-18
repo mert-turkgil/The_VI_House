@@ -1303,4 +1303,10 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Ambassador.Performance.Revenue" xml:space="preserve"><value>Umsatz</value></data>
   <data name="Ambassador.Performance.Commission" xml:space="preserve"><value>Ihre Provision</value></data>
   <data name="Ambassador.Performance.Empty" xml:space="preserve"><value>Teilen Sie oben einen Link, um hier Besuche, Bewerbungen und Provision zu sehen.</value></data>
+  <data name="Form.Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="Form.Phone.Optional" xml:space="preserve"><value>Telefon (optional)</value></data>
+  <data name="Form.Phone.Placeholder" xml:space="preserve"><value>+49 170 1234567</value></data>
+  <data name="Form.Phone.Hint" xml:space="preserve"><value>Mit Ländervorwahl. Wir schreiben nur zu Ihrer Mitgliedschaft – Ortswechsel, Zugangslink, eine Zahlung, die Aufmerksamkeit braucht.</value></data>
+  <data name="Form.Phone.ApplyHint" xml:space="preserve"><value>Wenn Sie eine angeben, schreiben wir Ihnen, sobald über Ihre Bewerbung entschieden ist – die E-Mail kommt ohnehin.</value></data>
+  <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Nur für Nachrichten zu Ihrer Mitgliedschaft. Feld leeren, um sie abzustellen.</value></data>
 </root>

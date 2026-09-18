@@ -43,6 +43,7 @@ public class AccountController(
     IRepository<CommunityLink> communityLinks,
     IAmbassadorService ambassadorService,
     IDiscordInviteService discordInvites,
+    IOptions<SmsOptions> smsOptions,
     IOptions<FeatureOptions> features) : Controller
 {
     // --- Dashboard -----------------------------------------------------------------------------
@@ -192,6 +193,24 @@ public class AccountController(
         if (form.EarningsBand is not null && !EarningsBand.IsValid(form.EarningsBand))
             ModelState.AddModelError(nameof(form.EarningsBand), "Choose a range from the list.");
 
+        // Same rule as the join and apply forms: a number we keep must be one a gateway would take.
+        // Clearing the field is allowed and means "stop texting me".
+        string? phone = null;
+        if (!string.IsNullOrWhiteSpace(form.Phone))
+        {
+            phone = PhoneNumber.TryNormalise(form.Phone, smsOptions.Value.DefaultCountryCode);
+            if (phone is null)
+            {
+                ModelState.AddModelError(nameof(form.Phone),
+                    "That doesn't look like a phone number we can text. Include the country code, e.g. +90 546 418 80 26.");
+            }
+            else
+            {
+                form.Phone = phone;
+                ModelState.Remove(nameof(form.Phone));
+            }
+        }
+
         if (!ModelState.IsValid)
             return View(form);
 
@@ -199,6 +218,7 @@ public class AccountController(
         user.LastName = form.LastName.Trim();
         user.City = form.City?.Trim();
         user.Country = form.Country.Trim().ToUpperInvariant();
+        user.PhoneNumber = phone;
         await userManager.UpdateAsync(user);
 
         var profile = await profiles.GetByUserIdAsync(userId, ct);

@@ -11,6 +11,9 @@ public class AdminCustomerDetailViewModel
 {
     public Guid UserId { get; set; }
     public string Email { get; set; } = default!;
+
+    /// <summary>E.164 as collected on the join form or kept current on the member's profile.</summary>
+    public string? Phone { get; set; }
     public List<string> Roles { get; set; } = [];
     public Profile? Profile { get; set; }
     public List<Application> Applications { get; set; } = [];

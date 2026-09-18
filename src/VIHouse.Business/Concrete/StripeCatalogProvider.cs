@@ -56,6 +56,7 @@ public class StripeCatalogProvider : IPaymentCatalogProvider
             {
                 Name = plan.Name,
                 Description = NullIfBlank(plan.Description),
+                Images = Images(plan),
                 Active = plan.Active,
                 Metadata = metadata,
                 DefaultPriceData = new ProductDefaultPriceDataOptions
@@ -76,6 +77,7 @@ public class StripeCatalogProvider : IPaymentCatalogProvider
         {
             Name = plan.Name,
             Description = plan.Description ?? string.Empty,
+            Images = Images(plan),
             Active = plan.Active,
             Metadata = metadata,
         }, cancellationToken: ct);
@@ -218,6 +220,14 @@ public class StripeCatalogProvider : IPaymentCatalogProvider
         RecurringInterval.Annual => new ProductDefaultPriceDataRecurringOptions { Interval = "year", IntervalCount = 1 },
         _ => null,
     };
+
+    /// <summary>
+    /// Stripe replaces the product's image list with whatever is sent, and treats an omitted list as
+    /// "leave it alone" — so a plan with no image must send an empty list to clear one that was set
+    /// before, rather than nothing at all.
+    /// </summary>
+    private static List<string> Images(CatalogPlan plan) =>
+        string.IsNullOrWhiteSpace(plan.ImageUrl) ? [] : [plan.ImageUrl];
 
     private static string? NullIfBlank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value;
 }

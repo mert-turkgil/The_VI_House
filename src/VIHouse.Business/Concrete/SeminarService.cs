@@ -266,7 +266,11 @@ public class SeminarService(
                     ["seminarEnrollmentId"] = enrollment.Id.ToString(),
                     ["seminarId"] = seminar.Id.ToString(),
                     ["userId"] = userId.ToString(),
-                }), ct);
+                })
+                {
+                    ImageUrl = await SeminarImageUrlAsync(seminar, ct),
+                    CollectPhone = true,
+                }, ct);
 
             enrollment.ProviderReference = session.SessionId;
             await enrollments.SaveChangesAsync(ct);
@@ -336,6 +340,22 @@ public class SeminarService(
     {
         var trimmed = code?.Trim();
         return string.IsNullOrEmpty(trimmed) ? null : trimmed.Length > 40 ? trimmed[..40] : trimmed;
+    }
+
+    /// <summary>
+    /// The session's cover for the provider's checkout page. Only for a session anyone can see: the
+    /// provider fetches the image anonymously, and a members-only session's cover is not served to a
+    /// viewer who could not have reached its page (see OpenMediaAsync). Those fall back to the
+    /// House's mark, which is committed and always reachable.
+    /// </summary>
+    private async Task<string> SeminarImageUrlAsync(Seminar seminar, CancellationToken ct)
+    {
+        var baseUrl = siteOptions.Value.BaseUrl;
+        if (seminar.CoverMediaId is { } coverId && seminar.Visibility != SeminarVisibility.Members)
+            return SiteUrls.Absolute(baseUrl, $"/sessions/media/{coverId}");
+
+        await Task.CompletedTask;
+        return SiteUrls.Absolute(baseUrl, "/icons/icon-512.png");
     }
 
     private async Task HandleCheckoutExpiredAsync(string sessionId, CancellationToken ct)

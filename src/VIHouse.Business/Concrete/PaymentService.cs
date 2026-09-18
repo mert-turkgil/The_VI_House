@@ -173,7 +173,15 @@ public class PaymentService(
                     ["paymentId"] = payment.Id.ToString(),
                     ["applicationId"] = application.Id.ToString(),
                     ["ticketHoldId"] = hold.Id.ToString(),
-                }), ct);
+                })
+                {
+                    // The picture on the cards and the experience page, so the checkout looks like
+                    // the thing that was just chosen. Absolute — the provider fetches it itself.
+                    ImageUrl = AbsoluteOrNull(ExperienceService.CoverUrl(experience)),
+                    // The approval and booking texts already exist; this is where the number to send
+                    // them to comes from when the applicant did not give one on the form.
+                    CollectPhone = true,
+                }, ct);
 
             payment.ProviderReference = session.SessionId;
             await payments.SaveChangesAsync(ct);
@@ -210,13 +218,20 @@ public class PaymentService(
         return new BookingConfirmationInfo(true, booking?.BookingReference, experience?.Title, experience?.City, payment.AmountMinor, payment.Currency, payment.UserId);
     }
 
+    /// <summary>A site-relative media path as an absolute URL, or null when there is no image.
+    /// An already-absolute URL (an admin pasted one) is left alone.</summary>
+    private string? AbsoluteOrNull(string? path) =>
+        string.IsNullOrWhiteSpace(path) ? null
+        : path.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? path
+        : SiteUrls.Absolute(siteOptions.Value.BaseUrl, path);
+
     public async Task HandleWebhookEventAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct = default)
     {
         if (await webhookEvents.HasBeenProcessedAsync(webhookEvent.EventId, ct))
             return; // duplicate delivery — Stripe retries are expected, this must be a safe no-op
 
         if (webhookEvent.Type == PaymentWebhookEventType.CheckoutCompleted && webhookEvent.SessionId is not null)
-            await HandleCheckoutCompletedAsync(webhookEvent.SessionId, ct);
+            await HandleCheckoutCompletedAsync(webhookEvent, ct);
         else if (webhookEvent.Type == PaymentWebhookEventType.CheckoutExpired && webhookEvent.SessionId is not null)
             await HandleCheckoutExpiredAsync(webhookEvent.SessionId, ct);
 
@@ -224,8 +239,9 @@ public class PaymentService(
         await webhookEvents.SaveChangesAsync(ct);
     }
 
-    private async Task HandleCheckoutCompletedAsync(string sessionId, CancellationToken ct)
+    private async Task HandleCheckoutCompletedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
+        var sessionId = webhookEvent.SessionId!;
         var payment = await payments.GetByProviderReferenceAsync(sessionId, ct);
         if (payment is null || payment.Status == PaymentStatus.Paid)
             return; // unknown session, or already handled by an earlier delivery of this event
@@ -267,6 +283,17 @@ public class PaymentService(
         await payments.SaveChangesAsync(ct);
 
         var confirmedApplication = await applications.GetByIdAsync(payment.ApplicationId, ct);
+
+        // Stripe asked for a number on its own page (CollectPhone). If the applicant never gave one
+        // on our form, this is where it arrives — in time for the booking text below.
+        if (confirmedApplication is not null
+            && string.IsNullOrWhiteSpace(confirmedApplication.Phone)
+            && !string.IsNullOrWhiteSpace(webhookEvent.CustomerPhone))
+        {
+            confirmedApplication.Phone = webhookEvent.CustomerPhone;
+            await applications.SaveChangesAsync(ct);
+        }
+
         await ambassadorService.RecordConversionAsync(confirmedApplication?.ReferralCode, ReferralConversionKind.TicketPurchase,
             nameof(Payment), payment.Id, payment.AmountMinor, payment.Currency,
             ReferralTargetKind.Experience, payment.ExperienceId, ct);

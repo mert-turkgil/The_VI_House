@@ -55,6 +55,13 @@ public class ApplyFormViewModel
     // run after Countries.Normalize has a chance to recover a browser-autofilled country name
     // (e.g. "Cyprus") back into its code ("CY") — see Countries.Normalize's own comment. A length
     // attribute here would reject that value before the controller ever saw it.
+    /// <summary>Optional here, unlike on the join form: an applicant is not a member yet and a
+    /// required number would cost applications. When it is given, the approval, payment-failed and
+    /// booking-confirmed texts have somewhere to go (see SmsService).</summary>
+    [Display(Name = "Phone")]
+    [StringLength(32)]
+    public string? Phone { get; set; }
+
     [Required(ErrorMessage = "Choose your country.")]
     public string Country { get; set; } = default!;
 

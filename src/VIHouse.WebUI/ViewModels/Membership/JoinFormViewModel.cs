@@ -47,6 +47,14 @@ public class JoinFormViewModel
     public string? City { get; set; }
 
     // See ApplyFormViewModel.Country for why there is no [StringLength] here.
+    /// <summary>Required, unlike on the apply form: a member is someone the House will need to
+    /// reach at short notice — a change of venue, a joining link an hour before a session — and a
+    /// text is the only channel that reliably arrives in time. Stored in E.164 (see PhoneNumber).</summary>
+    [Required(ErrorMessage = "Add a phone number we can reach you on.")]
+    [Display(Name = "Phone")]
+    [StringLength(32)]
+    public string Phone { get; set; } = default!;
+
     [Required(ErrorMessage = "Choose your country.")]
     [Display(Name = "Country")]
     public string Country { get; set; } = default!;

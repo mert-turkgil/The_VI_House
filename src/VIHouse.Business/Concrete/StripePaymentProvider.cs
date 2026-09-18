@@ -42,6 +42,37 @@ public class StripePaymentProvider : IPaymentProvider
             LineItems = [BuildLineItem(request)],
         };
 
+        // What Stripe's own page collects on top of the card. Each is opt-in per request, because a
+        // session checkout and a membership sign-up want different amounts of ceremony.
+        if (request.CollectPhone)
+        {
+            createOptions.PhoneNumberCollection = new SessionPhoneNumberCollectionOptions { Enabled = true };
+        }
+
+        if (request.CollectBillingAddress)
+        {
+            createOptions.BillingAddressCollection = "required";
+        }
+
+        if (request.CollectCompanyDetails)
+        {
+            // Optional on purpose (brief: a member may be buying personally). TaxIdCollection is
+            // Stripe's own "Add tax ID" affordance, which is optional by construction; the company
+            // name has to be asked for as a custom field, and is marked optional explicitly.
+            createOptions.TaxIdCollection = new SessionTaxIdCollectionOptions { Enabled = true };
+            createOptions.CustomFields =
+            [
+                new SessionCustomFieldOptions
+                {
+                    Key = CompanyFieldKey,
+                    Type = "text",
+                    Optional = true,
+                    Label = new SessionCustomFieldLabelOptions { Type = "custom", Custom = "Company (optional)" },
+                    Text = new SessionCustomFieldTextOptions { MaximumLength = 100 },
+                },
+            ];
+        }
+
         // Ticket checkouts expire to release the seat hold (CapacityService holds for 15 minutes);
         // Stripe rejects ExpiresAt on subscription sessions, and there's no inventory to free up for
         // a membership anyway, so the window only applies to one-off purchases.
@@ -60,6 +91,12 @@ public class StripePaymentProvider : IPaymentProvider
         var session = await sessionService.CreateAsync(createOptions, cancellationToken: ct);
         return new CheckoutSessionResult(session.Id, session.Url, ToUtc(session.ExpiresAt));
     }
+
+    /// <summary>The key Stripe echoes the company name back under. Alphanumeric, as Stripe requires.</summary>
+    private const string CompanyFieldKey = "company";
+
+    private static string? CustomFieldValue(Session? session, string key) =>
+        session?.CustomFields?.FirstOrDefault(f => f.Key == key)?.Text?.Value is { Length: > 0 } value ? value : null;
 
     private static DateTimeOffset? ToUtc(DateTime? value) =>
         value is null ? null : new DateTimeOffset(DateTime.SpecifyKind(value.Value, DateTimeKind.Utc));
@@ -137,6 +174,9 @@ public class StripePaymentProvider : IPaymentProvider
                 {
                     Name = request.ProductName,
                     Description = request.ProductDescription,
+                    // Stripe fetches this itself, so it has to be reachable without a session —
+                    // hence a cover image rather than anything behind the member gate.
+                    Images = string.IsNullOrWhiteSpace(request.ImageUrl) ? null : [request.ImageUrl],
                 },
             },
         };
@@ -211,6 +251,10 @@ public class StripePaymentProvider : IPaymentProvider
                     SubscriptionId = session?.SubscriptionId,
                     CustomerId = session?.CustomerId,
                     ClientReferenceId = session?.ClientReferenceId,
+                    // Present only when the session asked for them; absent on every other event.
+                    CustomerPhone = session?.CustomerDetails?.Phone,
+                    CompanyName = CustomFieldValue(session, CompanyFieldKey),
+                    TaxId = session?.CustomerDetails?.TaxIds?.FirstOrDefault()?.Value,
                 };
             }
 

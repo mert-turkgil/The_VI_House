@@ -33,7 +33,9 @@
             <h2>Account</h2>
             <dl class="admin-detail-list">
                 <div><dt>Email</dt><dd>@Model.Email</dd></div>
+                <div><dt>Phone</dt><dd>@(Model.Phone ?? "—")</dd></div>
                 <div><dt>Title / profession</dt><dd>@(Model.Profile?.JobTitle ?? "—")</dd></div>
+                <div><dt>Company</dt><dd>@(Model.Profile?.Company ?? "—")@(string.IsNullOrWhiteSpace(Model.Profile?.TaxId) ? "" : $" · {Model.Profile!.TaxId}")</dd></div>
                 <div>
                     <dt>Address</dt>
                     <dd>

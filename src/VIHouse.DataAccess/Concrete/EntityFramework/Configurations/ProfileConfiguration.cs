@@ -21,6 +21,8 @@ public class ProfileConfiguration : IEntityTypeConfiguration<Profile>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(p => p.JobTitle).HasMaxLength(200);
+        builder.Property(p => p.Company).HasMaxLength(200);
+        builder.Property(p => p.TaxId).HasMaxLength(60);
         builder.Property(p => p.AddressLine1).HasMaxLength(200);
         builder.Property(p => p.AddressLine2).HasMaxLength(200);
         builder.Property(p => p.PostalCode).HasMaxLength(20);

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Concrete;
 using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
@@ -38,6 +39,7 @@ public class JoinController(
     IMembershipService membershipService,
     IExperienceService experienceService,
     UserManager<ApplicationUser> userManager,
+    IOptions<SmsOptions> smsOptions,
     IOptions<FeatureOptions> features) : Controller
 {
     [HttpGet("")]
@@ -119,6 +121,21 @@ public class JoinController(
         if (form.EarningsBand is not null && !EarningsBand.IsValid(form.EarningsBand))
             ModelState.AddModelError(nameof(form.EarningsBand), "Choose a range from the list.");
 
+        // Stored in the one shape a gateway will take, decided here rather than at send time: a
+        // number that cannot be texted should be caught while the person is still on the form and
+        // can fix it, not months later when a venue changes. Same normaliser the SMS layer uses.
+        var phone = PhoneNumber.TryNormalise(form.Phone, smsOptions.Value.DefaultCountryCode);
+        if (phone is null)
+        {
+            ModelState.AddModelError(nameof(form.Phone),
+                "That doesn't look like a phone number we can text. Include the country code, e.g. +90 546 418 80 26.");
+        }
+        else
+        {
+            form.Phone = phone;
+            ModelState.Remove(nameof(form.Phone));
+        }
+
         if (!ModelState.IsValid)
         {
             form.Plans = await LoadPlanCardsAsync(ct);
@@ -144,6 +161,7 @@ public class JoinController(
                 About = form.About.Trim(),
                 Expectations = form.Expectations.Trim(),
                 EarningsBand = form.EarningsBand,
+                Phone = form.Phone,
                 IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
                 PromoCode = form.PromoCode,
             },

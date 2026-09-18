@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VIHouse.DataAccess.Concrete.EntityFramework;
 
@@ -11,9 +12,11 @@ using VIHouse.DataAccess.Concrete.EntityFramework;
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 {
     [DbContext(typeof(VIHouseDbContext))]
-    partial class VIHouseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260918124139_AddPendingJoinPhone")]
+    partial class AddPendingJoinPhone
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2936,10 +2939,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("Company")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
                     b.Property<string>("EarningsBand")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -2959,10 +2958,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<string>("PostalCode")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("TaxId")
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");

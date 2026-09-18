@@ -54,7 +54,12 @@ public record CatalogPlan(
     long AmountMinor,
     string Currency,
     RecurringInterval? Recurring,
-    bool Active);
+    bool Active)
+{
+    /// <summary>Absolute https URL of the image the provider should list this product by — the
+    /// House's logo for a membership. Shown on the checkout page and in the provider's dashboard.</summary>
+    public string? ImageUrl { get; init; }
+}
 
 /// <param name="PriceReplaced">True when a new Price was issued because the amount, currency or
 /// interval changed — worth surfacing to the admin, since the old price stays visible in the

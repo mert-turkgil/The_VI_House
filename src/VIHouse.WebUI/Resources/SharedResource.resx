@@ -1303,4 +1303,10 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Ambassador.Performance.Revenue" xml:space="preserve"><value>Revenue</value></data>
   <data name="Ambassador.Performance.Commission" xml:space="preserve"><value>Your commission</value></data>
   <data name="Ambassador.Performance.Empty" xml:space="preserve"><value>Share a link above to start seeing visits, applications and commission here.</value></data>
+  <data name="Form.Phone" xml:space="preserve"><value>Phone</value></data>
+  <data name="Form.Phone.Optional" xml:space="preserve"><value>Phone (optional)</value></data>
+  <data name="Form.Phone.Placeholder" xml:space="preserve"><value>+90 546 418 80 26</value></data>
+  <data name="Form.Phone.Hint" xml:space="preserve"><value>With the country code. We text only about your membership — a venue change, a joining link, a payment that needs attention.</value></data>
+  <data name="Form.Phone.ApplyHint" xml:space="preserve"><value>If you give one, we'll text you the moment your application is decided — the email comes either way.</value></data>
+  <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Used only for messages about your membership. Clear the field to stop them.</value></data>
 </root>

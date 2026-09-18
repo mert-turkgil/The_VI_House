@@ -34,6 +34,13 @@ public class ProfileFormViewModel
     public string? City { get; set; }
 
     // See ApplyFormViewModel.Country for why there is no [StringLength] here.
+    /// <summary>Where a member keeps their number current. Held on the account (Identity's own
+    /// column), not on the Profile, because it identifies the person rather than describing them —
+    /// and because it is what the SMS layer reads.</summary>
+    [Display(Name = "Phone")]
+    [StringLength(32)]
+    public string? Phone { get; set; }
+
     [Required(ErrorMessage = "Choose your country.")]
     public string Country { get; set; } = default!;
 
@@ -61,6 +68,7 @@ public class ProfileFormViewModel
         LastName = user.LastName,
         City = user.City,
         Country = user.Country,
+        Phone = user.PhoneNumber,
         JobTitle = profile?.JobTitle,
         AddressLine1 = profile?.AddressLine1,
         AddressLine2 = profile?.AddressLine2,

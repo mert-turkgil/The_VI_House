@@ -173,6 +173,15 @@
                             <span asp-validation-for="Email" class="join__field-error"></span>
                         </div>
                         <div class="join__field">
+                            <label asp-for="Phone">@Loc["Form.Phone"]</label>
+                            <input asp-for="Phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="@Loc["Form.Phone.Placeholder"]" />
+                            <span class="join__hint">@Loc["Form.Phone.Hint"]</span>
+                            <span asp-validation-for="Phone" class="join__field-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="join__row">
+                        <div class="join__field">
                             <label asp-for="JobTitle">@Loc["Form.JobTitle"]</label>
                             <input asp-for="JobTitle" autocomplete="organization-title" placeholder="@Loc["Form.JobTitle.Placeholder"]" />
                             <span asp-validation-for="JobTitle" class="join__field-error"></span>

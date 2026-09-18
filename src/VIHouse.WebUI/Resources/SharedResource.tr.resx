@@ -1303,4 +1303,10 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Ambassador.Performance.Revenue" xml:space="preserve"><value>Gelir</value></data>
   <data name="Ambassador.Performance.Commission" xml:space="preserve"><value>Komisyonun</value></data>
   <data name="Ambassador.Performance.Empty" xml:space="preserve"><value>Ziyaretleri, başvuruları ve komisyonu burada görmeye başlamak için yukarıdaki bağlantılardan birini paylaş.</value></data>
+  <data name="Form.Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="Form.Phone.Optional" xml:space="preserve"><value>Telefon (isteğe bağlı)</value></data>
+  <data name="Form.Phone.Placeholder" xml:space="preserve"><value>+90 546 418 80 26</value></data>
+  <data name="Form.Phone.Hint" xml:space="preserve"><value>Ülke koduyla birlikte. Yalnızca üyeliğinle ilgili yazarız — mekân değişikliği, katılım bağlantısı, dikkat isteyen bir ödeme.</value></data>
+  <data name="Form.Phone.ApplyHint" xml:space="preserve"><value>Verirsen, başvurun sonuçlandığı an sana yazarız — e-posta zaten gelecek.</value></data>
+  <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Yalnızca üyeliğinle ilgili mesajlar için. Durdurmak istersen alanı boşalt.</value></data>
 </root>

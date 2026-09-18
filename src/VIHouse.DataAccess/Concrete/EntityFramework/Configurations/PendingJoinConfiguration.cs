@@ -24,6 +24,7 @@ public class PendingJoinConfiguration : IEntityTypeConfiguration<PendingJoin>
         builder.Property(p => p.Country).HasMaxLength(2).IsRequired();
         builder.Property(p => p.City).HasMaxLength(100);
         // Same widths as ProfileConfiguration, because these become the profile on payment.
+        builder.Property(p => p.Phone).HasMaxLength(32);
         builder.Property(p => p.JobTitle).HasMaxLength(200);
         builder.Property(p => p.AddressLine1).HasMaxLength(200);
         builder.Property(p => p.AddressLine2).HasMaxLength(200);

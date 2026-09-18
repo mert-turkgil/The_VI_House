@@ -1,3 +1,6 @@
+using VIHouse.Business.Concrete;
+using VIHouse.Business.Options;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using VIHouse.Business.Abstract;
@@ -11,7 +14,10 @@ using VIHouse.WebUI.ViewModels.Applications;
 namespace VIHouse.WebUI.Controllers;
 
 [Route("apply")]
-public class ApplicationController(IExperienceService experienceService, IApplicationService applicationService) : Controller
+public class ApplicationController(
+    IExperienceService experienceService,
+    IApplicationService applicationService,
+    IOptions<SmsOptions> smsOptions) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(string? experience, CancellationToken ct)
@@ -83,6 +89,23 @@ public class ApplicationController(IExperienceService experienceService, IApplic
         if (form.EarningsBand is not null && !EarningsBand.IsValid(form.EarningsBand))
             ModelState.AddModelError(nameof(form.EarningsBand), "Choose a range from the list.");
 
+        // Optional, but if one is given it has to be textable — a number the gateway will reject is
+        // worse than none, because the record looks contactable and isn't.
+        if (!string.IsNullOrWhiteSpace(form.Phone))
+        {
+            var normalised = PhoneNumber.TryNormalise(form.Phone, smsOptions.Value.DefaultCountryCode);
+            if (normalised is null)
+            {
+                ModelState.AddModelError(nameof(form.Phone),
+                    "That doesn't look like a phone number we can text. Include the country code, e.g. +90 546 418 80 26.");
+            }
+            else
+            {
+                form.Phone = normalised;
+                ModelState.Remove(nameof(form.Phone));
+            }
+        }
+
         if (!ModelState.IsValid)
         {
             ViewData["Title"] = "Request Access";
@@ -105,6 +128,7 @@ public class ApplicationController(IExperienceService experienceService, IApplic
             AboutStatement = form.AboutStatement.Trim(),
             ExpectationsStatement = form.ExpectationsStatement.Trim(),
             EarningsBand = form.EarningsBand,
+            Phone = string.IsNullOrWhiteSpace(form.Phone) ? null : form.Phone,
             ReferralCode = form.ReferralCode,
         };
 

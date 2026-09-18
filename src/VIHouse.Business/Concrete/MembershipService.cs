@@ -284,8 +284,11 @@ public class MembershipService(
 
             var result = await catalog.SyncPlanAsync(new CatalogPlan(
                 plan.ProviderProductId, plan.ProviderPriceId, plan.Id,
-                plan.Name, plan.Description, plan.PriceMinor, plan.Currency,
-                ToRecurringInterval(plan.BillingPeriod), Active: true), ct);
+                plan.Name, PlanCheckoutDescription(plan), plan.PriceMinor, plan.Currency,
+                ToRecurringInterval(plan.BillingPeriod), Active: true)
+            {
+                ImageUrl = await MembershipImageUrlAsync(ct),
+            }, ct);
 
             plan.ProviderProductId = result.ProductId;
             plan.ProviderPriceId = result.PriceId;
@@ -619,6 +622,7 @@ public class MembershipService(
         join.LastName = request.LastName;
         join.Country = request.Country;
         join.City = request.City;
+        join.Phone = request.Phone;
         join.JobTitle = request.JobTitle;
         join.AddressLine1 = request.AddressLine1;
         join.AddressLine2 = request.AddressLine2;
@@ -741,7 +745,7 @@ public class MembershipService(
             var session = await paymentProvider.CreateCheckoutSessionAsync(new CreateCheckoutSessionRequest(
                 CustomerEmail: join.Email,
                 ProductName: $"The VI House Membership — {plan.Name}",
-                ProductDescription: plan.Description,
+                ProductDescription: PlanCheckoutDescription(plan),
                 AmountMinor: plan.PriceMinor,
                 Currency: plan.Currency,
                 SuccessUrl: successUrl,
@@ -754,6 +758,12 @@ public class MembershipService(
                 })
             {
                 Recurring = ToRecurringInterval(plan.BillingPeriod),
+                // A membership is an ongoing relationship and often a company expense: Stripe asks
+                // for the phone and billing address, and offers company name and tax id optionally.
+                ImageUrl = await MembershipImageUrlAsync(ct),
+                CollectPhone = true,
+                CollectBillingAddress = true,
+                CollectCompanyDetails = true,
                 ProviderPriceId = plan.IsProviderSynced ? plan.ProviderPriceId : null,
                 ProviderCouponId = couponId,
             }, ct);
@@ -917,7 +927,7 @@ public class MembershipService(
             var session = await paymentProvider.CreateCheckoutSessionAsync(new CreateCheckoutSessionRequest(
                 CustomerEmail: user.Email!,
                 ProductName: $"The VI House Membership — {plan.Name}",
-                ProductDescription: plan.Description,
+                ProductDescription: PlanCheckoutDescription(plan),
                 AmountMinor: plan.PriceMinor,
                 Currency: plan.Currency,
                 SuccessUrl: successUrl,
@@ -933,6 +943,12 @@ public class MembershipService(
                 // A Monthly/Annual plan becomes a real recurring subscription rather than a single
                 // charge that silently lapses.
                 Recurring = ToRecurringInterval(plan.BillingPeriod),
+                // A membership is an ongoing relationship and often a company expense: Stripe asks
+                // for the phone and billing address, and offers company name and tax id optionally.
+                ImageUrl = await MembershipImageUrlAsync(ct),
+                CollectPhone = true,
+                CollectBillingAddress = true,
+                CollectCompanyDetails = true,
                 // Sell by the mirrored Stripe price when there is one, so the sale lands under the
                 // named product in Stripe's reporting; the inline amount remains the fallback.
                 ProviderPriceId = plan.IsProviderSynced ? plan.ProviderPriceId : null,
@@ -1101,6 +1117,11 @@ public class MembershipService(
                 LastName = join.LastName,
                 Country = join.Country,
                 City = join.City,
+                // Collected on the join form and normalised there; unconfirmed in the same sense the
+                // address is, since nothing has been sent to it yet.
+                // The form's number, or the one Stripe validated on its own page if the form was
+                // skipped (a resumed checkout, a link straight to the provider).
+                PhoneNumber = join.Phone ?? webhookEvent.CustomerPhone,
                 // Not PendingApplication: this account exists because money landed.
                 MemberStatus = MemberStatus.Active,
             };
@@ -1118,6 +1139,9 @@ public class MembershipService(
             user.LastName = join.LastName;
             user.Country = join.Country;
             user.City ??= join.City;
+            // The form is the freshest word on the number too — a member who re-joins from a new
+            // phone should be reachable on that one, not on the one from two years ago.
+            if (Prefer(join.Phone, webhookEvent.CustomerPhone) is { } number) user.PhoneNumber = number;
             user.MemberStatus = MemberStatus.Active;
             await userManager.UpdateAsync(user);
         }
@@ -1132,7 +1156,24 @@ public class MembershipService(
             return;
         }
 
-        if (await profiles.GetByUserIdAsync(user.Id, ct) is null)
+        // Everything the form asked for is kept, not just on the first join: someone who let a
+        // membership lapse and joined again has just re-typed their details, and the newer answer is
+        // the true one. Blank answers never overwrite something already on file — an optional field
+        // left empty this time is not a request to forget what was there.
+        if (await profiles.GetByUserIdAsync(user.Id, ct) is { } profile)
+        {
+            profile.JobTitle = Prefer(join.JobTitle, profile.JobTitle);
+            profile.AddressLine1 = Prefer(join.AddressLine1, profile.AddressLine1);
+            profile.AddressLine2 = Prefer(join.AddressLine2, profile.AddressLine2);
+            profile.PostalCode = Prefer(join.PostalCode, profile.PostalCode);
+            profile.About = Prefer(join.About, profile.About);
+            profile.Expectations = Prefer(join.Expectations, profile.Expectations);
+            profile.EarningsBand = Prefer(join.EarningsBand, profile.EarningsBand);
+            profile.Company = Prefer(webhookEvent.CompanyName, profile.Company);
+            profile.TaxId = Prefer(webhookEvent.TaxId, profile.TaxId);
+            profile.UpdatedAt = now;
+        }
+        else
         {
             await profiles.AddAsync(new Profile
             {
@@ -1144,10 +1185,16 @@ public class MembershipService(
                 About = join.About,
                 Expectations = join.Expectations,
                 EarningsBand = join.EarningsBand,
+                // Whatever the buyer chose to give Stripe — usually nothing, for a personal purchase.
+                Company = webhookEvent.CompanyName,
+                TaxId = webhookEvent.TaxId,
                 UpdatedAt = now,
             }, ct);
-            await profiles.SaveChangesAsync(ct);
         }
+        await profiles.SaveChangesAsync(ct);
+
+        static string? Prefer(string? fromForm, string? onFile) =>
+            string.IsNullOrWhiteSpace(fromForm) ? onFile : fromForm;
 
         // The terms tick on the form, recorded now that there is a user to record it against.
         await consentRecords.AddAsync(new ConsentRecord
@@ -1606,6 +1653,36 @@ public class MembershipService(
         (await memberships.FindAsync(m => m.ProviderSubscriptionId == subscriptionId, ct))
             .OrderByDescending(m => m.StartAt)
             .FirstOrDefault();
+
+    /// <summary>
+    /// The House's own mark, as the picture every membership is sold under. An uploaded logo wins
+    /// (Admin &gt; Site &amp; SEO); the committed app icon is the fallback, so a fresh install still
+    /// shows a brand rather than a grey box. Absolute, because the provider fetches it itself.
+    /// </summary>
+    private async Task<string> MembershipImageUrlAsync(CancellationToken ct)
+    {
+        var settings = await siteSettings.GetCachedAsync(ct);
+        var path = settings.LogoStorageKey is not null
+            ? $"/media/site-logo/{settings.Id}"
+            : settings.LogoUrl;
+
+        if (string.IsNullOrWhiteSpace(path)) return SiteUrls.Absolute(BaseUrl, "/icons/icon-512.png");
+        return path.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? path : SiteUrls.Absolute(BaseUrl, path);
+    }
+
+    /// <summary>
+    /// What sits under the name on the checkout page: how long the membership runs and how often it
+    /// is charged. An admin's own description keeps its place in front of it.
+    /// </summary>
+    private static string BillingLine(MembershipPlan plan) => plan.BillingPeriod switch
+    {
+        MembershipBillingPeriod.Monthly => "Membership · renews monthly until cancelled",
+        MembershipBillingPeriod.Annual => "Membership · renews yearly until cancelled",
+        _ => "Membership · one payment, no renewal",
+    };
+
+    private static string PlanCheckoutDescription(MembershipPlan plan) =>
+        string.IsNullOrWhiteSpace(plan.Description) ? BillingLine(plan) : $"{plan.Description.Trim()} — {BillingLine(plan)}";
 
     private string BaseUrl => siteOptions.Value.BaseUrl.TrimEnd('/');
 

@@ -69,6 +69,12 @@
                         <span asp-validation-for="Email" class="apply-field__error"></span>
                     </div>
                     <div class="apply-field">
+                        <label asp-for="Phone">@Loc["Form.Phone.Optional"]</label>
+                        <input asp-for="Phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="@Loc["Form.Phone.Placeholder"]" />
+                        <span class="apply-field__hint">@Loc["Form.Phone.ApplyHint"]</span>
+                        <span asp-validation-for="Phone" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
                         <label asp-for="JobTitle">@Loc["Form.JobTitle"]</label>
                         <input asp-for="JobTitle" autocomplete="organization-title" placeholder="@Loc["Form.JobTitle.Placeholder"]" />
                         <span asp-validation-for="JobTitle" class="apply-field__error"></span>

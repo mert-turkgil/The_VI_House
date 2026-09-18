@@ -187,6 +187,7 @@ public record JoinRequest(
     string? City,
     string? ReferralCode)
 {
+    public string? Phone { get; init; }
     public string? JobTitle { get; init; }
     public string? AddressLine1 { get; init; }
     public string? AddressLine2 { get; init; }

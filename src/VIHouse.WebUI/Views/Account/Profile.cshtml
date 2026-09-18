@@ -80,6 +80,12 @@
                         <span asp-validation-for="PostalCode" class="apply-field__error"></span>
                     </div>
                     <div class="apply-field">
+                        <label asp-for="Phone">@Loc["Form.Phone.Optional"]</label>
+                        <input asp-for="Phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="@Loc["Form.Phone.Placeholder"]" />
+                        <span class="apply-field__hint">@Loc["Form.Phone.ProfileHint"]</span>
+                        <span asp-validation-for="Phone" class="apply-field__error"></span>
+                    </div>
+                    <div class="apply-field">
                         <label asp-for="City">@Loc["Form.City"]</label>
                         <input asp-for="City" autocomplete="address-level2" />
                         <span asp-validation-for="City" class="apply-field__error"></span>

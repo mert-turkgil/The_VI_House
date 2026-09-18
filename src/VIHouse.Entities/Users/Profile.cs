@@ -31,6 +31,12 @@ public class Profile
     /// <summary>One of <see cref="Users.EarningsBand"/>'s codes.</summary>
     public string? EarningsBand { get; set; }
 
+    /// <summary>Company name and tax/VAT id, both optional and both usually collected by the
+    /// payment provider's checkout rather than by our own form — a member buying personally leaves
+    /// them empty. Kept so an invoice or a receipt can be addressed correctly.</summary>
+    public string? Company { get; set; }
+    public string? TaxId { get; set; }
+
     public string? PhotoUrl { get; set; }
     public ProfileVisibility Visibility { get; set; } = ProfileVisibility.MembersOnly;
     public DateTimeOffset? UpdatedAt { get; set; }

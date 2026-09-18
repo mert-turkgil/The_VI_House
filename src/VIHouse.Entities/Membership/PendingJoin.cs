@@ -39,6 +39,10 @@ public class PendingJoin : BaseEntity
     public string LastName { get; set; } = default!;
     public string Country { get; set; } = default!;
     public string? City { get; set; }
+    /// <summary>E.164 ("+905464188026"), normalised at the form. Copied onto the account when the
+    /// payment lands, so the House can reach a member by text as well as by email.</summary>
+    public string? Phone { get; set; }
+
     public string? JobTitle { get; set; }
     public string? AddressLine1 { get; set; }
     public string? AddressLine2 { get; set; }

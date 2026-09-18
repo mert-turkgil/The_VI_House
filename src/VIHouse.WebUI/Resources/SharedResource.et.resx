@@ -1303,4 +1303,10 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Ambassador.Performance.Revenue" xml:space="preserve"><value>Tulu</value></data>
   <data name="Ambassador.Performance.Commission" xml:space="preserve"><value>Sinu komisjon</value></data>
   <data name="Ambassador.Performance.Empty" xml:space="preserve"><value>Jaga ülal olevat linki, et näha siin külastusi, taotlusi ja komisjoni.</value></data>
+  <data name="Form.Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="Form.Phone.Optional" xml:space="preserve"><value>Telefon (valikuline)</value></data>
+  <data name="Form.Phone.Placeholder" xml:space="preserve"><value>+372 5123 4567</value></data>
+  <data name="Form.Phone.Hint" xml:space="preserve"><value>Koos riigikoodiga. Kirjutame ainult sinu liikmesusest — koha muutus, liitumislink, makse, mis vajab tähelepanu.</value></data>
+  <data name="Form.Phone.ApplyHint" xml:space="preserve"><value>Kui annad numbri, kirjutame kohe, kui taotlus on otsustatud — e-kiri tuleb nagunii.</value></data>
+  <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Ainult liikmesusega seotud sõnumiteks. Tühjenda väli, et need lõpetada.</value></data>
 </root>

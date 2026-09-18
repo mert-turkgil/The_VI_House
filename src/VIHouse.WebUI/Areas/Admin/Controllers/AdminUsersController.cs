@@ -92,6 +92,7 @@ public class AdminUsersController(
         return View(new AdminCustomerDetailViewModel
         {
             IsProtected = security.Value.IsProtected(user.Email),
+            Phone = user.PhoneNumber,
             Membership = await membershipService.GetMembershipSummaryAsync(id, ct),
             MembershipHistory = await membershipService.GetMembershipHistoryAsync(id, ct),
             Plans = await membershipService.GetActivePlansAsync(ct),

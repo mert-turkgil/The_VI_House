@@ -78,6 +78,34 @@ public record CreateCheckoutSessionRequest(
     public RecurringInterval? Recurring { get; init; }
 
     /// <summary>
+    /// Ask the provider's own checkout page for a phone number as well. Worth doing even though our
+    /// forms ask: the provider's field is validated against the real numbering plan, it is prefilled
+    /// from the card issuer where it can be, and it is the only chance to get a number from someone
+    /// who came through a link that skipped our form. What comes back is on the webhook event.
+    /// </summary>
+    /// <summary>
+    /// An absolute https URL for the thing being bought — the experience's cover, the session's
+    /// cover, the House's logo for a membership. Shown beside the line item on the provider's
+    /// checkout page. Ignored when the line references a mirrored price: a catalogued product
+    /// carries its own image (see CatalogPlan.ImageUrl), which is also what the provider's
+    /// dashboard lists it by.
+    /// </summary>
+    public string? ImageUrl { get; init; }
+
+    public bool CollectPhone { get; init; }
+
+    /// <summary>Require a billing address on the checkout page — what an invoice needs, and what
+    /// decides VAT treatment.</summary>
+    public bool CollectBillingAddress { get; init; }
+
+    /// <summary>
+    /// Offer company details, never demand them: a company name as an optional custom field and the
+    /// provider's own "add tax ID" affordance for a VAT/company number. Someone buying personally
+    /// simply walks past both.
+    /// </summary>
+    public bool CollectCompanyDetails { get; init; }
+
+    /// <summary>
     /// The provider's own Price id for what is being sold, when the plan has been mirrored into the
     /// provider's catalogue (see IPaymentCatalogProvider). When set, the checkout line references
     /// that price and the amount/currency/interval above are informational only; when null, the
@@ -142,6 +170,13 @@ public record PaymentWebhookEvent(string EventId, PaymentWebhookEventType Type, 
     /// echoed back. Set on the two Checkout* events. A fallback for matching when our record of the
     /// provider's session id never got written.</summary>
     public string? ClientReferenceId { get; init; }
+
+    /// <summary>What the buyer typed into the provider's own checkout page, on the Checkout* events:
+    /// the phone it validated, and the optional company name and tax/VAT id. All null unless the
+    /// session asked for them — see CreateCheckoutSessionRequest.CollectPhone / CollectCompanyDetails.</summary>
+    public string? CustomerPhone { get; init; }
+    public string? CompanyName { get; init; }
+    public string? TaxId { get; init; }
 
     /// <summary>The provider's invoice id, on the two invoice-driven Subscription* events. Stable
     /// across redeliveries and across separate events about the same invoice, unlike EventId.</summary>
