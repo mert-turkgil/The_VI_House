@@ -244,4 +244,7 @@ public record SeminarConfirmationInfo(
 {
     /// <summary>Checkout finished with a delayed payment method; the money has not landed yet.</summary>
     public bool AwaitingBank { get; init; }
+
+    /// <summary>The provider needs the buyer to act (a bank confirmation) before the money moves.</summary>
+    public bool RequiresAction { get; init; }
 }

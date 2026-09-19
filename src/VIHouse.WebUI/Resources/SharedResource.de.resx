@@ -1311,4 +1311,6 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Nur für Nachrichten zu Ihrer Mitgliedschaft. Feld leeren, um sie abzustellen.</value></data>
   <data name="Payment.AwaitingBank.Heading" xml:space="preserve"><value>Zahlung in Bearbeitung</value></data>
   <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Ihr Checkout ist abgeschlossen und Ihre Bank bestätigt die Zahlung — bei der gewählten Zahlungsart kann das einige Tage dauern. Ihr Platz bleibt in der Zwischenzeit reserviert, und wir senden Ihre Bestätigung per E-Mail, sobald das Geld eingegangen ist. Sie müssen nichts weiter tun.</value></data>
+  <data name="Payment.RequiresAction.Heading" xml:space="preserve"><value>Ihre Bank benötigt eine Bestätigung</value></data>
+  <data name="Payment.RequiresAction.Body" xml:space="preserve"><value>Ihre Bank hat Sie gebeten, diese Zahlung zu bestätigen, bevor sie ausgeführt wird — achten Sie auf ihre Nachricht oder App-Aufforderung. Ihr Platz bleibt währenddessen reserviert, und wir senden Ihre Bestätigung per E-Mail, sobald die Zahlung eingegangen ist.</value></data>
 </root>

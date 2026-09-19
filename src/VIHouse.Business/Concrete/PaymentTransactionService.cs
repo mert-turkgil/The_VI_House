@@ -65,6 +65,9 @@ public class PaymentTransactionService(
         await RememberCustomerAsync(userId, providerCustomerId ?? transaction.ProviderCustomerId);
     }
 
+    public Task<PaymentTransaction?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
+        transactions.GetByIdAsync(id, ct);
+
     public Task<PaymentTransaction?> GetBySessionAsync(string providerSessionId, CancellationToken ct = default) =>
         transactions.GetBySessionAsync(providerSessionId, ct);
 

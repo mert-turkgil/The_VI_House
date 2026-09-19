@@ -132,6 +132,7 @@ public class SeminarsController(
             info.IsConfirmed, info.SeminarTitle, info.SeminarSlug, info.AmountMinor, info.Currency)
         {
             AwaitingBank = info.AwaitingBank,
+            RequiresAction = info.RequiresAction,
         });
     }
 

@@ -33,6 +33,7 @@ public interface IPaymentTransactionService
     /// </summary>
     Task<PaymentTransactionEventResult> ApplyAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct = default);
 
+    Task<PaymentTransaction?> GetByIdAsync(Guid id, CancellationToken ct = default);
     Task<PaymentTransaction?> GetBySessionAsync(string providerSessionId, CancellationToken ct = default);
     Task<PaymentTransaction?> GetByInvoiceAsync(string providerInvoiceId, CancellationToken ct = default);
 

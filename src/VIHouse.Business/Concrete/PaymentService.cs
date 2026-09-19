@@ -134,6 +134,11 @@ public class PaymentService(
             amountMinor = promoResult.AmountMinor;
         }
 
+        // A checkout they finished whose bank is still confirming: the seat is held for it, and a
+        // second session would take the money twice. The first resolves on its own.
+        if ((await payments.FindAsync(p => p.ApplicationId == application.Id && p.Status == PaymentStatus.Pending, ct)).Count > 0)
+            return CheckoutInitiationResult.Fail("Your previous payment is still being confirmed by your bank. We'll email you the moment it lands — there's no need to pay again.");
+
         // Retry path: a prior attempt on this application left an Active hold (different ticket
         // type, or they bounced back from Stripe) — release it before reserving a fresh one so we
         // never hold two seats for the same applicant.
@@ -226,9 +231,12 @@ public class PaymentService(
         {
             // Webhook hasn't landed yet — this is a normal race, not an error (brief §32: the
             // browser redirect is informational only, never authoritative on its own).
+            // The pending kind comes from the money record, the one thing the provider moves.
+            var open = payment.TransactionId is { } tid ? await transactions.GetByIdAsync(tid, ct) : null;
             return new BookingConfirmationInfo(false, null, experience?.Title, experience?.City, payment.AmountMinor, payment.Currency, null)
             {
-                AwaitingBank = payment.Status == PaymentStatus.Pending,
+                AwaitingBank = open?.Status == PaymentTransactionStatus.Processing,
+                RequiresAction = open?.Status == PaymentTransactionStatus.RequiresAction,
             };
         }
 

@@ -1311,4 +1311,6 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Ainult liikmesusega seotud sõnumiteks. Tühjenda väli, et need lõpetada.</value></data>
   <data name="Payment.AwaitingBank.Heading" xml:space="preserve"><value>Makse on töötlemisel</value></data>
   <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Ostuprotsess on lõpetatud ja teie pank kinnitab makset — valitud makseviisiga võib see võtta mõne päeva. Teie koht jääb seni broneerituks ja saadame kinnituse e-postiga kohe, kui raha on laekunud. Teilt pole midagi rohkem vaja.</value></data>
+  <data name="Payment.RequiresAction.Heading" xml:space="preserve"><value>Teie pank vajab kinnitust</value></data>
+  <data name="Payment.RequiresAction.Body" xml:space="preserve"><value>Teie pank palus teil see makse enne selle sooritamist kinnitada — vaadake panga sõnumit või rakenduse teadet. Teie koht jääb seni broneerituks ja saadame kinnituse e-postiga kohe, kui makse on laekunud.</value></data>
 </root>

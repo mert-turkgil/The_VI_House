@@ -446,6 +446,8 @@ public class AccountController(
     public async Task<IActionResult> Bookings(CancellationToken ct)
     {
         var userId = CurrentUserId();
+        // A paid checkout the webhook hasn't confirmed yet is settled against the provider first.
+        await reconciliation.ReconcileForUserAsync(userId, ct);
         var userBookings = await bookings.GetByUserAsync(userId, ct);
 
         var model = new List<BookingListItemViewModel>();
@@ -526,6 +528,7 @@ public class AccountController(
     public async Task<IActionResult> Sessions(CancellationToken ct)
     {
         var culture = CultureInfo.CurrentUICulture.Name;
+        await reconciliation.ReconcileForUserAsync(CurrentUserId(), ct);
         var enrolments = await seminarService.GetEnrolmentsForUserAsync(CurrentUserId(), ct);
 
         ViewData["Title"] = "My Sessions";

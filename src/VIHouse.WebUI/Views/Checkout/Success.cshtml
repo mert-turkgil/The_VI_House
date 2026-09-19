@@ -3,7 +3,7 @@
     ViewData["Title"] = Model.Info.IsConfirmed ? "Booking Confirmed" : "Processing Payment";
 }
 
-@if (!Model.Info.IsConfirmed && !Model.Info.AwaitingBank)
+@if (!Model.Info.IsConfirmed && !Model.Info.AwaitingBank && !Model.Info.RequiresAction)
 {
     @section Styles {
         <meta http-equiv="refresh" content="3" />
@@ -23,6 +23,18 @@
             <p>
                 Your confirmation is on its way to your inbox. If this is your first booking, the same
                 email carries the link to set a password for your VI House account.
+            </p>
+            <div class="apply-confirmation__actions">
+                <a class="btn btn--primary" href="/">Back to Home</a>
+            </div>
+        }
+        else if (Model.Info.RequiresAction)
+        {
+            <span class="apply-confirmation__mark">&hellip;</span>
+            <h1>Your Bank Needs A Confirmation</h1>
+            <p>
+                Your bank has asked you to confirm this payment before it goes through — look for its message or app
+                prompt. Your place is held while you do. We'll email your confirmation as soon as the payment clears.
             </p>
             <div class="apply-confirmation__actions">
                 <a class="btn btn--primary" href="/">Back to Home</a>

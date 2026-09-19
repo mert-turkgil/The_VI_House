@@ -133,6 +133,11 @@ public interface IMembershipService
     /// </summary>
     Task<int> PurgeStalePendingJoinsAsync(TimeSpan olderThan, CancellationToken ct = default);
 
+    /// <summary>Marks memberships whose paid period is over as Expired, maintains the account's
+    /// member status, and tells the member once. The entitlement check never granted access past
+    /// ExpiresAt; this makes the row and the account agree with it. Run by the hourly sweep.</summary>
+    Task<int> ExpireLapsedMembershipsAsync(CancellationToken ct = default);
+
     /// <summary>
     /// Deliberately does NOT touch the shared ProcessedWebhookEvent ledger that PaymentService uses —
     /// idempotency here comes purely from MembershipPayment.Status (and, for renewals, from the
@@ -171,6 +176,9 @@ public record MembershipConfirmationInfo(bool IsConfirmed, string? PlanName, lon
 
     /// <summary>Checkout finished with a delayed payment method; the money has not landed yet.</summary>
     public bool AwaitingBank { get; init; }
+
+    /// <summary>The provider needs the buyer to act (a bank confirmation) before the money moves.</summary>
+    public bool RequiresAction { get; init; }
 }
 
 /// <summary>What the resume page shows. Paid means the checkout already went through — the page

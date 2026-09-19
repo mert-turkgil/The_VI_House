@@ -309,13 +309,14 @@ public class SeminarService(
 
         var seminar = await seminars.GetWithDetailAsync(enrollment.SeminarId, ct);
         var title = seminar is null ? null : SeminarContent.Title(seminar, SiteCultures.Default);
+        var open = enrollment.Status == SeminarEnrollmentStatus.Pending ? await transactions.GetBySessionAsync(sessionId, ct) : null;
 
         return new SeminarConfirmationInfo(
             enrollment.Status == SeminarEnrollmentStatus.Confirmed,
             title, seminar?.Slug, enrollment.AmountMinor, enrollment.Currency)
         {
-            AwaitingBank = enrollment.Status == SeminarEnrollmentStatus.Pending
-                           && await transactions.GetBySessionAsync(sessionId, ct) is { Status: PaymentTransactionStatus.Processing },
+            AwaitingBank = open?.Status == PaymentTransactionStatus.Processing,
+            RequiresAction = open?.Status == PaymentTransactionStatus.RequiresAction,
         };
     }
 
@@ -345,7 +346,36 @@ public class SeminarService(
             case PaymentWebhookEventType.ChargeRefunded when webhookEvent.PaymentIntentId is not null:
                 await HandleRefundAsync(webhookEvent, ct);
                 break;
+            case PaymentWebhookEventType.DisputeCreated when webhookEvent.PaymentIntentId is not null:
+            case PaymentWebhookEventType.DisputeClosed when webhookEvent.PaymentIntentId is not null:
+                await HandleDisputeAsync(webhookEvent, ct);
+                break;
         }
+    }
+
+    /// <summary>A dispute on a session charge changes nothing by itself; the House's contact address
+    /// is told, once per verdict, and decides about the place.</summary>
+    private async Task HandleDisputeAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var transaction = await transactions.GetByPaymentIntentAsync(webhookEvent.PaymentIntentId!, ct);
+        if (transaction is not { Kind: PaymentTransactionKind.Session, RelatedEntityType: nameof(SeminarEnrollment) }) return;
+
+        var enrollment = await enrollments.GetByIdAsync(transaction.RelatedEntityId, ct);
+        var contact = siteOptions.Value.ContactEmail;
+        if (enrollment is null || string.IsNullOrWhiteSpace(contact)) return;
+
+        var verdict = webhookEvent.Type == PaymentWebhookEventType.DisputeCreated ? "opened" : $"closed ({webhookEvent.DisputeStatus ?? "unknown"})";
+        var user = await userManager.FindByIdAsync(enrollment.UserId.ToString());
+        var seminar = await seminars.GetWithDetailAsync(enrollment.SeminarId, ct);
+        var title = seminar is null ? "a session" : SeminarContent.Title(seminar, SiteCultures.Default);
+        await outbox.EnqueueEmailAsync(
+            $"email:Dispute:SeminarEnrollment:{enrollment.Id}:{verdict}",
+            "ContactMessage", contact, $"Payment dispute {verdict} — session ({user?.Email ?? "unknown"})",
+            new ContactMessageEmailModel("The VI House (system)", user?.Email ?? "unknown", "Payment dispute",
+                $"A dispute was {verdict} on the payment for \"{title}\" by {user?.FirstName} {user?.LastName} ({user?.Email}). " +
+                $"Amount: {enrollment.AmountMinor / 100m:0.00} {enrollment.Currency}. The place was NOT changed automatically. " +
+                "Respond to the dispute in the provider dashboard and decide about the place from the admin sessions page."),
+            nameof(SeminarEnrollment), enrollment.Id, ct);
     }
 
     private async Task HandleCheckoutCompletedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)

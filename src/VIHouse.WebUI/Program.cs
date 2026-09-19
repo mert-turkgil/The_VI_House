@@ -328,6 +328,7 @@ builder.Services.AddHostedService<CheckoutReconciliationSweepService>();
 // Clears the form data from membership checkouts that never paid, once they are 30 days old —
 // the row is kept, the personal detail is not.
 builder.Services.AddHostedService<PendingJoinPurgeService>();
+builder.Services.AddHostedService<MembershipExpirySweepService>();
 
 // --- Localization (EN default / DE / TR / ET) --------------------------------------------------
 // Cookie-driven, not URL-prefixed: switching language never changes the URL (thevihouse.com/about

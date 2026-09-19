@@ -164,4 +164,5 @@ public record SeminarCheckoutResultViewModel(
     bool IsConfirmed, string? Title, string? Slug, long AmountMinor, string Currency)
 {
     public bool AwaitingBank { get; init; }
+    public bool RequiresAction { get; init; }
 }

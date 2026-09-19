@@ -543,6 +543,11 @@ public class MembershipService(
                 : "You already hold an active membership. To change plan, manage your billing from your account page or contact us.");
         }
 
+        // A checkout they finished whose bank is still confirming: opening another would take the
+        // money twice. The first one resolves on its own (see PaymentTransactionStatus.Processing).
+        if ((await membershipPayments.FindAsync(p => p.UserId == userId && p.Status == PaymentStatus.Pending, ct)).Count > 0)
+            return MembershipCheckoutResult.Fail(PaymentInProgressMessage);
+
         if ((await GetPlanAvailabilityAsync(plan.Id, ct)).IsFull)
             return MembershipCheckoutResult.Full(PlanFullMessage);
 
@@ -559,6 +564,8 @@ public class MembershipService(
 
     private const string JoinCodeAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private const string TermsConsentText = "I agree to The VI House Terms & Conditions and Privacy Policy.";
+    private const string PaymentInProgressMessage =
+        "Your previous payment is still being confirmed by your bank. We'll email you the moment it lands — there's no need to pay again.";
     private const string AlreadyMemberMessage =
         "This email address already holds a membership. Look for the account setup email we sent you — it has the link to choose your password — or contact us and we'll resend it.";
 
@@ -592,6 +599,11 @@ public class MembershipService(
 
         var now = DateTimeOffset.UtcNow;
         var join = await pendingJoins.GetLatestOpenByEmailAsync(normalized, ct);
+
+        // A checkout they finished on a delayed method: the money is on its way; nothing is reopened.
+        if (join is { Status: PendingJoinStatus.Pending, ProviderSessionId: { } processingSession }
+            && await transactions.GetBySessionAsync(processingSession, ct) is { Status: PaymentTransactionStatus.Processing })
+            return MembershipCheckoutResult.Fail(PaymentInProgressMessage);
 
         // A second submit for the same plan while the first checkout is still open — a
         // double-click, a back button, an impatient refresh — goes back to the same session.
@@ -714,10 +726,17 @@ public class MembershipService(
     {
         var now = DateTimeOffset.UtcNow;
 
+        // A row whose checkout the person finished on a delayed method: the money is on its way
+        // and a second session would take it twice. Not reopened; the bank's answer settles it.
+        if (join is { Status: PendingJoinStatus.Pending, ProviderSessionId: { } openSession }
+            && await transactions.GetBySessionAsync(openSession, ct) is { Status: PaymentTransactionStatus.Processing })
+            return MembershipCheckoutResult.Fail(PaymentInProgressMessage);
+
         // The resume path can land here with the session still open (the email arrived late, or
         // the visitor came back through the cancel URL). Same plan, still payable: reuse it.
         if (join is { Status: PendingJoinStatus.Pending, CheckoutUrl: not null } && join.HasLiveSession(now) && join.PlanId == plan.Id)
             return MembershipCheckoutResult.Ok(join.CheckoutUrl);
+
 
         var previousSessionId = join.HasLiveSession(now) ? join.ProviderSessionId : null;
 
@@ -875,6 +894,32 @@ public class MembershipService(
 
     private static string NormalizeEmail(string email) => email.Trim().ToUpperInvariant();
 
+    public async Task<int> ExpireLapsedMembershipsAsync(CancellationToken ct = default)
+    {
+        var now = DateTimeOffset.UtcNow;
+        var lapsed = await memberships.FindAsync(m =>
+            (m.Status == MembershipStatus.Active || m.Status == MembershipStatus.PastDue) && m.ExpiresAt != null && m.ExpiresAt < now, ct);
+
+        foreach (var membership in lapsed)
+        {
+            // The entitlement check already refuses a past ExpiresAt; this makes the row say so
+            // too, and tells the member once. A renewal paid after this (the provider was still
+            // retrying) arrives as invoice.paid and makes the row Active again.
+            membership.Status = MembershipStatus.Expired;
+            membership.RenewalAt = null;
+            membership.UpdatedAt = now;
+            await memberships.SaveChangesAsync(ct);
+
+            if (await userManager.FindByIdAsync(membership.UserId.ToString()) is not { } user) continue;
+            if (await GetCurrentMembershipAsync(user.Id, ct) is null)
+                await SetMemberStatusAsync(user, MemberStatus.Cancelled);
+            var plan = await plans.GetByIdAsync(membership.PlanId, ct);
+            await AnnounceMembershipEndedAsync(user, membership.Id, plan?.Name ?? "membership", membership.ExpiresAt ?? now, wasRevoked: false, ct);
+        }
+
+        return lapsed.Count;
+    }
+
     public async Task<int> PurgeStalePendingJoinsAsync(TimeSpan olderThan, CancellationToken ct = default)
     {
         var cutoff = DateTimeOffset.UtcNow - olderThan;
@@ -993,10 +1038,14 @@ public class MembershipService(
             // reads the provider and runs the same activation the webhook does; by the time this
             // is called, the row says whatever the provider said.
             if (payment.Status != PaymentStatus.Paid || payment.MembershipId is null)
+            {
+                var open = await transactions.GetBySessionAsync(sessionId, ct);
                 return new MembershipConfirmationInfo(false, plan?.Name, payment.AmountMinor, payment.Currency, null)
                 {
-                    AwaitingBank = payment.Status == PaymentStatus.Pending,
+                    AwaitingBank = open?.Status == PaymentTransactionStatus.Processing,
+                    RequiresAction = open?.Status == PaymentTransactionStatus.RequiresAction,
                 };
+            }
 
             var membership = await memberships.GetByIdAsync(payment.MembershipId.Value, ct);
             return new MembershipConfirmationInfo(true, plan?.Name, payment.AmountMinor, payment.Currency, membership?.ExpiresAt)
@@ -1015,11 +1064,14 @@ public class MembershipService(
         var currency = joinPlan?.Currency ?? "GBP";
 
         if (join.Status != PendingJoinStatus.Paid || join.MembershipId is null)
+        {
+            var openJoin = join.Status == PendingJoinStatus.Pending ? await transactions.GetBySessionAsync(sessionId, ct) : null;
             return new MembershipConfirmationInfo(false, joinPlan?.Name, amount, currency, null)
             {
-                AwaitingBank = join.Status == PendingJoinStatus.Pending
-                               && await transactions.GetBySessionAsync(sessionId, ct) is { Status: PaymentTransactionStatus.Processing },
+                AwaitingBank = openJoin?.Status == PaymentTransactionStatus.Processing,
+                RequiresAction = openJoin?.Status == PaymentTransactionStatus.RequiresAction,
             };
+        }
 
         var joined = await memberships.GetByIdAsync(join.MembershipId.Value, ct);
         return new MembershipConfirmationInfo(true, joinPlan?.Name, amount, currency, joined?.ExpiresAt)
@@ -1067,7 +1119,35 @@ public class MembershipService(
             case PaymentWebhookEventType.ChargeRefunded when webhookEvent.PaymentIntentId is not null:
                 await HandleRefundAsync(webhookEvent, ct);
                 break;
+            case PaymentWebhookEventType.DisputeCreated when webhookEvent.PaymentIntentId is not null:
+            case PaymentWebhookEventType.DisputeClosed when webhookEvent.PaymentIntentId is not null:
+                await HandleDisputeAsync(webhookEvent, ct);
+                break;
         }
+    }
+
+    /// <summary>A dispute on a membership charge changes nothing by itself — whether access ends is
+    /// a decision — so the House's contact address is told, once per verdict.</summary>
+    private async Task HandleDisputeAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var transaction = await transactions.GetByPaymentIntentAsync(webhookEvent.PaymentIntentId!, ct);
+        if (transaction is not { Kind: PaymentTransactionKind.Membership or PaymentTransactionKind.MembershipRenewal }) return;
+
+        var payment = (await membershipPayments.FindAsync(p => p.TransactionId == transaction.Id, ct)).FirstOrDefault();
+        var contact = await ContactEmailAsync(ct);
+        if (payment is null || string.IsNullOrWhiteSpace(contact)) return;
+
+        var verdict = webhookEvent.Type == PaymentWebhookEventType.DisputeCreated ? "opened" : $"closed ({webhookEvent.DisputeStatus ?? "unknown"})";
+        var user = await userManager.FindByIdAsync(payment.UserId.ToString());
+        var plan = await plans.GetByIdAsync(payment.PlanId, ct);
+        await outbox.EnqueueEmailAsync(
+            $"email:Dispute:MembershipPayment:{payment.Id}:{verdict}",
+            "ContactMessage", contact, $"Payment dispute {verdict} — membership ({user?.Email ?? "unknown"})",
+            new ContactMessageEmailModel("The VI House (system)", user?.Email ?? "unknown", "Payment dispute",
+                $"A dispute was {verdict} on the {plan?.Name ?? "membership"} payment by {user?.FirstName} {user?.LastName} ({user?.Email}). " +
+                $"Amount: {payment.AmountMinor / 100m:0.00} {payment.Currency}. Membership {payment.MembershipId}: access was NOT changed automatically. " +
+                "Respond to the dispute in the provider dashboard and decide about the membership from the admin members page."),
+            nameof(MembershipPayment), payment.Id, ct);
     }
 
     /// <summary>
@@ -1317,7 +1397,8 @@ public class MembershipService(
     /// <summary>The signed-in path: the payment row already exists, the account already exists.</summary>
     private async Task HandleMemberCheckoutCompletedAsync(MembershipPayment payment, PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
-        if (!await membershipPayments.TryClaimAsync(payment.Id, PaymentStatus.Created, PaymentStatus.Paid, ct))
+        // Created is the card path; Pending is a delayed method whose bank has now confirmed.
+        if (!await membershipPayments.TryClaimAsync(payment.Id, [PaymentStatus.Created, PaymentStatus.Pending], PaymentStatus.Paid, ct))
             return; // already handled, or never a live checkout
 
         payment.Status = PaymentStatus.Paid;
@@ -1798,13 +1879,24 @@ public class MembershipService(
 
         var wasPastDue = membership.Status == MembershipStatus.PastDue;
 
-        membership.ExpiresAt = newExpiry;
-        membership.RenewalAt = newExpiry;
-        membership.Status = MembershipStatus.Active;
-        membership.CancelledAt = null;
+        // Money for a period that is still running (or ahead) makes the membership current again —
+        // that is the provider's own rule for a past_due or unpaid subscription whose invoice gets
+        // paid. Money for a period already over (a late payment on a subscription that has since
+        // ended) is recorded below but resurrects nothing.
+        var periodStillRuns = newExpiry > now;
+        if (periodStillRuns)
+        {
+            membership.ExpiresAt = newExpiry;
+            membership.RenewalAt = newExpiry;
+            membership.Status = MembershipStatus.Active;
+            membership.CancelledAt = null;
+        }
         membership.ProviderCustomerId ??= webhookEvent.CustomerId;
         membership.UpdatedAt = now;
         await memberships.SaveChangesAsync(ct);
+
+        if (periodStillRuns && await userManager.FindByIdAsync(membership.UserId.ToString()) is { } reactivated)
+            await SetMemberStatusAsync(reactivated, MemberStatus.Active);
 
         // A renewal also records a payment row, so the member's history and the admin's payment
         // list both show every charge — not just the first.
@@ -1825,7 +1917,7 @@ public class MembershipService(
         }, ct);
         await membershipPayments.SaveChangesAsync(ct);
 
-        if (await userManager.FindByIdAsync(membership.UserId.ToString()) is { } user)
+        if (periodStillRuns && await userManager.FindByIdAsync(membership.UserId.ToString()) is { } user)
         {
             await outbox.EnqueueEmailAsync(
                 $"email:MembershipRenewed:{receipt}",
@@ -1853,7 +1945,7 @@ public class MembershipService(
     private async Task HandleSubscriptionPaymentFailedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
         var membership = await FindBySubscriptionAsync(webhookEvent.SubscriptionId!, ct);
-        if (membership is null || membership.Status is not (MembershipStatus.Active or MembershipStatus.PastDue)) return;
+        if (membership is null || membership.Status is not (MembershipStatus.Active or MembershipStatus.PastDue or MembershipStatus.Expired)) return;
 
         var now = DateTimeOffset.UtcNow;
         if (membership.Status == MembershipStatus.Active)

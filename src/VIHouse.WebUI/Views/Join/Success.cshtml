@@ -4,7 +4,7 @@
     @* A session id in the query string is unguessable, but a page that only ever says "just a
        moment" is still not something a crawler should keep. *@
     <meta name="robots" content="noindex" />
-    @if (!Model.Info.IsConfirmed && !Model.Info.AwaitingBank)
+    @if (!Model.Info.IsConfirmed && !Model.Info.AwaitingBank && !Model.Info.RequiresAction)
     {
         @* The webhook usually lands within seconds of the redirect; polling by reload is the
            simplest thing that shows the confirmed state without the visitor having to act. *@
@@ -27,6 +27,15 @@
             <p class="onboarding__footnote">
                 Already have a password? Sign in as usual. Otherwise, check your inbox for
                 "Set up your VI House account".
+            </p>
+        }
+        else if (Model.Info.RequiresAction)
+        {
+            <span class="onboarding__eyebrow">Confirmation needed</span>
+            <h1>Your bank needs you to confirm this payment</h1>
+            <p class="onboarding__lede">
+                Look for your bank's message or app prompt and confirm the payment. Your membership starts the moment
+                it clears, and we'll email your account setup link then.
             </p>
         }
         else if (Model.Info.AwaitingBank)

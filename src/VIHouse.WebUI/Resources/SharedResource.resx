@@ -1311,4 +1311,6 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Used only for messages about your membership. Clear the field to stop them.</value></data>
   <data name="Payment.AwaitingBank.Heading" xml:space="preserve"><value>Payment in progress</value></data>
   <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Your checkout is complete and your bank is confirming the payment — with the method you chose this can take a few days. Your place is held in the meantime, and we'll email your confirmation the moment the money lands. Nothing further is needed from you.</value></data>
+  <data name="Payment.RequiresAction.Heading" xml:space="preserve"><value>Your bank needs a confirmation</value></data>
+  <data name="Payment.RequiresAction.Body" xml:space="preserve"><value>Your bank has asked you to confirm this payment before it goes through — look for its message or app prompt. Your place is held while you do, and we'll email your confirmation as soon as the payment clears.</value></data>
 </root>

@@ -143,7 +143,10 @@ public class MembershipController(
         var info = await membershipService.GetConfirmationBySessionAsync(sessionId, ct);
         if (info is null) return NotFound();
 
-        ViewData["Title"] = info.IsConfirmed ? loc["Membership.Confirmed"] : info.AwaitingBank ? loc["Payment.AwaitingBank.Heading"] : loc["Membership.Processing"];
+        ViewData["Title"] = info.IsConfirmed ? loc["Membership.Confirmed"]
+            : info.RequiresAction ? loc["Payment.RequiresAction.Heading"]
+            : info.AwaitingBank ? loc["Payment.AwaitingBank.Heading"]
+            : loc["Membership.Processing"];
         return View(info);
     }
 
