@@ -69,6 +69,10 @@ public class EfWebhookEventRepository(VIHouseDbContext db) : IWebhookEventReposi
         return query.OrderByDescending(e => e.ReceivedAt).Take(take).ToListAsync(ct);
     }
 
+    public Task<List<WebhookEvent>> ListByObjectIdsAsync(IReadOnlyCollection<string> objectIds, CancellationToken ct = default) =>
+        db.WebhookEvents.AsNoTracking().Where(e => e.ObjectId != null && objectIds.Contains(e.ObjectId))
+            .OrderByDescending(e => e.ReceivedAt).ToListAsync(ct);
+
     public async Task<Dictionary<WebhookEventStatus, int>> CountByStatusAsync(CancellationToken ct = default) =>
         await db.WebhookEvents.GroupBy(e => e.Status)
             .Select(g => new { g.Key, Count = g.Count() })

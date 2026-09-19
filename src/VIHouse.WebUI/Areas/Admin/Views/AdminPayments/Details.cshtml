@@ -1,57 +1,170 @@
-@model AdminPaymentDetailViewModel
+@using VIHouse.Business.Abstract
+@using VIHouse.Entities.Commerce
+@model PaymentTransactionDetail
 @{
-    var p = Model.Payment;
+    var t = Model.Transaction;
     ViewData["Title"] = "Payment";
+
+    string BadgeClass(PaymentTransactionStatus s) => s switch
+    {
+        PaymentTransactionStatus.Succeeded => "admin-badge admin-badge--paid",
+        PaymentTransactionStatus.Pending or PaymentTransactionStatus.Processing or PaymentTransactionStatus.RequiresAction => "admin-badge admin-badge--pending",
+        PaymentTransactionStatus.Failed => "admin-badge admin-badge--danger",
+        PaymentTransactionStatus.Canceled or PaymentTransactionStatus.Expired => "admin-badge admin-badge--closed",
+        PaymentTransactionStatus.Refunded or PaymentTransactionStatus.PartiallyRefunded => "admin-badge admin-badge--info",
+        _ => "admin-badge admin-badge--draft",
+    };
+
+    string EventBadge(WebhookEventStatus status) => status switch
+    {
+        WebhookEventStatus.Processed => "admin-badge admin-badge--open",
+        WebhookEventStatus.Failed => "admin-badge admin-badge--closed",
+        WebhookEventStatus.Received => "admin-badge admin-badge--pending",
+        _ => "admin-badge admin-badge--draft",
+    };
+
+    string StatusMeaning(PaymentTransactionStatus s) => s switch
+    {
+        PaymentTransactionStatus.Pending => "Checkout opened; nothing paid yet.",
+        PaymentTransactionStatus.Processing => "Checkout completed with a delayed payment method; the bank has not confirmed the money. Nothing has been granted.",
+        PaymentTransactionStatus.RequiresAction => "The buyer must confirm the payment with their bank before it goes through.",
+        PaymentTransactionStatus.Succeeded => "The provider confirmed the money. The booking / seat / membership was granted.",
+        PaymentTransactionStatus.Failed => "The provider could not collect. A retry may still succeed.",
+        PaymentTransactionStatus.Canceled => "Stopped before any money moved.",
+        PaymentTransactionStatus.Expired => "The checkout window closed unpaid; the held place was released.",
+        PaymentTransactionStatus.PartiallyRefunded => "Part of the money went back to the buyer; what was bought stands.",
+        PaymentTransactionStatus.Refunded => "All of the money went back to the buyer.",
+        _ => "",
+    };
+
+    // Stripe dashboard deep links. Test-mode objects live under /test/ there.
+    var live = Model.Events.FirstOrDefault()?.LiveMode ?? (t.ProviderSessionId?.StartsWith("cs_live") ?? false);
+    var mode = live ? "" : "test/";
+    string? Link(string? id, string path) => id is null ? null : $"https://dashboard.stripe.com/{mode}{path}/{id}";
 }
 
 <div class="admin-toolbar" style="justify-content: space-between; align-items: center;">
-    <span class="admin-badge">@p.Status</span>
+    <div>
+        <span class="@BadgeClass(t.Status)">@t.Status</span>
+        @if (t.Disputed)
+        {
+            <span class="admin-badge admin-badge--danger">Disputed</span>
+        }
+        <span class="admin-table__sub" style="margin-left:8px;">@StatusMeaning(t.Status)</span>
+    </div>
     <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; Back to Payments</a>
 </div>
 
 <div class="admin-card">
-    <h2>Payment</h2>
-    <p style="font-size:0.75rem; color:#999; margin-top:-8px;">Refunds/disputes are handled in the Stripe dashboard — this is a read-only mirror.</p>
+    <h2>@MoneyFormatter.Format(t.AmountMinor, t.Currency) · @t.Kind</h2>
+    <p style="font-size:0.75rem; color:#999; margin-top:-8px;">Refunds and disputes are actioned in the Stripe dashboard; this record follows the provider's events.</p>
     <dl class="admin-detail-list">
-        <div><dt>Customer</dt><dd>@(Model.CustomerEmail ?? "—")</dd></div>
-        <div><dt>Experience</dt><dd>@Model.ExperienceLabel</dd></div>
-        <div><dt>Provider</dt><dd>@p.Provider</dd></div>
-        <div><dt>Provider Reference</dt><dd style="word-break:break-all;">@p.ProviderReference</dd></div>
-        <div><dt>Amount</dt><dd>@MoneyFormatter.Format(p.AmountMinor, p.Currency)</dd></div>
-        <div><dt>Payment Method</dt><dd>@(p.PaymentMethod ?? "—")</dd></div>
-        <div><dt>Invoice Reference</dt><dd>@(p.InvoiceReference ?? "—")</dd></div>
-        <div><dt>Refund Status</dt><dd>@(p.RefundStatus ?? "—")</dd></div>
-        <div><dt>Created</dt><dd>@p.CreatedAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
-        @if (Model.BookingReference is not null)
+        <div><dt>Customer</dt><dd>
+            @if (t.UserId is { } uid)
+            {
+                <a asp-controller="AdminUsers" asp-action="Details" asp-route-id="@uid">@(t.UserEmail ?? "—")</a>
+            }
+            else
+            {
+                @(t.UserEmail ?? "—")
+                <span class="admin-table__sub">(no account yet — a /join checkout)</span>
+            }
+            @if (!string.IsNullOrWhiteSpace(t.UserName)) { <span class="admin-table__sub"> · @t.UserName</span> }
+        </dd></div>
+        <div><dt>For</dt><dd>
+            @if (t.RelatedAdminPath is not null) { <a href="@t.RelatedAdminPath">@t.RelatedLabel</a> } else { @t.RelatedLabel }
+            <span class="admin-table__sub"> · @t.RelatedEntityType</span>
+        </dd></div>
+        <div><dt>Amount</dt><dd>@MoneyFormatter.Format(t.AmountMinor, t.Currency)</dd></div>
+        <div><dt>Refunded</dt><dd>@(t.HasRefund ? $"{MoneyFormatter.Format(t.AmountRefundedMinor, t.Currency)}{(t.RefundedAt is { } ra ? $" on {ra:dd MMM yyyy, HH:mm}" : "")}" : "—")</dd></div>
+        <div><dt>Created</dt><dd>@t.CreatedAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
+        <div><dt>Updated</dt><dd>@((t.UpdatedAt ?? t.CreatedAt).ToString("dd MMM yyyy, HH:mm"))</dd></div>
+        <div><dt>Paid</dt><dd>@(t.PaidAt?.ToString("dd MMM yyyy, HH:mm") ?? "—")</dd></div>
+        @if (!string.IsNullOrWhiteSpace(t.FailureMessage) || !string.IsNullOrWhiteSpace(t.FailureCode))
         {
-            <div><dt>Booking</dt><dd>@Model.BookingReference</dd></div>
+            <div><dt>Failure</dt><dd>@t.FailureMessage <span class="admin-table__sub">@t.FailureCode</span></dd></div>
         }
+        <div><dt>Last event</dt><dd style="font-family:monospace; font-size:0.75rem;">@(t.LastEventId ?? "—")</dd></div>
     </dl>
 </div>
 
 <div class="admin-card">
-    <h2>Live Stripe Details</h2>
+    <h2>Stripe references</h2>
+    <dl class="admin-detail-list">
+        <div><dt>Checkout session</dt><dd style="font-family:monospace; font-size:0.75rem; word-break:break-all;">@(t.ProviderSessionId ?? "—")</dd></div>
+        <div><dt>Payment intent</dt><dd style="font-family:monospace; font-size:0.75rem;">
+            @if (Link(t.ProviderPaymentIntentId, "payments") is { } piHref) { <a href="@piHref" target="_blank" rel="noopener">@t.ProviderPaymentIntentId</a> } else { @("—") }
+        </dd></div>
+        <div><dt>Subscription</dt><dd style="font-family:monospace; font-size:0.75rem;">
+            @if (Link(t.ProviderSubscriptionId, "subscriptions") is { } subHref) { <a href="@subHref" target="_blank" rel="noopener">@t.ProviderSubscriptionId</a> } else { @("—") }
+        </dd></div>
+        <div><dt>Invoice</dt><dd style="font-family:monospace; font-size:0.75rem;">
+            @if (Link(t.ProviderInvoiceId, "invoices") is { } invHref) { <a href="@invHref" target="_blank" rel="noopener">@t.ProviderInvoiceId</a> } else { @("—") }
+        </dd></div>
+        <div><dt>Customer</dt><dd style="font-family:monospace; font-size:0.75rem;">
+            @if (Link(t.ProviderCustomerId, "customers") is { } cusHref) { <a href="@cusHref" target="_blank" rel="noopener">@t.ProviderCustomerId</a> } else { @("—") }
+        </dd></div>
+    </dl>
+</div>
+
+<div class="admin-card">
+    <h2>Live Stripe details</h2>
     @if (Model.LiveDetails is { } d)
     {
         <dl class="admin-detail-list">
-            <div><dt>Session Status</dt><dd>@(d.SessionStatus ?? "—")</dd></div>
-            <div><dt>Payment Status</dt><dd>@(d.PaymentStatus ?? "—")</dd></div>
-            <div><dt>Charge Status</dt><dd>@(d.ChargeStatus ?? "—")</dd></div>
+            <div><dt>Session status</dt><dd>@(d.SessionStatus ?? "—")</dd></div>
+            <div><dt>Payment status</dt><dd>@(d.PaymentStatus ?? "—")</dd></div>
+            <div><dt>Intent status</dt><dd>@(d.PaymentIntentStatus ?? "—")</dd></div>
+            <div><dt>Charge status</dt><dd>@(d.ChargeStatus ?? "—")</dd></div>
             <div><dt>Card</dt><dd>@(d.CardBrand is null ? "—" : $"{d.CardBrand} •••• {d.CardLast4}")</dd></div>
             @if (d.AmountCapturedMinor is { } captured)
             {
-                <div><dt>Amount Captured</dt><dd>@MoneyFormatter.Format(captured, p.Currency)</dd></div>
+                <div><dt>Amount captured</dt><dd>@MoneyFormatter.Format(captured, t.Currency)</dd></div>
             }
-            <div><dt>Refunded</dt><dd>@(d.Refunded == true ? MoneyFormatter.Format(d.AmountRefundedMinor ?? 0, p.Currency) : "No")</dd></div>
-            <div><dt>Disputed</dt><dd>@(d.Disputed == true ? "Yes" : "No")</dd></div>
+            <div><dt>Refunded (Stripe)</dt><dd>@(d.Refunded == true ? MoneyFormatter.Format(d.AmountRefundedMinor ?? 0, t.Currency) : "No")</dd></div>
+            <div><dt>Disputed (Stripe)</dt><dd>@(d.Disputed == true ? "Yes" : "No")</dd></div>
             @if (!string.IsNullOrWhiteSpace(d.ReceiptUrl))
             {
                 <div><dt>Receipt</dt><dd><a href="@d.ReceiptUrl" target="_blank" rel="noopener">View receipt</a></dd></div>
             }
         </dl>
     }
+    else if (t.ProviderSessionId is null)
+    {
+        <p style="font-size:0.8125rem; color:#999;">No checkout session on this record (a renewal is invoiced by Stripe directly — open the invoice above).</p>
+    }
     else
     {
-        <p style="font-size:0.8125rem; color:#999;">Couldn't sync with Stripe just now — showing the last known status from our database.</p>
+        <p style="font-size:0.8125rem; color:#999;">Couldn't reach Stripe just now — the record above is the last state the provider's events put it in.</p>
+    }
+</div>
+
+<div class="admin-card">
+    <h2>Event timeline</h2>
+    @if (Model.Events.Count == 0)
+    {
+        <p style="font-size:0.8125rem; color:#999;">No provider events recorded against this payment's Stripe objects yet.</p>
+    }
+    else
+    {
+        <div class="admin-table-scroll">
+            <table class="admin-table">
+                <thead><tr><th>Received</th><th>Event</th><th>Object</th><th>Status</th><th>Attempts</th><th>Error</th></tr></thead>
+                <tbody>
+                    @foreach (var e in Model.Events)
+                    {
+                        <tr>
+                            <td>@e.ReceivedAt.ToString("dd MMM yyyy HH:mm:ss")</td>
+                            <td>@e.Type<div class="admin-table__sub" style="font-family:monospace;">@e.EventId</div></td>
+                            <td style="font-family:monospace; font-size:0.75rem; word-break:break-all;">@e.ObjectId</td>
+                            <td><span class="@EventBadge(e.Status)">@e.Status</span></td>
+                            <td>@e.Attempts</td>
+                            <td class="admin-table__sub">@(e.LastError ?? "")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="admin-hint">Failed events can be re-run from <a asp-controller="AdminWebhooks" asp-action="Index" asp-route-status="Failed">Stripe Events</a>.</p>
     }
 </div>

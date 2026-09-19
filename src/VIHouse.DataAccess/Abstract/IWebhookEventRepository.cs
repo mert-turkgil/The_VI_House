@@ -27,4 +27,8 @@ public interface IWebhookEventRepository
     /// <summary>Newest first, for the admin screen.</summary>
     Task<List<WebhookEvent>> ListAsync(WebhookEventStatus? status, int take, CancellationToken ct = default);
     Task<Dictionary<WebhookEventStatus, int>> CountByStatusAsync(CancellationToken ct = default);
+
+    /// <summary>Every event recorded against any of the given provider object ids (a session, an
+    /// invoice, a payment intent, a subscription), newest first — one transaction's timeline.</summary>
+    Task<List<WebhookEvent>> ListByObjectIdsAsync(IReadOnlyCollection<string> objectIds, CancellationToken ct = default);
 }

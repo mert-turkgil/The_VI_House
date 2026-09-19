@@ -1,3 +1,4 @@
+@using VIHouse.Business.Abstract
 @using VIHouse.Entities.Commerce
 @using System.Text.Json
 @model AdminDashboardViewModel
@@ -11,10 +12,10 @@
     string Payload(IEnumerable<string> labels, IEnumerable<decimal> values, string? currency = null) =>
         JsonSerializer.Serialize(new { labels, values, currency });
 
-    var revenuePayload = Payload(
-        Model.RevenueByMonth.Select(m => m.Label),
-        Model.RevenueByMonth.Select(m => m.AmountMinor / 100m),
-        Model.PrimaryCurrency);
+    var money = Model.Payments;
+    var primaryCurrency = money?.PrimaryCurrency;
+    var revenueSeries = primaryCurrency is not null && money!.MonthlyNetByCurrency.TryGetValue(primaryCurrency, out var series) ? series : [];
+    var revenuePayload = Payload(revenueSeries.Select(m => m.Label), revenueSeries.Select(m => m.AmountMinor / 100m), primaryCurrency);
 
     var funnelStatuses = new[]
     {
@@ -31,8 +32,12 @@
         Model.BookingsByStatus.Keys.Select(s => s.ToString()),
         Model.BookingsByStatus.Values.Select(v => (decimal)v));
 
+    var paymentStatuses = Enum.GetValues<PaymentTransactionStatus>();
+    var paymentsPayload = money is null ? "" : Payload(
+        paymentStatuses.Select(s => s.ToString()),
+        paymentStatuses.Select(s => (decimal)money.CountsByStatus.GetValueOrDefault(s)));
+
     var approvedApplications = Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.Approved);
-    var paidApplications = Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.Paid);
     var underReviewApplications = Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.UnderReview)
         + Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.Shortlisted);
     var waitlistedApplications = Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.Waitlisted);
@@ -55,6 +60,25 @@
         BookingStatus.Cancelled or BookingStatus.Refunded => "admin-badge admin-badge--closed",
         _ => "admin-badge admin-badge--info",
     };
+
+    string PaymentBadgeClass(PaymentTransactionStatus status) => status switch
+    {
+        PaymentTransactionStatus.Succeeded => "admin-badge admin-badge--paid",
+        PaymentTransactionStatus.Pending or PaymentTransactionStatus.Processing or PaymentTransactionStatus.RequiresAction => "admin-badge admin-badge--pending",
+        PaymentTransactionStatus.Failed => "admin-badge admin-badge--danger",
+        PaymentTransactionStatus.Canceled or PaymentTransactionStatus.Expired => "admin-badge admin-badge--closed",
+        PaymentTransactionStatus.Refunded or PaymentTransactionStatus.PartiallyRefunded => "admin-badge admin-badge--info",
+        _ => "admin-badge admin-badge--draft",
+    };
+
+    string KindLabel(PaymentTransactionKind kind) => kind switch
+    {
+        PaymentTransactionKind.Experience => "Experience tickets",
+        PaymentTransactionKind.Session => "Session seats",
+        PaymentTransactionKind.Membership => "Membership sales",
+        PaymentTransactionKind.MembershipRenewal => "Membership renewals",
+        _ => kind.ToString(),
+    };
 }
 
 <section class="admin-dashboard-hero" data-reveal>
@@ -72,10 +96,13 @@
             <strong>@confirmedBookings</strong>
             <span>Confirmed bookings</span>
         </div>
-        <div class="admin-dashboard-hero__pill">
-            <strong>@paidApplications</strong>
-            <span>Paid members</span>
-        </div>
+        @if (money is not null)
+        {
+            <div class="admin-dashboard-hero__pill">
+                <strong>@money.CurrentMembers</strong>
+                <span>Current members</span>
+            </div>
+        }
     </div>
  </section>
 
@@ -104,41 +131,73 @@
         <div class="admin-kpi-card__label">Applications in motion</div>
         <div class="admin-kpi-card__meta">@waitlistedApplications waitlisted</div>
     </article>
-    @foreach (var (currency, amountMinor) in Model.RevenueByCurrency)
+    @if (money is not null)
     {
-        <article class="admin-kpi-card" data-reveal data-reveal-delay="200">
+        foreach (var c in money.CollectedByCurrency)
+        {
+            <article class="admin-kpi-card" data-reveal data-reveal-delay="200">
+                <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("credit-card")' /></div>
+                <div class="admin-kpi-card__value">@MoneyFormatter.Format(c.NetMinor, c.Currency)</div>
+                <div class="admin-kpi-card__label">Revenue collected (@c.Currency)</div>
+                <div class="admin-kpi-card__meta">
+                    @c.Count settled payment@(c.Count == 1 ? "" : "s")@(c.RefundedMinor > 0 ? $" · {MoneyFormatter.Format(c.RefundedMinor, c.Currency)} refunded" : "")
+                </div>
+            </article>
+        }
+        <article class="admin-kpi-card" data-reveal data-reveal-delay="240">
+            <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("layers")' /></div>
+            <div class="admin-kpi-card__value">@money.MembershipSales</div>
+            <div class="admin-kpi-card__label">Membership sales</div>
+            <div class="admin-kpi-card__meta">@money.MembershipRenewals renewal@(money.MembershipRenewals == 1 ? "" : "s") collected</div>
+        </article>
+        <article class="admin-kpi-card" data-reveal data-reveal-delay="280">
+            <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("activity")' /></div>
+            <div class="admin-kpi-card__value">@(money.PendingCount + money.ProcessingCount)</div>
+            <div class="admin-kpi-card__label">Payments in flight</div>
+            <div class="admin-kpi-card__meta">@money.PendingCount pending · @money.ProcessingCount processing / awaiting action</div>
+        </article>
+        <article class="admin-kpi-card" data-reveal data-reveal-delay="320">
             <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("credit-card")' /></div>
-            <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
-            <div class="admin-kpi-card__label">Revenue collected (@currency)</div>
-            <div class="admin-kpi-card__meta">Settled payments only</div>
+            <div class="admin-kpi-card__value">@money.FailedCount</div>
+            <div class="admin-kpi-card__label">Failed payments</div>
+            <div class="admin-kpi-card__meta">@money.CanceledCount cancelled or expired</div>
+        </article>
+        <article class="admin-kpi-card" data-reveal data-reveal-delay="360">
+            <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("tag")' /></div>
+            <div class="admin-kpi-card__value">@money.RefundedCount</div>
+            <div class="admin-kpi-card__label">Refunds</div>
+            <div class="admin-kpi-card__meta">@(money.DisputedCount > 0 ? $"{money.DisputedCount} disputed" : "No open disputes")</div>
         </article>
     }
 </section>
 
 <section class="admin-chart-grid">
-    <article class="admin-chart-card admin-chart-card--wide" data-reveal>
-        <h2>Revenue Collected</h2>
-        <span class="admin-chart-card__hint">
-            @if (Model.PrimaryCurrency is not null)
+    @if (money is not null)
+    {
+        <article class="admin-chart-card admin-chart-card--wide" data-reveal>
+            <h2>Revenue Collected</h2>
+            <span class="admin-chart-card__hint">
+                @if (primaryCurrency is not null)
+                {
+                    @:Last 12 months, net of refunds, @primaryCurrency only — currencies aren't combined.
+                }
+                else
+                {
+                    @:Last 12 months.
+                }
+            </span>
+            @if (revenueSeries.Any(m => m.AmountMinor != 0))
             {
-                @:Last 12 months, @Model.PrimaryCurrency only — currencies aren't combined.
+                <div class="admin-chart-card__canvas">
+                    <canvas data-chart="line" data-chart-payload="@revenuePayload"></canvas>
+                </div>
             }
             else
             {
-                @:Last 12 months.
+                <div class="admin-chart-empty">No payments collected yet.</div>
             }
-        </span>
-        @if (Model.RevenueByMonth.Any(m => m.AmountMinor > 0))
-        {
-            <div class="admin-chart-card__canvas">
-                <canvas data-chart="line" data-chart-payload="@revenuePayload"></canvas>
-            </div>
-        }
-        else
-        {
-            <div class="admin-chart-empty">No payments collected yet.</div>
-        }
-    </article>
+        </article>
+    }
 
     <article class="admin-chart-card" data-reveal data-reveal-delay="60">
         <h2>Application Funnel</h2>
@@ -169,6 +228,24 @@
             <div class="admin-chart-empty">No bookings yet.</div>
         }
     </article>
+
+    @if (money is not null)
+    {
+        <article class="admin-chart-card" data-reveal data-reveal-delay="180">
+            <h2>Payments by Status</h2>
+            <span class="admin-chart-card__hint">Experience, session and membership payments together.</span>
+            @if (money.CountsByStatus.Count > 0)
+            {
+                <div class="admin-chart-card__canvas">
+                    <canvas data-chart="bar" data-chart-payload="@paymentsPayload"></canvas>
+                </div>
+            }
+            else
+            {
+                <div class="admin-chart-empty">No payments yet.</div>
+            }
+        </article>
+    }
 </section>
 
 <section class="admin-dashboard-grid">
@@ -234,4 +311,76 @@
             </div>
         }
     </article>
+
+    @if (money is not null)
+    {
+        <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="120">
+            <div class="admin-section-heading-wrap">
+                <div>
+                    <span class="admin-eyebrow">Money by type</span>
+                    <h2>Payments by type and currency</h2>
+                </div>
+                <p>Settled payments only, net of refunds. Each currency stands on its own.</p>
+            </div>
+            @if (money.CollectedByKindAndCurrency.Count == 0)
+            {
+                <div class="admin-empty">
+                    <h3 class="admin-empty__title">No settled payments yet</h3>
+                    <p>Experience, session and membership payments will be broken down here once money has been collected.</p>
+                </div>
+            }
+            else
+            {
+                <div class="admin-table-scroll">
+                    <table class="admin-table" data-admin-table data-admin-table-per-page="12">
+                        <thead><tr><th>Type</th><th>Currency</th><th>Payments</th><th>Collected</th><th>Refunded</th><th>Net</th></tr></thead>
+                        <tbody>
+                            @foreach (var row in money.CollectedByKindAndCurrency)
+                            {
+                                <tr>
+                                    <td>@KindLabel(row.Kind)</td>
+                                    <td>@row.Currency</td>
+                                    <td>@row.Count</td>
+                                    <td>@MoneyFormatter.Format(row.GrossMinor, row.Currency)</td>
+                                    <td>@(row.RefundedMinor > 0 ? MoneyFormatter.Format(row.RefundedMinor, row.Currency) : "—")</td>
+                                    <td><strong>@MoneyFormatter.Format(row.NetMinor, row.Currency)</strong></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </article>
+
+        <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="160">
+            <div class="admin-section-heading-wrap">
+                <div>
+                    <span class="admin-eyebrow">Money by state</span>
+                    <h2>Payments by status</h2>
+                </div>
+                <p>Every payment's internal state. <a asp-controller="AdminPayments" asp-action="Index">Open the full list</a> to drill into any of them.</p>
+            </div>
+            <div class="admin-table-scroll">
+                <table class="admin-table" data-admin-table data-admin-table-per-page="12">
+                    <thead><tr><th>Status</th><th>Count</th></tr></thead>
+                    <tbody>
+                        @foreach (var status in paymentStatuses)
+                        {
+                            <tr>
+                                <td><a asp-controller="AdminPayments" asp-action="Index" asp-route-status="@status"><span class="@PaymentBadgeClass(status)">@status</span></a></td>
+                                <td>@money.CountsByStatus.GetValueOrDefault(status)</td>
+                            </tr>
+                        }
+                        @foreach (var open in money.OpenByCurrency)
+                        {
+                            <tr>
+                                <td><span class="admin-badge admin-badge--pending">In flight (@open.Currency)</span></td>
+                                <td>@MoneyFormatter.Format(open.GrossMinor, open.Currency) across @open.Count</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    }
 </section>

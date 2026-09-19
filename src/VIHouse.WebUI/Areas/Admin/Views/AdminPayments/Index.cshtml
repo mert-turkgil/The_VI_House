@@ -1,55 +1,160 @@
+@using VIHouse.Business.Abstract
 @using VIHouse.Entities.Commerce
-@model List<AdminPaymentListItemViewModel>
+@model AdminPaymentsIndexViewModel
 @{
     ViewData["Title"] = "Payments";
-    var selected = ViewData["SelectedStatus"] as PaymentStatus?;
+    var list = Model.Page;
+    var query = Model.Query;
+    var statuses = Enum.GetValues<PaymentTransactionStatus>();
+    var kinds = Enum.GetValues<PaymentTransactionKind>();
 
-    string TabClass(PaymentStatus? s) => selected == s ? "admin-tabs__link active" : "admin-tabs__link";
-    string BadgeClass(PaymentStatus s) => s switch
+    string TabClass(PaymentTransactionStatus? s) => query.Status == s ? "admin-tabs__link active" : "admin-tabs__link";
+
+    string BadgeClass(PaymentTransactionStatus s) => s switch
     {
-        PaymentStatus.Paid => "admin-badge admin-badge--open",
-        PaymentStatus.Failed or PaymentStatus.Cancelled or PaymentStatus.Chargeback => "admin-badge admin-badge--closed",
-        _ => "admin-badge",
+        PaymentTransactionStatus.Succeeded => "admin-badge admin-badge--paid",
+        PaymentTransactionStatus.Pending or PaymentTransactionStatus.Processing or PaymentTransactionStatus.RequiresAction => "admin-badge admin-badge--pending",
+        PaymentTransactionStatus.Failed => "admin-badge admin-badge--danger",
+        PaymentTransactionStatus.Canceled or PaymentTransactionStatus.Expired => "admin-badge admin-badge--closed",
+        PaymentTransactionStatus.Refunded or PaymentTransactionStatus.PartiallyRefunded => "admin-badge admin-badge--info",
+        _ => "admin-badge admin-badge--draft",
     };
+
+    string KindLabel(PaymentTransactionKind k) => k switch
+    {
+        PaymentTransactionKind.Experience => "Experience",
+        PaymentTransactionKind.Session => "Session",
+        PaymentTransactionKind.Membership => "Membership",
+        PaymentTransactionKind.MembershipRenewal => "Renewal",
+        _ => k.ToString(),
+    };
+
+    // The provider's own id for the row, for the "Stripe" column: the payment intent when the
+    // money moved, the invoice for a renewal, otherwise the checkout session.
+    string? StripeRef(PaymentTransactionListItem t) => t.ProviderPaymentIntentId ?? t.ProviderInvoiceId ?? t.ProviderSessionId;
 }
 
+<p class="admin-hint">
+    Every payment across experiences, sessions and memberships, with its internal state — moved only by the
+    provider's events, never by a browser redirect. Refunds and disputes are actioned in the Stripe dashboard and
+    arrive here as events. Amounts are per currency and never combined.
+</p>
+
 <nav class="admin-tabs">
-    <a class="@TabClass(null)" asp-action="Index">All</a>
-    <a class="@TabClass(PaymentStatus.Created)" asp-action="Index" asp-route-status="Created">Created</a>
-    <a class="@TabClass(PaymentStatus.Paid)" asp-action="Index" asp-route-status="Paid">Paid</a>
-    <a class="@TabClass(PaymentStatus.Failed)" asp-action="Index" asp-route-status="Failed">Failed</a>
-    <a class="@TabClass(PaymentStatus.Refunded)" asp-action="Index" asp-route-status="Refunded">Refunded</a>
+    <a class="@TabClass(null)" asp-action="Index" asp-route-kind="@query.Kind" asp-route-currency="@query.Currency" asp-route-q="@query.Search">All <span class="admin-table__sub">@list.CountsByStatus.Values.Sum()</span></a>
+    @foreach (var s in statuses)
+    {
+        <a class="@TabClass(s)" asp-action="Index" asp-route-status="@s" asp-route-kind="@query.Kind" asp-route-currency="@query.Currency" asp-route-q="@query.Search">@s <span class="admin-table__sub">@list.CountsByStatus.GetValueOrDefault(s)</span></a>
+    }
 </nav>
 
-@if (Model.Count == 0)
+<form method="get" asp-action="Index" class="admin-toolbar" style="gap:12px; align-items:flex-end; flex-wrap:wrap;">
+    <input type="hidden" name="status" value="@query.Status" />
+    <div class="admin-field" style="margin:0; min-width:160px;">
+        <label for="kind">Type</label>
+        <select id="kind" name="kind">
+            <option value="">All types</option>
+            @foreach (var k in kinds)
+            {
+                <option value="@k" selected="@(query.Kind == k)">@KindLabel(k)</option>
+            }
+        </select>
+    </div>
+    <div class="admin-field" style="margin:0; min-width:120px;">
+        <label for="currency">Currency</label>
+        <select id="currency" name="currency">
+            <option value="">All</option>
+            @foreach (var c in list.Currencies)
+            {
+                <option value="@c" selected="@(string.Equals(query.Currency, c, StringComparison.OrdinalIgnoreCase))">@c</option>
+            }
+        </select>
+    </div>
+    <div class="admin-field" style="margin:0; min-width:260px;">
+        <label for="q">Search</label>
+        <input id="q" name="q" value="@query.Search" placeholder="email, name, booking ref, cs_ / pi_ / in_ / sub_ id" />
+    </div>
+    <button type="submit" class="admin-btn">Filter</button>
+    @if (query.Kind is not null || query.Currency is not null || !string.IsNullOrWhiteSpace(query.Search))
+    {
+        <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-status="@query.Status">Clear</a>
+    }
+</form>
+
+@if (list.Rows.Count == 0)
 {
-    <p>No payments here yet.</p>
+    <p class="admin-hint">No payments match.</p>
 }
 else
 {
+    <p class="admin-hint">@list.Rows.Count of @list.Total shown, newest first.</p>
     <div class="admin-table-scroll">
-    <table class="admin-table" data-admin-table>
+    <table class="admin-table" data-admin-table data-admin-table-per-page="25">
         <thead>
             <tr>
-                <th>Customer</th>
-                <th>Experience</th>
-                <th>Status</th>
-                <th>Amount</th>
                 <th>Created</th>
+                <th>Customer</th>
+                <th>Type</th>
+                <th>For</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Stripe</th>
+                <th>Updated</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var p in Model)
+            @foreach (var t in list.Rows)
             {
                 <tr>
-                    <td><a asp-action="Details" asp-route-id="@p.Id">@(p.CustomerEmail ?? "—")</a></td>
-                    <td>@p.ExperienceLabel</td>
-                    <td><span class="@BadgeClass(p.Status)">@p.Status</span></td>
-                    <td>@MoneyFormatter.Format(p.AmountMinor, p.Currency)</td>
-                    <td>@p.CreatedAt.ToString("dd MMM yyyy")</td>
+                    <td>@t.CreatedAt.ToString("dd MMM yyyy HH:mm")</td>
+                    <td>
+                        @if (t.UserId is { } uid)
+                        {
+                            <a asp-controller="AdminUsers" asp-action="Details" asp-route-id="@uid">@(t.UserEmail ?? "—")</a>
+                        }
+                        else
+                        {
+                            @(t.UserEmail ?? "—")
+                        }
+                        @if (!string.IsNullOrWhiteSpace(t.UserName))
+                        {
+                            <div class="admin-table__sub">@t.UserName</div>
+                        }
+                    </td>
+                    <td>@KindLabel(t.Kind)</td>
+                    <td>
+                        @if (t.RelatedAdminPath is not null)
+                        {
+                            <a href="@t.RelatedAdminPath">@t.RelatedLabel</a>
+                        }
+                        else
+                        {
+                            @t.RelatedLabel
+                        }
+                    </td>
+                    <td>
+                        @MoneyFormatter.Format(t.AmountMinor, t.Currency)
+                        @if (t.HasRefund)
+                        {
+                            <div class="admin-table__sub">@MoneyFormatter.Format(t.AmountRefundedMinor, t.Currency) refunded</div>
+                        }
+                    </td>
+                    <td>
+                        <span class="@BadgeClass(t.Status)">@t.Status</span>
+                        @if (t.Disputed)
+                        {
+                            <span class="admin-badge admin-badge--danger">Disputed</span>
+                        }
+                        @if (t.Status == PaymentTransactionStatus.Failed && !string.IsNullOrWhiteSpace(t.FailureMessage))
+                        {
+                            <div class="admin-table__sub">@t.FailureMessage</div>
+                        }
+                    </td>
+                    <td style="font-family:monospace; font-size:0.75rem; word-break:break-all;">@(StripeRef(t) ?? "—")</td>
+                    <td>@((t.UpdatedAt ?? t.CreatedAt).ToString("dd MMM HH:mm"))</td>
                     <td class="admin-table__actions">
-                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@p.Id">Open</a>
+                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@t.Id">Open</a>
                     </td>
                 </tr>
             }

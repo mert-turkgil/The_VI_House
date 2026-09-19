@@ -243,6 +243,7 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 // The single entry point for every verified Stripe event: unique-id gate, one transaction across
 // the three handlers, a log row per event. See PaymentWebhookDispatcher.
 builder.Services.AddScoped<IPaymentTransactionService, PaymentTransactionService>();
+builder.Services.AddScoped<IPaymentReportingService, PaymentReportingService>();
 builder.Services.AddScoped<IPaymentWebhookDispatcher, PaymentWebhookDispatcher>();
 builder.Services.AddScoped<ICheckoutReconciliationService, CheckoutReconciliationService>();
 builder.Services.AddScoped<IOutbox, Outbox>();
