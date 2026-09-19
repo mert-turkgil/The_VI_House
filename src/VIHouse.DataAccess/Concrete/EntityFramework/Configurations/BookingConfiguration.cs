@@ -26,7 +26,7 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
         // would refuse.
         builder.HasIndex(b => new { b.ExperienceId, b.UserId })
             .IsUnique()
-            .HasFilter("[Status] <> 2");
+            .HasFilter("[Status] <> 2 AND [Status] <> 3");
 
         // All Restrict: a Booking is a financial record and must never disappear as a side effect
         // of deleting an unrelated parent row (brief §98 backups / §194 audit expectations).

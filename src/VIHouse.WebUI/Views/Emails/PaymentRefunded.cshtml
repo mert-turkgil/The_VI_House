@@ -1,0 +1,19 @@
+@model PaymentRefundedEmailModel
+@{
+    ViewData["Preheader"] = $"{(Model.IsPartial ? "A partial refund" : "A refund")} for {Model.What} is on its way back to you";
+    ViewData["Footnote"] = "You're receiving this because a payment you made to The VI House was refunded.";
+    var rows = new List<(string, string)>
+    {
+        ("For", Model.What),
+        (Model.IsPartial ? "Refunded so far" : "Refunded", MoneyFormatter.Format(Model.AmountRefundedMinor, Model.Currency)),
+    };
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Model.IsPartial ? "Partial refund" : "Refund", "Your refund is on its way"))" />
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    We've sent @(Model.IsPartial ? "a partial refund" : "a full refund") for <strong>@Model.What</strong> back to the
+    payment method you used. Depending on your bank it can take five to ten working days to show.
+</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+<p style="margin:0 0 16px;">@Model.Effect</p>
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("If you weren't expecting this, or have a question about it, just reply to this email.")" />

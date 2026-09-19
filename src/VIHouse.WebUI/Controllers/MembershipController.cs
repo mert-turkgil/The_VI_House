@@ -22,6 +22,7 @@ namespace VIHouse.WebUI.Controllers;
 [Route("membership")]
 public class MembershipController(
     IMembershipService membershipService,
+    ICheckoutReconciliationService reconciliation,
     ISeminarService seminarService,
     IBookingRepository bookings,
     UserManager<ApplicationUser> userManager,
@@ -136,10 +137,13 @@ public class MembershipController(
     {
         if (string.IsNullOrWhiteSpace(sessionId)) return NotFound();
 
+        // The provider's word on the session, through the webhook path, before local state is read.
+        await reconciliation.ReconcileSessionAsync(sessionId, ct);
+
         var info = await membershipService.GetConfirmationBySessionAsync(sessionId, ct);
         if (info is null) return NotFound();
 
-        ViewData["Title"] = info.IsConfirmed ? loc["Membership.Confirmed"] : loc["Membership.Processing"];
+        ViewData["Title"] = info.IsConfirmed ? loc["Membership.Confirmed"] : info.AwaitingBank ? loc["Payment.AwaitingBank.Heading"] : loc["Membership.Processing"];
         return View(info);
     }
 

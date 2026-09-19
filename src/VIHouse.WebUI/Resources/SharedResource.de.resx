@@ -1309,4 +1309,6 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Form.Phone.Hint" xml:space="preserve"><value>Mit Ländervorwahl. Wir schreiben nur zu Ihrer Mitgliedschaft – Ortswechsel, Zugangslink, eine Zahlung, die Aufmerksamkeit braucht.</value></data>
   <data name="Form.Phone.ApplyHint" xml:space="preserve"><value>Wenn Sie eine angeben, schreiben wir Ihnen, sobald über Ihre Bewerbung entschieden ist – die E-Mail kommt ohnehin.</value></data>
   <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Nur für Nachrichten zu Ihrer Mitgliedschaft. Feld leeren, um sie abzustellen.</value></data>
+  <data name="Payment.AwaitingBank.Heading" xml:space="preserve"><value>Zahlung in Bearbeitung</value></data>
+  <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Ihr Checkout ist abgeschlossen und Ihre Bank bestätigt die Zahlung — bei der gewählten Zahlungsart kann das einige Tage dauern. Ihr Platz bleibt in der Zwischenzeit reserviert, und wir senden Ihre Bestätigung per E-Mail, sobald das Geld eingegangen ist. Sie müssen nichts weiter tun.</value></data>
 </root>

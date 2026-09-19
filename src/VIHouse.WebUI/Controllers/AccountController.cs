@@ -39,6 +39,7 @@ public class AccountController(
     IExperienceService experienceService,
     ISeminarService seminarService,
     IMembershipService membershipService,
+    ICheckoutReconciliationService reconciliation,
     INotificationService notificationService,
     IRepository<CommunityLink> communityLinks,
     IAmbassadorService ambassadorService,
@@ -259,7 +260,7 @@ public class AccountController(
 
         // A paid checkout the webhook hasn't confirmed yet is settled against the provider first,
         // so this page never tells a paying member they have no membership.
-        await membershipService.ReconcilePendingCheckoutsAsync(userId, ct);
+        await reconciliation.ReconcileForUserAsync(userId, ct);
 
         var current = await membershipService.GetMembershipSummaryAsync(userId, ct);
         var history = await membershipService.GetMembershipHistoryAsync(userId, ct);

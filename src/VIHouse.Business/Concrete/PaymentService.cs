@@ -3,6 +3,7 @@ using System.Buffers.Text;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
@@ -31,15 +32,18 @@ public class PaymentService(
     IProfileRepository profiles,
     ICapacityService capacity,
     IPaymentProvider paymentProvider,
-    IEmailService emailService,
-    ISmsService smsService,
-    INotificationService notificationService,
     IOptions<SiteOptions> siteOptions,
     IMembershipService membershipService,
     IAmbassadorService ambassadorService,
     IPaymentTransactionService transactions,
+    IOutbox outbox,
+    ILogger<PaymentService> logger,
     UserManager<ApplicationUser> userManager) : IPaymentService
 {
+    /// <summary>How long a seat stays held once the buyer has finished checkout with a delayed
+    /// payment method and the bank is confirming. Bank debits settle in days, not minutes.</summary>
+    private static readonly TimeSpan ProcessingHold = TimeSpan.FromDays(14);
+
     /// <summary>The experience's member discount, if the applicant's address belongs to a current
     /// member; 0 otherwise. Read live, so a lapsed membership stops discounting the moment it lapses.</summary>
     private async Task<int> MemberDiscountForAsync(Experience experience, string applicantEmail, CancellationToken ct)
@@ -199,11 +203,12 @@ public class PaymentService(
 
             return CheckoutInitiationResult.Ok(session.Url);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             // Stripe call (or anything else) failed after we'd already reserved the seat — give it
             // back rather than leaving a phantom hold nobody will ever complete, and close the
             // money record that never reached the provider.
+            logger.LogError(ex, "Could not open a ticket checkout for application {ApplicationId}.", application.Id);
             await capacity.ReleaseAsync(hold.Id, ct);
             if (transaction is not null) await transactions.CancelOpenAsync(transaction.Id, "Checkout could not be opened at the provider.", ct);
             return CheckoutInitiationResult.Fail("We couldn't reach the payment provider — please try again in a moment.");
@@ -221,7 +226,10 @@ public class PaymentService(
         {
             // Webhook hasn't landed yet — this is a normal race, not an error (brief §32: the
             // browser redirect is informational only, never authoritative on its own).
-            return new BookingConfirmationInfo(false, null, experience?.Title, experience?.City, payment.AmountMinor, payment.Currency, null);
+            return new BookingConfirmationInfo(false, null, experience?.Title, experience?.City, payment.AmountMinor, payment.Currency, null)
+            {
+                AwaitingBank = payment.Status == PaymentStatus.Pending,
+            };
         }
 
         var booking = await bookings.GetByIdAsync(payment.BookingId.Value, ct);
@@ -236,24 +244,37 @@ public class PaymentService(
         : SiteUrls.Absolute(siteOptions.Value.BaseUrl, path);
 
     /// <summary>
-    /// Duplicate delivery is no longer this service's concern: PaymentWebhookDispatcher records
-    /// every event under a unique key before any handler runs and wraps all handlers in one
-    /// transaction, so this only has to be correct for an event it sees exactly once.
-    /// CheckoutPaymentFailed (a delayed payment method that did not settle) is the same outcome as
-    /// an expired session — nothing was paid, the held place goes back — and takes the same path.
+    /// Duplicate delivery is not this service's concern: PaymentWebhookDispatcher records every
+    /// event under a unique key before any handler runs and wraps all handlers in one transaction,
+    /// so this only has to be correct for an event it sees exactly once. Side effects go through
+    /// the outbox, keyed on the outcome, so a retry after a rollback cannot send twice.
+    ///
+    /// The one rule: a booking exists only after <see cref="PaymentWebhookEventType.CheckoutCompleted"/>,
+    /// which the provider only produces once the money is there. A completed checkout with a
+    /// delayed payment method is "awaiting payment" — the seat is kept, nothing is granted.
     /// </summary>
     public async Task HandleWebhookEventAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct = default)
     {
-        if (webhookEvent.SessionId is null) return;
-
         switch (webhookEvent.Type)
         {
-            case PaymentWebhookEventType.CheckoutCompleted:
+            case PaymentWebhookEventType.CheckoutCompleted when webhookEvent.SessionId is not null:
                 await HandleCheckoutCompletedAsync(webhookEvent, ct);
                 break;
-            case PaymentWebhookEventType.CheckoutExpired:
-            case PaymentWebhookEventType.CheckoutPaymentFailed:
-                await HandleCheckoutExpiredAsync(webhookEvent.SessionId, ct);
+            case PaymentWebhookEventType.CheckoutCompletedAwaitingPayment when webhookEvent.SessionId is not null:
+                await HandleCheckoutAwaitingPaymentAsync(webhookEvent, ct);
+                break;
+            case PaymentWebhookEventType.CheckoutExpired when webhookEvent.SessionId is not null:
+                await HandleCheckoutEndedUnpaidAsync(webhookEvent.SessionId, paymentFailed: false, ct);
+                break;
+            case PaymentWebhookEventType.CheckoutPaymentFailed when webhookEvent.SessionId is not null:
+                await HandleCheckoutEndedUnpaidAsync(webhookEvent.SessionId, paymentFailed: true, ct);
+                break;
+            case PaymentWebhookEventType.ChargeRefunded when webhookEvent.PaymentIntentId is not null:
+                await HandleRefundAsync(webhookEvent, ct);
+                break;
+            case PaymentWebhookEventType.DisputeCreated when webhookEvent.PaymentIntentId is not null:
+            case PaymentWebhookEventType.DisputeClosed when webhookEvent.PaymentIntentId is not null:
+                await HandleDisputeAsync(webhookEvent, ct);
                 break;
         }
     }
@@ -262,17 +283,33 @@ public class PaymentService(
     {
         var sessionId = webhookEvent.SessionId!;
         var payment = await payments.GetByProviderReferenceAsync(sessionId, ct);
-        if (payment is null || payment.Status == PaymentStatus.Paid)
-            return; // unknown session, or already handled by an earlier delivery of this event
+        if (payment is null || payment.Status is PaymentStatus.Paid or PaymentStatus.Refunded or PaymentStatus.PartiallyRefunded)
+            return; // unknown session, or already fulfilled
 
+        var now = DateTimeOffset.UtcNow;
         payment.Status = PaymentStatus.Paid;
-        payment.UpdatedAt = DateTimeOffset.UtcNow;
+        // The provider's figure for what was actually charged, when it sent one.
+        if (webhookEvent.AmountMinor is { } charged) payment.AmountMinor = charged;
+        payment.UpdatedAt = now;
 
         var hold = await ticketHolds.GetActiveByApplicationAsync(payment.ApplicationId, ct);
+        var quantity = hold?.Quantity ?? 1;
         if (hold is not null)
+        {
             await capacity.CommitAsync(hold.Id, ct);
+        }
+        else if (!await ticketTypes.TryDecrementInventoryAsync(payment.TicketTypeId, quantity, ct))
+        {
+            // The hold lapsed before the provider's answer arrived (the sweep gave the seat back in
+            // the same minute the buyer paid) and the seat has since gone. Money that arrived is
+            // honoured — the booking is made and the overshoot is written down for a human, because
+            // an oversold seat is something the House can put right with the buyer and a paid-for
+            // booking that silently never existed is not.
+            logger.LogWarning("Payment {PaymentId} for ticket type {TicketTypeId} completed after its hold lapsed and inventory is exhausted; booked anyway (oversold by {Quantity}).",
+                payment.Id, payment.TicketTypeId, quantity);
+        }
 
-        var reference = await bookings.GenerateNextReferenceAsync(DateTimeOffset.UtcNow.Year % 100, ct);
+        var reference = await bookings.GenerateNextReferenceAsync(now.Year % 100, ct);
         var booking = new Booking
         {
             BookingReference = reference,
@@ -280,24 +317,32 @@ public class PaymentService(
             ExperienceId = payment.ExperienceId,
             TicketTypeId = payment.TicketTypeId,
             ApplicationId = payment.ApplicationId,
-            Quantity = hold?.Quantity ?? 1,
+            Quantity = quantity,
             AmountMinor = payment.AmountMinor,
             Currency = payment.Currency,
             Status = BookingStatus.Confirmed,
-            ConfirmedAt = DateTimeOffset.UtcNow,
+            ConfirmedAt = now,
         };
         await bookings.AddAsync(booking, ct);
         await bookings.SaveChangesAsync(ct);
 
         payment.BookingId = booking.Id;
 
-        var invitation = hold?.InvitationId is { } invitationId ? await invitations.GetByIdAsync(invitationId, ct) : null;
-        if (invitation is not null)
+        // The invitation this checkout came in on — from the hold when there is one, otherwise the
+        // application's latest — is spent now, so it cannot be used to buy the same place twice.
+        var invitation = hold?.InvitationId is { } invitationId
+            ? await invitations.GetByIdAsync(invitationId, ct)
+            : await invitations.GetLatestByApplicationAsync(payment.ApplicationId, ct);
+        if (invitation is not null && !invitation.IsUsed)
         {
             invitation.IsUsed = true;
-            invitation.UsedAt = DateTimeOffset.UtcNow;
+            invitation.UsedAt = now;
         }
 
+        // Money wins: an application that had been put back to Approved (a failure event that was
+        // later contradicted by the bank) is walked forward rather than refused.
+        if ((await applications.GetByIdAsync(payment.ApplicationId, ct))?.Status == ApplicationStatus.Approved)
+            await applicationService.MarkPaymentPendingAsync(payment.ApplicationId, ct);
         await applicationService.MarkPaidAsync(payment.ApplicationId, ct);
         await payments.SaveChangesAsync(ct);
 
@@ -324,7 +369,8 @@ public class PaymentService(
 
         if (confirmedApplication is not null && confirmedExperience is not null)
         {
-            await emailService.SendAsync(
+            await outbox.EnqueueEmailAsync(
+                $"email:BookingConfirmed:Booking:{booking.Id}",
                 "BookingConfirmed", confirmedApplication.Email, $"You're confirmed — booking {booking.BookingReference}",
                 new BookingConfirmedEmailModel(
                     confirmedApplication.FirstName, booking.BookingReference, confirmedExperience.Title, confirmedExperience.City,
@@ -338,17 +384,68 @@ public class PaymentService(
                 },
                 nameof(Booking), booking.Id, ct);
 
-            await notificationService.CreateForUserAsync(
+            await outbox.EnqueueNotificationAsync(
+                $"notification:BookingConfirmed:Booking:{booking.Id}",
                 payment.UserId!.Value, NotificationType.Payment,
                 "Booking Confirmed", $"You're confirmed for The VI House — {confirmedExperience.City}. Reference {booking.BookingReference}.",
-                SiteUrls.AccountBookings, ct);
+                SiteUrls.AccountBookings, nameof(Booking), booking.Id, ct);
         }
     }
 
-    private async Task HandleCheckoutExpiredAsync(string sessionId, CancellationToken ct)
+    /// <summary>
+    /// The buyer finished checkout with a delayed payment method. Nothing is granted: the payment
+    /// row goes to Pending (so the sweep's "abandoned" query no longer sees it), the seat stays
+    /// held for as long as a bank debit can take, and the buyer is told what is happening. The
+    /// outcome arrives later as CheckoutCompleted or CheckoutPaymentFailed.
+    /// </summary>
+    private async Task HandleCheckoutAwaitingPaymentAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var payment = await payments.GetByProviderReferenceAsync(webhookEvent.SessionId!, ct);
+        if (payment is null || payment.Status != PaymentStatus.Created) return;
+
+        var now = DateTimeOffset.UtcNow;
+        payment.Status = PaymentStatus.Pending;
+        payment.UpdatedAt = now;
+
+        var hold = await ticketHolds.GetActiveByApplicationAsync(payment.ApplicationId, ct);
+        if (hold is not null)
+            await capacity.ExtendAsync(hold.Id, now.Add(ProcessingHold), ct);
+
+        await payments.SaveChangesAsync(ct);
+
+        var application = await applications.GetByIdAsync(payment.ApplicationId, ct);
+        var experience = await experiences.GetByIdAsync(payment.ExperienceId, ct);
+        if (application is null || experience is null) return;
+
+        var what = $"The VI House — {experience.City}";
+        await outbox.EnqueueEmailAsync(
+            $"email:PaymentProcessing:Payment:{payment.Id}",
+            "PaymentProcessing", application.Email, "We've received your order — payment in progress",
+            new PaymentProcessingEmailModel(application.FirstName, what, payment.AmountMinor, payment.Currency,
+                SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.AccountBookings)),
+            nameof(Payment), payment.Id, ct);
+
+        if (payment.UserId is { } userId)
+        {
+            await outbox.EnqueueNotificationAsync(
+                $"notification:PaymentProcessing:Payment:{payment.Id}",
+                userId, NotificationType.Payment,
+                "Payment In Progress", $"Your bank is confirming your payment for {what}. We'll confirm your place as soon as it lands.",
+                SiteUrls.AccountBookings, nameof(Payment), payment.Id, ct);
+        }
+    }
+
+    /// <summary>
+    /// The checkout ended without money — the session expired, or a delayed payment was declined
+    /// by the bank. Either way the held place goes back and the approval stands. An "expired" only
+    /// ends a checkout nobody finished (Created): a completed one waiting on the bank (Pending)
+    /// cannot expire, and a stray expiry must not release a seat the buyer has paid for.
+    /// </summary>
+    private async Task HandleCheckoutEndedUnpaidAsync(string sessionId, bool paymentFailed, CancellationToken ct)
     {
         var payment = await payments.GetByProviderReferenceAsync(sessionId, ct);
-        if (payment is null || payment.Status == PaymentStatus.Paid)
+        if (payment is null) return;
+        if (payment.Status != PaymentStatus.Created && !(paymentFailed && payment.Status == PaymentStatus.Pending))
             return;
 
         payment.Status = PaymentStatus.Cancelled;
@@ -364,23 +461,124 @@ public class PaymentService(
 
         await payments.SaveChangesAsync(ct);
 
-        var invitation = hold?.InvitationId is { } invitationId ? await invitations.GetByIdAsync(invitationId, ct) : null;
+        var invitation = hold?.InvitationId is { } invitationId
+            ? await invitations.GetByIdAsync(invitationId, ct)
+            : await invitations.GetLatestByApplicationAsync(payment.ApplicationId, ct);
         var experience = await experiences.GetByIdAsync(payment.ExperienceId, ct);
         if (application is not null && experience is not null && invitation is not null)
         {
             var invitationUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Invitation(invitation.Code));
-            await emailService.SendAsync(
+            await outbox.EnqueueEmailAsync(
+                $"email:PaymentFailed:Payment:{payment.Id}",
                 "PaymentFailed", application.Email, "We couldn't complete your payment",
                 new PaymentFailedEmailModel(application.FirstName, experience.Title, invitationUrl),
                 nameof(Payment), payment.Id, ct);
 
             // Their seat went back into inventory when the checkout expired, so this is time-sensitive
             // in a way the approval email isn't — worth the second channel.
-            await smsService.SendAsync(
+            await outbox.EnqueueSmsAsync(
+                $"sms:PaymentFailed:Payment:{payment.Id}",
                 "PaymentFailed", application.Phone,
                 $"The VI House: your payment for {experience.City} didn't complete. Your invitation is still open: {invitationUrl}",
                 nameof(Payment), payment.Id, ct);
         }
+    }
+
+    /// <summary>
+    /// Money went back to the buyer. Found through the transaction, which learned the payment
+    /// intent when the checkout completed. A full refund cancels the booking and returns the seat;
+    /// a partial one is recorded on the payment and the booking stands. The ambassador's
+    /// commission line is left as it is — reversing it is a policy the House has not set yet.
+    /// </summary>
+    private async Task HandleRefundAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var transaction = await transactions.GetByPaymentIntentAsync(webhookEvent.PaymentIntentId!, ct);
+        if (transaction is not { Kind: PaymentTransactionKind.Experience, RelatedEntityType: nameof(Payment) }) return;
+
+        var payment = await payments.GetByIdAsync(transaction.RelatedEntityId, ct);
+        if (payment is null || payment.Status == PaymentStatus.Refunded) return;
+
+        var refunded = webhookEvent.AmountRefundedMinor ?? 0;
+        var full = refunded >= (webhookEvent.AmountMinor ?? payment.AmountMinor);
+        var now = DateTimeOffset.UtcNow;
+
+        payment.Status = full ? PaymentStatus.Refunded : PaymentStatus.PartiallyRefunded;
+        payment.RefundStatus = full ? "refunded" : $"partial:{refunded}";
+        payment.UpdatedAt = now;
+
+        var booking = payment.BookingId is { } bookingId ? await bookings.GetByIdAsync(bookingId, ct) : null;
+        if (full && booking is not null && booking.Status == BookingStatus.Confirmed)
+        {
+            booking.Status = BookingStatus.Refunded;
+            booking.UpdatedAt = now;
+            await ticketTypes.IncrementInventoryAsync(booking.TicketTypeId ?? payment.TicketTypeId, booking.Quantity, ct);
+        }
+        await payments.SaveChangesAsync(ct);
+
+        var application = await applications.GetByIdAsync(payment.ApplicationId, ct);
+        var experience = await experiences.GetByIdAsync(payment.ExperienceId, ct);
+        if (application is null) return;
+
+        var what = experience is null ? "your experience booking" : $"The VI House — {experience.City}";
+        var effect = full && booking is not null
+            ? $"Your booking {booking.BookingReference} has been cancelled and the place released."
+            : "Your booking is unchanged.";
+
+        // Keyed on the amount as well: a second partial refund is a second piece of news.
+        await outbox.EnqueueEmailAsync(
+            $"email:PaymentRefunded:Payment:{payment.Id}:{refunded}",
+            "PaymentRefunded", application.Email, full ? "Your refund is on its way" : "A partial refund is on its way",
+            new PaymentRefundedEmailModel(application.FirstName, what, refunded, payment.Currency, !full, effect),
+            nameof(Payment), payment.Id, ct);
+
+        if (payment.UserId is { } userId)
+        {
+            await outbox.EnqueueNotificationAsync(
+                $"notification:PaymentRefunded:Payment:{payment.Id}:{refunded}",
+                userId, NotificationType.Payment,
+                full ? "Payment Refunded" : "Partial Refund", $"{(full ? "A full" : "A partial")} refund for {what} is on its way back to you. {effect}",
+                SiteUrls.AccountBookings, nameof(Payment), payment.Id, ct);
+        }
+    }
+
+    /// <summary>A dispute is a flag on the transaction, not a state of the booking; a human decides
+    /// what to do with the booking, so the House's contact address is told, once per verdict.</summary>
+    private async Task HandleDisputeAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var transaction = await transactions.GetByPaymentIntentAsync(webhookEvent.PaymentIntentId!, ct);
+        if (transaction is not { Kind: PaymentTransactionKind.Experience, RelatedEntityType: nameof(Payment) }) return;
+
+        var payment = await payments.GetByIdAsync(transaction.RelatedEntityId, ct);
+        if (payment is null) return;
+
+        var opened = webhookEvent.Type == PaymentWebhookEventType.DisputeCreated;
+        var verdict = opened ? "opened" : $"closed ({webhookEvent.DisputeStatus ?? "unknown"})";
+        if (opened && payment.Status == PaymentStatus.Paid)
+        {
+            payment.Status = PaymentStatus.Chargeback;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
+            await payments.SaveChangesAsync(ct);
+        }
+        else if (!opened && webhookEvent.DisputeStatus == "won" && payment.Status == PaymentStatus.Chargeback)
+        {
+            payment.Status = PaymentStatus.Paid;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
+            await payments.SaveChangesAsync(ct);
+        }
+
+        var contact = siteOptions.Value.ContactEmail;
+        if (string.IsNullOrWhiteSpace(contact)) return;
+
+        var application = await applications.GetByIdAsync(payment.ApplicationId, ct);
+        var booking = payment.BookingId is { } bookingId ? await bookings.GetByIdAsync(bookingId, ct) : null;
+        await outbox.EnqueueEmailAsync(
+            $"email:Dispute:Payment:{payment.Id}:{verdict}",
+            "ContactMessage", contact, $"Payment dispute {verdict} — booking {booking?.BookingReference ?? "(none)"}",
+            new ContactMessageEmailModel("The VI House (system)", application?.Email ?? "unknown", "Payment dispute",
+                $"A dispute was {verdict} on the ticket payment by {application?.FirstName} {application?.LastName} ({application?.Email}).\n" +
+                $"Booking: {booking?.BookingReference ?? "none"}. Amount: {payment.AmountMinor / 100m:0.00} {payment.Currency}. Provider payment intent: {webhookEvent.PaymentIntentId}.\n" +
+                "Nothing was changed on the booking automatically. Respond to the dispute in the provider dashboard and decide about the booking there."),
+            nameof(Payment), payment.Id, ct);
     }
 
     /// <summary>
@@ -391,8 +589,9 @@ public class PaymentService(
     /// and the only link that lets them choose a password are granted by money arriving, not by
     /// starting a checkout — so an abandoned attempt leaves nothing behind that looks like a member.
     ///
-    /// Runs from the webhook rather than the browser redirect because this is the path that always
-    /// runs, even when the tab is closed at the bank's 3-D Secure page.
+    /// Runs from the webhook (or the same path fed by a server-side read of the session) rather
+    /// than the browser redirect, because this is the path that always runs — even when the tab is
+    /// closed at the bank's 3-D Secure page.
     /// </summary>
     private async Task OpenAccountAsync(
         ApplicationUser user, Booking booking, Application? application, Experience? experience, CancellationToken ct)
@@ -415,11 +614,11 @@ public class PaymentService(
             var encoded = Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
             var setupUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.ResetPassword(encoded));
 
-            // The success page shows this link too, but that tab is easily lost — closed at the bank,
-            // opened on a phone that then rang. Without this email a paid-up member's only way in is
-            // to work out for themselves that they should use "forgot password" on an account they
-            // never knowingly created.
-            await emailService.SendAsync(
+            // The only place the setup link is issued. The success page no longer shows one: it is
+            // reachable by anyone holding the session id from the URL, and a password link is not
+            // something to hand to whoever has a browser-history entry.
+            await outbox.EnqueueEmailAsync(
+                $"email:WelcomeSetup:User:{user.Id}",
                 "WelcomeSetup", user.Email!, "Set up your VI House account",
                 new WelcomeSetupEmailModel(user.FirstName, setupUrl, null),
                 nameof(ApplicationUser), user.Id, ct);
@@ -428,7 +627,8 @@ public class PaymentService(
         // The text carries the booking reference, not the setup link: a password token stays on the
         // one channel we already treat as the account's own, and the reference is the part somebody
         // actually wants on their phone.
-        await smsService.SendAsync(
+        await outbox.EnqueueSmsAsync(
+            $"sms:BookingConfirmed:Booking:{booking.Id}",
             "BookingConfirmed", application?.Phone,
             $"The VI House: payment received. Booking {booking.BookingReference}"
                 + (experience is null ? "" : $" for {experience.City}")

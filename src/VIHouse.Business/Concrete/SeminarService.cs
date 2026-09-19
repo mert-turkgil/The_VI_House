@@ -1,6 +1,7 @@
 using VIHouse.Business;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
@@ -30,13 +31,13 @@ public class SeminarService(
     IProfileRepository profiles,
     IPaymentProvider paymentProvider,
     IMediaStorage mediaStorage,
-    IEmailService emailService,
-    INotificationService notificationService,
+    IOutbox outbox,
     IAmbassadorService ambassadorService,
     IPaymentTransactionService transactions,
     IAuditLogRepository auditLogs,
     IOptions<SiteOptions> siteOptions,
-    UserManager<ApplicationUser> userManager) : ISeminarService
+    UserManager<ApplicationUser> userManager,
+    ILogger<SeminarService> logger) : ISeminarService
 {
     // --- Public reads --------------------------------------------------------------------------
 
@@ -289,12 +290,13 @@ public class SeminarService(
 
             return SeminarEnrollmentResult.Redirect(session.Url);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             // The pending row is left in place deliberately: it is reused on the next attempt (see
             // UpsertEnrollmentAsync), and deleting it here would race a webhook for a session that
             // was in fact created before the response failed to reach us. The money record, which
             // never reached the provider, is closed.
+            logger.LogError(ex, "Could not open a session checkout for seminar {SeminarId}, user {UserId}.", seminarId, userId);
             await transactions.CancelOpenAsync(transaction.Id, "Checkout could not be opened at the provider.", ct);
             return SeminarEnrollmentResult.Fail("Seminar.Error.ProviderUnreachable");
         }
@@ -310,30 +312,53 @@ public class SeminarService(
 
         return new SeminarConfirmationInfo(
             enrollment.Status == SeminarEnrollmentStatus.Confirmed,
-            title, seminar?.Slug, enrollment.AmountMinor, enrollment.Currency);
+            title, seminar?.Slug, enrollment.AmountMinor, enrollment.Currency)
+        {
+            AwaitingBank = enrollment.Status == SeminarEnrollmentStatus.Pending
+                           && await transactions.GetBySessionAsync(sessionId, ct) is { Status: PaymentTransactionStatus.Processing },
+        };
     }
 
+    /// <summary>
+    /// Duplicate delivery is not this service's concern: PaymentWebhookDispatcher records every
+    /// event under a unique key before any handler runs and wraps all handlers in one transaction.
+    /// Side effects go through the outbox, keyed on the enrolment, so a retry cannot send twice.
+    /// A seat is confirmed only on CheckoutCompleted — which the provider produces only once the
+    /// money is there; a completed checkout on a delayed method leaves the row Pending.
+    /// </summary>
     public async Task HandleWebhookEventAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct = default)
     {
-        if (webhookEvent.SessionId is null) return;
-
-        if (webhookEvent.Type == PaymentWebhookEventType.CheckoutCompleted)
-            await HandleCheckoutCompletedAsync(webhookEvent.SessionId, ct);
-        else if (webhookEvent.Type is PaymentWebhookEventType.CheckoutExpired or PaymentWebhookEventType.CheckoutPaymentFailed)
-            await HandleCheckoutExpiredAsync(webhookEvent.SessionId, ct);
+        switch (webhookEvent.Type)
+        {
+            case PaymentWebhookEventType.CheckoutCompleted when webhookEvent.SessionId is not null:
+                await HandleCheckoutCompletedAsync(webhookEvent, ct);
+                break;
+            case PaymentWebhookEventType.CheckoutCompletedAwaitingPayment when webhookEvent.SessionId is not null:
+                await HandleCheckoutAwaitingPaymentAsync(webhookEvent, ct);
+                break;
+            case PaymentWebhookEventType.CheckoutExpired when webhookEvent.SessionId is not null:
+                await HandleCheckoutExpiredAsync(webhookEvent.SessionId, paymentFailed: false, ct);
+                break;
+            case PaymentWebhookEventType.CheckoutPaymentFailed when webhookEvent.SessionId is not null:
+                await HandleCheckoutExpiredAsync(webhookEvent.SessionId, paymentFailed: true, ct);
+                break;
+            case PaymentWebhookEventType.ChargeRefunded when webhookEvent.PaymentIntentId is not null:
+                await HandleRefundAsync(webhookEvent, ct);
+                break;
+        }
     }
 
-    private async Task HandleCheckoutCompletedAsync(string sessionId, CancellationToken ct)
+    private async Task HandleCheckoutCompletedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
-        var enrollment = await enrollments.GetByProviderReferenceAsync(sessionId, ct);
+        var enrollment = await enrollments.GetByProviderReferenceAsync(webhookEvent.SessionId!, ct);
 
         // Unknown session (a ticket or membership purchase — see PaymentService/MembershipService),
-        // or one already handled. Either way there is nothing to do, and the double delivery Stripe
-        // is entitled to make costs nothing.
+        // or one already handled. Either way there is nothing to do.
         if (enrollment is null || enrollment.Status == SeminarEnrollmentStatus.Confirmed) return;
 
         enrollment.Status = SeminarEnrollmentStatus.Confirmed;
         enrollment.GrantedVia = SeminarAccessGrant.Purchase;
+        if (webhookEvent.AmountMinor is { } charged) enrollment.AmountMinor = charged;
         enrollment.ConfirmedAt = DateTimeOffset.UtcNow;
         enrollment.UpdatedAt = DateTimeOffset.UtcNow;
         await enrollments.SaveChangesAsync(ct);
@@ -372,14 +397,82 @@ public class SeminarService(
         return SiteUrls.Absolute(baseUrl, "/icons/icon-512.png");
     }
 
-    private async Task HandleCheckoutExpiredAsync(string sessionId, CancellationToken ct)
+    /// <summary>An "expired" only ends a checkout nobody finished; a seat whose checkout completed
+    /// on a delayed method (Processing on the money side) ends only through a payment failure.</summary>
+    private async Task HandleCheckoutExpiredAsync(string sessionId, bool paymentFailed, CancellationToken ct)
     {
         var enrollment = await enrollments.GetByProviderReferenceAsync(sessionId, ct);
-        if (enrollment is null || enrollment.Status == SeminarEnrollmentStatus.Confirmed) return;
+        if (enrollment is null || enrollment.Status != SeminarEnrollmentStatus.Pending) return;
+        if (!paymentFailed && await transactions.GetBySessionAsync(sessionId, ct) is { Status: PaymentTransactionStatus.Processing })
+            return;
 
         enrollment.Status = SeminarEnrollmentStatus.Cancelled;
         enrollment.UpdatedAt = DateTimeOffset.UtcNow;
         await enrollments.SaveChangesAsync(ct);
+    }
+
+    /// <summary>The buyer finished checkout with a delayed payment method: the seat stays Pending
+    /// (it is counted as taken while Pending, so nobody else gets it) and the buyer is told.</summary>
+    private async Task HandleCheckoutAwaitingPaymentAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var enrollment = await enrollments.GetByProviderReferenceAsync(webhookEvent.SessionId!, ct);
+        if (enrollment is null || enrollment.Status != SeminarEnrollmentStatus.Pending) return;
+
+        var user = await userManager.FindByIdAsync(enrollment.UserId.ToString());
+        var seminar = await seminars.GetWithDetailAsync(enrollment.SeminarId, ct);
+        if (user?.Email is null || seminar is null) return;
+
+        var title = SeminarContent.Title(seminar, SiteCultures.Default);
+        await outbox.EnqueueEmailAsync(
+            $"email:PaymentProcessing:SeminarEnrollment:{enrollment.Id}",
+            "PaymentProcessing", user.Email, "We've received your order — payment in progress",
+            new PaymentProcessingEmailModel(user.FirstName, title, enrollment.AmountMinor, enrollment.Currency,
+                SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.AccountSessions)),
+            nameof(SeminarEnrollment), enrollment.Id, ct);
+
+        await outbox.EnqueueNotificationAsync(
+            $"notification:PaymentProcessing:SeminarEnrollment:{enrollment.Id}",
+            user.Id, NotificationType.Payment,
+            "Payment In Progress", $"Your bank is confirming your payment for \"{title}\". Your place is held until it lands.",
+            SiteUrls.AccountSessions, nameof(SeminarEnrollment), enrollment.Id, ct);
+    }
+
+    /// <summary>Money went back to the buyer. A full refund cancels the enrolment (which frees the
+    /// seat — capacity counts Pending and Confirmed only); a partial one leaves it in place.</summary>
+    private async Task HandleRefundAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var transaction = await transactions.GetByPaymentIntentAsync(webhookEvent.PaymentIntentId!, ct);
+        if (transaction is not { Kind: PaymentTransactionKind.Session, RelatedEntityType: nameof(SeminarEnrollment) }) return;
+
+        var enrollment = await enrollments.GetByIdAsync(transaction.RelatedEntityId, ct);
+        if (enrollment is null || enrollment.Status != SeminarEnrollmentStatus.Confirmed) return;
+
+        var refunded = webhookEvent.AmountRefundedMinor ?? 0;
+        var full = refunded >= (webhookEvent.AmountMinor ?? enrollment.AmountMinor);
+        if (full)
+        {
+            enrollment.Status = SeminarEnrollmentStatus.Cancelled;
+            enrollment.UpdatedAt = DateTimeOffset.UtcNow;
+            await enrollments.SaveChangesAsync(ct);
+        }
+
+        var user = await userManager.FindByIdAsync(enrollment.UserId.ToString());
+        var seminar = await seminars.GetWithDetailAsync(enrollment.SeminarId, ct);
+        if (user?.Email is null) return;
+
+        var title = seminar is null ? "your session" : SeminarContent.Title(seminar, SiteCultures.Default);
+        var effect = full ? "Your place on the session has been released." : "Your place on the session is unchanged.";
+        await outbox.EnqueueEmailAsync(
+            $"email:PaymentRefunded:SeminarEnrollment:{enrollment.Id}:{refunded}",
+            "PaymentRefunded", user.Email, full ? "Your refund is on its way" : "A partial refund is on its way",
+            new PaymentRefundedEmailModel(user.FirstName, title, refunded, enrollment.Currency, !full, effect),
+            nameof(SeminarEnrollment), enrollment.Id, ct);
+
+        await outbox.EnqueueNotificationAsync(
+            $"notification:PaymentRefunded:SeminarEnrollment:{enrollment.Id}:{refunded}",
+            user.Id, NotificationType.Payment,
+            full ? "Payment Refunded" : "Partial Refund", $"{(full ? "A full" : "A partial")} refund for \"{title}\" is on its way back to you. {effect}",
+            SiteUrls.AccountSessions, nameof(SeminarEnrollment), enrollment.Id, ct);
     }
 
     // --- Admin: seminars -----------------------------------------------------------------------
@@ -773,11 +866,15 @@ public class SeminarService(
         var title = SeminarContent.Title(seminar, SiteCultures.Default);
         var link = SiteUrls.Session(seminar.Slug);
 
-        await notificationService.CreateForUserAsync(
+        // Keyed on the seminar and the member: one confirmation per place, however the place was
+        // granted and however many times the granting path runs.
+        await outbox.EnqueueNotificationAsync(
+            $"notification:SeminarEnrolled:Seminar:{seminar.Id}:User:{userId}",
             userId, NotificationType.SeminarEnrolled,
-            "You're enrolled", $"Your place on \"{title}\" is confirmed.", link, ct);
+            "You're enrolled", $"Your place on \"{title}\" is confirmed.", link, nameof(Seminar), seminar.Id, ct);
 
-        await emailService.SendAsync(
+        await outbox.EnqueueEmailAsync(
+            $"email:SeminarEnrolled:Seminar:{seminar.Id}:User:{userId}",
             "SeminarEnrolled", user.Email!, $"You're enrolled — {title}",
             new SeminarEnrolledEmailModel(
                 user.FirstName, title, seminar.StartAtUtc, seminar.IsOnline, seminar.Location,

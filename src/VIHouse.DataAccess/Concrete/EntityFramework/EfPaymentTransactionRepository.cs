@@ -15,6 +15,18 @@ public class EfPaymentTransactionRepository(VIHouseDbContext db) : EfRepository<
     public Task<PaymentTransaction?> GetByInvoiceAsync(string invoiceId, CancellationToken ct = default) =>
         Set.FirstOrDefaultAsync(t => t.ProviderInvoiceId == invoiceId, ct);
 
+    public Task<List<PaymentTransaction>> GetOpenSessionsAsync(IReadOnlyCollection<PaymentTransactionStatus> statuses, DateTimeOffset untouchedSince, int take, CancellationToken ct = default) =>
+        Set.Where(t => t.ProviderSessionId != null && statuses.Contains(t.Status) && (t.UpdatedAt ?? t.CreatedAt) < untouchedSince)
+            .OrderBy(t => t.UpdatedAt ?? t.CreatedAt)
+            .Take(take)
+            .ToListAsync(ct);
+
+    public Task<List<PaymentTransaction>> GetOpenSessionsForUserAsync(Guid userId, CancellationToken ct = default) =>
+        Set.Where(t => t.UserId == userId && t.ProviderSessionId != null
+                       && (t.Status == PaymentTransactionStatus.Pending || t.Status == PaymentTransactionStatus.Processing))
+            .OrderByDescending(t => t.CreatedAt)
+            .ToListAsync(ct);
+
     public Task<PaymentTransaction?> GetLatestForRelatedAsync(string relatedEntityType, Guid relatedEntityId, CancellationToken ct = default) =>
         Set.Where(t => t.RelatedEntityType == relatedEntityType && t.RelatedEntityId == relatedEntityId)
             .OrderByDescending(t => t.CreatedAt)

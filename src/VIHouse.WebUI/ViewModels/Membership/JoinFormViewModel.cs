@@ -102,7 +102,7 @@ public class JoinFormViewModel
 /// confirmed yet (the webhook can lag the browser redirect by a second or two) or when the account
 /// already has a password — an existing member topping up, for instance.
 /// </summary>
-public record JoinSuccessViewModel(VIHouse.Business.Abstract.MembershipConfirmationInfo Info, string? SetupUrl);
+public record JoinSuccessViewModel(VIHouse.Business.Abstract.MembershipConfirmationInfo Info);
 
 /// <summary>
 /// The resume page: what an abandoned checkout was for, and whether a new one can be opened.

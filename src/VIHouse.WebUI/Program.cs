@@ -222,6 +222,7 @@ builder.Services.AddScoped<IAuditLogRepository, EfAuditLogRepository>();
 builder.Services.AddScoped<IProfileRepository, EfProfileRepository>();
 builder.Services.AddScoped<IWebhookEventRepository, EfWebhookEventRepository>();
 builder.Services.AddScoped<IPaymentTransactionRepository, EfPaymentTransactionRepository>();
+builder.Services.AddScoped<IOutboxRepository, EfOutboxRepository>();
 // The explicit transaction the webhook dispatcher wraps its handlers in — the one place several
 // repositories must commit together or not at all. See IUnitOfWork.
 builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
@@ -243,6 +244,9 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 // the three handlers, a log row per event. See PaymentWebhookDispatcher.
 builder.Services.AddScoped<IPaymentTransactionService, PaymentTransactionService>();
 builder.Services.AddScoped<IPaymentWebhookDispatcher, PaymentWebhookDispatcher>();
+builder.Services.AddScoped<ICheckoutReconciliationService, CheckoutReconciliationService>();
+builder.Services.AddScoped<IOutbox, Outbox>();
+builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IMembershipService, MembershipService>();
 builder.Services.AddScoped<IAmbassadorService, AmbassadorService>();
@@ -318,6 +322,8 @@ builder.Services.AddScoped<ISmsService, SmsService>();
 // Releases abandoned TicketHolds back to inventory every 60s (brief §177-179) — a safety net
 // alongside the immediate release on checkout failure/expiry in PaymentService.
 builder.Services.AddHostedService<TicketHoldExpiryService>();
+builder.Services.AddHostedService<OutboxProcessorService>();
+builder.Services.AddHostedService<CheckoutReconciliationSweepService>();
 
 // Clears the form data from membership checkouts that never paid, once they are 30 days old —
 // the row is kept, the personal detail is not.

@@ -7,6 +7,14 @@ public interface IPaymentTransactionRepository : IRepository<PaymentTransaction>
     Task<PaymentTransaction?> GetBySessionAsync(string sessionId, CancellationToken ct = default);
     Task<PaymentTransaction?> GetByPaymentIntentAsync(string paymentIntentId, CancellationToken ct = default);
     Task<PaymentTransaction?> GetByInvoiceAsync(string invoiceId, CancellationToken ct = default);
+    /// <summary>Checkout-backed transactions still waiting on the provider — Pending or Processing
+    /// with a session id — that have not been touched since <paramref name="untouchedSince"/>.
+    /// What the reconciliation sweep reads the provider's word on.</summary>
+    Task<List<PaymentTransaction>> GetOpenSessionsAsync(IReadOnlyCollection<PaymentTransactionStatus> statuses, DateTimeOffset untouchedSince, int take, CancellationToken ct = default);
+
+    /// <summary>The same, for one account — what a member's own pages reconcile on sight.</summary>
+    Task<List<PaymentTransaction>> GetOpenSessionsForUserAsync(Guid userId, CancellationToken ct = default);
+
     Task<PaymentTransaction?> GetLatestForRelatedAsync(string relatedEntityType, Guid relatedEntityId, CancellationToken ct = default);
 
     /// <summary>

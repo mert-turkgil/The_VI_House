@@ -1,0 +1,17 @@
+@model MembershipPaymentFailedEmailModel
+@{
+    ViewData["Preheader"] = "Your bank needs you to confirm this renewal — it takes a minute";
+    ViewData["Footnote"] = "You're receiving this because you have a membership at The VI House.";
+    var rows = new List<(string, string)> { ("Plan", Model.PlanName) };
+    if (Model.AccessUntil is { } until) rows.Add(("Access continues until", until.ToString("d MMMM yyyy")));
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Action needed", "Please confirm your membership payment", "warning"))" />
+<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">
+    We tried to renew your <strong>@Model.PlanName</strong> membership, and your bank has asked you to confirm the
+    payment before it will go through — the usual extra security step on your card.
+</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+<p style="margin:0 0 8px;">Confirm it here and your membership carries on as normal:</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ActionUrl, "Confirm payment"))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("Nothing has changed on your account yet. If it isn't confirmed, we'll try again and let you know.")" />

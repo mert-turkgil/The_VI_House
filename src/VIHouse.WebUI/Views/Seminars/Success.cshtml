@@ -1,6 +1,6 @@
 @model SeminarCheckoutResultViewModel
 
-@if (!Model.IsConfirmed)
+@if (!Model.IsConfirmed && !Model.AwaitingBank)
 {
     @* Same treatment as the membership success page: the browser's return from the payment provider
        proves nothing on its own, so this waits for the webhook rather than claiming success. *@
@@ -23,6 +23,12 @@
                 }
                 <a class="btn btn--ghost-dark" asp-action="Index">@Loc["Seminars.BackToAll"]</a>
             </div>
+        }
+        else if (Model.AwaitingBank)
+        {
+            <span class="apply-confirmation__mark">&hellip;</span>
+            <h1>@Loc["Payment.AwaitingBank.Heading"]</h1>
+            <p>@Loc["Payment.AwaitingBank.Body"]</p>
         }
         else
         {

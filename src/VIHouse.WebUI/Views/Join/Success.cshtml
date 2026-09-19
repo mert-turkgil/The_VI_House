@@ -4,7 +4,7 @@
     @* A session id in the query string is unguessable, but a page that only ever says "just a
        moment" is still not something a crawler should keep. *@
     <meta name="robots" content="noindex" />
-    @if (!Model.Info.IsConfirmed)
+    @if (!Model.Info.IsConfirmed && !Model.Info.AwaitingBank)
     {
         @* The webhook usually lands within seconds of the redirect; polling by reload is the
            simplest thing that shows the confirmed state without the visitor having to act. *@
@@ -20,21 +20,27 @@
             <h1>You're in</h1>
             <p class="onboarding__lede">
                 Your @(Model.Info.PlanName ?? "membership") is active and we've emailed your receipt.
-                One more step: choose a password, and we'll walk you through securing your account.
+                One more step: the same email carries a link to choose your password — open it and
+                we'll walk you through securing your account.
             </p>
-
-            @if (Model.SetupUrl is not null)
-            {
-                <a class="btn btn--primary" href="@Model.SetupUrl">Choose your password</a>
-                <p class="onboarding__footnote">
-                    We've emailed you this same link, so you can safely close this tab and pick it up
-                    later.
-                </p>
-            }
-            else
-            {
-                <a class="btn btn--primary" asp-area="Identity" asp-page="/Account/Login">Sign in to continue</a>
-            }
+            <a class="btn btn--primary" asp-area="Identity" asp-page="/Account/Login">Sign in</a>
+            <p class="onboarding__footnote">
+                Already have a password? Sign in as usual. Otherwise, check your inbox for
+                "Set up your VI House account".
+            </p>
+        }
+        else if (Model.Info.AwaitingBank)
+        {
+            <span class="onboarding__eyebrow">Payment in progress</span>
+            <h1>Your bank is confirming the payment</h1>
+            <p class="onboarding__lede">
+                Your checkout is complete. The payment method you chose takes a little while to clear,
+                so your membership starts the moment the money lands — usually within a few days.
+            </p>
+            <p class="onboarding__footnote">
+                We've emailed you a note about this, and we'll email again with your account setup link
+                as soon as the payment arrives. Nothing further is needed from you.
+            </p>
         }
         else
         {

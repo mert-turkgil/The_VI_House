@@ -125,13 +125,6 @@ public interface IMembershipService
     /// <summary>Reads LOCAL state only, same "never trust the browser redirect alone" rule as the ticket-purchase flow.</summary>
     Task<MembershipConfirmationInfo?> GetConfirmationBySessionAsync(string sessionId, CancellationToken ct = default);
 
-    /// <summary>
-    /// For every checkout this user started that the webhook has not yet confirmed, asks the
-    /// provider whether it was paid and activates the membership if so. What the account page calls
-    /// before rendering, so a member who paid but never came back through the success page — or
-    /// whose webhook is late — still sees their membership. True when something was activated.
-    /// </summary>
-    Task<bool> ReconcilePendingCheckoutsAsync(Guid userId, CancellationToken ct = default);
 
     /// <summary>
     /// Clears the free-text and address fields from pending joins that never paid and have sat
@@ -175,6 +168,9 @@ public record MembershipConfirmationInfo(bool IsConfirmed, string? PlanName, lon
     /// <summary>Set once the payment is confirmed, so the success page can hand the new member
     /// straight into onboarding without asking them to log in first (they have no password yet).</summary>
     public Guid? UserId { get; init; }
+
+    /// <summary>Checkout finished with a delayed payment method; the money has not landed yet.</summary>
+    public bool AwaitingBank { get; init; }
 }
 
 /// <summary>What the resume page shows. Paid means the checkout already went through — the page

@@ -1309,4 +1309,6 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Form.Phone.Hint" xml:space="preserve"><value>Ülke koduyla birlikte. Yalnızca üyeliğinle ilgili yazarız — mekân değişikliği, katılım bağlantısı, dikkat isteyen bir ödeme.</value></data>
   <data name="Form.Phone.ApplyHint" xml:space="preserve"><value>Verirsen, başvurun sonuçlandığı an sana yazarız — e-posta zaten gelecek.</value></data>
   <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Yalnızca üyeliğinle ilgili mesajlar için. Durdurmak istersen alanı boşalt.</value></data>
+  <data name="Payment.AwaitingBank.Heading" xml:space="preserve"><value>Ödeme işleniyor</value></data>
+  <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Ödeme adımınız tamamlandı ve bankanız ödemeyi onaylıyor — seçtiğiniz yöntemle bu birkaç gün sürebilir. Bu sırada yeriniz ayrılmış kalır; para ulaştığı anda onayınızı e-posta ile göndereceğiz. Sizin yapmanız gereken başka bir şey yok.</value></data>
 </root>

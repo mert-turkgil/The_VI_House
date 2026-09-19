@@ -3,8 +3,8 @@ using VIHouse.Business.Abstract;
 namespace VIHouse.WebUI.Services;
 
 /// <summary>
-/// Background sweep (brief §177-179): every 60s, returns inventory for any TicketHold whose 15-minute
-/// window lapsed without a completed checkout — the safety net behind PaymentService's immediate
+/// Background sweep (brief §177-179): every 60s, returns inventory for any TicketHold whose window
+/// (30 minutes — the provider's checkout window, see CapacityService.HoldDuration) lapsed without a completed checkout — the safety net behind PaymentService's immediate
 /// release on checkout failure/expiry webhooks.
 /// </summary>
 public class TicketHoldExpiryService(IServiceScopeFactory scopeFactory, ILogger<TicketHoldExpiryService> logger) : BackgroundService

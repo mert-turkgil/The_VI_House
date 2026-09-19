@@ -3,7 +3,7 @@
     ViewData["Title"] = Model.IsConfirmed ? Loc["Membership.Confirmed"] : Loc["Membership.Processing"];
 }
 
-@if (!Model.IsConfirmed)
+@if (!Model.IsConfirmed && !Model.AwaitingBank)
 {
     @section Styles {
         <meta http-equiv="refresh" content="3" />
@@ -27,6 +27,12 @@
                 <a class="btn btn--primary" asp-controller="Account" asp-action="Index">@Loc["Membership.GoToAccount"]</a>
                 <a class="btn btn--ghost-dark" asp-controller="Home" asp-action="Index">@Loc["Applied.BackHome"]</a>
             </div>
+        }
+        else if (Model.AwaitingBank)
+        {
+            <span class="apply-confirmation__mark">&hellip;</span>
+            <h1>@Loc["Payment.AwaitingBank.Heading"]</h1>
+            <p>@Loc["Payment.AwaitingBank.Body"]</p>
         }
         else
         {

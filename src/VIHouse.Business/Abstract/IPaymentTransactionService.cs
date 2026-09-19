@@ -36,6 +36,10 @@ public interface IPaymentTransactionService
     Task<PaymentTransaction?> GetBySessionAsync(string providerSessionId, CancellationToken ct = default);
     Task<PaymentTransaction?> GetByInvoiceAsync(string providerInvoiceId, CancellationToken ct = default);
 
+    /// <summary>How a refund or dispute event finds the purchase it is about: the intent is learned
+    /// when the checkout completes and is the only id those events carry.</summary>
+    Task<PaymentTransaction?> GetByPaymentIntentAsync(string providerPaymentIntentId, CancellationToken ct = default);
+
     /// <summary>The newest still-Pending transaction for a fulfilment row, if any — the one a
     /// fresh checkout attempt supersedes.</summary>
     Task<PaymentTransaction?> GetLatestOpenForAsync(string relatedEntityType, Guid relatedEntityId, CancellationToken ct = default);

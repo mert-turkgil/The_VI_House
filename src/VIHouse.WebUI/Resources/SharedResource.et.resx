@@ -1309,4 +1309,6 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Form.Phone.Hint" xml:space="preserve"><value>Koos riigikoodiga. Kirjutame ainult sinu liikmesusest — koha muutus, liitumislink, makse, mis vajab tähelepanu.</value></data>
   <data name="Form.Phone.ApplyHint" xml:space="preserve"><value>Kui annad numbri, kirjutame kohe, kui taotlus on otsustatud — e-kiri tuleb nagunii.</value></data>
   <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Ainult liikmesusega seotud sõnumiteks. Tühjenda väli, et need lõpetada.</value></data>
+  <data name="Payment.AwaitingBank.Heading" xml:space="preserve"><value>Makse on töötlemisel</value></data>
+  <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Ostuprotsess on lõpetatud ja teie pank kinnitab makset — valitud makseviisiga võib see võtta mõne päeva. Teie koht jääb seni broneerituks ja saadame kinnituse e-postiga kohe, kui raha on laekunud. Teilt pole midagi rohkem vaja.</value></data>
 </root>

@@ -62,4 +62,8 @@ public record BookingConfirmationInfo(
     string? ExperienceCity,
     long AmountMinor,
     string Currency,
-    Guid? UserId);
+    Guid? UserId)
+{
+    /// <summary>Checkout finished with a delayed payment method; the money has not landed yet.</summary>
+    public bool AwaitingBank { get; init; }
+}

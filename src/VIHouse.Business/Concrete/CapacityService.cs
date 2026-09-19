@@ -6,7 +6,9 @@ namespace VIHouse.Business.Concrete;
 
 public class CapacityService(ITicketTypeRepository ticketTypes, ITicketHoldRepository holds) : ICapacityService
 {
-    private static readonly TimeSpan HoldDuration = TimeSpan.FromMinutes(15);
+    /// <summary>Matches the provider's checkout window (StripePaymentProvider sets ExpiresAt to 30
+    /// minutes). A shorter hold used to hand the seat back while the buyer could still pay for it.</summary>
+    public static readonly TimeSpan HoldDuration = TimeSpan.FromMinutes(30);
 
     public async Task<TicketHold?> TryReserveAsync(Guid ticketTypeId, int quantity, Guid applicationId, Guid? invitationId, CancellationToken ct = default)
     {
@@ -28,6 +30,16 @@ public class CapacityService(ITicketTypeRepository ticketTypes, ITicketHoldRepos
         await holds.AddAsync(hold, ct);
         await holds.SaveChangesAsync(ct);
         return hold;
+    }
+
+    public async Task ExtendAsync(Guid holdId, DateTimeOffset until, CancellationToken ct = default)
+    {
+        var hold = await holds.GetByIdAsync(holdId, ct);
+        if (hold is null || hold.Status != TicketHoldStatus.Active || hold.ExpiresAt >= until) return;
+
+        hold.ExpiresAt = until;
+        hold.UpdatedAt = DateTimeOffset.UtcNow;
+        await holds.SaveChangesAsync(ct);
     }
 
     public async Task CommitAsync(Guid holdId, CancellationToken ct = default)

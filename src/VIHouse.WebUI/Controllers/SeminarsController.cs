@@ -27,6 +27,7 @@ namespace VIHouse.WebUI.Controllers;
 [Route("sessions")]
 public class SeminarsController(
     ISeminarService seminarService,
+    ICheckoutReconciliationService reconciliation,
     IMembershipService membershipService,
     UserManager<ApplicationUser> userManager,
     IStringLocalizer<SharedResource> loc) : Controller
@@ -120,12 +121,18 @@ public class SeminarsController(
     {
         if (string.IsNullOrWhiteSpace(session_id)) return RedirectToAction(nameof(Index));
 
+        // The provider's word on the session, through the webhook path, before local state is read.
+        await reconciliation.ReconcileSessionAsync(session_id, ct);
+
         var info = await seminarService.GetConfirmationBySessionAsync(session_id, ct);
         if (info is null) return RedirectToAction(nameof(Index));
 
         ViewData["Title"] = loc["Seminars.Success.Title"].Value;
         return View(new SeminarCheckoutResultViewModel(
-            info.IsConfirmed, info.SeminarTitle, info.SeminarSlug, info.AmountMinor, info.Currency));
+            info.IsConfirmed, info.SeminarTitle, info.SeminarSlug, info.AmountMinor, info.Currency)
+        {
+            AwaitingBank = info.AwaitingBank,
+        });
     }
 
     [HttpGet("cancelled")]

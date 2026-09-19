@@ -100,7 +100,23 @@ public class StripePaymentProvider : IPaymentProvider
             createOptions.Discounts = [new SessionDiscountOptions { Coupon = request.ProviderCouponId }];
         }
 
-        var session = await sessionService.CreateAsync(createOptions, cancellationToken: ct);
+        Session session;
+        try
+        {
+            session = await sessionService.CreateAsync(createOptions, cancellationToken: ct);
+        }
+        catch (StripeException ex) when (createOptions.Customer is not null && ex.StripeError?.Param == "customer")
+        {
+            // The customer id remembered on the account no longer exists at Stripe (deleted in the
+            // dashboard, or a different Stripe account's id). A sale is worth more than the link:
+            // open the checkout by email — Stripe creates a fresh customer — and the webhook that
+            // completes it writes the new id over the stale one (PaymentTransactionService).
+            logger.LogWarning(ex, "Stripe rejected customer {CustomerId}; opening the checkout by email instead.", createOptions.Customer);
+            createOptions.Customer = null;
+            createOptions.CustomerEmail = request.CustomerEmail;
+            session = await sessionService.CreateAsync(createOptions, cancellationToken: ct);
+        }
+
         return new CheckoutSessionResult(session.Id, session.Url, ToUtc(session.ExpiresAt));
     }
 
@@ -242,20 +258,27 @@ public class StripePaymentProvider : IPaymentProvider
         }
     }
 
-    public async Task<PaymentWebhookEvent?> GetCompletedCheckoutAsync(string sessionId, CancellationToken ct = default)
+    public async Task<PaymentWebhookEvent?> ReadCheckoutSessionAsync(string sessionId, CancellationToken ct = default)
     {
         try
         {
             var session = await sessionService.GetAsync(sessionId, cancellationToken: ct);
 
-            // "complete" is Stripe's word for a checkout the buyer finished; the payment status is
-            // the money. no_payment_required is a 100% coupon or a trial — still a finished purchase.
-            if (session.Status != "complete") return null;
-            if (session.PaymentStatus is not ("paid" or "no_payment_required")) return null;
-
-            // Stripe only sends checkout.session.completed once, so a synthetic id keyed on the
-            // session is as stable as the real one for anything that ledgers by event id.
-            return MapCheckoutSession($"reconcile_{session.Id}", PaymentWebhookEventType.CheckoutCompleted, session);
+            // The same three outcomes the webhook delivers, read straight from the provider with the
+            // secret key — never from anything the browser carried. Synthetic event ids keyed on the
+            // session and the outcome: a paid read and a paid webhook are different events that
+            // reach the same state, and the state machine makes the second a no-op.
+            switch (session.Status)
+            {
+                case "complete" when session.PaymentStatus is "paid" or "no_payment_required":
+                    return MapCheckoutSession($"reconcile_{session.Id}_paid", PaymentWebhookEventType.CheckoutCompleted, session, "reconcile.checkout.paid");
+                case "complete" when session.PaymentStatus == "unpaid":
+                    return MapCheckoutSession($"reconcile_{session.Id}_unpaid", PaymentWebhookEventType.CheckoutCompletedAwaitingPayment, session, "reconcile.checkout.unpaid");
+                case "expired":
+                    return MapCheckoutSession($"reconcile_{session.Id}_expired", PaymentWebhookEventType.CheckoutExpired, session, "reconcile.checkout.expired");
+                default:
+                    return null; // still open — nothing to say yet
+            }
         }
         catch (StripeException ex)
         {
@@ -297,7 +320,13 @@ public class StripePaymentProvider : IPaymentProvider
     {
         // Throws StripeException on a bad/missing signature — the caller (WebhooksController) lets
         // that translate to a 400 so Stripe knows delivery failed, rather than swallowing it.
-        var stripeEvent = EventUtility.ConstructEvent(requestBody, signatureHeader, options.WebhookSecret);
+        // The signature (HMAC over the raw body, 5-minute tolerance) is what proves the event is
+        // Stripe's. The API version the endpoint was registered under is not: a Stripe.net upgrade
+        // or a dashboard change would otherwise turn every delivery into a 400 and stop money
+        // landing. A mismatch is logged so it gets fixed, not enforced.
+        var stripeEvent = EventUtility.ConstructEvent(requestBody, signatureHeader, options.WebhookSecret, throwOnApiVersionMismatch: false);
+        if (stripeEvent.ApiVersion != StripeConfiguration.ApiVersion)
+            logger.LogWarning("Stripe event {EventId} was built with API version {EventVersion}; this build expects {SdkVersion}.", stripeEvent.Id, stripeEvent.ApiVersion, StripeConfiguration.ApiVersion);
         return MapEvent(stripeEvent);
     }
 
@@ -436,6 +465,7 @@ public class StripePaymentProvider : IPaymentProvider
                     CustomerId = subscription?.CustomerId,
                     CancelAtPeriodEnd = subscription?.CancelAtPeriodEnd,
                     CurrentPeriodEnd = ToUtc(periodEnd),
+                    SubscriptionStatus = subscription?.Status,
                 };
             }
 
@@ -470,6 +500,8 @@ public class StripePaymentProvider : IPaymentProvider
                     PaymentIntentId = dispute?.PaymentIntentId,
                     AmountMinor = dispute?.Amount,
                     Currency = dispute?.Currency?.ToUpperInvariant(),
+                    // On closed: "won" (the money stays) or "lost" (it went back to the buyer).
+                    DisputeStatus = dispute?.Status,
                 };
             }
 
@@ -498,6 +530,12 @@ public class StripePaymentProvider : IPaymentProvider
                 };
             }
 
+            // payment_intent.succeeded is deliberately not a fulfilment trigger: for a Checkout
+            // integration the money signal is checkout.session.completed (paid) or
+            // async_payment_succeeded, both of which carry the session the order is keyed on. The
+            // intent event arrives alongside (in no guaranteed order) and would only add a second
+            // path to the same outcome. It is recorded, and the intent's own status is what an
+            // admin reads live on the payment page.
             default:
                 return Plain(PaymentWebhookEventType.Unhandled);
         }

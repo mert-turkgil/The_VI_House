@@ -161,4 +161,7 @@ public class SeminarDetailViewModel
 /// <summary>The page a paid enrolment returns to. Mirrors the membership/ticket success pages:
 /// local state only, and "not confirmed yet" is a processing state rather than a failure.</summary>
 public record SeminarCheckoutResultViewModel(
-    bool IsConfirmed, string? Title, string? Slug, long AmountMinor, string Currency);
+    bool IsConfirmed, string? Title, string? Slug, long AmountMinor, string Currency)
+{
+    public bool AwaitingBank { get; init; }
+}

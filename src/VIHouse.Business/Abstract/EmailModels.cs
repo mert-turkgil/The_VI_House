@@ -110,3 +110,11 @@ public record ExperienceUpdateEmailModel(string FirstName, string ExperienceTitl
 /// StartAtUtc is null for on-demand content, which has nothing to turn up to.</summary>
 public record SeminarEnrolledEmailModel(
     string FirstName, string SeminarTitle, DateTimeOffset? StartAtUtc, bool IsOnline, string? Location, string SeminarUrl);
+
+/// <summary>A checkout finished with a delayed payment method (bank transfer, direct debit): the
+/// buyer did everything, the money is on its way, and nothing is granted until it lands.</summary>
+public record PaymentProcessingEmailModel(string FirstName, string What, long AmountMinor, string Currency, string StatusUrl);
+
+/// <summary>Money went back to the buyer, in full or in part. <paramref name="Effect"/> says what
+/// that meant for the thing they bought — a cancelled booking, a released seat, nothing yet.</summary>
+public record PaymentRefundedEmailModel(string FirstName, string What, long AmountRefundedMinor, string Currency, bool IsPartial, string Effect);

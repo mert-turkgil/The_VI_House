@@ -3,7 +3,7 @@
     ViewData["Title"] = Model.Info.IsConfirmed ? "Booking Confirmed" : "Processing Payment";
 }
 
-@if (!Model.Info.IsConfirmed)
+@if (!Model.Info.IsConfirmed && !Model.Info.AwaitingBank)
 {
     @section Styles {
         <meta http-equiv="refresh" content="3" />
@@ -20,20 +20,26 @@
                 You're in — <strong>@Model.Info.ExperienceTitle</strong> in @Model.Info.ExperienceCity.
                 Your booking reference is <strong>@Model.Info.BookingReference</strong>.
             </p>
-            @if (!string.IsNullOrWhiteSpace(Model.PasswordSetupUrl))
-            {
-                <p>One last step — set a password to access your VI House member account.</p>
-                <div class="apply-confirmation__actions">
-                    <a class="btn btn--primary" href="@Model.PasswordSetupUrl">Set Your Password</a>
-                    <a class="btn btn--ghost-dark" href="/">Back to Home</a>
-                </div>
-            }
-            else
-            {
-                <div class="apply-confirmation__actions">
-                    <a class="btn btn--primary" href="/">Back to Home</a>
-                </div>
-            }
+            <p>
+                Your confirmation is on its way to your inbox. If this is your first booking, the same
+                email carries the link to set a password for your VI House account.
+            </p>
+            <div class="apply-confirmation__actions">
+                <a class="btn btn--primary" href="/">Back to Home</a>
+            </div>
+        }
+        else if (Model.Info.AwaitingBank)
+        {
+            <span class="apply-confirmation__mark">&hellip;</span>
+            <h1>Payment In Progress</h1>
+            <p>
+                Your checkout is complete and your bank is confirming the payment — with the method you chose
+                this can take a few days. Your place is held in the meantime, and we'll email your confirmation
+                the moment the money lands. Nothing further is needed from you.
+            </p>
+            <div class="apply-confirmation__actions">
+                <a class="btn btn--primary" href="/">Back to Home</a>
+            </div>
         }
         else
         {

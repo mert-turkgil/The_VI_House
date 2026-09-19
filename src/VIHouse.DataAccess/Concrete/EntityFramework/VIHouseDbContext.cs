@@ -51,6 +51,7 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
     public DbSet<TicketHold> TicketHolds => Set<TicketHold>();
     public DbSet<WaitlistEntry> WaitlistEntries => Set<WaitlistEntry>();
     public DbSet<WebhookEvent> WebhookEvents => Set<WebhookEvent>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
     public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
 
     public DbSet<ContentPage> ContentPages => Set<ContentPage>();

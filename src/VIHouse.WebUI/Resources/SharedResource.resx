@@ -1309,4 +1309,6 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Form.Phone.Hint" xml:space="preserve"><value>With the country code. We text only about your membership — a venue change, a joining link, a payment that needs attention.</value></data>
   <data name="Form.Phone.ApplyHint" xml:space="preserve"><value>If you give one, we'll text you the moment your application is decided — the email comes either way.</value></data>
   <data name="Form.Phone.ProfileHint" xml:space="preserve"><value>Used only for messages about your membership. Clear the field to stop them.</value></data>
+  <data name="Payment.AwaitingBank.Heading" xml:space="preserve"><value>Payment in progress</value></data>
+  <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Your checkout is complete and your bank is confirming the payment — with the method you chose this can take a few days. Your place is held in the meantime, and we'll email your confirmation the moment the money lands. Nothing further is needed from you.</value></data>
 </root>

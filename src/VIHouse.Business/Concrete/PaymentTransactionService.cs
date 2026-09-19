@@ -71,6 +71,9 @@ public class PaymentTransactionService(
     public Task<PaymentTransaction?> GetByInvoiceAsync(string providerInvoiceId, CancellationToken ct = default) =>
         transactions.GetByInvoiceAsync(providerInvoiceId, ct);
 
+    public Task<PaymentTransaction?> GetByPaymentIntentAsync(string providerPaymentIntentId, CancellationToken ct = default) =>
+        transactions.GetByPaymentIntentAsync(providerPaymentIntentId, ct);
+
     public async Task<PaymentTransaction?> GetLatestOpenForAsync(string relatedEntityType, Guid relatedEntityId, CancellationToken ct = default)
     {
         var latest = await transactions.GetLatestForRelatedAsync(relatedEntityType, relatedEntityId, ct);
@@ -204,12 +207,19 @@ public class PaymentTransactionService(
         return new PaymentTransactionEventResult(PaymentTransactionEventOutcome.Applied, transaction, transaction.Status, transaction.Status);
     }
 
-    /// <summary>One customer per person at the provider: the first id seen for an account sticks.</summary>
+    /// <summary>
+    /// One customer per person at the provider. The id on a provider event is the provider's own
+    /// word, so it is written even over a different id already on the account — that happens when
+    /// the stored one went stale (deleted at the provider) and the checkout fell back to opening by
+    /// email; see StripePaymentProvider.CreateCheckoutSessionAsync.
+    /// </summary>
     private async Task RememberCustomerAsync(Guid userId, string? providerCustomerId)
     {
         if (string.IsNullOrWhiteSpace(providerCustomerId)) return;
         var user = await userManager.FindByIdAsync(userId.ToString());
-        if (user is null || !string.IsNullOrWhiteSpace(user.ProviderCustomerId)) return;
+        if (user is null || user.ProviderCustomerId == providerCustomerId) return;
+        if (user.ProviderCustomerId is not null)
+            logger.LogWarning("Account {UserId} paid as customer {New}; replacing the stored customer {Old}.", userId, providerCustomerId, user.ProviderCustomerId);
         user.ProviderCustomerId = providerCustomerId;
         await userManager.UpdateAsync(user);
     }

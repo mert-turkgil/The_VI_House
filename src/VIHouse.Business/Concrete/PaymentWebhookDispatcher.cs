@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Commerce;
 
@@ -34,8 +36,15 @@ public class PaymentWebhookDispatcher(
     IPaymentService paymentService,
     IMembershipService membershipService,
     ISeminarService seminarService,
+    IOptions<StripeOptions> stripeOptions,
     ILogger<PaymentWebhookDispatcher> logger) : IPaymentWebhookDispatcher
 {
+    /// <summary>Whether this host runs on live keys. A test-mode event delivered to a live host
+    /// (a sandbox endpoint pointed at production by mistake) is recorded and ignored: it is signed
+    /// and genuine, but it is not money.</summary>
+    private bool ExpectLiveMode => stripeOptions.Value.SecretKey.StartsWith("sk_live_", StringComparison.Ordinal)
+                                   || stripeOptions.Value.SecretKey.StartsWith("rk_live_", StringComparison.Ordinal);
+
     /// <summary>A Received row older than this with no outcome belongs to an attempt that died
     /// mid-way (a crash, a killed process); it may be retried.</summary>
     private static readonly TimeSpan StaleAttempt = TimeSpan.FromMinutes(2);
@@ -52,6 +61,7 @@ public class PaymentWebhookDispatcher(
         PaymentWebhookEventType.SubscriptionRenewed,
         PaymentWebhookEventType.SubscriptionPaymentFailed,
         PaymentWebhookEventType.SubscriptionCancelled,
+        PaymentWebhookEventType.SubscriptionUpdated,
         PaymentWebhookEventType.InvoicePaymentActionRequired,
         PaymentWebhookEventType.ChargeRefunded,
         PaymentWebhookEventType.DisputeCreated,
@@ -104,7 +114,12 @@ public class PaymentWebhookDispatcher(
         }
 
         // --- 2. Nothing to do for this type — say so and stop -----------------------------------
-        if (!Handled.Contains(webhookEvent.Type))
+        // Synthetic events (reconcile_…) carry no live-mode flag; only the provider's own are checked.
+        var wrongMode = ExpectLiveMode && !webhookEvent.LiveMode && !webhookEvent.EventId.StartsWith("reconcile_", StringComparison.Ordinal);
+        if (wrongMode)
+            logger.LogWarning("Webhook {EventId} ({Type}) is a test-mode event on a live host; ignored.", webhookEvent.EventId, webhookEvent.RawType);
+
+        if (wrongMode || !Handled.Contains(webhookEvent.Type))
         {
             await events.MarkIgnoredAsync(webhookEvent.EventId, now, ct);
             logger.LogInformation("Webhook {EventId} ({Type}) recorded, no handler ({Mapped}).", webhookEvent.EventId, webhookEvent.RawType, webhookEvent.Type);

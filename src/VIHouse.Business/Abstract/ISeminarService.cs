@@ -240,4 +240,8 @@ public enum SeminarAccessOutcome
 }
 
 public record SeminarConfirmationInfo(
-    bool IsConfirmed, string? SeminarTitle, string? SeminarSlug, long AmountMinor, string Currency);
+    bool IsConfirmed, string? SeminarTitle, string? SeminarSlug, long AmountMinor, string Currency)
+{
+    /// <summary>Checkout finished with a delayed payment method; the money has not landed yet.</summary>
+    public bool AwaitingBank { get; init; }
+}

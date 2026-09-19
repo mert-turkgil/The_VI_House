@@ -1,15 +1,11 @@
 using System.Globalization;
-using System.Text;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Concrete;
 using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
-using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Experiences;
 using VIHouse.Entities.Membership;
 using VIHouse.Entities.Users;
@@ -37,8 +33,8 @@ namespace VIHouse.WebUI.Controllers;
 [Route("join")]
 public class JoinController(
     IMembershipService membershipService,
+    ICheckoutReconciliationService reconciliation,
     IExperienceService experienceService,
-    UserManager<ApplicationUser> userManager,
     IOptions<SmsOptions> smsOptions,
     IOptions<FeatureOptions> features) : Controller
 {
@@ -237,34 +233,24 @@ public class JoinController(
         Url.Action(nameof(Resume), "Join", new { code = "__code__" }, Request.Scheme)!.Replace("__code__", "{code}");
 
     /// <summary>
-    /// Where Stripe sends the browser back to. Reads local state only — the webhook, not this
-    /// redirect, is what actually confirms the payment, so a visitor who closes the tab here still
-    /// gets their account, and one who forges a session id gets nothing.
+    /// Where Stripe sends the browser back to. The session id in the URL only says which checkout
+    /// to ask the provider about; the provider's answer, read server-side, is what activates the
+    /// membership — through the same path the webhook takes, so a visitor who closes the tab here
+    /// still gets their account, and one who forges a session id gets nothing. No password link is
+    /// shown: a session id sits in browser history and referrer logs, and the setup link belongs
+    /// only in the inbox that owns the account.
     /// </summary>
     [HttpGet("welcome")]
     public async Task<IActionResult> Success([FromQuery(Name = "session_id")] string sessionId, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(sessionId)) return NotFound();
 
+        await reconciliation.ReconcileSessionAsync(sessionId, ct);
+
         var info = await membershipService.GetConfirmationBySessionAsync(sessionId, ct);
         if (info is null) return NotFound();
 
-        // Shown here as well as emailed: the member is looking at the screen right now, and making
-        // them go and find an email to continue is a needless place to lose them. The link is a
-        // standard single-use Identity reset token, so showing it costs nothing extra — reaching
-        // this page already required the unguessable Stripe session id.
-        string? setupUrl = null;
-        if (info.IsConfirmed && info.UserId is { } userId
-            && await userManager.FindByIdAsync(userId.ToString()) is { } user
-            && !await userManager.HasPasswordAsync(user))
-        {
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
-            var encoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            setupUrl = Url.Page("/Account/ResetPassword", pageHandler: null,
-                values: new { area = "Identity", code = encoded }, protocol: Request.Scheme);
-        }
-
-        ViewData["Title"] = info.IsConfirmed ? "Welcome to The VI House" : "Confirming your payment";
-        return View(new JoinSuccessViewModel(info, setupUrl));
+        ViewData["Title"] = info.IsConfirmed ? "Welcome to The VI House" : info.AwaitingBank ? "Payment in progress" : "Confirming your payment";
+        return View(new JoinSuccessViewModel(info));
     }
 }

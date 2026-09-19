@@ -32,11 +32,11 @@ public class MembershipService(
     IPaymentProvider paymentProvider,
     IPaymentCatalogProvider catalog,
     IEmailService emailService,
-    ISmsService smsService,
     INotificationService notificationService,
     IAuditLogRepository auditLogs,
     IAmbassadorService ambassadorService,
     IPaymentTransactionService transactions,
+    IOutbox outbox,
     IOptions<SiteOptions> siteOptions,
     ISiteSettingsService siteSettings,
     UserManager<ApplicationUser> userManager,
@@ -464,7 +464,7 @@ public class MembershipService(
         if (user is not null)
         {
             var revokedPlan = await plans.GetByIdAsync(membership.PlanId, ct);
-            await AnnounceMembershipEndedAsync(user, revokedPlan?.Name ?? "membership", now, wasRevoked: true, ct);
+            await AnnounceMembershipEndedAsync(user, membership.Id, revokedPlan?.Name ?? "membership", now, wasRevoked: true, ct);
         }
 
         await LogAsync("MembershipRevoked", membership.Id, adminUserId, ipAddress, before,
@@ -989,14 +989,14 @@ public class MembershipService(
         {
             var plan = await plans.GetByIdAsync(payment.PlanId, ct);
 
-            // The webhook normally gets here first. When it hasn't — it is late, or nothing is
-            // forwarding it to this host — ask the provider directly and run the same activation,
-            // so the buyer sees their membership rather than an endless "processing".
-            if (payment.Status == PaymentStatus.Created && await TryReconcileCheckoutAsync(sessionId, ct))
-                payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct) ?? payment;
-
+            // Local state only. The success page asks ICheckoutReconciliationService first, which
+            // reads the provider and runs the same activation the webhook does; by the time this
+            // is called, the row says whatever the provider said.
             if (payment.Status != PaymentStatus.Paid || payment.MembershipId is null)
-                return new MembershipConfirmationInfo(false, plan?.Name, payment.AmountMinor, payment.Currency, null);
+                return new MembershipConfirmationInfo(false, plan?.Name, payment.AmountMinor, payment.Currency, null)
+                {
+                    AwaitingBank = payment.Status == PaymentStatus.Pending,
+                };
 
             var membership = await memberships.GetByIdAsync(payment.MembershipId.Value, ct);
             return new MembershipConfirmationInfo(true, plan?.Name, payment.AmountMinor, payment.Currency, membership?.ExpiresAt)
@@ -1014,43 +1014,18 @@ public class MembershipService(
         var amount = joinPlan?.PriceMinor ?? 0;
         var currency = joinPlan?.Currency ?? "GBP";
 
-        if (join.Status == PendingJoinStatus.Pending && await TryReconcileCheckoutAsync(sessionId, ct))
-            join = await pendingJoins.GetBySessionAsync(sessionId, ct) ?? join;
-
         if (join.Status != PendingJoinStatus.Paid || join.MembershipId is null)
-            return new MembershipConfirmationInfo(false, joinPlan?.Name, amount, currency, null);
+            return new MembershipConfirmationInfo(false, joinPlan?.Name, amount, currency, null)
+            {
+                AwaitingBank = join.Status == PendingJoinStatus.Pending
+                               && await transactions.GetBySessionAsync(sessionId, ct) is { Status: PaymentTransactionStatus.Processing },
+            };
 
         var joined = await memberships.GetByIdAsync(join.MembershipId.Value, ct);
         return new MembershipConfirmationInfo(true, joinPlan?.Name, amount, currency, joined?.ExpiresAt)
         {
             UserId = join.UserId,
         };
-    }
-
-    public async Task<bool> ReconcilePendingCheckoutsAsync(Guid userId, CancellationToken ct = default)
-    {
-        // Only rows that reached the provider: the pending_ placeholder never became a session.
-        var open = await membershipPayments.FindAsync(
-            p => p.UserId == userId && p.Status == PaymentStatus.Created && !p.ProviderReference.StartsWith("pending_"), ct);
-
-        var activated = false;
-        foreach (var payment in open.OrderByDescending(p => p.CreatedAt))
-            activated |= await TryReconcileCheckoutAsync(payment.ProviderReference, ct);
-
-        return activated;
-    }
-
-    /// <summary>Reads the session from the provider and, if it is paid, provisions exactly as the
-    /// webhook would. True when the provider confirmed payment; the claim inside the handler keeps
-    /// this and a webhook that lands at the same moment from provisioning twice.</summary>
-    private async Task<bool> TryReconcileCheckoutAsync(string sessionId, CancellationToken ct)
-    {
-        var completed = await paymentProvider.GetCompletedCheckoutAsync(sessionId, ct);
-        if (completed is null) return false;
-
-        logger.LogInformation("Reconciling membership checkout {SessionId} from the provider ahead of its webhook", sessionId);
-        await HandleCheckoutCompletedAsync(completed, ct);
-        return true;
     }
 
     // =============================================================================================
@@ -1064,10 +1039,15 @@ public class MembershipService(
             case PaymentWebhookEventType.CheckoutCompleted when webhookEvent.SessionId is not null:
                 await HandleCheckoutCompletedAsync(webhookEvent, ct);
                 break;
+            case PaymentWebhookEventType.CheckoutCompletedAwaitingPayment when webhookEvent.SessionId is not null:
+                await HandleCheckoutAwaitingPaymentAsync(webhookEvent, ct);
+                break;
             // A delayed payment that never settled ends the same way an abandoned checkout does.
             case PaymentWebhookEventType.CheckoutExpired when webhookEvent.SessionId is not null:
+                await HandleCheckoutExpiredAsync(webhookEvent.SessionId, paymentFailed: false, ct);
+                break;
             case PaymentWebhookEventType.CheckoutPaymentFailed when webhookEvent.SessionId is not null:
-                await HandleCheckoutExpiredAsync(webhookEvent.SessionId, ct);
+                await HandleCheckoutExpiredAsync(webhookEvent.SessionId, paymentFailed: true, ct);
                 break;
             case PaymentWebhookEventType.SubscriptionRenewed when webhookEvent.SubscriptionId is not null:
                 await HandleSubscriptionRenewedAsync(webhookEvent, ct);
@@ -1075,10 +1055,218 @@ public class MembershipService(
             case PaymentWebhookEventType.SubscriptionPaymentFailed when webhookEvent.SubscriptionId is not null:
                 await HandleSubscriptionPaymentFailedAsync(webhookEvent, ct);
                 break;
+            case PaymentWebhookEventType.InvoicePaymentActionRequired when webhookEvent.SubscriptionId is not null:
+                await HandleInvoiceActionRequiredAsync(webhookEvent, ct);
+                break;
+            case PaymentWebhookEventType.SubscriptionUpdated when webhookEvent.SubscriptionId is not null:
+                await HandleSubscriptionUpdatedAsync(webhookEvent, ct);
+                break;
             case PaymentWebhookEventType.SubscriptionCancelled when webhookEvent.SubscriptionId is not null:
                 await HandleSubscriptionCancelledAsync(webhookEvent, ct);
                 break;
+            case PaymentWebhookEventType.ChargeRefunded when webhookEvent.PaymentIntentId is not null:
+                await HandleRefundAsync(webhookEvent, ct);
+                break;
         }
+    }
+
+    /// <summary>
+    /// The buyer finished checkout with a delayed payment method. Nothing is activated: the
+    /// signed-in payment row goes to Pending, a /join row stays Pending (its transaction says
+    /// Processing), and the buyer is told the money is on its way. The outcome arrives later as
+    /// CheckoutCompleted or CheckoutPaymentFailed.
+    /// </summary>
+    private async Task HandleCheckoutAwaitingPaymentAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var sessionId = webhookEvent.SessionId!;
+        string? email, firstName; Guid? userId; Guid planId; string entityType; Guid entityId;
+
+        var payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct);
+        if (payment is not null)
+        {
+            if (payment.Status != PaymentStatus.Created) return;
+            payment.Status = PaymentStatus.Pending;
+            payment.UpdatedAt = DateTimeOffset.UtcNow;
+            await membershipPayments.SaveChangesAsync(ct);
+
+            var user = await userManager.FindByIdAsync(payment.UserId.ToString());
+            if (user?.Email is null) return;
+            (email, firstName, userId, planId, entityType, entityId) = (user.Email, user.FirstName, user.Id, payment.PlanId, nameof(MembershipPayment), payment.Id);
+        }
+        else
+        {
+            var join = await pendingJoins.GetBySessionAsync(sessionId, ct);
+            if (join is null || join.Status != PendingJoinStatus.Pending) return;
+            (email, firstName, userId, planId, entityType, entityId) = (join.Email, join.FirstName, null, join.PlanId, nameof(PendingJoin), join.Id);
+        }
+
+        var plan = await plans.GetByIdAsync(planId, ct);
+        var what = plan?.Name ?? "your membership";
+        await outbox.EnqueueEmailAsync(
+            $"email:PaymentProcessing:{entityType}:{entityId}",
+            "PaymentProcessing", email, "We've received your order — payment in progress",
+            new PaymentProcessingEmailModel(firstName, what, webhookEvent.AmountMinor ?? plan?.PriceMinor ?? 0, webhookEvent.Currency ?? plan?.Currency ?? "GBP",
+                SiteUrls.Absolute(BaseUrl, userId is null ? SiteUrls.Membership : SiteUrls.AccountMembership)),
+            entityType, entityId, ct);
+
+        if (userId is { } id)
+        {
+            await outbox.EnqueueNotificationAsync(
+                $"notification:PaymentProcessing:{entityType}:{entityId}",
+                id, NotificationType.Payment,
+                "Payment In Progress", $"Your bank is confirming your payment for {what}. Your membership starts as soon as it lands.",
+                SiteUrls.AccountMembership, entityType, entityId, ct);
+        }
+    }
+
+    /// <summary>
+    /// A renewal needs the member to authenticate (3-D Secure) before the bank will pay it. The
+    /// membership is untouched — the paid-up period still runs — and the member gets the
+    /// provider's hosted page, which is where the confirmation happens. One email per invoice.
+    /// </summary>
+    private async Task HandleInvoiceActionRequiredAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var membership = await FindBySubscriptionAsync(webhookEvent.SubscriptionId!, ct);
+        if (membership is null || membership.Status == MembershipStatus.Cancelled) return;
+
+        var user = await userManager.FindByIdAsync(membership.UserId.ToString());
+        if (user?.Email is null) return;
+
+        var plan = await plans.GetByIdAsync(membership.PlanId, ct);
+        var accountUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.AccountMembership);
+        var actionUrl = webhookEvent.HostedInvoiceUrl ?? accountUrl;
+        var key = webhookEvent.InvoiceId ?? webhookEvent.EventId;
+
+        await outbox.EnqueueEmailAsync(
+            $"email:MembershipPaymentActionRequired:Invoice:{key}",
+            "MembershipPaymentActionRequired", user.Email, "Please confirm your membership payment",
+            new MembershipPaymentFailedEmailModel(user.FirstName, plan?.Name ?? "Membership", actionUrl, membership.ExpiresAt, null),
+            nameof(Membership), membership.Id, ct);
+
+        await outbox.EnqueueNotificationAsync(
+            $"notification:MembershipPaymentActionRequired:Invoice:{key}",
+            user.Id, NotificationType.Payment,
+            "Confirm Your Payment", $"Your bank needs you to confirm the renewal of your {plan?.Name ?? "membership"}.",
+            SiteUrls.AccountMembership, nameof(Membership), membership.Id, ct);
+    }
+
+    /// <summary>
+    /// The subscription changed at the provider — through the billing portal, the dashboard, or
+    /// on its own as it moves between statuses. What is mirrored: the period end (authoritative
+    /// for the expiry), whether it will stop at the period end (no renewal date to show), and the
+    /// provider's status where it maps onto ours. "canceled" is left to the deleted event, which
+    /// always follows it.
+    /// </summary>
+    private async Task HandleSubscriptionUpdatedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var membership = await FindBySubscriptionAsync(webhookEvent.SubscriptionId!, ct);
+        if (membership is null || membership.Status == MembershipStatus.Cancelled) return;
+        if (webhookEvent.SubscriptionStatus is "canceled" or "incomplete" or "incomplete_expired") return;
+
+        var now = DateTimeOffset.UtcNow;
+        var before = new { membership.Status, membership.ExpiresAt, membership.RenewalAt };
+
+        if (webhookEvent.CurrentPeriodEnd is { } periodEnd && periodEnd > now)
+            membership.ExpiresAt = periodEnd;
+
+        membership.RenewalAt = webhookEvent.CancelAtPeriodEnd == true ? null : membership.ExpiresAt;
+        membership.ProviderCustomerId ??= webhookEvent.CustomerId;
+
+        switch (webhookEvent.SubscriptionStatus)
+        {
+            case "past_due":
+            case "paused":
+                if (membership.Status == MembershipStatus.Active) membership.Status = MembershipStatus.PastDue;
+                break;
+            case "active":
+            case "trialing":
+                if (membership.Status == MembershipStatus.PastDue) membership.Status = MembershipStatus.Active;
+                break;
+            case "unpaid":
+                // Every retry has been made and the provider has stopped trying: the provider's own
+                // guidance is to revoke. The row ends now; the deleted event, if the dashboard is set
+                // to cancel as well, finds nothing left to do.
+                membership.Status = MembershipStatus.Cancelled;
+                membership.CancelledAt = now;
+                membership.RenewalAt = null;
+                membership.ExpiresAt = now;
+                break;
+        }
+
+        if (before.Status == membership.Status && before.ExpiresAt == membership.ExpiresAt && before.RenewalAt == membership.RenewalAt)
+            return;
+
+        membership.UpdatedAt = now;
+        await memberships.SaveChangesAsync(ct);
+        logger.LogInformation("Membership {MembershipId} mirrored subscription update {EventId}: {From} → {To}, expires {ExpiresAt}, renews {RenewalAt}.",
+            membership.Id, webhookEvent.EventId, before.Status, membership.Status, membership.ExpiresAt, membership.RenewalAt);
+
+        if (membership.Status == MembershipStatus.Cancelled && await userManager.FindByIdAsync(membership.UserId.ToString()) is { } user)
+        {
+            await SetMemberStatusAsync(user, MemberStatus.Cancelled);
+            var plan = await plans.GetByIdAsync(membership.PlanId, ct);
+            await AnnounceMembershipEndedAsync(user, membership.Id, plan?.Name ?? "membership", now, wasRevoked: false, ct);
+        }
+    }
+
+    /// <summary>
+    /// Money went back to the buyer on a membership charge. The payment row says so; the
+    /// membership itself is left as it is — whether a refund ends access at once, at the period
+    /// end, or not at all is a policy the House has not set, so a human is told and decides. The
+    /// member hears about the refund itself, once per amount.
+    /// </summary>
+    private async Task HandleRefundAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
+    {
+        var transaction = await transactions.GetByPaymentIntentAsync(webhookEvent.PaymentIntentId!, ct);
+        if (transaction is not { Kind: PaymentTransactionKind.Membership or PaymentTransactionKind.MembershipRenewal }) return;
+
+        var payment = (await membershipPayments.FindAsync(p => p.TransactionId == transaction.Id, ct)).FirstOrDefault();
+        if (payment is null || payment.Status == PaymentStatus.Refunded) return;
+
+        var refunded = webhookEvent.AmountRefundedMinor ?? 0;
+        var full = refunded >= (webhookEvent.AmountMinor ?? payment.AmountMinor);
+        payment.Status = full ? PaymentStatus.Refunded : PaymentStatus.PartiallyRefunded;
+        payment.UpdatedAt = DateTimeOffset.UtcNow;
+        await membershipPayments.SaveChangesAsync(ct);
+
+        var plan = await plans.GetByIdAsync(payment.PlanId, ct);
+        var user = await userManager.FindByIdAsync(payment.UserId.ToString());
+        var what = plan?.Name ?? "your membership";
+
+        if (user?.Email is not null)
+        {
+            await outbox.EnqueueEmailAsync(
+                $"email:PaymentRefunded:MembershipPayment:{payment.Id}:{refunded}",
+                "PaymentRefunded", user.Email, full ? "Your refund is on its way" : "A partial refund is on its way",
+                new PaymentRefundedEmailModel(user.FirstName, what, refunded, payment.Currency, !full,
+                    "Your membership is unchanged for now; if anything about it needs to change, we'll be in touch separately."),
+                nameof(MembershipPayment), payment.Id, ct);
+
+            await outbox.EnqueueNotificationAsync(
+                $"notification:PaymentRefunded:MembershipPayment:{payment.Id}:{refunded}",
+                user.Id, NotificationType.Payment,
+                full ? "Payment Refunded" : "Partial Refund", $"{(full ? "A full" : "A partial")} refund for {what} is on its way back to you.",
+                SiteUrls.AccountMembership, nameof(MembershipPayment), payment.Id, ct);
+        }
+
+        var contact = await ContactEmailAsync(ct);
+        if (!string.IsNullOrWhiteSpace(contact))
+        {
+            await outbox.EnqueueEmailAsync(
+                $"email:RefundReview:MembershipPayment:{payment.Id}:{refunded}",
+                "ContactMessage", contact, $"Membership payment refunded — decide about access ({user?.Email ?? "unknown"})",
+                new ContactMessageEmailModel("The VI House (system)", user?.Email ?? "unknown", "Membership refund",
+                    $"{(full ? "A full" : "A partial")} refund of {refunded / 100m:0.00} {payment.Currency} was issued on the {what} payment by {user?.FirstName} {user?.LastName} ({user?.Email}).\n" +
+                    $"Membership {payment.MembershipId}: access was NOT changed automatically. If the membership should end, revoke it from the admin members page or cancel the subscription in the provider dashboard."),
+                nameof(MembershipPayment), payment.Id, ct);
+        }
+    }
+
+    private async Task SetMemberStatusAsync(ApplicationUser user, MemberStatus status)
+    {
+        if (user.MemberStatus == status) return;
+        user.MemberStatus = status;
+        await userManager.UpdateAsync(user);
     }
 
     private async Task HandleCheckoutCompletedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
@@ -1357,7 +1545,8 @@ public class MembershipService(
         var contact = await ContactEmailAsync(ct);
         if (!string.IsNullOrWhiteSpace(contact))
         {
-            await emailService.SendAsync(
+            await outbox.EnqueueEmailAsync(
+                $"email:DuplicateMembership:PendingJoin:{join.Id}",
                 "ContactMessage", contact, "Duplicate membership payment needs a refund",
                 new ContactMessageEmailModel("The VI House (system)", user.Email!, "Duplicate membership purchase",
                     $"{user.FirstName} {user.LastName} ({user.Email}) paid for {plan.Name} a second time while membership {existing.Id} was already current.\n" +
@@ -1476,9 +1665,10 @@ public class MembershipService(
             await userManager.UpdateAsync(user);
         }
 
-        // Someone who joined through /join has no password at all — the browser redirect shows
-        // them a setup link, but that tab is easily lost, so the same link is emailed. Sent from
-        // the webhook rather than the redirect because this is the path that always runs.
+        // Someone who joined through /join has no password at all. The setup link is emailed — and
+        // only emailed: the success page is reachable by anyone holding the session id from the
+        // URL, which is not a thing to hand a password link to. Sent from here because this is the
+        // path that always runs, webhook or server-side read.
         if (!await userManager.HasPasswordAsync(user))
         {
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
@@ -1488,13 +1678,15 @@ public class MembershipService(
             var encoded = Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
             var setupUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.ResetPassword(encoded));
 
-            await emailService.SendAsync(
+            await outbox.EnqueueEmailAsync(
+                $"email:WelcomeSetup:User:{user.Id}",
                 "WelcomeSetup", user.Email!, "Set up your VI House account",
                 new WelcomeSetupEmailModel(user.FirstName, setupUrl, plan.Name),
                 nameof(ApplicationUser), user.Id, ct);
         }
 
-        await emailService.SendAsync(
+        await outbox.EnqueueEmailAsync(
+            $"email:MembershipConfirmed:Membership:{membership.Id}",
             "MembershipConfirmed", user.Email!, $"Welcome — you're a {plan.Name}",
             new MembershipConfirmedEmailModel(user.FirstName, plan.Name, membership.ExpiresAt)
             {
@@ -1507,27 +1699,31 @@ public class MembershipService(
 
         // The number the provider validated on its checkout page wins over whatever is on the
         // account; SmsService logs (and does nothing) when there is no gateway or no number.
-        await smsService.SendAsync(
+        await outbox.EnqueueSmsAsync(
+            $"sms:MembershipConfirmed:Membership:{membership.Id}",
             "MembershipConfirmed", webhookEvent.CustomerPhone ?? user.PhoneNumber,
             $"The VI House: payment received. You're confirmed as a {plan.Name}"
                 + (membership.ExpiresAt is { } until ? $" until {until:d MMM yyyy}" : "")
                 + ". Your card, sessions and experiences are open in your account.",
             nameof(Membership), membership.Id, ct);
 
-        await notificationService.CreateForUserAsync(
+        await outbox.EnqueueNotificationAsync(
+            $"notification:MembershipConfirmed:Membership:{membership.Id}",
             user.Id, NotificationType.Payment,
             "Membership Confirmed", $"You're confirmed as a {plan.Name}.",
-            SiteUrls.Account, ct);
+            SiteUrls.Account, nameof(Membership), membership.Id, ct);
 
         return membership;
     }
 
-    private async Task HandleCheckoutExpiredAsync(string sessionId, CancellationToken ct)
+    /// <summary>An "expired" only ends a checkout nobody finished; a completed one waiting on the
+    /// bank ends only through a payment failure. See PaymentService for the same rule.</summary>
+    private async Task HandleCheckoutExpiredAsync(string sessionId, bool paymentFailed, CancellationToken ct)
     {
         var payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct);
         if (payment is not null)
         {
-            if (payment.Status == PaymentStatus.Paid) return;
+            if (payment.Status != PaymentStatus.Created && !(paymentFailed && payment.Status == PaymentStatus.Pending)) return;
 
             payment.Status = PaymentStatus.Cancelled;
             payment.UpdatedAt = DateTimeOffset.UtcNow;
@@ -1537,6 +1733,11 @@ public class MembershipService(
 
         var join = await pendingJoins.GetBySessionAsync(sessionId, ct);
         if (join is null) return;
+
+        // A join whose checkout completed on a delayed method is still Pending here but Processing
+        // on the money side; a stray expiry must not close it. A payment failure does.
+        if (!paymentFailed && await transactions.GetBySessionAsync(sessionId, ct) is { Status: PaymentTransactionStatus.Processing })
+            return;
 
         // Only a Pending row lapses. Paid stays paid; Superseded stays superseded (its replacement
         // is the live one, and this event is usually our own doing — see OpenJoinSessionAsync).
@@ -1554,7 +1755,8 @@ public class MembershipService(
         var plan = await plans.GetByIdAsync(join.PlanId, ct);
         var resumeUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.JoinResume(join.Code));
 
-        await emailService.SendAsync(
+        await outbox.EnqueueEmailAsync(
+            $"email:MembershipResume:PendingJoin:{join.Id}",
             "MembershipResume", join.Email, "Pick up where you left off",
             new MembershipResumeEmailModel(join.FirstName, plan?.Name ?? "Membership", resumeUrl),
             nameof(PendingJoin), join.Id, ct);
@@ -1625,35 +1827,42 @@ public class MembershipService(
 
         if (await userManager.FindByIdAsync(membership.UserId.ToString()) is { } user)
         {
-            await emailService.SendAsync(
+            await outbox.EnqueueEmailAsync(
+                $"email:MembershipRenewed:{receipt}",
                 "MembershipRenewed", user.Email!, $"Your {plan?.Name ?? "membership"} has renewed",
                 new MembershipRenewedEmailModel(user.FirstName, plan?.Name ?? "Membership", newExpiry),
                 nameof(Membership), membership.Id, ct);
 
-            await notificationService.CreateForUserAsync(
+            await outbox.EnqueueNotificationAsync(
+                $"notification:MembershipRenewed:{receipt}",
                 user.Id, NotificationType.Payment,
                 wasPastDue ? "Payment Received" : "Membership Renewed",
                 $"Your {plan?.Name ?? "membership"} now runs until {newExpiry:d MMMM yyyy}.",
-                SiteUrls.Account, ct);
+                SiteUrls.Account, nameof(Membership), membership.Id, ct);
         }
     }
 
     /// <summary>
     /// A renewal charge was declined. The membership is marked PastDue but keeps its ExpiresAt —
     /// the member has paid up to that date and keeps access until it. The provider retries the
-    /// card on its own schedule and raises this event every time, so the member is told once, on
-    /// the way in; a successful retry arrives as a renewal and sets things right, and giving up
-    /// arrives as a cancellation.
+    /// card on its own schedule and raises this event every time; the nudge is keyed on the
+    /// invoice, so the member is told once per invoice however many attempts it takes. A
+    /// successful retry arrives as a renewal and sets things right; giving up arrives as an
+    /// "unpaid" update or a cancellation.
     /// </summary>
     private async Task HandleSubscriptionPaymentFailedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
         var membership = await FindBySubscriptionAsync(webhookEvent.SubscriptionId!, ct);
-        if (membership is null || membership.Status != MembershipStatus.Active) return;
+        if (membership is null || membership.Status is not (MembershipStatus.Active or MembershipStatus.PastDue)) return;
 
         var now = DateTimeOffset.UtcNow;
-        membership.Status = MembershipStatus.PastDue;
-        membership.UpdatedAt = now;
-        await memberships.SaveChangesAsync(ct);
+        if (membership.Status == MembershipStatus.Active)
+        {
+            membership.Status = MembershipStatus.PastDue;
+            membership.UpdatedAt = now;
+            await memberships.SaveChangesAsync(ct);
+        }
+        var invoiceKey = webhookEvent.InvoiceId ?? webhookEvent.EventId;
 
         var user = await userManager.FindByIdAsync(membership.UserId.ToString());
         if (user is null) return;
@@ -1669,24 +1878,29 @@ public class MembershipService(
             actionUrl = await paymentProvider.CreateBillingPortalUrlAsync(membership.ProviderCustomerId, accountUrl, ct);
         actionUrl ??= accountUrl;
 
-        await emailService.SendAsync(
+        await outbox.EnqueueEmailAsync(
+            $"email:MembershipPaymentFailed:Invoice:{invoiceKey}",
             "MembershipPaymentFailed", user.Email!, "Your membership payment didn't go through",
             new MembershipPaymentFailedEmailModel(user.FirstName, plan?.Name ?? "Membership", actionUrl, membership.ExpiresAt, webhookEvent.NextPaymentAttempt),
             nameof(Membership), membership.Id, ct);
 
-        await notificationService.CreateForUserAsync(
+        await outbox.EnqueueNotificationAsync(
+            $"notification:MembershipPaymentFailed:Invoice:{invoiceKey}",
             user.Id, NotificationType.Payment,
             "Payment Needs Attention",
             membership.ExpiresAt is { } until
                 ? $"Your {plan?.Name ?? "membership"} renewal was declined. Update your card to keep access beyond {until:d MMMM yyyy}."
                 : $"Your {plan?.Name ?? "membership"} renewal was declined. Please update your card.",
-            SiteUrls.AccountMembership, ct);
+            SiteUrls.AccountMembership, nameof(Membership), membership.Id, ct);
     }
 
     /// <summary>
-    /// The subscription has ended at the provider. The membership is marked Cancelled but keeps
-    /// its ExpiresAt: a member who cancels mid-period has paid for the period and keeps access
-    /// until it ends — Stripe sends this event at the end of the period, not on the click.
+    /// The subscription has ended at the provider. A member who cancels through the portal is
+    /// stopped at the period end, and the provider sends this event <em>then</em>, not on the
+    /// click (the click arrives as an update with cancel_at_period_end, mirrored above); so by the
+    /// time this arrives the paid-for period is over and the row closes now. An immediate
+    /// cancellation from the dashboard, or the provider giving up on an unpaid card, ends access
+    /// now as well — there is no subscription left to have paid for anything further.
     /// </summary>
     private async Task HandleSubscriptionCancelledAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
@@ -1706,23 +1920,29 @@ public class MembershipService(
 
         if (await userManager.FindByIdAsync(membership.UserId.ToString()) is { } user)
         {
+            // Only when nothing else keeps them a member — a complimentary grant, say.
+            if (await GetCurrentMembershipAsync(user.Id, ct) is null)
+                await SetMemberStatusAsync(user, MemberStatus.Cancelled);
             var plan = await plans.GetByIdAsync(membership.PlanId, ct);
-            await AnnounceMembershipEndedAsync(user, plan?.Name ?? "membership", now, wasRevoked: false, ct);
+            await AnnounceMembershipEndedAsync(user, membership.Id, plan?.Name ?? "membership", now, wasRevoked: false, ct);
         }
     }
 
     /// <summary>The in-app line and the email, together — a membership ending is the one event a
     /// member most needs to hear about in plain words, whichever way it happened.</summary>
-    private async Task AnnounceMembershipEndedAsync(ApplicationUser user, string planName, DateTimeOffset endedAt, bool wasRevoked, CancellationToken ct)
+    private async Task AnnounceMembershipEndedAsync(ApplicationUser user, Guid membershipId, string planName, DateTimeOffset endedAt, bool wasRevoked, CancellationToken ct)
     {
-        await notificationService.CreateForUserAsync(
+        await outbox.EnqueueNotificationAsync(
+            $"notification:MembershipEnded:Membership:{membershipId}",
             user.Id, NotificationType.Payment,
             "Membership Ended", $"Your {planName} has ended. You're welcome back any time.",
-            SiteUrls.Membership, ct);
+            SiteUrls.Membership, nameof(Membership), membershipId, ct);
 
         if (user.Email is not null)
         {
-            await emailService.SendAsync("MembershipEnded", user.Email, "Your membership has ended",
+            await outbox.EnqueueEmailAsync(
+                $"email:MembershipEnded:Membership:{membershipId}",
+                "MembershipEnded", user.Email, "Your membership has ended",
                 new MembershipEndedEmailModel(user.FirstName, planName, endedAt, SiteUrls.Absolute(BaseUrl, SiteUrls.Membership), wasRevoked),
                 nameof(ApplicationUser), user.Id, ct);
         }

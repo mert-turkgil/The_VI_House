@@ -21,15 +21,13 @@ public interface IPaymentProvider
     Task<PaymentWebhookEvent?> FetchWebhookEventAsync(string eventId, CancellationToken ct = default);
 
     /// <summary>
-    /// Reads a checkout session straight from the provider and, if the provider says it is complete
-    /// and paid, returns the same <see cref="PaymentWebhookEventType.CheckoutCompleted"/> event the
-    /// webhook would have carried. This is what the success page falls back on when the webhook has
-    /// not landed yet — delivery lag, a retry backlog, or a local run with nothing forwarding
-    /// webhooks — so the buyer is not left staring at "processing". It is as trustworthy as the
-    /// webhook (a server-side read with the secret key, not the browser's word), never the browser's
-    /// return URL alone. Returns null (never throws) when the session is not paid or cannot be read.
+    /// Reads a checkout session from the provider — with the secret key, never from anything the
+    /// browser carried — and reports it as the event the webhook would have delivered: paid,
+    /// complete-but-awaiting-payment, or expired. Null while the session is still open, or when
+    /// the provider cannot be reached. What the success pages and the reconciliation sweep feed
+    /// through the same dispatcher as a real webhook.
     /// </summary>
-    Task<PaymentWebhookEvent?> GetCompletedCheckoutAsync(string sessionId, CancellationToken ct = default);
+    Task<PaymentWebhookEvent?> ReadCheckoutSessionAsync(string sessionId, CancellationToken ct = default);
 
     /// <summary>Live read of a payment's current state directly from the provider — for admin
     /// screens that want real card/receipt/refund details beyond what's stored locally. Returns
@@ -292,4 +290,11 @@ public record PaymentWebhookEvent(string EventId, PaymentWebhookEventType Type, 
     /// <summary>For <see cref="PaymentWebhookEventType.SubscriptionRenewed"/>: when the period
     /// just paid for ends, i.e. the new expiry.</summary>
     public DateTimeOffset? CurrentPeriodEnd { get; init; }
+
+    /// <summary>The provider's subscription status on the Subscription* events: active, past_due,
+    /// unpaid, canceled, incomplete, incomplete_expired, trialing, paused.</summary>
+    public string? SubscriptionStatus { get; init; }
+
+    /// <summary>On the Dispute* events: the provider's dispute status — on closed, "won" or "lost".</summary>
+    public string? DisputeStatus { get; init; }
 }
