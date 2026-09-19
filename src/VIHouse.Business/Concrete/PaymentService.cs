@@ -29,7 +29,6 @@ public class PaymentService(
     IPaymentRepository payments,
     IBookingRepository bookings,
     IProfileRepository profiles,
-    IWebhookEventRepository webhookEvents,
     ICapacityService capacity,
     IPaymentProvider paymentProvider,
     IEmailService emailService,
@@ -38,6 +37,7 @@ public class PaymentService(
     IOptions<SiteOptions> siteOptions,
     IMembershipService membershipService,
     IAmbassadorService ambassadorService,
+    IPaymentTransactionService transactions,
     UserManager<ApplicationUser> userManager) : IPaymentService
 {
     /// <summary>The experience's member discount, if the applicant's address belongs to a current
@@ -141,6 +141,7 @@ public class PaymentService(
         if (hold is null)
             return CheckoutInitiationResult.Fail("Sorry — this ticket type just sold out.");
 
+        PaymentTransaction? transaction = null;
         try
         {
             var user = await ProvisionMemberAccountAsync(application, ct);
@@ -158,6 +159,11 @@ public class PaymentService(
             payment.ProviderReference = $"pending_{payment.Id:N}"; // placeholder, unique — replaced once Stripe returns a session id
             await payments.AddAsync(payment, ct);
             await payments.SaveChangesAsync(ct);
+
+            // The money record, opened Pending before the provider is asked for anything: it is
+            // what the webhook moves, and what "is this paid" is answered from (see PaymentTransaction).
+            transaction = await transactions.OpenAsync(PaymentTransactionKind.Experience, user.Id, nameof(Payment), payment.Id, amountMinor, ticketType.Currency, ct);
+            payment.TransactionId = transaction.Id;
 
             var session = await paymentProvider.CreateCheckoutSessionAsync(new CreateCheckoutSessionRequest(
                 CustomerEmail: application.Email,
@@ -178,6 +184,7 @@ public class PaymentService(
                     // The picture on the cards and the experience page, so the checkout looks like
                     // the thing that was just chosen. Absolute — the provider fetches it itself.
                     ImageUrl = AbsoluteOrNull(ExperienceService.CoverUrl(experience)),
+                    ProviderCustomerId = user.ProviderCustomerId,
                     // The approval and booking texts already exist; this is where the number to send
                     // them to comes from when the applicant did not give one on the form.
                     CollectPhone = true,
@@ -185,6 +192,7 @@ public class PaymentService(
 
             payment.ProviderReference = session.SessionId;
             await payments.SaveChangesAsync(ct);
+            await transactions.AttachSessionAsync(transaction.Id, session.SessionId, user.ProviderCustomerId, ct);
 
             if (application.Status == ApplicationStatus.Approved)
                 await applicationService.MarkPaymentPendingAsync(application.Id, ct);
@@ -194,8 +202,10 @@ public class PaymentService(
         catch (Exception)
         {
             // Stripe call (or anything else) failed after we'd already reserved the seat — give it
-            // back rather than leaving a phantom hold nobody will ever complete.
+            // back rather than leaving a phantom hold nobody will ever complete, and close the
+            // money record that never reached the provider.
             await capacity.ReleaseAsync(hold.Id, ct);
+            if (transaction is not null) await transactions.CancelOpenAsync(transaction.Id, "Checkout could not be opened at the provider.", ct);
             return CheckoutInitiationResult.Fail("We couldn't reach the payment provider — please try again in a moment.");
         }
     }
@@ -225,18 +235,27 @@ public class PaymentService(
         : path.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? path
         : SiteUrls.Absolute(siteOptions.Value.BaseUrl, path);
 
+    /// <summary>
+    /// Duplicate delivery is no longer this service's concern: PaymentWebhookDispatcher records
+    /// every event under a unique key before any handler runs and wraps all handlers in one
+    /// transaction, so this only has to be correct for an event it sees exactly once.
+    /// CheckoutPaymentFailed (a delayed payment method that did not settle) is the same outcome as
+    /// an expired session — nothing was paid, the held place goes back — and takes the same path.
+    /// </summary>
     public async Task HandleWebhookEventAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct = default)
     {
-        if (await webhookEvents.HasBeenProcessedAsync(webhookEvent.EventId, ct))
-            return; // duplicate delivery — Stripe retries are expected, this must be a safe no-op
+        if (webhookEvent.SessionId is null) return;
 
-        if (webhookEvent.Type == PaymentWebhookEventType.CheckoutCompleted && webhookEvent.SessionId is not null)
-            await HandleCheckoutCompletedAsync(webhookEvent, ct);
-        else if (webhookEvent.Type == PaymentWebhookEventType.CheckoutExpired && webhookEvent.SessionId is not null)
-            await HandleCheckoutExpiredAsync(webhookEvent.SessionId, ct);
-
-        await webhookEvents.MarkProcessedAsync(webhookEvent.EventId, ct);
-        await webhookEvents.SaveChangesAsync(ct);
+        switch (webhookEvent.Type)
+        {
+            case PaymentWebhookEventType.CheckoutCompleted:
+                await HandleCheckoutCompletedAsync(webhookEvent, ct);
+                break;
+            case PaymentWebhookEventType.CheckoutExpired:
+            case PaymentWebhookEventType.CheckoutPaymentFailed:
+                await HandleCheckoutExpiredAsync(webhookEvent.SessionId, ct);
+                break;
+        }
     }
 
     private async Task HandleCheckoutCompletedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)

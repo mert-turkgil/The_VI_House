@@ -256,6 +256,11 @@ public class AccountController(
     public async Task<IActionResult> Membership(CancellationToken ct)
     {
         var userId = CurrentUserId();
+
+        // A paid checkout the webhook hasn't confirmed yet is settled against the provider first,
+        // so this page never tells a paying member they have no membership.
+        await membershipService.ReconcilePendingCheckoutsAsync(userId, ct);
+
         var current = await membershipService.GetMembershipSummaryAsync(userId, ct);
         var history = await membershipService.GetMembershipHistoryAsync(userId, ct);
 

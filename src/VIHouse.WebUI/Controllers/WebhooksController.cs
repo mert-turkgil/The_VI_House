@@ -1,19 +1,37 @@
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using VIHouse.Business.Abstract;
 
 namespace VIHouse.WebUI.Controllers;
 
+/// <summary>
+/// Stripe's delivery endpoint. Thin on purpose: verify the signature, hash the body, hand the
+/// event to <see cref="IPaymentWebhookDispatcher"/>, translate its outcome into the status code
+/// Stripe acts on. Everything that matters — idempotency, the transaction, the log row — lives in
+/// the dispatcher, where a unit test can reach it.
+///
+/// Status codes are the contract with Stripe's retry schedule: 2xx means "done, never send this
+/// again"; anything else means "send it again later". So a duplicate is a 200 (we have it), an
+/// attempt still running elsewhere is a 409 (come back), a handler failure is a 500 (nothing was
+/// committed; come back), and a bad signature is a 400 (not ours to process).
+/// </summary>
 [Route("webhooks")]
 [ApiController]
 [IgnoreAntiforgeryToken]
+[EnableRateLimiting("webhook")]
 public class WebhooksController(
     IPaymentProvider paymentProvider,
-    IPaymentService paymentService,
-    IMembershipService membershipService,
-    ISeminarService seminarService,
+    IPaymentWebhookDispatcher dispatcher,
     ILogger<WebhooksController> logger) : ControllerBase
 {
+    /// <summary>Stripe events are a few kilobytes; a megabyte is already ten times the largest
+    /// object it sends. Anything bigger is not Stripe.</summary>
+    public const long MaxBodyBytes = 1_048_576;
+
     [HttpPost("stripe")]
+    [RequestSizeLimit(MaxBodyBytes)]
     public async Task<IActionResult> Stripe(CancellationToken ct)
     {
         string json;
@@ -30,19 +48,21 @@ public class WebhooksController(
         catch (Exception ex)
         {
             // Bad/missing signature — tell Stripe delivery failed (400) rather than silently
-            // swallowing what could be a spoofed request (brief §32).
+            // swallowing what could be a spoofed request (brief §32). The body is never logged.
             logger.LogWarning(ex, "Stripe webhook signature verification failed.");
             return BadRequest();
         }
 
-        // All three run unconditionally — each recognizes only its own checkout sessions (via its
-        // own table's ProviderReference) and no-ops otherwise, so a ticket purchase, a membership
-        // purchase and a seminar enrolment all land safely regardless of which one this is. See
-        // MembershipService.HandleWebhookEventAsync's doc comment for why the membership and
-        // seminar paths deliberately don't share PaymentService's ProcessedWebhookEvent ledger.
-        await paymentService.HandleWebhookEventAsync(webhookEvent, ct);
-        await membershipService.HandleWebhookEventAsync(webhookEvent, ct);
-        await seminarService.HandleWebhookEventAsync(webhookEvent, ct);
-        return Ok();
+        var result = await dispatcher.DispatchAsync(webhookEvent, Sha256Hex(json), isReplay: false, ct);
+
+        return result.Outcome switch
+        {
+            WebhookDispatchOutcome.Processed or WebhookDispatchOutcome.Ignored or WebhookDispatchOutcome.Duplicate => Ok(),
+            WebhookDispatchOutcome.InProgress => StatusCode(StatusCodes.Status409Conflict),
+            _ => StatusCode(StatusCodes.Status500InternalServerError),
+        };
     }
+
+    private static string Sha256Hex(string body) =>
+        Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(body)));
 }

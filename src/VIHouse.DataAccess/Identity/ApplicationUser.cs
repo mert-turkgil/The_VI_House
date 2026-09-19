@@ -20,4 +20,9 @@ public class ApplicationUser : IdentityUser<Guid>
 
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? LastLoginAt { get; set; }
+
+    /// <summary>The provider's customer record for this person, learned from the first payment
+    /// and handed to every later checkout — so a member is one customer at Stripe with one billing
+    /// portal and one payment-method list, not a new customer per purchase.</summary>
+    public string? ProviderCustomerId { get; set; }
 }

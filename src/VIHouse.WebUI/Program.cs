@@ -221,6 +221,10 @@ builder.Services.AddScoped<ISmsLogRepository, EfSmsLogRepository>();
 builder.Services.AddScoped<IAuditLogRepository, EfAuditLogRepository>();
 builder.Services.AddScoped<IProfileRepository, EfProfileRepository>();
 builder.Services.AddScoped<IWebhookEventRepository, EfWebhookEventRepository>();
+builder.Services.AddScoped<IPaymentTransactionRepository, EfPaymentTransactionRepository>();
+// The explicit transaction the webhook dispatcher wraps its handlers in — the one place several
+// repositories must commit together or not at all. See IUnitOfWork.
+builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
 builder.Services.AddScoped<IMembershipPaymentRepository, EfMembershipPaymentRepository>();
 builder.Services.AddScoped<IPendingJoinRepository, EfPendingJoinRepository>();
 builder.Services.AddScoped<IAmbassadorRepository, EfAmbassadorRepository>();
@@ -235,6 +239,10 @@ builder.Services.AddScoped<IExperienceService, ExperienceService>();
 builder.Services.AddScoped<IApplicationService, ApplicationService>();
 builder.Services.AddScoped<ICapacityService, CapacityService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+// The single entry point for every verified Stripe event: unique-id gate, one transaction across
+// the three handlers, a log row per event. See PaymentWebhookDispatcher.
+builder.Services.AddScoped<IPaymentTransactionService, PaymentTransactionService>();
+builder.Services.AddScoped<IPaymentWebhookDispatcher, PaymentWebhookDispatcher>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IMembershipService, MembershipService>();
 builder.Services.AddScoped<IAmbassadorService, AmbassadorService>();
@@ -266,6 +274,10 @@ builder.Services.AddScoped<IMediaStorage, LocalMediaStorage>();
 // Stripe keys: user-secrets in Development, environment variables (or a real vault) in Production —
 // never a committed appsettings.*.json file, same policy as SeedAdmin's credentials.
 builder.Services.Configure<StripeOptions>(builder.Configuration.GetSection("Stripe"));
+// One Stripe client for the process: the key bound to the instance, network retries on (see
+// StripeClientFactory). Both providers hang their Stripe services off it.
+builder.Services.AddSingleton<Stripe.IStripeClient>(sp =>
+    StripeClientFactory.Create(sp.GetRequiredService<IOptions<StripeOptions>>().Value));
 builder.Services.AddScoped<IPaymentProvider, StripePaymentProvider>();
 
 // The plan catalogue mirror (Admin -> Membership Plans <-> Stripe Products/Prices). Its own class
@@ -435,6 +447,12 @@ builder.Services.AddRateLimiter(options =>
 
     options.AddPolicy("checkout", ctx => RateLimitPartition.GetFixedWindowLimiter(PartitionKey(ctx), _ =>
         new FixedWindowRateLimiterOptions { PermitLimit = 20, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+
+    // Stripe delivers from a small set of addresses and legitimately bursts (a subscription renewal
+    // day, a replay from the dashboard). Generous, so real traffic never sees a 429 — Stripe would
+    // just retry — but a ceiling all the same on an endpoint that runs handlers per request.
+    options.AddPolicy("webhook", ctx => RateLimitPartition.GetFixedWindowLimiter(PartitionKey(ctx), _ =>
+        new FixedWindowRateLimiterOptions { PermitLimit = 600, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
 });
 
 var app = builder.Build();

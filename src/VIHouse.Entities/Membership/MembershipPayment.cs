@@ -27,4 +27,8 @@ public class MembershipPayment : BaseEntity
     /// <summary>The promo code applied at checkout, if any — the provider's coupon did the
     /// arithmetic, this is the record of which code it was.</summary>
     public Guid? PromoCodeId { get; set; }
+
+    /// <summary>The unified money record this row pays for — see PaymentTransaction. Null only
+    /// on rows older than the transaction table that the backfill could not place.</summary>
+    public Guid? TransactionId { get; set; }
 }

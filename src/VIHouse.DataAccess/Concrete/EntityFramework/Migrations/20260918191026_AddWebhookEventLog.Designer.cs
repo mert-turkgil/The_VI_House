@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VIHouse.DataAccess.Concrete.EntityFramework;
 
@@ -11,9 +12,11 @@ using VIHouse.DataAccess.Concrete.EntityFramework;
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 {
     [DbContext(typeof(VIHouseDbContext))]
-    partial class VIHouseDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260918191026_AddWebhookEventLog")]
+    partial class AddWebhookEventLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,10 +225,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ProviderCustomerId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -245,10 +244,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("ProviderCustomerId")
-                        .IsUnique()
-                        .HasFilter("[ProviderCustomerId] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -603,9 +598,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<Guid>("TicketTypeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TransactionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -625,146 +617,9 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.HasIndex("TicketTypeId");
 
-                    b.HasIndex("TransactionId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Payments", (string)null);
-                });
-
-            modelBuilder.Entity("VIHouse.Entities.Commerce.PaymentTransaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("AmountMinor")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("AmountRefundedMinor")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("CanceledAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
-
-                    b.Property<bool>("Disputed")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("DisputedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("ExpiredAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("FailedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("FailureCode")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FailureMessage")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("Kind")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<string>("LastEventId")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTimeOffset?>("PaidAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("ProviderChargeId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ProviderCustomerId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ProviderInvoiceId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ProviderPaymentIntentId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ProviderSessionId")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("ProviderSubscriptionId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTimeOffset?>("RefundedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("RelatedEntityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("RelatedEntityType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProviderChargeId")
-                        .HasFilter("[ProviderChargeId] IS NOT NULL");
-
-                    b.HasIndex("ProviderInvoiceId")
-                        .IsUnique()
-                        .HasFilter("[ProviderInvoiceId] IS NOT NULL");
-
-                    b.HasIndex("ProviderPaymentIntentId")
-                        .IsUnique()
-                        .HasFilter("[ProviderPaymentIntentId] IS NOT NULL");
-
-                    b.HasIndex("ProviderSessionId")
-                        .IsUnique()
-                        .HasFilter("[ProviderSessionId] IS NOT NULL");
-
-                    b.HasIndex("ProviderSubscriptionId")
-                        .HasFilter("[ProviderSubscriptionId] IS NOT NULL");
-
-                    b.HasIndex("Kind", "Status");
-
-                    b.HasIndex("RelatedEntityType", "RelatedEntityId");
-
-                    b.HasIndex("UserId", "CreatedAt");
-
-                    b.ToTable("PaymentTransactions", (string)null);
                 });
 
             modelBuilder.Entity("VIHouse.Entities.Commerce.PromoCode", b =>
@@ -2233,9 +2088,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TransactionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -2250,8 +2102,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
 
                     b.HasIndex("ProviderReference")
                         .IsUnique();
-
-                    b.HasIndex("TransactionId");
 
                     b.HasIndex("UserId");
 
@@ -2805,9 +2655,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TransactionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -2819,8 +2666,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.HasIndex("ProviderReference")
                         .IsUnique()
                         .HasFilter("[ProviderReference] IS NOT NULL");
-
-                    b.HasIndex("TransactionId");
 
                     b.HasIndex("UserId");
 
@@ -3333,19 +3178,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("VIHouse.Entities.Commerce.PaymentTransaction", null)
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("VIHouse.DataAccess.Identity.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("VIHouse.Entities.Commerce.PaymentTransaction", b =>
-                {
                     b.HasOne("VIHouse.DataAccess.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -3554,11 +3386,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("VIHouse.Entities.Commerce.PaymentTransaction", null)
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("VIHouse.DataAccess.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -3618,11 +3445,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasForeignKey("SeminarId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("VIHouse.Entities.Commerce.PaymentTransaction", null)
-                        .WithMany()
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("VIHouse.DataAccess.Identity.ApplicationUser", null)
                         .WithMany()

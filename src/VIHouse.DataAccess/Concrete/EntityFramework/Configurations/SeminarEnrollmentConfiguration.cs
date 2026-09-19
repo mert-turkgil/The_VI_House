@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VIHouse.DataAccess.Identity;
+using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Seminars;
 
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Configurations;
@@ -25,6 +26,7 @@ public class SeminarEnrollmentConfiguration : IEntityTypeConfiguration<SeminarEn
         builder.Property(e => e.ProviderReference).HasMaxLength(200);
         builder.Property(e => e.Currency).HasMaxLength(3).IsRequired();
         builder.Property(e => e.ReferralCode).HasMaxLength(40);
+        builder.HasOne<PaymentTransaction>().WithMany().HasForeignKey(x => x.TransactionId).OnDelete(DeleteBehavior.Restrict);
 
         // Restrict, not Cascade, on both sides: an enrolment is a financial record. Deleting a
         // seminar someone paid for should fail loudly rather than quietly erase the evidence —

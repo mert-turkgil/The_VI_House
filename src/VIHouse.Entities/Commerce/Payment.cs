@@ -24,4 +24,8 @@ public class Payment : BaseEntity
     public string ProviderReference { get; set; } = default!;
     public string? InvoiceReference { get; set; }
     public string? RefundStatus { get; set; }
+
+    /// <summary>The unified money record this row pays for — see PaymentTransaction. Null only
+    /// on rows older than the transaction table that the backfill could not place.</summary>
+    public Guid? TransactionId { get; set; }
 }

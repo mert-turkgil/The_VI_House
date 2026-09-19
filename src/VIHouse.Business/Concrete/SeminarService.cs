@@ -8,6 +8,7 @@ using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Notifications;
+using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Referrals;
 using VIHouse.Entities.Seminars;
 
@@ -32,6 +33,7 @@ public class SeminarService(
     IEmailService emailService,
     INotificationService notificationService,
     IAmbassadorService ambassadorService,
+    IPaymentTransactionService transactions,
     IAuditLogRepository auditLogs,
     IOptions<SiteOptions> siteOptions,
     UserManager<ApplicationUser> userManager) : ISeminarService
@@ -248,6 +250,14 @@ public class SeminarService(
         enrollment.ReferralCode ??= NormaliseReferral(referralCode);
         await enrollments.SaveChangesAsync(ct);
 
+        // A retry of an abandoned checkout reuses the enrolment row but gets a new money record;
+        // the old one, if still open, is closed as superseded.
+        if (enrollment.TransactionId is { } previous)
+            await transactions.CancelOpenAsync(previous, "Superseded by a newer checkout for the same enrolment.", ct);
+        var transaction = await transactions.OpenAsync(PaymentTransactionKind.Session, userId, nameof(SeminarEnrollment), enrollment.Id, access.PriceMinor, seminar.Currency, ct);
+        enrollment.TransactionId = transaction.Id;
+        await enrollments.SaveChangesAsync(ct);
+
         var translation = SeminarContent.Resolve(seminar, SiteCultures.Default);
 
         try
@@ -270,10 +280,12 @@ public class SeminarService(
                 {
                     ImageUrl = await SeminarImageUrlAsync(seminar, ct),
                     CollectPhone = true,
+                    ProviderCustomerId = user.ProviderCustomerId,
                 }, ct);
 
             enrollment.ProviderReference = session.SessionId;
             await enrollments.SaveChangesAsync(ct);
+            await transactions.AttachSessionAsync(transaction.Id, session.SessionId, user.ProviderCustomerId, ct);
 
             return SeminarEnrollmentResult.Redirect(session.Url);
         }
@@ -281,7 +293,9 @@ public class SeminarService(
         {
             // The pending row is left in place deliberately: it is reused on the next attempt (see
             // UpsertEnrollmentAsync), and deleting it here would race a webhook for a session that
-            // was in fact created before the response failed to reach us.
+            // was in fact created before the response failed to reach us. The money record, which
+            // never reached the provider, is closed.
+            await transactions.CancelOpenAsync(transaction.Id, "Checkout could not be opened at the provider.", ct);
             return SeminarEnrollmentResult.Fail("Seminar.Error.ProviderUnreachable");
         }
     }
@@ -305,7 +319,7 @@ public class SeminarService(
 
         if (webhookEvent.Type == PaymentWebhookEventType.CheckoutCompleted)
             await HandleCheckoutCompletedAsync(webhookEvent.SessionId, ct);
-        else if (webhookEvent.Type == PaymentWebhookEventType.CheckoutExpired)
+        else if (webhookEvent.Type is PaymentWebhookEventType.CheckoutExpired or PaymentWebhookEventType.CheckoutPaymentFailed)
             await HandleCheckoutExpiredAsync(webhookEvent.SessionId, ct);
     }
 

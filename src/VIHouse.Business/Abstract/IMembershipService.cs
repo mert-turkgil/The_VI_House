@@ -126,6 +126,14 @@ public interface IMembershipService
     Task<MembershipConfirmationInfo?> GetConfirmationBySessionAsync(string sessionId, CancellationToken ct = default);
 
     /// <summary>
+    /// For every checkout this user started that the webhook has not yet confirmed, asks the
+    /// provider whether it was paid and activates the membership if so. What the account page calls
+    /// before rendering, so a member who paid but never came back through the success page — or
+    /// whose webhook is late — still sees their membership. True when something was activated.
+    /// </summary>
+    Task<bool> ReconcilePendingCheckoutsAsync(Guid userId, CancellationToken ct = default);
+
+    /// <summary>
     /// Clears the free-text and address fields from pending joins that never paid and have sat
     /// untouched for <paramref name="olderThan"/>. Returns how many rows were cleared. The row
     /// itself stays, so a very late payment on it can still be matched.

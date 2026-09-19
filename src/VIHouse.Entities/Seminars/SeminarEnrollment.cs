@@ -33,4 +33,8 @@ public class SeminarEnrollment : BaseEntity
     /// Application.ReferralCode. Kept for every enrolment, paid or not, so the stats can count it;
     /// only a paid one becomes a conversion on the ledger.</summary>
     public string? ReferralCode { get; set; }
+
+    /// <summary>The unified money record this row pays for — see PaymentTransaction. Null only
+    /// on rows older than the transaction table that the backfill could not place.</summary>
+    public Guid? TransactionId { get; set; }
 }

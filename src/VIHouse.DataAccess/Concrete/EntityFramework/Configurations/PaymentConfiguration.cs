@@ -22,5 +22,6 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<Experience>().WithMany().HasForeignKey(p => p.ExperienceId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<TicketType>().WithMany().HasForeignKey(p => p.TicketTypeId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<PaymentTransaction>().WithMany().HasForeignKey(x => x.TransactionId).OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VIHouse.DataAccess.Identity;
+using VIHouse.Entities.Commerce;
 using VIHouse.Entities.Membership;
 
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Configurations;
@@ -12,6 +13,7 @@ public class MembershipPaymentConfiguration : IEntityTypeConfiguration<Membershi
         builder.ToTable("MembershipPayments");
 
         builder.HasIndex(p => p.ProviderReference).IsUnique();
+        builder.HasOne<PaymentTransaction>().WithMany().HasForeignKey(x => x.TransactionId).OnDelete(DeleteBehavior.Restrict);
         builder.Property(p => p.ProviderReference).HasMaxLength(200).IsRequired();
         builder.Property(p => p.Currency).HasMaxLength(3).IsRequired();
         builder.Property(p => p.ReferralCode).HasMaxLength(40);

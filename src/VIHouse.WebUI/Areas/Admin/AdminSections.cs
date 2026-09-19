@@ -54,6 +54,7 @@ public static class AdminSections
         new("AdminSeminars", "Index", "Sessions", "calendar", Split(RolesFor.Events)),
         new("AdminBookings", "Index", "Bookings", "calendar", Split(RolesFor.Bookings)),
         new("AdminPayments", "Index", "Payments", "credit-card", Split(RolesFor.Money)),
+        new("AdminWebhooks", "Index", "Stripe Events", "activity", Split(RolesFor.Money)),
         new("AdminPromoCodes", "Index", "Promo Codes", "tag", Split(RolesFor.Money)),
         new("AdminMembershipPlans", "Index", "Membership Plans", "layers", Split(RolesFor.Money)),
         new("AdminAmbassadors", "Index", "Ambassadors", "megaphone", Split(RolesFor.Marketing)),

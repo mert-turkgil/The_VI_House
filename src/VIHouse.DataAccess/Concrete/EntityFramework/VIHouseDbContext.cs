@@ -50,7 +50,8 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
     public DbSet<PromoCode> PromoCodes => Set<PromoCode>();
     public DbSet<TicketHold> TicketHolds => Set<TicketHold>();
     public DbSet<WaitlistEntry> WaitlistEntries => Set<WaitlistEntry>();
-    public DbSet<ProcessedWebhookEvent> ProcessedWebhookEvents => Set<ProcessedWebhookEvent>();
+    public DbSet<WebhookEvent> WebhookEvents => Set<WebhookEvent>();
+    public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
 
     public DbSet<ContentPage> ContentPages => Set<ContentPage>();
     public DbSet<ContentBlock> ContentBlocks => Set<ContentBlock>();
@@ -99,5 +100,12 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
         // Backs EfBookingRepository.GenerateNextReferenceAsync — a DB-level sequence guarantees
         // two simultaneous webhook deliveries can never allocate the same booking reference.
         modelBuilder.HasSequence<long>("BookingRefSeq", schema: "dbo").StartsAt(1).IncrementsBy(1);
+
+        // One Stripe customer per person; unique so two accounts can never claim the same one.
+        modelBuilder.Entity<ApplicationUser>(user =>
+        {
+            user.Property(u => u.ProviderCustomerId).HasMaxLength(100);
+            user.HasIndex(u => u.ProviderCustomerId).IsUnique().HasFilter("[ProviderCustomerId] IS NOT NULL");
+        });
     }
 }

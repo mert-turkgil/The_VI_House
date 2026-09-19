@@ -14,17 +14,25 @@ public class StripePaymentProvider : IPaymentProvider
     private readonly Stripe.BillingPortal.SessionService portalService;
     private readonly SubscriptionService subscriptionService;
     private readonly CouponService couponService;
+    private readonly EventService eventService;
     private readonly ILogger<StripePaymentProvider> logger;
 
-    public StripePaymentProvider(IOptions<StripeOptions> options, ILogger<StripePaymentProvider> logger)
+    /// <summary>
+    /// Every service is bound to the one shared <see cref="IStripeClient"/> (a singleton, see
+    /// StripeClientFactory) rather than the static StripeConfiguration.ApiKey — the previous
+    /// approach re-assigned a process-wide global from a per-request constructor. The client also
+    /// carries the network-retry policy; Stripe.net attaches an idempotency key to every POST it
+    /// retries, so a request that was sent but never answered cannot be executed twice.
+    /// </summary>
+    public StripePaymentProvider(IStripeClient client, IOptions<StripeOptions> options, ILogger<StripePaymentProvider> logger)
     {
         this.options = options.Value;
         this.logger = logger;
-        StripeConfiguration.ApiKey = this.options.SecretKey;
-        sessionService = new SessionService();
-        portalService = new Stripe.BillingPortal.SessionService();
-        subscriptionService = new SubscriptionService();
-        couponService = new CouponService();
+        sessionService = new SessionService(client);
+        portalService = new Stripe.BillingPortal.SessionService(client);
+        subscriptionService = new SubscriptionService(client);
+        couponService = new CouponService(client);
+        eventService = new EventService(client);
     }
 
     public async Task<CheckoutSessionResult> CreateCheckoutSessionAsync(CreateCheckoutSessionRequest request, CancellationToken ct = default)
@@ -34,7 +42,11 @@ public class StripePaymentProvider : IPaymentProvider
         var createOptions = new SessionCreateOptions
         {
             Mode = isSubscription ? "subscription" : "payment",
-            CustomerEmail = request.CustomerEmail,
+            // Customer and CustomerEmail are mutually exclusive at Stripe: a known customer is
+            // reused (their saved cards, one billing portal), an unknown buyer is created from the
+            // email on the first payment and remembered from the webhook.
+            Customer = request.ProviderCustomerId,
+            CustomerEmail = request.ProviderCustomerId is null ? request.CustomerEmail : null,
             ClientReferenceId = request.ClientReferenceId,
             SuccessUrl = request.SuccessUrl,
             CancelUrl = request.CancelUrl,
@@ -230,33 +242,115 @@ public class StripePaymentProvider : IPaymentProvider
         }
     }
 
+    public async Task<PaymentWebhookEvent?> GetCompletedCheckoutAsync(string sessionId, CancellationToken ct = default)
+    {
+        try
+        {
+            var session = await sessionService.GetAsync(sessionId, cancellationToken: ct);
+
+            // "complete" is Stripe's word for a checkout the buyer finished; the payment status is
+            // the money. no_payment_required is a 100% coupon or a trial — still a finished purchase.
+            if (session.Status != "complete") return null;
+            if (session.PaymentStatus is not ("paid" or "no_payment_required")) return null;
+
+            // Stripe only sends checkout.session.completed once, so a synthetic id keyed on the
+            // session is as stable as the real one for anything that ledgers by event id.
+            return MapCheckoutSession($"reconcile_{session.Id}", PaymentWebhookEventType.CheckoutCompleted, session);
+        }
+        catch (StripeException ex)
+        {
+            // Same reasons as GetPaymentDetailsAsync: a placeholder reference that never reached
+            // Stripe, or the API being unreachable. The caller keeps waiting for the webhook.
+            logger.LogWarning(ex, "Could not read Stripe checkout session {SessionId} for reconciliation", sessionId);
+            return null;
+        }
+    }
+
+    /// <summary>The one place a Checkout Session becomes our event — the webhook and the live
+    /// read above must agree on every field, or reconciliation would provision differently.</summary>
+    private static PaymentWebhookEvent MapCheckoutSession(string eventId, PaymentWebhookEventType type, Session? session, string rawType = "", bool liveMode = false)
+        => new(eventId, type, session?.Id)
+        {
+            RawType = rawType,
+            ObjectId = session?.Id,
+            LiveMode = liveMode,
+            PaymentState = session?.PaymentStatus switch
+            {
+                "paid" => CheckoutPaymentState.Paid,
+                "unpaid" => CheckoutPaymentState.Unpaid,
+                "no_payment_required" => CheckoutPaymentState.NoPaymentRequired,
+                _ => CheckoutPaymentState.Unknown,
+            },
+            AmountMinor = session?.AmountTotal,
+            Currency = session?.Currency?.ToUpperInvariant(),
+            PaymentIntentId = session?.PaymentIntentId,
+            SubscriptionId = session?.SubscriptionId,
+            CustomerId = session?.CustomerId,
+            ClientReferenceId = session?.ClientReferenceId,
+            // Present only when the session asked for them; absent on every other event.
+            CustomerPhone = session?.CustomerDetails?.Phone,
+            CompanyName = CustomFieldValue(session, CompanyFieldKey),
+            TaxId = session?.CustomerDetails?.TaxIds?.FirstOrDefault()?.Value,
+        };
+
     public PaymentWebhookEvent ConstructWebhookEvent(string requestBody, string signatureHeader)
     {
         // Throws StripeException on a bad/missing signature — the caller (WebhooksController) lets
         // that translate to a 400 so Stripe knows delivery failed, rather than swallowing it.
         var stripeEvent = EventUtility.ConstructEvent(requestBody, signatureHeader, options.WebhookSecret);
+        return MapEvent(stripeEvent);
+    }
 
-        switch (stripeEvent.Type)
+    public async Task<PaymentWebhookEvent?> FetchWebhookEventAsync(string eventId, CancellationToken ct = default)
+    {
+        try
+        {
+            var stripeEvent = await eventService.GetAsync(eventId, cancellationToken: ct);
+            return stripeEvent is null ? null : MapEvent(stripeEvent);
+        }
+        catch (StripeException ex)
+        {
+            logger.LogWarning(ex, "Could not fetch Stripe event {EventId}.", eventId);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Every event type the site reacts to or records. The rule that matters most is in the first
+    /// case: a completed checkout is only <see cref="PaymentWebhookEventType.CheckoutCompleted"/>
+    /// when the provider says the money is there. With a delayed payment method (bank transfer,
+    /// direct debit) the session completes as "unpaid" and the outcome arrives days later as
+    /// async_payment_succeeded / async_payment_failed — treating the first event as paid would
+    /// hand out a ticket, a membership or a seat for money that may never arrive.
+    /// </summary>
+    private static PaymentWebhookEvent MapEvent(Event stripeEvent)
+    {
+        var id = stripeEvent.Id;
+        var raw = stripeEvent.Type;
+        var live = stripeEvent.Livemode;
+
+        PaymentWebhookEvent Plain(PaymentWebhookEventType type) =>
+            new(id, type, null) { RawType = raw, ObjectId = (stripeEvent.Data?.Object as IHasId)?.Id, LiveMode = live };
+
+        switch (raw)
         {
             case "checkout.session.completed":
-            case "checkout.session.expired":
             {
                 var session = stripeEvent.Data.Object as Session;
-                var type = stripeEvent.Type == "checkout.session.completed"
-                    ? PaymentWebhookEventType.CheckoutCompleted
-                    : PaymentWebhookEventType.CheckoutExpired;
-
-                return new PaymentWebhookEvent(stripeEvent.Id, type, session?.Id)
-                {
-                    SubscriptionId = session?.SubscriptionId,
-                    CustomerId = session?.CustomerId,
-                    ClientReferenceId = session?.ClientReferenceId,
-                    // Present only when the session asked for them; absent on every other event.
-                    CustomerPhone = session?.CustomerDetails?.Phone,
-                    CompanyName = CustomFieldValue(session, CompanyFieldKey),
-                    TaxId = session?.CustomerDetails?.TaxIds?.FirstOrDefault()?.Value,
-                };
+                var type = session?.PaymentStatus == "unpaid"
+                    ? PaymentWebhookEventType.CheckoutCompletedAwaitingPayment
+                    : PaymentWebhookEventType.CheckoutCompleted;
+                return MapCheckoutSession(id, type, session, raw, live);
             }
+
+            case "checkout.session.async_payment_succeeded":
+                return MapCheckoutSession(id, PaymentWebhookEventType.CheckoutCompleted, stripeEvent.Data.Object as Session, raw, live);
+
+            case "checkout.session.async_payment_failed":
+                return MapCheckoutSession(id, PaymentWebhookEventType.CheckoutPaymentFailed, stripeEvent.Data.Object as Session, raw, live);
+
+            case "checkout.session.expired":
+                return MapCheckoutSession(id, PaymentWebhookEventType.CheckoutExpired, stripeEvent.Data.Object as Session, raw, live);
 
             case "invoice.paid":
             {
@@ -268,7 +362,7 @@ public class StripePaymentProvider : IPaymentProvider
                     || invoice.BillingReason == "subscription_create"
                     || invoice.Parent?.SubscriptionDetails?.SubscriptionId is not { } subscriptionId)
                 {
-                    return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.Unhandled, null);
+                    return Plain(PaymentWebhookEventType.Unhandled);
                 }
 
                 // The period the invoice covers is on its line items; the invoice-level PeriodEnd
@@ -279,45 +373,133 @@ public class StripePaymentProvider : IPaymentProvider
                     .Where(d => d is not null)
                     .Max();
 
-                return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.SubscriptionRenewed, null)
+                return new PaymentWebhookEvent(id, PaymentWebhookEventType.SubscriptionRenewed, null)
                 {
+                    RawType = raw,
+                    ObjectId = invoice.Id,
+                    LiveMode = live,
                     SubscriptionId = subscriptionId,
                     CustomerId = invoice.CustomerId,
                     InvoiceId = invoice.Id,
+                    // What was actually charged — a coupon or a proration makes this differ from
+                    // the plan's list price, and the ledger must say what the member paid.
+                    AmountMinor = invoice.AmountPaid,
+                    Currency = invoice.Currency?.ToUpperInvariant(),
                     CurrentPeriodEnd = ToUtc(periodEnd),
                 };
             }
 
             case "invoice.payment_failed":
+            case "invoice.payment_action_required":
             {
                 if (stripeEvent.Data.Object is not Invoice invoice
                     || invoice.Parent?.SubscriptionDetails?.SubscriptionId is not { } subscriptionId)
                 {
-                    return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.Unhandled, null);
+                    return Plain(PaymentWebhookEventType.Unhandled);
                 }
 
-                return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.SubscriptionPaymentFailed, null)
+                var type = raw == "invoice.payment_failed"
+                    ? PaymentWebhookEventType.SubscriptionPaymentFailed
+                    : PaymentWebhookEventType.InvoicePaymentActionRequired;
+
+                return new PaymentWebhookEvent(id, type, null)
                 {
+                    RawType = raw,
+                    ObjectId = invoice.Id,
+                    LiveMode = live,
                     SubscriptionId = subscriptionId,
                     CustomerId = invoice.CustomerId,
                     InvoiceId = invoice.Id,
+                    AmountMinor = invoice.AmountDue,
+                    Currency = invoice.Currency?.ToUpperInvariant(),
                     HostedInvoiceUrl = invoice.HostedInvoiceUrl,
                     NextPaymentAttempt = ToUtc(invoice.NextPaymentAttempt),
                 };
             }
 
             case "customer.subscription.deleted":
+            case "customer.subscription.updated":
             {
                 var subscription = stripeEvent.Data.Object as Subscription;
-                return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.SubscriptionCancelled, null)
+                var type = raw == "customer.subscription.deleted"
+                    ? PaymentWebhookEventType.SubscriptionCancelled
+                    : PaymentWebhookEventType.SubscriptionUpdated;
+                DateTime? periodEnd = subscription?.Items?.Data is { Count: > 0 } items
+                    ? items.Max(i => i.CurrentPeriodEnd)
+                    : null;
+                return new PaymentWebhookEvent(id, type, null)
                 {
+                    RawType = raw,
+                    ObjectId = subscription?.Id,
+                    LiveMode = live,
                     SubscriptionId = subscription?.Id,
                     CustomerId = subscription?.CustomerId,
+                    CancelAtPeriodEnd = subscription?.CancelAtPeriodEnd,
+                    CurrentPeriodEnd = ToUtc(periodEnd),
+                };
+            }
+
+            case "charge.refunded":
+            {
+                var charge = stripeEvent.Data.Object as Charge;
+                return new PaymentWebhookEvent(id, PaymentWebhookEventType.ChargeRefunded, null)
+                {
+                    RawType = raw,
+                    ObjectId = charge?.Id,
+                    LiveMode = live,
+                    ChargeId = charge?.Id,
+                    PaymentIntentId = charge?.PaymentIntentId,
+                    CustomerId = charge?.CustomerId,
+                    AmountMinor = charge?.Amount,
+                    AmountRefundedMinor = charge?.AmountRefunded,
+                    Currency = charge?.Currency?.ToUpperInvariant(),
+                };
+            }
+
+            case "charge.dispute.created":
+            case "charge.dispute.closed":
+            {
+                var dispute = stripeEvent.Data.Object as Dispute;
+                var type = raw == "charge.dispute.created" ? PaymentWebhookEventType.DisputeCreated : PaymentWebhookEventType.DisputeClosed;
+                return new PaymentWebhookEvent(id, type, null)
+                {
+                    RawType = raw,
+                    ObjectId = dispute?.Id,
+                    LiveMode = live,
+                    ChargeId = dispute?.ChargeId,
+                    PaymentIntentId = dispute?.PaymentIntentId,
+                    AmountMinor = dispute?.Amount,
+                    Currency = dispute?.Currency?.ToUpperInvariant(),
+                };
+            }
+
+            case "payment_intent.processing":
+            case "payment_intent.requires_action":
+            case "payment_intent.payment_failed":
+            case "payment_intent.canceled":
+            {
+                var intent = stripeEvent.Data.Object as PaymentIntent;
+                var type = raw switch
+                {
+                    "payment_intent.processing" => PaymentWebhookEventType.PaymentIntentProcessing,
+                    "payment_intent.requires_action" => PaymentWebhookEventType.PaymentIntentRequiresAction,
+                    "payment_intent.payment_failed" => PaymentWebhookEventType.PaymentIntentFailed,
+                    _ => PaymentWebhookEventType.PaymentIntentCanceled,
+                };
+                return new PaymentWebhookEvent(id, type, null)
+                {
+                    RawType = raw,
+                    ObjectId = intent?.Id,
+                    LiveMode = live,
+                    PaymentIntentId = intent?.Id,
+                    CustomerId = intent?.CustomerId,
+                    AmountMinor = intent?.Amount,
+                    Currency = intent?.Currency?.ToUpperInvariant(),
                 };
             }
 
             default:
-                return new PaymentWebhookEvent(stripeEvent.Id, PaymentWebhookEventType.Unhandled, null);
+                return Plain(PaymentWebhookEventType.Unhandled);
         }
     }
 }

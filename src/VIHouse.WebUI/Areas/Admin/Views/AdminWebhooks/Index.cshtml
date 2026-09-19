@@ -1,0 +1,130 @@
+@using VIHouse.Entities.Commerce
+@model AdminWebhookEventsViewModel
+@{
+    ViewData["Title"] = "Stripe Events";
+
+    string FilterClass(WebhookEventStatus? status) =>
+        Model.Status == status ? "admin-btn" : "admin-btn admin-btn--ghost";
+
+    string StatusBadge(WebhookEventStatus status) => status switch
+    {
+        WebhookEventStatus.Processed => "admin-badge admin-badge--open",
+        WebhookEventStatus.Failed => "admin-badge admin-badge--closed",
+        WebhookEventStatus.Received => "admin-badge admin-badge--pending",
+        _ => "admin-badge admin-badge--draft",
+    };
+
+    // The Stripe object an event is about, as a link into the Stripe dashboard. Test-mode objects
+    // live under /test/ there; the row knows which mode it came from.
+    string? StripeHref(WebhookEvent e)
+    {
+        if (string.IsNullOrEmpty(e.ObjectId)) return null;
+        var mode = e.LiveMode ? "" : "test/";
+        var prefix = e.ObjectId.Split('_')[0];
+        return prefix switch
+        {
+            "cs" => null, // Checkout Sessions have no dashboard page of their own
+            "in" => $"https://dashboard.stripe.com/{mode}invoices/{e.ObjectId}",
+            "sub" => $"https://dashboard.stripe.com/{mode}subscriptions/{e.ObjectId}",
+            "pi" => $"https://dashboard.stripe.com/{mode}payments/{e.ObjectId}",
+            "ch" => $"https://dashboard.stripe.com/{mode}payments/{e.ObjectId}",
+            "dp" or "du" => $"https://dashboard.stripe.com/{mode}disputes/{e.ObjectId}",
+            _ => null,
+        };
+    }
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<p class="admin-hint">
+    Every event Stripe delivered that verified against the webhook secret, newest first. <strong>Processed</strong>
+    means every handler ran and committed together; <strong>Failed</strong> means a handler threw, nothing was
+    written, and Stripe was told to retry — the reason is on the row, and <em>Re-run</em> fetches the event from
+    Stripe again and pushes it through the same path. <strong>Ignored</strong> events are types nothing acts on
+    yet. Payloads are never stored.
+</p>
+
+<div class="admin-toolbar">
+    <a class="@FilterClass(null)" asp-action="Index">All <span class="admin-table__sub">@Model.Total</span></a>
+    <a class="@FilterClass(WebhookEventStatus.Failed)" asp-action="Index" asp-route-status="Failed">Failed <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Failed)</span></a>
+    <a class="@FilterClass(WebhookEventStatus.Received)" asp-action="Index" asp-route-status="Received">In progress <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Received)</span></a>
+    <a class="@FilterClass(WebhookEventStatus.Processed)" asp-action="Index" asp-route-status="Processed">Processed <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Processed)</span></a>
+    <a class="@FilterClass(WebhookEventStatus.Ignored)" asp-action="Index" asp-route-status="Ignored">Ignored <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Ignored)</span></a>
+</div>
+
+@if (Model.Count(WebhookEventStatus.Failed) > 0 && Model.Status != WebhookEventStatus.Failed)
+{
+    <div class="admin-status-message">
+        @Model.Count(WebhookEventStatus.Failed) event(s) failed and are waiting on Stripe's retries.
+        <a asp-action="Index" asp-route-status="Failed">Show them</a>.
+    </div>
+}
+
+@if (Model.Rows.Count == 0)
+{
+    <p class="admin-hint">No events@(Model.Status is { } s ? $" with status {s}" : "") yet.</p>
+}
+else
+{
+    <div class="admin-table-scroll">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Received</th>
+                    <th>Event</th>
+                    <th>Object</th>
+                    <th>Status</th>
+                    <th>Attempts</th>
+                    <th>Last error</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model.Rows)
+                {
+                    <tr>
+                        <td>
+                            <time datetime="@e.ReceivedAt.ToString("o")">@e.ReceivedAt.ToString("d MMM yyyy, HH:mm:ss")</time>
+                            @if (!e.LiveMode)
+                            {
+                                <span class="admin-table__sub">test</span>
+                            }
+                        </td>
+                        <td>
+                            <code>@e.Type</code>
+                            <div class="admin-table__sub" style="font-family:ui-monospace,monospace;">@e.EventId</div>
+                        </td>
+                        <td>
+                            @if (StripeHref(e) is { } href)
+                            {
+                                <a href="@href" target="_blank" rel="noopener" style="font-family:ui-monospace,monospace; font-size:0.8125rem;">@e.ObjectId</a>
+                            }
+                            else
+                            {
+                                <span style="font-family:ui-monospace,monospace; font-size:0.8125rem;">@(e.ObjectId ?? "—")</span>
+                            }
+                        </td>
+                        <td><span class="@StatusBadge(e.Status)">@e.Status</span></td>
+                        <td>@e.Attempts</td>
+                        <td class="admin-table__sub" style="max-width:360px; word-break:break-word;">@(e.LastError ?? "—")</td>
+                        <td>
+                            @if (e.Status is WebhookEventStatus.Failed or WebhookEventStatus.Received)
+                            {
+                                <form asp-action="Rerun" asp-route-eventId="@e.EventId" method="post" onsubmit="return confirm('Fetch this event from Stripe again and run every handler on it?');">
+                                    <button type="submit" class="admin-btn admin-btn--sm">Re-run</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.Rows.Count == Model.Take)
+    {
+        <p class="admin-hint">Showing the newest @Model.Take. Narrow by status to see older rows.</p>
+    }
+}

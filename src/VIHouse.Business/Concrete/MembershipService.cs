@@ -32,9 +32,11 @@ public class MembershipService(
     IPaymentProvider paymentProvider,
     IPaymentCatalogProvider catalog,
     IEmailService emailService,
+    ISmsService smsService,
     INotificationService notificationService,
     IAuditLogRepository auditLogs,
     IAmbassadorService ambassadorService,
+    IPaymentTransactionService transactions,
     IOptions<SiteOptions> siteOptions,
     ISiteSettingsService siteSettings,
     UserManager<ApplicationUser> userManager,
@@ -731,6 +733,10 @@ public class MembershipService(
         // paid — and its webhook would then find a row that has moved on to a different session.
         if (previousSessionId is not null)
             await paymentProvider.ExpireCheckoutSessionAsync(previousSessionId, ct);
+        // …and the money record that went with it is closed; a new one opens for this attempt.
+        if (await transactions.GetLatestOpenForAsync(nameof(PendingJoin), join.Id, ct) is { } superseded)
+            await transactions.CancelOpenAsync(superseded.Id, "Superseded by a newer checkout for the same join.", ct);
+        var transaction = await transactions.OpenAsync(PaymentTransactionKind.Membership, null, nameof(PendingJoin), join.Id, plan.PriceMinor, plan.Currency, ct);
 
         string? couponId = null;
         if (join.PromoCodeId is { } joinPromoId && await promoCodes.GetByIdAsync(joinPromoId, ct) is { } joinPromo)
@@ -775,11 +781,13 @@ public class MembershipService(
             join.SessionExpiresAt = session.ExpiresAt ?? now.AddHours(24);
             join.UpdatedAt = DateTimeOffset.UtcNow;
             await pendingJoins.SaveChangesAsync(ct);
+            await transactions.AttachSessionAsync(transaction.Id, session.SessionId, null, ct);
 
             return MembershipCheckoutResult.Ok(session.Url);
         }
         catch (Exception ex)
         {
+            await transactions.CancelOpenAsync(transaction.Id, "Checkout could not be opened at the provider.", ct);
             logger.LogWarning(ex, "Could not open a checkout session for pending join {PendingJoinId}", join.Id);
             return MembershipCheckoutResult.Fail("We couldn't reach the payment provider — please try again in a moment.");
         }
@@ -922,6 +930,10 @@ public class MembershipService(
         await membershipPayments.AddAsync(payment, ct);
         await membershipPayments.SaveChangesAsync(ct);
 
+        // The money record — opened Pending, moved only by the provider's events.
+        var transaction = await transactions.OpenAsync(PaymentTransactionKind.Membership, user.Id, nameof(MembershipPayment), payment.Id, plan.PriceMinor, plan.Currency, ct);
+        payment.TransactionId = transaction.Id;
+
         try
         {
             var session = await paymentProvider.CreateCheckoutSessionAsync(new CreateCheckoutSessionRequest(
@@ -953,15 +965,18 @@ public class MembershipService(
                 // named product in Stripe's reporting; the inline amount remains the fallback.
                 ProviderPriceId = plan.IsProviderSynced ? plan.ProviderPriceId : null,
                 ProviderCouponId = couponId,
+                ProviderCustomerId = user.ProviderCustomerId,
             }, ct);
 
             payment.ProviderReference = session.SessionId;
             await membershipPayments.SaveChangesAsync(ct);
+            await transactions.AttachSessionAsync(transaction.Id, session.SessionId, user.ProviderCustomerId, ct);
 
             return MembershipCheckoutResult.Ok(session.Url);
         }
         catch (Exception ex)
         {
+            await transactions.CancelOpenAsync(transaction.Id, "Checkout could not be opened at the provider.", ct);
             logger.LogWarning(ex, "Could not open a checkout session for membership payment {PaymentId}", payment.Id);
             return MembershipCheckoutResult.Fail("We couldn't reach the payment provider — please try again in a moment.");
         }
@@ -973,6 +988,12 @@ public class MembershipService(
         if (payment is not null)
         {
             var plan = await plans.GetByIdAsync(payment.PlanId, ct);
+
+            // The webhook normally gets here first. When it hasn't — it is late, or nothing is
+            // forwarding it to this host — ask the provider directly and run the same activation,
+            // so the buyer sees their membership rather than an endless "processing".
+            if (payment.Status == PaymentStatus.Created && await TryReconcileCheckoutAsync(sessionId, ct))
+                payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct) ?? payment;
 
             if (payment.Status != PaymentStatus.Paid || payment.MembershipId is null)
                 return new MembershipConfirmationInfo(false, plan?.Name, payment.AmountMinor, payment.Currency, null);
@@ -993,6 +1014,9 @@ public class MembershipService(
         var amount = joinPlan?.PriceMinor ?? 0;
         var currency = joinPlan?.Currency ?? "GBP";
 
+        if (join.Status == PendingJoinStatus.Pending && await TryReconcileCheckoutAsync(sessionId, ct))
+            join = await pendingJoins.GetBySessionAsync(sessionId, ct) ?? join;
+
         if (join.Status != PendingJoinStatus.Paid || join.MembershipId is null)
             return new MembershipConfirmationInfo(false, joinPlan?.Name, amount, currency, null);
 
@@ -1001,6 +1025,32 @@ public class MembershipService(
         {
             UserId = join.UserId,
         };
+    }
+
+    public async Task<bool> ReconcilePendingCheckoutsAsync(Guid userId, CancellationToken ct = default)
+    {
+        // Only rows that reached the provider: the pending_ placeholder never became a session.
+        var open = await membershipPayments.FindAsync(
+            p => p.UserId == userId && p.Status == PaymentStatus.Created && !p.ProviderReference.StartsWith("pending_"), ct);
+
+        var activated = false;
+        foreach (var payment in open.OrderByDescending(p => p.CreatedAt))
+            activated |= await TryReconcileCheckoutAsync(payment.ProviderReference, ct);
+
+        return activated;
+    }
+
+    /// <summary>Reads the session from the provider and, if it is paid, provisions exactly as the
+    /// webhook would. True when the provider confirmed payment; the claim inside the handler keeps
+    /// this and a webhook that lands at the same moment from provisioning twice.</summary>
+    private async Task<bool> TryReconcileCheckoutAsync(string sessionId, CancellationToken ct)
+    {
+        var completed = await paymentProvider.GetCompletedCheckoutAsync(sessionId, ct);
+        if (completed is null) return false;
+
+        logger.LogInformation("Reconciling membership checkout {SessionId} from the provider ahead of its webhook", sessionId);
+        await HandleCheckoutCompletedAsync(completed, ct);
+        return true;
     }
 
     // =============================================================================================
@@ -1014,7 +1064,9 @@ public class MembershipService(
             case PaymentWebhookEventType.CheckoutCompleted when webhookEvent.SessionId is not null:
                 await HandleCheckoutCompletedAsync(webhookEvent, ct);
                 break;
+            // A delayed payment that never settled ends the same way an abandoned checkout does.
             case PaymentWebhookEventType.CheckoutExpired when webhookEvent.SessionId is not null:
+            case PaymentWebhookEventType.CheckoutPaymentFailed when webhookEvent.SessionId is not null:
                 await HandleCheckoutExpiredAsync(webhookEvent.SessionId, ct);
                 break;
             case PaymentWebhookEventType.SubscriptionRenewed when webhookEvent.SubscriptionId is not null:
@@ -1227,6 +1279,18 @@ public class MembershipService(
             await membershipPayments.SaveChangesAsync(ct);
         }
 
+        // The money record was opened against the PendingJoin before an account existed; now it
+        // has an owner, and the payment row points at it.
+        if (await transactions.GetBySessionAsync(sessionId, ct) is { } joinTransaction)
+        {
+            await transactions.AssignUserAsync(joinTransaction.Id, user.Id, webhookEvent.CustomerId, ct);
+            if (payment.TransactionId is null)
+            {
+                payment.TransactionId = joinTransaction.Id;
+                await membershipPayments.SaveChangesAsync(ct);
+            }
+        }
+
         var membership = await ActivateMembershipAsync(payment, plan, user, webhookEvent, ct);
 
         join.UserId = user.Id;
@@ -1257,6 +1321,7 @@ public class MembershipService(
                 Status = PaymentStatus.Paid,
                 ProviderReference = sessionId,
                 ReferralCode = join.ReferralCode,
+                TransactionId = (await transactions.GetBySessionAsync(sessionId, ct))?.Id,
             }, ct);
             await membershipPayments.SaveChangesAsync(ct);
         }
@@ -1440,6 +1505,15 @@ public class MembershipService(
             },
             nameof(Membership), membership.Id, ct);
 
+        // The number the provider validated on its checkout page wins over whatever is on the
+        // account; SmsService logs (and does nothing) when there is no gateway or no number.
+        await smsService.SendAsync(
+            "MembershipConfirmed", webhookEvent.CustomerPhone ?? user.PhoneNumber,
+            $"The VI House: payment received. You're confirmed as a {plan.Name}"
+                + (membership.ExpiresAt is { } until ? $" until {until:d MMM yyyy}" : "")
+                + ". Your card, sessions and experiences are open in your account.",
+            nameof(Membership), membership.Id, ct);
+
         await notificationService.CreateForUserAsync(
             user.Id, NotificationType.Payment,
             "Membership Confirmed", $"You're confirmed as a {plan.Name}.",
@@ -1537,10 +1611,15 @@ public class MembershipService(
             UserId = membership.UserId,
             PlanId = membership.PlanId,
             MembershipId = membership.Id,
-            AmountMinor = plan?.PriceMinor ?? 0,
-            Currency = plan?.Currency ?? "GBP",
+            // What the invoice actually collected — a coupon, a proration or a price change makes
+            // that differ from the plan's list price, and the ledger records money, not list prices.
+            // The plan is only the fallback for an event that carried no amount.
+            AmountMinor = webhookEvent.AmountMinor ?? plan?.PriceMinor ?? 0,
+            Currency = webhookEvent.Currency ?? plan?.Currency ?? "GBP",
             Status = PaymentStatus.Paid,
             ProviderReference = receipt,
+            // The MembershipRenewal transaction the dispatcher opened for this invoice a moment ago.
+            TransactionId = webhookEvent.InvoiceId is { } invoiceId ? (await transactions.GetByInvoiceAsync(invoiceId, ct))?.Id : null,
         }, ct);
         await membershipPayments.SaveChangesAsync(ct);
 

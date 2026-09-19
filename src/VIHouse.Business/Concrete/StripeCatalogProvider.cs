@@ -30,13 +30,12 @@ public class StripeCatalogProvider : IPaymentCatalogProvider
     private readonly ProductService products;
     private readonly PriceService prices;
 
-    public StripeCatalogProvider(IOptions<StripeOptions> options)
+    public StripeCatalogProvider(IStripeClient client, IOptions<StripeOptions> options)
     {
         this.options = options.Value;
 
-        // An empty key still constructs a client; the guard in EnsureConfigured turns the first
-        // call into a readable error instead of a 401 from Stripe.
-        var client = new StripeClient(string.IsNullOrWhiteSpace(this.options.SecretKey) ? "sk_unset" : this.options.SecretKey);
+        // The shared client (StripeClientFactory) — an empty key still constructs one; the guard in
+        // EnsureConfigured turns the first call into a readable error instead of a 401 from Stripe.
         products = new ProductService(client);
         prices = new PriceService(client);
     }
