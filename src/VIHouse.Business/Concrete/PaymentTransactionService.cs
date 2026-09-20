@@ -89,6 +89,10 @@ public class PaymentTransactionService(
         if (e.Type is PaymentWebhookEventType.DisputeCreated or PaymentWebhookEventType.DisputeClosed)
             return await FlagDisputeAsync(e, ct);
 
+        // A settled charge: one field (the buyer's receipt), no state change.
+        if (e.Type is PaymentWebhookEventType.ChargeSucceeded)
+            return await RecordReceiptAsync(e, ct);
+
         var target = PaymentTransactionStateMachine.TargetFor(e);
         if (target is null)
             return new PaymentTransactionEventResult(PaymentTransactionEventOutcome.NotApplicable, null, null, null);
@@ -127,6 +131,7 @@ public class PaymentTransactionService(
         transaction.ProviderCustomerId ??= e.CustomerId;
         transaction.ProviderSubscriptionId ??= e.SubscriptionId;
         transaction.ProviderInvoiceId ??= e.InvoiceId;
+        transaction.ProviderReceiptUrl ??= e.ReceiptUrl;
         if (e.AmountMinor is { } amount && e.Type is not PaymentWebhookEventType.ChargeRefunded) transaction.AmountMinor = amount;
         if (e.Currency is { Length: 3 } currency) transaction.Currency = currency;
         if (e.AmountRefundedMinor is { } refunded) transaction.AmountRefundedMinor = refunded;
@@ -193,6 +198,24 @@ public class PaymentTransactionService(
         return null;
     }
 
+    /// <summary>The provider's hosted receipt for a charge, kept so the member can open their own
+    /// copy from their account. Matched on the payment intent, which the checkout captured.</summary>
+    private async Task<PaymentTransactionEventResult> RecordReceiptAsync(PaymentWebhookEvent e, CancellationToken ct)
+    {
+        var transaction = e.PaymentIntentId is { } intentId ? await transactions.GetByPaymentIntentAsync(intentId, ct) : null;
+        if (transaction is null || e.ReceiptUrl is null)
+            return new PaymentTransactionEventResult(PaymentTransactionEventOutcome.NoTransaction, null, null, null);
+
+        if (transaction.ProviderReceiptUrl == e.ReceiptUrl)
+            return new PaymentTransactionEventResult(PaymentTransactionEventOutcome.AlreadyApplied, transaction, transaction.Status, transaction.Status);
+
+        transaction.ProviderReceiptUrl = e.ReceiptUrl;
+        transaction.ProviderChargeId ??= e.ChargeId;
+        transaction.UpdatedAt = DateTimeOffset.UtcNow;
+        await transactions.SaveChangesAsync(ct);
+        return new PaymentTransactionEventResult(PaymentTransactionEventOutcome.Applied, transaction, transaction.Status, transaction.Status);
+    }
+
     private async Task<PaymentTransactionEventResult> FlagDisputeAsync(PaymentWebhookEvent e, CancellationToken ct)
     {
         var transaction = e.PaymentIntentId is { } intentId ? await transactions.GetByPaymentIntentAsync(intentId, ct) : null;
@@ -221,10 +244,25 @@ public class PaymentTransactionService(
         if (string.IsNullOrWhiteSpace(providerCustomerId)) return;
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null || user.ProviderCustomerId == providerCustomerId) return;
+
+        // The id is unique across accounts. If another account already holds it — two people
+        // sharing a provider customer, or an id reused by hand — the link is left alone and the
+        // fact is written down. Never thrown: this is bookkeeping, and a payment that has landed
+        // must not be rolled back (and retried for ever) over which account the customer hangs off.
+        var owner = userManager.Users.FirstOrDefault(u => u.ProviderCustomerId == providerCustomerId);
+        if (owner is not null && owner.Id != userId)
+        {
+            logger.LogWarning("Customer {CustomerId} is already linked to account {OwnerId}; leaving account {UserId} unlinked.", providerCustomerId, owner.Id, userId);
+            return;
+        }
+
         if (user.ProviderCustomerId is not null)
             logger.LogWarning("Account {UserId} paid as customer {New}; replacing the stored customer {Old}.", userId, providerCustomerId, user.ProviderCustomerId);
         user.ProviderCustomerId = providerCustomerId;
-        await userManager.UpdateAsync(user);
+
+        var updated = await userManager.UpdateAsync(user);
+        if (!updated.Succeeded)
+            logger.LogWarning("Could not link customer {CustomerId} to account {UserId}: {Errors}", providerCustomerId, userId, string.Join(" ", updated.Errors.Select(e => e.Description)));
     }
 
     private static string Clip(string value, int max) => value.Length <= max ? value : value[..max];

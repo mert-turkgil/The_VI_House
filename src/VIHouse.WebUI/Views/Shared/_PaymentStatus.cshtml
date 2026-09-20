@@ -1,0 +1,32 @@
+@using VIHouse.Entities.Commerce
+@model PaymentTransactionStatus
+@*
+    One payment state, in the member's own words. Shared by the payments page and by the notices
+    on Experiences, Sessions and Membership so a state is never described two different ways.
+    The modifiers reuse the account status palette: green for money that landed, amber for money
+    still moving or waiting on the member, red for a failure, muted for everything closed.
+*@
+@{
+    var key = Model switch
+    {
+        PaymentTransactionStatus.Succeeded => "active",
+        PaymentTransactionStatus.Pending or PaymentTransactionStatus.Processing or PaymentTransactionStatus.RequiresAction => "pastdue",
+        PaymentTransactionStatus.Failed => "cancelled",
+        _ => "closed",
+    };
+
+    var label = Model switch
+    {
+        PaymentTransactionStatus.Pending => Loc["Payment.Status.Pending"],
+        PaymentTransactionStatus.Processing => Loc["Payment.Status.Processing"],
+        PaymentTransactionStatus.RequiresAction => Loc["Payment.Status.RequiresAction"],
+        PaymentTransactionStatus.Succeeded => Loc["Payment.Status.Succeeded"],
+        PaymentTransactionStatus.Failed => Loc["Payment.Status.Failed"],
+        PaymentTransactionStatus.Canceled => Loc["Payment.Status.Canceled"],
+        PaymentTransactionStatus.Expired => Loc["Payment.Status.Expired"],
+        PaymentTransactionStatus.Refunded => Loc["Payment.Status.Refunded"],
+        PaymentTransactionStatus.PartiallyRefunded => Loc["Payment.Status.PartiallyRefunded"],
+        _ => Loc["Payment.Status.Pending"],
+    };
+}
+<span class="account-status account-status--@key">@label</span>

@@ -63,6 +63,7 @@ public class PaymentWebhookDispatcher(
         PaymentWebhookEventType.SubscriptionCancelled,
         PaymentWebhookEventType.SubscriptionUpdated,
         PaymentWebhookEventType.InvoicePaymentActionRequired,
+        PaymentWebhookEventType.ChargeSucceeded,
         PaymentWebhookEventType.ChargeRefunded,
         PaymentWebhookEventType.DisputeCreated,
         PaymentWebhookEventType.DisputeClosed,

@@ -1809,6 +1809,16 @@ public class MembershipService(
             payment.Status = PaymentStatus.Cancelled;
             payment.UpdatedAt = DateTimeOffset.UtcNow;
             await membershipPayments.SaveChangesAsync(ct);
+
+            var cancelledPlan = await plans.GetByIdAsync(payment.PlanId, ct);
+            await outbox.EnqueueNotificationAsync(
+                $"notification:PaymentNotCompleted:MembershipPayment:{payment.Id}",
+                payment.UserId, NotificationType.Payment,
+                paymentFailed ? "Payment Failed" : "Checkout Cancelled",
+                paymentFailed
+                    ? $"Your bank declined the payment for the {cancelledPlan?.Name ?? "membership"}, so it didn't start and nothing was charged. You can try again from your account."
+                    : $"The checkout for the {cancelledPlan?.Name ?? "membership"} closed before it was paid, so it didn't start and nothing was charged. You can try again from your account.",
+                SiteUrls.AccountMembership, nameof(MembershipPayment), payment.Id, ct);
             return;
         }
 

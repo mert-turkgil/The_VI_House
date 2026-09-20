@@ -415,6 +415,8 @@ public class StripePaymentProvider : IPaymentProvider
                     AmountMinor = invoice.AmountPaid,
                     Currency = invoice.Currency?.ToUpperInvariant(),
                     CurrentPeriodEnd = ToUtc(periodEnd),
+                    // The member's copy of this charge, on Stripe's own pages.
+                    ReceiptUrl = invoice.HostedInvoiceUrl,
                 };
             }
 
@@ -469,6 +471,24 @@ public class StripePaymentProvider : IPaymentProvider
                 };
             }
 
+            case "charge.succeeded":
+            {
+                // Recorded for one field: the receipt the buyer can open. Fulfilment is decided by
+                // the Checkout events, which carry the session the order is keyed on.
+                var settled = stripeEvent.Data.Object as Charge;
+                return new PaymentWebhookEvent(id, PaymentWebhookEventType.ChargeSucceeded, null)
+                {
+                    RawType = raw,
+                    ObjectId = settled?.Id,
+                    LiveMode = live,
+                    ChargeId = settled?.Id,
+                    PaymentIntentId = settled?.PaymentIntentId,
+                    CustomerId = settled?.CustomerId,
+                    Currency = settled?.Currency?.ToUpperInvariant(),
+                    ReceiptUrl = settled?.ReceiptUrl,
+                };
+            }
+
             case "charge.refunded":
             {
                 var charge = stripeEvent.Data.Object as Charge;
@@ -483,6 +503,7 @@ public class StripePaymentProvider : IPaymentProvider
                     AmountMinor = charge?.Amount,
                     AmountRefundedMinor = charge?.AmountRefunded,
                     Currency = charge?.Currency?.ToUpperInvariant(),
+                    ReceiptUrl = charge?.ReceiptUrl,
                 };
             }
 

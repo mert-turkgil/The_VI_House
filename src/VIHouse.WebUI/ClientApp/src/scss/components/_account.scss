@@ -92,6 +92,13 @@
     background: var(--vih-warning-bg);
     color: var(--vih-warning);
   }
+
+  // Closed without money changing hands, or money given back: neither good news nor bad, so it
+  // keeps the muted default rather than borrowing green or red.
+  &--closed {
+    background: var(--vih-surface-sunken);
+    color: var(--vih-text-muted);
+  }
 }
 
 // A single prompt that needs acting on — "complete your profile". Sits between the hero and the
@@ -569,6 +576,27 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--vih-text-muted);
+  }
+
+  // A second line inside a cell — a time under a date, a refunded amount under a total, what a
+  // payment state means. The cells themselves are nowrap; this one wraps, so the explanation can
+  // be a sentence without stretching the table.
+  &__sub {
+    display: block;
+    max-width: 30ch;
+    margin-top: 2px;
+    font-size: var(--vih-text-xs);
+    line-height: 1.35;
+    white-space: normal;
+    color: var(--vih-text-muted);
+  }
+
+  // The payments table carries a sentence in two of its columns, which a nowrap grid pushes off
+  // the side of the page. Here the cells wrap instead, so every column — including the reference
+  // and its receipt link — stays on screen at laptop width.
+  &--roomy td {
+    white-space: normal;
+    vertical-align: top;
   }
 }
 

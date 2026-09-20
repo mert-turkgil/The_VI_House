@@ -1,0 +1,36 @@
+@using VIHouse.Entities.Commerce
+@model List<MemberPaymentItem>
+@*
+    Payments on this page's subject that have not settled — money still moving, a bank waiting on
+    the member, a checkout that ended without paying. Shown above the list of what they actually
+    hold, so a place that was never confirmed is explained rather than simply absent.
+
+    The caller passes only the payments for its own kind; this partial does not query anything.
+*@
+@{
+    string Meaning(PaymentTransactionStatus s) => s switch
+    {
+        PaymentTransactionStatus.Pending => Loc["Payment.Meaning.Pending"].Value,
+        PaymentTransactionStatus.Processing => Loc["Payment.Meaning.Processing"].Value,
+        PaymentTransactionStatus.RequiresAction => Loc["Payment.Meaning.RequiresAction"].Value,
+        PaymentTransactionStatus.Failed => Loc["Payment.Meaning.Failed"].Value,
+        PaymentTransactionStatus.Canceled => Loc["Payment.Meaning.Canceled"].Value,
+        PaymentTransactionStatus.Expired => Loc["Payment.Meaning.Expired"].Value,
+        PaymentTransactionStatus.Refunded => Loc["Payment.Meaning.Refunded"].Value,
+        PaymentTransactionStatus.PartiallyRefunded => Loc["Payment.Meaning.PartiallyRefunded"].Value,
+        _ => Loc["Payment.Meaning.Succeeded"].Value,
+    };
+}
+@foreach (var p in Model)
+{
+    <div class="account-notice @(p.Status is PaymentTransactionStatus.Failed or PaymentTransactionStatus.RequiresAction ? "account-notice--pastdue" : "")" role="status">
+        <div>
+            <strong>
+                <partial name="_PaymentStatus" model="p.Status" />
+                @p.What — @MoneyFormatter.Format(p.AmountMinor, p.Currency)
+            </strong>
+            <p>@Meaning(p.Status)</p>
+        </div>
+        <a class="btn btn--ghost btn--sm" asp-controller="Account" asp-action="Payments">@Loc["Account.Payments.SeeAll"]</a>
+    </div>
+}

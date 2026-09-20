@@ -52,6 +52,9 @@ public static class SiteUrls
     public const string AccountMembership = "/account/membership";
     public const string AccountBookings = "/account/bookings";
     public const string AccountSessions = "/account/sessions";
+
+    /// <summary>The member's own record of every payment they have made.</summary>
+    public const string AccountPayments = "/account/payments";
     public const string AccountNotifications = "/account/notifications";
 
     // Public pages.

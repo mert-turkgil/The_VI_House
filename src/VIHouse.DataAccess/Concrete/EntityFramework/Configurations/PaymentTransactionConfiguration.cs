@@ -21,6 +21,7 @@ public class PaymentTransactionConfiguration : IEntityTypeConfiguration<PaymentT
         builder.Property(t => t.ProviderChargeId).HasMaxLength(100);
         builder.Property(t => t.ProviderSubscriptionId).HasMaxLength(100);
         builder.Property(t => t.ProviderInvoiceId).HasMaxLength(100);
+        builder.Property(t => t.ProviderReceiptUrl).HasMaxLength(500);
         builder.Property(t => t.FailureCode).HasMaxLength(100);
         builder.Property(t => t.FailureMessage).HasMaxLength(1000);
         builder.Property(t => t.LastEventId).HasMaxLength(255);

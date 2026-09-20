@@ -52,6 +52,11 @@
             <div class="apply-form__summary" role="alert" style="margin-bottom:20px;">@error</div>
         }
 
+        @if (ViewData["PaymentNotices"] is List<MemberPaymentItem> { Count: > 0 } paymentNotices)
+        {
+            <partial name="_PaymentNotices" model="paymentNotices" />
+        }
+
         @if (m is not null)
         {
             @if (m.IsPastDue)

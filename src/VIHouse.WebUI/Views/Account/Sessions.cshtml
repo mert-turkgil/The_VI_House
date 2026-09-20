@@ -33,6 +33,11 @@
             }
         </header>
 
+        @if (ViewData["PaymentNotices"] is List<MemberPaymentItem> { Count: > 0 } paymentNotices)
+        {
+            <partial name="_PaymentNotices" model="paymentNotices" />
+        }
+
         @if (Model.Total == 0)
         {
             <div class="account-empty">

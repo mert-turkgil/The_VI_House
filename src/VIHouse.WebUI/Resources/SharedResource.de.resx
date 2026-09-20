@@ -1313,4 +1313,46 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Ihr Checkout ist abgeschlossen und Ihre Bank bestätigt die Zahlung — bei der gewählten Zahlungsart kann das einige Tage dauern. Ihr Platz bleibt in der Zwischenzeit reserviert, und wir senden Ihre Bestätigung per E-Mail, sobald das Geld eingegangen ist. Sie müssen nichts weiter tun.</value></data>
   <data name="Payment.RequiresAction.Heading" xml:space="preserve"><value>Ihre Bank benötigt eine Bestätigung</value></data>
   <data name="Payment.RequiresAction.Body" xml:space="preserve"><value>Ihre Bank hat Sie gebeten, diese Zahlung zu bestätigen, bevor sie ausgeführt wird — achten Sie auf ihre Nachricht oder App-Aufforderung. Ihr Platz bleibt währenddessen reserviert, und wir senden Ihre Bestätigung per E-Mail, sobald die Zahlung eingegangen ist.</value></data>
+  <data name="Account.NavPayments" xml:space="preserve"><value>Zahlungen</value></data>
+  <data name="Account.PaymentsTitle" xml:space="preserve"><value>Meine Zahlungen</value></data>
+  <data name="Account.Payments.Lede" xml:space="preserve"><value>Jede Zahlung, die Sie an The VI House geleistet haben — wofür sie war, was sie gekostet hat und wie ihr Stand ist. Nichts hier wird vom Browser bestätigt: Eine Zahlung gilt erst als bezahlt, wenn Ihre Bank es uns bestätigt hat.</value></data>
+  <data name="Account.Payments.Empty" xml:space="preserve"><value>Noch keine Zahlungen</value></data>
+  <data name="Account.Payments.Empty.Body" xml:space="preserve"><value>Sobald Sie eine Experience buchen, einen Platz in einer Session nehmen oder eine Mitgliedschaft beginnen, erscheinen die Zahlung und die Quittung hier.</value></data>
+  <data name="Account.Payments.InFlight" xml:space="preserve"><value>In Bearbeitung</value></data>
+  <data name="Account.Payments.History" xml:space="preserve"><value>Alle Zahlungen</value></data>
+  <data name="Account.Payments.Date" xml:space="preserve"><value>Datum</value></data>
+  <data name="Account.Payments.For" xml:space="preserve"><value>Für</value></data>
+  <data name="Account.Payments.Type" xml:space="preserve"><value>Art</value></data>
+  <data name="Account.Payments.Amount" xml:space="preserve"><value>Betrag</value></data>
+  <data name="Account.Payments.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Account.Payments.Reference" xml:space="preserve"><value>Referenz</value></data>
+  <data name="Account.Payments.Receipt" xml:space="preserve"><value>Beleg ansehen</value></data>
+  <data name="Account.Payments.RefundedAmount" xml:space="preserve"><value>{0} erstattet</value></data>
+  <data name="Account.Payments.View" xml:space="preserve"><value>Ansehen</value></data>
+  <data name="Account.Payments.SeeAll" xml:space="preserve"><value>Zahlungen ansehen</value></data>
+  <data name="Account.Payments.OpenMembership" xml:space="preserve"><value>Zur Mitgliedschaft</value></data>
+  <data name="Account.Payments.TotalsLead" xml:space="preserve"><value>Bisher von Ihnen eingezogen, abzüglich Erstattungen:</value></data>
+  <data name="Account.Payments.Foot" xml:space="preserve"><value>Belege werden von unserem Zahlungsdienstleister Stripe bereitgestellt. Ihre vollständigen Kartendaten sehen und speichern wir nie.</value></data>
+  <data name="Payment.Kind.Experience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Payment.Kind.Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Payment.Kind.Membership" xml:space="preserve"><value>Mitgliedschaft</value></data>
+  <data name="Payment.Kind.Renewal" xml:space="preserve"><value>Verlängerung</value></data>
+  <data name="Payment.Status.Pending" xml:space="preserve"><value>Zahlung ausstehend</value></data>
+  <data name="Payment.Status.Processing" xml:space="preserve"><value>In Bearbeitung</value></data>
+  <data name="Payment.Status.RequiresAction" xml:space="preserve"><value>Aktion erforderlich</value></data>
+  <data name="Payment.Status.Succeeded" xml:space="preserve"><value>Bezahlt</value></data>
+  <data name="Payment.Status.Failed" xml:space="preserve"><value>Fehlgeschlagen</value></data>
+  <data name="Payment.Status.Canceled" xml:space="preserve"><value>Storniert</value></data>
+  <data name="Payment.Status.Expired" xml:space="preserve"><value>Abgelaufen</value></data>
+  <data name="Payment.Status.Refunded" xml:space="preserve"><value>Erstattet</value></data>
+  <data name="Payment.Status.PartiallyRefunded" xml:space="preserve"><value>Teilweise erstattet</value></data>
+  <data name="Payment.Meaning.Pending" xml:space="preserve"><value>Der Checkout ist offen, es wurde noch nichts belastet.</value></data>
+  <data name="Payment.Meaning.Processing" xml:space="preserve"><value>Ihre Bank bestätigt die Zahlung. Ihr Platz bleibt so lange reserviert und Sie müssen nichts weiter tun — wir melden uns per E-Mail, sobald sie eingegangen ist.</value></data>
+  <data name="Payment.Meaning.RequiresAction" xml:space="preserve"><value>Ihre Bank bittet Sie, diese Zahlung zu bestätigen — achten Sie auf ihre Nachricht oder App-Aufforderung. Bis dahin wird nichts belastet.</value></data>
+  <data name="Payment.Meaning.Succeeded" xml:space="preserve"><value>Vollständig bezahlt und von Ihrer Bank bestätigt.</value></data>
+  <data name="Payment.Meaning.Failed" xml:space="preserve"><value>Ihre Bank hat die Zahlung abgelehnt, es wurde nichts belastet und nichts bestätigt. Sie können es gern erneut versuchen.</value></data>
+  <data name="Payment.Meaning.Canceled" xml:space="preserve"><value>Der Checkout wurde vor der Zahlung abgebrochen. Es wurde nichts belastet und nichts bestätigt.</value></data>
+  <data name="Payment.Meaning.Expired" xml:space="preserve"><value>Der Checkout ist vor der Zahlung abgelaufen. Es wurde nichts belastet und nichts bestätigt.</value></data>
+  <data name="Payment.Meaning.Refunded" xml:space="preserve"><value>Der volle Betrag wurde an Ihr Zahlungsmittel zurückgesendet. Je nach Bank kann es fünf bis zehn Werktage dauern, bis er sichtbar ist.</value></data>
+  <data name="Payment.Meaning.PartiallyRefunded" xml:space="preserve"><value>Ein Teil dieser Zahlung wurde an Ihr Zahlungsmittel zurückgesendet; das Gekaufte bleibt unverändert.</value></data>
 </root>

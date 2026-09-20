@@ -207,6 +207,9 @@ public enum PaymentWebhookEventType
     ChargeRefunded,
     DisputeCreated,
     DisputeClosed,
+    /// <summary>A charge settled. Carries nothing the state machine needs — the Checkout events
+    /// decide fulfilment — but it is the only event that carries the buyer's receipt URL.</summary>
+    ChargeSucceeded,
     PaymentIntentProcessing,
     PaymentIntentRequiresAction,
     PaymentIntentFailed,
@@ -297,4 +300,8 @@ public record PaymentWebhookEvent(string EventId, PaymentWebhookEventType Type, 
 
     /// <summary>On the Dispute* events: the provider's dispute status — on closed, "won" or "lost".</summary>
     public string? DisputeStatus { get; init; }
+
+    /// <summary>The provider's hosted receipt (charge) or invoice page, when the event carries one.
+    /// Safe to show the buyer: the provider serves it, and it holds no card data.</summary>
+    public string? ReceiptUrl { get; init; }
 }

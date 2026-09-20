@@ -1313,4 +1313,46 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Ödeme adımınız tamamlandı ve bankanız ödemeyi onaylıyor — seçtiğiniz yöntemle bu birkaç gün sürebilir. Bu sırada yeriniz ayrılmış kalır; para ulaştığı anda onayınızı e-posta ile göndereceğiz. Sizin yapmanız gereken başka bir şey yok.</value></data>
   <data name="Payment.RequiresAction.Heading" xml:space="preserve"><value>Bankanızın onayı gerekiyor</value></data>
   <data name="Payment.RequiresAction.Body" xml:space="preserve"><value>Bankanız, ödemenin gerçekleşmesi için sizden onay istedi — bankanızın mesajını veya uygulama bildirimini kontrol edin. Bu sırada yeriniz ayrılmış kalır; ödeme tamamlandığında onayınızı e-posta ile göndereceğiz.</value></data>
+  <data name="Account.NavPayments" xml:space="preserve"><value>Ödemeler</value></data>
+  <data name="Account.PaymentsTitle" xml:space="preserve"><value>Ödemelerim</value></data>
+  <data name="Account.Payments.Lede" xml:space="preserve"><value>The VI House'a yaptığınız her ödeme — neyin karşılığı olduğu, tutarı ve durumu. Buradaki hiçbir şey tarayıcı tarafından onaylanmaz: bir ödeme, ancak bankanız bize bildirdiğinde ödendi olarak görünür.</value></data>
+  <data name="Account.Payments.Empty" xml:space="preserve"><value>Henüz ödeme yok</value></data>
+  <data name="Account.Payments.Empty.Body" xml:space="preserve"><value>Bir deneyim rezervasyonu yaptığınızda, bir oturumda yer aldığınızda veya üyelik başlattığınızda ödeme ve makbuzu burada görünür.</value></data>
+  <data name="Account.Payments.InFlight" xml:space="preserve"><value>İşlemde</value></data>
+  <data name="Account.Payments.History" xml:space="preserve"><value>Tüm ödemeler</value></data>
+  <data name="Account.Payments.Date" xml:space="preserve"><value>Tarih</value></data>
+  <data name="Account.Payments.For" xml:space="preserve"><value>Neyin için</value></data>
+  <data name="Account.Payments.Type" xml:space="preserve"><value>Tür</value></data>
+  <data name="Account.Payments.Amount" xml:space="preserve"><value>Tutar</value></data>
+  <data name="Account.Payments.Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Account.Payments.Reference" xml:space="preserve"><value>Referans</value></data>
+  <data name="Account.Payments.Receipt" xml:space="preserve"><value>Makbuzu görüntüle</value></data>
+  <data name="Account.Payments.RefundedAmount" xml:space="preserve"><value>{0} iade edildi</value></data>
+  <data name="Account.Payments.View" xml:space="preserve"><value>Görüntüle</value></data>
+  <data name="Account.Payments.SeeAll" xml:space="preserve"><value>Ödemeleri gör</value></data>
+  <data name="Account.Payments.OpenMembership" xml:space="preserve"><value>Üyeliğe git</value></data>
+  <data name="Account.Payments.TotalsLead" xml:space="preserve"><value>Şimdiye kadar tahsil edilen (iadeler düşülmüş):</value></data>
+  <data name="Account.Payments.Foot" xml:space="preserve"><value>Makbuzlar ödeme sağlayıcımız Stripe tarafından sunulur. Kart bilgilerinizin tamamını hiçbir zaman görmez ve saklamayız.</value></data>
+  <data name="Payment.Kind.Experience" xml:space="preserve"><value>Deneyim</value></data>
+  <data name="Payment.Kind.Session" xml:space="preserve"><value>Oturum</value></data>
+  <data name="Payment.Kind.Membership" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Payment.Kind.Renewal" xml:space="preserve"><value>Yenileme</value></data>
+  <data name="Payment.Status.Pending" xml:space="preserve"><value>Ödeme bekleniyor</value></data>
+  <data name="Payment.Status.Processing" xml:space="preserve"><value>İşleniyor</value></data>
+  <data name="Payment.Status.RequiresAction" xml:space="preserve"><value>İşlem gerekli</value></data>
+  <data name="Payment.Status.Succeeded" xml:space="preserve"><value>Ödendi</value></data>
+  <data name="Payment.Status.Failed" xml:space="preserve"><value>Başarısız</value></data>
+  <data name="Payment.Status.Canceled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Payment.Status.Expired" xml:space="preserve"><value>Süresi doldu</value></data>
+  <data name="Payment.Status.Refunded" xml:space="preserve"><value>İade edildi</value></data>
+  <data name="Payment.Status.PartiallyRefunded" xml:space="preserve"><value>Kısmen iade edildi</value></data>
+  <data name="Payment.Meaning.Pending" xml:space="preserve"><value>Ödeme adımı açık ve henüz bir tahsilat yapılmadı.</value></data>
+  <data name="Payment.Meaning.Processing" xml:space="preserve"><value>Bankanız ödemeyi onaylıyor. Bu sırada yeriniz ayrılmış kalır ve sizin yapmanız gereken bir şey yok — ödeme ulaştığı anda e-posta göndereceğiz.</value></data>
+  <data name="Payment.Meaning.RequiresAction" xml:space="preserve"><value>Bankanız bu ödemeyi onaylamanızı istedi — bankanızın mesajını veya uygulama bildirimini kontrol edin. Siz onaylayana kadar tahsilat yapılmaz.</value></data>
+  <data name="Payment.Meaning.Succeeded" xml:space="preserve"><value>Tamamı ödendi ve bankanız tarafından onaylandı.</value></data>
+  <data name="Payment.Meaning.Failed" xml:space="preserve"><value>Bankanız ödemeyi reddetti; bu nedenle tahsilat yapılmadı ve hiçbir şey onaylanmadı. Dilerseniz tekrar deneyebilirsiniz.</value></data>
+  <data name="Payment.Meaning.Canceled" xml:space="preserve"><value>Ödeme adımı tamamlanmadan iptal edildi. Tahsilat yapılmadı ve hiçbir şey onaylanmadı.</value></data>
+  <data name="Payment.Meaning.Expired" xml:space="preserve"><value>Ödeme adımı tamamlanmadan kapandı. Tahsilat yapılmadı ve hiçbir şey onaylanmadı.</value></data>
+  <data name="Payment.Meaning.Refunded" xml:space="preserve"><value>Tutarın tamamı kullandığınız ödeme yöntemine geri gönderildi. Bankanıza bağlı olarak görünmesi beş ila on iş günü sürebilir.</value></data>
+  <data name="Payment.Meaning.PartiallyRefunded" xml:space="preserve"><value>Bu ödemenin bir kısmı kullandığınız ödeme yöntemine geri gönderildi; satın aldığınız şey değişmedi.</value></data>
 </root>

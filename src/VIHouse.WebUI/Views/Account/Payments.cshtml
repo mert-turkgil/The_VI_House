@@ -1,0 +1,145 @@
+@using VIHouse.Entities.Commerce
+@model AccountPaymentsViewModel
+@{
+    ViewData["Title"] = Loc["Account.PaymentsTitle"];
+
+    // What a state means for the member, in their terms — the operator's wording (a decline code,
+    // a provider message) is never shown here.
+    string Meaning(PaymentTransactionStatus s) => s switch
+    {
+        PaymentTransactionStatus.Pending => Loc["Payment.Meaning.Pending"].Value,
+        PaymentTransactionStatus.Processing => Loc["Payment.Meaning.Processing"].Value,
+        PaymentTransactionStatus.RequiresAction => Loc["Payment.Meaning.RequiresAction"].Value,
+        PaymentTransactionStatus.Failed => Loc["Payment.Meaning.Failed"].Value,
+        PaymentTransactionStatus.Canceled => Loc["Payment.Meaning.Canceled"].Value,
+        PaymentTransactionStatus.Expired => Loc["Payment.Meaning.Expired"].Value,
+        PaymentTransactionStatus.Refunded => Loc["Payment.Meaning.Refunded"].Value,
+        PaymentTransactionStatus.PartiallyRefunded => Loc["Payment.Meaning.PartiallyRefunded"].Value,
+        _ => Loc["Payment.Meaning.Succeeded"].Value,
+    };
+
+    string KindLabel(PaymentTransactionKind k) => k switch
+    {
+        PaymentTransactionKind.Experience => Loc["Payment.Kind.Experience"].Value,
+        PaymentTransactionKind.Session => Loc["Payment.Kind.Session"].Value,
+        PaymentTransactionKind.Membership => Loc["Payment.Kind.Membership"].Value,
+        _ => Loc["Payment.Kind.Renewal"].Value,
+    };
+}
+
+<div class="account-manage">
+    <partial name="_AccountNav" />
+    <div class="account-manage__content">
+        <header class="account-page__head">
+            <h1>@Loc["Account.PaymentsTitle"]</h1>
+            <p class="account-page__lede">@Loc["Account.Payments.Lede"]</p>
+        </header>
+
+        @if (Model.Payments.Count == 0)
+        {
+            <div class="account-empty">
+                <span class="account-empty__icon"><partial name="_Icon" model='@("credit-card")' /></span>
+                <h2>@Loc["Account.Payments.Empty"]</h2>
+                <p>@Loc["Account.Payments.Empty.Body"]</p>
+                <a class="btn btn--primary" asp-controller="Experiences" asp-action="Index">@Loc["Account.BrowseExperiences"]</a>
+            </div>
+        }
+        else
+        {
+            @if (Model.InFlight.Count > 0)
+            {
+                <section class="account-group" aria-labelledby="in-flight-heading">
+                    <h2 id="in-flight-heading" class="account-section-heading">
+                        @Loc["Account.Payments.InFlight"] <span class="account-section-heading__count">@Model.InFlight.Count</span>
+                    </h2>
+                    @foreach (var p in Model.InFlight)
+                    {
+                        <div class="account-notice @(p.Status == PaymentTransactionStatus.RequiresAction ? "account-notice--pastdue" : "")" role="status">
+                            <div>
+                                <strong>@p.What — @MoneyFormatter.Format(p.AmountMinor, p.Currency)</strong>
+                                <p>@Meaning(p.Status)</p>
+                            </div>
+                            @if (p.Status == PaymentTransactionStatus.RequiresAction && p.Kind is PaymentTransactionKind.Membership or PaymentTransactionKind.MembershipRenewal)
+                            {
+                                <a class="btn btn--primary btn--sm" asp-action="Membership">@Loc["Account.Payments.OpenMembership"]</a>
+                            }
+                            else if (p.Link is not null)
+                            {
+                                <a class="btn btn--ghost btn--sm" href="@p.Link">@Loc["Account.Payments.View"]</a>
+                            }
+                        </div>
+                    }
+                </section>
+            }
+
+            @if (Model.TotalsByCurrency.Count > 0)
+            {
+                <p class="account-page__lede">
+                    @Loc["Account.Payments.TotalsLead"]
+                    @foreach (var (currency, net) in Model.TotalsByCurrency)
+                    {
+                        <strong>@MoneyFormatter.Format(net, currency)</strong><text> </text>
+                    }
+                </p>
+            }
+
+            <h2 class="account-section-heading">@Loc["Account.Payments.History"]</h2>
+            <div class="account-table-scroll">
+                <table class="account-table account-table--roomy">
+                    <thead>
+                        <tr>
+                            <th>@Loc["Account.Payments.Date"]</th>
+                            <th>@Loc["Account.Payments.For"]</th>
+                            <th>@Loc["Account.Payments.Type"]</th>
+                            <th>@Loc["Account.Payments.Amount"]</th>
+                            <th>@Loc["Account.Payments.Status"]</th>
+                            <th>@Loc["Account.Payments.Reference"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.Payments)
+                        {
+                            <tr>
+                                <td>
+                                    @((p.PaidAt ?? p.CreatedAt).ToString("d MMM yyyy"))
+                                    <span class="account-table__sub">@((p.PaidAt ?? p.CreatedAt).ToString("HH:mm"))</span>
+                                </td>
+                                <td>
+                                    @if (p.Link is not null)
+                                    {
+                                        <a href="@p.Link">@p.What</a>
+                                    }
+                                    else
+                                    {
+                                        @p.What
+                                    }
+                                </td>
+                                <td>@KindLabel(p.Kind)</td>
+                                <td>
+                                    @MoneyFormatter.Format(p.AmountMinor, p.Currency)
+                                    @if (p.HasRefund)
+                                    {
+                                        <span class="account-table__sub">@Loc["Account.Payments.RefundedAmount", MoneyFormatter.Format(p.AmountRefundedMinor, p.Currency)]</span>
+                                    }
+                                </td>
+                                <td>
+                                    <partial name="_PaymentStatus" model="p.Status" />
+                                    <span class="account-table__sub">@Meaning(p.Status)</span>
+                                </td>
+                                <td>
+                                    <code>@p.Reference</code>
+                                    @if (!string.IsNullOrWhiteSpace(p.ReceiptUrl))
+                                    {
+                                        <span class="account-table__sub"><a href="@p.ReceiptUrl" target="_blank" rel="noopener">@Loc["Account.Payments.Receipt"]</a></span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="account-page__foot">@Loc["Account.Payments.Foot"]</p>
+        }
+    </div>
+</div>

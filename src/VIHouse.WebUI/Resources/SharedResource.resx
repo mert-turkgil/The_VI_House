@@ -1313,4 +1313,46 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Your checkout is complete and your bank is confirming the payment — with the method you chose this can take a few days. Your place is held in the meantime, and we'll email your confirmation the moment the money lands. Nothing further is needed from you.</value></data>
   <data name="Payment.RequiresAction.Heading" xml:space="preserve"><value>Your bank needs a confirmation</value></data>
   <data name="Payment.RequiresAction.Body" xml:space="preserve"><value>Your bank has asked you to confirm this payment before it goes through — look for its message or app prompt. Your place is held while you do, and we'll email your confirmation as soon as the payment clears.</value></data>
+  <data name="Account.NavPayments" xml:space="preserve"><value>Payments</value></data>
+  <data name="Account.PaymentsTitle" xml:space="preserve"><value>My Payments</value></data>
+  <data name="Account.Payments.Lede" xml:space="preserve"><value>Every payment you've made to The VI House — what it was for, what it cost and where it stands. Nothing here is confirmed by a browser: a payment shows as paid only once your bank has told us it is.</value></data>
+  <data name="Account.Payments.Empty" xml:space="preserve"><value>No payments yet</value></data>
+  <data name="Account.Payments.Empty.Body" xml:space="preserve"><value>When you book an experience, take a seat on a session or start a membership, the payment and its receipt will appear here.</value></data>
+  <data name="Account.Payments.InFlight" xml:space="preserve"><value>In progress</value></data>
+  <data name="Account.Payments.History" xml:space="preserve"><value>All payments</value></data>
+  <data name="Account.Payments.Date" xml:space="preserve"><value>Date</value></data>
+  <data name="Account.Payments.For" xml:space="preserve"><value>For</value></data>
+  <data name="Account.Payments.Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Account.Payments.Amount" xml:space="preserve"><value>Amount</value></data>
+  <data name="Account.Payments.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Account.Payments.Reference" xml:space="preserve"><value>Reference</value></data>
+  <data name="Account.Payments.Receipt" xml:space="preserve"><value>View receipt</value></data>
+  <data name="Account.Payments.RefundedAmount" xml:space="preserve"><value>{0} refunded</value></data>
+  <data name="Account.Payments.View" xml:space="preserve"><value>View</value></data>
+  <data name="Account.Payments.SeeAll" xml:space="preserve"><value>See payments</value></data>
+  <data name="Account.Payments.OpenMembership" xml:space="preserve"><value>Go to membership</value></data>
+  <data name="Account.Payments.TotalsLead" xml:space="preserve"><value>Collected from you so far, net of refunds:</value></data>
+  <data name="Account.Payments.Foot" xml:space="preserve"><value>Receipts are served by our payment provider, Stripe. We never see or store your full card details.</value></data>
+  <data name="Payment.Kind.Experience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Payment.Kind.Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Payment.Kind.Membership" xml:space="preserve"><value>Membership</value></data>
+  <data name="Payment.Kind.Renewal" xml:space="preserve"><value>Renewal</value></data>
+  <data name="Payment.Status.Pending" xml:space="preserve"><value>Awaiting payment</value></data>
+  <data name="Payment.Status.Processing" xml:space="preserve"><value>Processing</value></data>
+  <data name="Payment.Status.RequiresAction" xml:space="preserve"><value>Action needed</value></data>
+  <data name="Payment.Status.Succeeded" xml:space="preserve"><value>Paid</value></data>
+  <data name="Payment.Status.Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Payment.Status.Canceled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Payment.Status.Expired" xml:space="preserve"><value>Expired</value></data>
+  <data name="Payment.Status.Refunded" xml:space="preserve"><value>Refunded</value></data>
+  <data name="Payment.Status.PartiallyRefunded" xml:space="preserve"><value>Partly refunded</value></data>
+  <data name="Payment.Meaning.Pending" xml:space="preserve"><value>The checkout is open and nothing has been charged yet.</value></data>
+  <data name="Payment.Meaning.Processing" xml:space="preserve"><value>Your bank is confirming the payment. Your place is held in the meantime and nothing further is needed from you — we'll email you the moment it lands.</value></data>
+  <data name="Payment.Meaning.RequiresAction" xml:space="preserve"><value>Your bank has asked you to confirm this payment — look for its message or app prompt. Nothing is charged until you do.</value></data>
+  <data name="Payment.Meaning.Succeeded" xml:space="preserve"><value>Paid in full and confirmed by your bank.</value></data>
+  <data name="Payment.Meaning.Failed" xml:space="preserve"><value>Your bank declined the payment, so nothing was charged and nothing was confirmed. You're welcome to try again.</value></data>
+  <data name="Payment.Meaning.Canceled" xml:space="preserve"><value>The checkout was cancelled before it was paid. Nothing was charged and nothing was confirmed.</value></data>
+  <data name="Payment.Meaning.Expired" xml:space="preserve"><value>The checkout closed before it was paid. Nothing was charged and nothing was confirmed.</value></data>
+  <data name="Payment.Meaning.Refunded" xml:space="preserve"><value>The full amount has been sent back to the payment method you used. Depending on your bank it can take five to ten working days to show.</value></data>
+  <data name="Payment.Meaning.PartiallyRefunded" xml:space="preserve"><value>Part of this payment has been sent back to the payment method you used; what you bought is unchanged.</value></data>
 </root>

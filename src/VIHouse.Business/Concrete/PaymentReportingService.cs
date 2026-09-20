@@ -137,6 +137,43 @@ public class PaymentReportingService(
         return new PaymentTransactionDetail { Transaction = row, Events = timeline, LiveDetails = live };
     }
 
+    public async Task<List<MemberPaymentItem>> ListForUserAsync(Guid userId, CancellationToken ct = default)
+    {
+        var mine = await transactions.FindAsync(t => t.UserId == userId, ct);
+        if (mine.Count == 0) return [];
+
+        var rows = await ProjectAsync(mine.OrderByDescending(t => t.CreatedAt).ToList(), ct);
+        var receipts = mine.ToDictionary(t => t.Id, t => t.ProviderReceiptUrl);
+
+        return rows.Select(r => new MemberPaymentItem
+        {
+            Id = r.Id,
+            Kind = r.Kind,
+            Status = r.Status,
+            What = r.RelatedLabel,
+            Link = MemberLink(r),
+            AmountMinor = r.AmountMinor,
+            AmountRefundedMinor = r.AmountRefundedMinor,
+            Currency = r.Currency,
+            CreatedAt = r.CreatedAt,
+            PaidAt = r.PaidAt,
+            RefundedAt = r.RefundedAt,
+            ReceiptUrl = receipts.GetValueOrDefault(r.Id),
+            // Our own id, shortened: enough for support to find the row, and nothing of the
+            // provider's. A failure message is deliberately not carried — the provider's wording
+            // is for the operator; the member is told what it means for them in the view.
+            Reference = r.Id.ToString("N")[..8].ToUpperInvariant(),
+        }).ToList();
+
+        static string? MemberLink(PaymentTransactionListItem r) => r.RelatedEntityType switch
+        {
+            nameof(Payment) => r.RelatedReference is { } reference ? SiteUrls.Booking(reference) : SiteUrls.AccountBookings,
+            nameof(SeminarEnrollment) => r.RelatedReference is { } slug ? SiteUrls.Session(slug) : SiteUrls.AccountSessions,
+            nameof(MembershipPayment) or nameof(PendingJoin) or nameof(Membership) => SiteUrls.AccountMembership,
+            _ => null,
+        };
+    }
+
     public async Task<Guid?> ResolveTransactionIdAsync(Guid rowId, CancellationToken ct = default)
     {
         if (await transactions.GetByIdAsync(rowId, ct) is not null) return rowId;
@@ -202,6 +239,7 @@ public class PaymentReportingService(
                 RelatedEntityType = t.RelatedEntityType,
                 RelatedEntityId = t.RelatedEntityId,
                 RelatedAdminPath = path,
+                RelatedReference = Reference(t),
                 ProviderSessionId = t.ProviderSessionId,
                 ProviderPaymentIntentId = t.ProviderPaymentIntentId,
                 ProviderSubscriptionId = t.ProviderSubscriptionId,
@@ -217,6 +255,16 @@ public class PaymentReportingService(
                 LastEventId = t.LastEventId,
             };
         }).ToList();
+
+        // The member-facing handle for what was bought: a booking reference, a session slug.
+        string? Reference(PaymentTransaction t) => t.RelatedEntityType switch
+        {
+            nameof(Payment) => paymentsById.GetValueOrDefault(t.RelatedEntityId)?.BookingId is { } bid
+                ? bookingRows.GetValueOrDefault(bid)?.BookingReference : null,
+            nameof(SeminarEnrollment) => enrolmentRows.GetValueOrDefault(t.RelatedEntityId) is { } enrolment
+                ? seminarRows.GetValueOrDefault(enrolment.SeminarId)?.Slug : null,
+            _ => null,
+        };
 
         (string Label, string? Path) Describe(PaymentTransaction t)
         {

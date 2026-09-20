@@ -490,6 +490,21 @@ public class PaymentService(
                 $"The VI House: your payment for {experience.City} didn't complete. Your invitation is still open: {invitationUrl}",
                 nameof(Payment), payment.Id, ct);
         }
+
+        // In the account as well as the inbox, and worded as the absence it is: nothing was
+        // confirmed. Keyed on the payment, so the provider's retries add no second line.
+        if (payment.UserId is { } userId)
+        {
+            var what = experience is null ? "your booking" : $"The VI House — {experience.City}";
+            await outbox.EnqueueNotificationAsync(
+                $"notification:PaymentNotCompleted:Payment:{payment.Id}",
+                userId, NotificationType.Payment,
+                paymentFailed ? "Payment Failed" : "Checkout Cancelled",
+                paymentFailed
+                    ? $"Your bank declined the payment for {what}, so your place wasn't confirmed and nothing was charged. Your invitation is still open."
+                    : $"The checkout for {what} closed before it was paid, so your place wasn't confirmed and nothing was charged. Your invitation is still open.",
+                SiteUrls.AccountPayments, nameof(Payment), payment.Id, ct);
+        }
     }
 
     /// <summary>

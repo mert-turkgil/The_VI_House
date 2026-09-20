@@ -1313,4 +1313,46 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Payment.AwaitingBank.Body" xml:space="preserve"><value>Ostuprotsess on lõpetatud ja teie pank kinnitab makset — valitud makseviisiga võib see võtta mõne päeva. Teie koht jääb seni broneerituks ja saadame kinnituse e-postiga kohe, kui raha on laekunud. Teilt pole midagi rohkem vaja.</value></data>
   <data name="Payment.RequiresAction.Heading" xml:space="preserve"><value>Teie pank vajab kinnitust</value></data>
   <data name="Payment.RequiresAction.Body" xml:space="preserve"><value>Teie pank palus teil see makse enne selle sooritamist kinnitada — vaadake panga sõnumit või rakenduse teadet. Teie koht jääb seni broneerituks ja saadame kinnituse e-postiga kohe, kui makse on laekunud.</value></data>
+  <data name="Account.NavPayments" xml:space="preserve"><value>Maksed</value></data>
+  <data name="Account.PaymentsTitle" xml:space="preserve"><value>Minu maksed</value></data>
+  <data name="Account.Payments.Lede" xml:space="preserve"><value>Kõik teie maksed The VI House'ile — mille eest, kui palju ja millises seisus. Midagi siin ei kinnita brauser: makse on tasutud alles siis, kui teie pank on seda meile kinnitanud.</value></data>
+  <data name="Account.Payments.Empty" xml:space="preserve"><value>Makseid veel pole</value></data>
+  <data name="Account.Payments.Empty.Body" xml:space="preserve"><value>Kui broneerite kogemuse, võtate koha sessioonil või alustate liikmesust, ilmuvad makse ja selle kviitung siia.</value></data>
+  <data name="Account.Payments.InFlight" xml:space="preserve"><value>Pooleli</value></data>
+  <data name="Account.Payments.History" xml:space="preserve"><value>Kõik maksed</value></data>
+  <data name="Account.Payments.Date" xml:space="preserve"><value>Kuupäev</value></data>
+  <data name="Account.Payments.For" xml:space="preserve"><value>Mille eest</value></data>
+  <data name="Account.Payments.Type" xml:space="preserve"><value>Tüüp</value></data>
+  <data name="Account.Payments.Amount" xml:space="preserve"><value>Summa</value></data>
+  <data name="Account.Payments.Status" xml:space="preserve"><value>Olek</value></data>
+  <data name="Account.Payments.Reference" xml:space="preserve"><value>Viide</value></data>
+  <data name="Account.Payments.Receipt" xml:space="preserve"><value>Vaata kviitungit</value></data>
+  <data name="Account.Payments.RefundedAmount" xml:space="preserve"><value>{0} tagastatud</value></data>
+  <data name="Account.Payments.View" xml:space="preserve"><value>Vaata</value></data>
+  <data name="Account.Payments.SeeAll" xml:space="preserve"><value>Vaata makseid</value></data>
+  <data name="Account.Payments.OpenMembership" xml:space="preserve"><value>Ava liikmesus</value></data>
+  <data name="Account.Payments.TotalsLead" xml:space="preserve"><value>Seni teilt kogutud, tagastused maha arvatud:</value></data>
+  <data name="Account.Payments.Foot" xml:space="preserve"><value>Kviitungid väljastab meie makseteenuse pakkuja Stripe. Me ei näe ega salvesta kunagi teie kaardi täisandmeid.</value></data>
+  <data name="Payment.Kind.Experience" xml:space="preserve"><value>Kogemus</value></data>
+  <data name="Payment.Kind.Session" xml:space="preserve"><value>Sessioon</value></data>
+  <data name="Payment.Kind.Membership" xml:space="preserve"><value>Liikmesus</value></data>
+  <data name="Payment.Kind.Renewal" xml:space="preserve"><value>Uuendus</value></data>
+  <data name="Payment.Status.Pending" xml:space="preserve"><value>Ootab makset</value></data>
+  <data name="Payment.Status.Processing" xml:space="preserve"><value>Töötlemisel</value></data>
+  <data name="Payment.Status.RequiresAction" xml:space="preserve"><value>Vajab tegutsemist</value></data>
+  <data name="Payment.Status.Succeeded" xml:space="preserve"><value>Makstud</value></data>
+  <data name="Payment.Status.Failed" xml:space="preserve"><value>Ebaõnnestus</value></data>
+  <data name="Payment.Status.Canceled" xml:space="preserve"><value>Tühistatud</value></data>
+  <data name="Payment.Status.Expired" xml:space="preserve"><value>Aegunud</value></data>
+  <data name="Payment.Status.Refunded" xml:space="preserve"><value>Tagastatud</value></data>
+  <data name="Payment.Status.PartiallyRefunded" xml:space="preserve"><value>Osaliselt tagastatud</value></data>
+  <data name="Payment.Meaning.Pending" xml:space="preserve"><value>Ostuprotsess on avatud ja midagi pole veel maksustatud.</value></data>
+  <data name="Payment.Meaning.Processing" xml:space="preserve"><value>Teie pank kinnitab makset. Teie koht jääb seni broneerituks ja teilt pole midagi rohkem vaja — anname e-postiga teada kohe, kui see laekub.</value></data>
+  <data name="Payment.Meaning.RequiresAction" xml:space="preserve"><value>Teie pank palus teil see makse kinnitada — vaadake panga sõnumit või rakenduse teadet. Kuni selleni ei võeta midagi maha.</value></data>
+  <data name="Payment.Meaning.Succeeded" xml:space="preserve"><value>Täielikult makstud ja teie panga poolt kinnitatud.</value></data>
+  <data name="Payment.Meaning.Failed" xml:space="preserve"><value>Teie pank lükkas makse tagasi, seega ei võetud midagi maha ega kinnitatud. Võite julgelt uuesti proovida.</value></data>
+  <data name="Payment.Meaning.Canceled" xml:space="preserve"><value>Ostuprotsess tühistati enne tasumist. Midagi ei võetud maha ega kinnitatud.</value></data>
+  <data name="Payment.Meaning.Expired" xml:space="preserve"><value>Ostuprotsess sulgus enne tasumist. Midagi ei võetud maha ega kinnitatud.</value></data>
+  <data name="Payment.Meaning.Refunded" xml:space="preserve"><value>Kogu summa on saadetud tagasi teie kasutatud maksevahendile. Olenevalt pangast võib selle ilmumine võtta viis kuni kümme tööpäeva.</value></data>
+  <data name="Payment.Meaning.PartiallyRefunded" xml:space="preserve"><value>Osa sellest maksest on saadetud tagasi teie kasutatud maksevahendile; ostetu jääb samaks.</value></data>
 </root>

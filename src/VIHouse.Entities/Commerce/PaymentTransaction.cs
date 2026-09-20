@@ -62,6 +62,14 @@ public class PaymentTransaction : BaseEntity
     /// the WebhookEvents row that caused it.</summary>
     public string? LastEventId { get; set; }
 
+    /// <summary>
+    /// The provider's own hosted receipt (a card payment) or invoice page (a subscription charge)
+    /// for this money, as the provider sent it on the event. It is the only provider-side thing
+    /// ever shown to the member: a tokenised URL the provider serves, carrying no card data and no
+    /// id of ours. Null until the provider sends one.
+    /// </summary>
+    public string? ProviderReceiptUrl { get; set; }
+
     public byte[]? RowVersion { get; set; }
 }
 

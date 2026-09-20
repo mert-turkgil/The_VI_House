@@ -19,6 +19,13 @@ public interface IPaymentReportingService
     /// <summary>Older admin links point at a Payment / MembershipPayment row id. Finds the
     /// transaction that row belongs to, if any.</summary>
     Task<Guid?> ResolveTransactionIdAsync(Guid rowId, CancellationToken ct = default);
+
+    /// <summary>
+    /// One member's own payments, newest first — the same rows the admin sees, projected to what
+    /// is theirs to know. Never carries a provider id, a customer id or anything about a card; the
+    /// only provider-side value is the hosted receipt URL the provider itself sent.
+    /// </summary>
+    Task<List<MemberPaymentItem>> ListForUserAsync(Guid userId, CancellationToken ct = default);
 }
 
 /// <summary>One currency's money: what settled (gross), what went back, and the difference.</summary>
@@ -95,6 +102,10 @@ public class PaymentTransactionListItem
     public Guid RelatedEntityId { get; init; }
     /// <summary>The admin page for the thing bought, when there is one: a booking, a session's enrolments, a plan.</summary>
     public string? RelatedAdminPath { get; init; }
+
+    /// <summary>The member-facing handle for the thing bought — a booking reference, a session slug
+    /// — used to build the member's own link to it. Null when there is nothing to point at yet.</summary>
+    public string? RelatedReference { get; init; }
     public string? ProviderSessionId { get; init; }
     public string? ProviderPaymentIntentId { get; init; }
     public string? ProviderSubscriptionId { get; init; }
@@ -114,6 +125,40 @@ public class PaymentTransactionListItem
 }
 
 public record PaymentTransactionPage(List<PaymentTransactionListItem> Rows, Dictionary<PaymentTransactionStatus, int> CountsByStatus, int Total, List<string> Currencies);
+
+/// <summary>
+/// A payment as its payer sees it. Deliberately a different shape from the admin item: the fields
+/// that are operational (provider ids, the event id, the dispute flag) are simply not on it, so a
+/// member-facing view cannot render one by accident.
+/// </summary>
+public class MemberPaymentItem
+{
+    public Guid Id { get; init; }
+    public PaymentTransactionKind Kind { get; init; }
+    public PaymentTransactionStatus Status { get; init; }
+
+    /// <summary>What was bought, in words — "The VI House — Lisbon · VI-26-0042", a session title, a plan name.</summary>
+    public string What { get; init; } = "—";
+
+    /// <summary>Where in the member's own account this payment leads.</summary>
+    public string? Link { get; init; }
+
+    public long AmountMinor { get; init; }
+    public long AmountRefundedMinor { get; init; }
+    public string Currency { get; init; } = default!;
+    public DateTimeOffset CreatedAt { get; init; }
+    public DateTimeOffset? PaidAt { get; init; }
+    public DateTimeOffset? RefundedAt { get; init; }
+
+    /// <summary>The provider's own hosted receipt or invoice page, when it sent one.</summary>
+    public string? ReceiptUrl { get; init; }
+
+    /// <summary>A short reference for support — our own transaction id, not the provider's.</summary>
+    public string Reference { get; init; } = default!;
+
+    public bool HasRefund => AmountRefundedMinor > 0;
+    public bool IsFullyRefunded => Status == PaymentTransactionStatus.Refunded;
+}
 
 public class PaymentTransactionDetail
 {

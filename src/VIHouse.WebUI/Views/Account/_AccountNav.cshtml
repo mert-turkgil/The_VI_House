@@ -28,6 +28,7 @@
         "Membership" => Loc["Account.NavMembership"].Value,
         "Bookings" => Loc["Account.NavBookings"].Value,
         "Sessions" => Loc["Account.NavSessions"].Value,
+        "Payments" => Loc["Account.NavPayments"].Value,
         "Card" => Loc["Card.NavLabel"].Value,
         "Community" => Loc["Account.NavCommunity"].Value,
         "Notifications" => Loc["Notif.Title"].Value,
@@ -63,6 +64,9 @@
         </a>
         <a class="account-manage__link @NavClass("Sessions")" asp-controller="Account" asp-action="Sessions">
             <span class="account-manage__icon"><partial name="_Icon" model='@("calendar")' /></span><span>@Loc["Account.NavSessions"]</span>
+        </a>
+        <a class="account-manage__link @NavClass("Payments")" asp-controller="Account" asp-action="Payments">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("tag")' /></span><span>@Loc["Account.NavPayments"]</span>
         </a>
         @* Each members-only door follows the tier (MembershipPlan's entitlement flags), not just
            "has a membership" — plans differ in what they include. *@

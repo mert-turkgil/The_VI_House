@@ -40,6 +40,7 @@ public class AccountController(
     ISeminarService seminarService,
     IMembershipService membershipService,
     ICheckoutReconciliationService reconciliation,
+    IPaymentReportingService payments,
     INotificationService notificationService,
     IRepository<CommunityLink> communityLinks,
     IAmbassadorService ambassadorService,
@@ -265,6 +266,11 @@ public class AccountController(
         var current = await membershipService.GetMembershipSummaryAsync(userId, ct);
         var history = await membershipService.GetMembershipHistoryAsync(userId, ct);
 
+        // A membership payment that hasn't landed, needs the member's bank, or failed. The PastDue
+        // banner below covers a declined renewal on a live membership; this covers the rest.
+        ViewData["PaymentNotices"] = NoticesFor(await payments.ListForUserAsync(userId, ct),
+            PaymentTransactionKind.Membership, PaymentTransactionKind.MembershipRenewal);
+
         var model = new AccountMembershipViewModel
         {
             Current = current,
@@ -440,6 +446,48 @@ public class AccountController(
         return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : RedirectToAction(nameof(Notifications));
     }
 
+    // --- Payments -----------------------------------------------------------------------------
+
+    /// <summary>
+    /// The member's own money: every payment they have made, in every state, from the same
+    /// PaymentTransactions rows the admin panel reads — so what they see here and what support
+    /// sees are one thing. Open checkouts are settled against the provider first, for the same
+    /// reason the other pages do it: a webhook that is late must not make a paid member look unpaid.
+    /// </summary>
+    [HttpGet("payments")]
+    public async Task<IActionResult> Payments(CancellationToken ct)
+    {
+        var userId = CurrentUserId();
+        await reconciliation.ReconcileForUserAsync(userId, ct);
+
+        ViewData["Title"] = "My Payments";
+        return View(new AccountPaymentsViewModel { Payments = await payments.ListForUserAsync(userId, ct) });
+    }
+
+    /// <summary>
+    /// The payments on a page's own subject that have not settled — money still moving, a bank
+    /// waiting on the member, or a checkout that ended without paying. What a page shows above its
+    /// list, so a place that was never confirmed is explained rather than silently missing.
+    ///
+    /// A closed one is only news for a week; an open one is news until it resolves.
+    /// </summary>
+    private static List<MemberPaymentItem> NoticesFor(IEnumerable<MemberPaymentItem> all, params PaymentTransactionKind[] kinds)
+    {
+        var cutoff = DateTimeOffset.UtcNow.AddDays(-7);
+        return all
+            .Where(p => kinds.Contains(p.Kind))
+            .Where(p => p.Status switch
+            {
+                PaymentTransactionStatus.Processing or PaymentTransactionStatus.RequiresAction or PaymentTransactionStatus.Failed => true,
+                PaymentTransactionStatus.Canceled or PaymentTransactionStatus.Expired => (p.PaidAt ?? p.CreatedAt) >= cutoff,
+                // A checkout that was opened and never finished is not news; it becomes Expired or
+                // Canceled when the provider closes it, and is reported then.
+                _ => false,
+            })
+            .OrderByDescending(p => p.CreatedAt)
+            .ToList();
+    }
+
     // --- Bookings -----------------------------------------------------------------------------
 
     [HttpGet("bookings")]
@@ -449,6 +497,10 @@ public class AccountController(
         // A paid checkout the webhook hasn't confirmed yet is settled against the provider first.
         await reconciliation.ReconcileForUserAsync(userId, ct);
         var userBookings = await bookings.GetByUserAsync(userId, ct);
+
+        // A ticket payment that is still moving, or that failed, has no booking to show — say so
+        // here rather than leaving the member to wonder where their place went.
+        ViewData["PaymentNotices"] = NoticesFor(await payments.ListForUserAsync(userId, ct), PaymentTransactionKind.Experience);
 
         var model = new List<BookingListItemViewModel>();
         foreach (var booking in userBookings.OrderByDescending(b => b.CreatedAt))
@@ -528,8 +580,13 @@ public class AccountController(
     public async Task<IActionResult> Sessions(CancellationToken ct)
     {
         var culture = CultureInfo.CurrentUICulture.Name;
-        await reconciliation.ReconcileForUserAsync(CurrentUserId(), ct);
-        var enrolments = await seminarService.GetEnrolmentsForUserAsync(CurrentUserId(), ct);
+        var sessionUserId = CurrentUserId();
+        await reconciliation.ReconcileForUserAsync(sessionUserId, ct);
+        var enrolments = await seminarService.GetEnrolmentsForUserAsync(sessionUserId, ct);
+
+        // A seat whose payment is still clearing is not an enrolment yet (GetEnrolmentsForUserAsync
+        // returns confirmed places only), so the payment behind it is what explains the gap.
+        ViewData["PaymentNotices"] = NoticesFor(await payments.ListForUserAsync(sessionUserId, ct), PaymentTransactionKind.Session);
 
         ViewData["Title"] = "My Sessions";
         return View(SessionPortalViewModel.Build(enrolments, culture, DateTimeOffset.UtcNow));

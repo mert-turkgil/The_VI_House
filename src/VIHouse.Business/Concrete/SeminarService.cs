@@ -439,6 +439,19 @@ public class SeminarService(
         enrollment.Status = SeminarEnrollmentStatus.Cancelled;
         enrollment.UpdatedAt = DateTimeOffset.UtcNow;
         await enrollments.SaveChangesAsync(ct);
+
+        // No place, and the member is told so rather than left to notice a session that never
+        // appeared. Keyed on the enrolment: one line however many times the provider retries.
+        var seminar = await seminars.GetWithDetailAsync(enrollment.SeminarId, ct);
+        var title = seminar is null ? "the session" : SeminarContent.Title(seminar, SiteCultures.Default);
+        await outbox.EnqueueNotificationAsync(
+            $"notification:PaymentNotCompleted:SeminarEnrollment:{enrollment.Id}",
+            enrollment.UserId, NotificationType.Payment,
+            paymentFailed ? "Payment Failed" : "Checkout Cancelled",
+            paymentFailed
+                ? $"Your bank declined the payment for \"{title}\", so your place wasn't confirmed and nothing was charged. The session is still open if you'd like to try again."
+                : $"The checkout for \"{title}\" closed before it was paid, so your place wasn't confirmed and nothing was charged. The session is still open if you'd like to try again.",
+            seminar is null ? SiteUrls.Sessions : SiteUrls.Session(seminar.Slug), nameof(SeminarEnrollment), enrollment.Id, ct);
     }
 
     /// <summary>The buyer finished checkout with a delayed payment method: the seat stays Pending
