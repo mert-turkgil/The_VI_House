@@ -1101,6 +1101,15 @@ public class MembershipService(
             case PaymentWebhookEventType.CheckoutPaymentFailed when webhookEvent.SessionId is not null:
                 await HandleCheckoutExpiredAsync(webhookEvent.SessionId, paymentFailed: true, ct);
                 break;
+            // A delayed first payment failing or cancelled at the intent level after the checkout completed.
+            case PaymentWebhookEventType.PaymentIntentFailed when webhookEvent.PaymentIntentId is not null:
+            case PaymentWebhookEventType.PaymentIntentCanceled when webhookEvent.PaymentIntentId is not null:
+            {
+                var failed = await transactions.GetByPaymentIntentAsync(webhookEvent.PaymentIntentId, ct);
+                if (failed is { Kind: PaymentTransactionKind.Membership, ProviderSessionId: { } failedSession, Status: PaymentTransactionStatus.Failed or PaymentTransactionStatus.Canceled })
+                    await HandleCheckoutExpiredAsync(failedSession, paymentFailed: true, ct);
+                break;
+            }
             case PaymentWebhookEventType.SubscriptionRenewed when webhookEvent.SubscriptionId is not null:
                 await HandleSubscriptionRenewedAsync(webhookEvent, ct);
                 break;
@@ -1206,6 +1215,8 @@ public class MembershipService(
     /// </summary>
     private async Task HandleInvoiceActionRequiredAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
+        if (await InvoiceAlreadyPaidAsync(webhookEvent.InvoiceId, ct)) return;
+
         var membership = await FindBySubscriptionAsync(webhookEvent.SubscriptionId!, ct);
         if (membership is null || membership.Status == MembershipStatus.Cancelled) return;
 
@@ -1954,6 +1965,10 @@ public class MembershipService(
     /// </summary>
     private async Task HandleSubscriptionPaymentFailedAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
+        // Events are not ordered: a failed attempt reported after the same invoice was paid is
+        // history, not news. The money record for the invoice is the tie-breaker.
+        if (await InvoiceAlreadyPaidAsync(webhookEvent.InvoiceId, ct)) return;
+
         var membership = await FindBySubscriptionAsync(webhookEvent.SubscriptionId!, ct);
         if (membership is null || membership.Status is not (MembershipStatus.Active or MembershipStatus.PastDue or MembershipStatus.Expired)) return;
 
@@ -2049,6 +2064,11 @@ public class MembershipService(
                 nameof(ApplicationUser), user.Id, ct);
         }
     }
+
+    /// <summary>True when the invoice's money record already says Succeeded — the state machine
+    /// has refused the late event; the membership must refuse it too.</summary>
+    private async Task<bool> InvoiceAlreadyPaidAsync(string? invoiceId, CancellationToken ct) =>
+        invoiceId is not null && await transactions.GetByInvoiceAsync(invoiceId, ct) is { Status: PaymentTransactionStatus.Succeeded };
 
     private async Task<Membership?> FindBySubscriptionAsync(string subscriptionId, CancellationToken ct) =>
         (await memberships.FindAsync(m => m.ProviderSubscriptionId == subscriptionId, ct))

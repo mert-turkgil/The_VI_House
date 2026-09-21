@@ -343,6 +343,15 @@ public class SeminarService(
             case PaymentWebhookEventType.CheckoutPaymentFailed when webhookEvent.SessionId is not null:
                 await HandleCheckoutExpiredAsync(webhookEvent.SessionId, paymentFailed: true, ct);
                 break;
+            // A delayed payment failing or cancelled at the intent level after the checkout completed.
+            case PaymentWebhookEventType.PaymentIntentFailed when webhookEvent.PaymentIntentId is not null:
+            case PaymentWebhookEventType.PaymentIntentCanceled when webhookEvent.PaymentIntentId is not null:
+            {
+                var failed = await transactions.GetByPaymentIntentAsync(webhookEvent.PaymentIntentId, ct);
+                if (failed is { Kind: PaymentTransactionKind.Session, ProviderSessionId: { } failedSession, Status: PaymentTransactionStatus.Failed or PaymentTransactionStatus.Canceled })
+                    await HandleCheckoutExpiredAsync(failedSession, paymentFailed: true, ct);
+                break;
+            }
             case PaymentWebhookEventType.ChargeRefunded when webhookEvent.PaymentIntentId is not null:
                 await HandleRefundAsync(webhookEvent, ct);
                 break;

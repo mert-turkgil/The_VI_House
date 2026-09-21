@@ -134,7 +134,9 @@ public class PaymentTransactionService(
         transaction.ProviderReceiptUrl ??= e.ReceiptUrl;
         if (e.AmountMinor is { } amount && e.Type is not PaymentWebhookEventType.ChargeRefunded) transaction.AmountMinor = amount;
         if (e.Currency is { Length: 3 } currency) transaction.Currency = currency;
-        if (e.AmountRefundedMinor is { } refunded) transaction.AmountRefundedMinor = refunded;
+        // Stripe's amount_refunded is cumulative and events are not ordered: a late delivery of an
+        // earlier, smaller refund must not wind the figure back.
+        if (e.AmountRefundedMinor is { } refunded) transaction.AmountRefundedMinor = Math.Max(transaction.AmountRefundedMinor, refunded);
         if (target is PaymentTransactionStatus.Failed)
         {
             transaction.FailureCode = e.RawType;
@@ -173,6 +175,9 @@ public class PaymentTransactionService(
             var membership = e.SubscriptionId is { } subscriptionId
                 ? (await memberships.FindAsync(m => m.ProviderSubscriptionId == subscriptionId, ct)).OrderByDescending(m => m.StartAt).FirstOrDefault()
                 : null;
+            if (membership is null)
+                logger.LogWarning("Invoice {InvoiceId} ({EventId}) names subscription {SubscriptionId}, which no membership holds; recording the money without an owner.",
+                    invoiceId, e.EventId, e.SubscriptionId);
 
             var opened = new PaymentTransaction
             {

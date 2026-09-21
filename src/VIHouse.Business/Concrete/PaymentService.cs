@@ -277,6 +277,14 @@ public class PaymentService(
             case PaymentWebhookEventType.CheckoutPaymentFailed when webhookEvent.SessionId is not null:
                 await HandleCheckoutEndedUnpaidAsync(webhookEvent.SessionId, paymentFailed: true, ct);
                 break;
+            // A delayed payment that fails or is cancelled at the intent level after the checkout
+            // completed. The intent is only known once the checkout completed, so this can never
+            // touch a checkout the buyer is still on; the session is found through the money record.
+            case PaymentWebhookEventType.PaymentIntentFailed when webhookEvent.PaymentIntentId is not null:
+            case PaymentWebhookEventType.PaymentIntentCanceled when webhookEvent.PaymentIntentId is not null:
+                if (await SessionForIntentAsync(webhookEvent.PaymentIntentId, PaymentTransactionKind.Experience, ct) is { } failedSession)
+                    await HandleCheckoutEndedUnpaidAsync(failedSession, paymentFailed: true, ct);
+                break;
             case PaymentWebhookEventType.ChargeRefunded when webhookEvent.PaymentIntentId is not null:
                 await HandleRefundAsync(webhookEvent, ct);
                 break;
@@ -505,6 +513,16 @@ public class PaymentService(
                     : $"The checkout for {what} closed before it was paid, so your place wasn't confirmed and nothing was charged. Your invitation is still open.",
                 SiteUrls.AccountPayments, nameof(Payment), payment.Id, ct);
         }
+    }
+
+    /// <summary>The checkout session behind a payment intent, when the intent belongs to one of
+    /// this service's transactions and that transaction is not settled.</summary>
+    private async Task<string?> SessionForIntentAsync(string paymentIntentId, PaymentTransactionKind kind, CancellationToken ct)
+    {
+        var transaction = await transactions.GetByPaymentIntentAsync(paymentIntentId, ct);
+        return transaction is { ProviderSessionId: { } session } && transaction.Kind == kind
+            && transaction.Status is PaymentTransactionStatus.Failed or PaymentTransactionStatus.Canceled
+            ? session : null;
     }
 
     /// <summary>
