@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace VIHouse.Business.Options;
 
 /// <summary>
@@ -80,6 +82,11 @@ public static class SiteCultures
         var name = Normalise(culture);
         return All.First(c => string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase));
     }
+
+    /// <summary>The culture the current request/thread is rendering in, normalised to one of ours.
+    /// Only meaningful mid-request — RouteCultureProvider has resolved it from the URL by then;
+    /// called outside a request (a background service) it just returns the process default.</summary>
+    public static string Current() => Normalise(CultureInfo.CurrentUICulture.Name);
 }
 
 /// <param name="Name">Culture name, e.g. "de-DE".</param>

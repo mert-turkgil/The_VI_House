@@ -2,30 +2,32 @@
 @{
     var (eyebrow, heading, lede) = Model.Status switch
     {
-        MembershipEmailStatus.Renewed => ("Membership renewed", "Your membership has renewed", $"Your {Model.PlanName} membership carries straight on — your access, your card and your place in the room are unchanged."),
-        MembershipEmailStatus.Granted => ("Membership", "Welcome to The VI House", $"You have been given a {Model.PlanName} membership by the House. There is nothing to pay; everything a member has is now yours."),
-        _ => ("Membership confirmed", "Welcome to The VI House", $"You're confirmed as a {Model.PlanName}. Thank you — we are glad to have you in the room."),
+        MembershipEmailStatus.Renewed => (Loc["Email.Common.EyebrowMembershipRenewed"].Value, Loc["Email.Common.HeadingMembershipRenewed"].Value, string.Format(Loc["Email.MembershipConfirmed.RenewedLede"].Value, Model.PlanName)),
+        MembershipEmailStatus.Granted => (Loc["Email.Common.EyebrowMembership"].Value, Loc["Email.MembershipConfirmed.GrantedHeading"].Value, string.Format(Loc["Email.MembershipConfirmed.GrantedLede"].Value, Model.PlanName)),
+        _ => (Loc["Email.MembershipConfirmed.DefaultEyebrow"].Value, Loc["Email.MembershipConfirmed.GrantedHeading"].Value, string.Format(Loc["Email.MembershipConfirmed.DefaultLede"].Value, Model.PlanName)),
     };
-    ViewData["Preheader"] = Model.Status == MembershipEmailStatus.Renewed ? $"{Model.PlanName} renewed" : $"You're a {Model.PlanName}";
-    ViewData["Footnote"] = "You're receiving this because you have a membership at The VI House.";
-    var rows = new List<(string, string)> { ("Plan", Model.PlanName) };
-    if (Model.MemberNumber is not null) rows.Add(("Member number", Model.MemberNumber));
-    if (Model.AmountMinor is { } amount && Model.Currency is not null) rows.Add((Model.Status == MembershipEmailStatus.Renewed ? "Charged" : "Paid", MoneyFormatter.Format(amount, Model.Currency)));
-    rows.Add((Model.Status == MembershipEmailStatus.Renewed ? "Runs until" : "Valid until", Model.ExpiresAt?.ToString("d MMMM yyyy") ?? "No expiry"));
+    ViewData["Preheader"] = Model.Status == MembershipEmailStatus.Renewed
+        ? string.Format(Loc["Email.MembershipConfirmed.RenewedPreheader"].Value, Model.PlanName)
+        : string.Format(Loc["Email.MembershipConfirmed.DefaultPreheader"].Value, Model.PlanName);
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteMembership"].Value;
+    var rows = new List<(string, string)> { (Loc["Email.Common.DetailPlanLabel"].Value, Model.PlanName) };
+    if (Model.MemberNumber is not null) rows.Add((Loc["Email.Common.DetailMemberNumberLabel"].Value, Model.MemberNumber));
+    if (Model.AmountMinor is { } amount && Model.Currency is not null) rows.Add((Model.Status == MembershipEmailStatus.Renewed ? Loc["Email.Common.DetailChargedLabel"].Value : Loc["Email.Common.DetailPaidLabel"].Value, MoneyFormatter.Format(amount, Model.Currency)));
+    rows.Add((Model.Status == MembershipEmailStatus.Renewed ? Loc["Email.Common.DetailRunsUntilLabel"].Value : Loc["Email.Common.DetailValidUntilLabel"].Value, Model.ExpiresAt?.ToString("d MMMM yyyy") ?? Loc["Email.Common.NoExpiryValue"].Value));
 }
 <partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(eyebrow, heading))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 20px;">@lede</p>
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
 @if (Model.AccountUrl is not null)
 {
-    <partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.AccountUrl, "Open your membership"))" />
+    <partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.AccountUrl, Loc["Email.MembershipConfirmed.Button"].Value))" />
 }
 <p style="margin:0 0 16px; color:#4a4f45;">
-    Your sessions, your card, the community channels and your bookings all live on your account page.
+    @Loc["Email.MembershipConfirmed.Body"]
     @if (Model.Status != MembershipEmailStatus.Granted)
     {
-        <text>You can change your card, download invoices or cancel at any time from there.</text>
+        @Loc["Email.MembershipConfirmed.BodySuffix"]
     }
 </p>
 <partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

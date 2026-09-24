@@ -1,16 +1,16 @@
 @model SecurityAlertEmailModel
 @{
     ViewData["Preheader"] = $"{Model.Event} on your VI House account";
-    ViewData["Footnote"] = "You're receiving this because it concerns the security of your VI House account. These notices cannot be switched off.";
-    var rows = new List<(string, string)> { ("What", Model.Event), ("When", $"{Model.WhenUtc:d MMMM yyyy, HH:mm} UTC") };
-    if (!string.IsNullOrWhiteSpace(Model.IpAddress)) rows.Add(("From", Model.IpAddress));
-    if (!string.IsNullOrWhiteSpace(Model.UserAgent)) rows.Add(("Device", Model.UserAgent));
+    ViewData["Footnote"] = Loc["Email.SecurityAlert.Footnote"].Value;
+    var rows = new List<(string, string)> { (Loc["Email.Common.DetailWhatLabel"].Value, Model.Event), (Loc["Email.Common.DetailWhenLabel"].Value, $"{Model.WhenUtc:d MMMM yyyy, HH:mm} UTC") };
+    if (!string.IsNullOrWhiteSpace(Model.IpAddress)) rows.Add((Loc["Email.Common.DetailFromLabel"].Value, Model.IpAddress));
+    if (!string.IsNullOrWhiteSpace(Model.UserAgent)) rows.Add((Loc["Email.Common.DetailDeviceLabel"].Value, Model.UserAgent));
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Security notice", Model.Event, "security"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowActionNeeded"].Value, Model.Event, "security"))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 20px;">@Model.Detail</p>
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
-<p style="margin:0 0 6px;"><strong>Was this you?</strong> Then there is nothing to do.</p>
-<p style="margin:0 0 8px;">If it wasn't, secure your account now:</p>
+<p style="margin:0 0 6px;">@Loc["Email.SecurityAlert.WasThisYou"]</p>
+<p style="margin:0 0 8px;">@Loc["Email.SecurityAlert.IfNotYou"]</p>
 <partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ActionUrl, Model.ActionLabel))" />
-<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("We will never ask for your password by email. If anything about this looks wrong, reply to this message and a person will look into it.")" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.SecurityAlert.Signoff"].Value)" />

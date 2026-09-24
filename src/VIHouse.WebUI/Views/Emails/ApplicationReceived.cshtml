@@ -1,14 +1,13 @@
 @model ApplicationReceivedEmailModel
 @{
-    ViewData["Preheader"] = $"We have your application for The VI House — {Model.ExperienceCity}";
-    ViewData["Footnote"] = "You're receiving this because you applied to an experience at The VI House.";
+    ViewData["Preheader"] = string.Format(Loc["Email.ApplicationReceived.Preheader"].Value, Model.ExperienceCity);
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteApplication"].Value;
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Application received", "Thank you — we have it"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.ApplicationReceived.Eyebrow"].Value, Loc["Email.ApplicationReceived.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 16px;">
-    Your application for <strong>The VI House &mdash; @Model.ExperienceCity</strong> (@Model.ExperienceTitle) has arrived.
-    Every application is read by a person, not a filter, so it takes a little time.
+    @Html.Raw(string.Format(Loc["Email.ApplicationReceived.Body1"].Value, $"<strong>The VI House &mdash; {Model.ExperienceCity}</strong>", Model.ExperienceTitle))
 </p>
-<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { ("Experience", Model.ExperienceTitle), ("City", Model.ExperienceCity), ("What happens next", "A decision by email, usually within a few days") })" />
-<p style="margin:0 0 16px; color:#4a4f45;">There is nothing you need to do now. If your plans change in the meantime, just reply to this email.</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { (Loc["Email.Common.DetailExperienceLabel"].Value, Model.ExperienceTitle), (Loc["Email.Common.DetailCityLabel"].Value, Model.ExperienceCity), (Loc["Email.ApplicationReceived.NextStepsLabel"].Value, Loc["Email.ApplicationReceived.NextStepsValue"].Value) })" />
+<p style="margin:0 0 16px; color:#4a4f45;">@Loc["Email.ApplicationReceived.Body2"]</p>
 <partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

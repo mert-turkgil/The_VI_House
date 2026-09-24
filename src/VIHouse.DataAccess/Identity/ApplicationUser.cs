@@ -25,4 +25,10 @@ public class ApplicationUser : IdentityUser<Guid>
     /// and handed to every later checkout — so a member is one customer at Stripe with one billing
     /// portal and one payment-method list, not a new customer per purchase.</summary>
     public string? ProviderCustomerId { get; set; }
+
+    /// <summary>One of SiteCultures.Names ("de-DE" etc.), or null (falls back to SiteCultures.Default).
+    /// The only way this is ever set is the nav language switcher, for a signed-in member
+    /// (CultureController.Set) — there is no separate "mail language" setting. Drives every
+    /// notification this member receives, not just the page they happen to be viewing.</summary>
+    public string? PreferredCulture { get; set; }
 }

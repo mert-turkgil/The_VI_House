@@ -1,13 +1,12 @@
 @model PaymentFailedEmailModel
 @{
-    ViewData["Preheader"] = $"Your checkout for {Model.ExperienceTitle} timed out — nothing was charged";
-    ViewData["Footnote"] = "You're receiving this because you started a booking at The VI House.";
+    ViewData["Preheader"] = string.Format(Loc["Email.PaymentFailed.Preheader"].Value, Model.ExperienceTitle);
+    ViewData["Footnote"] = Loc["Email.PaymentFailed.Footnote"].Value;
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Checkout not completed", "We couldn't complete your payment", "warning"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.PaymentFailed.Eyebrow"].Value, Loc["Email.PaymentFailed.Heading"].Value, "warning"))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 16px;">
-    Your checkout for <strong>@Model.ExperienceTitle</strong> wasn't completed in time, so no payment was taken and
-    the place we were holding has been released. Your approval still stands — start a new checkout below.
+    @Html.Raw(string.Format(Loc["Email.PaymentFailed.Body1"].Value, $"<strong>{Model.ExperienceTitle}</strong>"))
 </p>
-<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.InvitationUrl, "Try again"))" />
-<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("If the card was declined, your bank may be able to say why; if you'd rather pay another way, reply to this email.")" />
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.InvitationUrl, Loc["Email.PaymentFailed.Button"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.PaymentFailed.Signoff"].Value)" />

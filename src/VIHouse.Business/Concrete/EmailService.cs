@@ -12,7 +12,7 @@ public class EmailService(
     ILogger<EmailService> logger) : IEmailService
 {
     public async Task<bool> SendAsync<TModel>(
-        string templateKey, string recipientEmail, string subject, TModel model,
+        string templateKey, string recipientEmail, string subject, TModel model, string culture,
         string? relatedEntityType = null, Guid? relatedEntityId = null, CancellationToken ct = default)
     {
         var log = new EmailLog
@@ -29,8 +29,10 @@ public class EmailService(
 
         try
         {
-            var html = await renderer.RenderAsync(templateKey, model, ct);
-            await sender.SendAsync(recipientEmail, subject, html, ct);
+            var rendered = await renderer.RenderAsync(templateKey, model, culture, ct);
+            var actualSubject = rendered.Subject ?? subject;
+            log.Subject = actualSubject;
+            await sender.SendAsync(recipientEmail, actualSubject, rendered.Html, ct);
             log.Status = EmailStatus.Sent;
             log.SentAt = DateTimeOffset.UtcNow;
         }

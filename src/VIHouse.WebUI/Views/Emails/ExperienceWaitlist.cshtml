@@ -1,13 +1,13 @@
 @model ExperienceWaitlistEmailModel
 @{
-    ViewData["Preheader"] = $"You're number {Model.Position} in line for {Model.ExperienceTitle}";
-    ViewData["Footnote"] = "You're receiving this because you joined a waitlist at The VI House.";
+    ViewData["Preheader"] = string.Format(Loc["Email.ExperienceWaitlist.Preheader"].Value, Model.Position, Model.ExperienceTitle);
+    ViewData["Footnote"] = Loc["Email.ExperienceWaitlist.Footnote"].Value;
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Waitlist", "You're on the list"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowWaitlist"].Value, Loc["Email.ExperienceWaitlist.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 16px;">
-    <strong>@Model.ExperienceTitle</strong> in @Model.ExperienceCity is full for this round, but you are on the waitlist.
+    @Html.Raw(string.Format(Loc["Email.ExperienceWaitlist.Body1"].Value, $"<strong>{Model.ExperienceTitle}</strong>", Model.ExperienceCity))
 </p>
-<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { ("Experience", Model.ExperienceTitle), ("City", Model.ExperienceCity), ("Your place in line", Model.Position.ToString()) })" />
-<p style="margin:0 0 16px;">If a place opens up &mdash; and it often does &mdash; we will email you before anyone else hears about it.</p>
-<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("Nothing to do now. We'll come to you.")" />
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { (Loc["Email.Common.DetailExperienceLabel"].Value, Model.ExperienceTitle), (Loc["Email.Common.DetailCityLabel"].Value, Model.ExperienceCity), (Loc["Email.ExperienceWaitlist.PositionLabel"].Value, Model.Position.ToString()) })" />
+<p style="margin:0 0 16px;">@Loc["Email.ExperienceWaitlist.Body2"]</p>
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.ExperienceWaitlist.Signoff"].Value)" />

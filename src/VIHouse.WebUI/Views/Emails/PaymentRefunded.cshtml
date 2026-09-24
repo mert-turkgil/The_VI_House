@@ -1,19 +1,18 @@
 @model PaymentRefundedEmailModel
 @{
-    ViewData["Preheader"] = $"{(Model.IsPartial ? "A partial refund" : "A refund")} for {Model.What} is on its way back to you";
-    ViewData["Footnote"] = "You're receiving this because a payment you made to The VI House was refunded.";
+    ViewData["Preheader"] = string.Format(Model.IsPartial ? Loc["Email.PaymentRefunded.PreheaderPartial"].Value : Loc["Email.PaymentRefunded.PreheaderFull"].Value, Model.What);
+    ViewData["Footnote"] = Loc["Email.PaymentRefunded.Footnote"].Value;
     var rows = new List<(string, string)>
     {
-        ("For", Model.What),
-        (Model.IsPartial ? "Refunded so far" : "Refunded", MoneyFormatter.Format(Model.AmountRefundedMinor, Model.Currency)),
+        (Loc["Email.Common.DetailForLabel"].Value, Model.What),
+        (Model.IsPartial ? Loc["Email.Common.DetailRefundedSoFarLabel"].Value : Loc["Email.Common.DetailRefundedLabel"].Value, MoneyFormatter.Format(Model.AmountRefundedMinor, Model.Currency)),
     };
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Model.IsPartial ? "Partial refund" : "Refund", "Your refund is on its way"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Model.IsPartial ? Loc["Email.PaymentRefunded.EyebrowPartial"].Value : Loc["Email.PaymentRefunded.EyebrowFull"].Value, Loc["Email.PaymentRefunded.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 16px;">
-    We've sent @(Model.IsPartial ? "a partial refund" : "a full refund") for <strong>@Model.What</strong> back to the
-    payment method you used. Depending on your bank it can take five to ten working days to show.
+    @Html.Raw(string.Format(Loc["Email.PaymentRefunded.Body1"].Value, Model.IsPartial ? Loc["Email.PaymentRefunded.BodyPartial"].Value : Loc["Email.PaymentRefunded.BodyFull"].Value, $"<strong>{Model.What}</strong>"))
 </p>
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
 <p style="margin:0 0 16px;">@Model.Effect</p>
-<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("If you weren't expecting this, or have a question about it, just reply to this email.")" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.PaymentRefunded.Signoff"].Value)" />

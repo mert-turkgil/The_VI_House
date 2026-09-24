@@ -1,5 +1,11 @@
 @* Shared by every template in this folder. The partial paths are absolute (see _ViewStart) because
-   the renderer has no controller context to resolve a bare name against. *@
+   the renderer has no controller context to resolve a bare name against.
+   Localizer resolves against whatever CultureInfo.CurrentUICulture RazorEmailTemplateRenderer set
+   just before this view rendered — see its RenderAsync — not the culture of whoever triggered the
+   send. Same ResxStringLocalizerFactory the rest of the site uses (admin-editable, live off disk). *@
+@using Microsoft.Extensions.Localization
+@using VIHouse.WebUI
 @using VIHouse.Business.Abstract
 @using VIHouse.WebUI.Helpers
 @using static VIHouse.WebUI.Helpers.EmailParts
+@inject IStringLocalizer<SharedResource> Loc

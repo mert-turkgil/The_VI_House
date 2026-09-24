@@ -134,6 +134,7 @@ public class AdminAmbassadorsController(
             "AmbassadorLink", user.Email, "Your VI House referral link",
             new AmbassadorLinkEmailModel(ambassador.Name, referralUrl, ambassador.Code, ambassador.CommissionPercent,
                 referralUrl.Replace($"/r/{ambassador.Code}", "/ambassador"), string.IsNullOrWhiteSpace(note) ? null : note.Trim()),
+            user.PreferredCulture ?? SiteCultures.Default,
             nameof(Ambassador), ambassador.Id, ct);
 
         TempData["StatusMessage"] = sent

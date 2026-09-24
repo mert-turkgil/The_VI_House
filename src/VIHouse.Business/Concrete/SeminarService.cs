@@ -384,6 +384,7 @@ public class SeminarService(
                 $"A dispute was {verdict} on the payment for \"{title}\" by {user?.FirstName} {user?.LastName} ({user?.Email}). " +
                 $"Amount: {enrollment.AmountMinor / 100m:0.00} {enrollment.Currency}. The place was NOT changed automatically. " +
                 "Respond to the dispute in the provider dashboard and decide about the place from the admin sessions page."),
+            SiteCultures.Default,
             nameof(SeminarEnrollment), enrollment.Id, ct);
     }
 
@@ -474,12 +475,14 @@ public class SeminarService(
         var seminar = await seminars.GetWithDetailAsync(enrollment.SeminarId, ct);
         if (user?.Email is null || seminar is null) return;
 
-        var title = SeminarContent.Title(seminar, SiteCultures.Default);
+        var culture = user.PreferredCulture ?? SiteCultures.Default;
+        var title = SeminarContent.Title(seminar, culture);
         await outbox.EnqueueEmailAsync(
             $"email:PaymentProcessing:SeminarEnrollment:{enrollment.Id}",
             "PaymentProcessing", user.Email, "We've received your order — payment in progress",
             new PaymentProcessingEmailModel(user.FirstName, title, enrollment.AmountMinor, enrollment.Currency,
                 SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.AccountSessions)),
+            culture,
             nameof(SeminarEnrollment), enrollment.Id, ct);
 
         await outbox.EnqueueNotificationAsync(
@@ -512,12 +515,14 @@ public class SeminarService(
         var seminar = await seminars.GetWithDetailAsync(enrollment.SeminarId, ct);
         if (user?.Email is null) return;
 
-        var title = seminar is null ? "your session" : SeminarContent.Title(seminar, SiteCultures.Default);
+        var culture = user.PreferredCulture ?? SiteCultures.Default;
+        var title = seminar is null ? "your session" : SeminarContent.Title(seminar, culture);
         var effect = full ? "Your place on the session has been released." : "Your place on the session is unchanged.";
         await outbox.EnqueueEmailAsync(
             $"email:PaymentRefunded:SeminarEnrollment:{enrollment.Id}:{refunded}",
             "PaymentRefunded", user.Email, full ? "Your refund is on its way" : "A partial refund is on its way",
             new PaymentRefundedEmailModel(user.FirstName, title, refunded, enrollment.Currency, !full, effect),
+            culture,
             nameof(SeminarEnrollment), enrollment.Id, ct);
 
         await outbox.EnqueueNotificationAsync(
@@ -915,7 +920,8 @@ public class SeminarService(
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null) return;
 
-        var title = SeminarContent.Title(seminar, SiteCultures.Default);
+        var culture = user.PreferredCulture ?? SiteCultures.Default;
+        var title = SeminarContent.Title(seminar, culture);
         var link = SiteUrls.Session(seminar.Slug);
 
         // Keyed on the seminar and the member: one confirmation per place, however the place was
@@ -931,6 +937,7 @@ public class SeminarService(
             new SeminarEnrolledEmailModel(
                 user.FirstName, title, seminar.StartAtUtc, seminar.IsOnline, seminar.Location,
                 $"{siteOptions.Value.BaseUrl.TrimEnd('/')}{link}"),
+            culture,
             nameof(Seminar), seminar.Id, ct);
     }
 

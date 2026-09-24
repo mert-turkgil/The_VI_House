@@ -84,6 +84,7 @@ public class SecurityAlertService(
                 "SecurityAlert", user.Email, eventTitle,
                 new SecurityAlertEmailModel(user.FirstName, eventTitle, detail, DateTimeOffset.UtcNow,
                     ip, Summarise(userAgent), actionUrl, actionLabel),
+                user.PreferredCulture ?? SiteCultures.Default,
                 nameof(ApplicationUser), user.Id, ct);
         }
         catch (Exception ex)

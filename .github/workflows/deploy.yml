@@ -75,6 +75,9 @@ env:
   SMTP_USE_SSL: 'true'
   SMTP_FROM_NAME: 'The VI House'
   SMTP_FROM_EMAIL: 'info@thevihouse.com'
+  # Where a reply lands when a recipient hits "Reply" on an automated mail — the staff inbox for
+  # issues/refunds (see SITE_CONTACT_EMAIL above), not the info@ mailbox that only sends.
+  SMTP_REPLY_TO_EMAIL: 'support@thevihouse.com'
 
   # --- Storage paths (empty = inside the site folder: App_Data/dp-keys, App_Media, Resources) -------
   # Only set these to ABSOLUTE Windows paths that the MonsterASP app pool can write to. A path it
@@ -231,6 +234,7 @@ jobs:
             --argjson smtpUseSsl        "$SMTP_USE_SSL" \
             --arg     smtpFromName      "$SMTP_FROM_NAME" \
             --arg     smtpFromEmail     "$SMTP_FROM_EMAIL" \
+            --arg     smtpReplyTo       "$SMTP_REPLY_TO_EMAIL" \
             --arg     smtpUsername      "$SMTP_USERNAME" \
             --arg     smtpPassword      "$SMTP_PASSWORD" \
             --arg     ckeditorKey       "$CKEDITOR_LICENSE_KEY" \
@@ -268,7 +272,7 @@ jobs:
               },
               Smtp: {
                 Host: $smtpHost, Port: $smtpPort, UseSsl: $smtpUseSsl,
-                FromName: $smtpFromName, FromEmail: $smtpFromEmail,
+                FromName: $smtpFromName, FromEmail: $smtpFromEmail, ReplyToEmail: $smtpReplyTo,
                 Username: $smtpUsername, Password: $smtpPassword
               },
               CkEditor: { LicenseKey: $ckeditorKey },
@@ -284,7 +288,7 @@ jobs:
 
           echo "appsettings.Production.json written. Non-secret sections:"
           jq 'del(.ConnectionStrings, .Stripe, .Authentication, .Sms, .Smtp, .CkEditor, .SeedAdmin, .SeedAdmins)' appsettings.Production.json
-          echo "Smtp (secrets redacted): host=$(jq -r '.Smtp.Host' appsettings.Production.json):$(jq -r '.Smtp.Port' appsettings.Production.json), from=$(jq -r '.Smtp.FromEmail' appsettings.Production.json), username set: $(jq -r '.Smtp.Username != ""' appsettings.Production.json)"
+          echo "Smtp (secrets redacted): host=$(jq -r '.Smtp.Host' appsettings.Production.json):$(jq -r '.Smtp.Port' appsettings.Production.json), from=$(jq -r '.Smtp.FromEmail' appsettings.Production.json), replyTo=$(jq -r '.Smtp.ReplyToEmail' appsettings.Production.json), username set: $(jq -r '.Smtp.Username != ""' appsettings.Production.json)"
 
       - name: Publish
         run: >

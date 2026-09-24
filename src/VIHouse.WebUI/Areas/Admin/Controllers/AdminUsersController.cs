@@ -370,6 +370,7 @@ public class AdminUsersController(
         await emailService.SendAsync(
             "AdminInvite", user.Email!, "Your VI House admin access",
             new AdminInviteEmailModel(user.FirstName, setupUrl, invitedBy, roleSummary),
+            user.PreferredCulture ?? SiteCultures.Default,
             nameof(ApplicationUser), user.Id, ct);
 
         await LogAsync("AdminInvited", user.Id, null,

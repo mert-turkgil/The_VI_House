@@ -107,6 +107,7 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
         {
             user.Property(u => u.ProviderCustomerId).HasMaxLength(100);
             user.HasIndex(u => u.ProviderCustomerId).IsUnique().HasFilter("[ProviderCustomerId] IS NOT NULL");
+            user.Property(u => u.PreferredCulture).HasMaxLength(10);
         });
     }
 }

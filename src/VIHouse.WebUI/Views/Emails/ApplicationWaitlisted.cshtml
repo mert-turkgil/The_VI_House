@@ -1,14 +1,12 @@
 @model ApplicationWaitlistedEmailModel
 @{
-    ViewData["Preheader"] = $"You're on the waitlist for {Model.ExperienceTitle}";
-    ViewData["Footnote"] = "You're receiving this because you applied to an experience at The VI House.";
+    ViewData["Preheader"] = string.Format(Loc["Email.ApplicationWaitlisted.Preheader"].Value, Model.ExperienceTitle);
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteApplication"].Value;
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Waitlist", "You're on the waitlist"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowWaitlist"].Value, Loc["Email.ApplicationWaitlisted.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 16px;">
-    <strong>@Model.ExperienceTitle</strong> is at capacity for this round, so we have placed you on the waitlist
-    rather than say no. Places do open — a change of plans on someone's side is common — and when one does,
-    we come to the waitlist first.
+    @Html.Raw(string.Format(Loc["Email.ApplicationWaitlisted.Body1"].Value, $"<strong>{Model.ExperienceTitle}</strong>"))
 </p>
-<partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note("If a place opens up we will email you directly with a booking link. There is nothing to do until then.", "info", "What happens next"))" />
+<partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note(Loc["Email.ApplicationWaitlisted.NextStepsValue"].Value, "info", Loc["Email.ApplicationWaitlisted.NextStepsLabel"].Value))" />
 <partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

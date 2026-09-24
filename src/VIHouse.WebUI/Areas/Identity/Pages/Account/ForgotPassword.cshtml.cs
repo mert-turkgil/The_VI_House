@@ -80,6 +80,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                 // delivered; the Identity UI's IEmailSender is a silent no-op by default.
                 await _emails.SendAsync("PasswordReset", Input.Email, "Reset your password",
                     new VIHouse.Business.Abstract.PasswordResetEmailModel(user.FirstName, callbackUrl!, ResetLinkHours),
+                    user.PreferredCulture ?? VIHouse.Business.Options.SiteCultures.Default,
                     nameof(ApplicationUser), user.Id);
 
                 return RedirectToPage("./ForgotPasswordConfirmation");

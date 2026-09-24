@@ -1,16 +1,15 @@
 @model ApplicationApprovedEmailModel
 @{
-    ViewData["Preheader"] = $"You're approved for The VI House — {Model.ExperienceCity}. Complete your booking by {Model.ExpiresAt:d MMMM}.";
-    ViewData["Footnote"] = "You're receiving this because you applied to an experience at The VI House.";
+    ViewData["Preheader"] = string.Format(Loc["Email.ApplicationApproved.Preheader"].Value, Model.ExperienceCity, Model.ExpiresAt.ToString("d MMMM"));
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteApplication"].Value;
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("You're approved", $"Welcome to The VI House — {Model.ExperienceCity}"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.ApplicationApproved.Eyebrow"].Value, string.Format(Loc["Email.ApplicationApproved.Heading"].Value, Model.ExperienceCity)))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 16px;">
-    We would be glad to have you at <strong>@Model.ExperienceTitle</strong>. Your place is held for you now —
-    complete the booking below to make it yours.
+    @Html.Raw(string.Format(Loc["Email.ApplicationApproved.Body1"].Value, $"<strong>{Model.ExperienceTitle}</strong>"))
 </p>
-<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { ("Experience", Model.ExperienceTitle), ("City", Model.ExperienceCity), ("Booking link valid until", Model.ExpiresAt.ToString("d MMMM yyyy")) })" />
-<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.InvitationUrl, "Complete your booking"))" />
-<p style="margin:0 0 6px; font-size:13px; color:#5a5f55;">If the button doesn't work, copy this into your browser:</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { (Loc["Email.Common.DetailExperienceLabel"].Value, Model.ExperienceTitle), (Loc["Email.Common.DetailCityLabel"].Value, Model.ExperienceCity), (Loc["Email.Common.DetailBookingLinkValidLabel"].Value, Model.ExpiresAt.ToString("d MMMM yyyy")) })" />
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.InvitationUrl, Loc["Email.ApplicationApproved.Button"].Value))" />
+<p style="margin:0 0 6px; font-size:13px; color:#5a5f55;">@Loc["Email.Common.ButtonFallbackHint"]</p>
 <partial name="/Views/Emails/_EmailCode.cshtml" model="@(new Code(Model.InvitationUrl, Href: Model.InvitationUrl))" />
-<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("The link is personal to you. If you need more time than it allows, reply to this email and we will extend it.")" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.ApplicationApproved.Signoff"].Value)" />

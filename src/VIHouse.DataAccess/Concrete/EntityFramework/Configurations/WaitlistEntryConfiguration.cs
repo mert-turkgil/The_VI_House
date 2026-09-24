@@ -21,6 +21,7 @@ public class WaitlistEntryConfiguration : IEntityTypeConfiguration<WaitlistEntry
 
         builder.Property(w => w.Email).HasMaxLength(320).IsRequired();
         builder.Property(w => w.FullName).HasMaxLength(200).IsRequired();
+        builder.Property(w => w.PreferredCulture).HasMaxLength(10);
 
         builder.HasOne<Experience>().WithMany().HasForeignKey(w => w.ExperienceId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<TicketType>().WithMany().HasForeignKey(w => w.TicketTypeId).OnDelete(DeleteBehavior.Restrict);

@@ -1355,4 +1355,221 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Payment.Meaning.Expired" xml:space="preserve"><value>Der Checkout ist vor der Zahlung abgelaufen. Es wurde nichts belastet und nichts bestätigt.</value></data>
   <data name="Payment.Meaning.Refunded" xml:space="preserve"><value>Der volle Betrag wurde an Ihr Zahlungsmittel zurückgesendet. Je nach Bank kann es fünf bis zehn Werktage dauern, bis er sichtbar ist.</value></data>
   <data name="Payment.Meaning.PartiallyRefunded" xml:space="preserve"><value>Ein Teil dieser Zahlung wurde an Ihr Zahlungsmittel zurückgesendet; das Gekaufte bleibt unverändert.</value></data>
+  <data name="Email.Common.Greeting" xml:space="preserve"><value>Hallo {0},</value></data>
+  <data name="Email.Common.ButtonFallbackHint" xml:space="preserve"><value>Falls der Button nicht funktioniert, kopieren Sie dies in Ihren Browser:</value></data>
+  <data name="Email.Common.NoteFromTeamLabel" xml:space="preserve"><value>Eine Nachricht vom Team</value></data>
+  <data name="Email.Common.ButtonOpenDashboard" xml:space="preserve"><value>Zu Ihrem Dashboard</value></data>
+  <data name="Email.Common.FootnoteApplication" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie sich für ein Erlebnis bei The VI House beworben haben.</value></data>
+  <data name="Email.Common.DetailExperienceLabel" xml:space="preserve"><value>Erlebnis</value></data>
+  <data name="Email.Common.DetailCityLabel" xml:space="preserve"><value>Stadt</value></data>
+  <data name="Email.Common.EyebrowWaitlist" xml:space="preserve"><value>Warteliste</value></data>
+  <data name="Email.Common.DetailWhenLabel" xml:space="preserve"><value>Wann</value></data>
+  <data name="Email.Common.DetailWhereLabel" xml:space="preserve"><value>Wo</value></data>
+  <data name="Email.Common.DetailPaidLabel" xml:space="preserve"><value>Bezahlt</value></data>
+  <data name="Email.Common.EyebrowYourAccount" xml:space="preserve"><value>Ihr Konto</value></data>
+  <data name="Email.Common.FootnoteMembership" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie eine Mitgliedschaft bei The VI House haben.</value></data>
+  <data name="Email.Common.EyebrowMembership" xml:space="preserve"><value>Mitgliedschaft</value></data>
+  <data name="Email.Common.EyebrowActionNeeded" xml:space="preserve"><value>Handlung erforderlich</value></data>
+  <data name="Email.Common.EyebrowMembershipRenewed" xml:space="preserve"><value>Mitgliedschaft verlängert</value></data>
+  <data name="Email.Common.HeadingMembershipRenewed" xml:space="preserve"><value>Ihre Mitgliedschaft wurde verlängert</value></data>
+  <data name="Email.Common.DetailRunsUntilLabel" xml:space="preserve"><value>Läuft bis</value></data>
+  <data name="Email.Common.EyebrowAmbassador" xml:space="preserve"><value>Botschafter</value></data>
+  <data name="Email.Common.FootnoteAmbassador" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie Botschafter/in von The VI House sind.</value></data>
+  <data name="Email.Common.DetailCommissionLabel" xml:space="preserve"><value>Ihre Provision</value></data>
+  <data name="Email.Common.DetailBookingLinkValidLabel" xml:space="preserve"><value>Buchungslink gültig bis</value></data>
+  <data name="Email.Common.DetailPlanLabel" xml:space="preserve"><value>Plan</value></data>
+  <data name="Email.Common.DetailMemberNumberLabel" xml:space="preserve"><value>Mitgliedsnummer</value></data>
+  <data name="Email.Common.DetailChargedLabel" xml:space="preserve"><value>Abgebucht</value></data>
+  <data name="Email.Common.DetailValidUntilLabel" xml:space="preserve"><value>Gültig bis</value></data>
+  <data name="Email.Common.NoExpiryValue" xml:space="preserve"><value>Kein Ablaufdatum</value></data>
+  <data name="Email.Common.DetailAccessUntilLabel" xml:space="preserve"><value>Zugang bleibt bestehen bis</value></data>
+  <data name="Email.Common.DetailNextAttemptLabel" xml:space="preserve"><value>Wir versuchen es erneut am</value></data>
+  <data name="Email.Common.DetailForLabel" xml:space="preserve"><value>Für</value></data>
+  <data name="Email.Common.DetailAmountLabel" xml:space="preserve"><value>Betrag</value></data>
+  <data name="Email.Common.DetailStatusLabel" xml:space="preserve"><value>Status</value></data>
+  <data name="Email.Common.DetailRefundedSoFarLabel" xml:space="preserve"><value>Bisher erstattet</value></data>
+  <data name="Email.Common.DetailRefundedLabel" xml:space="preserve"><value>Erstattet</value></data>
+  <data name="Email.Common.DetailWhatLabel" xml:space="preserve"><value>Was</value></data>
+  <data name="Email.Common.DetailFromLabel" xml:space="preserve"><value>Von</value></data>
+  <data name="Email.Common.DetailDeviceLabel" xml:space="preserve"><value>Gerät</value></data>
+  <data name="Email.Common.DetailSessionLabel" xml:space="preserve"><value>Sitzung</value></data>
+  <data name="Email.Common.OnlineValue" xml:space="preserve"><value>Online</value></data>
+  <data name="Email.Common.InPersonValue" xml:space="preserve"><value>Vor Ort</value></data>
+  <data name="Email.Layout.Tagline" xml:space="preserve"><value>Eine private, globale Gemeinschaft für Gründer, Betreiber und Investoren.</value></data>
+  <data name="Email.Layout.ReplyOnly" xml:space="preserve"><value>Fragen? Antworten Sie auf diese E-Mail, und wir melden uns bei Ihnen.</value></data>
+  <data name="Email.Layout.ReplyOrWrite" xml:space="preserve"><value>Fragen? Antworten Sie auf diese E-Mail oder schreiben Sie an {0}.</value></data>
+  <data name="Email.Layout.DefaultFootnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie ein Konto bei The VI House haben oder uns gebeten haben, Sie zu kontaktieren.</value></data>
+  <data name="Email.AdminInvite.Preheader" xml:space="preserve"><value>{0} hat Ihnen Administratorzugriff gewährt — legen Sie Ihr Passwort fest, um zu beginnen</value></data>
+  <data name="Email.AdminInvite.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil ein Administrator von The VI House ein Mitarbeiterkonto für Sie erstellt hat.</value></data>
+  <data name="Email.AdminInvite.Eyebrow" xml:space="preserve"><value>Administratorzugriff</value></data>
+  <data name="Email.AdminInvite.Heading" xml:space="preserve"><value>Sie haben Administratorzugriff erhalten</value></data>
+  <data name="Email.AdminInvite.Body1" xml:space="preserve"><value>{0} hat für Sie ein Administratorkonto bei The VI House erstellt.</value></data>
+  <data name="Email.AdminInvite.DetailsAccessLabel" xml:space="preserve"><value>Zugriff</value></data>
+  <data name="Email.AdminInvite.DetailsInvitedByLabel" xml:space="preserve"><value>Eingeladen von</value></data>
+  <data name="Email.AdminInvite.Body2" xml:space="preserve"><value>Legen Sie unten Ihr Passwort fest. Anschließend werden Sie gebeten, diese E-Mail-Adresse zu bestätigen und die Zwei-Faktor-Authentifizierung einzurichten — beides ist erforderlich, bevor sich das Admin-Panel öffnet, und wir führen Sie mit einem QR-Code durch den Zwei-Faktor-Schritt.</value></data>
+  <data name="Email.AdminInvite.NoteWarning" xml:space="preserve"><value>Dieser Link kann nur einmal verwendet werden. Wenn er abläuft, nutzen Sie "Passwort vergessen?" auf der Anmeldeseite. Wenn Sie dies nicht erwartet haben, sagen Sie es {0} — verwenden Sie den Link nicht.</value></data>
+  <data name="Email.AmbassadorLink.Preheader" xml:space="preserve"><value>Ihr Link: {0}</value></data>
+  <data name="Email.AmbassadorLink.Heading" xml:space="preserve"><value>Ihr VI House Empfehlungslink</value></data>
+  <data name="Email.AmbassadorLink.Body1" xml:space="preserve"><value>Hier ist der Link, der Ihnen jeden gutschreibt, den Sie zu The VI House schicken. Teilen Sie ihn überall — in einem Beitrag, einer Story, einer Nachricht, einer Folie.</value></data>
+  <data name="Email.AmbassadorLink.CodeLabel" xml:space="preserve"><value>Ihr Link</value></data>
+  <data name="Email.AmbassadorLink.Body2" xml:space="preserve"><value>Auf Ihrem Dashboard finden Sie außerdem für jedes Erlebnis und jede Sitzung einen eigenen Link und einen QR-Code, sodass ein Beitrag darüber Menschen direkt auf diese Seite führt und Ihnen zeigt, welcher Beitrag funktioniert.</value></data>
+  <data name="Email.AmbassadorLink.DetailCodeLabel" xml:space="preserve"><value>Ihr Code</value></data>
+  <data name="Email.AmbassadorLink.CommissionValue" xml:space="preserve"><value>{0}% dessen, was Ihre Empfehlungen zahlen</value></data>
+  <data name="Email.AmbassadorLink.CreditedForLabel" xml:space="preserve"><value>Angerechnet für</value></data>
+  <data name="Email.AmbassadorLink.CreditedForValue" xml:space="preserve"><value>30 Tage nach jedem Besuch</value></data>
+  <data name="Email.AmbassadorLink.Signoff" xml:space="preserve"><value>Jede Bewerbung, Genehmigung und jeder Kauf wird auf Ihrem Dashboard aufgeführt, und Sie werden per E-Mail benachrichtigt, sobald etwas davon passiert.</value></data>
+  <data name="Email.ApplicationApproved.Preheader" xml:space="preserve"><value>Sie sind zugelassen für The VI House — {0}. Schließen Sie Ihre Buchung bis {1} ab.</value></data>
+  <data name="Email.ApplicationApproved.Eyebrow" xml:space="preserve"><value>Sie sind zugelassen</value></data>
+  <data name="Email.ApplicationApproved.Heading" xml:space="preserve"><value>Willkommen bei The VI House — {0}</value></data>
+  <data name="Email.ApplicationApproved.Body1" xml:space="preserve"><value>Wir würden uns freuen, Sie bei {0} zu haben. Ihr Platz ist jetzt für Sie reserviert — schließen Sie die Buchung unten ab, um ihn sich zu sichern.</value></data>
+  <data name="Email.ApplicationApproved.Button" xml:space="preserve"><value>Buchung abschließen</value></data>
+  <data name="Email.ApplicationApproved.Signoff" xml:space="preserve"><value>Der Link ist persönlich für Sie. Wenn Sie mehr Zeit benötigen, als er erlaubt, antworten Sie auf diese E-Mail und wir verlängern ihn.</value></data>
+  <data name="Email.ApplicationReceived.Preheader" xml:space="preserve"><value>Wir haben Ihre Bewerbung für The VI House — {0} erhalten</value></data>
+  <data name="Email.ApplicationReceived.Eyebrow" xml:space="preserve"><value>Bewerbung eingegangen</value></data>
+  <data name="Email.ApplicationReceived.Heading" xml:space="preserve"><value>Vielen Dank — wir haben sie erhalten</value></data>
+  <data name="Email.ApplicationReceived.Body1" xml:space="preserve"><value>Ihre Bewerbung für The VI House — {0} ({1}) ist eingegangen. Jede Bewerbung wird von einer Person gelesen, nicht von einem Filter, daher dauert es etwas.</value></data>
+  <data name="Email.ApplicationReceived.NextStepsLabel" xml:space="preserve"><value>Wie es weitergeht</value></data>
+  <data name="Email.ApplicationReceived.NextStepsValue" xml:space="preserve"><value>Eine Entscheidung per E-Mail, meist innerhalb einiger Tage</value></data>
+  <data name="Email.ApplicationReceived.Body2" xml:space="preserve"><value>Sie müssen jetzt nichts weiter tun. Wenn sich Ihre Pläne in der Zwischenzeit ändern, antworten Sie einfach auf diese E-Mail.</value></data>
+  <data name="Email.ApplicationRejected.Preheader" xml:space="preserve"><value>Zu Ihrer Bewerbung für The VI House — {0}</value></data>
+  <data name="Email.ApplicationRejected.Eyebrow" xml:space="preserve"><value>Ihre Bewerbung</value></data>
+  <data name="Email.ApplicationRejected.Heading" xml:space="preserve"><value>Zu The VI House — {0}</value></data>
+  <data name="Email.ApplicationRejected.Body1" xml:space="preserve"><value>Vielen Dank für Ihre Bewerbung bei {0}. Wir lesen jede Bewerbung sorgfältig, und dieses Mal können wir Ihnen leider keinen Platz anbieten. Jeder Raum wird mit einer bestimmten Zusammensetzung im Sinn zusammengestellt, und das ist eine Entscheidung über den Raum, nicht über Sie.</value></data>
+  <data name="Email.ApplicationRejected.Body2" xml:space="preserve"><value>Andere Erlebnisse sind das ganze Jahr über für Bewerbungen offen, und wir würden uns freuen, Ihren Namen wiederzusehen.</value></data>
+  <data name="Email.ApplicationRejected.Button" xml:space="preserve"><value>Kommende Erlebnisse ansehen</value></data>
+  <data name="Email.ApplicationWaitlisted.Preheader" xml:space="preserve"><value>Sie stehen auf der Warteliste für {0}</value></data>
+  <data name="Email.ApplicationWaitlisted.Heading" xml:space="preserve"><value>Sie stehen auf der Warteliste</value></data>
+  <data name="Email.ApplicationWaitlisted.Body1" xml:space="preserve"><value>{0} ist für diese Runde ausgebucht, daher haben wir Sie auf die Warteliste gesetzt, anstatt abzusagen. Plätze werden frei — eine Planänderung auf jemandes Seite ist üblich — und wenn das passiert, kommen wir zuerst zur Warteliste.</value></data>
+  <data name="Email.ApplicationWaitlisted.NextStepsLabel" xml:space="preserve"><value>Wie es weitergeht</value></data>
+  <data name="Email.ApplicationWaitlisted.NextStepsValue" xml:space="preserve"><value>Wenn ein Platz frei wird, senden wir Ihnen direkt eine E-Mail mit einem Buchungslink. Bis dahin gibt es nichts zu tun.</value></data>
+  <data name="Email.BookingConfirmed.Preheader" xml:space="preserve"><value>Bestätigt: The VI House — {0}, {1}. Referenz {2}.</value></data>
+  <data name="Email.BookingConfirmed.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie einen Platz bei The VI House gebucht haben.</value></data>
+  <data name="Email.BookingConfirmed.Eyebrow" xml:space="preserve"><value>Buchung bestätigt</value></data>
+  <data name="Email.BookingConfirmed.Heading" xml:space="preserve"><value>Sie sind dabei — The VI House, {0}</value></data>
+  <data name="Email.BookingConfirmed.Body1" xml:space="preserve"><value>Ihr Platz ist bestätigt. Bewahren Sie diese E-Mail auf — die Referenz unten ist Ihr Ticket und findet sich auch auf Ihrer Kontoseite.</value></data>
+  <data name="Email.BookingConfirmed.CodeLabel" xml:space="preserve"><value>Buchungsreferenz</value></data>
+  <data name="Email.BookingConfirmed.OnlineWhereValue" xml:space="preserve"><value>Online — der Zugangslink befindet sich auf Ihrer Kontoseite</value></data>
+  <data name="Email.BookingConfirmed.Button" xml:space="preserve"><value>Ihr Ticket ansehen</value></data>
+  <data name="Email.BookingConfirmed.Body2" xml:space="preserve"><value>Wir senden das vollständige Programm und alle Zugangsdetails näher am Termin.</value></data>
+  <data name="Email.BookingConfirmed.ExperiencePageLinkText" xml:space="preserve"><value>Bis dahin finden Sie alles, was wir veröffentlicht haben, auf {0}.</value></data>
+  <data name="Email.BookingConfirmed.ExperiencePageLinkLabel" xml:space="preserve"><value>der Erlebnisseite</value></data>
+  <data name="Email.ConfirmEmail.Preheader" xml:space="preserve"><value>Ein Klick, um zu bestätigen, dass Sie es sind</value></data>
+  <data name="Email.ConfirmEmail.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil diese Adresse zur Erstellung eines Kontos bei The VI House verwendet wurde.</value></data>
+  <data name="Email.ConfirmEmail.Heading" xml:space="preserve"><value>Bestätigen Sie Ihre E-Mail-Adresse</value></data>
+  <data name="Email.ConfirmEmail.Body1" xml:space="preserve"><value>Bitte bestätigen Sie, dass dies die richtige Adresse für Ihr VI House-Konto ist. Dorthin werden Ihre Tickets, Veranstaltungsdetails und Belege gesendet.</value></data>
+  <data name="Email.ConfirmEmail.Button" xml:space="preserve"><value>E-Mail bestätigen</value></data>
+  <data name="Email.ConfirmEmail.Signoff" xml:space="preserve"><value>Der Link ist 24 Stunden gültig. Wenn Sie sich nicht für The VI House angemeldet haben, können Sie diese E-Mail ignorieren.</value></data>
+  <data name="Email.EmailChange.Preheader" xml:space="preserve"><value>Bestätigen Sie {0} als neue Adresse für Ihr Konto</value></data>
+  <data name="Email.EmailChange.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil jemand darum gebeten hat, ein VI House-Konto auf diese Adresse zu verlegen.</value></data>
+  <data name="Email.EmailChange.Heading" xml:space="preserve"><value>Bestätigen Sie Ihre neue E-Mail-Adresse</value></data>
+  <data name="Email.EmailChange.Body1" xml:space="preserve"><value>Sie haben angefragt, die E-Mail Ihres VI House-Kontos auf {0} zu ändern. Die Änderung tritt erst in Kraft, wenn Sie sie aus diesem Posteingang bestätigen.</value></data>
+  <data name="Email.EmailChange.Button" xml:space="preserve"><value>Neue Adresse bestätigen</value></data>
+  <data name="Email.EmailChange.Signoff" xml:space="preserve"><value>Wenn Sie dies nicht angefragt haben, ignorieren Sie diese E-Mail — Ihr Konto behält seine aktuelle Adresse.</value></data>
+  <data name="Email.ExperienceUpdate.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie einen bestätigten Platz für dieses Erlebnis haben.</value></data>
+  <data name="Email.ExperienceUpdate.Button" xml:space="preserve"><value>Erlebnisseite öffnen</value></data>
+  <data name="Email.ExperienceUpdate.Signoff" xml:space="preserve"><value>Ihr Ticket, das Programm und alles, was wir für dieses Erlebnis veröffentlicht haben, finden Sie auf Ihrer Kontoseite.</value></data>
+  <data name="Email.ExperienceWaitlist.Preheader" xml:space="preserve"><value>Sie sind Nummer {0} in der Warteschlange für {1}</value></data>
+  <data name="Email.ExperienceWaitlist.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie sich bei The VI House auf eine Warteliste gesetzt haben.</value></data>
+  <data name="Email.ExperienceWaitlist.Heading" xml:space="preserve"><value>Sie stehen auf der Liste</value></data>
+  <data name="Email.ExperienceWaitlist.Body1" xml:space="preserve"><value>{0} in {1} ist für diese Runde ausgebucht, aber Sie stehen auf der Warteliste.</value></data>
+  <data name="Email.ExperienceWaitlist.PositionLabel" xml:space="preserve"><value>Ihr Platz in der Warteschlange</value></data>
+  <data name="Email.ExperienceWaitlist.Body2" xml:space="preserve"><value>Wenn ein Platz frei wird — und das kommt oft vor — informieren wir Sie per E-Mail, bevor irgendjemand anderes davon erfährt.</value></data>
+  <data name="Email.ExperienceWaitlist.Signoff" xml:space="preserve"><value>Jetzt gibt es nichts zu tun. Wir kommen auf Sie zu.</value></data>
+  <data name="Email.MembershipConfirmed.RenewedLede" xml:space="preserve"><value>Ihre {0}-Mitgliedschaft läuft einfach weiter — Ihr Zugang, Ihre Karte und Ihr Platz im Raum bleiben unverändert.</value></data>
+  <data name="Email.MembershipConfirmed.GrantedHeading" xml:space="preserve"><value>Willkommen bei The VI House</value></data>
+  <data name="Email.MembershipConfirmed.GrantedLede" xml:space="preserve"><value>Sie haben vom Haus eine {0}-Mitgliedschaft erhalten. Es gibt nichts zu zahlen; alles, was ein Mitglied hat, ist jetzt Ihres.</value></data>
+  <data name="Email.MembershipConfirmed.DefaultEyebrow" xml:space="preserve"><value>Mitgliedschaft bestätigt</value></data>
+  <data name="Email.MembershipConfirmed.DefaultLede" xml:space="preserve"><value>Sie sind bestätigt als {0}. Vielen Dank — wir freuen uns, Sie im Raum zu haben.</value></data>
+  <data name="Email.MembershipConfirmed.RenewedPreheader" xml:space="preserve"><value>{0} verlängert</value></data>
+  <data name="Email.MembershipConfirmed.DefaultPreheader" xml:space="preserve"><value>Sie sind {0}</value></data>
+  <data name="Email.MembershipConfirmed.Button" xml:space="preserve"><value>Zu Ihrer Mitgliedschaft</value></data>
+  <data name="Email.MembershipConfirmed.Body" xml:space="preserve"><value>Ihre Sitzungen, Ihre Karte, die Community-Kanäle und Ihre Buchungen befinden sich alle auf Ihrer Kontoseite.</value></data>
+  <data name="Email.MembershipConfirmed.BodySuffix" xml:space="preserve"><value>Von dort aus können Sie jederzeit Ihre Karte ändern, Rechnungen herunterladen oder kündigen.</value></data>
+  <data name="Email.MembershipEnded.Preheader" xml:space="preserve"><value>Ihre {0}-Mitgliedschaft ist beendet</value></data>
+  <data name="Email.MembershipEnded.Heading" xml:space="preserve"><value>Ihre Mitgliedschaft ist beendet</value></data>
+  <data name="Email.MembershipEnded.BodyRevoked" xml:space="preserve"><value>Ihre {0}-Mitgliedschaft wurde vom Haus am {1} beendet.</value></data>
+  <data name="Email.MembershipEnded.BodyExpired" xml:space="preserve"><value>Ihre {0}-Mitgliedschaft lief bis zum Ende des bezahlten Zeitraums und ist am {1} beendet.</value></data>
+  <data name="Email.MembershipEnded.BodySuffix" xml:space="preserve"><value>Mitgliedersitzungen, die Community-Kanäle und Ihre Mitgliedskarte stehen nicht mehr zur Verfügung; Ihr Konto, Ihre Buchungen und Ihr Verlauf bleiben genau, wie sie waren.</value></data>
+  <data name="Email.MembershipEnded.Body2" xml:space="preserve"><value>Sie sind jederzeit wieder willkommen — der Wiedereintritt dauert eine Minute und setzt dort an, wo Sie aufgehört haben.</value></data>
+  <data name="Email.MembershipEnded.Button" xml:space="preserve"><value>Mitgliedschaftspläne ansehen</value></data>
+  <data name="Email.MembershipEnded.Signoff" xml:space="preserve"><value>Wenn Sie das überrascht, antworten Sie auf diese E-Mail und eine Person wird sich damit befassen.</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Preheader" xml:space="preserve"><value>Ihre Bank muss diese Verlängerung bestätigen — es dauert nur eine Minute</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Heading" xml:space="preserve"><value>Bitte bestätigen Sie Ihre Mitgliedschaftszahlung</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Body1" xml:space="preserve"><value>Wir haben versucht, Ihre {0}-Mitgliedschaft zu verlängern, und Ihre Bank hat Sie gebeten, die Zahlung zu bestätigen, bevor sie durchgeführt wird — der übliche zusätzliche Sicherheitsschritt bei Ihrer Karte.</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Body2" xml:space="preserve"><value>Bestätigen Sie es hier, und Ihre Mitgliedschaft läuft normal weiter:</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Button" xml:space="preserve"><value>Zahlung bestätigen</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Signoff" xml:space="preserve"><value>An Ihrem Konto hat sich noch nichts geändert. Wenn die Zahlung nicht bestätigt wird, versuchen wir es erneut und informieren Sie.</value></data>
+  <data name="Email.MembershipPaymentFailed.Preheader" xml:space="preserve"><value>Ihre Karte wurde abgelehnt — noch ändert sich nichts, aber bitte aktualisieren Sie sie</value></data>
+  <data name="Email.MembershipPaymentFailed.Heading" xml:space="preserve"><value>Ihre Mitgliedschaftszahlung wurde nicht durchgeführt</value></data>
+  <data name="Email.MembershipPaymentFailed.Body1" xml:space="preserve"><value>Wir haben versucht, Ihre {0}-Mitgliedschaft zu verlängern, aber die Zahlung wurde abgelehnt. Das bedeutet meist, dass eine Karte abgelaufen ist oder ersetzt wurde.</value></data>
+  <data name="Email.MembershipPaymentFailed.Body2" xml:space="preserve"><value>Um eine Unterbrechung zu vermeiden, aktualisieren Sie Ihre Zahlungsdaten vorher:</value></data>
+  <data name="Email.MembershipPaymentFailed.Button" xml:space="preserve"><value>Zahlung aktualisieren</value></data>
+  <data name="Email.MembershipPaymentFailed.Signoff" xml:space="preserve"><value>An Ihrem Konto hat sich noch nichts geändert. Wenn die Zahlung nach dem letzten Versuch weiterhin fehlschlägt, wird Ihre Mitgliedschaft pausiert, bis sie geklärt ist.</value></data>
+  <data name="Email.MembershipRenewed.Preheader" xml:space="preserve"><value>{0} verlängert bis {1}</value></data>
+  <data name="Email.MembershipRenewed.Body" xml:space="preserve"><value>Ihre {0}-Mitgliedschaft wurde verlängert. Sonst ändert sich nichts — Ihr Zugang, Ihre Karte und Ihr Platz im Raum laufen einfach weiter.</value></data>
+  <data name="Email.MembershipRenewed.Signoff" xml:space="preserve"><value>Sie können jederzeit von Ihrer Kontoseite aus Ihre Karte ändern, Rechnungen herunterladen oder kündigen.</value></data>
+  <data name="Email.MembershipResume.Preheader" xml:space="preserve"><value>Ihr {0}-Checkout ist gespeichert — machen Sie da weiter, wo Sie aufgehört haben</value></data>
+  <data name="Email.MembershipResume.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie begonnen haben, The VI House beizutreten.</value></data>
+  <data name="Email.MembershipResume.Heading" xml:space="preserve"><value>Machen Sie da weiter, wo Sie aufgehört haben</value></data>
+  <data name="Email.MembershipResume.Body1" xml:space="preserve"><value>Ihr Checkout für die {0}-Mitgliedschaft wurde nicht rechtzeitig abgeschlossen, daher wurde keine Zahlung vorgenommen und kein Konto erstellt. Alles, was Sie uns mitgeteilt haben, ist gespeichert — der Link unten öffnet den Checkout erneut, ohne erneut danach zu fragen.</value></data>
+  <data name="Email.MembershipResume.Button" xml:space="preserve"><value>Weiter zur Zahlung</value></data>
+  <data name="Email.MembershipResume.Signoff" xml:space="preserve"><value>Wenn Sie Ihre Meinung geändert haben, müssen Sie nichts tun — wir werden Sie nicht belasten und nicht weiter nachfragen.</value></data>
+  <data name="Email.PasswordReset.Preheader" xml:space="preserve"><value>Hier ist der Link, um ein neues Passwort zu wählen</value></data>
+  <data name="Email.PasswordReset.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil eine Passwortzurücksetzung für Ihr VI House-Konto angefordert wurde.</value></data>
+  <data name="Email.PasswordReset.Heading" xml:space="preserve"><value>Passwort zurücksetzen</value></data>
+  <data name="Email.PasswordReset.Body1" xml:space="preserve"><value>Jemand — hoffentlich Sie — hat gebeten, das Passwort für Ihr VI House-Konto zurückzusetzen. Wählen Sie unten ein neues.</value></data>
+  <data name="Email.PasswordReset.Button" xml:space="preserve"><value>Neues Passwort wählen</value></data>
+  <data name="Email.PasswordReset.Note" xml:space="preserve"><value>Dieser Link funktioniert einmal und läuft in {0} Stunden ab. Wenn Sie keine Zurücksetzung angefordert haben, ignorieren Sie diese E-Mail — Ihr Passwort bleibt unverändert, und niemand kann es ohne diesen Link ändern.</value></data>
+  <data name="Email.PasswordReset.Signoff" xml:space="preserve"><value>Wir werden Sie niemals per E-Mail nach Ihrem Passwort fragen.</value></data>
+  <data name="Email.PaymentFailed.Preheader" xml:space="preserve"><value>Ihr Checkout für {0} ist abgelaufen — es wurde nichts abgebucht</value></data>
+  <data name="Email.PaymentFailed.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie eine Buchung bei The VI House gestartet haben.</value></data>
+  <data name="Email.PaymentFailed.Eyebrow" xml:space="preserve"><value>Checkout nicht abgeschlossen</value></data>
+  <data name="Email.PaymentFailed.Heading" xml:space="preserve"><value>Wir konnten Ihre Zahlung nicht abschließen</value></data>
+  <data name="Email.PaymentFailed.Body1" xml:space="preserve"><value>Ihr Checkout für {0} wurde nicht rechtzeitig abgeschlossen, daher wurde keine Zahlung vorgenommen und der für Sie reservierte Platz wurde freigegeben. Ihre Zulassung bleibt bestehen — starten Sie unten einen neuen Checkout.</value></data>
+  <data name="Email.PaymentFailed.Button" xml:space="preserve"><value>Erneut versuchen</value></data>
+  <data name="Email.PaymentFailed.Signoff" xml:space="preserve"><value>Wenn die Karte abgelehnt wurde, kann Ihre Bank Ihnen möglicherweise den Grund nennen; wenn Sie lieber auf eine andere Art zahlen möchten, antworten Sie auf diese E-Mail.</value></data>
+  <data name="Email.PaymentProcessing.Preheader" xml:space="preserve"><value>Ihre Zahlung für {0} ist auf dem Weg — wir bestätigen, sobald sie eingegangen ist</value></data>
+  <data name="Email.PaymentProcessing.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie einen Checkout bei The VI House abgeschlossen haben.</value></data>
+  <data name="Email.PaymentProcessing.WaitingValue" xml:space="preserve"><value>Warten auf Ihre Bank</value></data>
+  <data name="Email.PaymentProcessing.Eyebrow" xml:space="preserve"><value>Zahlung wird bearbeitet</value></data>
+  <data name="Email.PaymentProcessing.Heading" xml:space="preserve"><value>Wir haben Ihre Bestellung erhalten</value></data>
+  <data name="Email.PaymentProcessing.Body1" xml:space="preserve"><value>Vielen Dank — Ihr Checkout für {0} ist abgeschlossen. Die von Ihnen gewählte Zahlungsmethode braucht etwas Zeit, um verarbeitet zu werden, daher bestätigt Ihre Bank sie noch. Ihr Platz ist in der Zwischenzeit reserviert, und es ist nichts weiter von Ihnen erforderlich.</value></data>
+  <data name="Email.PaymentProcessing.Body2" xml:space="preserve"><value>Wir senden Ihre Bestätigung, sobald das Geld eingeht — meist innerhalb einiger Tage. Sie können hier den Status prüfen:</value></data>
+  <data name="Email.PaymentProcessing.Button" xml:space="preserve"><value>Status prüfen</value></data>
+  <data name="Email.PaymentProcessing.Signoff" xml:space="preserve"><value>Falls die Bank die Zahlung ablehnt, informieren wir Sie umgehend mit einem Link, um es erneut zu versuchen.</value></data>
+  <data name="Email.PaymentRefunded.PreheaderPartial" xml:space="preserve"><value>Eine Teilrückerstattung für {0} ist auf dem Weg zu Ihnen zurück</value></data>
+  <data name="Email.PaymentRefunded.PreheaderFull" xml:space="preserve"><value>Eine Rückerstattung für {0} ist auf dem Weg zu Ihnen zurück</value></data>
+  <data name="Email.PaymentRefunded.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil eine Zahlung, die Sie an The VI House geleistet haben, erstattet wurde.</value></data>
+  <data name="Email.PaymentRefunded.EyebrowPartial" xml:space="preserve"><value>Teilrückerstattung</value></data>
+  <data name="Email.PaymentRefunded.EyebrowFull" xml:space="preserve"><value>Rückerstattung</value></data>
+  <data name="Email.PaymentRefunded.Heading" xml:space="preserve"><value>Ihre Rückerstattung ist auf dem Weg</value></data>
+  <data name="Email.PaymentRefunded.BodyPartial" xml:space="preserve"><value>eine Teilrückerstattung</value></data>
+  <data name="Email.PaymentRefunded.BodyFull" xml:space="preserve"><value>eine vollständige Rückerstattung</value></data>
+  <data name="Email.PaymentRefunded.Body1" xml:space="preserve"><value>Wir haben {0} für {1} an die von Ihnen verwendete Zahlungsmethode zurückgesendet. Je nach Bank kann es fünf bis zehn Werktage dauern, bis es angezeigt wird.</value></data>
+  <data name="Email.PaymentRefunded.Signoff" xml:space="preserve"><value>Wenn Sie dies nicht erwartet haben oder eine Frage dazu haben, antworten Sie einfach auf diese E-Mail.</value></data>
+  <data name="Email.ReferralConverted.Heading" xml:space="preserve"><value>Ihr Link hat gerade funktioniert</value></data>
+  <data name="Email.ReferralConverted.Signoff" xml:space="preserve"><value>Wir teilen nicht mit, wer es war; alle Zahlen finden Sie auf Ihrem Dashboard.</value></data>
+  <data name="Email.SecurityAlert.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil sie die Sicherheit Ihres VI House-Kontos betrifft. Diese Hinweise können nicht deaktiviert werden.</value></data>
+  <data name="Email.SecurityAlert.WasThisYou" xml:space="preserve"><value>Waren Sie das? Dann gibt es nichts zu tun.</value></data>
+  <data name="Email.SecurityAlert.IfNotYou" xml:space="preserve"><value>Wenn nicht, sichern Sie Ihr Konto jetzt:</value></data>
+  <data name="Email.SecurityAlert.Signoff" xml:space="preserve"><value>Wir werden Sie niemals per E-Mail nach Ihrem Passwort fragen. Wenn Ihnen daran etwas falsch vorkommt, antworten Sie auf diese Nachricht, und eine Person wird sich damit befassen.</value></data>
+  <data name="Email.SeminarEnrolled.Preheader" xml:space="preserve"><value>Ihr Platz bei {0} ist bestätigt</value></data>
+  <data name="Email.SeminarEnrolled.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie sich für eine Sitzung bei The VI House angemeldet haben.</value></data>
+  <data name="Email.SeminarEnrolled.OnDemandValue" xml:space="preserve"><value>Auf Abruf — öffnen Sie es, wann immer es Ihnen passt</value></data>
+  <data name="Email.SeminarEnrolled.Eyebrow" xml:space="preserve"><value>Sitzung</value></data>
+  <data name="Email.SeminarEnrolled.Heading" xml:space="preserve"><value>Sie sind angemeldet</value></data>
+  <data name="Email.SeminarEnrolled.Body1" xml:space="preserve"><value>Ihr Platz bei {0} ist bestätigt.</value></data>
+  <data name="Email.SeminarEnrolled.Button" xml:space="preserve"><value>Sitzung öffnen</value></data>
+  <data name="Email.SeminarEnrolled.BodyOnline" xml:space="preserve"><value>Der Zugangslink erscheint auf der Sitzungsseite und unter Meine Sitzungen in Ihrem Konto ab einer Stunde vor Beginn.</value></data>
+  <data name="Email.SeminarEnrolled.BodyElse" xml:space="preserve"><value>Sie finden es unter Meine Sitzungen auf Ihrer Kontoseite.</value></data>
+  <data name="Email.WelcomeSetup.Preheader" xml:space="preserve"><value>Wählen Sie Ihr Passwort und Sie sind dabei</value></data>
+  <data name="Email.WelcomeSetup.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil eine Zahlung ein Konto für Sie bei The VI House eröffnet hat.</value></data>
+  <data name="Email.WelcomeSetup.Eyebrow" xml:space="preserve"><value>Willkommen</value></data>
+  <data name="Email.WelcomeSetup.Heading" xml:space="preserve"><value>Richten Sie Ihr Konto ein</value></data>
+  <data name="Email.WelcomeSetup.Body1WithPlan" xml:space="preserve"><value>Ihre Zahlung war erfolgreich und Ihre {0} ist aktiv.</value></data>
+  <data name="Email.WelcomeSetup.Body1NoPlan" xml:space="preserve"><value>Ihre Zahlung war erfolgreich.</value></data>
+  <data name="Email.WelcomeSetup.Body1Suffix" xml:space="preserve"><value>Der letzte Schritt ist die Wahl eines Passworts, die Bestätigung dieser E-Mail-Adresse und die Aktivierung der Zwei-Faktor-Authentifizierung. Wir führen Sie durch den Vorgang — es dauert etwa zwei Minuten.</value></data>
+  <data name="Email.WelcomeSetup.Button" xml:space="preserve"><value>Passwort wählen</value></data>
+  <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Dieser Link kann nur einmal verwendet werden. Wenn er abläuft, nutzen Sie "Passwort vergessen?" auf der Anmeldeseite, um einen neuen zu erhalten.</value></data>
+  <data name="Email.AdminInvite.ButtonSetPassword" xml:space="preserve"><value>Passwort festlegen</value></data>
 </root>

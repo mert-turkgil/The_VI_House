@@ -130,6 +130,7 @@ public class ApplicationController(
             EarningsBand = form.EarningsBand,
             Phone = string.IsNullOrWhiteSpace(form.Phone) ? null : form.Phone,
             ReferralCode = form.ReferralCode,
+            PreferredCulture = SiteCultures.Current(),
         };
 
         await applicationService.SubmitAsync(application, form.AgreeToTerms, HttpContext.Connection.RemoteIpAddress?.ToString(), ct);

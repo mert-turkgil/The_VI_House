@@ -108,6 +108,7 @@ public class NotificationService(
             if (user?.Email is null) continue;
             await emailService.SendAsync("ExperienceUpdate", user.Email, $"{experience.Title}: {title}",
                 new ExperienceUpdateEmailModel(user.FirstName, experience.Title, title, body, experienceUrl!),
+                user.PreferredCulture ?? SiteCultures.Default,
                 "Experience", experienceId, ct);
         }
 

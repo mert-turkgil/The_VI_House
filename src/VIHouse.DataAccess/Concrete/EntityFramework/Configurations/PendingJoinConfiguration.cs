@@ -33,6 +33,7 @@ public class PendingJoinConfiguration : IEntityTypeConfiguration<PendingJoin>
         builder.Property(p => p.Expectations).HasMaxLength(2000);
         builder.Property(p => p.EarningsBand).HasMaxLength(20);
         builder.Property(p => p.ReferralCode).HasMaxLength(40);
+        builder.Property(p => p.PreferredCulture).HasMaxLength(10);
         builder.Property(p => p.IpAddress).HasMaxLength(64);
 
         builder.Property(p => p.ProviderSessionId).HasMaxLength(200);

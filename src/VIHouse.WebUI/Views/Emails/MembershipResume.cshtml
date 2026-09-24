@@ -1,13 +1,12 @@
 @model MembershipResumeEmailModel
 @{
-    ViewData["Preheader"] = $"Your {Model.PlanName} checkout is saved — pick up where you left off";
-    ViewData["Footnote"] = "You're receiving this because you started joining The VI House.";
+    ViewData["Preheader"] = string.Format(Loc["Email.MembershipResume.Preheader"].Value, Model.PlanName);
+    ViewData["Footnote"] = Loc["Email.MembershipResume.Footnote"].Value;
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Membership", "Pick up where you left off"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowMembership"].Value, Loc["Email.MembershipResume.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 16px;">
-    Your checkout for the <strong>@Model.PlanName</strong> membership wasn't completed in time, so no payment was taken and
-    no account has been created. Everything you told us is saved &mdash; the link below reopens checkout without asking for it again.
+    @Html.Raw(string.Format(Loc["Email.MembershipResume.Body1"].Value, $"<strong>{Model.PlanName}</strong>"))
 </p>
-<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ResumeUrl, "Continue to payment"))" />
-<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("If you've changed your mind, there's nothing to do — we won't charge you and we won't keep asking.")" />
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ResumeUrl, Loc["Email.MembershipResume.Button"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.MembershipResume.Signoff"].Value)" />

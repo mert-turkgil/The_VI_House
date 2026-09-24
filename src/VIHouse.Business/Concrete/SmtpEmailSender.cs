@@ -18,6 +18,8 @@ public partial class SmtpEmailSender(IOptions<SmtpOptions> options) : IEmailSend
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(opts.FromName, opts.FromEmail));
         message.To.Add(MailboxAddress.Parse(toEmail));
+        if (!string.IsNullOrEmpty(opts.ReplyToEmail))
+            message.ReplyTo.Add(MailboxAddress.Parse(opts.ReplyToEmail));
         message.Subject = subject;
 
         // multipart/alternative — the HTML plus a plain-text rendering of it. Filters score an

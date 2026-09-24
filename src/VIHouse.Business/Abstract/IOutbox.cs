@@ -14,7 +14,12 @@ namespace VIHouse.Business.Abstract;
 /// </summary>
 public interface IOutbox
 {
-    Task EnqueueEmailAsync<TModel>(string dedupeKey, string templateKey, string recipientEmail, string subject, TModel model,
+    /// <param name="culture">One of SiteCultures.Names — required, same rule as IEmailService.SendAsync:
+    /// the recipient's known PreferredCulture (falling back to SiteCultures.Default), or
+    /// SiteCultures.Default for an internal staff alert. Captured now because the enqueuing
+    /// request's own ambient culture (the actor's, not necessarily the recipient's) will be long
+    /// gone by the time OutboxProcessor actually sends this.</param>
+    Task EnqueueEmailAsync<TModel>(string dedupeKey, string templateKey, string recipientEmail, string subject, TModel model, string culture,
         string? relatedEntityType = null, Guid? relatedEntityId = null, CancellationToken ct = default) where TModel : notnull;
 
     Task EnqueueSmsAsync(string dedupeKey, string templateKey, string? recipientPhone, string body,
@@ -31,6 +36,6 @@ public interface IOutboxProcessor
     Task<int> ProcessDueAsync(int batchSize, CancellationToken ct = default);
 }
 
-public sealed record OutboxEmailPayload(string TemplateKey, string RecipientEmail, string Subject, string ModelType, string ModelJson);
+public sealed record OutboxEmailPayload(string TemplateKey, string RecipientEmail, string Subject, string ModelType, string ModelJson, string Culture);
 public sealed record OutboxSmsPayload(string TemplateKey, string? RecipientPhone, string Body);
 public sealed record OutboxNotificationPayload(Guid UserId, NotificationType Type, string Title, string Body, string? Link);

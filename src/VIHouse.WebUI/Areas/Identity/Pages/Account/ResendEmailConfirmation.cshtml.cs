@@ -79,6 +79,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                 protocol: Request.Scheme);
             await _emails.SendAsync("ConfirmEmail", Input.Email, "Confirm your email",
                 new VIHouse.Business.Abstract.ConfirmEmailAddressEmailModel(user.FirstName, callbackUrl!),
+                user.PreferredCulture ?? VIHouse.Business.Options.SiteCultures.Default,
                 nameof(ApplicationUser), user.Id);
 
             ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");

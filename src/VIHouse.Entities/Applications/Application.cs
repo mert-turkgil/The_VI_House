@@ -49,6 +49,12 @@ public class Application : BaseEntity
     /// <summary>Admin-settable qualification score, not customer-visible.</summary>
     public int? QualificationScore { get; set; }
 
+    /// <summary>The applicant's site language at submission (one of SiteCultures.Names), captured
+    /// from the URL they applied under. Carried onto ApplicationUser.PreferredCulture once an
+    /// account is provisioned, so every application-funnel email (received/approved/rejected/
+    /// waitlisted/booking/payment) goes out in the language the applicant actually applied in.</summary>
+    public string? PreferredCulture { get; set; }
+
     // Workflow
     public ApplicationStatus Status { get; set; } = ApplicationStatus.Draft;
 

@@ -91,6 +91,7 @@ public class AmbassadorService(
                 await emailService.SendAsync("ReferralConverted", user.Email, "Your referral link just worked",
                     new ReferralConvertedEmailModel(ambassador.Name, what, amountText, commissionText,
                         SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Ambassador)),
+                    user.PreferredCulture ?? SiteCultures.Default,
                     nameof(Ambassador), ambassador.Id, ct);
             }
         }

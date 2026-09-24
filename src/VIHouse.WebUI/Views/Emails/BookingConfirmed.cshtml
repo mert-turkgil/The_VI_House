@@ -1,36 +1,36 @@
 @model BookingConfirmedEmailModel
 @{
-    ViewData["Preheader"] = $"Confirmed: The VI House — {Model.ExperienceCity}, {Model.StartAtUtc:d MMM yyyy}. Reference {Model.BookingReference}.";
-    ViewData["Footnote"] = "You're receiving this because you booked a place at The VI House.";
+    ViewData["Preheader"] = string.Format(Loc["Email.BookingConfirmed.Preheader"].Value, Model.ExperienceCity, Model.StartAtUtc.ToString("d MMM yyyy"), Model.BookingReference);
+    ViewData["Footnote"] = Loc["Email.BookingConfirmed.Footnote"].Value;
     var sameDay = Model.StartAtUtc.Date == Model.EndAtUtc.Date;
     var when = sameDay
         ? $"{Model.StartAtUtc:dddd d MMMM yyyy}, {Model.StartAtUtc:HH:mm}–{Model.EndAtUtc:HH:mm} UTC"
         : $"{Model.StartAtUtc:d MMM} – {Model.EndAtUtc:d MMM yyyy}";
-    var where = Model.IsOnline ? "Online — the joining link will be on your account page" : Model.Venue ?? Model.ExperienceCity;
+    var where = Model.IsOnline ? Loc["Email.BookingConfirmed.OnlineWhereValue"].Value : Model.Venue ?? Model.ExperienceCity;
     var rows = new List<(string, string)>
     {
-        ("Experience", Model.ExperienceTitle),
-        ("When", when),
-        ("Where", where),
-        ("Paid", MoneyFormatter.Format(Model.AmountMinor, Model.Currency)),
+        (Loc["Email.Common.DetailExperienceLabel"].Value, Model.ExperienceTitle),
+        (Loc["Email.Common.DetailWhenLabel"].Value, when),
+        (Loc["Email.Common.DetailWhereLabel"].Value, where),
+        (Loc["Email.Common.DetailPaidLabel"].Value, MoneyFormatter.Format(Model.AmountMinor, Model.Currency)),
     };
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Booking confirmed", $"You're in — The VI House, {Model.ExperienceCity}"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.BookingConfirmed.Eyebrow"].Value, string.Format(Loc["Email.BookingConfirmed.Heading"].Value, Model.ExperienceCity)))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 20px;">
-    Your place is confirmed. Keep this email &mdash; the reference below is your ticket, and it is also on your account page.
+    @Loc["Email.BookingConfirmed.Body1"]
 </p>
-<partial name="/Views/Emails/_EmailCode.cshtml" model="@(new Code(Model.BookingReference, "Booking reference"))" />
+<partial name="/Views/Emails/_EmailCode.cshtml" model="@(new Code(Model.BookingReference, Loc["Email.BookingConfirmed.CodeLabel"].Value))" />
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
 @if (Model.TicketUrl is not null)
 {
-    <partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.TicketUrl, "View your ticket"))" />
+    <partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.TicketUrl, Loc["Email.BookingConfirmed.Button"].Value))" />
 }
 <p style="margin:0 0 16px; color:#4a4f45;">
-    We'll send the full programme and any joining details closer to the date.
+    @Loc["Email.BookingConfirmed.Body2"]
     @if (Model.ExperienceUrl is not null)
     {
-        <text>Until then, everything we have published is on <a href="@Model.ExperienceUrl" style="color:#00230a;">the experience page</a>.</text>
+        @Html.Raw(string.Format(Loc["Email.BookingConfirmed.ExperiencePageLinkText"].Value, $"<a href=\"{Model.ExperienceUrl}\" style=\"color:#00230a;\">{Loc["Email.BookingConfirmed.ExperiencePageLinkLabel"]}</a>"))
     }
 </p>
 <partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

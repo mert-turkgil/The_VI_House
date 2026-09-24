@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
@@ -333,6 +334,7 @@ public class OnboardingController(
         await emailService.SendAsync(
             "ConfirmEmail", user.Email!, "Confirm your email",
             new ConfirmEmailAddressEmailModel(user.FirstName, link),
+            user.PreferredCulture ?? SiteCultures.Default,
             nameof(ApplicationUser), user.Id, ct);
     }
 

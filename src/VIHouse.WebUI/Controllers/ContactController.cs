@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Localization;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Options;
 using VIHouse.WebUI.ViewModels.Content;
 using VIHouse.WebUI.Helpers;
 
@@ -38,6 +39,7 @@ public class ContactController(IEmailService emailService, SeoResolver seo, IStr
             await emailService.SendAsync(
                 "ContactMessage", recipient, $"New contact message from {form.Name}",
                 new ContactMessageEmailModel(form.Name.Trim(), form.Email.Trim(), form.Subject?.Trim(), form.Message.Trim()),
+                SiteCultures.Default,
                 ct: ct);
         }
         // If no ContactEmail is configured yet (Production default), the message still has nowhere to

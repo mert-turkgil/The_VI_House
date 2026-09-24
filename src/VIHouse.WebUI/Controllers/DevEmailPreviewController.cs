@@ -2,6 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Options;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -153,7 +154,7 @@ table{{border-collapse:collapse;width:100%}}th,td{{text-align:left;padding:6px 1
     }
 
     [HttpGet("{key}")]
-    public async Task<IActionResult> Show(string key, CancellationToken ct)
+    public async Task<IActionResult> Show(string key, string? culture, CancellationToken ct)
     {
         if (!env.IsDevelopment()) return NotFound();
 
@@ -163,9 +164,11 @@ table{{border-collapse:collapse;width:100%}}th,td{{text-align:left;padding:6px 1
         var entry = Catalogue.FirstOrDefault(e => e.Key.Equals(key, StringComparison.OrdinalIgnoreCase));
         if (entry is null) return NotFound();
 
-        var html = await renderer.RenderAsync(entry.Template, entry.Model(), ct);
+        // ?culture=de-DE (or tr-TR, et-EE) previews the same template in another language —
+        // exercises the same culture-scoping RazorEmailTemplateRenderer applies for a real send.
+        var rendered = await renderer.RenderAsync(entry.Template, entry.Model(), SiteCultures.Normalise(culture), ct);
         return asText
-            ? Content(VIHouse.Business.Concrete.SmtpEmailSender.ToPlainText(html), "text/plain; charset=utf-8")
-            : Content(html, "text/html");
+            ? Content(VIHouse.Business.Concrete.SmtpEmailSender.ToPlainText(rendered.Html), "text/plain; charset=utf-8")
+            : Content(rendered.Html, "text/html");
     }
 }

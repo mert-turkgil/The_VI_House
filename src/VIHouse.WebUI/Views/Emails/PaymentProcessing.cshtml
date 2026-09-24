@@ -1,22 +1,20 @@
 @model PaymentProcessingEmailModel
 @{
-    ViewData["Preheader"] = $"Your payment for {Model.What} is on its way — we'll confirm once it lands";
-    ViewData["Footnote"] = "You're receiving this because you completed a checkout at The VI House.";
+    ViewData["Preheader"] = string.Format(Loc["Email.PaymentProcessing.Preheader"].Value, Model.What);
+    ViewData["Footnote"] = Loc["Email.PaymentProcessing.Footnote"].Value;
     var rows = new List<(string, string)>
     {
-        ("For", Model.What),
-        ("Amount", MoneyFormatter.Format(Model.AmountMinor, Model.Currency)),
-        ("Status", "Waiting for your bank"),
+        (Loc["Email.Common.DetailForLabel"].Value, Model.What),
+        (Loc["Email.Common.DetailAmountLabel"].Value, MoneyFormatter.Format(Model.AmountMinor, Model.Currency)),
+        (Loc["Email.Common.DetailStatusLabel"].Value, Loc["Email.PaymentProcessing.WaitingValue"].Value),
     };
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Payment in progress", "We've received your order"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.PaymentProcessing.Eyebrow"].Value, Loc["Email.PaymentProcessing.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 16px;">
-    Thank you — your checkout for <strong>@Model.What</strong> is complete. The payment method you chose takes a little
-    while to clear, so your bank is still confirming it. Your place is held in the meantime, and nothing
-    else is needed from you.
+    @Html.Raw(string.Format(Loc["Email.PaymentProcessing.Body1"].Value, $"<strong>{Model.What}</strong>"))
 </p>
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
-<p style="margin:0 0 8px;">We'll send your confirmation the moment the money arrives — usually within a few days. You can check on it here:</p>
-<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.StatusUrl, "Check status"))" />
-<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("If the bank declines the payment we'll let you know straight away, with a link to try again.")" />
+<p style="margin:0 0 8px;">@Loc["Email.PaymentProcessing.Body2"]</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.StatusUrl, Loc["Email.PaymentProcessing.Button"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.PaymentProcessing.Signoff"].Value)" />

@@ -17,7 +17,7 @@
     // A line the inbox preview shows after the subject; set per template via ViewData["Preheader"].
     var preheader = ViewData["Preheader"] as string;
     // Why this person is getting this mail, in one line under the footer — set per template.
-    var footnote = ViewData["Footnote"] as string ?? "You're receiving this because you have an account with The VI House or asked us to get in touch.";
+    var footnote = ViewData["Footnote"] as string ?? Loc["Email.Layout.DefaultFootnote"].Value;
     var lang = ViewData["Lang"] as string ?? "en";
 }
 <!DOCTYPE html>
@@ -79,14 +79,14 @@
                     <tr>
                         <td class="vih-pad" style="padding:22px 36px 24px; background-color:#00230a; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.6; color:#c7c9c2; border-radius:0 0 10px 10px;">
                             <span style="color:#d7bd8a; font-family:Georgia,'Times New Roman',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase;">The VI House</span><br />
-                            A private global community for founders, operators and investors.<br />
+                            @Loc["Email.Layout.Tagline"]<br />
                             @if (string.IsNullOrWhiteSpace(contactEmail))
                             {
-                                @: Questions? Reply to this email and we'll get back to you.
+                                @Loc["Email.Layout.ReplyOnly"]
                             }
                             else
                             {
-                                @: Questions? Reply to this email or write to <a href="mailto:@contactEmail" style="color:#d7bd8a;">@contactEmail</a>.
+                                @Html.Raw(string.Format(Loc["Email.Layout.ReplyOrWrite"].Value, $"<a href=\"mailto:{contactEmail}\" style=\"color:#d7bd8a;\">{contactEmail}</a>"))
                             }
                             <br />
                             <span style="color:#8f948a; font-size:11px;">@footnote</span>

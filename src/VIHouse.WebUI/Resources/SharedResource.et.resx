@@ -1355,4 +1355,221 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Payment.Meaning.Expired" xml:space="preserve"><value>Ostuprotsess sulgus enne tasumist. Midagi ei võetud maha ega kinnitatud.</value></data>
   <data name="Payment.Meaning.Refunded" xml:space="preserve"><value>Kogu summa on saadetud tagasi teie kasutatud maksevahendile. Olenevalt pangast võib selle ilmumine võtta viis kuni kümme tööpäeva.</value></data>
   <data name="Payment.Meaning.PartiallyRefunded" xml:space="preserve"><value>Osa sellest maksest on saadetud tagasi teie kasutatud maksevahendile; ostetu jääb samaks.</value></data>
+  <data name="Email.Common.Greeting" xml:space="preserve"><value>Tere, {0},</value></data>
+  <data name="Email.Common.ButtonFallbackHint" xml:space="preserve"><value>Kui nupp ei toimi, kopeerige see oma brauserisse:</value></data>
+  <data name="Email.Common.NoteFromTeamLabel" xml:space="preserve"><value>Märkus meeskonnalt</value></data>
+  <data name="Email.Common.ButtonOpenDashboard" xml:space="preserve"><value>Ava oma töölaud</value></data>
+  <data name="Email.Common.FootnoteApplication" xml:space="preserve"><value>Saate selle kirja, kuna esitasite The VI House kogemusele avalduse.</value></data>
+  <data name="Email.Common.DetailExperienceLabel" xml:space="preserve"><value>Kogemus</value></data>
+  <data name="Email.Common.DetailCityLabel" xml:space="preserve"><value>Linn</value></data>
+  <data name="Email.Common.EyebrowWaitlist" xml:space="preserve"><value>Ootenimekiri</value></data>
+  <data name="Email.Common.DetailWhenLabel" xml:space="preserve"><value>Millal</value></data>
+  <data name="Email.Common.DetailWhereLabel" xml:space="preserve"><value>Kus</value></data>
+  <data name="Email.Common.DetailPaidLabel" xml:space="preserve"><value>Makstud</value></data>
+  <data name="Email.Common.EyebrowYourAccount" xml:space="preserve"><value>Sinu konto</value></data>
+  <data name="Email.Common.FootnoteMembership" xml:space="preserve"><value>Saate selle kirja, kuna olete The VI House liige.</value></data>
+  <data name="Email.Common.EyebrowMembership" xml:space="preserve"><value>Liikmesus</value></data>
+  <data name="Email.Common.EyebrowActionNeeded" xml:space="preserve"><value>Vajalik tegevus</value></data>
+  <data name="Email.Common.EyebrowMembershipRenewed" xml:space="preserve"><value>Liikmesus on pikendatud</value></data>
+  <data name="Email.Common.HeadingMembershipRenewed" xml:space="preserve"><value>Sinu liikmesus on pikendatud</value></data>
+  <data name="Email.Common.DetailRunsUntilLabel" xml:space="preserve"><value>Kehtib kuni</value></data>
+  <data name="Email.Common.EyebrowAmbassador" xml:space="preserve"><value>Suursaadik</value></data>
+  <data name="Email.Common.FootnoteAmbassador" xml:space="preserve"><value>Saate selle kirja, kuna olete The VI House suursaadik.</value></data>
+  <data name="Email.Common.DetailCommissionLabel" xml:space="preserve"><value>Sinu vahendustasu</value></data>
+  <data name="Email.Common.DetailBookingLinkValidLabel" xml:space="preserve"><value>Broneerimislink kehtib kuni</value></data>
+  <data name="Email.Common.DetailPlanLabel" xml:space="preserve"><value>Pakett</value></data>
+  <data name="Email.Common.DetailMemberNumberLabel" xml:space="preserve"><value>Liikme number</value></data>
+  <data name="Email.Common.DetailChargedLabel" xml:space="preserve"><value>Arveldatud</value></data>
+  <data name="Email.Common.DetailValidUntilLabel" xml:space="preserve"><value>Kehtib kuni</value></data>
+  <data name="Email.Common.NoExpiryValue" xml:space="preserve"><value>Aegumistähtaeg puudub</value></data>
+  <data name="Email.Common.DetailAccessUntilLabel" xml:space="preserve"><value>Ligipääs kestab kuni</value></data>
+  <data name="Email.Common.DetailNextAttemptLabel" xml:space="preserve"><value>Proovime uuesti</value></data>
+  <data name="Email.Common.DetailForLabel" xml:space="preserve"><value>Mille eest</value></data>
+  <data name="Email.Common.DetailAmountLabel" xml:space="preserve"><value>Summa</value></data>
+  <data name="Email.Common.DetailStatusLabel" xml:space="preserve"><value>Olek</value></data>
+  <data name="Email.Common.DetailRefundedSoFarLabel" xml:space="preserve"><value>Seni tagastatud</value></data>
+  <data name="Email.Common.DetailRefundedLabel" xml:space="preserve"><value>Tagastatud</value></data>
+  <data name="Email.Common.DetailWhatLabel" xml:space="preserve"><value>Mis</value></data>
+  <data name="Email.Common.DetailFromLabel" xml:space="preserve"><value>Kust</value></data>
+  <data name="Email.Common.DetailDeviceLabel" xml:space="preserve"><value>Seade</value></data>
+  <data name="Email.Common.DetailSessionLabel" xml:space="preserve"><value>Sessioon</value></data>
+  <data name="Email.Common.OnlineValue" xml:space="preserve"><value>Veebis</value></data>
+  <data name="Email.Common.InPersonValue" xml:space="preserve"><value>Kohapeal</value></data>
+  <data name="Email.Layout.Tagline" xml:space="preserve"><value>Privaatne globaalne kogukond asutajatele, juhtidele ja investoritele.</value></data>
+  <data name="Email.Layout.ReplyOnly" xml:space="preserve"><value>Küsimusi? Vasta sellele kirjale ja võtame teiega ühendust.</value></data>
+  <data name="Email.Layout.ReplyOrWrite" xml:space="preserve"><value>Küsimusi? Vasta sellele kirjale või kirjuta aadressile {0}.</value></data>
+  <data name="Email.Layout.DefaultFootnote" xml:space="preserve"><value>Saate selle kirja, kuna teil on The VI House'i konto või palusite meil teiega ühendust võtta.</value></data>
+  <data name="Email.AdminInvite.Preheader" xml:space="preserve"><value>{0} andis teile administraatoriõigused — alustamiseks määrake oma salasõna</value></data>
+  <data name="Email.AdminInvite.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna The VI House administraator loob teile töötajakonto.</value></data>
+  <data name="Email.AdminInvite.Eyebrow" xml:space="preserve"><value>Administraatoriõigused</value></data>
+  <data name="Email.AdminInvite.Heading" xml:space="preserve"><value>Teile on antud administraatoriõigused</value></data>
+  <data name="Email.AdminInvite.Body1" xml:space="preserve"><value>{0} lõi teile The VI House's administraatorikonto.</value></data>
+  <data name="Email.AdminInvite.DetailsAccessLabel" xml:space="preserve"><value>Õigused</value></data>
+  <data name="Email.AdminInvite.DetailsInvitedByLabel" xml:space="preserve"><value>Kutsuja</value></data>
+  <data name="Email.AdminInvite.Body2" xml:space="preserve"><value>Määrake allpool oma salasõna. Seejärel palutakse teil kinnitada see e-posti aadress ja seadistada kaheastmeline autentimine — mõlemad on vajalikud, enne kui administraatoripaneel avaneb, ja juhatame teid kaheastmelise sammu läbi QR-koodiga.</value></data>
+  <data name="Email.AdminInvite.NoteWarning" xml:space="preserve"><value>Seda linki saab kasutada vaid ühe korra. Kui see aegub, kasutage sisselogimislehel valikut "Unustasid salasõna?". Kui te sellele ei oodanud, öelge {0}-le — ärge kasutage linki.</value></data>
+  <data name="Email.AmbassadorLink.Preheader" xml:space="preserve"><value>Sinu link: {0}</value></data>
+  <data name="Email.AmbassadorLink.Heading" xml:space="preserve"><value>Sinu The VI House soovituslink</value></data>
+  <data name="Email.AmbassadorLink.Body1" xml:space="preserve"><value>Siin on link, mis krediteerib teile kõik, kelle The VI House'i saadate. Jagage seda kõikjal — postituses, loos, sõnumis või slaidil.</value></data>
+  <data name="Email.AmbassadorLink.CodeLabel" xml:space="preserve"><value>Sinu link</value></data>
+  <data name="Email.AmbassadorLink.Body2" xml:space="preserve"><value>Sinu töölaual leiate ka iga kogemuse ja sessiooni jaoks eraldi lingi ja QR-koodi, nii et postitus selle kohta suunab inimesed otse sellele lehele ja näitab teile, milline postitus toimib.</value></data>
+  <data name="Email.AmbassadorLink.DetailCodeLabel" xml:space="preserve"><value>Sinu kood</value></data>
+  <data name="Email.AmbassadorLink.CommissionValue" xml:space="preserve"><value>{0}% sinu soovitatute maksetest</value></data>
+  <data name="Email.AmbassadorLink.CreditedForLabel" xml:space="preserve"><value>Kehtivusaeg</value></data>
+  <data name="Email.AmbassadorLink.CreditedForValue" xml:space="preserve"><value>30 päeva pärast igat külastust</value></data>
+  <data name="Email.AmbassadorLink.Signoff" xml:space="preserve"><value>Kõik avaldused, kinnitused ja ostud on loetletud sinu töölaual, ja saate e-kirja iga sündmuse kohta kohe, kui see toimub.</value></data>
+  <data name="Email.ApplicationApproved.Preheader" xml:space="preserve"><value>Olete The VI House — {0} jaoks heaks kiidetud. Lõpetage broneering enne {1}.</value></data>
+  <data name="Email.ApplicationApproved.Eyebrow" xml:space="preserve"><value>Olete heaks kiidetud</value></data>
+  <data name="Email.ApplicationApproved.Heading" xml:space="preserve"><value>Tere tulemast The VI House'i — {0}</value></data>
+  <data name="Email.ApplicationApproved.Body1" xml:space="preserve"><value>Oleksime rõõmsad, kui liituksite {0}-ga. Sinu koht on praegu hoitud — vormista broneering allpool, et see kinnitada.</value></data>
+  <data name="Email.ApplicationApproved.Button" xml:space="preserve"><value>Lõpeta broneering</value></data>
+  <data name="Email.ApplicationApproved.Signoff" xml:space="preserve"><value>Link on sulle personaalne. Kui vajad rohkem aega, kui see lubab, vasta sellele kirjale ja pikendame seda.</value></data>
+  <data name="Email.ApplicationReceived.Preheader" xml:space="preserve"><value>Saime kätte teie avalduse The VI House — {0} jaoks</value></data>
+  <data name="Email.ApplicationReceived.Eyebrow" xml:space="preserve"><value>Avaldus on vastu võetud</value></data>
+  <data name="Email.ApplicationReceived.Heading" xml:space="preserve"><value>Tänan — see on meil olemas</value></data>
+  <data name="Email.ApplicationReceived.Body1" xml:space="preserve"><value>Sinu avaldus The VI House — {0} ({1}) jaoks on kohale jõudnud. Igat avaldust loeb inimene, mitte filter, seega võtab see veidi aega.</value></data>
+  <data name="Email.ApplicationReceived.NextStepsLabel" xml:space="preserve"><value>Mis järgmiseks</value></data>
+  <data name="Email.ApplicationReceived.NextStepsValue" xml:space="preserve"><value>Otsus e-posti teel, tavaliselt mõne päeva jooksul</value></data>
+  <data name="Email.ApplicationReceived.Body2" xml:space="preserve"><value>Praegu ei pea te midagi tegema. Kui teie plaanid vahepeal muutuvad, vastake lihtsalt sellele kirjale.</value></data>
+  <data name="Email.ApplicationRejected.Preheader" xml:space="preserve"><value>Sinu avalduse kohta The VI House — {0}</value></data>
+  <data name="Email.ApplicationRejected.Eyebrow" xml:space="preserve"><value>Sinu avaldus</value></data>
+  <data name="Email.ApplicationRejected.Heading" xml:space="preserve"><value>The VI House — {0} kohta</value></data>
+  <data name="Email.ApplicationRejected.Body1" xml:space="preserve"><value>Täname, et kandideerisid {0}-le. Loeme igat avaldust hoolikalt, ja seekord ei saa me sulle kohta pakkuda. Igat ruumi koostatakse kindla kooslusega silmas peetud, ja see on otsus ruumi, mitte sinu kohta.</value></data>
+  <data name="Email.ApplicationRejected.Body2" xml:space="preserve"><value>Teised kogemused on aasta läbi avatud avaldustele, ja oleksime rõõmsad, kui näeksime sinu nime taas.</value></data>
+  <data name="Email.ApplicationRejected.Button" xml:space="preserve"><value>Vaata tulevasi kogemusi</value></data>
+  <data name="Email.ApplicationWaitlisted.Preheader" xml:space="preserve"><value>Olete ootenimekirjas {0} jaoks</value></data>
+  <data name="Email.ApplicationWaitlisted.Heading" xml:space="preserve"><value>Olete ootenimekirjas</value></data>
+  <data name="Email.ApplicationWaitlisted.Body1" xml:space="preserve"><value>{0} on selle vooru jaoks täis, seega paigutasime teid ootenimekirja, mitte öelnud ei. Koha vabanevad — kellegi plaanide muutus on tavaline — ja kui see juhtub, pöördume esmalt ootenimekirja poole.</value></data>
+  <data name="Email.ApplicationWaitlisted.NextStepsLabel" xml:space="preserve"><value>Mis järgmiseks</value></data>
+  <data name="Email.ApplicationWaitlisted.NextStepsValue" xml:space="preserve"><value>Kui koht vabaneb, saadame teile otse e-kirja koos broneerimislingiga. Kuni selle ajani ei pea te midagi tegema.</value></data>
+  <data name="Email.BookingConfirmed.Preheader" xml:space="preserve"><value>Kinnitatud: The VI House — {0}, {1}. Viide {2}.</value></data>
+  <data name="Email.BookingConfirmed.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna broneerisite koha The VI House's.</value></data>
+  <data name="Email.BookingConfirmed.Eyebrow" xml:space="preserve"><value>Broneering on kinnitatud</value></data>
+  <data name="Email.BookingConfirmed.Heading" xml:space="preserve"><value>Olete sees — The VI House, {0}</value></data>
+  <data name="Email.BookingConfirmed.Body1" xml:space="preserve"><value>Sinu koht on kinnitatud. Hoidke see kiri alles — allolev viide on sinu pilet ja see on ka sinu konto lehel.</value></data>
+  <data name="Email.BookingConfirmed.CodeLabel" xml:space="preserve"><value>Broneeringu viide</value></data>
+  <data name="Email.BookingConfirmed.OnlineWhereValue" xml:space="preserve"><value>Veebis — liitumislink on sinu konto lehel</value></data>
+  <data name="Email.BookingConfirmed.Button" xml:space="preserve"><value>Vaata oma piletit</value></data>
+  <data name="Email.BookingConfirmed.Body2" xml:space="preserve"><value>Saadame täisprogrammi ja liitumisandmed lähemal ajal.</value></data>
+  <data name="Email.BookingConfirmed.ExperiencePageLinkText" xml:space="preserve"><value>Kuni selle ajani on kõik, mille avaldasime, {0} peal.</value></data>
+  <data name="Email.BookingConfirmed.ExperiencePageLinkLabel" xml:space="preserve"><value>kogemuse lehel</value></data>
+  <data name="Email.ConfirmEmail.Preheader" xml:space="preserve"><value>Üks klõps, et kinnitada, et see olete teie</value></data>
+  <data name="Email.ConfirmEmail.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna seda aadressi kasutati The VI House'i konto loomiseks.</value></data>
+  <data name="Email.ConfirmEmail.Heading" xml:space="preserve"><value>Kinnita oma e-posti aadress</value></data>
+  <data name="Email.ConfirmEmail.Body1" xml:space="preserve"><value>Palun kinnitage, et see on õige aadress teie VI House kontole. Sinna saadetakse sinu piletid, sündmuste andmed ja kviitungid.</value></data>
+  <data name="Email.ConfirmEmail.Button" xml:space="preserve"><value>Kinnitan oma e-posti</value></data>
+  <data name="Email.ConfirmEmail.Signoff" xml:space="preserve"><value>Link kehtib 24 tundi. Kui te ei registreerunud The VI House'i, võite selle kirja eirata.</value></data>
+  <data name="Email.EmailChange.Preheader" xml:space="preserve"><value>Kinnitage {0} oma konto uue aadressina</value></data>
+  <data name="Email.EmailChange.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna keegi palus liigutada VI House konto sellele aadressile.</value></data>
+  <data name="Email.EmailChange.Heading" xml:space="preserve"><value>Kinnitage oma uus e-posti aadress</value></data>
+  <data name="Email.EmailChange.Body1" xml:space="preserve"><value>Palusite muuta oma VI House konto e-posti aadressiks {0}. Muudatus jõustub alles siis, kui kinnitate seda sellest postkastist.</value></data>
+  <data name="Email.EmailChange.Button" xml:space="preserve"><value>Kinnita uus aadress</value></data>
+  <data name="Email.EmailChange.Signoff" xml:space="preserve"><value>Kui te seda ei taotlenud, eirake seda kirja — teie konto säilitab oma praeguse aadressi.</value></data>
+  <data name="Email.ExperienceUpdate.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna teil on sellel kogemusel kinnitatud koht.</value></data>
+  <data name="Email.ExperienceUpdate.Button" xml:space="preserve"><value>Ava kogemuse leht</value></data>
+  <data name="Email.ExperienceUpdate.Signoff" xml:space="preserve"><value>Sinu pilet, programm ja kõik, mille selle kogemuse kohta avaldasime, on sinu konto lehel.</value></data>
+  <data name="Email.ExperienceWaitlist.Preheader" xml:space="preserve"><value>Olete {1} järjekorras number {0}</value></data>
+  <data name="Email.ExperienceWaitlist.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna liitusite The VI House ootenimekirjaga.</value></data>
+  <data name="Email.ExperienceWaitlist.Heading" xml:space="preserve"><value>Olete nimekirjas</value></data>
+  <data name="Email.ExperienceWaitlist.Body1" xml:space="preserve"><value>{0} kohas {1} on selle vooru jaoks täis, kuid olete ootenimekirjas.</value></data>
+  <data name="Email.ExperienceWaitlist.PositionLabel" xml:space="preserve"><value>Sinu koht järjekorras</value></data>
+  <data name="Email.ExperienceWaitlist.Body2" xml:space="preserve"><value>Kui koht vabaneb — ja see juhtub tihti — saadame teile e-kirja enne, kui kellegi teisele sellest teada saab.</value></data>
+  <data name="Email.ExperienceWaitlist.Signoff" xml:space="preserve"><value>Praegu ei pea midagi tegema. Võtame teiega ühendust.</value></data>
+  <data name="Email.MembershipConfirmed.RenewedLede" xml:space="preserve"><value>Sinu {0} liikmesus jätkub sujuvalt — sinu ligipääs, kaart ja koht ruumis on samad.</value></data>
+  <data name="Email.MembershipConfirmed.GrantedHeading" xml:space="preserve"><value>Tere tulemast The VI House'i</value></data>
+  <data name="Email.MembershipConfirmed.GrantedLede" xml:space="preserve"><value>Maja andis teile {0} liikmesuse. Midagi ei tule maksta; kõik, mis liikmel on, on nüüd teie.</value></data>
+  <data name="Email.MembershipConfirmed.DefaultEyebrow" xml:space="preserve"><value>Liikmesus on kinnitatud</value></data>
+  <data name="Email.MembershipConfirmed.DefaultLede" xml:space="preserve"><value>Olete kinnitatud kui {0}. Tänan — meil on hea meel, et olete ruumis.</value></data>
+  <data name="Email.MembershipConfirmed.RenewedPreheader" xml:space="preserve"><value>{0} on pikendatud</value></data>
+  <data name="Email.MembershipConfirmed.DefaultPreheader" xml:space="preserve"><value>Olete {0}</value></data>
+  <data name="Email.MembershipConfirmed.Button" xml:space="preserve"><value>Ava oma liikmesus</value></data>
+  <data name="Email.MembershipConfirmed.Body" xml:space="preserve"><value>Sinu sessioonid, kaart, kogukonna kanalid ja broneeringud on kõik sinu konto lehel.</value></data>
+  <data name="Email.MembershipConfirmed.BodySuffix" xml:space="preserve"><value>Sealt saate igal ajal muuta oma kaarti, laadida alla arveid või tühistada.</value></data>
+  <data name="Email.MembershipEnded.Preheader" xml:space="preserve"><value>Sinu {0} liikmesus on lõppenud</value></data>
+  <data name="Email.MembershipEnded.Heading" xml:space="preserve"><value>Sinu liikmesus on lõppenud</value></data>
+  <data name="Email.MembershipEnded.BodyRevoked" xml:space="preserve"><value>Sinu {0} liikmesuse lõpetas maja {1}.</value></data>
+  <data name="Email.MembershipEnded.BodyExpired" xml:space="preserve"><value>Sinu {0} liikmesus kestis makstud perioodi lõpuni ja lõppes {1}.</value></data>
+  <data name="Email.MembershipEnded.BodySuffix" xml:space="preserve"><value>Liikmete sessioonid, kogukonna kanalid ja sinu liikmekaart ei ole enam saadaval; sinu konto, broneeringud ja ajalugu jäävad täpselt samaks.</value></data>
+  <data name="Email.MembershipEnded.Body2" xml:space="preserve"><value>Olete alati tagasi oodatud — taasliitumine võtab minuti ja jätkub sealt, kus lõpetasite.</value></data>
+  <data name="Email.MembershipEnded.Button" xml:space="preserve"><value>Vaata liikmesuspakette</value></data>
+  <data name="Email.MembershipEnded.Signoff" xml:space="preserve"><value>Kui see tuli ootamatult, vasta sellele kirjale ja inimene uurib seda.</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Preheader" xml:space="preserve"><value>Sinu pank vajab selle pikendamise kinnitamist — see võtab minuti</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Heading" xml:space="preserve"><value>Palun kinnita oma liikmesuse makse</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Body1" xml:space="preserve"><value>Proovisime pikendada sinu {0} liikmesust, ja sinu pank palus enne läbimist makse kinnitada — tavaline täiendav turvasamm sinu kaardil.</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Body2" xml:space="preserve"><value>Kinnitage see siin ja sinu liikmesus jätkub tavapäraselt:</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Button" xml:space="preserve"><value>Kinnita makse</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Signoff" xml:space="preserve"><value>Sinu kontol pole veel midagi muutunud. Kui see ei kinnitatud, proovime uuesti ja anname teile teada.</value></data>
+  <data name="Email.MembershipPaymentFailed.Preheader" xml:space="preserve"><value>Sinu kaart lükati tagasi — veel midagi ei muutu, kuid palun uuenda seda</value></data>
+  <data name="Email.MembershipPaymentFailed.Heading" xml:space="preserve"><value>Sinu liikmesuse makse ei läbinud</value></data>
+  <data name="Email.MembershipPaymentFailed.Body1" xml:space="preserve"><value>Proovisime pikendada sinu {0} liikmesust, kuid makse lükati tagasi. See tähendab tavaliselt, et kaart on aegunud või asendatud.</value></data>
+  <data name="Email.MembershipPaymentFailed.Body2" xml:space="preserve"><value>Katkestuse vältimiseks uuenda oma makseandmed enne seda:</value></data>
+  <data name="Email.MembershipPaymentFailed.Button" xml:space="preserve"><value>Uuenda maksed</value></data>
+  <data name="Email.MembershipPaymentFailed.Signoff" xml:space="preserve"><value>Sinu kontol pole veel midagi muutunud. Kui makse ebaõnnestub ka viimase katse järel, peatatakse sinu liikmesus kuni selle lahendamiseni.</value></data>
+  <data name="Email.MembershipRenewed.Preheader" xml:space="preserve"><value>{0} on pikendatud kuni {1}</value></data>
+  <data name="Email.MembershipRenewed.Body" xml:space="preserve"><value>Sinu {0} liikmesus on pikendatud. Muud midagi ei muutu — sinu ligipääs, kaart ja koht ruumis jätkuvad sujuvalt.</value></data>
+  <data name="Email.MembershipRenewed.Signoff" xml:space="preserve"><value>Saate igal ajal oma konto lehelt muuta kaarti, laadida alla arveid või tühistada.</value></data>
+  <data name="Email.MembershipResume.Preheader" xml:space="preserve"><value>Sinu {0} ostuprotsess on salvestatud — jätka sealt, kus lõpetasid</value></data>
+  <data name="Email.MembershipResume.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna alustasite The VI House'i liitumist.</value></data>
+  <data name="Email.MembershipResume.Heading" xml:space="preserve"><value>Jätka sealt, kus lõpetasid</value></data>
+  <data name="Email.MembershipResume.Body1" xml:space="preserve"><value>Sinu {0} liikmesuse ostuprotsess ei jõudnud õigel ajal lõpule, seega makset ei tehtud ja kontot ei loodud. Kõik, mida meile ütlesid, on salvestatud — allolev link avab ostuprotsessi uuesti, küsimata seda uuesti.</value></data>
+  <data name="Email.MembershipResume.Button" xml:space="preserve"><value>Jätka maksmist</value></data>
+  <data name="Email.MembershipResume.Signoff" xml:space="preserve"><value>Kui muutsid meelt, ei pea midagi tegema — me ei võta sinult tasu ega küsi enam.</value></data>
+  <data name="Email.PasswordReset.Preheader" xml:space="preserve"><value>Siin on link uue salasõna valimiseks</value></data>
+  <data name="Email.PasswordReset.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna teie VI House konto jaoks taotleti salasõna lähtestamist.</value></data>
+  <data name="Email.PasswordReset.Heading" xml:space="preserve"><value>Lähtesta oma salasõna</value></data>
+  <data name="Email.PasswordReset.Body1" xml:space="preserve"><value>Keegi — loodetavasti teie — palus lähtestada sinu VI House konto salasõna. Vali allpool uus.</value></data>
+  <data name="Email.PasswordReset.Button" xml:space="preserve"><value>Vali uus salasõna</value></data>
+  <data name="Email.PasswordReset.Note" xml:space="preserve"><value>See link töötab ühe korra ja aegub {0} tunni pärast. Kui te lähtestamist ei taotlenud, eirake seda kirja — sinu salasõna jääb samaks ja ilma selle lingita ei saa seda muuta.</value></data>
+  <data name="Email.PasswordReset.Signoff" xml:space="preserve"><value>Me ei küsi sinu salasõna kunagi e-posti teel.</value></data>
+  <data name="Email.PaymentFailed.Preheader" xml:space="preserve"><value>Sinu {0} ostuprotsess aegus — midagi ei arveldatud</value></data>
+  <data name="Email.PaymentFailed.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna alustasite broneeringut The VI House's.</value></data>
+  <data name="Email.PaymentFailed.Eyebrow" xml:space="preserve"><value>Ostuprotsess ei lõppenud</value></data>
+  <data name="Email.PaymentFailed.Heading" xml:space="preserve"><value>Me ei saanud sinu maksega lõpuni jõuda</value></data>
+  <data name="Email.PaymentFailed.Body1" xml:space="preserve"><value>Sinu {0} ostuprotsess ei jõudnud õigel ajal lõpule, seega makset ei võetud ja hoitud koht vabastati. Sinu heakskiit kehtib endiselt — alusta allpool uut ostuprotsessi.</value></data>
+  <data name="Email.PaymentFailed.Button" xml:space="preserve"><value>Proovi uuesti</value></data>
+  <data name="Email.PaymentFailed.Signoff" xml:space="preserve"><value>Kui kaart lükati tagasi, võib sinu pank öelda, miks; kui soovid maksta teisiti, vasta sellele kirjale.</value></data>
+  <data name="Email.PaymentProcessing.Preheader" xml:space="preserve"><value>Sinu {0} makse on teel — kinnitame, kui see saabub</value></data>
+  <data name="Email.PaymentProcessing.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna lõpetasite ostuprotsessi The VI House's.</value></data>
+  <data name="Email.PaymentProcessing.WaitingValue" xml:space="preserve"><value>Ootame sinu panka</value></data>
+  <data name="Email.PaymentProcessing.Eyebrow" xml:space="preserve"><value>Makse on töös</value></data>
+  <data name="Email.PaymentProcessing.Heading" xml:space="preserve"><value>Saime sinu tellimuse kätte</value></data>
+  <data name="Email.PaymentProcessing.Body1" xml:space="preserve"><value>Tänan — sinu {0} ostuprotsess on lõpetatud. Valitud maksemeetodi töötlemine võtab veidi aega, seega sinu pank kinnitab seda veel. Sinu koht on vahepeal hoitud ja muud sinult ei vajata.</value></data>
+  <data name="Email.PaymentProcessing.Body2" xml:space="preserve"><value>Saadame kinnituse kohe, kui raha jõuab kohale — tavaliselt mõne päeva jooksul. Saate seda kontrollida siin:</value></data>
+  <data name="Email.PaymentProcessing.Button" xml:space="preserve"><value>Kontrolli olekut</value></data>
+  <data name="Email.PaymentProcessing.Signoff" xml:space="preserve"><value>Kui pank makse tagasi lükkab, teavitame teid sellest kohe koos lingiga uuesti proovimiseks.</value></data>
+  <data name="Email.PaymentRefunded.PreheaderPartial" xml:space="preserve"><value>Osaline tagasimakse {0} eest on teel tagasi teie juurde</value></data>
+  <data name="Email.PaymentRefunded.PreheaderFull" xml:space="preserve"><value>Tagasimakse {0} eest on teel tagasi teie juurde</value></data>
+  <data name="Email.PaymentRefunded.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna teie makse The VI House'ile tagastati.</value></data>
+  <data name="Email.PaymentRefunded.EyebrowPartial" xml:space="preserve"><value>Osaline tagasimakse</value></data>
+  <data name="Email.PaymentRefunded.EyebrowFull" xml:space="preserve"><value>Tagasimakse</value></data>
+  <data name="Email.PaymentRefunded.Heading" xml:space="preserve"><value>Sinu tagasimakse on teel</value></data>
+  <data name="Email.PaymentRefunded.BodyPartial" xml:space="preserve"><value>osaline tagasimakse</value></data>
+  <data name="Email.PaymentRefunded.BodyFull" xml:space="preserve"><value>täielik tagasimakse</value></data>
+  <data name="Email.PaymentRefunded.Body1" xml:space="preserve"><value>Saatsime {0} {1} eest tagasi teie kasutatud maksevahendile. Sõltuvalt pangast võib selle kajastumine võtta viis kuni kümme tööpäeva.</value></data>
+  <data name="Email.PaymentRefunded.Signoff" xml:space="preserve"><value>Kui te sellele ei oodanud või on teil selle kohta küsimusi, vastake lihtsalt sellele kirjale.</value></data>
+  <data name="Email.ReferralConverted.Heading" xml:space="preserve"><value>Sinu link toimis just</value></data>
+  <data name="Email.ReferralConverted.Signoff" xml:space="preserve"><value>Me ei jaga, kes see oli; kõik numbrid on sinu töölaual.</value></data>
+  <data name="Email.SecurityAlert.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna see puudutab teie VI House konto turvalisust. Neid teavitusi ei saa välja lülitada.</value></data>
+  <data name="Email.SecurityAlert.WasThisYou" xml:space="preserve"><value>Olite see teie? Siis ei pea midagi tegema.</value></data>
+  <data name="Email.SecurityAlert.IfNotYou" xml:space="preserve"><value>Kui ei olnud, turvake oma konto kohe:</value></data>
+  <data name="Email.SecurityAlert.Signoff" xml:space="preserve"><value>Me ei küsi sinu salasõna kunagi e-posti teel. Kui midagi tundub valesti, vasta sellele sõnumile ja inimene uurib seda.</value></data>
+  <data name="Email.SeminarEnrolled.Preheader" xml:space="preserve"><value>Sinu koht {0} peal on kinnitatud</value></data>
+  <data name="Email.SeminarEnrolled.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna registreerusite The VI House sessioonile.</value></data>
+  <data name="Email.SeminarEnrolled.OnDemandValue" xml:space="preserve"><value>Nõudmisel — ava see, millal sulle sobib</value></data>
+  <data name="Email.SeminarEnrolled.Eyebrow" xml:space="preserve"><value>Sessioon</value></data>
+  <data name="Email.SeminarEnrolled.Heading" xml:space="preserve"><value>Olete registreeritud</value></data>
+  <data name="Email.SeminarEnrolled.Body1" xml:space="preserve"><value>Sinu koht {0} peal on kinnitatud.</value></data>
+  <data name="Email.SeminarEnrolled.Button" xml:space="preserve"><value>Ava sessioon</value></data>
+  <data name="Email.SeminarEnrolled.BodyOnline" xml:space="preserve"><value>Liitumislink ilmub sessiooni lehele ja teie konto alla Minu sessioonid tund enne algust.</value></data>
+  <data name="Email.SeminarEnrolled.BodyElse" xml:space="preserve"><value>See on loetletud teie konto lehel Minu sessioonid alt.</value></data>
+  <data name="Email.WelcomeSetup.Preheader" xml:space="preserve"><value>Vali oma salasõna ja olete sees</value></data>
+  <data name="Email.WelcomeSetup.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna makse avas teile konto The VI House's.</value></data>
+  <data name="Email.WelcomeSetup.Eyebrow" xml:space="preserve"><value>Tere tulemast</value></data>
+  <data name="Email.WelcomeSetup.Heading" xml:space="preserve"><value>Seadista oma konto</value></data>
+  <data name="Email.WelcomeSetup.Body1WithPlan" xml:space="preserve"><value>Sinu makse läbis ja sinu {0} on aktiivne.</value></data>
+  <data name="Email.WelcomeSetup.Body1NoPlan" xml:space="preserve"><value>Sinu makse läbis.</value></data>
+  <data name="Email.WelcomeSetup.Body1Suffix" xml:space="preserve"><value>Viimane samm on valida salasõna, kinnitada see e-posti aadress ja lülitada sisse kaheastmeline autentimine. Juhatame teid läbi — see võtab paar minutit.</value></data>
+  <data name="Email.WelcomeSetup.Button" xml:space="preserve"><value>Vali salasõna</value></data>
+  <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Seda linki saab kasutada vaid ühe korra. Kui see aegub, kasutage uue saamiseks sisselogimislehel valikut "Unustasid salasõna?".</value></data>
+  <data name="Email.AdminInvite.ButtonSetPassword" xml:space="preserve"><value>Määra salasõna</value></data>
 </root>

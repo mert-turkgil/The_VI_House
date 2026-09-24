@@ -16,4 +16,7 @@ public class SmtpOptions
     public string FromEmail { get; set; } = "";
     public string Username { get; set; } = "";
     public string Password { get; set; } = "";
+
+    /// <summary>Where a reply lands when a recipient hits "Reply" — the staff inbox for issues/refunds, not the sending mailbox.</summary>
+    public string ReplyToEmail { get; set; } = "";
 }

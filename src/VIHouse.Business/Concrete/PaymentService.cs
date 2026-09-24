@@ -398,6 +398,7 @@ public class PaymentService(
                     TicketUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Booking(booking.BookingReference)),
                     ExperienceUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Experience(confirmedExperience.Slug)),
                 },
+                confirmedApplication.PreferredCulture ?? SiteCultures.Default,
                 nameof(Booking), booking.Id, ct);
 
             await outbox.EnqueueNotificationAsync(
@@ -439,6 +440,7 @@ public class PaymentService(
             "PaymentProcessing", application.Email, "We've received your order — payment in progress",
             new PaymentProcessingEmailModel(application.FirstName, what, payment.AmountMinor, payment.Currency,
                 SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.AccountBookings)),
+            application.PreferredCulture ?? SiteCultures.Default,
             nameof(Payment), payment.Id, ct);
 
         if (payment.UserId is { } userId)
@@ -488,6 +490,7 @@ public class PaymentService(
                 $"email:PaymentFailed:Payment:{payment.Id}",
                 "PaymentFailed", application.Email, "We couldn't complete your payment",
                 new PaymentFailedEmailModel(application.FirstName, experience.Title, invitationUrl),
+                application.PreferredCulture ?? SiteCultures.Default,
                 nameof(Payment), payment.Id, ct);
 
             // Their seat went back into inventory when the checkout expired, so this is time-sensitive
@@ -570,6 +573,7 @@ public class PaymentService(
             $"email:PaymentRefunded:Payment:{payment.Id}:{refunded}",
             "PaymentRefunded", application.Email, full ? "Your refund is on its way" : "A partial refund is on its way",
             new PaymentRefundedEmailModel(application.FirstName, what, refunded, payment.Currency, !full, effect),
+            application.PreferredCulture ?? SiteCultures.Default,
             nameof(Payment), payment.Id, ct);
 
         if (payment.UserId is { } userId)
@@ -619,6 +623,7 @@ public class PaymentService(
                 $"A dispute was {verdict} on the ticket payment by {application?.FirstName} {application?.LastName} ({application?.Email}).\n" +
                 $"Booking: {booking?.BookingReference ?? "none"}. Amount: {payment.AmountMinor / 100m:0.00} {payment.Currency}. Provider payment intent: {webhookEvent.PaymentIntentId}.\n" +
                 "Nothing was changed on the booking automatically. Respond to the dispute in the provider dashboard and decide about the booking there."),
+            SiteCultures.Default,
             nameof(Payment), payment.Id, ct);
     }
 
@@ -662,6 +667,7 @@ public class PaymentService(
                 $"email:WelcomeSetup:User:{user.Id}",
                 "WelcomeSetup", user.Email!, "Set up your VI House account",
                 new WelcomeSetupEmailModel(user.FirstName, setupUrl, null),
+                user.PreferredCulture ?? SiteCultures.Default,
                 nameof(ApplicationUser), user.Id, ct);
         }
 
@@ -718,6 +724,7 @@ public class PaymentService(
             Country = application.Country,
             City = application.City,
             MemberStatus = MemberStatus.PendingApplication,
+            PreferredCulture = application.PreferredCulture,
         };
 
         // Random, never-communicated password — the member sets their own via the password-reset

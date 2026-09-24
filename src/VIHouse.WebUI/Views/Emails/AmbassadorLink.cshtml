@@ -1,23 +1,21 @@
 @model AmbassadorLinkEmailModel
 @{
-    ViewData["Preheader"] = $"Your link: {Model.ReferralUrl}";
-    ViewData["Footnote"] = "You're receiving this because you are an ambassador for The VI House.";
+    ViewData["Preheader"] = string.Format(Loc["Email.AmbassadorLink.Preheader"].Value, Model.ReferralUrl);
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteAmbassador"].Value;
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Ambassador", "Your VI House referral link"))" />
-<p style="margin:0 0 16px;">Hi @Model.Name,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowAmbassador"].Value, Loc["Email.AmbassadorLink.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.Name)</p>
 <p style="margin:0 0 16px;">
-    Here is the link that credits everyone you send to The VI House to you. Share it anywhere &mdash; a post,
-    a story, a message, a slide.
+    @Loc["Email.AmbassadorLink.Body1"]
 </p>
-<partial name="/Views/Emails/_EmailCode.cshtml" model="@(new Code(Model.ReferralUrl, "Your link", Href: Model.ReferralUrl))" />
+<partial name="/Views/Emails/_EmailCode.cshtml" model="@(new Code(Model.ReferralUrl, Loc["Email.AmbassadorLink.CodeLabel"].Value, Href: Model.ReferralUrl))" />
 <p style="margin:0 0 16px;">
-    On your dashboard you will also find a separate link and a QR code for every experience and session,
-    so a post about one of them lands people straight on that page and shows you which post is working.
+    @Loc["Email.AmbassadorLink.Body2"]
 </p>
 @if (!string.IsNullOrWhiteSpace(Model.Note))
 {
-    <partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note(Model.Note, "info", "A note from the team"))" />
+    <partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note(Model.Note, "info", Loc["Email.Common.NoteFromTeamLabel"].Value))" />
 }
-<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { ("Your code", Model.Code), ("Your commission", $"{Model.CommissionPercent:0.##}% of what your referrals pay"), ("Credited for", "30 days after each visit") })" />
-<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.DashboardUrl, "Open your dashboard"))" />
-<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("Every application, approval and purchase is listed on your dashboard, and you will be emailed the moment each one happens.")" />
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { (Loc["Email.AmbassadorLink.DetailCodeLabel"].Value, Model.Code), (Loc["Email.Common.DetailCommissionLabel"].Value, string.Format(Loc["Email.AmbassadorLink.CommissionValue"].Value, Model.CommissionPercent.ToString("0.##"))), (Loc["Email.AmbassadorLink.CreditedForLabel"].Value, Loc["Email.AmbassadorLink.CreditedForValue"].Value) })" />
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.DashboardUrl, Loc["Email.Common.ButtonOpenDashboard"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.AmbassadorLink.Signoff"].Value)" />

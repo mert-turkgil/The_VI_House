@@ -126,6 +126,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
                     protocol: Request.Scheme);
                 await _emails.SendAsync("EmailChange", Input.NewEmail, "Confirm your new email address",
                     new VIHouse.Business.Abstract.EmailChangeEmailModel(user.FirstName, Input.NewEmail, callbackUrl!),
+                    user.PreferredCulture ?? VIHouse.Business.Options.SiteCultures.Default,
                     nameof(ApplicationUser), user.Id);
 
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
@@ -161,6 +162,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
                 protocol: Request.Scheme);
             await _emails.SendAsync("ConfirmEmail", email!, "Confirm your email",
                 new VIHouse.Business.Abstract.ConfirmEmailAddressEmailModel(user.FirstName, callbackUrl!),
+                user.PreferredCulture ?? VIHouse.Business.Options.SiteCultures.Default,
                 nameof(ApplicationUser), user.Id);
 
             StatusMessage = "Verification email sent. Please check your email.";

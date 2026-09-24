@@ -425,6 +425,7 @@ public class MembershipService(
                     MemberNumber = $"VIH-{membership.Id:N}"[..12].ToUpperInvariant(),
                     AccountUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.AccountMembership),
                 },
+                user.PreferredCulture ?? SiteCultures.Default,
                 nameof(Membership), membership.Id, ct);
         }
 
@@ -647,6 +648,7 @@ public class MembershipService(
         join.ReferralCode = request.ReferralCode;
         join.IpAddress = request.IpAddress;
         join.PurgedAt = null;
+        join.PreferredCulture = SiteCultures.Current();
 
         // The code already redeemed for this row is kept if it is the same one typed again; a
         // different one is validated and redeemed afresh; none clears it.
@@ -1156,6 +1158,7 @@ public class MembershipService(
                 $"A dispute was {verdict} on the {plan?.Name ?? "membership"} payment by {user?.FirstName} {user?.LastName} ({user?.Email}). " +
                 $"Amount: {payment.AmountMinor / 100m:0.00} {payment.Currency}. Membership {payment.MembershipId}: access was NOT changed automatically. " +
                 "Respond to the dispute in the provider dashboard and decide about the membership from the admin members page."),
+            SiteCultures.Default,
             nameof(MembershipPayment), payment.Id, ct);
     }
 
@@ -1168,7 +1171,7 @@ public class MembershipService(
     private async Task HandleCheckoutAwaitingPaymentAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
         var sessionId = webhookEvent.SessionId!;
-        string? email, firstName; Guid? userId; Guid planId; string entityType; Guid entityId;
+        string? email, firstName, culture; Guid? userId; Guid planId; string entityType; Guid entityId;
 
         var payment = await membershipPayments.GetByProviderReferenceAsync(sessionId, ct);
         if (payment is not null)
@@ -1180,13 +1183,15 @@ public class MembershipService(
 
             var user = await userManager.FindByIdAsync(payment.UserId.ToString());
             if (user?.Email is null) return;
-            (email, firstName, userId, planId, entityType, entityId) = (user.Email, user.FirstName, user.Id, payment.PlanId, nameof(MembershipPayment), payment.Id);
+            (email, firstName, userId, planId, entityType, entityId, culture) =
+                (user.Email, user.FirstName, user.Id, payment.PlanId, nameof(MembershipPayment), payment.Id, user.PreferredCulture ?? SiteCultures.Default);
         }
         else
         {
             var join = await pendingJoins.GetBySessionAsync(sessionId, ct);
             if (join is null || join.Status != PendingJoinStatus.Pending) return;
-            (email, firstName, userId, planId, entityType, entityId) = (join.Email, join.FirstName, null, join.PlanId, nameof(PendingJoin), join.Id);
+            (email, firstName, userId, planId, entityType, entityId, culture) =
+                (join.Email, join.FirstName, null, join.PlanId, nameof(PendingJoin), join.Id, join.PreferredCulture ?? SiteCultures.Default);
         }
 
         var plan = await plans.GetByIdAsync(planId, ct);
@@ -1196,6 +1201,7 @@ public class MembershipService(
             "PaymentProcessing", email, "We've received your order — payment in progress",
             new PaymentProcessingEmailModel(firstName, what, webhookEvent.AmountMinor ?? plan?.PriceMinor ?? 0, webhookEvent.Currency ?? plan?.Currency ?? "GBP",
                 SiteUrls.Absolute(BaseUrl, userId is null ? SiteUrls.Membership : SiteUrls.AccountMembership)),
+            culture,
             entityType, entityId, ct);
 
         if (userId is { } id)
@@ -1232,6 +1238,7 @@ public class MembershipService(
             $"email:MembershipPaymentActionRequired:Invoice:{key}",
             "MembershipPaymentActionRequired", user.Email, "Please confirm your membership payment",
             new MembershipPaymentFailedEmailModel(user.FirstName, plan?.Name ?? "Membership", actionUrl, membership.ExpiresAt, null),
+            user.PreferredCulture ?? SiteCultures.Default,
             nameof(Membership), membership.Id, ct);
 
         await outbox.EnqueueNotificationAsync(
@@ -1331,6 +1338,7 @@ public class MembershipService(
                 "PaymentRefunded", user.Email, full ? "Your refund is on its way" : "A partial refund is on its way",
                 new PaymentRefundedEmailModel(user.FirstName, what, refunded, payment.Currency, !full,
                     "Your membership is unchanged for now; if anything about it needs to change, we'll be in touch separately."),
+                user.PreferredCulture ?? SiteCultures.Default,
                 nameof(MembershipPayment), payment.Id, ct);
 
             await outbox.EnqueueNotificationAsync(
@@ -1349,6 +1357,7 @@ public class MembershipService(
                 new ContactMessageEmailModel("The VI House (system)", user?.Email ?? "unknown", "Membership refund",
                     $"{(full ? "A full" : "A partial")} refund of {refunded / 100m:0.00} {payment.Currency} was issued on the {what} payment by {user?.FirstName} {user?.LastName} ({user?.Email}).\n" +
                     $"Membership {payment.MembershipId}: access was NOT changed automatically. If the membership should end, revoke it from the admin members page or cancel the subscription in the provider dashboard."),
+                SiteCultures.Default,
                 nameof(MembershipPayment), payment.Id, ct);
         }
     }
@@ -1456,6 +1465,7 @@ public class MembershipService(
                 PhoneNumber = join.Phone ?? webhookEvent.CustomerPhone,
                 // Not PendingApplication: this account exists because money landed.
                 MemberStatus = MemberStatus.Active,
+                PreferredCulture = join.PreferredCulture,
             };
 
             // No password is ever set or communicated — the member chooses one via the setup link.
@@ -1644,6 +1654,7 @@ public class MembershipService(
                     $"{user.FirstName} {user.LastName} ({user.Email}) paid for {plan.Name} a second time while membership {existing.Id} was already current.\n" +
                     $"Provider session: {sessionId}. Duplicate subscription: {webhookEvent.SubscriptionId ?? "none"} (cancelled at provider: {(cancelled ? "yes" : "no — check manually")}).\n" +
                     "Nothing was refunded automatically. Please refund the second charge from the provider dashboard."),
+                SiteCultures.Default,
                 nameof(Membership), existing.Id, ct);
         }
 
@@ -1774,6 +1785,7 @@ public class MembershipService(
                 $"email:WelcomeSetup:User:{user.Id}",
                 "WelcomeSetup", user.Email!, "Set up your VI House account",
                 new WelcomeSetupEmailModel(user.FirstName, setupUrl, plan.Name),
+                user.PreferredCulture ?? SiteCultures.Default,
                 nameof(ApplicationUser), user.Id, ct);
         }
 
@@ -1787,6 +1799,7 @@ public class MembershipService(
                 MemberNumber = $"VIH-{membership.Id:N}"[..12].ToUpperInvariant(),
                 AccountUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.AccountMembership),
             },
+            user.PreferredCulture ?? SiteCultures.Default,
             nameof(Membership), membership.Id, ct);
 
         // The number the provider validated on its checkout page wins over whatever is on the
@@ -1861,6 +1874,7 @@ public class MembershipService(
             $"email:MembershipResume:PendingJoin:{join.Id}",
             "MembershipResume", join.Email, "Pick up where you left off",
             new MembershipResumeEmailModel(join.FirstName, plan?.Name ?? "Membership", resumeUrl),
+            join.PreferredCulture ?? SiteCultures.Default,
             nameof(PendingJoin), join.Id, ct);
 
         join.ResumeEmailSentAt = DateTimeOffset.UtcNow;
@@ -1944,6 +1958,7 @@ public class MembershipService(
                 $"email:MembershipRenewed:{receipt}",
                 "MembershipRenewed", user.Email!, $"Your {plan?.Name ?? "membership"} has renewed",
                 new MembershipRenewedEmailModel(user.FirstName, plan?.Name ?? "Membership", newExpiry),
+                user.PreferredCulture ?? SiteCultures.Default,
                 nameof(Membership), membership.Id, ct);
 
             await outbox.EnqueueNotificationAsync(
@@ -1999,6 +2014,7 @@ public class MembershipService(
             $"email:MembershipPaymentFailed:Invoice:{invoiceKey}",
             "MembershipPaymentFailed", user.Email!, "Your membership payment didn't go through",
             new MembershipPaymentFailedEmailModel(user.FirstName, plan?.Name ?? "Membership", actionUrl, membership.ExpiresAt, webhookEvent.NextPaymentAttempt),
+            user.PreferredCulture ?? SiteCultures.Default,
             nameof(Membership), membership.Id, ct);
 
         await outbox.EnqueueNotificationAsync(
@@ -2061,6 +2077,7 @@ public class MembershipService(
                 $"email:MembershipEnded:Membership:{membershipId}",
                 "MembershipEnded", user.Email, "Your membership has ended",
                 new MembershipEndedEmailModel(user.FirstName, planName, endedAt, SiteUrls.Absolute(BaseUrl, SiteUrls.Membership), wasRevoked),
+                user.PreferredCulture ?? SiteCultures.Default,
                 nameof(ApplicationUser), user.Id, ct);
         }
     }

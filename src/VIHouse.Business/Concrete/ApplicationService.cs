@@ -88,6 +88,7 @@ public class ApplicationService(
             await emailService.SendAsync(
                 "ApplicationReceived", application.Email, "Application Received",
                 new ApplicationReceivedEmailModel(application.FirstName, experience.Title, experience.City),
+                application.PreferredCulture ?? SiteCultures.Default,
                 nameof(Application), application.Id, ct);
         }
 
@@ -193,6 +194,7 @@ public class ApplicationService(
         var emailed = await emailService.SendAsync(
             "ApplicationApproved", application.Email, "You're approved — complete your booking",
             new ApplicationApprovedEmailModel(application.FirstName, experience.Title, experience.City, invitationUrl, invitation.ExpiresAt),
+            application.PreferredCulture ?? SiteCultures.Default,
             nameof(Application), application.Id, ct);
 
         var texted = await smsService.SendAsync(
@@ -241,6 +243,7 @@ public class ApplicationService(
                 new ApplicationRejectedEmailModel(application.FirstName, experience.Title, experience.City,
                     string.IsNullOrWhiteSpace(reason) ? null : reason.Trim(),
                     SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Experiences)),
+                application.PreferredCulture ?? SiteCultures.Default,
                 nameof(Application), application.Id, ct);
         }
     }
@@ -255,6 +258,7 @@ public class ApplicationService(
             await emailService.SendAsync(
                 "ApplicationWaitlisted", application.Email, "You're on the waitlist",
                 new ApplicationWaitlistedEmailModel(application.FirstName, experience.Title),
+                application.PreferredCulture ?? SiteCultures.Default,
                 nameof(Application), application.Id, ct);
         }
     }

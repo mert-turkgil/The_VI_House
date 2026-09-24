@@ -1,13 +1,12 @@
 @model MembershipRenewedEmailModel
 @{
-    ViewData["Preheader"] = $"{Model.PlanName} renewed until {Model.ExpiresAt:d MMMM yyyy}";
-    ViewData["Footnote"] = "You're receiving this because you have a membership at The VI House.";
+    ViewData["Preheader"] = string.Format(Loc["Email.MembershipRenewed.Preheader"].Value, Model.PlanName, Model.ExpiresAt.ToString("d MMMM yyyy"));
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteMembership"].Value;
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Membership renewed", "Your membership has renewed"))" />
-<p style="margin:0 0 16px;">Hi @Model.FirstName,</p>
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowMembershipRenewed"].Value, Loc["Email.Common.HeadingMembershipRenewed"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 20px;">
-    Your <strong>@Model.PlanName</strong> membership has been renewed. Nothing else changes &mdash; your access, your card and
-    your place in the room carry straight on.
+    @Html.Raw(string.Format(Loc["Email.MembershipRenewed.Body"].Value, $"<strong>{Model.PlanName}</strong>"))
 </p>
-<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { ("Plan", Model.PlanName), ("Runs until", Model.ExpiresAt.ToString("d MMMM yyyy")) })" />
-<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@("You can change your card, download invoices or cancel at any time from your account page.")" />
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="@(new List<(string, string)> { (Loc["Email.Common.DetailPlanLabel"].Value, Model.PlanName), (Loc["Email.Common.DetailRunsUntilLabel"].Value, Model.ExpiresAt.ToString("d MMMM yyyy")) })" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.MembershipRenewed.Signoff"].Value)" />

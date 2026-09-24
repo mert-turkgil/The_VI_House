@@ -36,6 +36,7 @@ public class ApplicationConfiguration : IEntityTypeConfiguration<Application>
         builder.Property(a => a.ExpectationsStatement).HasMaxLength(2000);
         builder.Property(a => a.EarningsBand).HasMaxLength(20);
         builder.Property(a => a.ReferralCode).HasMaxLength(40);
+        builder.Property(a => a.PreferredCulture).HasMaxLength(10);
 
         builder.HasMany(a => a.Tags)
             .WithOne()

@@ -75,7 +75,7 @@ public class OutboxProcessor(
                     ?? throw new InvalidOperationException("Email model did not deserialise.");
 
                 var task = (Task<bool>)SendEmail.MakeGenericMethod(modelType).Invoke(emailService,
-                    [payload.TemplateKey, payload.RecipientEmail, payload.Subject, model, message.RelatedEntityType, message.RelatedEntityId, ct])!;
+                    [payload.TemplateKey, payload.RecipientEmail, payload.Subject, model, payload.Culture, message.RelatedEntityType, message.RelatedEntityId, ct])!;
                 await task;
                 break;
             }

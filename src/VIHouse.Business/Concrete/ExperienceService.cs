@@ -667,6 +667,7 @@ public class ExperienceService(
             Email = normalised,
             FullName = fullName.Trim(),
             Position = await waitlist.GetNextPositionAsync(experienceId, ct),
+            PreferredCulture = SiteCultures.Current(),
         };
 
         await waitlist.AddAsync(entry, ct);
@@ -689,6 +690,7 @@ public class ExperienceService(
         await emailService.SendAsync(
             "ExperienceWaitlist", entry.Email, "You're on the waitlist",
             new ExperienceWaitlistEmailModel(FirstNameOf(entry.FullName), experience.Title, experience.City, entry.Position),
+            entry.PreferredCulture ?? SiteCultures.Default,
             nameof(WaitlistEntry), entry.Id, ct);
 
         return (null, entry.Position);

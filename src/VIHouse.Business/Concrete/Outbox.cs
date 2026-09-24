@@ -11,10 +11,10 @@ public class Outbox(IOutboxRepository messages, ILogger<Outbox> logger) : IOutbo
 {
     internal static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
-    public Task EnqueueEmailAsync<TModel>(string dedupeKey, string templateKey, string recipientEmail, string subject, TModel model,
+    public Task EnqueueEmailAsync<TModel>(string dedupeKey, string templateKey, string recipientEmail, string subject, TModel model, string culture,
         string? relatedEntityType = null, Guid? relatedEntityId = null, CancellationToken ct = default) where TModel : notnull =>
         EnqueueAsync(OutboxMessageKind.Email, dedupeKey,
-            new OutboxEmailPayload(templateKey, recipientEmail, subject, typeof(TModel).AssemblyQualifiedName!, JsonSerializer.Serialize(model, Json)),
+            new OutboxEmailPayload(templateKey, recipientEmail, subject, typeof(TModel).AssemblyQualifiedName!, JsonSerializer.Serialize(model, Json), culture),
             relatedEntityType, relatedEntityId, ct);
 
     public Task EnqueueSmsAsync(string dedupeKey, string templateKey, string? recipientPhone, string body,
