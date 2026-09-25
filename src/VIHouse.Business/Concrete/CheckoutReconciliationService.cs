@@ -11,6 +11,7 @@ public class CheckoutReconciliationService(
     IPaymentTransactionRepository transactions,
     IPaymentProvider paymentProvider,
     IPaymentWebhookDispatcher dispatcher,
+    IWebhookEventRepository webhookEvents,
     ILogger<CheckoutReconciliationService> logger) : ICheckoutReconciliationService
 {
     /// <summary>One-off sessions expire at the provider after 30 minutes; a Pending row older than
@@ -79,6 +80,14 @@ public class CheckoutReconciliationService(
         // Processing → the provider still says unpaid: nothing new; don't spend a dispatch on it.
         if (reported.Type == PaymentWebhookEventType.CheckoutCompletedAwaitingPayment && transaction.Status == PaymentTransactionStatus.Processing)
             return CheckoutReconcileOutcome.AwaitingPayment;
+
+        // The provider's answer is one already acted on — the same reconcile event id, already on
+        // record — yet the row is still open, because the state machine refused the move (an
+        // "expired" can't end a Processing payment). Dispatching again would only bounce off the
+        // idempotency gate's primary key and log a database error every sweep; treat it as still
+        // open so the sweep dates the row and comes back after a full interval instead.
+        if (await webhookEvents.GetAsync(reported.EventId, ct) is { Status: WebhookEventStatus.Processed or WebhookEventStatus.Ignored })
+            return CheckoutReconcileOutcome.StillOpen;
 
         logger.LogInformation("Reconciling checkout {SessionId} ({Kind} transaction {TransactionId}) from the provider: {Reported}.",
             sessionId, transaction.Kind, transaction.Id, reported.RawType);
