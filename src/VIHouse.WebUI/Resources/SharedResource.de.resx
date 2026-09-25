@@ -1045,7 +1045,7 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="ComingSoon.Notify.Invalid" xml:space="preserve"><value>Das sieht nicht nach einer E-Mail-Adresse aus. Bitte prüfen Sie sie und versuchen Sie es erneut.</value></data>
   <data name="ComingSoon.Notify.Failed" xml:space="preserve"><value>Bei uns ist etwas schiefgegangen. Bitte versuchen Sie es gleich noch einmal.</value></data>
   <data name="Admin.NotifySignups.Title" xml:space="preserve"><value>Startliste</value></data>
-  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Adressen, die auf der Coming-soon-Seite hinterlassen wurden. Nichts davon ist bearbeitbar — dies ist eine Aufzeichnung darüber, wer benachrichtigt werden möchte.</value></data>
+  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Auf der Coming-soon-Seite hinterlassene Adressen. Die Einträge können nicht bearbeitet werden — hier steht, wer beim Start informiert werden wollte. Senden Sie unten eine Ankündigung; jede E-Mail geht in der Sprache der Anmeldung raus und enthält einen Link zum Verlassen der Liste.</value></data>
   <data name="Admin.NotifySignups.When" xml:space="preserve"><value>Wann</value></data>
   <data name="Admin.NotifySignups.Email" xml:space="preserve"><value>E-Mail</value></data>
   <data name="Admin.NotifySignups.Language" xml:space="preserve"><value>Sprache</value></data>
@@ -1572,4 +1572,29 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Email.WelcomeSetup.Button" xml:space="preserve"><value>Passwort wählen</value></data>
   <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Dieser Link kann nur einmal verwendet werden. Wenn er abläuft, nutzen Sie "Passwort vergessen?" auf der Anmeldeseite, um einen neuen zu erhalten.</value></data>
   <data name="Email.AdminInvite.ButtonSetPassword" xml:space="preserve"><value>Passwort festlegen</value></data>
+  <data name="Auth.Login.ContinueWith" xml:space="preserve"><value>Weiter mit {0}</value></data>
+  <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Wird weitergeleitet…</value></data>
+  <data name="Email.LaunchAnnouncement.Eyebrow" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Email.LaunchAnnouncement.DefaultButton" xml:space="preserve"><value>The VI House besuchen</value></data>
+  <data name="Email.LaunchAnnouncement.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Sie benachrichtigt werden wollten, sobald The VI House öffnet.</value></data>
+  <data name="Email.LaunchAnnouncement.LeaveLead" xml:space="preserve"><value>Keine weiteren Nachrichten gewünscht?</value></data>
+  <data name="Email.LaunchAnnouncement.LeaveLink" xml:space="preserve"><value>Von der Liste entfernen.</value></data>
+  <data name="ComingSoon.Leave.Title" xml:space="preserve"><value>Launch-Liste verlassen?</value></data>
+  <data name="ComingSoon.Leave.Body" xml:space="preserve"><value>{0} wird entfernt, und wir schreiben dieser Adresse nicht mehr zum Launch.</value></data>
+  <data name="ComingSoon.Leave.Button" xml:space="preserve"><value>Meine Adresse entfernen</value></data>
+  <data name="ComingSoon.Leave.DoneTitle" xml:space="preserve"><value>Sie sind nicht mehr auf der Liste</value></data>
+  <data name="ComingSoon.Leave.DoneBody" xml:space="preserve"><value>Wir schreiben Ihnen nicht mehr zum Launch. Sie sind jederzeit wieder willkommen.</value></data>
+  <data name="ComingSoon.Leave.GoneTitle" xml:space="preserve"><value>Nichts zu entfernen</value></data>
+  <data name="ComingSoon.Leave.GoneBody" xml:space="preserve"><value>Diese Adresse steht nicht auf der Launch-Liste — sie wurde vielleicht schon entfernt.</value></data>
+  <data name="Admin.NotifySignups.Compose" xml:space="preserve"><value>Ankündigung senden ({0} noch nicht benachrichtigt)</value></data>
+  <data name="Admin.NotifySignups.Subject" xml:space="preserve"><value>Betreff</value></data>
+  <data name="Admin.NotifySignups.Headline" xml:space="preserve"><value>Überschrift</value></data>
+  <data name="Admin.NotifySignups.Message" xml:space="preserve"><value>Nachricht</value></data>
+  <data name="Admin.NotifySignups.ButtonLabel" xml:space="preserve"><value>Button-Text (optional)</value></data>
+  <data name="Admin.NotifySignups.ButtonUrl" xml:space="preserve"><value>Button-Link (optional)</value></data>
+  <data name="Admin.NotifySignups.ButtonHint" xml:space="preserve"><value>Ein Seitenpfad wie /experiences wird in der Sprache jedes Lesers gesendet; eine vollständige https://-Adresse wird unverändert verwendet. Leer gelassen öffnet der Button die Startseite.</value></data>
+  <data name="Admin.NotifySignups.IncludeNotified" xml:space="preserve"><value>Auch an bereits Benachrichtigte senden (alle — {0})</value></data>
+  <data name="Admin.NotifySignups.Confirm" xml:space="preserve"><value>Ich habe diese E-Mail geprüft (zuerst einen Test senden) und sie kann an die Liste gehen.</value></data>
+  <data name="Admin.NotifySignups.Send" xml:space="preserve"><value>An die Liste senden</value></data>
+  <data name="Admin.NotifySignups.SendTest" xml:space="preserve"><value>Test an mich senden</value></data>
 </root>

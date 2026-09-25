@@ -1045,7 +1045,7 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="ComingSoon.Notify.Invalid" xml:space="preserve"><value>See ei näe välja nagu e-posti aadress. Palun kontrollige ja proovige uuesti.</value></data>
   <data name="ComingSoon.Notify.Failed" xml:space="preserve"><value>Meie poolel läks midagi valesti. Palun proovige hetke pärast uuesti.</value></data>
   <data name="Admin.NotifySignups.Title" xml:space="preserve"><value>Avamise nimekiri</value></data>
-  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Aadressid, mis jäeti peagi avatava lehe kaudu. Siin ei saa midagi muuta — see on ülevaade sellest, kes soovis avamisest teada saada.</value></data>
+  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Tulekul-lehele jäetud aadressid. Kirjeid ei saa muuta — need on inimesed, kes palusid avamisest teada anda. Saada neile allpool teadaanne; iga kiri läheb registreerumise keeles ja sisaldab linki nimekirjast lahkumiseks.</value></data>
   <data name="Admin.NotifySignups.When" xml:space="preserve"><value>Millal</value></data>
   <data name="Admin.NotifySignups.Email" xml:space="preserve"><value>E-post</value></data>
   <data name="Admin.NotifySignups.Language" xml:space="preserve"><value>Keel</value></data>
@@ -1572,4 +1572,29 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Email.WelcomeSetup.Button" xml:space="preserve"><value>Vali salasõna</value></data>
   <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Seda linki saab kasutada vaid ühe korra. Kui see aegub, kasutage uue saamiseks sisselogimislehel valikut "Unustasid salasõna?".</value></data>
   <data name="Email.AdminInvite.ButtonSetPassword" xml:space="preserve"><value>Määra salasõna</value></data>
+  <data name="Auth.Login.ContinueWith" xml:space="preserve"><value>Jätka {0}-ga</value></data>
+  <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Suunamine…</value></data>
+  <data name="Email.LaunchAnnouncement.Eyebrow" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Email.LaunchAnnouncement.DefaultButton" xml:space="preserve"><value>Külasta The VI House'i</value></data>
+  <data name="Email.LaunchAnnouncement.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna palusite teada anda, kui The VI House avatakse.</value></data>
+  <data name="Email.LaunchAnnouncement.LeaveLead" xml:space="preserve"><value>Ei soovi meilt kirju?</value></data>
+  <data name="Email.LaunchAnnouncement.LeaveLink" xml:space="preserve"><value>Eemalda mind nimekirjast.</value></data>
+  <data name="ComingSoon.Leave.Title" xml:space="preserve"><value>Lahkuda avamise nimekirjast?</value></data>
+  <data name="ComingSoon.Leave.Body" xml:space="preserve"><value>{0} eemaldatakse ja me ei saada sellele aadressile enam avamise kohta kirju.</value></data>
+  <data name="ComingSoon.Leave.Button" xml:space="preserve"><value>Eemalda minu aadress</value></data>
+  <data name="ComingSoon.Leave.DoneTitle" xml:space="preserve"><value>Olete nimekirjast eemaldatud</value></data>
+  <data name="ComingSoon.Leave.DoneBody" xml:space="preserve"><value>Me ei saada teile enam avamise kohta kirju. Olete alati tagasi oodatud.</value></data>
+  <data name="ComingSoon.Leave.GoneTitle" xml:space="preserve"><value>Pole midagi eemaldada</value></data>
+  <data name="ComingSoon.Leave.GoneBody" xml:space="preserve"><value>Seda aadressi pole avamise nimekirjas — see võib olla juba eemaldatud.</value></data>
+  <data name="Admin.NotifySignups.Compose" xml:space="preserve"><value>Saada teadaanne ({0} veel teavitamata)</value></data>
+  <data name="Admin.NotifySignups.Subject" xml:space="preserve"><value>Teema</value></data>
+  <data name="Admin.NotifySignups.Headline" xml:space="preserve"><value>Pealkiri</value></data>
+  <data name="Admin.NotifySignups.Message" xml:space="preserve"><value>Sõnum</value></data>
+  <data name="Admin.NotifySignups.ButtonLabel" xml:space="preserve"><value>Nupu tekst (valikuline)</value></data>
+  <data name="Admin.NotifySignups.ButtonUrl" xml:space="preserve"><value>Nupu link (valikuline)</value></data>
+  <data name="Admin.NotifySignups.ButtonHint" xml:space="preserve"><value>Saidi tee nagu /experiences saadetakse iga lugeja keeles; täielikku https:// aadressi kasutatakse nii, nagu see on. Tühjaks jättes avab nupp avalehe.</value></data>
+  <data name="Admin.NotifySignups.IncludeNotified" xml:space="preserve"><value>Saada ka juba teavitatutele (kõik — {0})</value></data>
+  <data name="Admin.NotifySignups.Confirm" xml:space="preserve"><value>Olen selle kirja üle vaadanud (saada kõigepealt test) ja see on valmis nimekirjale minema.</value></data>
+  <data name="Admin.NotifySignups.Send" xml:space="preserve"><value>Saada nimekirjale</value></data>
+  <data name="Admin.NotifySignups.SendTest" xml:space="preserve"><value>Saada mulle test</value></data>
 </root>

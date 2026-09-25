@@ -23,6 +23,17 @@
             _ => null,
         };
 
+    @* Built by hand: "page" is a reserved route value (Razor Pages), so asp-route-page on an MVC
+       link generates an empty href and the pager led nowhere. *@
+    string PageHref(int n)
+    {
+        var q = new List<string>();
+        if (channel is not null) q.Add("channel=" + channel);
+        if (Model.Status is { } st) q.Add("status=" + st);
+        q.Add("page=" + n);
+        return Url.Action("Index") + "?" + string.Join("&", q);
+    }
+
     string StatusBadge(EmailStatus status) => status switch
     {
         EmailStatus.Sent => "admin-badge admin-badge--open",
@@ -31,10 +42,16 @@
     };
 }
 
+@if (TempData["StatusMessage"] is string resendStatus)
+{
+    <div class="admin-status-message">@resendStatus</div>
+}
+
 <p class="admin-hint">
     Every transactional message the system has attempted — approvals, payment links, booking
-    confirmations. Recipient and subject only; the body is never stored, so the single-use invitation
-    URL inside a message is not on this screen. Read-only: this is the record of what was sent.
+    confirmations. Recipient and subject only; the message itself is never shown here. A failed
+    message can be <strong>resent</strong>: the stored copy goes out again as a new row, and the
+    failure stays on record marked as resent.
 </p>
 
 <div class="admin-toolbar">
@@ -91,6 +108,7 @@
                     <th>To</th>
                     <th>Message</th>
                     <th>Status</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -110,6 +128,18 @@
                             }
                         </td>
                         <td><span class="@StatusBadge(row.Status)">@row.Status</span></td>
+                        <td class="admin-table__actions">
+                            @if (row.ResentAt is { } resent)
+                            {
+                                <span class="admin-badge admin-badge--draft" title="Resent @resent.ToString("d MMM yyyy HH:mm")">Resent</span>
+                            }
+                            else if (row.Status == EmailStatus.Failed && !string.IsNullOrEmpty(row.Body) && Model.SmsConfigured)
+                            {
+                                <form method="post" asp-action="ResendSms" asp-route-id="@row.Id" asp-route-status="@Model.Status" style="display:inline;">
+                                    <button type="submit" class="admin-btn admin-btn--ghost">Resend</button>
+                                </form>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -156,6 +186,16 @@ else
                         <td style="font-size:0.75rem;"><code>@row.TemplateKey</code></td>
                         <td><span class="@StatusBadge(row.Status)">@row.Status</span></td>
                         <td class="admin-table__actions">
+                            @if (row.ResentAt is { } resent)
+                            {
+                                <span class="admin-badge admin-badge--draft" title="Resent @resent.ToString("d MMM yyyy HH:mm")">Resent</span>
+                            }
+                            else if (row.Status == EmailStatus.Failed && !string.IsNullOrEmpty(row.Body))
+                            {
+                                <form method="post" asp-action="ResendEmail" asp-route-id="@row.Id" asp-route-status="@Model.Status" style="display:inline;">
+                                    <button type="submit" class="admin-btn admin-btn--ghost">Resend</button>
+                                </form>
+                            }
                             @if (RelatedHref(row.RelatedEntityType, row.RelatedEntityId) is { } href)
                             {
                                 <a class="admin-icon-btn" href="@href">Open @row.RelatedEntityType&rarr;</a>
@@ -174,14 +214,14 @@ else
     <div class="admin-toolbar" style="margin-top:16px;">
         @if (Model.HasPrevious)
         {
-            <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-channel="@channel" asp-route-status="@Model.Status" asp-route-page="@(Model.Page - 1)">&larr; Newer</a>
+            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page - 1)">&larr; Newer</a>
         }
         <span class="admin-hint" style="margin:0;">
             Page @Model.Page of @Model.TotalPages · @Model.TotalCount @(Model.ShowSms ? "text message(s)" : "email(s)")
         </span>
         @if (Model.HasNext)
         {
-            <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-channel="@channel" asp-route-status="@Model.Status" asp-route-page="@(Model.Page + 1)">Older &rarr;</a>
+            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page + 1)">Older &rarr;</a>
         }
     </div>
 }

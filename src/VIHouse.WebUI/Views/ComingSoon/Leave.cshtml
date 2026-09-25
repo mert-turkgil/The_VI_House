@@ -1,0 +1,39 @@
+@* Taking an address off the launch list — the link at the foot of every launch email. A GET only
+   shows the question; the removal is a POST, so a mail scanner that pre-fetches links cannot take
+   someone off the list without them. *@
+@model VIHouse.WebUI.Controllers.LaunchListLeaveViewModel
+
+<div class="curtain">
+    <div class="curtain__backdrop" aria-hidden="true">
+        <img class="curtain__photo" src="~/brand/coming-soon.jpg" alt="" decoding="async" fetchpriority="high" />
+        <span class="curtain__scrim"></span>
+    </div>
+
+    <div class="curtain__inner">
+        <div class="curtain__brand">
+            <span class="curtain__crest"><partial name="_Crest" /></span>
+            <p class="curtain__wordmark">The VI House</p>
+        </div>
+
+        <main class="curtain__main" id="main-content">
+            @if (Model.Removed)
+            {
+                <h1 class="curtain__headline"><span class="curtain__headline-lead">@Loc["ComingSoon.Leave.DoneTitle"]</span></h1>
+                <p class="curtain__body">@Loc["ComingSoon.Leave.DoneBody"]</p>
+            }
+            else if (Model.Email is null)
+            {
+                <h1 class="curtain__headline"><span class="curtain__headline-lead">@Loc["ComingSoon.Leave.GoneTitle"]</span></h1>
+                <p class="curtain__body">@Loc["ComingSoon.Leave.GoneBody"]</p>
+            }
+            else
+            {
+                <h1 class="curtain__headline"><span class="curtain__headline-lead">@Loc["ComingSoon.Leave.Title"]</span></h1>
+                <p class="curtain__body">@Loc["ComingSoon.Leave.Body", Model.Email]</p>
+                <form class="curtain__form" method="post" asp-controller="ComingSoon" asp-action="LeaveConfirmed" asp-route-id="@Model.Id">
+                    <button class="curtain__submit" type="submit"><span>@Loc["ComingSoon.Leave.Button"]</span></button>
+                </form>
+            }
+        </main>
+    </div>
+</div>

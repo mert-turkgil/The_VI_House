@@ -1,3 +1,5 @@
+using VIHouse.Business.Options;
+
 namespace VIHouse.Business;
 
 /// <summary>
@@ -66,6 +68,15 @@ public static class SiteUrls
     public const string Contact = "/contact";
     public const string Ambassador = "/ambassador";
     public const string Admin = "/admin";
+
+    /// <summary>The page that takes an address off the launch list — linked from every launch email.
+    /// The signup's own id is the key: an unguessable Guid, so no one can remove anybody else.</summary>
+    public static string LeaveLaunchList(Guid signupId) => $"/coming-soon/leave/{signupId}";
+
+    /// <summary>A path in a given language: /experiences stays as it is for English and becomes
+    /// /de/experiences for German. For links in mail, where there is no request to take it from.</summary>
+    public static string InCulture(string path, string? culture) =>
+        SiteCultures.ToUrlCode(culture) is { } code ? $"/{code}{(path == "/" ? "" : path)}" : path;
 
     public static string LoginReturningTo(string returnUrl) => $"{Login}?returnUrl={Uri.EscapeDataString(returnUrl)}";
     public static string ResetPassword(string code) => $"{ResetPasswordPath}?code={Uri.EscapeDataString(code)}";

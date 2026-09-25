@@ -13,5 +13,6 @@ public class SmsLogConfiguration : IEntityTypeConfiguration<SmsLog>
         builder.HasIndex(e => new { e.RelatedEntityType, e.RelatedEntityId });
         builder.Property(e => e.TemplateKey).HasMaxLength(100).IsRequired();
         builder.Property(e => e.RecipientPhone).HasMaxLength(40).IsRequired();
+        builder.Property(e => e.Body).HasMaxLength(1600);
     }
 }

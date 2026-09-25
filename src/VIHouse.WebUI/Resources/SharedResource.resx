@@ -1045,7 +1045,7 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="ComingSoon.Notify.Invalid" xml:space="preserve"><value>That doesn't look like an email address. Please check it and try again.</value></data>
   <data name="ComingSoon.Notify.Failed" xml:space="preserve"><value>Something went wrong at our end. Please try again in a moment.</value></data>
   <data name="Admin.NotifySignups.Title" xml:space="preserve"><value>Launch List</value></data>
-  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Addresses left on the coming-soon page. Nothing here is editable — this is a record of who asked to be told when the site opens.</value></data>
+  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Addresses left on the coming-soon page. The records can't be edited — this is who asked to be told when the site opens. Send them an announcement below; each mail goes out in the language they signed up in and carries a link to leave the list.</value></data>
   <data name="Admin.NotifySignups.When" xml:space="preserve"><value>When</value></data>
   <data name="Admin.NotifySignups.Email" xml:space="preserve"><value>Email</value></data>
   <data name="Admin.NotifySignups.Language" xml:space="preserve"><value>Language</value></data>
@@ -1572,4 +1572,29 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Email.WelcomeSetup.Button" xml:space="preserve"><value>Choose your password</value></data>
   <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>This link can only be used once. If it expires, use "Forgot your password?" on the sign-in page to get a new one.</value></data>
   <data name="Email.AdminInvite.ButtonSetPassword" xml:space="preserve"><value>Set your password</value></data>
+  <data name="Auth.Login.ContinueWith" xml:space="preserve"><value>Continue with {0}</value></data>
+  <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Redirecting…</value></data>
+  <data name="Email.LaunchAnnouncement.Eyebrow" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Email.LaunchAnnouncement.DefaultButton" xml:space="preserve"><value>Visit The VI House</value></data>
+  <data name="Email.LaunchAnnouncement.Footnote" xml:space="preserve"><value>You're receiving this because you asked to be told when The VI House opened.</value></data>
+  <data name="Email.LaunchAnnouncement.LeaveLead" xml:space="preserve"><value>Don't want to hear from us?</value></data>
+  <data name="Email.LaunchAnnouncement.LeaveLink" xml:space="preserve"><value>Take me off the list.</value></data>
+  <data name="ComingSoon.Leave.Title" xml:space="preserve"><value>Leave the launch list?</value></data>
+  <data name="ComingSoon.Leave.Body" xml:space="preserve"><value>{0} will be removed and we won't email it about the launch again.</value></data>
+  <data name="ComingSoon.Leave.Button" xml:space="preserve"><value>Remove my address</value></data>
+  <data name="ComingSoon.Leave.DoneTitle" xml:space="preserve"><value>You're off the list</value></data>
+  <data name="ComingSoon.Leave.DoneBody" xml:space="preserve"><value>We won't email you about the launch again. You're welcome back any time.</value></data>
+  <data name="ComingSoon.Leave.GoneTitle" xml:space="preserve"><value>Nothing to remove</value></data>
+  <data name="ComingSoon.Leave.GoneBody" xml:space="preserve"><value>That address isn't on the launch list — it may already have been removed.</value></data>
+  <data name="Admin.NotifySignups.Compose" xml:space="preserve"><value>Send an announcement ({0} not yet notified)</value></data>
+  <data name="Admin.NotifySignups.Subject" xml:space="preserve"><value>Subject</value></data>
+  <data name="Admin.NotifySignups.Headline" xml:space="preserve"><value>Headline</value></data>
+  <data name="Admin.NotifySignups.Message" xml:space="preserve"><value>Message</value></data>
+  <data name="Admin.NotifySignups.ButtonLabel" xml:space="preserve"><value>Button text (optional)</value></data>
+  <data name="Admin.NotifySignups.ButtonUrl" xml:space="preserve"><value>Button link (optional)</value></data>
+  <data name="Admin.NotifySignups.ButtonHint" xml:space="preserve"><value>A site path like /experiences is sent in each reader's language; a full https:// address is used as written. Left empty, the button opens the home page.</value></data>
+  <data name="Admin.NotifySignups.IncludeNotified" xml:space="preserve"><value>Also send to people who were already notified (everyone — {0})</value></data>
+  <data name="Admin.NotifySignups.Confirm" xml:space="preserve"><value>I have checked this email (send a test first) and it is ready to go to the list.</value></data>
+  <data name="Admin.NotifySignups.Send" xml:space="preserve"><value>Send to the list</value></data>
+  <data name="Admin.NotifySignups.SendTest" xml:space="preserve"><value>Send a test to me</value></data>
 </root>

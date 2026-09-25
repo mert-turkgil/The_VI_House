@@ -296,6 +296,17 @@ builder.Services.AddScoped<IPaymentCatalogProvider, StripeCatalogProvider>();
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.Configure<SiteOptions>(builder.Configuration.GetSection("Site"));
 
+// Site:BaseUrl is what every link inside an email is built from. Production sets it explicitly.
+// Left empty (Development), it is taken from the addresses this process is told to listen on
+// (launchSettings' applicationUrl / --urls / ASPNETCORE_URLS), so a link in a mail always points at
+// the port the site is really on — see ListenUrls. The ApplicationStarted hook below covers a host
+// that picked its own addresses with nothing configured.
+builder.Services.PostConfigure<SiteOptions>(site =>
+{
+    if (string.IsNullOrWhiteSpace(site.BaseUrl))
+        site.BaseUrl = ListenUrls.ToBaseUrl(builder.Configuration["urls"]) ?? "";
+});
+
 // What is open and what is still behind the curtain — see FeatureOptions. Everything defaults to
 // off, so a deployment that forgets the section launches with the application route only, which is
 // the brief's Phase 1 rather than an accident.
@@ -464,6 +475,19 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+// Last resort for Site:BaseUrl: nothing configured it and no listen URLs were given, so Kestrel chose
+// its own (http://localhost:5000). Read what it actually bound once it has. IOptions<SiteOptions> is a
+// singleton, so filling in the instance here is what every later email sees.
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    var site = app.Services.GetRequiredService<IOptions<SiteOptions>>().Value;
+    if (!string.IsNullOrWhiteSpace(site.BaseUrl)) return;
+
+    var bound = app.Services.GetRequiredService<Microsoft.AspNetCore.Hosting.Server.IServer>()
+        .Features.Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>()?.Addresses;
+    site.BaseUrl = ListenUrls.ToBaseUrl(bound is null ? null : string.Join(';', bound)) ?? "";
+});
 
 // Fail fast in Production rather than silently taking money-facing requests with no Stripe keys
 // configured — Development is allowed to run without them (only checkout/webhook routes need them).

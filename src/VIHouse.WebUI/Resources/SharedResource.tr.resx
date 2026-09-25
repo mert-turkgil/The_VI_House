@@ -1045,7 +1045,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="ComingSoon.Notify.Invalid" xml:space="preserve"><value>Bu bir e-posta adresine benzemiyor. Lütfen kontrol edip tekrar deneyin.</value></data>
   <data name="ComingSoon.Notify.Failed" xml:space="preserve"><value>Bizim tarafımızda bir şeyler ters gitti. Lütfen birazdan tekrar deneyin.</value></data>
   <data name="Admin.NotifySignups.Title" xml:space="preserve"><value>Lansman Listesi</value></data>
-  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Yakında sayfasında bırakılan adresler. Buradaki hiçbir şey düzenlenemez — bu, site açıldığında haber verilmesini isteyenlerin kaydıdır.</value></data>
+  <data name="Admin.NotifySignups.Hint" xml:space="preserve"><value>Yakında sayfasında bırakılan adresler. Kayıtlar düzenlenemez — site açıldığında haber verilmesini isteyenler bunlardır. Aşağıdan duyuru gönderin; her e-posta kaydolunan dilde gider ve listeden ayrılma bağlantısı içerir.</value></data>
   <data name="Admin.NotifySignups.When" xml:space="preserve"><value>Ne zaman</value></data>
   <data name="Admin.NotifySignups.Email" xml:space="preserve"><value>E-posta</value></data>
   <data name="Admin.NotifySignups.Language" xml:space="preserve"><value>Dil</value></data>
@@ -1572,4 +1572,29 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Email.WelcomeSetup.Button" xml:space="preserve"><value>Şifrenizi belirleyin</value></data>
   <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Bu bağlantı yalnızca bir kez kullanılabilir. Süresi dolarsa yeni bir bağlantı almak için giriş sayfasındaki "Şifrenizi mi unuttunuz?" seçeneğini kullanın.</value></data>
   <data name="Email.AdminInvite.ButtonSetPassword" xml:space="preserve"><value>Şifrenizi belirleyin</value></data>
+  <data name="Auth.Login.ContinueWith" xml:space="preserve"><value>{0} ile devam et</value></data>
+  <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Yönlendiriliyor…</value></data>
+  <data name="Email.LaunchAnnouncement.Eyebrow" xml:space="preserve"><value>The VI House</value></data>
+  <data name="Email.LaunchAnnouncement.DefaultButton" xml:space="preserve"><value>The VI House'u ziyaret edin</value></data>
+  <data name="Email.LaunchAnnouncement.Footnote" xml:space="preserve"><value>Bu e-postayı The VI House açıldığında haber verilmesini istediğiniz için alıyorsunuz.</value></data>
+  <data name="Email.LaunchAnnouncement.LeaveLead" xml:space="preserve"><value>Bizden haber almak istemiyor musunuz?</value></data>
+  <data name="Email.LaunchAnnouncement.LeaveLink" xml:space="preserve"><value>Beni listeden çıkarın.</value></data>
+  <data name="ComingSoon.Leave.Title" xml:space="preserve"><value>Açılış listesinden ayrılmak mı istiyorsunuz?</value></data>
+  <data name="ComingSoon.Leave.Body" xml:space="preserve"><value>{0} listeden çıkarılacak ve açılışla ilgili bu adrese bir daha e-posta göndermeyeceğiz.</value></data>
+  <data name="ComingSoon.Leave.Button" xml:space="preserve"><value>Adresimi çıkarın</value></data>
+  <data name="ComingSoon.Leave.DoneTitle" xml:space="preserve"><value>Listeden çıkarıldınız</value></data>
+  <data name="ComingSoon.Leave.DoneBody" xml:space="preserve"><value>Açılışla ilgili size bir daha e-posta göndermeyeceğiz. Her zaman tekrar bekleriz.</value></data>
+  <data name="ComingSoon.Leave.GoneTitle" xml:space="preserve"><value>Çıkarılacak bir şey yok</value></data>
+  <data name="ComingSoon.Leave.GoneBody" xml:space="preserve"><value>Bu adres açılış listesinde yok — daha önce çıkarılmış olabilir.</value></data>
+  <data name="Admin.NotifySignups.Compose" xml:space="preserve"><value>Duyuru gönder ({0} kişiye henüz bildirilmedi)</value></data>
+  <data name="Admin.NotifySignups.Subject" xml:space="preserve"><value>Konu</value></data>
+  <data name="Admin.NotifySignups.Headline" xml:space="preserve"><value>Başlık</value></data>
+  <data name="Admin.NotifySignups.Message" xml:space="preserve"><value>Mesaj</value></data>
+  <data name="Admin.NotifySignups.ButtonLabel" xml:space="preserve"><value>Düğme metni (isteğe bağlı)</value></data>
+  <data name="Admin.NotifySignups.ButtonUrl" xml:space="preserve"><value>Düğme bağlantısı (isteğe bağlı)</value></data>
+  <data name="Admin.NotifySignups.ButtonHint" xml:space="preserve"><value>/experiences gibi bir site yolu her okuyucunun dilinde gönderilir; tam bir https:// adresi olduğu gibi kullanılır. Boş bırakılırsa düğme ana sayfayı açar.</value></data>
+  <data name="Admin.NotifySignups.IncludeNotified" xml:space="preserve"><value>Daha önce bildirilenlere de gönder (herkes — {0})</value></data>
+  <data name="Admin.NotifySignups.Confirm" xml:space="preserve"><value>Bu e-postayı kontrol ettim (önce test gönderin) ve listeye gönderilmeye hazır.</value></data>
+  <data name="Admin.NotifySignups.Send" xml:space="preserve"><value>Listeye gönder</value></data>
+  <data name="Admin.NotifySignups.SendTest" xml:space="preserve"><value>Bana test gönder</value></data>
 </root>

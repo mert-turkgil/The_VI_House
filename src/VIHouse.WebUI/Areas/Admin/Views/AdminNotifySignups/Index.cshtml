@@ -6,6 +6,67 @@
 
 <p class="admin-hint">@Loc["Admin.NotifySignups.Hint"]</p>
 
+@if ((TempData["StatusMessage"] ?? ViewData["StatusMessage"]) is string status)
+{
+    <div class="admin-status-message" role="status">@status</div>
+}
+
+@if (Model.TotalCount > 0)
+{
+    var d = Model.Draft;
+    @* One message, written once. Each recipient still gets the email's own wording — footer, default
+       button, the leave link — in the language they signed up in. "Send test to me" goes only to
+       the signed-in admin and skips the confirm tick (formnovalidate); the real send needs it. *@
+    <details class="admin-card" style="margin-bottom:20px;" open="@(d.Subject is not null ? "open" : null)">
+        <summary class="admin-btn">@Loc["Admin.NotifySignups.Compose", Model.PendingCount]</summary>
+        <form method="post" asp-action="Announce" class="admin-form" style="margin-top:16px;">
+            <div class="admin-form__grid">
+                <div class="admin-field">
+                    <label for="ann-subject">@Loc["Admin.NotifySignups.Subject"]</label>
+                    <input id="ann-subject" name="Subject" value="@d.Subject" maxlength="200" required
+                           placeholder="The VI House is open" />
+                </div>
+                <div class="admin-field">
+                    <label for="ann-headline">@Loc["Admin.NotifySignups.Headline"]</label>
+                    <input id="ann-headline" name="Headline" value="@d.Headline" maxlength="200" required
+                           placeholder="The doors are open" />
+                </div>
+            </div>
+            <div class="admin-field">
+                <label for="ann-message">@Loc["Admin.NotifySignups.Message"]</label>
+                <textarea id="ann-message" name="Message" rows="7" maxlength="5000" required>@d.Message</textarea>
+            </div>
+            <div class="admin-form__grid">
+                <div class="admin-field">
+                    <label for="ann-button-label">@Loc["Admin.NotifySignups.ButtonLabel"]</label>
+                    <input id="ann-button-label" name="ButtonLabel" value="@d.ButtonLabel" maxlength="60" />
+                </div>
+                <div class="admin-field">
+                    <label for="ann-button-url">@Loc["Admin.NotifySignups.ButtonUrl"]</label>
+                    <input id="ann-button-url" name="ButtonUrl" value="@d.ButtonUrl" placeholder="/experiences" />
+                </div>
+            </div>
+            <p class="admin-hint" style="margin-top:0;">@Loc["Admin.NotifySignups.ButtonHint"]</p>
+
+            <div class="admin-field">
+                <label style="display:flex; gap:8px; align-items:center; text-transform:none; letter-spacing:0;">
+                    <input type="checkbox" name="IncludeAlreadyNotified" value="true" checked="@d.IncludeAlreadyNotified" />
+                    @Loc["Admin.NotifySignups.IncludeNotified", Model.TotalCount]
+                </label>
+                <label style="display:flex; gap:8px; align-items:center; text-transform:none; letter-spacing:0;">
+                    <input type="checkbox" name="Confirmed" value="true" required />
+                    @Loc["Admin.NotifySignups.Confirm"]
+                </label>
+            </div>
+
+            <div class="admin-toolbar">
+                <button type="submit" class="admin-btn">@Loc["Admin.NotifySignups.Send"]</button>
+                <button type="submit" class="admin-btn admin-btn--ghost" formaction="@Url.Action("SendTest")" formnovalidate>@Loc["Admin.NotifySignups.SendTest"]</button>
+            </div>
+        </form>
+    </details>
+}
+
 @if (Model.TotalCount == 0)
 {
     <p class="admin-empty">@Loc["Admin.NotifySignups.Empty"]</p>
@@ -53,14 +114,14 @@ else
     <div class="admin-toolbar" style="margin-top:16px;">
         @if (Model.HasPrevious)
         {
-            <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-page="@(Model.Page - 1)">&larr; Newer</a>
+            <a class="admin-btn admin-btn--ghost" href="@(Url.Action("Index") + "?page=" + (Model.Page - 1))">&larr; Newer</a>
         }
         <span class="admin-hint" style="margin:0;">
             Page @Model.Page of @Model.TotalPages · @Loc["Admin.NotifySignups.Total", Model.TotalCount]
         </span>
         @if (Model.HasNext)
         {
-            <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-page="@(Model.Page + 1)">Older &rarr;</a>
+            <a class="admin-btn admin-btn--ghost" href="@(Url.Action("Index") + "?page=" + (Model.Page + 1))">Older &rarr;</a>
         }
     </div>
 }

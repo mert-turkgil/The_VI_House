@@ -8,8 +8,9 @@ namespace VIHouse.Entities.Communication;
 /// an applicant on the phone saying they never got their link is a question about this table as often
 /// as the email one.
 ///
-/// Stores the destination number and the template key, never the body: the body carries the
-/// invitation URL, which is a single-use credential for their booking.
+/// Stores the destination number and the template key. The body — which carries the invitation URL,
+/// a single-use credential for their booking — is kept only while a failed text waits to be resent,
+/// and cleared once it has been.
 /// </summary>
 public class SmsLog : BaseEntity
 {
@@ -28,4 +29,10 @@ public class SmsLog : BaseEntity
     public string? ErrorMessage { get; set; }
     public string? RelatedEntityType { get; set; }
     public Guid? RelatedEntityId { get; set; }
+
+    /// <summary>The text, kept only on a Failed row that has not been resent. See EmailLog.Body.</summary>
+    public string? Body { get; set; }
+
+    /// <summary>When an admin resent this failed text; the resend is its own row.</summary>
+    public DateTimeOffset? ResentAt { get; set; }
 }

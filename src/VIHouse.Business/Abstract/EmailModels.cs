@@ -118,3 +118,9 @@ public record PaymentProcessingEmailModel(string FirstName, string What, long Am
 /// <summary>Money went back to the buyer, in full or in part. <paramref name="Effect"/> says what
 /// that meant for the thing they bought — a cancelled booking, a released seat, nothing yet.</summary>
 public record PaymentRefundedEmailModel(string FirstName, string What, long AmountRefundedMinor, string Currency, bool IsPartial, string Effect);
+
+/// <summary>A message from the House to everyone on the launch list (the coming-soon sign-ups). The
+/// admin writes Subject/Headline/Message once; the email's own chrome — footer, footnote, the leave
+/// link — follows each recipient's language. There is no name to greet: the list holds an address and
+/// nothing more, by design.</summary>
+public record LaunchAnnouncementEmailModel(string Headline, string Message, string? ButtonLabel, string ButtonUrl, string LeaveUrl);

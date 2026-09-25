@@ -40,6 +40,7 @@ public sealed class IdentityEmailSenderAdapter(IEmailSender sender, IEmailLogRep
         {
             log.Status = EmailStatus.Failed;
             log.ErrorMessage = ex.Message;
+            log.Body = htmlMessage; // resendable from Admin > Emails, like every other failed mail
             logger.LogError(ex, "Failed to send Identity email {Subject} to {Email}", subject, email);
         }
 

@@ -25,4 +25,7 @@ public interface ISmsService
     Task<bool> SendAsync(
         string templateKey, string? recipientPhone, string body,
         string? relatedEntityType = null, Guid? relatedEntityId = null, CancellationToken ct = default);
+
+    /// <summary>Sends a failed text again as a new log row; the failed row is marked resent.</summary>
+    Task<ResendResult> ResendAsync(Guid logId, CancellationToken ct = default);
 }

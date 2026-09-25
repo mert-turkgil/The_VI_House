@@ -10,6 +10,7 @@ import { initVideoEmbeds } from './modules/video';
 import { initExperienceGate } from './modules/gate';
 import { initAuthBackdrop } from './modules/authBackdrop';
 import { initPasswordToggle } from './modules/passwordToggle';
+import { initExternalLogin } from './modules/externalLogin';
 import { initViewTransitions } from './modules/transitions';
 import { initJoinPage } from './modules/join';
 import { initCopyButtons } from './modules/copy';
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   run('gate', initExperienceGate);
   run('auth-backdrop', initAuthBackdrop);
   run('password-toggle', initPasswordToggle);
+  run('external-login', initExternalLogin);
   run('view-transitions', initViewTransitions);
   run('join', initJoinPage);
   run('copy', initCopyButtons);

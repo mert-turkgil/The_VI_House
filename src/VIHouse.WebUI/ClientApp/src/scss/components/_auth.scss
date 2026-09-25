@@ -325,6 +325,109 @@
   gap: var(--vih-space-2xs);
 }
 
+// "Continue with Google" — full width so it reads as an equal alternative to the form above it,
+// not an afterthought squeezed into a row. White with the site's own border rather than Google's
+// prescribed light-grey chrome, so it still sits comfortably on .auth-page--backdrop's photograph.
+.auth-external__btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--vih-space-2xs);
+  padding: 13px var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-white);
+  color: var(--vih-ink);
+  font: inherit;
+  font-size: var(--vih-text-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--vih-dur-base) var(--vih-ease),
+              box-shadow var(--vih-dur-base) var(--vih-ease),
+              transform var(--vih-dur-base) var(--vih-ease);
+
+  // The same small lift the rest of the site's interactive controls use (.auth-password-toggle__btn,
+  // the ghost buttons) — consistent motion vocabulary rather than a one-off for this button alone.
+  &:hover {
+    border-color: var(--vih-green-900);
+    box-shadow: var(--vih-shadow-sm);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--vih-focus-ring);
+    outline-offset: 2px;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  // aria-busy, not :disabled — the button must stay a live, enabled form control so its
+  // name=value pair (provider=Google) survives into the request already in flight (see
+  // modules/externalLogin.ts). pointer-events blocks a second click the same way disabled would.
+  &[aria-busy='true'] {
+    cursor: default;
+    pointer-events: none;
+    // No opacity fade: the button is mid-action (redirecting), not unavailable, and a dimmed
+    // control reads as the opposite of that.
+    transform: none;
+  }
+}
+
+.auth-external__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.auth-external__label {
+  line-height: 1;
+}
+
+// The four-dot Google-colour bounce that replaces the label the instant the form posts — this is
+// the entire click-to-redirect gap (a few hundred ms of network round trip to Google's own login),
+// so it only ever needs to play once and never needs a stop state.
+.auth-external__loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
+}
+
+.auth-external__loader-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: vih-auth-external-bounce 0.9s ease-in-out infinite;
+
+  &--blue { background: #4285f4; }
+  &--red { background: #ea4335; animation-delay: 0.1s; }
+  &--yellow { background: #fbbc05; animation-delay: 0.2s; }
+  &--green { background: #34a853; animation-delay: 0.3s; }
+}
+
+@keyframes vih-auth-external-bounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-external__btn {
+    transition: none;
+
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+
+  .auth-external__loader-dot {
+    animation: none;
+  }
+}
+
 // Numbered steps on the locked-out help page.
 .auth-steps {
   counter-reset: auth-step;

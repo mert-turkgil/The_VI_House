@@ -1,0 +1,14 @@
+@model LaunchAnnouncementEmailModel
+@{
+    ViewData["Preheader"] = Model.Headline;
+    ViewData["Footnote"] = Loc["Email.LaunchAnnouncement.Footnote"].Value;
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.LaunchAnnouncement.Eyebrow"].Value, Model.Headline))" />
+@* The admin's own words, as text — never as markup — with their line breaks kept. *@
+<p style="margin:0 0 20px; white-space:pre-line;">@Model.Message</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ButtonUrl, Model.ButtonLabel ?? Loc["Email.LaunchAnnouncement.DefaultButton"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />
+<p style="margin:24px 0 0; font-size:12px; color:#8f948a;">
+    @Loc["Email.LaunchAnnouncement.LeaveLead"]
+    <a href="@Model.LeaveUrl" style="color:#5a5f55;">@Loc["Email.LaunchAnnouncement.LeaveLink"]</a>
+</p>

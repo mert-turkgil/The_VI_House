@@ -120,6 +120,12 @@ public class DevEmailPreviewController(IEmailTemplateRenderer renderer, IWebHost
         new("ReferralConverted", "ReferralConverted", "Your referral link just worked", "Any referral conversion (application, approval, ticket, membership, session)", "Ambassadors",
             () => new ReferralConvertedEmailModel("Anton", "Someone who came through your link has bought a place on a session.", "£120.00", "£18.00", $"{Site}/ambassador")),
 
+        // --- Launch list
+        new("LaunchAnnouncement", "LaunchAnnouncement", "The VI House is open", "Admin sends an announcement to the launch list", "Launch list",
+            () => new LaunchAnnouncementEmailModel("The doors are open",
+                "The VI House is live. Applications for the first experiences are open now,\nand the sessions calendar is published.",
+                null, $"{Site}/experiences", $"{Site}/coming-soon/leave/00000000-0000-0000-0000-000000000000")),
+
         // --- Internal
         new("ContactMessage", "ContactMessage", "New contact message from Ada Lovelace", "Public /contact form (to the site's contact address)", "Internal",
             () => new ContactMessageEmailModel("Ada Lovelace", "ada@example.com", "Speaking at Lisbon", "Hello,\n\nI'd love to talk about hosting a session on pricing at the Lisbon retreat.\n\nAda")),

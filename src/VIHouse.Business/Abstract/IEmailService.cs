@@ -17,4 +17,8 @@ public interface IEmailService
     Task<bool> SendAsync<TModel>(
         string templateKey, string recipientEmail, string subject, TModel model, string culture,
         string? relatedEntityType = null, Guid? relatedEntityId = null, CancellationToken ct = default);
+
+    /// <summary>Sends a failed email again, exactly as it was rendered, as a new log row. The
+    /// failed row is marked resent and its stored body cleared either way.</summary>
+    Task<ResendResult> ResendAsync(Guid logId, CancellationToken ct = default);
 }
