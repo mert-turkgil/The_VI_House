@@ -17,7 +17,9 @@ namespace VIHouse.WebUI.Controllers;
 public class ApplicationController(
     IExperienceService experienceService,
     IApplicationService applicationService,
-    IOptions<SmsOptions> smsOptions) : Controller
+    IOptions<SmsOptions> smsOptions,
+    ApplicationStatusCookie statusCookie,
+    Microsoft.AspNetCore.Identity.UserManager<VIHouse.DataAccess.Identity.ApplicationUser> userManager) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(string? experience, CancellationToken ct)
@@ -135,27 +137,63 @@ public class ApplicationController(
 
         await applicationService.SubmitAsync(application, form.AgreeToTerms, HttpContext.Connection.RemoteIpAddress?.ToString(), ct);
 
+        // This browser may now see this application's status — and no one else without signing in.
+        statusCookie.Add(HttpContext, application.Id);
+
         ViewData["Title"] = "Application Received";
         return View("Submitted", new SubmittedViewModel { Experience = exp!, ApplicationId = application.Id });
     }
 
-    [HttpGet("status/{id:guid}")]
-    public async Task<IActionResult> Status(Guid id, CancellationToken ct)
+    /// <summary>
+    /// Every application this visitor may see: the ones this browser submitted (the encrypted status
+    /// cookie) and, when signed in, the ones on their account. Nothing is looked up by an id from the
+    /// URL alone — see ApplicationStatusCookie for why the old bookmarkable link had to go.
+    /// </summary>
+    [HttpGet("status")]
+    public async Task<IActionResult> Status(CancellationToken ct)
     {
-        var application = await applicationService.GetForAdminAsync(id, ct);
-        if (application is null) return NotFound();
+        ViewData["Title"] = "Application Status";
+        return View(await BuildStatusAsync(null, ct));
+    }
 
-        var experience = await experienceService.GetForAdminEditAsync(application.ExperienceId, ct);
+    /// <summary>The old per-application link, still honoured for its owner: the browser that applied,
+    /// or the signed-in account it belongs to. Anyone else gets a 404 — not a 403, which would
+    /// confirm the application exists.</summary>
+    [HttpGet("status/{id:guid}")]
+    public async Task<IActionResult> StatusFor(Guid id, CancellationToken ct)
+    {
+        var model = await BuildStatusAsync(id, ct);
+        if (model.Items.Count == 0) return NotFound();
 
         ViewData["Title"] = "Application Status";
-        return View(new ApplicationStatusViewModel
+        return View(nameof(Status), model);
+    }
+
+    private async Task<ApplicationStatusListViewModel> BuildStatusAsync(Guid? only, CancellationToken ct)
+    {
+        var user = User.Identity?.IsAuthenticated == true ? await userManager.GetUserAsync(User) : null;
+        var owned = await applicationService.GetForApplicantAsync(statusCookie.Read(Request), user?.Id, user?.Email, ct);
+        if (only is { } id) owned = owned.Where(a => a.Id == id).ToList();
+
+        var labels = new Dictionary<Guid, string>();
+        foreach (var experienceId in owned.Select(a => a.ExperienceId).Distinct())
         {
-            Id = application.Id,
-            FirstName = application.FirstName,
-            Status = application.Status,
-            ExperienceLabel = experience is null ? "—" : $"The VI House — {experience.City}",
-            SubmittedAt = application.SubmittedAt,
-        });
+            var experience = await experienceService.GetForAdminEditAsync(experienceId, ct);
+            labels[experienceId] = experience is null ? "—" : $"The VI House — {experience.City}";
+        }
+
+        return new ApplicationStatusListViewModel
+        {
+            SignedIn = user is not null,
+            Items = owned.Select(a => new ApplicationStatusViewModel
+            {
+                Id = a.Id,
+                FirstName = a.FirstName,
+                Status = a.Status,
+                ExperienceLabel = labels[a.ExperienceId],
+                SubmittedAt = a.SubmittedAt,
+            }).ToList(),
+        };
     }
 
     private static bool CanApply(ExperienceStatus status) =>

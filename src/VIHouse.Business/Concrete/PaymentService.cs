@@ -380,8 +380,9 @@ public class PaymentService(
         var confirmedExperience = await experiences.GetByIdAsync(payment.ExperienceId, ct);
 
         // The money has landed — this is the moment the account becomes one its owner can use.
+        var accountSetupPending = false;
         if (await userManager.FindByIdAsync(payment.UserId!.Value.ToString()) is { } member)
-            await OpenAccountAsync(member, booking, confirmedApplication, confirmedExperience, ct);
+            accountSetupPending = await OpenAccountAsync(member, booking, confirmedApplication, confirmedExperience, ct);
 
         if (confirmedApplication is not null && confirmedExperience is not null)
         {
@@ -397,6 +398,7 @@ public class PaymentService(
                     TimeZoneId = confirmedExperience.TimeZoneId,
                     TicketUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Booking(booking.BookingReference)),
                     ExperienceUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Experience(confirmedExperience.Slug)),
+                    AccountSetupPending = accountSetupPending,
                 },
                 confirmedApplication.PreferredCulture ?? SiteCultures.Default,
                 nameof(Booking), booking.Id, ct);
@@ -639,7 +641,8 @@ public class PaymentService(
     /// than the browser redirect, because this is the path that always runs — even when the tab is
     /// closed at the bank's 3-D Secure page.
     /// </summary>
-    private async Task OpenAccountAsync(
+    /// <returns>True when a password-setup email was queued — the booking confirmation then says so.</returns>
+    private async Task<bool> OpenAccountAsync(
         ApplicationUser user, Booking booking, Application? application, Experience? experience, CancellationToken ct)
     {
         if (!await userManager.IsInRoleAsync(user, Roles.Member))
@@ -651,7 +654,10 @@ public class PaymentService(
             await userManager.UpdateAsync(user);
         }
 
-        if (!await userManager.HasPasswordAsync(user))
+        // Never signed in counts too: an account opened before the no-password change carries a random
+        // password nobody knows, and a returning buyer who never set one up needs the same way in.
+        var needsSetup = !await userManager.HasPasswordAsync(user) || user.LastLoginAt is null;
+        if (needsSetup)
         {
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
             // Same unpadded URL-safe alphabet WebEncoders.Base64UrlEncode produces, which is what the
@@ -663,10 +669,17 @@ public class PaymentService(
             // The only place the setup link is issued. The success page no longer shows one: it is
             // reachable by anyone holding the session id from the URL, and a password link is not
             // something to hand to whoever has a browser-history entry.
+            // Keyed on the booking, not only the user: a second booking by someone who still has not
+            // set a password gets a fresh link rather than nothing.
             await outbox.EnqueueEmailAsync(
-                $"email:WelcomeSetup:User:{user.Id}",
+                $"email:WelcomeSetup:User:{user.Id}:Booking:{booking.Id}",
                 "WelcomeSetup", user.Email!, "Set up your VI House account",
-                new WelcomeSetupEmailModel(user.FirstName, setupUrl, null),
+                new WelcomeSetupEmailModel(user.FirstName, setupUrl, null)
+                {
+                    BookingReference = booking.BookingReference,
+                    ExperienceTitle = experience is null ? null : $"The VI House — {experience.City}",
+                    ValidForHours = 24,
+                },
                 user.PreferredCulture ?? SiteCultures.Default,
                 nameof(ApplicationUser), user.Id, ct);
         }
@@ -679,8 +692,10 @@ public class PaymentService(
             "BookingConfirmed", application?.Phone,
             $"The VI House: payment received. Booking {booking.BookingReference}"
                 + (experience is null ? "" : $" for {experience.City}")
-                + ". Your account is open — check your email to set a password.",
+                + (needsSetup ? ". Your account is open — check your email to set a password." : "."),
             nameof(Booking), booking.Id, ct);
+
+        return needsSetup;
     }
 
     private async Task<(long AmountMinor, string? Error)> TryApplyPromoAsync(string code, Guid experienceId, string applicantEmail, long baseAmountMinor, CancellationToken ct)
@@ -727,12 +742,10 @@ public class PaymentService(
             PreferredCulture = application.PreferredCulture,
         };
 
-        // Random, never-communicated password — the member sets their own via the password-reset
-        // link shown on the checkout success page (CheckoutController.Success), not emailed here.
-        var temporaryPassword = RandomNumberGenerator.GetString(
-            "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!#%", 24);
-
-        var result = await userManager.CreateAsync(user, temporaryPassword);
+        // No password at all. The owner chooses one through the setup link emailed when the payment
+        // lands (OpenAccountAsync). This used to be a random, never-communicated password, which made
+        // HasPasswordAsync true — so the setup email was never sent and the account had no way in.
+        var result = await userManager.CreateAsync(user);
         if (!result.Succeeded)
             throw new InvalidOperationException($"Could not provision member account for {application.Email}: {string.Join("; ", result.Errors.Select(e => e.Description))}");
 

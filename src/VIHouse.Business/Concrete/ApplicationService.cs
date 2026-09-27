@@ -101,6 +101,9 @@ public class ApplicationService(
     public Task<Application?> GetForAdminAsync(Guid id, CancellationToken ct = default) =>
         applications.GetWithTagsAsync(id, ct);
 
+    public Task<List<Application>> GetForApplicantAsync(IReadOnlyCollection<Guid> ids, Guid? userId, string? email, CancellationToken ct = default) =>
+        applications.GetForApplicantAsync(ids, userId, email, ct);
+
     public Task MarkUnderReviewAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default) =>
         TransitionAsync(id, ApplicationStatus.UnderReview, adminUserId, "ApplicationMarkedUnderReview", ipAddress, ct: ct);
 

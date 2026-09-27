@@ -347,6 +347,18 @@
                     <dd>@(Model.LastLoginAt?.ToString("dd MMM yyyy, HH:mm") ?? "Never signed in")</dd>
                 </div>
             </dl>
+            @* For the member whose setup email never arrived or expired. The link goes to the address on
+               the account, never to the admin — see AdminUsersController.SendSetupLink. Open to support
+               staff too (not SuperAdmin-only like role changes): getting a member in is their job. *@
+            @if (!Model.IsProtected)
+            {
+                <form asp-action="SendSetupLink" asp-route-id="@Model.UserId" method="post" class="admin-inline-form" style="margin-top:12px;"
+                      onsubmit="return confirm('Email @Model.Email a one-time link to @(Model.LastLoginAt is null ? "set" : "reset") their password?');">
+                    <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">
+                        @(Model.LastLoginAt is null ? "Send password setup email" : "Send password reset email")
+                    </button>
+                </form>
+            }
         </div>
 
         <div class="admin-card">

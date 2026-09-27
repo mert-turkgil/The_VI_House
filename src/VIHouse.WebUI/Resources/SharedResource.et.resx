@@ -160,7 +160,7 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
 
   <data name="Applied.Title" xml:space="preserve"><value>Taotlus on vastu võetud</value></data>
   <data name="Applied.Body" xml:space="preserve"><value>Täname, et kandideerisid The VI House'i — {0} elamusele. Iga taotlus vaadatakse käsitsi üle — saad e-kirjaga vastuse mõne päeva jooksul.</value></data>
-  <data name="Applied.StatusHint" xml:space="preserve"><value>Saad oma taotluse staatust igal ajal kontrollida siit:</value></data>
+  <data name="Applied.StatusHint" xml:space="preserve"><value>Saate oma avalduse olekut igal ajal vaadata — sellest brauserist või sisse logides:</value></data>
   <data name="Applied.ExploreMore" xml:space="preserve"><value>Avasta rohkem elamusi</value></data>
   <data name="Applied.BackHome" xml:space="preserve"><value>Tagasi avalehele</value></data>
 
@@ -1570,7 +1570,7 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Email.WelcomeSetup.Body1NoPlan" xml:space="preserve"><value>Sinu makse läbis.</value></data>
   <data name="Email.WelcomeSetup.Body1Suffix" xml:space="preserve"><value>Viimane samm on valida salasõna, kinnitada see e-posti aadress ja lülitada sisse kaheastmeline autentimine. Juhatame teid läbi — see võtab paar minutit.</value></data>
   <data name="Email.WelcomeSetup.Button" xml:space="preserve"><value>Vali salasõna</value></data>
-  <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Seda linki saab kasutada vaid ühe korra. Kui see aegub, kasutage uue saamiseks sisselogimislehel valikut "Unustasid salasõna?".</value></data>
+  <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Kui te seda ei oodanud, võite selle eirata — midagi ei muutu enne lingi kasutamist.</value></data>
   <data name="Email.AdminInvite.ButtonSetPassword" xml:space="preserve"><value>Määra salasõna</value></data>
   <data name="Auth.Login.ContinueWith" xml:space="preserve"><value>Jätka {0}-ga</value></data>
   <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Suunamine…</value></data>
@@ -1597,4 +1597,22 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Admin.NotifySignups.Confirm" xml:space="preserve"><value>Olen selle kirja üle vaadanud (saada kõigepealt test) ja see on valmis nimekirjale minema.</value></data>
   <data name="Admin.NotifySignups.Send" xml:space="preserve"><value>Saada nimekirjale</value></data>
   <data name="Admin.NotifySignups.SendTest" xml:space="preserve"><value>Saada mulle test</value></data>
+  <data name="Email.WelcomeSetup.FootnoteAdmin" xml:space="preserve"><value>Saate selle kirja, kuna keegi The VI House'ist saatis teile lingi teie kontole sisenemiseks.</value></data>
+  <data name="Email.WelcomeSetup.Body1Booking" xml:space="preserve"><value>Teie koht {0} on kinnitatud — broneering {1}. Pileti avamiseks ja broneeringu haldamiseks valige oma uuele kontole salasõna.</value></data>
+  <data name="Email.WelcomeSetup.Body1Admin" xml:space="preserve"><value>Siin on teie link VI House konto salasõna valimiseks.</value></data>
+  <data name="Email.WelcomeSetup.StepsLabel" xml:space="preserve"><value>Kolm kiiret sammu</value></data>
+  <data name="Email.WelcomeSetup.Step1" xml:space="preserve"><value>Valige oma salasõna.</value></data>
+  <data name="Email.WelcomeSetup.Step2" xml:space="preserve"><value>Lülitage sisse kaheastmeline kinnitamine — juhatame teid samm-sammult.</value></data>
+  <data name="Email.WelcomeSetup.Step3" xml:space="preserve"><value>Olete sees: teie broneeringud, sessioonid ja liikmesus on teie konto lehel.</value></data>
+  <data name="Email.WelcomeSetup.ValidFor" xml:space="preserve"><value>See link töötab ühe korra ja {0} tundi. Kui see on aegunud, kasutage sisselogimislehel selle e-posti aadressiga valikut „Unustasid salasõna?“.</value></data>
+  <data name="Email.BookingConfirmed.SetupNoteLabel" xml:space="preserve"><value>Järgmine samm: teie konto</value></data>
+  <data name="Email.BookingConfirmed.SetupNote" xml:space="preserve"><value>Saatsime teile eraldi kirja „Set up your VI House account“ lingiga salasõna valimiseks. Seda on vaja pileti ja konto lehe avamiseks.</value></data>
+  <data name="Applied.StatusLink" xml:space="preserve"><value>Vaata avalduse olekut</value></data>
+  <data name="Status.None" xml:space="preserve"><value>Avaldust ei leitud</value></data>
+  <data name="Status.NoneHint" xml:space="preserve"><value>Teie avaldus on nähtav brauseris, millest kandideerisite, või pärast sisselogimist teie konto lehel.</value></data>
+  <data name="Status.BrowserOnly" xml:space="preserve"><value>Kuvatakse, kuna kandideerisite sellest brauserist. Teises seadmes nägemiseks logige sisse.</value></data>
+  <data name="Account.NavApplications" xml:space="preserve"><value>Avaldused</value></data>
+  <data name="Account.Applications.Title" xml:space="preserve"><value>Minu avaldused</value></data>
+  <data name="Account.Applications.Lede" xml:space="preserve"><value>Kus on teie iga kogemuse avaldus.</value></data>
+  <data name="Account.Applications.Empty" xml:space="preserve"><value>Te pole veel ühelegi kogemusele kandideerinud.</value></data>
 </root>

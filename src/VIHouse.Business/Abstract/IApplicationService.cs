@@ -10,6 +10,10 @@ public interface IApplicationService
     Task<List<Application>> GetByStatusAsync(ApplicationStatus? status, CancellationToken ct = default);
     Task<Application?> GetForAdminAsync(Guid id, CancellationToken ct = default);
 
+    /// <summary>What an applicant may see of their own applications: the ids their browser proves it
+    /// submitted, plus, when signed in, those tied to their account or its email. Never by id alone.</summary>
+    Task<List<Application>> GetForApplicantAsync(IReadOnlyCollection<Guid> ids, Guid? userId, string? email, CancellationToken ct = default);
+
     Task MarkUnderReviewAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
     Task ShortlistAsync(Guid id, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 

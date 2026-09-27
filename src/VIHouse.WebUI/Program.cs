@@ -314,6 +314,7 @@ builder.Services.Configure<FeatureOptions>(builder.Configuration.GetSection("Fea
 builder.Services.Configure<SecurityOptions>(builder.Configuration.GetSection("Security"));
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IEmailTemplateRenderer, RazorEmailTemplateRenderer>();
+builder.Services.AddSingleton<ApplicationStatusCookie>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 // The Identity UI's own sender is a no-op unless one is registered — see IdentityEmailSenderAdapter.
 builder.Services.AddScoped<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, IdentityEmailSenderAdapter>();

@@ -45,4 +45,12 @@ public class EfPendingJoinRepository(VIHouseDbContext db) : EfRepository<Pending
             .OrderBy(p => p.CreatedAt)
             .Take(take)
             .ToListAsync(ct);
+
+    public Task<List<PendingJoin>> GetRecentAsync(PendingJoinStatus? status, int skip, int take, CancellationToken ct = default) =>
+        Filter(status).AsNoTracking().OrderByDescending(p => p.CreatedAt).Skip(skip).Take(take).ToListAsync(ct);
+
+    public Task<int> CountAsync(PendingJoinStatus? status, CancellationToken ct = default) => Filter(status).CountAsync(ct);
+
+    private IQueryable<PendingJoin> Filter(PendingJoinStatus? status) =>
+        status is null ? Set : Set.Where(p => p.Status == status);
 }

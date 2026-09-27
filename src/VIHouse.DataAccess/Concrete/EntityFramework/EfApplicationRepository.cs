@@ -14,4 +14,17 @@ public class EfApplicationRepository(VIHouseDbContext db) : EfRepository<Applica
 
     public Task<Application?> GetWithTagsAsync(Guid id, CancellationToken ct = default) =>
         Set.Include(a => a.Tags).FirstOrDefaultAsync(a => a.Id == id, ct);
+
+    public Task<List<Application>> GetForApplicantAsync(IReadOnlyCollection<Guid> ids, Guid? userId, string? email, CancellationToken ct = default)
+    {
+        var address = string.IsNullOrWhiteSpace(email) ? null : email.Trim();
+        if (ids.Count == 0 && userId is null && address is null) return Task.FromResult(new List<Application>());
+
+        return Set.AsNoTracking()
+            .Where(a => ids.Contains(a.Id)
+                        || (userId != null && a.UserId == userId)
+                        || (address != null && EF.Functions.Collate(a.Email, "Latin1_General_CI_AS") == address))
+            .OrderByDescending(a => a.SubmittedAt ?? a.CreatedAt)
+            .ToListAsync(ct);
+    }
 }

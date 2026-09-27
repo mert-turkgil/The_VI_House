@@ -160,7 +160,7 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
 
   <data name="Applied.Title" xml:space="preserve"><value>Bewerbung eingegangen</value></data>
   <data name="Applied.Body" xml:space="preserve"><value>Vielen Dank für Ihre Bewerbung bei The VI House — {0}. Jede Bewerbung wird persönlich geprüft — Sie erhalten innerhalb weniger Tage eine Rückmeldung per E-Mail.</value></data>
-  <data name="Applied.StatusHint" xml:space="preserve"><value>Sie können den Status Ihrer Bewerbung jederzeit hier einsehen:</value></data>
+  <data name="Applied.StatusHint" xml:space="preserve"><value>Sie können Ihren Bewerbungsstatus jederzeit prüfen — in diesem Browser oder nach der Anmeldung:</value></data>
   <data name="Applied.ExploreMore" xml:space="preserve"><value>Weitere Erlebnisse entdecken</value></data>
   <data name="Applied.BackHome" xml:space="preserve"><value>Zurück zur Startseite</value></data>
 
@@ -1570,7 +1570,7 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Email.WelcomeSetup.Body1NoPlan" xml:space="preserve"><value>Ihre Zahlung war erfolgreich.</value></data>
   <data name="Email.WelcomeSetup.Body1Suffix" xml:space="preserve"><value>Der letzte Schritt ist die Wahl eines Passworts, die Bestätigung dieser E-Mail-Adresse und die Aktivierung der Zwei-Faktor-Authentifizierung. Wir führen Sie durch den Vorgang — es dauert etwa zwei Minuten.</value></data>
   <data name="Email.WelcomeSetup.Button" xml:space="preserve"><value>Passwort wählen</value></data>
-  <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Dieser Link kann nur einmal verwendet werden. Wenn er abläuft, nutzen Sie "Passwort vergessen?" auf der Anmeldeseite, um einen neuen zu erhalten.</value></data>
+  <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Falls Sie das nicht erwartet haben, können Sie es ignorieren — nichts ändert sich, bis der Link verwendet wird.</value></data>
   <data name="Email.AdminInvite.ButtonSetPassword" xml:space="preserve"><value>Passwort festlegen</value></data>
   <data name="Auth.Login.ContinueWith" xml:space="preserve"><value>Weiter mit {0}</value></data>
   <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Wird weitergeleitet…</value></data>
@@ -1597,4 +1597,22 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Admin.NotifySignups.Confirm" xml:space="preserve"><value>Ich habe diese E-Mail geprüft (zuerst einen Test senden) und sie kann an die Liste gehen.</value></data>
   <data name="Admin.NotifySignups.Send" xml:space="preserve"><value>An die Liste senden</value></data>
   <data name="Admin.NotifySignups.SendTest" xml:space="preserve"><value>Test an mich senden</value></data>
+  <data name="Email.WelcomeSetup.FootnoteAdmin" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil Ihnen jemand von The VI House einen Link zu Ihrem Konto geschickt hat.</value></data>
+  <data name="Email.WelcomeSetup.Body1Booking" xml:space="preserve"><value>Ihr Platz bei {0} ist bestätigt — Buchung {1}. Um Ihr Ticket zu öffnen und Ihre Buchung zu verwalten, wählen Sie ein Passwort für Ihr neues Konto.</value></data>
+  <data name="Email.WelcomeSetup.Body1Admin" xml:space="preserve"><value>Hier ist Ihr Link, um ein Passwort für Ihr VI House-Konto zu wählen.</value></data>
+  <data name="Email.WelcomeSetup.StepsLabel" xml:space="preserve"><value>Drei schnelle Schritte</value></data>
+  <data name="Email.WelcomeSetup.Step1" xml:space="preserve"><value>Wählen Sie Ihr Passwort.</value></data>
+  <data name="Email.WelcomeSetup.Step2" xml:space="preserve"><value>Aktivieren Sie die Zwei-Faktor-Bestätigung — wir führen Sie durch.</value></data>
+  <data name="Email.WelcomeSetup.Step3" xml:space="preserve"><value>Fertig: Ihre Buchungen, Sitzungen und Mitgliedschaft finden Sie auf Ihrer Kontoseite.</value></data>
+  <data name="Email.WelcomeSetup.ValidFor" xml:space="preserve"><value>Dieser Link funktioniert einmal und {0} Stunden lang. Ist er abgelaufen, nutzen Sie „Passwort vergessen?“ auf der Anmeldeseite mit dieser E-Mail-Adresse.</value></data>
+  <data name="Email.BookingConfirmed.SetupNoteLabel" xml:space="preserve"><value>Nächster Schritt: Ihr Konto</value></data>
+  <data name="Email.BookingConfirmed.SetupNote" xml:space="preserve"><value>Wir haben Ihnen eine separate E-Mail „Set up your VI House account“ mit einem Link zur Passwortwahl geschickt. Sie brauchen es, um Ihr Ticket und Ihre Kontoseite zu öffnen.</value></data>
+  <data name="Applied.StatusLink" xml:space="preserve"><value>Bewerbungsstatus ansehen</value></data>
+  <data name="Status.None" xml:space="preserve"><value>Keine Bewerbung gefunden</value></data>
+  <data name="Status.NoneHint" xml:space="preserve"><value>Ihre Bewerbung erscheint hier in dem Browser, mit dem Sie sich beworben haben, oder nach der Anmeldung auf Ihrer Kontoseite.</value></data>
+  <data name="Status.BrowserOnly" xml:space="preserve"><value>Angezeigt, weil Sie sich mit diesem Browser beworben haben. Auf einem anderen Gerät melden Sie sich an, um sie zu sehen.</value></data>
+  <data name="Account.NavApplications" xml:space="preserve"><value>Bewerbungen</value></data>
+  <data name="Account.Applications.Title" xml:space="preserve"><value>Meine Bewerbungen</value></data>
+  <data name="Account.Applications.Lede" xml:space="preserve"><value>Wo jede Ihrer Erlebnis-Bewerbungen steht.</value></data>
+  <data name="Account.Applications.Empty" xml:space="preserve"><value>Sie haben sich noch für kein Erlebnis beworben.</value></data>
 </root>

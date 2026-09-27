@@ -160,7 +160,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
 
   <data name="Applied.Title" xml:space="preserve"><value>Başvurunuz Alındı</value></data>
   <data name="Applied.Body" xml:space="preserve"><value>The VI House — {0} için başvurduğunuz için teşekkür ederiz. Her başvuru elle incelenir — birkaç gün içinde e-posta ile size dönüş yapılacaktır.</value></data>
-  <data name="Applied.StatusHint" xml:space="preserve"><value>Başvuru durumunuzu istediğiniz zaman şu adresten kontrol edebilirsiniz:</value></data>
+  <data name="Applied.StatusHint" xml:space="preserve"><value>Başvuru durumunuzu istediğiniz zaman kontrol edebilirsiniz — bu tarayıcıdan veya giriş yaparak:</value></data>
   <data name="Applied.ExploreMore" xml:space="preserve"><value>Diğer Deneyimleri Keşfet</value></data>
   <data name="Applied.BackHome" xml:space="preserve"><value>Ana Sayfaya Dön</value></data>
 
@@ -1570,7 +1570,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Email.WelcomeSetup.Body1NoPlan" xml:space="preserve"><value>Ödemeniz gerçekleşti.</value></data>
   <data name="Email.WelcomeSetup.Body1Suffix" xml:space="preserve"><value>Son adım bir şifre seçmek, bu e-posta adresini onaylamak ve iki adımlı doğrulamayı etkinleştirmektir. Size yol göstereceğiz — yaklaşık iki dakika sürer.</value></data>
   <data name="Email.WelcomeSetup.Button" xml:space="preserve"><value>Şifrenizi belirleyin</value></data>
-  <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Bu bağlantı yalnızca bir kez kullanılabilir. Süresi dolarsa yeni bir bağlantı almak için giriş sayfasındaki "Şifrenizi mi unuttunuz?" seçeneğini kullanın.</value></data>
+  <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>Bunu beklemiyorsanız görmezden gelebilirsiniz — bağlantı kullanılana kadar hiçbir şey değişmez.</value></data>
   <data name="Email.AdminInvite.ButtonSetPassword" xml:space="preserve"><value>Şifrenizi belirleyin</value></data>
   <data name="Auth.Login.ContinueWith" xml:space="preserve"><value>{0} ile devam et</value></data>
   <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Yönlendiriliyor…</value></data>
@@ -1597,4 +1597,22 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Admin.NotifySignups.Confirm" xml:space="preserve"><value>Bu e-postayı kontrol ettim (önce test gönderin) ve listeye gönderilmeye hazır.</value></data>
   <data name="Admin.NotifySignups.Send" xml:space="preserve"><value>Listeye gönder</value></data>
   <data name="Admin.NotifySignups.SendTest" xml:space="preserve"><value>Bana test gönder</value></data>
+  <data name="Email.WelcomeSetup.FootnoteAdmin" xml:space="preserve"><value>Bu e-postayı The VI House'tan biri size hesabınıza giriş bağlantısı gönderdiği için alıyorsunuz.</value></data>
+  <data name="Email.WelcomeSetup.Body1Booking" xml:space="preserve"><value>{0} için yeriniz onaylandı — rezervasyon {1}. Biletinizi açmak ve rezervasyonunuzu yönetmek için yeni hesabınıza bir şifre belirleyin.</value></data>
+  <data name="Email.WelcomeSetup.Body1Admin" xml:space="preserve"><value>VI House hesabınız için şifre belirleme bağlantınız burada.</value></data>
+  <data name="Email.WelcomeSetup.StepsLabel" xml:space="preserve"><value>Üç kısa adım</value></data>
+  <data name="Email.WelcomeSetup.Step1" xml:space="preserve"><value>Şifrenizi belirleyin.</value></data>
+  <data name="Email.WelcomeSetup.Step2" xml:space="preserve"><value>İki adımlı doğrulamayı açın — size adım adım yol göstereceğiz.</value></data>
+  <data name="Email.WelcomeSetup.Step3" xml:space="preserve"><value>Hazırsınız: rezervasyonlarınız, oturumlarınız ve üyeliğiniz hesap sayfanızda.</value></data>
+  <data name="Email.WelcomeSetup.ValidFor" xml:space="preserve"><value>Bu bağlantı bir kez ve {0} saat boyunca çalışır. Süresi dolduysa giriş sayfasındaki “Şifrenizi mi unuttunuz?” seçeneğini bu e-posta adresiyle kullanın.</value></data>
+  <data name="Email.BookingConfirmed.SetupNoteLabel" xml:space="preserve"><value>Sonraki adım: hesabınız</value></data>
+  <data name="Email.BookingConfirmed.SetupNote" xml:space="preserve"><value>Size şifrenizi belirlemeniz için bağlantı içeren ayrı bir e-posta (“Set up your VI House account”) gönderdik. Biletinizi ve hesap sayfanızı açmak için buna ihtiyacınız olacak.</value></data>
+  <data name="Applied.StatusLink" xml:space="preserve"><value>Başvuru durumunuzu görün</value></data>
+  <data name="Status.None" xml:space="preserve"><value>Başvuru bulunamadı</value></data>
+  <data name="Status.NoneHint" xml:space="preserve"><value>Başvurunuz, başvurduğunuz tarayıcıda veya giriş yaptıktan sonra hesap sayfanızda görünür.</value></data>
+  <data name="Status.BrowserOnly" xml:space="preserve"><value>Bu tarayıcıdan başvurduğunuz için gösteriliyor. Başka bir cihazda görmek için giriş yapın.</value></data>
+  <data name="Account.NavApplications" xml:space="preserve"><value>Başvurular</value></data>
+  <data name="Account.Applications.Title" xml:space="preserve"><value>Başvurularım</value></data>
+  <data name="Account.Applications.Lede" xml:space="preserve"><value>Deneyim başvurularınızın her birinin durumu.</value></data>
+  <data name="Account.Applications.Empty" xml:space="preserve"><value>Henüz bir deneyime başvurmadınız.</value></data>
 </root>

@@ -36,7 +36,8 @@ public class AdminUsersController(
     IAuditLogRepository auditLogs,
     IMembershipService membershipService,
     IAmbassadorService ambassadorService,
-    IOptions<SecurityOptions> security) : AdminControllerBase
+    IOptions<SecurityOptions> security,
+    IOptions<SiteOptions> siteOptions) : AdminControllerBase
 {
     /// <summary>
     /// The owner lock. Every action that changes an account goes through here first; a protected
@@ -211,6 +212,46 @@ public class AdminUsersController(
         TempData["StatusMessage"] =
             $"Two-factor reset for {user.Email}. The panel is closed to them from their next click, their session ends within " +
             "five minutes, and they'll pair a new authenticator app when they sign in again.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    /// <summary>
+    /// Emails the account owner a one-time link to choose a password — the same "Set up your VI House
+    /// account" mail a payment sends. For the member whose setup mail never arrived, went to spam or
+    /// expired. The link goes only to the address on the account, never to the admin, so this
+    /// cannot be used to get into someone else's account.
+    /// </summary>
+    [HttpPost("{id:guid}/send-setup-link")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SendSetupLink(Guid id, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
+        if (string.IsNullOrWhiteSpace(user.Email))
+        {
+            TempData["StatusMessage"] = "This account has no email address to send a link to.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var encoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+        // The public site, not Request host: in production this panel answers on admin.* and the
+        // member's link must open the member-facing reset page.
+        var setupUrl = VIHouse.Business.SiteUrls.Absolute(siteOptions.Value.BaseUrl, VIHouse.Business.SiteUrls.ResetPassword(encoded));
+
+        var sent = await emailService.SendAsync(
+            "WelcomeSetup", user.Email, "Set up your VI House account",
+            new WelcomeSetupEmailModel(user.FirstName, setupUrl, null) { SentByAdmin = true, ValidForHours = 24 },
+            user.PreferredCulture ?? SiteCultures.Default,
+            nameof(ApplicationUser), user.Id, ct);
+
+        await LogAsync("UserSetupLinkSent", id, null, new { user.Email, Sent = sent, SentBy = User.Identity?.Name }, ct);
+        await auditLogs.SaveChangesAsync(ct);
+
+        TempData["StatusMessage"] = sent
+            ? $"A password setup link is on its way to {user.Email}. It works once, for 24 hours."
+            : $"The email to {user.Email} did not go out — Emails & SMS has the reason, and a Resend button.";
         return RedirectToAction(nameof(Details), new { id });
     }
 

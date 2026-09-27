@@ -1,39 +1,40 @@
-@using VIHouse.Entities.Applications
-@model ApplicationStatusViewModel
+@model ApplicationStatusListViewModel
 @{
     ViewData["Title"] = Loc["Status.Title"];
-
-    string StatusKey(ApplicationStatus status) => status switch
-    {
-        ApplicationStatus.Draft => "Status.Draft",
-        ApplicationStatus.Submitted => "Status.Submitted",
-        ApplicationStatus.UnderReview => "Status.UnderReview",
-        ApplicationStatus.Shortlisted => "Status.Shortlisted",
-        ApplicationStatus.Approved => "Status.Approved",
-        ApplicationStatus.Rejected => "Status.Rejected",
-        ApplicationStatus.Waitlisted => "Status.Waitlisted",
-        ApplicationStatus.PaymentPending => "Status.PaymentPending",
-        ApplicationStatus.Paid => "Status.Paid",
-        ApplicationStatus.Cancelled => "Status.Cancelled",
-        _ => "Status.Submitted",
-    };
 }
 
 <div class="content-hero">
     <div class="container">
         <h1>@Loc["Status.Title"]</h1>
-        <p>@Loc["Status.Intro", Model.FirstName]</p>
+        @if (Model.Items.Count > 0)
+        {
+            <p>@Loc["Status.Intro", Model.Items[0].FirstName]</p>
+        }
     </div>
 </div>
 
 <div class="container content-body">
-    <div class="status-card">
-        <span class="status-card__badge">@Loc[StatusKey(Model.Status)]</span>
-        <h2>@Model.ExperienceLabel</h2>
-        <p>@Loc[$"{StatusKey(Model.Status)}.Detail"]</p>
-        @if (Model.SubmittedAt is not null)
+    @if (Model.Items.Count == 0)
+    {
+        @* Deliberately says nothing about whether any application exists — only where to look. *@
+        <div class="status-card">
+            <h2>@Loc["Status.None"]</h2>
+            <p>@Loc["Status.NoneHint"]</p>
+            @if (!Model.SignedIn)
+            {
+                <p style="margin-top:16px;"><a class="btn btn--primary" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Action("Status", "Application")">@Loc["Nav.LogIn"]</a></p>
+            }
+        </div>
+    }
+    else
+    {
+        foreach (var item in Model.Items)
         {
-            <p style="margin-top:12px; font-size:0.8125rem; color:#999;">@Loc["Status.SubmittedOn", Model.SubmittedAt.Value.ToString("dd MMM yyyy")]</p>
+            <partial name="_ApplicationStatusCard" model="item" />
         }
-    </div>
+        @if (!Model.SignedIn)
+        {
+            <p style="font-size:0.8125rem; color:#999;">@Loc["Status.BrowserOnly"]</p>
+        }
+    }
 </div>

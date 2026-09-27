@@ -160,7 +160,7 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
 
   <data name="Applied.Title" xml:space="preserve"><value>Application Received</value></data>
   <data name="Applied.Body" xml:space="preserve"><value>Thank you for applying to The VI House — {0}. Every application is reviewed by hand — you'll hear back by email within a few days.</value></data>
-  <data name="Applied.StatusHint" xml:space="preserve"><value>You can check your application status any time at:</value></data>
+  <data name="Applied.StatusHint" xml:space="preserve"><value>You can check your application status any time — from this browser, or by signing in:</value></data>
   <data name="Applied.ExploreMore" xml:space="preserve"><value>Explore More Experiences</value></data>
   <data name="Applied.BackHome" xml:space="preserve"><value>Back to Home</value></data>
 
@@ -1570,7 +1570,7 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Email.WelcomeSetup.Body1NoPlan" xml:space="preserve"><value>Your payment went through.</value></data>
   <data name="Email.WelcomeSetup.Body1Suffix" xml:space="preserve"><value>The last step is to choose a password, confirm this email address, and switch on two-factor authentication. We'll walk you through it — it takes about two minutes.</value></data>
   <data name="Email.WelcomeSetup.Button" xml:space="preserve"><value>Choose your password</value></data>
-  <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>This link can only be used once. If it expires, use "Forgot your password?" on the sign-in page to get a new one.</value></data>
+  <data name="Email.WelcomeSetup.Signoff" xml:space="preserve"><value>If you weren't expecting this, you can ignore it — nothing changes until the link is used.</value></data>
   <data name="Email.AdminInvite.ButtonSetPassword" xml:space="preserve"><value>Set your password</value></data>
   <data name="Auth.Login.ContinueWith" xml:space="preserve"><value>Continue with {0}</value></data>
   <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Redirecting…</value></data>
@@ -1597,4 +1597,22 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Admin.NotifySignups.Confirm" xml:space="preserve"><value>I have checked this email (send a test first) and it is ready to go to the list.</value></data>
   <data name="Admin.NotifySignups.Send" xml:space="preserve"><value>Send to the list</value></data>
   <data name="Admin.NotifySignups.SendTest" xml:space="preserve"><value>Send a test to me</value></data>
+  <data name="Email.WelcomeSetup.FootnoteAdmin" xml:space="preserve"><value>You're receiving this because someone at The VI House sent you a link to get into your account.</value></data>
+  <data name="Email.WelcomeSetup.Body1Booking" xml:space="preserve"><value>Your place at {0} is confirmed — booking {1}. To open your ticket and manage your booking, choose a password for your new account.</value></data>
+  <data name="Email.WelcomeSetup.Body1Admin" xml:space="preserve"><value>Here is your link to choose a password for your VI House account.</value></data>
+  <data name="Email.WelcomeSetup.StepsLabel" xml:space="preserve"><value>Three quick steps</value></data>
+  <data name="Email.WelcomeSetup.Step1" xml:space="preserve"><value>Choose your password.</value></data>
+  <data name="Email.WelcomeSetup.Step2" xml:space="preserve"><value>Switch on two-step verification — we'll walk you through it.</value></data>
+  <data name="Email.WelcomeSetup.Step3" xml:space="preserve"><value>You're in: your bookings, sessions and membership are all on your account page.</value></data>
+  <data name="Email.WelcomeSetup.ValidFor" xml:space="preserve"><value>This link works once, for {0} hours. If it has expired, use “Forgot your password?” on the sign-in page with this email address.</value></data>
+  <data name="Email.BookingConfirmed.SetupNoteLabel" xml:space="preserve"><value>Next step: your account</value></data>
+  <data name="Email.BookingConfirmed.SetupNote" xml:space="preserve"><value>We've sent you a separate email, “Set up your VI House account”, with a link to choose your password. You'll need it to open your ticket and your account page.</value></data>
+  <data name="Applied.StatusLink" xml:space="preserve"><value>Check your application status</value></data>
+  <data name="Status.None" xml:space="preserve"><value>No application found</value></data>
+  <data name="Status.NoneHint" xml:space="preserve"><value>Your application shows here on the browser you applied from, or on your account page once you're signed in.</value></data>
+  <data name="Status.BrowserOnly" xml:space="preserve"><value>Shown because you applied from this browser. On another device, sign in to see it.</value></data>
+  <data name="Account.NavApplications" xml:space="preserve"><value>Applications</value></data>
+  <data name="Account.Applications.Title" xml:space="preserve"><value>My Applications</value></data>
+  <data name="Account.Applications.Lede" xml:space="preserve"><value>Where each of your experience applications stands.</value></data>
+  <data name="Account.Applications.Empty" xml:space="preserve"><value>You haven't applied to an experience yet.</value></data>
 </root>

@@ -1,7 +1,9 @@
 @model SubmittedViewModel
 @{
     ViewData["Title"] = Loc["Applied.Title"];
-    var statusUrl = Url.Action("Status", "Application", new { id = Model.ApplicationId });
+    // No application id in the link: this browser holds an encrypted cookie proving it applied, and
+    // a signed-in owner is recognised by their account. See ApplicationStatusCookie.
+    var statusUrl = Url.Action("Status", "Application");
 }
 
 <div class="apply-confirmation">
@@ -12,7 +14,7 @@
             @Loc["Applied.Body", Model.Experience.City]
         </p>
         <p class="apply-form__note" style="color: var(--vih-cream-dim);">
-            @Loc["Applied.StatusHint"] <a href="@statusUrl" style="color: var(--vih-gold-light);">@statusUrl</a>
+            @Loc["Applied.StatusHint"] <a href="@statusUrl" style="color: var(--vih-gold-light);">@Loc["Applied.StatusLink"]</a>
         </p>
         <div class="apply-confirmation__actions">
             <a class="btn btn--primary" asp-controller="Experiences" asp-action="Index">@Loc["Applied.ExploreMore"]</a>

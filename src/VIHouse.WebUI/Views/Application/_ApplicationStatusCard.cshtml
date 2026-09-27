@@ -1,0 +1,29 @@
+@* One application's status. Shared by /apply/status and the account's Applications page, so the
+   two can never describe the same decision in different words. *@
+@using VIHouse.Entities.Applications
+@model ApplicationStatusViewModel
+@{
+    string StatusKey(ApplicationStatus status) => status switch
+    {
+        ApplicationStatus.Draft => "Status.Draft",
+        ApplicationStatus.Submitted => "Status.Submitted",
+        ApplicationStatus.UnderReview => "Status.UnderReview",
+        ApplicationStatus.Shortlisted => "Status.Shortlisted",
+        ApplicationStatus.Approved => "Status.Approved",
+        ApplicationStatus.Rejected => "Status.Rejected",
+        ApplicationStatus.Waitlisted => "Status.Waitlisted",
+        ApplicationStatus.PaymentPending => "Status.PaymentPending",
+        ApplicationStatus.Paid => "Status.Paid",
+        ApplicationStatus.Cancelled => "Status.Cancelled",
+        _ => "Status.Submitted",
+    };
+}
+<div class="status-card" style="margin-bottom:16px;">
+    <span class="status-card__badge">@Loc[StatusKey(Model.Status)]</span>
+    <h2>@Model.ExperienceLabel</h2>
+    <p>@Loc[$"{StatusKey(Model.Status)}.Detail"]</p>
+    @if (Model.SubmittedAt is not null)
+    {
+        <p style="margin-top:12px; font-size:0.8125rem; color:#999;">@Loc["Status.SubmittedOn", Model.SubmittedAt.Value.ToString("dd MMM yyyy")]</p>
+    }
+</div>

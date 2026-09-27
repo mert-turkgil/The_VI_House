@@ -31,4 +31,9 @@ public interface IPendingJoinRepository : IRepository<PendingJoin>
     /// <summary>Expired/Superseded rows last touched before <paramref name="olderThan"/> that still
     /// hold their form data — the purge sweep's work list.</summary>
     Task<IReadOnlyList<PendingJoin>> ListPurgeableAsync(DateTimeOffset olderThan, int take, CancellationToken ct = default);
+
+    /// <summary>The admin sign-up list: newest first, optionally one status, paged — this table only grows.</summary>
+    Task<List<PendingJoin>> GetRecentAsync(PendingJoinStatus? status, int skip, int take, CancellationToken ct = default);
+
+    Task<int> CountAsync(PendingJoinStatus? status, CancellationToken ct = default);
 }

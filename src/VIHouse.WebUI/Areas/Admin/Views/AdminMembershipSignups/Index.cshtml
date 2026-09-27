@@ -1,0 +1,83 @@
+@model AdminMembershipSignupsViewModel
+@{
+    ViewData["Title"] = "Membership Sign-ups";
+
+    string FilterClass(PendingJoinStatus? s) => Model.Status == s ? "admin-btn" : "admin-btn admin-btn--ghost";
+    string Badge(PendingJoinStatus s) => s switch
+    {
+        PendingJoinStatus.Paid => "admin-badge admin-badge--open",
+        PendingJoinStatus.Pending => "admin-badge admin-badge--draft",
+        _ => "admin-badge",
+    };
+    string Label(PendingJoinStatus s) => s switch
+    {
+        PendingJoinStatus.Paid => "Paid — member",
+        PendingJoinStatus.Pending => "Not paid yet",
+        PendingJoinStatus.Expired => "Checkout expired",
+        PendingJoinStatus.Superseded => "Replaced by a newer form",
+        _ => s.ToString(),
+    };
+    // Built by hand: "page" is a reserved route value, so asp-route-page gives an empty href.
+    string PageHref(int n) => Url.Action("Index") + "?" + (Model.Status is { } st ? $"status={st}&" : "") + $"page={n}";
+}
+
+<p class="admin-hint">
+    Everything people wrote on the membership form, whether or not they went on to pay. Membership is
+    not reviewed — paying is joining — so this is for knowing who is coming in. @Model.PaidCount paid so far.
+</p>
+
+<div class="admin-toolbar">
+    <a class="@FilterClass(null)" asp-action="Index">All</a>
+    <a class="@FilterClass(PendingJoinStatus.Paid)" asp-action="Index" asp-route-status="@PendingJoinStatus.Paid">Paid</a>
+    <a class="@FilterClass(PendingJoinStatus.Pending)" asp-action="Index" asp-route-status="@PendingJoinStatus.Pending">Not paid yet</a>
+    <a class="@FilterClass(PendingJoinStatus.Expired)" asp-action="Index" asp-route-status="@PendingJoinStatus.Expired">Expired</a>
+</div>
+
+@if (Model.Rows.Count == 0)
+{
+    <p class="admin-empty">No sign-ups@(Model.Status is null ? "" : " with this status") yet.</p>
+}
+else
+{
+    <div class="admin-table-scroll">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>When</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Plan</th>
+                    <th>Country</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td style="font-size:0.75rem; white-space:nowrap;">@row.CreatedAt.ToLocalTime().ToString("d MMM yyyy HH:mm")</td>
+                        <td>@row.FirstName @row.LastName</td>
+                        <td><a href="mailto:@row.Email">@row.Email</a></td>
+                        <td>@(Model.PlanNames.TryGetValue(row.PlanId, out var plan) ? plan : "—")</td>
+                        <td>@Countries.NameFor(row.Country)</td>
+                        <td><span class="@Badge(row.Status)">@Label(row.Status)</span></td>
+                        <td class="admin-table__actions"><a class="admin-icon-btn" asp-action="Details" asp-route-id="@row.Id">View form &rarr;</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-toolbar" style="margin-top:16px;">
+        @if (Model.HasPrevious)
+        {
+            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page - 1)">&larr; Newer</a>
+        }
+        <span class="admin-hint" style="margin:0;">Page @Model.Page of @Model.TotalPages · @Model.TotalCount sign-up(s)</span>
+        @if (Model.HasNext)
+        {
+            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page + 1)">Older &rarr;</a>
+        }
+    </div>
+}

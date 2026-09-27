@@ -27,6 +27,10 @@ public record BookingConfirmedEmailModel(
     public string? TimeZoneId { get; init; }
     public string? TicketUrl { get; init; }
     public string? ExperienceUrl { get; init; }
+
+    /// <summary>True when this is the buyer's first way into their account: a separate email with the
+    /// password-setup link went out alongside this one, and the ticket page needs that password.</summary>
+    public bool AccountSetupPending { get; init; }
 }
 
 /// <summary>Something changed on the account's sign-in side, or someone signed in from somewhere
@@ -71,7 +75,19 @@ public record ConfirmEmailAddressEmailModel(string FirstName, string ConfirmUrl)
 /// <summary>Sent the moment an account is provisioned by a completed payment — carries the one-time
 /// link the new member uses to choose a password and start onboarding. Nothing else in the system
 /// ever emails a credential.</summary>
-public record WelcomeSetupEmailModel(string FirstName, string SetupUrl, string? PlanName);
+public record WelcomeSetupEmailModel(string FirstName, string SetupUrl, string? PlanName)
+{
+    /// <summary>Set when the account was opened by an experience booking, so the mail can say what
+    /// it is for ("your booking VI-26-1") instead of arriving out of nowhere.</summary>
+    public string? BookingReference { get; init; }
+    public string? ExperienceTitle { get; init; }
+
+    /// <summary>How long the link works — the password-reset token lifespan.</summary>
+    public int? ValidForHours { get; init; }
+
+    /// <summary>True when an admin sent it by hand from the user record rather than a payment.</summary>
+    public bool SentByAdmin { get; init; }
+}
 
 /// <summary>To an ambassador when their link converts. Deliberately anonymous — what happened and
 /// what it is worth, never who.</summary>

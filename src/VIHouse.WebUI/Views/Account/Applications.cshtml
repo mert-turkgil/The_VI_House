@@ -1,0 +1,30 @@
+@model ApplicationStatusListViewModel
+@{
+    ViewData["Title"] = Loc["Account.Applications.Title"];
+}
+
+<div class="account-manage">
+    <partial name="_AccountNav" />
+    <div class="account-manage__content">
+        <header class="account-page__head">
+            <h1>@Loc["Account.Applications.Title"]</h1>
+            <p class="account-page__lede">@Loc["Account.Applications.Lede"]</p>
+        </header>
+
+        @if (Model.Items.Count == 0)
+        {
+            <div class="account-empty">
+                <span class="account-empty__icon"><partial name="_Icon" model='@("file-text")' /></span>
+                <h2>@Loc["Account.Applications.Empty"]</h2>
+                <a class="btn btn--primary" asp-controller="Experiences" asp-action="Index">@Loc["Account.BrowseExperiences"]</a>
+            </div>
+        }
+        else
+        {
+            foreach (var item in Model.Items)
+            {
+                <partial name="/Views/Application/_ApplicationStatusCard.cshtml" model="item" />
+            }
+        }
+    </div>
+</div>

@@ -21,6 +21,12 @@
     @Loc["Email.BookingConfirmed.Body1"]
 </p>
 <partial name="/Views/Emails/_EmailCode.cshtml" model="@(new Code(Model.BookingReference, Loc["Email.BookingConfirmed.CodeLabel"].Value))" />
+@if (Model.AccountSetupPending)
+{
+    @* The ticket page is behind the account, so the one thing they must do next is set a password —
+       the link itself is in its own email, not here, so a forwarded confirmation carries no key. *@
+    <partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note(Loc["Email.BookingConfirmed.SetupNote"].Value, "warning", Loc["Email.BookingConfirmed.SetupNoteLabel"].Value))" />
+}
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
 @if (Model.TicketUrl is not null)
 {

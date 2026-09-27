@@ -49,6 +49,8 @@ public static class AdminSections
     [
         new("AdminDashboard", "Index", "Dashboard", "layout-dashboard", Split(RolesFor.Everyone)),
         new("AdminApplications", "Index", "Applications", "file-text", Split(RolesFor.Applications)),
+        // Every admin, as asked: who is joining and what they wrote. Not reviewed — paying is joining.
+        new("AdminMembershipSignups", "Index", "Membership Sign-ups", "users", Split(RolesFor.Everyone)),
         new("AdminUsers", "Index", "Users", "user-round", Split(RolesFor.Users)),
         new("AdminExperiences", "Index", "Experiences", "sparkles", Split(RolesFor.Events)),
         new("AdminSeminars", "Index", "Sessions", "calendar", Split(RolesFor.Events)),

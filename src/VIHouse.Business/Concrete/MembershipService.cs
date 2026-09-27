@@ -1772,7 +1772,9 @@ public class MembershipService(
         // only emailed: the success page is reachable by anyone holding the session id from the
         // URL, which is not a thing to hand a password link to. Sent from here because this is the
         // path that always runs, webhook or server-side read.
-        if (!await userManager.HasPasswordAsync(user))
+        // Same rule as an experience booking: no password, or an account that has never been signed
+        // in to (one opened with a random password nobody knows), needs a way in.
+        if (!await userManager.HasPasswordAsync(user) || user.LastLoginAt is null)
         {
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
             // Same unpadded URL-safe alphabet as WebEncoders.Base64UrlEncode, which is what the
@@ -1784,7 +1786,7 @@ public class MembershipService(
             await outbox.EnqueueEmailAsync(
                 $"email:WelcomeSetup:User:{user.Id}",
                 "WelcomeSetup", user.Email!, "Set up your VI House account",
-                new WelcomeSetupEmailModel(user.FirstName, setupUrl, plan.Name),
+                new WelcomeSetupEmailModel(user.FirstName, setupUrl, plan.Name) { ValidForHours = 24 },
                 user.PreferredCulture ?? SiteCultures.Default,
                 nameof(ApplicationUser), user.Id, ct);
         }

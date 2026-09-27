@@ -1,15 +1,42 @@
 @model WelcomeSetupEmailModel
 @{
     ViewData["Preheader"] = Loc["Email.WelcomeSetup.Preheader"].Value;
-    ViewData["Footnote"] = Loc["Email.WelcomeSetup.Footnote"].Value;
+    ViewData["Footnote"] = Model.SentByAdmin
+        ? Loc["Email.WelcomeSetup.FootnoteAdmin"].Value
+        : Loc["Email.WelcomeSetup.Footnote"].Value;
+
+    // Why this mail arrived, in one line — a password link out of nowhere looks like phishing.
+    var why = Model switch
+    {
+        { SentByAdmin: true } => Loc["Email.WelcomeSetup.Body1Admin"].Value,
+        { BookingReference: { } reference } => string.Format(Loc["Email.WelcomeSetup.Body1Booking"].Value,
+            $"<strong>{System.Net.WebUtility.HtmlEncode(Model.ExperienceTitle ?? "The VI House")}</strong>",
+            $"<strong>{System.Net.WebUtility.HtmlEncode(reference)}</strong>"),
+        { PlanName: { } plan } => string.Format(Loc["Email.WelcomeSetup.Body1WithPlan"].Value, $"<strong>{System.Net.WebUtility.HtmlEncode(plan)}</strong>"),
+        _ => Loc["Email.WelcomeSetup.Body1NoPlan"].Value,
+    };
 }
 <partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.WelcomeSetup.Eyebrow"].Value, Loc["Email.WelcomeSetup.Heading"].Value))" />
 <p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
-<p style="margin:0 0 16px;">
-    @(Model.PlanName is null ? Loc["Email.WelcomeSetup.Body1NoPlan"].Value : string.Format(Loc["Email.WelcomeSetup.Body1WithPlan"].Value, Model.PlanName))
-    @Loc["Email.WelcomeSetup.Body1Suffix"]
-</p>
+<p style="margin:0 0 16px;">@Html.Raw(why)</p>
+
+<p style="margin:0 0 8px; color:#63685c; font-size:11px; font-weight:bold; letter-spacing:1.5px; text-transform:uppercase;">@Loc["Email.WelcomeSetup.StepsLabel"]</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;">
+    @foreach (var (n, key) in new[] { (1, "Email.WelcomeSetup.Step1"), (2, "Email.WelcomeSetup.Step2"), (3, "Email.WelcomeSetup.Step3") })
+    {
+        <tr>
+            <td style="vertical-align:top; padding:0 12px 10px 0;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:24px; height:24px; background-color:#00230a; border-radius:12px;">
+                    <tr><td align="center" style="color:#d7bd8a; font-size:12px; font-weight:bold; line-height:24px;">@n</td></tr>
+                </table>
+            </td>
+            <td style="vertical-align:top; padding:2px 0 10px; font-size:15px; line-height:1.5;">@Loc[key]</td>
+        </tr>
+    }
+</table>
+
 <partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.SetupUrl, Loc["Email.WelcomeSetup.Button"].Value))" />
 <p style="margin:0 0 6px; font-size:13px; color:#5a5f55;">@Loc["Email.Common.ButtonFallbackHint"]</p>
 <partial name="/Views/Emails/_EmailCode.cshtml" model="@(new Code(Model.SetupUrl, Href: Model.SetupUrl))" />
+<partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note(string.Format(Loc["Email.WelcomeSetup.ValidFor"].Value, Model.ValidForHours ?? 24), "info"))" />
 <partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.WelcomeSetup.Signoff"].Value)" />

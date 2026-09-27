@@ -17,6 +17,8 @@ using VIHouse.WebUI.ViewModels.Account;
 using VIHouse.WebUI.ViewModels.Membership;
 using VIHouse.WebUI.ViewModels.Seminars;
 
+using VIHouse.WebUI.ViewModels.Applications;
+
 namespace VIHouse.WebUI.Controllers;
 
 /// <summary>
@@ -46,7 +48,8 @@ public class AccountController(
     IAmbassadorService ambassadorService,
     IDiscordInviteService discordInvites,
     IOptions<SmsOptions> smsOptions,
-    IOptions<FeatureOptions> features) : Controller
+    IOptions<FeatureOptions> features,
+    IApplicationService applicationService) : Controller
 {
     // --- Dashboard -----------------------------------------------------------------------------
 
@@ -454,6 +457,40 @@ public class AccountController(
     /// sees are one thing. Open checkouts are settled against the provider first, for the same
     /// reason the other pages do it: a webhook that is late must not make a paid member look unpaid.
     /// </summary>
+    /// <summary>
+    /// The applications this member made — linked to the account, or sent from its email address
+    /// before the account existed — each with where it stands. The signed-in counterpart of
+    /// /apply/status, which a visitor without an account reaches through the browser cookie instead.
+    /// </summary>
+    [HttpGet("applications")]
+    public async Task<IActionResult> Applications(CancellationToken ct)
+    {
+        var user = await userManager.GetUserAsync(User);
+        if (user is null) return Challenge();
+
+        var mine = await applicationService.GetForApplicantAsync([], user.Id, user.Email, ct);
+        var labels = new Dictionary<Guid, string>();
+        foreach (var experienceId in mine.Select(a => a.ExperienceId).Distinct())
+        {
+            var experience = await experienceService.GetForAdminEditAsync(experienceId, ct);
+            labels[experienceId] = experience is null ? "—" : $"The VI House — {experience.City}";
+        }
+
+        ViewData["Title"] = "My Applications";
+        return View(new ApplicationStatusListViewModel
+        {
+            SignedIn = true,
+            Items = mine.Select(a => new ApplicationStatusViewModel
+            {
+                Id = a.Id,
+                FirstName = a.FirstName,
+                Status = a.Status,
+                ExperienceLabel = labels[a.ExperienceId],
+                SubmittedAt = a.SubmittedAt,
+            }).ToList(),
+        });
+    }
+
     [HttpGet("payments")]
     public async Task<IActionResult> Payments(CancellationToken ct)
     {
