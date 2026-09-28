@@ -17,6 +17,10 @@ public class ReferralVisitConfiguration : IEntityTypeConfiguration<ReferralVisit
         builder.Property(v => v.TargetKind).HasConversion<string>().HasMaxLength(20);
         builder.Property(v => v.LandingPath).HasMaxLength(200);
         builder.HasIndex(v => new { v.AmbassadorId, v.TargetKind, v.TargetId });
+        builder.Property(v => v.IpHash).HasMaxLength(64);
+        builder.Property(v => v.UserAgent).HasMaxLength(300);
+        // "Same network, same link, just now?" — the repeat-visit check runs on every landing.
+        builder.HasIndex(v => new { v.AmbassadorId, v.IpHash, v.CreatedAt });
 
         builder.HasOne<Ambassador>().WithMany().HasForeignKey(v => v.AmbassadorId).OnDelete(DeleteBehavior.Cascade);
     }

@@ -1,5 +1,6 @@
 @model MembershipRenewedEmailModel
 @{
+    ViewData["Subject"] = string.Format(Loc["Email.MembershipRenewed.Subject"].Value, Model.PlanName);
     ViewData["Preheader"] = string.Format(Loc["Email.MembershipRenewed.Preheader"].Value, Model.PlanName, Model.ExpiresAt.ToString("d MMMM yyyy"));
     ViewData["Footnote"] = Loc["Email.Common.FootnoteMembership"].Value;
 }

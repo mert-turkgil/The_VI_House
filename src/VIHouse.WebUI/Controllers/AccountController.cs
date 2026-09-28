@@ -587,6 +587,7 @@ public class AccountController(
             BookingReference = booking.BookingReference,
             HolderName = user is null ? "" : $"{user.FirstName} {user.LastName}",
             ExperienceTitle = experience is null ? "The VI House" : $"The VI House — {experience.City}",
+            ExperienceSlug = experience?.Slug,
             City = experience?.City ?? "—",
             Country = experience?.Country ?? "",
             StartAtUtc = experience?.StartAtUtc ?? booking.CreatedAt,

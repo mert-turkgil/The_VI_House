@@ -67,7 +67,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             }
 
             _logger.LogInformation("User with ID '{UserId}' has disabled 2fa.", _userManager.GetUserId(User));
-            await _securityAlerts.TwoFactorChangedAsync(user.Id, "Two-step verification was switched off", HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
+            await _securityAlerts.TwoFactorChangedAsync(user.Id, VIHouse.Business.Abstract.TwoFactorChange.Disabled, HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
             StatusMessage = "2fa has been disabled. You can reenable 2fa when you setup an authenticator app";
             return RedirectToPage("./TwoFactorAuthentication");
         }

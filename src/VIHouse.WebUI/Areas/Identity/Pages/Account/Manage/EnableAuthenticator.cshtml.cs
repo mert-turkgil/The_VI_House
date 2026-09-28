@@ -134,7 +134,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
 
             await _userManager.SetTwoFactorEnabledAsync(user, true);
             var userId = await _userManager.GetUserIdAsync(user);
-            await _securityAlerts.TwoFactorChangedAsync(user.Id, "Two-step verification was switched on", HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
+            await _securityAlerts.TwoFactorChangedAsync(user.Id, VIHouse.Business.Abstract.TwoFactorChange.Enabled, HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
             _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
 
             StatusMessage = "Your authenticator app has been verified.";

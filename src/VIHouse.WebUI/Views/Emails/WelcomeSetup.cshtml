@@ -1,5 +1,6 @@
 @model WelcomeSetupEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.WelcomeSetup.Subject"].Value;
     ViewData["Preheader"] = Loc["Email.WelcomeSetup.Preheader"].Value;
     ViewData["Footnote"] = Model.SentByAdmin
         ? Loc["Email.WelcomeSetup.FootnoteAdmin"].Value

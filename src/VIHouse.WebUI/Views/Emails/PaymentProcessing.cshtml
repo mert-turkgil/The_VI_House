@@ -1,5 +1,6 @@
 @model PaymentProcessingEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.PaymentProcessing.Subject"].Value;
     ViewData["Preheader"] = string.Format(Loc["Email.PaymentProcessing.Preheader"].Value, Model.What);
     ViewData["Footnote"] = Loc["Email.PaymentProcessing.Footnote"].Value;
     var rows = new List<(string, string)>

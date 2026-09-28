@@ -29,6 +29,7 @@ public class ReferralController(
     IAmbassadorService ambassadorService,
     IExperienceService experienceService,
     ISeminarService seminarService,
+    ReferralFingerprint fingerprint,
     IOptions<SiteOptions> siteOptions) : Controller
 {
     [HttpGet("{code}")]
@@ -130,7 +131,7 @@ public class ReferralController(
 
         var q = Request.Query;
         await ambassadorService.RecordVisitAsync(code, kind, targetId, landingPath,
-            q["utm_source"], q["utm_medium"], q["utm_campaign"], q["utm_content"], ct);
+            q["utm_source"], q["utm_medium"], q["utm_campaign"], q["utm_content"], fingerprint.For(HttpContext), ct);
 
         ReferralCookie.Write(Response, ambassador.Code);
     }

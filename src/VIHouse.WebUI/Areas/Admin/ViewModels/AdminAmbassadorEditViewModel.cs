@@ -39,6 +39,12 @@ public class AdminAmbassadorEditViewModel
     public List<ReferralConversion> Conversions { get; set; } = [];
     public List<ReferralSourceCount> VisitSources { get; set; } = [];
 
+    public List<ReferralPayout> Payouts { get; set; } = [];
+    public ReferralFraudSignals? Signals { get; set; }
+
+    /// <summary>Finance and SuperAdmin record payouts and void commission; Marketing sees them.</summary>
+    public bool CanSettle { get; set; }
+
     public static AdminAmbassadorEditViewModel FromEntity(Ambassador a, string? email) => new()
     {
         Id = a.Id,

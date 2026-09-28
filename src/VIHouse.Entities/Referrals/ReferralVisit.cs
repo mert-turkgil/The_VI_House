@@ -24,4 +24,18 @@ public class ReferralVisit : BaseEntity
 
     /// <summary>The page the visitor was sent to, as a path — "/experiences/lisbon-2026".</summary>
     public string? LandingPath { get; set; }
+
+    // --- Fraud signals ---------------------------------------------------------------------------
+    // The raw IP address is never stored: a keyed hash is enough to tell "the same network again"
+    // from "someone new", and cannot be read back into an address.
+
+    /// <summary>Keyed SHA-256 of the visitor's IP address, hex. Null when the address was unknown.</summary>
+    public string? IpHash { get; set; }
+
+    /// <summary>The browser's User-Agent, clipped — enough to spot scripts and headless browsers.</summary>
+    public string? UserAgent { get; set; }
+
+    /// <summary>The signed-in account that clicked, when there was one — an ambassador clicking
+    /// their own link shows up here.</summary>
+    public Guid? VisitorUserId { get; set; }
 }

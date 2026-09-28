@@ -1,5 +1,6 @@
 @model ReferralConvertedEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.ReferralConverted.Subject"].Value;
     ViewData["Preheader"] = Model.What;
     ViewData["Footnote"] = Loc["Email.Common.FootnoteAmbassador"].Value;
     var rows = new List<(string, string)>();

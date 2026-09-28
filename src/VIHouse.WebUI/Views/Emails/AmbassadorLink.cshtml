@@ -1,5 +1,6 @@
 @model AmbassadorLinkEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.AmbassadorLink.Subject"].Value;
     ViewData["Preheader"] = string.Format(Loc["Email.AmbassadorLink.Preheader"].Value, Model.ReferralUrl);
     ViewData["Footnote"] = Loc["Email.Common.FootnoteAmbassador"].Value;
 }

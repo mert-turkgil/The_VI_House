@@ -1,5 +1,6 @@
 @model PaymentFailedEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.PaymentFailed.Subject"].Value;
     ViewData["Preheader"] = string.Format(Loc["Email.PaymentFailed.Preheader"].Value, Model.ExperienceTitle);
     ViewData["Footnote"] = Loc["Email.PaymentFailed.Footnote"].Value;
 }

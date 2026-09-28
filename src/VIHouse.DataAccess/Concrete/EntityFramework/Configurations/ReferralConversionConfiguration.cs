@@ -17,6 +17,10 @@ public class ReferralConversionConfiguration : IEntityTypeConfiguration<Referral
         // clicked twice, must not become two lines on the ambassador's timeline.
         builder.HasIndex(c => new { c.SourceEntityType, c.SourceEntityId, c.Kind }).IsUnique();
         builder.HasIndex(c => new { c.AmbassadorId, c.OccurredAt });
+        builder.Property(c => c.VoidReason).HasMaxLength(300);
+        builder.Ignore(c => c.NetCommissionMinor);
+        // Restrict, not cascade: a payout is a record of money that moved and outlives any tidy-up.
+        builder.HasOne<ReferralPayout>().WithMany().HasForeignKey(c => c.PayoutId).OnDelete(DeleteBehavior.NoAction);
         builder.HasOne<Ambassador>().WithMany().HasForeignKey(c => c.AmbassadorId).OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -166,7 +166,7 @@
                     {
                         <div class="admin-kpi-card admin-kpi-card--accent">
                             <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
-                            <div class="admin-kpi-card__label">Commission owed (@currency)</div>
+                            <div class="admin-kpi-card__label">Commission earned (@currency) <span class="admin-table__sub">net of refunds</span></div>
                         </div>
                     }
                 </div>
@@ -241,9 +241,49 @@
                                             @MoneyFormatter.Format(amount, c.Currency)
                                             @if (c.CommissionMinor is { } commission)
                                             {
-                                                <em>&middot; commission @MoneyFormatter.Format(commission, c.Currency)</em>
+                                                <em>&middot; commission @MoneyFormatter.Format(c.NetCommissionMinor, c.Currency)@if (c.CommissionReversedMinor > 0) { <text> (of @MoneyFormatter.Format(commission, c.Currency))</text> }</em>
                                             }
                                         </span>
+                                        <span class="ambassador-timeline__flags" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
+                                            @if (c.IsSelfReferral)
+                                            {
+                                                <span class="admin-badge admin-badge--danger" title="The buyer's account is the ambassador's own">Self-referral</span>
+                                            }
+                                            @if (c.ReversedAt is not null)
+                                            {
+                                                <span class="admin-badge admin-badge--draft">Refunded</span>
+                                            }
+                                            else if (c.RefundedMinor > 0)
+                                            {
+                                                <span class="admin-badge admin-badge--draft">Partly refunded (@MoneyFormatter.Format(c.RefundedMinor, c.Currency))</span>
+                                            }
+                                            @if (c.VoidedAt is not null)
+                                            {
+                                                <span class="admin-badge admin-badge--draft" title="@c.VoidReason">Commission withdrawn</span>
+                                            }
+                                            @if (c.PayoutId is not null)
+                                            {
+                                                <span class="admin-badge admin-badge--paid">Paid out</span>
+                                            }
+                                            else if (c.NetCommissionMinor > 0)
+                                            {
+                                                <span class="admin-badge admin-badge--pending">Owed</span>
+                                            }
+                                        </span>
+                                        @if (c.VoidedAt is not null && c.VoidReason is not null)
+                                        {
+                                            <span class="admin-table__sub">Withdrawn @c.VoidedAt.Value.ToString("d MMM yyyy"): @c.VoidReason</span>
+                                        }
+                                        @if (Model.CanSettle && c.VoidedAt is null && c.NetCommissionMinor > 0)
+                                        {
+                                            <details style="margin-top:4px;">
+                                                <summary class="admin-table__sub" style="cursor:pointer;">Withdraw commission…</summary>
+                                                <form asp-action="VoidConversion" asp-route-id="@Model.Id" asp-route-conversionId="@c.Id" method="post" class="admin-form" style="margin-top:6px;">
+                                                    <input name="reason" maxlength="300" required placeholder="Reason, e.g. self-referral" />
+                                                    <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Withdraw</button>
+                                                </form>
+                                            </details>
+                                        }
                                     }
                                 </li>
                             }
@@ -255,6 +295,102 @@
     </div>
 
     <div class="admin-review-side">
+        @* --- Commission: earned, paid, owed ------------------------------------------------------ *@
+        <div class="admin-card">
+            <h2>Commission</h2>
+            @if (stats is null || stats.Balances.Count == 0)
+            {
+                <p class="admin-hint" style="margin-top:0;">Nothing earned yet.</p>
+            }
+            else
+            {
+                foreach (var b in stats.Balances)
+                {
+                    <dl class="admin-detail-list">
+                        <div><dt>Earned (@b.Currency)</dt><dd>@MoneyFormatter.Format(b.EarnedMinor, b.Currency)</dd></div>
+                        <div><dt>Paid</dt><dd>@MoneyFormatter.Format(b.PaidMinor, b.Currency)</dd></div>
+                        <div>
+                            <dt>@(b.OwedMinor < 0 ? "Overpaid" : "Owed")</dt>
+                            <dd><strong>@MoneyFormatter.Format(Math.Abs(b.OwedMinor), b.Currency)</strong></dd>
+                        </div>
+                    </dl>
+                    @if (b.OwedMinor < 0)
+                    {
+                        <p class="admin-hint">A refund landed after this was paid out. Recover it, or it nets off the next payout automatically.</p>
+                    }
+                    else if (b.OwedMinor > 0 && Model.CanSettle)
+                    {
+                        <form asp-action="RecordPayout" asp-route-id="@Model.Id" method="post" class="admin-form" style="margin-bottom:16px;">
+                            <input type="hidden" name="currency" value="@b.Currency" />
+                            <input type="hidden" name="expectedOwedMinor" value="@b.OwedMinor" />
+                            <div class="admin-field">
+                                <label for="payout-ref-@b.Currency">Transfer reference</label>
+                                <input id="payout-ref-@b.Currency" name="reference" maxlength="100" placeholder="e.g. bank transfer ref." />
+                            </div>
+                            <div class="admin-field">
+                                <label for="payout-note-@b.Currency">Note (optional)</label>
+                                <input id="payout-note-@b.Currency" name="note" maxlength="500" />
+                            </div>
+                            <label class="admin-checkbox" style="display:flex; gap:8px; align-items:flex-start; margin-bottom:10px;">
+                                <input type="checkbox" name="confirmed" value="true" required />
+                                <span>I have sent @MoneyFormatter.Format(b.OwedMinor, b.Currency) to @Model.Name.</span>
+                            </label>
+                            <button type="submit" class="admin-btn" style="width:100%;">Mark @MoneyFormatter.Format(b.OwedMinor, b.Currency) as paid</button>
+                        </form>
+                    }
+                }
+                <p class="admin-hint" style="margin-top:0;">Commission is taken at the rate in force when each sale happened. Refunds take it back pro rata; withdrawn lines earn nothing.@(Model.CanSettle ? "" : " Finance records payouts.")</p>
+            }
+
+            @if (Model.Payouts.Count > 0)
+            {
+                <h3>Payouts</h3>
+                <table class="admin-table admin-table--compact">
+                    <thead><tr><th>Date</th><th>Reference</th><th style="text-align:right;">Amount</th></tr></thead>
+                    <tbody>
+                        @foreach (var p in Model.Payouts)
+                        {
+                            <tr>
+                                <td>@p.PaidAt.ToLocalTime().ToString("d MMM yyyy")</td>
+                                <td>@(p.Reference ?? "—")@if (p.Note is not null) { <div class="admin-table__sub">@p.Note</div> }</td>
+                                <td style="text-align:right;">@MoneyFormatter.Format(p.AmountMinor, p.Currency)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        @* --- Fraud signals ---------------------------------------------------------------------- *@
+        @if (Model.Signals is { } sig)
+        {
+            <div class="admin-card">
+                <h2>Signals</h2>
+                @if (sig.Warnings.Count == 0)
+                {
+                    <p class="admin-hint" style="margin-top:0;">Nothing unusual in the last @sig.WindowDays days.</p>
+                }
+                else
+                {
+                    <ul style="margin:0 0 12px; padding-left:18px;">
+                        @foreach (var w in sig.Warnings)
+                        {
+                            <li style="margin-bottom:6px;">@w</li>
+                        }
+                    </ul>
+                }
+                <dl class="admin-detail-list">
+                    <div><dt>Visits, @sig.WindowDays days</dt><dd>@sig.Visits</dd></div>
+                    <div><dt>Distinct networks</dt><dd>@sig.DistinctNetworks</dd></div>
+                    <div><dt>Busiest network</dt><dd>@sig.TopNetworkVisits (@sig.TopNetworkShare.ToString("P0"))</dd></div>
+                    <div><dt>Automated-looking</dt><dd>@sig.AutomatedVisits</dd></div>
+                    <div><dt>Own clicks</dt><dd>@sig.OwnVisits</dd></div>
+                    <div><dt>Self-referrals</dt><dd>@sig.SelfReferrals</dd></div>
+                </dl>
+                <p class="admin-hint">IP addresses are stored only as a keyed hash. Repeat landings from one network on one link within 30 minutes count once.</p>
+            </div>
+        }
+
         <div class="admin-card">
             <h2>Settings</h2>
             <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
@@ -275,7 +411,10 @@
                     <select asp-for="Status" asp-items="Html.GetEnumSelectList<AmbassadorStatus>()"></select>
                     <p class="admin-field__hint">Inactive: visits to the link stop being recorded; the account and history stay.</p>
                 </div>
-                <button type="submit" class="admin-btn" style="width:100%;">Save changes</button>
+                @if (User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin) || User.IsInRole(VIHouse.DataAccess.Identity.Roles.Marketing))
+                {
+                    <button type="submit" class="admin-btn" style="width:100%;">Save changes</button>
+                }
             </form>
         </div>
 

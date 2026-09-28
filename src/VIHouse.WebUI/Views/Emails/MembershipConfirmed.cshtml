@@ -1,5 +1,6 @@
 @model MembershipConfirmedEmailModel
 @{
+    ViewData["Subject"] = string.Format(Model.Status == MembershipEmailStatus.Renewed ? Loc["Email.MembershipRenewed.Subject"].Value : Loc["Email.MembershipConfirmed.Subject"].Value, Model.PlanName);
     var (eyebrow, heading, lede) = Model.Status switch
     {
         MembershipEmailStatus.Renewed => (Loc["Email.Common.EyebrowMembershipRenewed"].Value, Loc["Email.Common.HeadingMembershipRenewed"].Value, string.Format(Loc["Email.MembershipConfirmed.RenewedLede"].Value, Model.PlanName)),

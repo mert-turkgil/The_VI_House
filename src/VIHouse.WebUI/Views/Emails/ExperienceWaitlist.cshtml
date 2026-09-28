@@ -1,5 +1,6 @@
 @model ExperienceWaitlistEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.ApplicationWaitlisted.Subject"].Value;
     ViewData["Preheader"] = string.Format(Loc["Email.ExperienceWaitlist.Preheader"].Value, Model.Position, Model.ExperienceTitle);
     ViewData["Footnote"] = Loc["Email.ExperienceWaitlist.Footnote"].Value;
 }

@@ -20,7 +20,7 @@ using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
-[Authorize(Roles = AdminSections.RolesFor.Marketing)]
+[Authorize(Roles = AdminSections.RolesFor.Ambassadors)]
 [Route("admin/ambassadors")]
 public class AdminAmbassadorsController(
     IAmbassadorService ambassadorService,
@@ -49,6 +49,9 @@ public class AdminAmbassadorsController(
         model.Stats = await ambassadorService.GetStatsAsync(ambassador.Id, ct);
         model.Conversions = await ambassadorService.GetConversionsAsync(ambassador.Id, 30, ct);
         model.VisitSources = await ambassadorService.GetVisitSourcesAsync(ambassador.Id, ct);
+        model.Payouts = await ambassadorService.GetPayoutsAsync(ambassador.Id, ct);
+        model.Signals = await ambassadorService.GetFraudSignalsAsync(ambassador.Id, ct);
+        model.CanSettle = User.IsInRole(Roles.SuperAdmin) || User.IsInRole(Roles.Finance);
         model.Links = new VIHouse.WebUI.ViewModels.Ambassador.ReferralLinksViewModel
         {
             Code = ambassador.Code,
@@ -69,10 +72,12 @@ public class AdminAmbassadorsController(
     }
 
     [HttpGet("new")]
+    [Authorize(Roles = AdminSections.RolesFor.Marketing)]
     public IActionResult Create() => View(new AdminAmbassadorCreateViewModel());
 
     [HttpPost("new")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = AdminSections.RolesFor.Marketing)]
     public async Task<IActionResult> Create(AdminAmbassadorCreateViewModel form, CancellationToken ct)
     {
         if (!ModelState.IsValid) return View(form);
@@ -117,6 +122,7 @@ public class AdminAmbassadorsController(
     /// </summary>
     [HttpPost("{id:guid}/send-link")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = AdminSections.RolesFor.Marketing)]
     public async Task<IActionResult> SendLink(Guid id, string? note, CancellationToken ct)
     {
         var ambassador = await ambassadorService.GetByIdAsync(id, ct);
@@ -143,8 +149,52 @@ public class AdminAmbassadorsController(
         return RedirectToAction(nameof(Edit), new { id });
     }
 
+    /// <summary>
+    /// Records that everything owed in one currency has been paid. The form carries the balance
+    /// the admin saw; if it has moved since, nothing is recorded (see MarkCommissionPaidAsync).
+    /// Recording only — the money itself is sent outside the site (bank transfer).
+    /// </summary>
+    [HttpPost("{id:guid}/payouts")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = AdminSections.RolesFor.Money)]
+    public async Task<IActionResult> RecordPayout(Guid id, string currency, long expectedOwedMinor, string? reference, string? note, bool confirmed, CancellationToken ct)
+    {
+        if (!confirmed)
+        {
+            TempData["StatusMessage"] = "Tick the box to confirm the transfer has actually been made.";
+            return RedirectToAction(nameof(Edit), new { id });
+        }
+
+        var (adminId, ip) = CurrentActor();
+        var result = await ambassadorService.MarkCommissionPaidAsync(id, currency ?? "", expectedOwedMinor, reference, note, adminId, ip, ct);
+        TempData["StatusMessage"] = result.Success
+            ? $"Recorded: {MoneyFormatter.Format(result.Payout!.AmountMinor, result.Payout.Currency)} paid{(result.Payout.Reference is null ? "" : $" (ref. {result.Payout.Reference})")}. The ambassador has been notified."
+            : result.Error;
+        return RedirectToAction(nameof(Edit), new { id });
+    }
+
+    /// <summary>Strikes one ledger line's commission out — a self-referral, or anything else the
+    /// House will not pay for. The line stays on the timeline, marked, with the reason.</summary>
+    [HttpPost("{id:guid}/conversions/{conversionId:guid}/void")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = AdminSections.RolesFor.Money)]
+    public async Task<IActionResult> VoidConversion(Guid id, Guid conversionId, string? reason, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            TempData["StatusMessage"] = "Give a reason for withdrawing the commission — it is kept on the record.";
+            return RedirectToAction(nameof(Edit), new { id });
+        }
+
+        var (adminId, ip) = CurrentActor();
+        var done = await ambassadorService.VoidConversionAsync(id, conversionId, reason.Trim(), adminId, ip, ct);
+        TempData["StatusMessage"] = done ? "Commission withdrawn for that line." : "That line has no commission to withdraw (already withdrawn, or not a purchase).";
+        return RedirectToAction(nameof(Edit), new { id });
+    }
+
     [HttpPost("{id:guid}")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = AdminSections.RolesFor.Marketing)]
     public async Task<IActionResult> Edit(Guid id, AdminAmbassadorEditViewModel form, CancellationToken ct)
     {
         form.Id = id;

@@ -1,16 +1,27 @@
 @model SecurityAlertEmailModel
 @{
-    ViewData["Preheader"] = $"{Model.Event} on your VI House account";
+    // Title, detail and button come from the alert's kind in the reader's language; the English the
+    // service passed is only the fallback for a kind without keys.
+    string Tr(string part, string fallback) =>
+        Model.Kind is { } kind && Loc[$"Email.SecurityAlert.{kind}.{part}"] is { ResourceNotFound: false } found ? found.Value : fallback;
+    var detailKind = Model.Kind is "TwoFactorOn" or "TwoFactorOff" or "AuthenticatorReset" ? "TwoFactor" : Model.Kind;
+    string TrShared(string part, string fallback) =>
+        detailKind is not null && Loc[$"Email.SecurityAlert.{detailKind}.{part}"] is { ResourceNotFound: false } found ? found.Value : fallback;
+    var title = Tr("Title", Model.Event);
+    var detail = TrShared("Detail", Model.Detail);
+    var actionLabel = TrShared("Action", Model.ActionLabel);
+    ViewData["Subject"] = title;
+    ViewData["Preheader"] = string.Format(Loc["Email.SecurityAlert.Preheader"].Value, title);
     ViewData["Footnote"] = Loc["Email.SecurityAlert.Footnote"].Value;
-    var rows = new List<(string, string)> { (Loc["Email.Common.DetailWhatLabel"].Value, Model.Event), (Loc["Email.Common.DetailWhenLabel"].Value, $"{Model.WhenUtc:d MMMM yyyy, HH:mm} UTC") };
+    var rows = new List<(string, string)> { (Loc["Email.Common.DetailWhatLabel"].Value, title), (Loc["Email.Common.DetailWhenLabel"].Value, $"{Model.WhenUtc:d MMMM yyyy, HH:mm} UTC") };
     if (!string.IsNullOrWhiteSpace(Model.IpAddress)) rows.Add((Loc["Email.Common.DetailFromLabel"].Value, Model.IpAddress));
     if (!string.IsNullOrWhiteSpace(Model.UserAgent)) rows.Add((Loc["Email.Common.DetailDeviceLabel"].Value, Model.UserAgent));
 }
-<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowActionNeeded"].Value, Model.Event, "security"))" />
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowActionNeeded"].Value, title, "security"))" />
 <p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
-<p style="margin:0 0 20px;">@Model.Detail</p>
+<p style="margin:0 0 20px;">@detail</p>
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
 <p style="margin:0 0 6px;">@Loc["Email.SecurityAlert.WasThisYou"]</p>
 <p style="margin:0 0 8px;">@Loc["Email.SecurityAlert.IfNotYou"]</p>
-<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ActionUrl, Model.ActionLabel))" />
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.ActionUrl, actionLabel))" />
 <partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.SecurityAlert.Signoff"].Value)" />

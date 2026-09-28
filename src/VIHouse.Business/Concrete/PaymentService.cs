@@ -376,7 +376,8 @@ public class PaymentService(
 
         await ambassadorService.RecordConversionAsync(confirmedApplication?.ReferralCode, ReferralConversionKind.TicketPurchase,
             nameof(Payment), payment.Id, payment.AmountMinor, payment.Currency,
-            ReferralTargetKind.Experience, payment.ExperienceId, ct);
+            ReferralTargetKind.Experience, payment.ExperienceId,
+            buyerUserId: payment.UserId, buyerEmail: confirmedApplication?.Email, ct: ct);
         var confirmedExperience = await experiences.GetByIdAsync(payment.ExperienceId, ct);
 
         // The money has landed — this is the moment the account becomes one its owner can use.
@@ -398,6 +399,8 @@ public class PaymentService(
                     TimeZoneId = confirmedExperience.TimeZoneId,
                     TicketUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Booking(booking.BookingReference)),
                     ExperienceUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Experience(confirmedExperience.Slug)),
+                    CalendarUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl,
+                        SiteUrls.InCulture(SiteUrls.ExperienceCalendar(confirmedExperience.Slug), confirmedApplication.PreferredCulture)),
                     AccountSetupPending = accountSetupPending,
                 },
                 confirmedApplication.PreferredCulture ?? SiteCultures.Default,
@@ -534,7 +537,7 @@ public class PaymentService(
     /// Money went back to the buyer. Found through the transaction, which learned the payment
     /// intent when the checkout completed. A full refund cancels the booking and returns the seat;
     /// a partial one is recorded on the payment and the booking stands. The ambassador's
-    /// commission line is left as it is — reversing it is a policy the House has not set yet.
+    /// commission follows the money: pro rata for a partial refund, all of it for a full one.
     /// </summary>
     private async Task HandleRefundAsync(PaymentWebhookEvent webhookEvent, CancellationToken ct)
     {
@@ -560,6 +563,8 @@ public class PaymentService(
             await ticketTypes.IncrementInventoryAsync(booking.TicketTypeId ?? payment.TicketTypeId, booking.Quantity, ct);
         }
         await payments.SaveChangesAsync(ct);
+
+        await ambassadorService.ReverseForRefundAsync(nameof(Payment), payment.Id, refunded, full, ct);
 
         var application = await applications.GetByIdAsync(payment.ApplicationId, ct);
         var experience = await experiences.GetByIdAsync(payment.ExperienceId, ct);

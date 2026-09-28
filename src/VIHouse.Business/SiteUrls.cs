@@ -83,6 +83,9 @@ public static class SiteUrls
     public static string Booking(string reference) => $"{AccountBookings}/{reference}";
     public static string Experience(string slug) => $"{Experiences}/{slug}";
     public static string Session(string slug) => $"{Sessions}/{slug}";
+    /// <summary>"Add to calendar" — the event as an .ics file (ExperiencesController/SeminarsController.Calendar).</summary>
+    public static string ExperienceCalendar(string slug) => $"{Experiences}/{slug}/calendar.ics";
+    public static string SessionCalendar(string slug) => $"{Sessions}/{slug}/calendar.ics";
     public static string Invitation(string code) => $"/invitation/{code}";
     public static string JoinResume(string code) => $"{Join}/resume/{code}";
     public static string ApplyFor(string experienceSlug) => $"{Apply}?experience={Uri.EscapeDataString(experienceSlug)}";

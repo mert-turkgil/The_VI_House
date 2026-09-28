@@ -1,5 +1,6 @@
 @model ApplicationReceivedEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.ApplicationReceived.Subject"].Value;
     ViewData["Preheader"] = string.Format(Loc["Email.ApplicationReceived.Preheader"].Value, Model.ExperienceCity);
     ViewData["Footnote"] = Loc["Email.Common.FootnoteApplication"].Value;
 }

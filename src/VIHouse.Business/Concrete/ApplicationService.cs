@@ -80,7 +80,8 @@ public class ApplicationService(
         await applications.SaveChangesAsync(ct);
 
         await ambassadorService.RecordConversionAsync(application.ReferralCode, ReferralConversionKind.Application,
-            nameof(Application), application.Id, targetKind: ReferralTargetKind.Experience, targetId: application.ExperienceId, ct: ct);
+            nameof(Application), application.Id, targetKind: ReferralTargetKind.Experience, targetId: application.ExperienceId,
+            buyerUserId: application.UserId, buyerEmail: application.Email, ct: ct);
 
         var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
         if (experience is not null)
@@ -125,7 +126,8 @@ public class ApplicationService(
         await applications.SaveChangesAsync(ct);
 
         await ambassadorService.RecordConversionAsync(application.ReferralCode, ReferralConversionKind.Approved,
-            nameof(Application), application.Id, targetKind: ReferralTargetKind.Experience, targetId: application.ExperienceId, ct: ct);
+            nameof(Application), application.Id, targetKind: ReferralTargetKind.Experience, targetId: application.ExperienceId,
+            buyerUserId: application.UserId, buyerEmail: application.Email, ct: ct);
 
         var experience = await experiences.GetByIdAsync(application.ExperienceId, ct);
         if (experience is null)

@@ -1,5 +1,6 @@
 @model MembershipPaymentFailedEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.MembershipPaymentFailed.Subject"].Value;
     ViewData["Preheader"] = Loc["Email.MembershipPaymentFailed.Preheader"].Value;
     ViewData["Footnote"] = Loc["Email.Common.FootnoteMembership"].Value;
     var rows = new List<(string, string)> { (Loc["Email.Common.DetailPlanLabel"].Value, Model.PlanName) };

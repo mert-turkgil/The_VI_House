@@ -1615,4 +1615,48 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Account.Applications.Title" xml:space="preserve"><value>My Applications</value></data>
   <data name="Account.Applications.Lede" xml:space="preserve"><value>Where each of your experience applications stands.</value></data>
   <data name="Account.Applications.Empty" xml:space="preserve"><value>You haven't applied to an experience yet.</value></data>
+  <data name="Ambassador.Performance.Paid" xml:space="preserve"><value>Paid to you</value></data>
+  <data name="Ambassador.Performance.Owed" xml:space="preserve"><value>To be paid</value></data>
+  <data name="Ambassador.Conversions.Refunded" xml:space="preserve"><value>refunded</value></data>
+  <data name="Ambassador.Conversions.PartRefunded" xml:space="preserve"><value>partly refunded</value></data>
+  <data name="Ambassador.Conversions.Withdrawn" xml:space="preserve"><value>commission withdrawn</value></data>
+  <data name="Ambassador.Conversions.PaidOut" xml:space="preserve"><value>paid</value></data>
+  <data name="Email.Common.AddToCalendar" xml:space="preserve"><value>Add to calendar</value></data>
+  <data name="Calendar.Label" xml:space="preserve"><value>Calendar</value></data>
+  <data name="Calendar.Details" xml:space="preserve"><value>Details and any updates: {0}</value></data>
+  <data name="Email.AdminInvite.Subject" xml:space="preserve"><value>Your VI House admin access</value></data>
+  <data name="Email.AmbassadorLink.Subject" xml:space="preserve"><value>Your VI House referral link</value></data>
+  <data name="Email.ApplicationApproved.Subject" xml:space="preserve"><value>You're approved — complete your booking</value></data>
+  <data name="Email.ApplicationReceived.Subject" xml:space="preserve"><value>Application received</value></data>
+  <data name="Email.ApplicationRejected.Subject" xml:space="preserve"><value>About your application</value></data>
+  <data name="Email.ApplicationWaitlisted.Subject" xml:space="preserve"><value>You're on the waitlist</value></data>
+  <data name="Email.BookingConfirmed.Subject" xml:space="preserve"><value>You're confirmed — booking {0}</value></data>
+  <data name="Email.ConfirmEmail.Subject" xml:space="preserve"><value>Confirm your email</value></data>
+  <data name="Email.EmailChange.Subject" xml:space="preserve"><value>Confirm your new email address</value></data>
+  <data name="Email.MembershipConfirmed.Subject" xml:space="preserve"><value>Welcome — you're a {0}</value></data>
+  <data name="Email.MembershipRenewed.Subject" xml:space="preserve"><value>Your {0} has renewed</value></data>
+  <data name="Email.MembershipEnded.Subject" xml:space="preserve"><value>Your membership has ended</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Subject" xml:space="preserve"><value>Please confirm your membership payment</value></data>
+  <data name="Email.MembershipPaymentFailed.Subject" xml:space="preserve"><value>Your membership payment didn't go through</value></data>
+  <data name="Email.MembershipResume.Subject" xml:space="preserve"><value>Pick up where you left off</value></data>
+  <data name="Email.PasswordReset.Subject" xml:space="preserve"><value>Reset your password</value></data>
+  <data name="Email.PaymentFailed.Subject" xml:space="preserve"><value>We couldn't complete your payment</value></data>
+  <data name="Email.PaymentProcessing.Subject" xml:space="preserve"><value>We've received your order — payment in progress</value></data>
+  <data name="Email.PaymentRefunded.Subject" xml:space="preserve"><value>Your refund is on its way</value></data>
+  <data name="Email.PaymentRefunded.SubjectPartial" xml:space="preserve"><value>A partial refund is on its way</value></data>
+  <data name="Email.ReferralConverted.Subject" xml:space="preserve"><value>Your referral link just worked</value></data>
+  <data name="Email.SeminarEnrolled.Subject" xml:space="preserve"><value>You're enrolled — {0}</value></data>
+  <data name="Email.WelcomeSetup.Subject" xml:space="preserve"><value>Set up your VI House account</value></data>
+  <data name="Email.SecurityAlert.Preheader" xml:space="preserve"><value>{0} on your VI House account</value></data>
+  <data name="Email.SecurityAlert.PasswordChanged.Title" xml:space="preserve"><value>Your password was changed</value></data>
+  <data name="Email.SecurityAlert.PasswordChanged.Detail" xml:space="preserve"><value>The password on your VI House account was just changed. If that was you, there is nothing to do.</value></data>
+  <data name="Email.SecurityAlert.PasswordChanged.Action" xml:space="preserve"><value>Reset your password</value></data>
+  <data name="Email.SecurityAlert.TwoFactorOn.Title" xml:space="preserve"><value>Two-step verification was switched on</value></data>
+  <data name="Email.SecurityAlert.TwoFactorOff.Title" xml:space="preserve"><value>Two-step verification was switched off</value></data>
+  <data name="Email.SecurityAlert.AuthenticatorReset.Title" xml:space="preserve"><value>Your authenticator app was reset</value></data>
+  <data name="Email.SecurityAlert.TwoFactor.Detail" xml:space="preserve"><value>The two-step verification settings on your VI House account were just changed. If that was you, there is nothing to do.</value></data>
+  <data name="Email.SecurityAlert.TwoFactor.Action" xml:space="preserve"><value>Review two-step verification</value></data>
+  <data name="Email.SecurityAlert.NewSignIn.Title" xml:space="preserve"><value>New sign-in to your account</value></data>
+  <data name="Email.SecurityAlert.NewSignIn.Detail" xml:space="preserve"><value>Your VI House account was just signed in to from an address it has not used in the last thirty days. If that was you — a new phone, a trip, a different network — there is nothing to do.</value></data>
+  <data name="Email.SecurityAlert.NewSignIn.Action" xml:space="preserve"><value>Change your password</value></data>
 </root>

@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Localization;
+using VIHouse.Business;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Concrete;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Commerce;
@@ -105,6 +107,34 @@ public class ExperiencesController(
         }
 
         return View(model);
+    }
+
+    /// <summary>
+    /// "Add to calendar": the experience as an .ics file, in the reader's language. Same
+    /// visibility as the page. Someone signed out asking for one they cannot see is sent to sign
+    /// in, whether or not the slug exists, so the file never confirms a members-only experience.
+    /// </summary>
+    [HttpGet("{slug}/calendar.ics")]
+    public async Task<IActionResult> Calendar(string slug, CancellationToken ct)
+    {
+        var userId = CurrentUserId();
+        var experience = await experienceService.GetPublicDetailBySlugAsync(slug, ct);
+        if (experience is null || experience.Status == ExperienceStatus.Draft || !await CanSeeAsync(experience, userId, ct))
+            return userId is null ? Challenge() : NotFound();
+
+        var culture = CultureInfo.CurrentUICulture.Name;
+        var pageUrl = $"{Request.Scheme}://{Request.Host}{SiteUrls.InCulture(SiteUrls.Experience(experience.Slug), culture)}";
+        var where = experience.AttendanceMode == ExperienceAttendanceMode.Online
+            ? loc["Seminars.Online"].Value
+            : string.Join(", ", new[] { experience.Venue, experience.City, experience.Country }.Where(x => !string.IsNullOrWhiteSpace(x)));
+        var ics = IcsCalendar.Build(new IcsCalendar.Event(
+            $"experience-{experience.Id}@thevihouse.com",
+            $"The VI House — {ExperienceContent.Title(experience, culture)}",
+            experience.StartAtUtc, experience.EndAtUtc, where,
+            loc["Calendar.Details", pageUrl].Value, pageUrl));
+
+        Response.Headers["X-Robots-Tag"] = "noindex";
+        return File(System.Text.Encoding.UTF8.GetBytes(ics), IcsCalendar.ContentType, IcsCalendar.FileName(experience.Slug));
     }
 
     /// <summary>

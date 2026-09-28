@@ -37,6 +37,8 @@ public static class AdminSections
         public const string Bookings = $"{Roles.SuperAdmin},{Roles.EventManager},{Roles.Finance},{Roles.Concierge},{Roles.Support}";
         public const string Money = $"{Roles.SuperAdmin},{Roles.Finance}";
         public const string Marketing = $"{Roles.SuperAdmin},{Roles.Marketing}";
+        /// <summary>Ambassadors: Marketing runs the programme, Finance settles the commission.</summary>
+        public const string Ambassadors = $"{Roles.SuperAdmin},{Roles.Marketing},{Roles.Finance}";
         public const string Communications = $"{Roles.SuperAdmin},{Roles.Marketing},{Roles.Concierge},{Roles.Support}";
     }
 
@@ -59,7 +61,7 @@ public static class AdminSections
         new("AdminWebhooks", "Index", "Stripe Events", "activity", Split(RolesFor.Money)),
         new("AdminPromoCodes", "Index", "Promo Codes", "tag", Split(RolesFor.Money)),
         new("AdminMembershipPlans", "Index", "Membership Plans", "layers", Split(RolesFor.Money)),
-        new("AdminAmbassadors", "Index", "Ambassadors", "megaphone", Split(RolesFor.Marketing)),
+        new("AdminAmbassadors", "Index", "Ambassadors", "megaphone", Split(RolesFor.Ambassadors)),
         new("AdminJournal", "Index", "Journal", "book-open", Split(RolesFor.Content)),
         new("AdminCms", "Index", "Content", "pen-square", Split(RolesFor.Content)),
         new("AdminHeroSlides", "Index", "Hero Slides", "image", Split(RolesFor.Content)),

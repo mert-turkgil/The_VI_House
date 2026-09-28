@@ -1,5 +1,6 @@
 @model ApplicationApprovedEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.ApplicationApproved.Subject"].Value;
     ViewData["Preheader"] = string.Format(Loc["Email.ApplicationApproved.Preheader"].Value, Model.ExperienceCity, Model.ExpiresAt.ToString("d MMMM"));
     ViewData["Footnote"] = Loc["Email.Common.FootnoteApplication"].Value;
 }

@@ -407,7 +407,7 @@ public class SeminarService(
         // enrolment row, so the double delivery Stripe is entitled to make still writes one line.
         await ambassadorService.RecordConversionAsync(enrollment.ReferralCode, ReferralConversionKind.SessionPurchase,
             nameof(SeminarEnrollment), enrollment.Id, enrollment.AmountMinor, enrollment.Currency,
-            ReferralTargetKind.Session, enrollment.SeminarId, ct);
+            ReferralTargetKind.Session, enrollment.SeminarId, buyerUserId: enrollment.UserId, ct: ct);
 
         var seminar = await seminars.GetWithDetailAsync(enrollment.SeminarId, ct);
         if (seminar is not null)
@@ -510,6 +510,8 @@ public class SeminarService(
             enrollment.UpdatedAt = DateTimeOffset.UtcNow;
             await enrollments.SaveChangesAsync(ct);
         }
+
+        await ambassadorService.ReverseForRefundAsync(nameof(SeminarEnrollment), enrollment.Id, refunded, full, ct);
 
         var user = await userManager.FindByIdAsync(enrollment.UserId.ToString());
         var seminar = await seminars.GetWithDetailAsync(enrollment.SeminarId, ct);
@@ -936,7 +938,11 @@ public class SeminarService(
             "SeminarEnrolled", user.Email!, $"You're enrolled — {title}",
             new SeminarEnrolledEmailModel(
                 user.FirstName, title, seminar.StartAtUtc, seminar.IsOnline, seminar.Location,
-                $"{siteOptions.Value.BaseUrl.TrimEnd('/')}{link}"),
+                $"{siteOptions.Value.BaseUrl.TrimEnd('/')}{link}")
+            {
+                CalendarUrl = seminar.StartAtUtc is null ? null
+                    : SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.InCulture(SiteUrls.SessionCalendar(seminar.Slug), culture)),
+            },
             culture,
             nameof(Seminar), seminar.Id, ct);
     }

@@ -1,5 +1,6 @@
 @model AdminInviteEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.AdminInvite.Subject"].Value;
     ViewData["Preheader"] = string.Format(Loc["Email.AdminInvite.Preheader"].Value, Model.InvitedBy);
     ViewData["Footnote"] = Loc["Email.AdminInvite.Footnote"].Value;
 }

@@ -28,6 +28,9 @@ public record BookingConfirmedEmailModel(
     public string? TicketUrl { get; init; }
     public string? ExperienceUrl { get; init; }
 
+    /// <summary>The experience as an .ics file, in the recipient's language.</summary>
+    public string? CalendarUrl { get; init; }
+
     /// <summary>True when this is the buyer's first way into their account: a separate email with the
     /// password-setup link went out alongside this one, and the ticket page needs that password.</summary>
     public bool AccountSetupPending { get; init; }
@@ -37,7 +40,13 @@ public record BookingConfirmedEmailModel(
 /// new. What happened and where from; the way to lock things down if it was not them.</summary>
 public record SecurityAlertEmailModel(
     string FirstName, string Event, string Detail, DateTimeOffset WhenUtc,
-    string? IpAddress, string? UserAgent, string ActionUrl, string ActionLabel);
+    string? IpAddress, string? UserAgent, string ActionUrl, string ActionLabel)
+{
+    /// <summary>Which alert this is — "PasswordChanged", "TwoFactorOn", "TwoFactorOff",
+    /// "AuthenticatorReset", "NewSignIn" — so the template can word it in the reader's language.
+    /// Event/Detail/ActionLabel are the English fallback.</summary>
+    public string? Kind { get; init; }
+}
 
 public record PaymentFailedEmailModel(string FirstName, string ExperienceTitle, string InvitationUrl);
 
@@ -125,7 +134,11 @@ public record ExperienceUpdateEmailModel(string FirstName, string ExperienceTitl
 /// <summary>Sent the moment a seminar enrolment is confirmed — free, membership-covered or paid.
 /// StartAtUtc is null for on-demand content, which has nothing to turn up to.</summary>
 public record SeminarEnrolledEmailModel(
-    string FirstName, string SeminarTitle, DateTimeOffset? StartAtUtc, bool IsOnline, string? Location, string SeminarUrl);
+    string FirstName, string SeminarTitle, DateTimeOffset? StartAtUtc, bool IsOnline, string? Location, string SeminarUrl)
+{
+    /// <summary>The sitting as an .ics file; null for an on-demand session.</summary>
+    public string? CalendarUrl { get; init; }
+}
 
 /// <summary>A checkout finished with a delayed payment method (bank transfer, direct debit): the
 /// buyer did everything, the money is on its way, and nothing is granted until it lands.</summary>

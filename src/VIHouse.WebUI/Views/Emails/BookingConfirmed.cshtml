@@ -1,5 +1,6 @@
 @model BookingConfirmedEmailModel
 @{
+    ViewData["Subject"] = string.Format(Loc["Email.BookingConfirmed.Subject"].Value, Model.BookingReference);
     ViewData["Preheader"] = string.Format(Loc["Email.BookingConfirmed.Preheader"].Value, Model.ExperienceCity, Model.StartAtUtc.ToString("d MMM yyyy"), Model.BookingReference);
     ViewData["Footnote"] = Loc["Email.BookingConfirmed.Footnote"].Value;
     var sameDay = Model.StartAtUtc.Date == Model.EndAtUtc.Date;
@@ -28,6 +29,10 @@
     <partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note(Loc["Email.BookingConfirmed.SetupNote"].Value, "warning", Loc["Email.BookingConfirmed.SetupNoteLabel"].Value))" />
 }
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+@if (Model.CalendarUrl is not null)
+{
+    <p style="margin:-8px 0 20px; font-size:14px;"><a href="@Model.CalendarUrl" style="color:#00230a;">@Loc["Email.Common.AddToCalendar"]</a></p>
+}
 @if (Model.TicketUrl is not null)
 {
     <partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.TicketUrl, Loc["Email.BookingConfirmed.Button"].Value))" />

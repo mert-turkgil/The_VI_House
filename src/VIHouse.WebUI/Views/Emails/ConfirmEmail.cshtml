@@ -1,5 +1,6 @@
 @model ConfirmEmailAddressEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.ConfirmEmail.Subject"].Value;
     ViewData["Preheader"] = Loc["Email.ConfirmEmail.Preheader"].Value;
     ViewData["Footnote"] = Loc["Email.ConfirmEmail.Footnote"].Value;
 }

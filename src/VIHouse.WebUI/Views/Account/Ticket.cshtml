@@ -24,6 +24,13 @@
                         <dt>Dates</dt>
                         <dd>@Model.StartAtUtc.ToString("d MMM")&ndash;@Model.EndAtUtc.ToString("d MMM yyyy")</dd>
                     </div>
+                    @if (Model.ExperienceSlug is not null && !Model.IsPast)
+                    {
+                        <div>
+                            <dt>@Loc["Calendar.Label"]</dt>
+                            <dd><a href="@VIHouse.Business.SiteUrls.InCulture(VIHouse.Business.SiteUrls.ExperienceCalendar(Model.ExperienceSlug), System.Globalization.CultureInfo.CurrentUICulture.Name)" download>@Loc["Email.Common.AddToCalendar"]</a></dd>
+                        </div>
+                    }
                     <div>
                         <dt>Attendee</dt>
                         <dd>@Model.HolderName</dd>

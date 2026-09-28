@@ -13,6 +13,7 @@ public class TicketViewModel
     public string HolderName { get; set; } = default!;
 
     public string ExperienceTitle { get; set; } = default!;
+    public string? ExperienceSlug { get; set; }
     public string City { get; set; } = default!;
     public string Country { get; set; } = default!;
     public DateTimeOffset StartAtUtc { get; set; }

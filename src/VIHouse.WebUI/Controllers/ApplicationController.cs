@@ -150,6 +150,7 @@ public class ApplicationController(
     /// URL alone — see ApplicationStatusCookie for why the old bookmarkable link had to go.
     /// </summary>
     [HttpGet("status")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public async Task<IActionResult> Status(CancellationToken ct)
     {
         ViewData["Title"] = "Application Status";
@@ -160,6 +161,7 @@ public class ApplicationController(
     /// or the signed-in account it belongs to. Anyone else gets a 404 — not a 403, which would
     /// confirm the application exists.</summary>
     [HttpGet("status/{id:guid}")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public async Task<IActionResult> StatusFor(Guid id, CancellationToken ct)
     {
         var model = await BuildStatusAsync(id, ct);

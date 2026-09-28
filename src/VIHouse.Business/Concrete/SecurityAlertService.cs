@@ -23,12 +23,23 @@ public class SecurityAlertService(
     private string BaseUrl => siteOptions.Value.BaseUrl.TrimEnd('/');
 
     public Task PasswordChangedAsync(Guid userId, string? ipAddress, string? userAgent, CancellationToken ct = default) =>
-        SendAsync(userId, "Your password was changed",
+        SendAsync(userId, "PasswordChanged", "Your password was changed",
             "The password on your VI House account was just changed. If that was you, there is nothing to do.",
             SiteUrls.Absolute(BaseUrl, SiteUrls.ForgotPassword), "Reset your password", ipAddress, userAgent, ct);
 
-    public Task TwoFactorChangedAsync(Guid userId, string what, string? ipAddress, string? userAgent, CancellationToken ct = default) =>
-        SendAsync(userId, what,
+    public Task TwoFactorChangedAsync(Guid userId, TwoFactorChange change, string? ipAddress, string? userAgent, CancellationToken ct = default) =>
+        SendAsync(userId, change switch
+            {
+                TwoFactorChange.Enabled => "TwoFactorOn",
+                TwoFactorChange.Disabled => "TwoFactorOff",
+                _ => "AuthenticatorReset",
+            },
+            change switch
+            {
+                TwoFactorChange.Enabled => "Two-step verification was switched on",
+                TwoFactorChange.Disabled => "Two-step verification was switched off",
+                _ => "Your authenticator app was reset",
+            },
             "The two-step verification settings on your VI House account were just changed. If that was you, there is nothing to do.",
             SiteUrls.Absolute(BaseUrl, SiteUrls.SecurityTwoFactor), "Review two-step verification", ipAddress, userAgent, ct);
 
@@ -63,7 +74,7 @@ public class SecurityAlertService(
 
             if (seenBefore || firstEver) return;
 
-            await SendAsync(userId, "New sign-in to your account",
+            await SendAsync(userId, "NewSignIn", "New sign-in to your account",
                 "Your VI House account was just signed in to from an address it has not used in the last thirty days. If that was you — a new phone, a trip, a different network — there is nothing to do.",
                 SiteUrls.Absolute(BaseUrl, SiteUrls.SecurityPassword), "Change your password", ip, userAgent, ct);
         }
@@ -73,7 +84,7 @@ public class SecurityAlertService(
         }
     }
 
-    private async Task SendAsync(Guid userId, string eventTitle, string detail, string actionUrl, string actionLabel, string? ip, string? userAgent, CancellationToken ct)
+    private async Task SendAsync(Guid userId, string kind, string eventTitle, string detail, string actionUrl, string actionLabel, string? ip, string? userAgent, CancellationToken ct)
     {
         try
         {
@@ -83,7 +94,7 @@ public class SecurityAlertService(
             await emailService.SendAsync(
                 "SecurityAlert", user.Email, eventTitle,
                 new SecurityAlertEmailModel(user.FirstName, eventTitle, detail, DateTimeOffset.UtcNow,
-                    ip, Summarise(userAgent), actionUrl, actionLabel),
+                    ip, Summarise(userAgent), actionUrl, actionLabel) { Kind = kind },
                 user.PreferredCulture ?? SiteCultures.Default,
                 nameof(ApplicationUser), user.Id, ct);
         }

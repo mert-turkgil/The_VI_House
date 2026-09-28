@@ -1327,6 +1327,9 @@ public class MembershipService(
         payment.UpdatedAt = DateTimeOffset.UtcNow;
         await membershipPayments.SaveChangesAsync(ct);
 
+        // The ambassador's commission follows the money, whatever is decided about access.
+        await ambassadorService.ReverseForRefundAsync(nameof(MembershipPayment), payment.Id, refunded, full, ct);
+
         var plan = await plans.GetByIdAsync(payment.PlanId, ct);
         var user = await userManager.FindByIdAsync(payment.UserId.ToString());
         var what = plan?.Name ?? "your membership";
@@ -1755,7 +1758,7 @@ public class MembershipService(
         await membershipPayments.SaveChangesAsync(ct);
 
         await ambassadorService.RecordConversionAsync(payment.ReferralCode, ReferralConversionKind.MembershipPurchase,
-            nameof(MembershipPayment), payment.Id, payment.AmountMinor, payment.Currency, ct: ct);
+            nameof(MembershipPayment), payment.Id, payment.AmountMinor, payment.Currency, buyerUserId: payment.UserId, ct: ct);
 
         if (user is null) return membership;
 

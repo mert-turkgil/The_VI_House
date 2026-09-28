@@ -1,5 +1,6 @@
 @model PaymentRefundedEmailModel
 @{
+    ViewData["Subject"] = (Model.IsPartial ? Loc["Email.PaymentRefunded.SubjectPartial"] : Loc["Email.PaymentRefunded.Subject"]).Value;
     ViewData["Preheader"] = string.Format(Model.IsPartial ? Loc["Email.PaymentRefunded.PreheaderPartial"].Value : Loc["Email.PaymentRefunded.PreheaderFull"].Value, Model.What);
     ViewData["Footnote"] = Loc["Email.PaymentRefunded.Footnote"].Value;
     var rows = new List<(string, string)>

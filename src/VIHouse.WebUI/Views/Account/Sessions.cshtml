@@ -74,6 +74,7 @@
                                     {
                                         <text>&middot; @s.HostName</text>
                                     }
+                                    &middot; <a href="@VIHouse.Business.SiteUrls.InCulture(VIHouse.Business.SiteUrls.SessionCalendar(s.Slug), System.Globalization.CultureInfo.CurrentUICulture.Name)" download>@Loc["Email.Common.AddToCalendar"]</a>
                                 </span>
                                 <span class="account-grant account-grant--@s.GrantedVia.ToString().ToLowerInvariant()">
                                     @GrantLabel(s.GrantedVia)

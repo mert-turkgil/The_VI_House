@@ -1,5 +1,6 @@
 @model MembershipResumeEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.MembershipResume.Subject"].Value;
     ViewData["Preheader"] = string.Format(Loc["Email.MembershipResume.Preheader"].Value, Model.PlanName);
     ViewData["Footnote"] = Loc["Email.MembershipResume.Footnote"].Value;
 }

@@ -25,6 +25,7 @@ public class AmbassadorService(
     IMembershipPaymentRepository membershipPayments,
     IAuditLogRepository auditLogs,
     IRepository<ReferralConversion> conversions,
+    IRepository<ReferralPayout> payouts,
     IExperienceRepository experiences,
     ISeminarRepository seminars,
     ISeminarEnrollmentRepository seminarEnrollments,
@@ -36,7 +37,8 @@ public class AmbassadorService(
 {
     public async Task RecordConversionAsync(string? referralCode, ReferralConversionKind kind, string sourceEntityType, Guid sourceEntityId,
         long? amountMinor = null, string? currency = null,
-        ReferralTargetKind targetKind = ReferralTargetKind.Site, Guid? targetId = null, CancellationToken ct = default)
+        ReferralTargetKind targetKind = ReferralTargetKind.Site, Guid? targetId = null,
+        Guid? buyerUserId = null, string? buyerEmail = null, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(referralCode)) return;
         try
@@ -54,6 +56,13 @@ public class AmbassadorService(
                 ? (long)Math.Round(amount * ambassador.CommissionPercent / 100m, MidpointRounding.AwayFromZero)
                 : null;
 
+            // Buying through your own link is flagged, not refused: the purchase is real, and
+            // whether it earns commission is the House's call before the payout.
+            var ambassadorUser = await userManager.FindByIdAsync(ambassador.UserId.ToString());
+            var selfReferral = (buyerUserId is { } buyer && buyer == ambassador.UserId)
+                || (!string.IsNullOrWhiteSpace(buyerEmail) && ambassadorUser?.Email is { } ownEmail
+                    && string.Equals(buyerEmail.Trim(), ownEmail, StringComparison.OrdinalIgnoreCase));
+
             await conversions.AddAsync(new ReferralConversion
             {
                 AmbassadorId = ambassador.Id,
@@ -66,8 +75,12 @@ public class AmbassadorService(
                 SourceEntityId = sourceEntityId,
                 TargetKind = targetKind,
                 TargetId = targetId,
+                IsSelfReferral = selfReferral,
             }, ct);
             await conversions.SaveChangesAsync(ct);
+            if (selfReferral)
+                logger.LogWarning("Self-referral: ambassador {AmbassadorId} bought through their own code ({SourceType} {SourceId}).",
+                    ambassador.Id, sourceEntityType, sourceEntityId);
 
             var what = kind switch
             {
@@ -85,7 +98,7 @@ public class AmbassadorService(
                 amountText is null ? what : $"{what} {amountText}{(commissionText is null ? "" : $" — your commission {commissionText}")}.",
                 SiteUrls.Ambassador, ct);
 
-            var user = await userManager.FindByIdAsync(ambassador.UserId.ToString());
+            var user = ambassadorUser;
             if (user?.Email is not null)
             {
                 await emailService.SendAsync("ReferralConverted", user.Email, "Your referral link just worked",
@@ -200,11 +213,22 @@ public class AmbassadorService(
         await ambassadors.SaveChangesAsync(ct);
     }
 
-    public async Task RecordVisitAsync(string code, ReferralTargetKind targetKind, Guid? targetId, string? landingPath,
-        string? utmSource, string? utmMedium, string? utmCampaign, string? utmContent, CancellationToken ct = default)
+    public async Task<bool> RecordVisitAsync(string code, ReferralTargetKind targetKind, Guid? targetId, string? landingPath,
+        string? utmSource, string? utmMedium, string? utmCampaign, string? utmContent,
+        ReferralVisitor? visitor = null, CancellationToken ct = default)
     {
         var ambassador = await ambassadors.GetByCodeAsync(code, ct);
-        if (ambassador is null || ambassador.Status != AmbassadorStatus.Active) return;
+        if (ambassador is null || ambassador.Status != AmbassadorStatus.Active) return false;
+
+        // One network, one link, one visit per window: a refresh, a back button or a script
+        // hammering the link is not new interest.
+        if (visitor?.IpHash is { } ipHash)
+        {
+            var since = DateTimeOffset.UtcNow - IAmbassadorService.RepeatVisitWindow;
+            var recent = await visits.FindAsync(v => v.AmbassadorId == ambassador.Id && v.IpHash == ipHash && v.CreatedAt >= since
+                && v.TargetKind == targetKind && v.TargetId == targetId, ct);
+            if (recent.Count > 0) return false;
+        }
 
         await visits.AddAsync(new ReferralVisit
         {
@@ -216,8 +240,12 @@ public class AmbassadorService(
             UtmMedium = Clip(utmMedium),
             UtmCampaign = Clip(utmCampaign),
             UtmContent = Clip(utmContent),
+            IpHash = visitor?.IpHash,
+            UserAgent = visitor?.UserAgent is { Length: > 0 } ua ? (ua.Length > 300 ? ua[..300] : ua) : null,
+            VisitorUserId = visitor?.UserId,
         }, ct);
         await visits.SaveChangesAsync(ct);
+        return true;
 
         // The columns are 100 wide and the values come straight off a query string.
         static string? Clip(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Length > 100 ? value[..100] : value;
@@ -260,30 +288,38 @@ public class AmbassadorService(
         var approvedCount = referredApplications.Count(a => a.Status is ApplicationStatus.Approved or ApplicationStatus.PaymentPending or ApplicationStatus.Paid);
 
         var referredTicketPayments = (await payments.GetAllAsync(ct))
-            .Where(p => p.Status == PaymentStatus.Paid && referredApplicationIds.Contains(p.ApplicationId))
+            .Where(p => p.Status is PaymentStatus.Paid or PaymentStatus.PartiallyRefunded && referredApplicationIds.Contains(p.ApplicationId))
             .ToList();
 
         var referredMembershipPayments = (await membershipPayments.GetAllAsync(ct))
-            .Where(p => p.Status == PaymentStatus.Paid && p.ReferralCode == ambassador.Code)
+            .Where(p => p.Status is PaymentStatus.Paid or PaymentStatus.PartiallyRefunded && p.ReferralCode == ambassador.Code)
             .ToList();
 
         var referredSessionPurchases = (await seminarEnrollments.GetAllAsync(ct))
             .Where(e => e.ReferralCode == ambassador.Code && e.Status == SeminarEnrollmentStatus.Confirmed && e.GrantedVia == SeminarAccessGrant.Purchase)
             .ToList();
 
-        var revenueByCurrency = new Dictionary<string, long>();
-        void AddRevenue(string currency, long amountMinor) =>
-            revenueByCurrency[currency] = revenueByCurrency.GetValueOrDefault(currency) + amountMinor;
-
-        foreach (var p in referredTicketPayments) AddRevenue(p.Currency, p.AmountMinor);
-        foreach (var p in referredMembershipPayments) AddRevenue(p.Currency, p.AmountMinor);
-        foreach (var e in referredSessionPurchases) AddRevenue(e.Currency, e.AmountMinor);
+        // Money comes from the ledger, not from re-pricing today's payments: each line carries the
+        // rate in force when it happened, less whatever a refund or a void took back. Changing the
+        // commission % therefore never rewrites what was already earned.
+        var ledger = await conversions.FindAsync(c => c.AmbassadorId == ambassadorId, ct);
+        var purchaseLines = ledger.Where(c => c.AmountMinor is not null && c.Currency is not null && c.ReversedAt is null).ToList();
+        var revenueByCurrency = purchaseLines
+            .GroupBy(c => c.Currency!)
+            .ToDictionary(g => g.Key, g => g.Sum(c => Math.Max(0, c.AmountMinor!.Value - c.RefundedMinor)));
+        var commissionByCurrency = ledger
+            .Where(c => c.Currency is not null && c.CommissionMinor is not null)
+            .GroupBy(c => c.Currency!)
+            .ToDictionary(g => g.Key, g => g.Sum(c => c.NetCommissionMinor));
+        var paidByCurrency = (await payouts.FindAsync(p => p.AmbassadorId == ambassadorId, ct))
+            .GroupBy(p => p.Currency)
+            .ToDictionary(g => g.Key, g => g.Sum(p => p.AmountMinor));
+        var balances = commissionByCurrency.Keys.Union(paidByCurrency.Keys)
+            .OrderBy(c => c)
+            .Select(c => new CommissionBalance(c, commissionByCurrency.GetValueOrDefault(c), paidByCurrency.GetValueOrDefault(c)))
+            .ToList();
 
         var targets = await BuildTargetStatsAsync(ambassadorId, allVisits, ct);
-
-        var commissionByCurrency = revenueByCurrency.ToDictionary(
-            kv => kv.Key,
-            kv => (long)Math.Round(kv.Value * ambassador.CommissionPercent / 100m, MidpointRounding.AwayFromZero));
 
         return new AmbassadorStats(
             Visits: allVisits.Count,
@@ -294,7 +330,10 @@ public class AmbassadorService(
             SessionPurchases: referredSessionPurchases.Count,
             RevenueByCurrency: revenueByCurrency,
             CommissionByCurrency: commissionByCurrency,
-            Targets: targets);
+            Targets: targets)
+        {
+            Balances = balances,
+        };
     }
 
     /// <summary>
@@ -348,12 +387,154 @@ public class AmbassadorService(
             targets.Add(new ReferralTargetStats(kind, id, title, slug,
                 Visits: allVisits.Count(v => v.TargetKind == kind && v.TargetId == id),
                 Applications: ledger.Count(c => c.Kind == ReferralConversionKind.Application && c.TargetKind == kind && c.TargetId == id),
-                Purchases: ledger.Count(c => c.TargetKind == kind && c.TargetId == id
+                Purchases: ledger.Count(c => c.TargetKind == kind && c.TargetId == id && c.ReversedAt is null
                     && c.Kind is ReferralConversionKind.TicketPurchase or ReferralConversionKind.MembershipPurchase or ReferralConversionKind.SessionPurchase)));
         }
 
         return targets.OrderByDescending(t => t.Purchases).ThenByDescending(t => t.Applications).ThenByDescending(t => t.Visits).ToList();
     }
+
+    public async Task ReverseForRefundAsync(string sourceEntityType, Guid sourceEntityId, long refundedMinor, bool full, CancellationToken ct = default)
+    {
+        try
+        {
+            var lines = await conversions.FindAsync(c => c.SourceEntityType == sourceEntityType && c.SourceEntityId == sourceEntityId
+                && c.AmountMinor != null, ct);
+            foreach (var line in lines)
+            {
+                var amount = line.AmountMinor!.Value;
+                var refunded = Math.Min(amount, Math.Max(line.RefundedMinor, full ? amount : refundedMinor));
+                var commission = line.CommissionMinor ?? 0;
+                var reversed = line.VoidedAt is not null || refunded >= amount || amount == 0
+                    ? commission
+                    : (long)Math.Round(commission * (decimal)refunded / amount, MidpointRounding.AwayFromZero);
+                reversed = Math.Max(line.CommissionReversedMinor, reversed);
+
+                var nowFull = refunded >= amount && line.ReversedAt is null;
+                if (refunded == line.RefundedMinor && reversed == line.CommissionReversedMinor && !nowFull) continue;
+
+                var takenBack = reversed - line.CommissionReversedMinor;
+                line.RefundedMinor = refunded;
+                line.CommissionReversedMinor = reversed;
+                if (nowFull) line.ReversedAt = DateTimeOffset.UtcNow;
+                line.UpdatedAt = DateTimeOffset.UtcNow;
+                await conversions.SaveChangesAsync(ct);
+
+                logger.LogInformation("Referral line {LineId} ({SourceType} {SourceId}) refunded {Refunded}/{Amount}; commission reversed {Reversed}{AfterPayout}.",
+                    line.Id, sourceEntityType, sourceEntityId, refunded, amount, reversed, line.PayoutId is null ? "" : " after payout");
+
+                var ambassador = await ambassadors.GetByIdAsync(line.AmbassadorId, ct);
+                if (ambassador is not null && takenBack > 0 && line.Currency is not null)
+                {
+                    await notificationService.CreateForUserAsync(ambassador.UserId, NotificationType.ReferralConverted,
+                        "A referred purchase was refunded",
+                        $"{(refunded >= amount ? "A purchase" : "Part of a purchase")} made through your link was refunded, so {FormatMoney(takenBack, line.Currency)} of commission no longer stands.",
+                        SiteUrls.Ambassador, ct);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Same rule as recording: the refund itself has already happened and must not fail on this.
+            logger.LogError(ex, "Failed to reverse referral commission for {SourceType} {SourceId}.", sourceEntityType, sourceEntityId);
+        }
+    }
+
+    public async Task<bool> VoidConversionAsync(Guid ambassadorId, Guid conversionId, string reason, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var line = await conversions.GetByIdAsync(conversionId, ct);
+        if (line is null || line.AmbassadorId != ambassadorId || line.VoidedAt is not null || line.CommissionMinor is null) return false;
+
+        var before = new { line.CommissionMinor, line.CommissionReversedMinor, line.PayoutId };
+        line.VoidedAt = DateTimeOffset.UtcNow;
+        line.VoidedByAdminId = adminUserId;
+        line.VoidReason = reason.Length > 300 ? reason[..300] : reason;
+        line.CommissionReversedMinor = line.CommissionMinor.Value;
+        line.UpdatedAt = DateTimeOffset.UtcNow;
+        await LogAsync("ReferralCommissionVoided", ambassadorId, adminUserId, ipAddress, before,
+            new { ConversionId = line.Id, line.VoidReason, line.CommissionReversedMinor }, ct);
+        await conversions.SaveChangesAsync(ct);
+        return true;
+    }
+
+    public async Task<ReferralPayoutResult> MarkCommissionPaidAsync(Guid ambassadorId, string currency, long expectedOwedMinor,
+        string? reference, string? note, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        currency = currency.Trim().ToUpperInvariant();
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        if (ambassador is null) return ReferralPayoutResult.Fail("Ambassador not found.");
+
+        var ledger = await conversions.FindAsync(c => c.AmbassadorId == ambassadorId && c.Currency == currency && c.CommissionMinor != null, ct);
+        var earned = ledger.Sum(c => c.NetCommissionMinor);
+        var paid = (await payouts.FindAsync(p => p.AmbassadorId == ambassadorId && p.Currency == currency, ct)).Sum(p => p.AmountMinor);
+        var owed = earned - paid;
+
+        if (owed != expectedOwedMinor)
+            return ReferralPayoutResult.Fail($"The balance changed to {FormatMoney(owed, currency)} while you were looking (a refund, a sale or another admin's payout). Nothing was recorded — check the figures and try again.");
+        if (owed <= 0)
+            return ReferralPayoutResult.Fail($"Nothing is owed in {currency}.");
+
+        var payout = new ReferralPayout
+        {
+            AmbassadorId = ambassadorId,
+            Currency = currency,
+            AmountMinor = owed,
+            PaidAt = DateTimeOffset.UtcNow,
+            PaidByAdminId = adminUserId,
+            Reference = Clip(reference, 100),
+            Note = Clip(note, 500),
+        };
+        await payouts.AddAsync(payout, ct);
+        foreach (var line in ledger.Where(c => c.PayoutId is null))
+        {
+            line.PayoutId = payout.Id;
+            line.UpdatedAt = DateTimeOffset.UtcNow;
+        }
+        await LogAsync("ReferralCommissionPaid", ambassadorId, adminUserId, ipAddress, new { Owed = owed, Currency = currency },
+            new { PayoutId = payout.Id, payout.AmountMinor, payout.Currency, payout.Reference }, ct);
+        await payouts.SaveChangesAsync(ct);
+
+        await notificationService.CreateForUserAsync(ambassador.UserId, NotificationType.ReferralConverted,
+            "Commission paid", $"The House has paid you {FormatMoney(owed, currency)} in commission{(payout.Reference is null ? "" : $" (reference {payout.Reference})")}.",
+            SiteUrls.Ambassador, ct);
+        return ReferralPayoutResult.Ok(payout);
+
+        static string? Clip(string? value, int max) =>
+            string.IsNullOrWhiteSpace(value) ? null : value.Trim().Length > max ? value.Trim()[..max] : value.Trim();
+    }
+
+    public async Task<List<ReferralPayout>> GetPayoutsAsync(Guid ambassadorId, CancellationToken ct = default) =>
+        (await payouts.FindAsync(p => p.AmbassadorId == ambassadorId, ct)).OrderByDescending(p => p.PaidAt).ToList();
+
+    public async Task<ReferralFraudSignals> GetFraudSignalsAsync(Guid ambassadorId, CancellationToken ct = default)
+    {
+        const int windowDays = 30;
+        var since = DateTimeOffset.UtcNow.AddDays(-windowDays);
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        var recent = await visits.FindAsync(v => v.AmbassadorId == ambassadorId && v.CreatedAt >= since, ct);
+        var hashed = recent.Where(v => v.IpHash is not null).ToList();
+        var top = hashed.GroupBy(v => v.IpHash).Select(g => g.Count()).DefaultIfEmpty(0).Max();
+        var selfReferrals = (await conversions.FindAsync(c => c.AmbassadorId == ambassadorId && c.IsSelfReferral && c.VoidedAt == null, ct)).Count;
+
+        return new ReferralFraudSignals(
+            WindowDays: windowDays,
+            Visits: recent.Count,
+            DistinctNetworks: hashed.Select(v => v.IpHash).Distinct().Count(),
+            TopNetworkVisits: top,
+            // Only rows recorded since the fingerprint was captured can be judged.
+            AutomatedVisits: hashed.Count(v => LooksAutomated(v.UserAgent)),
+            OwnVisits: ambassador is null ? 0 : recent.Count(v => v.VisitorUserId == ambassador.UserId),
+            SelfReferrals: selfReferrals);
+    }
+
+    /// <summary>No User-Agent at all, or one a script, crawler or headless browser sends.</summary>
+    private static bool LooksAutomated(string? userAgent) =>
+        string.IsNullOrWhiteSpace(userAgent) || userAgent.Length < 10
+        || AutomatedAgents.Any(a => userAgent.Contains(a, StringComparison.OrdinalIgnoreCase));
+
+    private static readonly string[] AutomatedAgents =
+        ["bot", "crawl", "spider", "curl", "wget", "python", "httpclient", "java/", "go-http", "headless", "phantomjs", "scrapy", "okhttp", "axios", "node-fetch", "postman"];
+
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>
         auditLogs.AddAsync(new AuditLogEntry

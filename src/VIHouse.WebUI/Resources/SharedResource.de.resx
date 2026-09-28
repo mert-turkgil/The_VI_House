@@ -1606,7 +1606,7 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Email.WelcomeSetup.Step3" xml:space="preserve"><value>Fertig: Ihre Buchungen, Sitzungen und Mitgliedschaft finden Sie auf Ihrer Kontoseite.</value></data>
   <data name="Email.WelcomeSetup.ValidFor" xml:space="preserve"><value>Dieser Link funktioniert einmal und {0} Stunden lang. Ist er abgelaufen, nutzen Sie „Passwort vergessen?“ auf der Anmeldeseite mit dieser E-Mail-Adresse.</value></data>
   <data name="Email.BookingConfirmed.SetupNoteLabel" xml:space="preserve"><value>Nächster Schritt: Ihr Konto</value></data>
-  <data name="Email.BookingConfirmed.SetupNote" xml:space="preserve"><value>Wir haben Ihnen eine separate E-Mail „Set up your VI House account“ mit einem Link zur Passwortwahl geschickt. Sie brauchen es, um Ihr Ticket und Ihre Kontoseite zu öffnen.</value></data>
+  <data name="Email.BookingConfirmed.SetupNote" xml:space="preserve"><value>Wir haben Ihnen eine separate E-Mail „Richten Sie Ihr VI House-Konto ein“ mit einem Link zur Passwortwahl geschickt. Sie brauchen es, um Ihr Ticket und Ihre Kontoseite zu öffnen.</value></data>
   <data name="Applied.StatusLink" xml:space="preserve"><value>Bewerbungsstatus ansehen</value></data>
   <data name="Status.None" xml:space="preserve"><value>Keine Bewerbung gefunden</value></data>
   <data name="Status.NoneHint" xml:space="preserve"><value>Ihre Bewerbung erscheint hier in dem Browser, mit dem Sie sich beworben haben, oder nach der Anmeldung auf Ihrer Kontoseite.</value></data>
@@ -1615,4 +1615,48 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Account.Applications.Title" xml:space="preserve"><value>Meine Bewerbungen</value></data>
   <data name="Account.Applications.Lede" xml:space="preserve"><value>Wo jede Ihrer Erlebnis-Bewerbungen steht.</value></data>
   <data name="Account.Applications.Empty" xml:space="preserve"><value>Sie haben sich noch für kein Erlebnis beworben.</value></data>
+  <data name="Ambassador.Performance.Paid" xml:space="preserve"><value>An Sie ausgezahlt</value></data>
+  <data name="Ambassador.Performance.Owed" xml:space="preserve"><value>Noch auszuzahlen</value></data>
+  <data name="Ambassador.Conversions.Refunded" xml:space="preserve"><value>erstattet</value></data>
+  <data name="Ambassador.Conversions.PartRefunded" xml:space="preserve"><value>teilweise erstattet</value></data>
+  <data name="Ambassador.Conversions.Withdrawn" xml:space="preserve"><value>Provision zurückgezogen</value></data>
+  <data name="Ambassador.Conversions.PaidOut" xml:space="preserve"><value>ausgezahlt</value></data>
+  <data name="Email.Common.AddToCalendar" xml:space="preserve"><value>Zum Kalender hinzufügen</value></data>
+  <data name="Calendar.Label" xml:space="preserve"><value>Kalender</value></data>
+  <data name="Calendar.Details" xml:space="preserve"><value>Details und Aktualisierungen: {0}</value></data>
+  <data name="Email.AdminInvite.Subject" xml:space="preserve"><value>Ihr Admin-Zugang zu The VI House</value></data>
+  <data name="Email.AmbassadorLink.Subject" xml:space="preserve"><value>Ihr VI House-Empfehlungslink</value></data>
+  <data name="Email.ApplicationApproved.Subject" xml:space="preserve"><value>Sie sind angenommen — schließen Sie Ihre Buchung ab</value></data>
+  <data name="Email.ApplicationReceived.Subject" xml:space="preserve"><value>Bewerbung erhalten</value></data>
+  <data name="Email.ApplicationRejected.Subject" xml:space="preserve"><value>Zu Ihrer Bewerbung</value></data>
+  <data name="Email.ApplicationWaitlisted.Subject" xml:space="preserve"><value>Sie stehen auf der Warteliste</value></data>
+  <data name="Email.BookingConfirmed.Subject" xml:space="preserve"><value>Ihre Buchung ist bestätigt — {0}</value></data>
+  <data name="Email.ConfirmEmail.Subject" xml:space="preserve"><value>Bestätigen Sie Ihre E-Mail-Adresse</value></data>
+  <data name="Email.EmailChange.Subject" xml:space="preserve"><value>Bestätigen Sie Ihre neue E-Mail-Adresse</value></data>
+  <data name="Email.MembershipConfirmed.Subject" xml:space="preserve"><value>Willkommen — Sie sind jetzt {0}</value></data>
+  <data name="Email.MembershipRenewed.Subject" xml:space="preserve"><value>Ihre Mitgliedschaft {0} wurde verlängert</value></data>
+  <data name="Email.MembershipEnded.Subject" xml:space="preserve"><value>Ihre Mitgliedschaft ist beendet</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Subject" xml:space="preserve"><value>Bitte bestätigen Sie Ihre Mitgliedschaftszahlung</value></data>
+  <data name="Email.MembershipPaymentFailed.Subject" xml:space="preserve"><value>Ihre Mitgliedschaftszahlung ist fehlgeschlagen</value></data>
+  <data name="Email.MembershipResume.Subject" xml:space="preserve"><value>Machen Sie dort weiter, wo Sie aufgehört haben</value></data>
+  <data name="Email.PasswordReset.Subject" xml:space="preserve"><value>Setzen Sie Ihr Passwort zurück</value></data>
+  <data name="Email.PaymentFailed.Subject" xml:space="preserve"><value>Wir konnten Ihre Zahlung nicht abschließen</value></data>
+  <data name="Email.PaymentProcessing.Subject" xml:space="preserve"><value>Wir haben Ihre Bestellung erhalten — Zahlung in Bearbeitung</value></data>
+  <data name="Email.PaymentRefunded.Subject" xml:space="preserve"><value>Ihre Erstattung ist unterwegs</value></data>
+  <data name="Email.PaymentRefunded.SubjectPartial" xml:space="preserve"><value>Eine Teilerstattung ist unterwegs</value></data>
+  <data name="Email.ReferralConverted.Subject" xml:space="preserve"><value>Ihr Empfehlungslink hat gerade gewirkt</value></data>
+  <data name="Email.SeminarEnrolled.Subject" xml:space="preserve"><value>Sie sind angemeldet — {0}</value></data>
+  <data name="Email.WelcomeSetup.Subject" xml:space="preserve"><value>Richten Sie Ihr VI House-Konto ein</value></data>
+  <data name="Email.SecurityAlert.Preheader" xml:space="preserve"><value>{0} in Ihrem VI House-Konto</value></data>
+  <data name="Email.SecurityAlert.PasswordChanged.Title" xml:space="preserve"><value>Ihr Passwort wurde geändert</value></data>
+  <data name="Email.SecurityAlert.PasswordChanged.Detail" xml:space="preserve"><value>Das Passwort Ihres VI House-Kontos wurde soeben geändert. Wenn Sie das waren, ist nichts weiter zu tun.</value></data>
+  <data name="Email.SecurityAlert.PasswordChanged.Action" xml:space="preserve"><value>Passwort zurücksetzen</value></data>
+  <data name="Email.SecurityAlert.TwoFactorOn.Title" xml:space="preserve"><value>Die Zwei-Faktor-Bestätigung wurde aktiviert</value></data>
+  <data name="Email.SecurityAlert.TwoFactorOff.Title" xml:space="preserve"><value>Die Zwei-Faktor-Bestätigung wurde deaktiviert</value></data>
+  <data name="Email.SecurityAlert.AuthenticatorReset.Title" xml:space="preserve"><value>Ihre Authenticator-App wurde zurückgesetzt</value></data>
+  <data name="Email.SecurityAlert.TwoFactor.Detail" xml:space="preserve"><value>Die Einstellungen der Zwei-Faktor-Bestätigung Ihres VI House-Kontos wurden soeben geändert. Wenn Sie das waren, ist nichts weiter zu tun.</value></data>
+  <data name="Email.SecurityAlert.TwoFactor.Action" xml:space="preserve"><value>Zwei-Faktor-Bestätigung prüfen</value></data>
+  <data name="Email.SecurityAlert.NewSignIn.Title" xml:space="preserve"><value>Neue Anmeldung bei Ihrem Konto</value></data>
+  <data name="Email.SecurityAlert.NewSignIn.Detail" xml:space="preserve"><value>Bei Ihrem VI House-Konto wurde soeben eine Anmeldung von einer Adresse festgestellt, die in den letzten dreißig Tagen nicht verwendet wurde. Wenn Sie das waren — ein neues Telefon, eine Reise, ein anderes Netzwerk — ist nichts weiter zu tun.</value></data>
+  <data name="Email.SecurityAlert.NewSignIn.Action" xml:space="preserve"><value>Passwort ändern</value></data>
 </root>

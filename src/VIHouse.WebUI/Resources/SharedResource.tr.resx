@@ -1606,7 +1606,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Email.WelcomeSetup.Step3" xml:space="preserve"><value>Hazırsınız: rezervasyonlarınız, oturumlarınız ve üyeliğiniz hesap sayfanızda.</value></data>
   <data name="Email.WelcomeSetup.ValidFor" xml:space="preserve"><value>Bu bağlantı bir kez ve {0} saat boyunca çalışır. Süresi dolduysa giriş sayfasındaki “Şifrenizi mi unuttunuz?” seçeneğini bu e-posta adresiyle kullanın.</value></data>
   <data name="Email.BookingConfirmed.SetupNoteLabel" xml:space="preserve"><value>Sonraki adım: hesabınız</value></data>
-  <data name="Email.BookingConfirmed.SetupNote" xml:space="preserve"><value>Size şifrenizi belirlemeniz için bağlantı içeren ayrı bir e-posta (“Set up your VI House account”) gönderdik. Biletinizi ve hesap sayfanızı açmak için buna ihtiyacınız olacak.</value></data>
+  <data name="Email.BookingConfirmed.SetupNote" xml:space="preserve"><value>Size şifrenizi belirlemeniz için bağlantı içeren ayrı bir e-posta (“VI House hesabınızı oluşturun”) gönderdik. Biletinizi ve hesap sayfanızı açmak için buna ihtiyacınız olacak.</value></data>
   <data name="Applied.StatusLink" xml:space="preserve"><value>Başvuru durumunuzu görün</value></data>
   <data name="Status.None" xml:space="preserve"><value>Başvuru bulunamadı</value></data>
   <data name="Status.NoneHint" xml:space="preserve"><value>Başvurunuz, başvurduğunuz tarayıcıda veya giriş yaptıktan sonra hesap sayfanızda görünür.</value></data>
@@ -1615,4 +1615,48 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Account.Applications.Title" xml:space="preserve"><value>Başvurularım</value></data>
   <data name="Account.Applications.Lede" xml:space="preserve"><value>Deneyim başvurularınızın her birinin durumu.</value></data>
   <data name="Account.Applications.Empty" xml:space="preserve"><value>Henüz bir deneyime başvurmadınız.</value></data>
+  <data name="Ambassador.Performance.Paid" xml:space="preserve"><value>Size ödenen</value></data>
+  <data name="Ambassador.Performance.Owed" xml:space="preserve"><value>Ödenecek</value></data>
+  <data name="Ambassador.Conversions.Refunded" xml:space="preserve"><value>iade edildi</value></data>
+  <data name="Ambassador.Conversions.PartRefunded" xml:space="preserve"><value>kısmen iade edildi</value></data>
+  <data name="Ambassador.Conversions.Withdrawn" xml:space="preserve"><value>komisyon geri alındı</value></data>
+  <data name="Ambassador.Conversions.PaidOut" xml:space="preserve"><value>ödendi</value></data>
+  <data name="Email.Common.AddToCalendar" xml:space="preserve"><value>Takvime ekle</value></data>
+  <data name="Calendar.Label" xml:space="preserve"><value>Takvim</value></data>
+  <data name="Calendar.Details" xml:space="preserve"><value>Ayrıntılar ve güncellemeler: {0}</value></data>
+  <data name="Email.AdminInvite.Subject" xml:space="preserve"><value>VI House yönetici erişiminiz</value></data>
+  <data name="Email.AmbassadorLink.Subject" xml:space="preserve"><value>VI House referans bağlantınız</value></data>
+  <data name="Email.ApplicationApproved.Subject" xml:space="preserve"><value>Başvurunuz onaylandı — rezervasyonunuzu tamamlayın</value></data>
+  <data name="Email.ApplicationReceived.Subject" xml:space="preserve"><value>Başvurunuz alındı</value></data>
+  <data name="Email.ApplicationRejected.Subject" xml:space="preserve"><value>Başvurunuz hakkında</value></data>
+  <data name="Email.ApplicationWaitlisted.Subject" xml:space="preserve"><value>Bekleme listesindesiniz</value></data>
+  <data name="Email.BookingConfirmed.Subject" xml:space="preserve"><value>Rezervasyonunuz onaylandı — {0}</value></data>
+  <data name="Email.ConfirmEmail.Subject" xml:space="preserve"><value>E-posta adresinizi doğrulayın</value></data>
+  <data name="Email.EmailChange.Subject" xml:space="preserve"><value>Yeni e-posta adresinizi doğrulayın</value></data>
+  <data name="Email.MembershipConfirmed.Subject" xml:space="preserve"><value>Hoş geldiniz — artık {0} üyesisiniz</value></data>
+  <data name="Email.MembershipRenewed.Subject" xml:space="preserve"><value>{0} üyeliğiniz yenilendi</value></data>
+  <data name="Email.MembershipEnded.Subject" xml:space="preserve"><value>Üyeliğiniz sona erdi</value></data>
+  <data name="Email.MembershipPaymentActionRequired.Subject" xml:space="preserve"><value>Lütfen üyelik ödemenizi onaylayın</value></data>
+  <data name="Email.MembershipPaymentFailed.Subject" xml:space="preserve"><value>Üyelik ödemeniz gerçekleşmedi</value></data>
+  <data name="Email.MembershipResume.Subject" xml:space="preserve"><value>Kaldığınız yerden devam edin</value></data>
+  <data name="Email.PasswordReset.Subject" xml:space="preserve"><value>Şifrenizi sıfırlayın</value></data>
+  <data name="Email.PaymentFailed.Subject" xml:space="preserve"><value>Ödemenizi tamamlayamadık</value></data>
+  <data name="Email.PaymentProcessing.Subject" xml:space="preserve"><value>Siparişinizi aldık — ödeme işleniyor</value></data>
+  <data name="Email.PaymentRefunded.Subject" xml:space="preserve"><value>İadeniz yolda</value></data>
+  <data name="Email.PaymentRefunded.SubjectPartial" xml:space="preserve"><value>Kısmi iadeniz yolda</value></data>
+  <data name="Email.ReferralConverted.Subject" xml:space="preserve"><value>Referans bağlantınız işe yaradı</value></data>
+  <data name="Email.SeminarEnrolled.Subject" xml:space="preserve"><value>Kaydınız yapıldı — {0}</value></data>
+  <data name="Email.WelcomeSetup.Subject" xml:space="preserve"><value>VI House hesabınızı oluşturun</value></data>
+  <data name="Email.SecurityAlert.Preheader" xml:space="preserve"><value>VI House hesabınızda: {0}</value></data>
+  <data name="Email.SecurityAlert.PasswordChanged.Title" xml:space="preserve"><value>Şifreniz değiştirildi</value></data>
+  <data name="Email.SecurityAlert.PasswordChanged.Detail" xml:space="preserve"><value>VI House hesabınızın şifresi az önce değiştirildi. Bunu siz yaptıysanız yapmanız gereken bir şey yok.</value></data>
+  <data name="Email.SecurityAlert.PasswordChanged.Action" xml:space="preserve"><value>Şifrenizi sıfırlayın</value></data>
+  <data name="Email.SecurityAlert.TwoFactorOn.Title" xml:space="preserve"><value>İki adımlı doğrulama açıldı</value></data>
+  <data name="Email.SecurityAlert.TwoFactorOff.Title" xml:space="preserve"><value>İki adımlı doğrulama kapatıldı</value></data>
+  <data name="Email.SecurityAlert.AuthenticatorReset.Title" xml:space="preserve"><value>Doğrulama uygulamanız sıfırlandı</value></data>
+  <data name="Email.SecurityAlert.TwoFactor.Detail" xml:space="preserve"><value>VI House hesabınızın iki adımlı doğrulama ayarları az önce değiştirildi. Bunu siz yaptıysanız yapmanız gereken bir şey yok.</value></data>
+  <data name="Email.SecurityAlert.TwoFactor.Action" xml:space="preserve"><value>İki adımlı doğrulamayı gözden geçirin</value></data>
+  <data name="Email.SecurityAlert.NewSignIn.Title" xml:space="preserve"><value>Hesabınıza yeni giriş</value></data>
+  <data name="Email.SecurityAlert.NewSignIn.Detail" xml:space="preserve"><value>VI House hesabınıza son otuz gündür kullanılmayan bir adresten giriş yapıldı. Bunu siz yaptıysanız — yeni bir telefon, bir seyahat, farklı bir ağ — yapmanız gereken bir şey yok.</value></data>
+  <data name="Email.SecurityAlert.NewSignIn.Action" xml:space="preserve"><value>Şifrenizi değiştirin</value></data>
 </root>

@@ -60,11 +60,19 @@
                     <div class="admin-kpi-card__label">@Loc["Ambassador.Performance.Revenue"] (@currency)</div>
                 </div>
             }
-            @foreach (var (currency, amountMinor) in stats.CommissionByCurrency)
+            @foreach (var b in stats.Balances)
             {
                 <div class="admin-kpi-card admin-kpi-card--accent">
-                    <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
-                    <div class="admin-kpi-card__label">@Loc["Ambassador.Performance.Commission"] (@currency)</div>
+                    <div class="admin-kpi-card__value">@MoneyFormatter.Format(b.EarnedMinor, b.Currency)</div>
+                    <div class="admin-kpi-card__label">@Loc["Ambassador.Performance.Commission"] (@b.Currency)</div>
+                </div>
+                <div class="admin-kpi-card">
+                    <div class="admin-kpi-card__value">@MoneyFormatter.Format(b.PaidMinor, b.Currency)</div>
+                    <div class="admin-kpi-card__label">@Loc["Ambassador.Performance.Paid"] (@b.Currency)</div>
+                </div>
+                <div class="admin-kpi-card">
+                    <div class="admin-kpi-card__value">@MoneyFormatter.Format(Math.Max(0, b.OwedMinor), b.Currency)</div>
+                    <div class="admin-kpi-card__label">@Loc["Ambassador.Performance.Owed"] (@b.Currency)</div>
                 </div>
             }
         </div>
@@ -131,9 +139,20 @@
                         {
                             <span class="ambassador-timeline__money">
                                 @MoneyFormatter.Format(amount, c.Currency)
-                                @if (c.CommissionMinor is { } commission)
+                                @if (c.CommissionMinor is not null)
                                 {
-                                    <em>&middot; @Loc["Ambassador.Conversions.Commission"] @MoneyFormatter.Format(commission, c.Currency)</em>
+                                    <em>&middot; @Loc["Ambassador.Conversions.Commission"] @MoneyFormatter.Format(c.NetCommissionMinor, c.Currency)</em>
+                                }
+                                @{
+                                    var state = c.VoidedAt is not null ? Loc["Ambassador.Conversions.Withdrawn"].Value
+                                        : c.ReversedAt is not null ? Loc["Ambassador.Conversions.Refunded"].Value
+                                        : c.RefundedMinor > 0 ? Loc["Ambassador.Conversions.PartRefunded"].Value
+                                        : c.PayoutId is not null ? Loc["Ambassador.Conversions.PaidOut"].Value
+                                        : null;
+                                }
+                                @if (state is not null)
+                                {
+                                    <em>&middot; @state</em>
                                 }
                             </span>
                         }

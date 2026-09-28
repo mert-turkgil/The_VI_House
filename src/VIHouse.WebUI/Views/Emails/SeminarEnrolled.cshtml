@@ -1,5 +1,6 @@
 @model SeminarEnrolledEmailModel
 @{
+    ViewData["Subject"] = string.Format(Loc["Email.SeminarEnrolled.Subject"].Value, Model.SeminarTitle);
     ViewData["Preheader"] = string.Format(Loc["Email.SeminarEnrolled.Preheader"].Value, Model.SeminarTitle);
     ViewData["Footnote"] = Loc["Email.SeminarEnrolled.Footnote"].Value;
     var rows = new List<(string, string)> { (Loc["Email.Common.DetailSessionLabel"].Value, Model.SeminarTitle) };
@@ -10,6 +11,10 @@
 <p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
 <p style="margin:0 0 20px;">@Html.Raw(string.Format(Loc["Email.SeminarEnrolled.Body1"].Value, $"<strong>{Model.SeminarTitle}</strong>"))</p>
 <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+@if (Model.CalendarUrl is not null)
+{
+    <p style="margin:-8px 0 20px; font-size:14px;"><a href="@Model.CalendarUrl" style="color:#00230a;">@Loc["Email.Common.AddToCalendar"]</a></p>
+}
 <partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.SeminarUrl, Loc["Email.SeminarEnrolled.Button"].Value))" />
 <p style="margin:0 0 16px; color:#4a4f45;">
     @if (Model.IsOnline && Model.StartAtUtc is not null)

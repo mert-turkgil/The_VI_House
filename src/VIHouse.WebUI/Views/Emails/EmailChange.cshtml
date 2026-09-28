@@ -1,5 +1,6 @@
 @model EmailChangeEmailModel
 @{
+    ViewData["Subject"] = Loc["Email.EmailChange.Subject"].Value;
     ViewData["Preheader"] = string.Format(Loc["Email.EmailChange.Preheader"].Value, Model.NewEmail);
     ViewData["Footnote"] = Loc["Email.EmailChange.Footnote"].Value;
 }

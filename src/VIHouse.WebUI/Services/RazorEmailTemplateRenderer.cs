@@ -62,6 +62,9 @@ public class RazorEmailTemplateRenderer(
             CultureInfo.CurrentUICulture = previousUiCulture;
         }
 
-        return new RenderedEmail(writer.ToString(), viewData["Subject"] as string);
+        // Read back from the context, not from viewData: the page gets its own copy-on-write
+        // ViewData (RazorPageActivator swaps it into the context), so whatever the template set is
+        // only visible there.
+        return new RenderedEmail(writer.ToString(), viewContext.ViewData["Subject"] as string);
     }
 }

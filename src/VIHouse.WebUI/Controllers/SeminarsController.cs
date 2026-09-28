@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Identity;
+using VIHouse.Business;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Concrete;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Helpers;
@@ -62,6 +64,31 @@ public class SeminarsController(
 
         ViewData["Title"] = model.SeoTitle ?? model.Title;
         return View(model);
+    }
+
+    /// <summary>
+    /// "Add to calendar" for a live sitting. The same visibility as the page: signed out and not
+    /// visible means "sign in" whether or not the slug exists, so a members-only session is never
+    /// confirmed to a guesser. The meeting link is not in the file (see IcsCalendar).
+    /// </summary>
+    [HttpGet("{slug}/calendar.ics")]
+    public async Task<IActionResult> Calendar(string slug, CancellationToken ct)
+    {
+        var seminar = await seminarService.GetPublicDetailBySlugAsync(slug, await ViewerIsMemberAsync(ct), ViewerIsStaff, ct);
+        if (seminar is null) return CurrentUserId is null ? Challenge() : NotFound();
+        if (seminar.StartAtUtc is not { } start) return NotFound(); // on demand: nothing to put in a calendar
+
+        var culture = CultureInfo.CurrentUICulture.Name;
+        var pageUrl = $"{Request.Scheme}://{Request.Host}{SiteUrls.InCulture(SiteUrls.Session(seminar.Slug), culture)}";
+        var ics = IcsCalendar.Build(new IcsCalendar.Event(
+            $"session-{seminar.Id}@thevihouse.com",
+            $"The VI House — {SeminarContent.Title(seminar, culture)}",
+            start, seminar.EndAtUtc ?? start.AddHours(1),
+            seminar.IsOnline ? loc["Seminars.Online"].Value : seminar.Location,
+            loc["Calendar.Details", pageUrl].Value, pageUrl));
+
+        Response.Headers["X-Robots-Tag"] = "noindex";
+        return File(System.Text.Encoding.UTF8.GetBytes(ics), IcsCalendar.ContentType, IcsCalendar.FileName(seminar.Slug));
     }
 
     /// <summary>

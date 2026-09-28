@@ -60,7 +60,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
 
             await _userManager.SetTwoFactorEnabledAsync(user, false);
             await _userManager.ResetAuthenticatorKeyAsync(user);
-            await _securityAlerts.TwoFactorChangedAsync(user.Id, "Your authenticator app was reset", HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
+            await _securityAlerts.TwoFactorChangedAsync(user.Id, VIHouse.Business.Abstract.TwoFactorChange.AuthenticatorReset, HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
             var userId = await _userManager.GetUserIdAsync(user);
             _logger.LogInformation("User with ID '{UserId}' has reset their authentication app key.", user.Id);
 
