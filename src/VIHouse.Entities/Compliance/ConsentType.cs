@@ -4,5 +4,7 @@ public enum ConsentType
 {
     PhotographyMedia,
     Marketing,
-    TermsOfService
+    TermsOfService,
+    /// <summary>The ambassador terms: commission rate, payouts, refunds reversing commission.</summary>
+    AmbassadorTerms,
 }

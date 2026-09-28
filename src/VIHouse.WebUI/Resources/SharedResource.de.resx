@@ -1659,4 +1659,70 @@ Fragen. Falls Sie glauben, außerhalb dieser Bedingungen Anspruch auf eine Rück
   <data name="Email.SecurityAlert.NewSignIn.Title" xml:space="preserve"><value>Neue Anmeldung bei Ihrem Konto</value></data>
   <data name="Email.SecurityAlert.NewSignIn.Detail" xml:space="preserve"><value>Bei Ihrem VI House-Konto wurde soeben eine Anmeldung von einer Adresse festgestellt, die in den letzten dreißig Tagen nicht verwendet wurde. Wenn Sie das waren — ein neues Telefon, eine Reise, ein anderes Netzwerk — ist nichts weiter zu tun.</value></data>
   <data name="Email.SecurityAlert.NewSignIn.Action" xml:space="preserve"><value>Passwort ändern</value></data>
+  <data name="Email.AmbassadorInvite.Subject" xml:space="preserve"><value>Einladung: Werden Sie Ambassador von The VI House</value></data>
+  <data name="Email.AmbassadorInvite.Preheader" xml:space="preserve"><value>Nehmen Sie die Einladung an, um Ihren persönlichen Empfehlungslink zu aktivieren.</value></data>
+  <data name="Email.AmbassadorInvite.Heading" xml:space="preserve"><value>Eine Einladung, Ambassador zu werden</value></data>
+  <data name="Email.AmbassadorInvite.Body1" xml:space="preserve"><value>The VI House möchte, dass Sie uns vertreten. Sie erhalten Ihren eigenen Empfehlungslink und Code und verdienen Provision auf jedes Ticket, jede Mitgliedschaft und jede Sitzung, die darüber gekauft wird.</value></data>
+  <data name="Email.AmbassadorInvite.StepsIntro" xml:space="preserve"><value>Der Link unten führt Sie zu einer Seite, auf der Sie:</value></data>
+  <data name="Email.AmbassadorInvite.Step1" xml:space="preserve"><value>ein Passwort für Ihr Konto wählen,</value></data>
+  <data name="Email.AmbassadorInvite.Step2" xml:space="preserve"><value>Ihre Rechnungsadresse und das Bankkonto für die Provision angeben,</value></data>
+  <data name="Email.AmbassadorInvite.Step3" xml:space="preserve"><value>die Ambassador-Bedingungen lesen und annehmen. Ihr Link und Ihre QR-Codes funktionieren direkt danach.</value></data>
+  <data name="Email.AmbassadorInvite.Button" xml:space="preserve"><value>Einladung annehmen</value></data>
+  <data name="Email.AmbassadorInvite.ValidUntilLabel" xml:space="preserve"><value>Link gültig bis</value></data>
+  <data name="Email.AmbassadorInvite.Expiry" xml:space="preserve"><value>Der Link ist persönlich und funktioniert einmal. Läuft er ab, bevor Sie dazu kommen, antworten Sie auf diese E-Mail und wir senden einen neuen.</value></data>
+  <data name="Email.AmbassadorInvite.Footnote" xml:space="preserve"><value>Sie erhalten diese E-Mail, weil The VI House diese Adresse zu seinem Ambassador-Programm eingeladen hat. Wenn Sie das nicht erwartet haben, ignorieren Sie sie — ohne den Link passiert nichts.</value></data>
+  <data name="Email.AmbassadorInvite.Signoff" xml:space="preserve"><value>Wir freuen uns auf die Zusammenarbeit.</value></data>
+  <data name="AmbassadorInvite.Title" xml:space="preserve"><value>Ambassador-Einladung</value></data>
+  <data name="AmbassadorInvite.Eyebrow" xml:space="preserve"><value>Ambassador-Programm</value></data>
+  <data name="AmbassadorInvite.Heading" xml:space="preserve"><value>Willkommen, {0}</value></data>
+  <data name="AmbassadorInvite.Lede" xml:space="preserve"><value>Vier kurze Teile, dann sind Ihr Empfehlungslink und Ihre QR-Codes aktiv.</value></data>
+  <data name="AmbassadorInvite.Fact.Code" xml:space="preserve"><value>Ihr Code</value></data>
+  <data name="AmbassadorInvite.Fact.Rate" xml:space="preserve"><value>Provision</value></data>
+  <data name="AmbassadorInvite.Fact.Email" xml:space="preserve"><value>Konto-E-Mail</value></data>
+  <data name="AmbassadorInvite.Fact.Expires" xml:space="preserve"><value>Link gültig bis</value></data>
+  <data name="AmbassadorInvite.Section.You" xml:space="preserve"><value>Sie und Ihr Passwort</value></data>
+  <data name="AmbassadorInvite.NameHint" xml:space="preserve"><value>Ihr rechtlicher Name, wie auf Ihrem Bankkonto — die Provision wird darauf gezahlt.</value></data>
+  <data name="AmbassadorInvite.Password" xml:space="preserve"><value>Passwort wählen</value></data>
+  <data name="AmbassadorInvite.ConfirmPassword" xml:space="preserve"><value>Passwort wiederholen</value></data>
+  <data name="AmbassadorInvite.SignedIn" xml:space="preserve"><value>Sie sind als {0} angemeldet; Ihr bisheriges Passwort bleibt bestehen.</value></data>
+  <data name="AmbassadorInvite.Section.Billing" xml:space="preserve"><value>Rechnungsadresse</value></data>
+  <data name="AmbassadorInvite.TaxId" xml:space="preserve"><value>USt-IdNr. / Steuernummer (optional)</value></data>
+  <data name="AmbassadorInvite.TaxIdHint" xml:space="preserve"><value>Nur wenn Sie als Unternehmen abrechnen.</value></data>
+  <data name="AmbassadorInvite.Section.Payout" xml:space="preserve"><value>Wohin wir Ihre Provision zahlen</value></data>
+  <data name="AmbassadorInvite.PayoutHint" xml:space="preserve"><value>Die Provision wird per Überweisung gezahlt. Nur das Finanzteam des House sieht diese Angaben.</value></data>
+  <data name="AmbassadorInvite.AccountHolder" xml:space="preserve"><value>Kontoinhaber</value></data>
+  <data name="AmbassadorInvite.Bic" xml:space="preserve"><value>BIC / SWIFT (optional)</value></data>
+  <data name="AmbassadorInvite.Section.Terms" xml:space="preserve"><value>Ambassador-Bedingungen</value></data>
+  <data name="AmbassadorInvite.Terms.Commission" xml:space="preserve"><value>Provision. Sie erhalten {0} % des gezahlten Betrags für jedes Ticket, jede Mitgliedschaft oder Sitzung, die über Ihren Link oder Code gekauft wird, zu dem am Tag des Kaufs geltenden Satz.</value></data>
+  <data name="AmbassadorInvite.Terms.Payouts" xml:space="preserve"><value>Auszahlungen. Die Provision wird per Überweisung auf das hier angegebene Konto gezahlt. Jede Auszahlung wird erfasst; Ihre Ambassador-Seite zeigt Verdientes, Ausgezahltes und noch Offenes.</value></data>
+  <data name="AmbassadorInvite.Terms.Refunds" xml:space="preserve"><value>Erstattungen. Wird ein Kauf ganz oder teilweise erstattet, wird die Provision darauf im gleichen Verhältnis storniert. Wurde sie bereits ausgezahlt, wird der Betrag von Ihrer nächsten Auszahlung abgezogen oder an das House zurückgezahlt, wenn keine weitere Auszahlung ansteht.</value></data>
+  <data name="AmbassadorInvite.Terms.OwnPurchases" xml:space="preserve"><value>Eigene Käufe. Käufe, die Sie selbst über Ihren Link oder Code tätigen, bringen keine Provision, sofern das House nicht schriftlich zustimmt. Das House kann Provision für betrügerische oder nicht tatsächlich vermittelte Käufe zurückziehen und nennt Ihnen den Grund.</value></data>
+  <data name="AmbassadorInvite.Terms.Changes" xml:space="preserve"><value>Änderungen. Das House informiert Sie, bevor es Ihren Provisionssatz ändert. Bereits getätigte Verkäufe behalten ihren Satz.</value></data>
+  <data name="AmbassadorInvite.Terms.Privacy" xml:space="preserve"><value>Datenschutz. Sie sehen nur Zahlen und Beträge, nie Namen oder Kontaktdaten der von Ihnen geworbenen Personen. Das House speichert Ihre Bankdaten nur, um Sie zu bezahlen.</value></data>
+  <data name="AmbassadorInvite.Accept" xml:space="preserve"><value>Ich habe die obigen Ambassador-Bedingungen gelesen und akzeptiere sie.</value></data>
+  <data name="AmbassadorInvite.Submit" xml:space="preserve"><value>Annehmen und Link aktivieren</value></data>
+  <data name="AmbassadorInvite.Welcome" xml:space="preserve"><value>Sie sind jetzt Ambassador — Ihre Links und QR-Codes sind aktiv.</value></data>
+  <data name="AmbassadorInvite.Gate.SignInHeading" xml:space="preserve"><value>Zum Annehmen anmelden</value></data>
+  <data name="AmbassadorInvite.Gate.SignInBody" xml:space="preserve"><value>{0} hat bereits ein VI House-Konto. Melden Sie sich damit an, und Sie kehren direkt hierher zurück.</value></data>
+  <data name="AmbassadorInvite.Gate.WrongHeading" xml:space="preserve"><value>Diese Einladung gilt für ein anderes Konto</value></data>
+  <data name="AmbassadorInvite.Gate.WrongBody" xml:space="preserve"><value>Sie wurde an {0} gesendet, aber dieser Browser ist mit einem anderen Konto angemeldet. Melden Sie sich ab und öffnen Sie den Link erneut.</value></data>
+  <data name="AmbassadorInvite.Gate.SignOut" xml:space="preserve"><value>Abmelden</value></data>
+  <data name="AmbassadorInvite.Expired.Heading" xml:space="preserve"><value>Diese Einladung ist abgelaufen</value></data>
+  <data name="AmbassadorInvite.Expired.Body" xml:space="preserve"><value>Antworten Sie auf die Einladungs-E-Mail, und das House sendet Ihnen einen neuen Link. Ihr Code bleibt für Sie reserviert.</value></data>
+  <data name="AmbassadorInvite.Invalid.Heading" xml:space="preserve"><value>Dieser Link ist ungültig</value></data>
+  <data name="AmbassadorInvite.Invalid.Body" xml:space="preserve"><value>Er wurde vielleicht schon verwendet oder durch eine neuere Einladung ersetzt. Verwenden Sie die neueste E-Mail von The VI House.</value></data>
+  <data name="AmbassadorInvite.Home" xml:space="preserve"><value>Zur Startseite</value></data>
+  <data name="AmbassadorInvite.Error.FirstName" xml:space="preserve"><value>Geben Sie Ihren Vornamen ein.</value></data>
+  <data name="AmbassadorInvite.Error.LastName" xml:space="preserve"><value>Geben Sie Ihren Nachnamen ein.</value></data>
+  <data name="AmbassadorInvite.Error.Password" xml:space="preserve"><value>Wählen Sie ein Passwort.</value></data>
+  <data name="AmbassadorInvite.Error.PasswordMismatch" xml:space="preserve"><value>Die Passwörter stimmen nicht überein.</value></data>
+  <data name="AmbassadorInvite.Error.Address" xml:space="preserve"><value>Geben Sie Ihre Adresse ein.</value></data>
+  <data name="AmbassadorInvite.Error.City" xml:space="preserve"><value>Geben Sie Ihre Stadt ein.</value></data>
+  <data name="AmbassadorInvite.Error.PostalCode" xml:space="preserve"><value>Geben Sie Ihre Postleitzahl ein.</value></data>
+  <data name="AmbassadorInvite.Error.Country" xml:space="preserve"><value>Wählen Sie Ihr Land.</value></data>
+  <data name="AmbassadorInvite.Error.AccountHolder" xml:space="preserve"><value>Geben Sie den Namen des Kontoinhabers ein.</value></data>
+  <data name="AmbassadorInvite.Error.Iban" xml:space="preserve"><value>Geben Sie Ihre IBAN ein.</value></data>
+  <data name="AmbassadorInvite.Error.IbanInvalid" xml:space="preserve"><value>Diese IBAN ist ungültig — prüfen Sie auf fehlende oder vertauschte Zeichen.</value></data>
+  <data name="AmbassadorInvite.Error.Bic" xml:space="preserve"><value>Eine BIC hat 8 oder 11 Buchstaben und Ziffern.</value></data>
+  <data name="AmbassadorInvite.Error.Terms" xml:space="preserve"><value>Akzeptieren Sie die Bedingungen, um fortzufahren.</value></data>
 </root>

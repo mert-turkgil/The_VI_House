@@ -104,6 +104,10 @@ public record ReferralConvertedEmailModel(string Name, string What, string? Amou
 
 /// <summary>An admin sends the ambassador their referral link (and code) — the same thing the
 /// dashboard shows, delivered so it can be forwarded from the inbox.</summary>
+/// <summary>The invitation to become an ambassador. The link is the only way in, so it is only
+/// ever in this email — the admin who sent it never sees it.</summary>
+public record AmbassadorInviteEmailModel(string Name, string InviteUrl, string Code, decimal CommissionPercent, DateTimeOffset ExpiresAt);
+
 public record AmbassadorLinkEmailModel(string Name, string ReferralUrl, string Code, decimal CommissionPercent, string DashboardUrl, string? Note);
 
 /// <summary>Sent when an existing SuperAdmin creates a staff account. Carries the one-time link the

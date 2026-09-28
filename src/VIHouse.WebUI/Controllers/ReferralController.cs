@@ -127,7 +127,9 @@ public class ReferralController(
     private async Task RecordAsync(string code, ReferralTargetKind kind, Guid? targetId, string landingPath, CancellationToken ct)
     {
         var ambassador = await ambassadorService.GetByCodeAsync(code, ct);
-        if (ambassador is null) return;
+        // Only a live link attributes: a pending invitation or a paused ambassador must not
+        // leave a 30-day cookie that would credit them later.
+        if (ambassador is null || ambassador.Status != AmbassadorStatus.Active) return;
 
         var q = Request.Query;
         await ambassadorService.RecordVisitAsync(code, kind, targetId, landingPath,

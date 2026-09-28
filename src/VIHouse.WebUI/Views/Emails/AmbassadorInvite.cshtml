@@ -1,0 +1,25 @@
+@model AmbassadorInviteEmailModel
+@{
+    ViewData["Subject"] = Loc["Email.AmbassadorInvite.Subject"].Value;
+    ViewData["Preheader"] = Loc["Email.AmbassadorInvite.Preheader"].Value;
+    ViewData["Footnote"] = Loc["Email.AmbassadorInvite.Footnote"].Value;
+    var rows = new List<(string, string)>
+    {
+        (Loc["Email.AmbassadorLink.DetailCodeLabel"].Value, Model.Code),
+        (Loc["Email.Common.DetailCommissionLabel"].Value, string.Format(Loc["Email.AmbassadorLink.CommissionValue"].Value, Model.CommissionPercent.ToString("0.##"))),
+        (Loc["Email.AmbassadorInvite.ValidUntilLabel"].Value, Model.ExpiresAt.ToString("d MMMM yyyy, HH:mm") + " UTC"),
+    };
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowAmbassador"].Value, Loc["Email.AmbassadorInvite.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.Name)</p>
+<p style="margin:0 0 16px;">@Loc["Email.AmbassadorInvite.Body1"]</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+<p style="margin:0 0 8px;">@Loc["Email.AmbassadorInvite.StepsIntro"]</p>
+<ol style="margin:0 0 20px; padding-left:20px;">
+    <li>@Loc["Email.AmbassadorInvite.Step1"]</li>
+    <li>@Loc["Email.AmbassadorInvite.Step2"]</li>
+    <li>@Loc["Email.AmbassadorInvite.Step3"]</li>
+</ol>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.InviteUrl, Loc["Email.AmbassadorInvite.Button"].Value))" />
+<p style="margin:0 0 16px; color:#4a4f45;">@Loc["Email.AmbassadorInvite.Expiry"]</p>
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.AmbassadorInvite.Signoff"].Value)" />

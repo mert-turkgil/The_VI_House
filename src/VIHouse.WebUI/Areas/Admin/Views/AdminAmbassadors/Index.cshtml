@@ -9,7 +9,7 @@
 }
 
 <div class="admin-toolbar">
-    <a class="admin-btn" asp-action="Create">+ New Ambassador</a>
+    <a class="admin-btn" asp-action="Create">+ Invite an ambassador</a>
 </div>
 
 @if (Model.Count == 0)
@@ -37,7 +37,18 @@ else
                     <td>@a.Code</td>
                     <td>/r/@a.Code</td>
                     <td>@a.CommissionPercent%</td>
-                    <td><span class="@(a.Status == AmbassadorStatus.Active ? "admin-badge admin-badge--open" : "admin-badge admin-badge--closed")">@a.Status</span></td>
+                    <td>
+                        @if (a.Status == AmbassadorStatus.Pending)
+                        {
+                            var expired = a.InviteExpiresAt < DateTimeOffset.UtcNow;
+                            <span class="admin-badge @(expired ? "admin-badge--danger" : "admin-badge--pending")">@(expired ? "Invite expired" : "Invited")</span>
+                            <div class="admin-table__sub">@a.InviteEmail</div>
+                        }
+                        else
+                        {
+                            <span class="@(a.Status == AmbassadorStatus.Active ? "admin-badge admin-badge--open" : "admin-badge admin-badge--closed")">@a.Status</span>
+                        }
+                    </td>
                 </tr>
             }
         </tbody>

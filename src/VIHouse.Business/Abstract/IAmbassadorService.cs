@@ -9,8 +9,40 @@ public interface IAmbassadorService
     Task<Ambassador?> GetByCodeAsync(string code, CancellationToken ct = default);
     Task<Ambassador?> GetByUserIdAsync(Guid userId, CancellationToken ct = default);
 
-    /// <summary>Reuses an existing account by email if one exists (mirrors PaymentService.ProvisionMemberAccountAsync), otherwise provisions a new one with a random never-communicated password — the caller builds the password-reset link, same split of responsibility as the checkout success page.</summary>
-    Task<AmbassadorCreationResult> CreateAsync(string email, string name, string code, decimal commissionPercent, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+    /// <summary>
+    /// The existing-account path ("Make ambassador" on a user record): the person already has a
+    /// login, so the ambassador is Active at once.
+    /// </summary>
+    Task<AmbassadorCreationResult> CreateForUserAsync(Guid userId, string name, string code, decimal commissionPercent, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>
+    /// The new-person path: reserves the code, opens a Pending ambassador with no account behind it
+    /// and emails the invitation link to <see cref="AmbassadorInvite.Email"/>. The link is never
+    /// returned — only the person it was sent to can use it. Refused when an account with that
+    /// email already exists (use <see cref="CreateForUserAsync"/>) or an invitation is already pending.
+    /// </summary>
+    Task<AmbassadorCreationResult> InviteAsync(AmbassadorInvite invite, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>New link, new expiry, same code. The old link stops working. The address and
+    /// language can be corrected at the same time — the fix for a mistyped email.</summary>
+    Task<AmbassadorCreationResult> ResendInviteAsync(Guid ambassadorId, string? email, string? culture, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>Cancels a pending invitation and frees its code. Only for Pending rows.</summary>
+    Task<bool> WithdrawInviteAsync(Guid ambassadorId, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>What the invitation page needs to know about a token.</summary>
+    Task<AmbassadorInviteLookup> GetInviteAsync(string token, CancellationToken ct = default);
+
+    /// <summary>
+    /// Finishes an invitation: sets the password (or, when the address already has an account with
+    /// one, requires that account to be signed in), confirms the email — the link proved it — records
+    /// the real name, billing and payout details, writes the terms ConsentRecord with the exact text
+    /// shown, and makes the ambassador Active. The token is spent.
+    /// </summary>
+    Task<AmbassadorAcceptResult> AcceptInviteAsync(string token, AmbassadorAcceptance form, Guid? signedInUserId, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>How long an invitation link works.</summary>
+    static readonly TimeSpan InviteLifetime = TimeSpan.FromDays(7);
 
     Task UpdateAsync(Ambassador updated, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 
@@ -94,8 +126,16 @@ public interface IAmbassadorService
 
 public record AmbassadorCreationResult(bool Success, Ambassador? Ambassador, Guid? UserId, string? Error)
 {
-    public static AmbassadorCreationResult Ok(Ambassador ambassador, Guid userId) => new(true, ambassador, userId, null);
+    public static AmbassadorCreationResult Ok(Ambassador ambassador, Guid? userId) => new(true, ambassador, userId, null);
     public static AmbassadorCreationResult Fail(string error) => new(false, null, null, error);
+
+    /// <summary>The address already has an account: the "Make ambassador" path on that user applies.</summary>
+    public static AmbassadorCreationResult ExistingAccount(Guid userId) =>
+        new(false, null, userId, "An account with this email already exists. Open their user record and use \"Make ambassador\" there.");
+
+    /// <summary>Saved (code reserved) but the email did not go out — see Emails &amp; SMS; re-send from the ambassador page.</summary>
+    public static AmbassadorCreationResult SavedButNotSent(Ambassador ambassador) =>
+        new(true, ambassador, null, "The invitation was saved but the email could not be sent. Check Emails & SMS, then use \"Re-send invitation\".");
 }
 
 public record ReferralSourceCount(string? Source, string? Medium, int Visits);
@@ -168,4 +208,50 @@ public record ReferralFraudSignals(
             return w;
         }
     }
+}
+
+public record AmbassadorInvite(string Email, string Name, string Code, decimal CommissionPercent, string Culture);
+
+public enum AmbassadorInviteState { Invalid, Expired, Valid }
+
+/// <summary>
+/// A token looked up for the invitation page. <see cref="AccountHasPassword"/> means the address
+/// already has a login: the page asks them to sign in with it instead of choosing a new password.
+/// </summary>
+public record AmbassadorInviteLookup(AmbassadorInviteState State, Ambassador? Ambassador, Guid? AccountId, bool AccountHasPassword,
+    string? AccountFirstName, string? AccountLastName, string? AccountCountry);
+
+public class AmbassadorAcceptance
+{
+    public string FirstName { get; init; } = "";
+    public string LastName { get; init; } = "";
+    /// <summary>Null when the account already has a password (they signed in with it).</summary>
+    public string? Password { get; init; }
+    public string AddressLine1 { get; init; } = "";
+    public string? AddressLine2 { get; init; }
+    public string City { get; init; } = "";
+    public string PostalCode { get; init; } = "";
+    public string Country { get; init; } = "";
+    public string? TaxId { get; init; }
+    public string AccountHolder { get; init; } = "";
+    public string Iban { get; init; } = "";
+    public string? Bic { get; init; }
+    /// <summary>The terms exactly as the page showed them, rate included — stored in the ConsentRecord.</summary>
+    public string TermsText { get; init; } = "";
+    public bool AcceptedTerms { get; init; }
+}
+
+public enum AmbassadorAcceptStatus { Activated, Invalid, Expired, SignInRequired, WrongAccount, Rejected }
+
+public record AmbassadorAcceptResult(AmbassadorAcceptStatus Status, Guid? UserId, IReadOnlyList<string> Errors)
+{
+    public static AmbassadorAcceptResult Of(AmbassadorAcceptStatus status) => new(status, null, []);
+    public static AmbassadorAcceptResult Reject(params string[] errors) => new(AmbassadorAcceptStatus.Rejected, null, errors);
+}
+
+/// <summary>The version stamped on every acceptance. Bump it when the wording in the
+/// Ambassador.Terms.* resources changes in substance, so each ConsentRecord says which one it was.</summary>
+public static class AmbassadorTerms
+{
+    public const string Version = "2026-09";
 }

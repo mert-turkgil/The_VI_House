@@ -312,8 +312,8 @@ public class AdminUsersController(
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        var result = await ambassadorService.CreateAsync(
-            user.Email, form.Name.Trim(), form.Code.Trim().ToUpperInvariant(), form.CommissionPercent, CurrentAdminId(), Ip(), ct);
+        var result = await ambassadorService.CreateForUserAsync(
+            user.Id, form.Name.Trim(), form.Code.Trim().ToUpperInvariant(), form.CommissionPercent, CurrentAdminId(), Ip(), ct);
         TempData["StatusMessage"] = result.Success
             ? $"Referral link created: /r/{result.Ambassador!.Code}. They can copy it from their account page."
             : result.Error;

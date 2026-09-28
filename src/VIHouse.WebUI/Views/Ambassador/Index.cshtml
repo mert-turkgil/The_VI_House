@@ -24,6 +24,10 @@
 </div>
 
 <div class="container content-body">
+    @if (TempData["StatusMessage"] is string status)
+    {
+        <div class="contact-success" role="status">@status</div>
+    }
     @* --- Links --------------------------------------------------------------------------------- *@
     <section class="ambassador-section" id="referral-links">
         <h2>@Loc["Ambassador.Links.Title"]</h2>

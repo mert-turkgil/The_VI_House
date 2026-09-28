@@ -1,0 +1,19 @@
+@model AmbassadorInviteState
+@* Says as little as possible: an unknown, used or withdrawn link all read the same, so the page
+   cannot be used to test which codes or addresses have invitations. *@
+<div class="container">
+    <div class="ambassador-invite__panel">
+        <span class="join__eyebrow">@Loc["AmbassadorInvite.Eyebrow"]</span>
+        @if (Model == AmbassadorInviteState.Expired)
+        {
+            <h1>@Loc["AmbassadorInvite.Expired.Heading"]</h1>
+            <p>@Loc["AmbassadorInvite.Expired.Body"]</p>
+        }
+        else
+        {
+            <h1>@Loc["AmbassadorInvite.Invalid.Heading"]</h1>
+            <p>@Loc["AmbassadorInvite.Invalid.Body"]</p>
+        }
+        <a class="btn btn--primary" href="/">@Loc["AmbassadorInvite.Home"]</a>
+    </div>
+</div>

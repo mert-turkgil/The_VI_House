@@ -127,6 +127,8 @@ public class DevEmailPreviewController(IEmailTemplateRenderer renderer, IWebHost
             () => new AdminInviteEmailModel("Ada", $"{Site}/reset-password?code=…", "Mert Türkgil", "Editor, Marketing")),
 
         // --- Ambassadors
+        new("AmbassadorInvite", "AmbassadorInvite", "You're invited to be a VI House ambassador", "Admin > Ambassadors > Invite (or Re-send invitation)", "Ambassadors",
+            () => new AmbassadorInviteEmailModel("Anton", $"{Site}/ambassador/invite/sample-token", "ANTON", 15m, Sample.AddDays(7))),
         new("AmbassadorLink", "AmbassadorLink", "Your VI House referral link", "Admin > Ambassador > Send link", "Ambassadors",
             () => new AmbassadorLinkEmailModel("Anton", $"{Site}/r/ANTON", "ANTON", 15m, $"{Site}/ambassador", "Lovely to have you on board — here is your link for the launch post.")),
         new("ReferralConverted", "ReferralConverted", "Your referral link just worked", "Any referral conversion (application, approval, ticket, membership, session)", "Ambassadors",

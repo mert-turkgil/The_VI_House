@@ -16,4 +16,7 @@ public class AdminAmbassadorCreateViewModel
 
     [Required, Range(0, 100)]
     public decimal CommissionPercent { get; set; }
+
+    /// <summary>Language of the invitation email and page.</summary>
+    public string Culture { get; set; } = VIHouse.Business.Options.SiteCultures.Default;
 }

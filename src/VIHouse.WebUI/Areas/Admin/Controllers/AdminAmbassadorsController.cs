@@ -37,11 +37,13 @@ public class AdminAmbassadorsController(
 
     private async Task<AdminAmbassadorEditViewModel> BuildEditModelAsync(Ambassador ambassador, AdminAmbassadorEditViewModel? form, CancellationToken ct)
     {
-        var user = await userManager.FindByIdAsync(ambassador.UserId.ToString());
+        var user = ambassador.UserId is { } userId ? await userManager.FindByIdAsync(userId.ToString()) : null;
         var model = form ?? AdminAmbassadorEditViewModel.FromEntity(ambassador, user?.Email);
+        model.Ambassador = ambassador;
+        model.AccountName = user is null ? null : $"{user.FirstName} {user.LastName}".Trim();
         model.Id = ambassador.Id;
         model.Code = ambassador.Code;
-        model.Email = user?.Email;
+        model.Email = user?.Email ?? ambassador.InviteEmail;
         model.UserId = ambassador.UserId;
         model.CreatedAt = ambassador.CreatedAt;
         model.ReferralUrl = ReferralUrlFor(ambassador.Code);
@@ -83,26 +85,19 @@ public class AdminAmbassadorsController(
         if (!ModelState.IsValid) return View(form);
 
         var (adminId, ip) = CurrentActor();
-        var result = await ambassadorService.CreateAsync(form.Email.Trim(), form.Name.Trim(), form.Code.Trim(), form.CommissionPercent, adminId, ip, ct);
+        var result = await ambassadorService.InviteAsync(
+            new AmbassadorInvite(form.Email.Trim(), form.Name.Trim(), form.Code.Trim().ToUpperInvariant(), form.CommissionPercent, form.Culture),
+            adminId, ip, ct);
         if (!result.Success)
         {
             ModelState.AddModelError(string.Empty, result.Error!);
+            if (result.UserId is { } existingUserId) ViewData["ExistingUserId"] = existingUserId;
             return View(form);
         }
 
-        var user = await userManager.FindByIdAsync(result.UserId!.Value.ToString());
-        string? passwordSetupUrl = null;
-        if (user is not null)
-        {
-            var rawToken = await userManager.GeneratePasswordResetTokenAsync(user);
-            var encodedCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(rawToken));
-            passwordSetupUrl = Url.Page("/Account/ResetPassword", pageHandler: null,
-                values: new { area = "Identity", code = encodedCode }, protocol: Request.Scheme);
-        }
-
-        TempData["StatusMessage"] = passwordSetupUrl is null
-            ? $"\"{form.Name}\" created."
-            : $"\"{form.Name}\" created. Share this password-setup link with them: {passwordSetupUrl}";
+        // The link itself is never shown here — it only exists in the email.
+        TempData["StatusMessage"] = result.Error
+            ?? $"Invitation sent to {form.Email.Trim()}. The code {result.Ambassador!.Code} is reserved; the links go live once they accept.";
         return RedirectToAction(nameof(Edit), new { id = result.Ambassador!.Id });
     }
 
@@ -128,7 +123,13 @@ public class AdminAmbassadorsController(
         var ambassador = await ambassadorService.GetByIdAsync(id, ct);
         if (ambassador is null) return NotFound();
 
-        var user = await userManager.FindByIdAsync(ambassador.UserId.ToString());
+        if (ambassador.Status == AmbassadorStatus.Pending)
+        {
+            TempData["StatusMessage"] = "The referral link does not work until they accept the invitation.";
+            return RedirectToAction(nameof(Edit), new { id });
+        }
+
+        var user = ambassador.UserId is { } userId ? await userManager.FindByIdAsync(userId.ToString()) : null;
         if (user?.Email is null)
         {
             TempData["StatusMessage"] = "This ambassador has no email address on their account.";
@@ -147,6 +148,43 @@ public class AdminAmbassadorsController(
             ? $"Link sent to {user.Email}."
             : $"The email to {user.Email} could not be sent — check Emails & SMS for the error. The link is still {referralUrl}.";
         return RedirectToAction(nameof(Edit), new { id });
+    }
+
+    /// <summary>New link and expiry for a pending invitation; the old link stops working. The
+    /// address and language can be corrected here — the fix for a mistyped email.</summary>
+    [HttpPost("{id:guid}/resend-invite")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = AdminSections.RolesFor.Marketing)]
+    public async Task<IActionResult> ResendInvite(Guid id, string? email, string? culture, CancellationToken ct)
+    {
+        if (!string.IsNullOrWhiteSpace(email) && !new System.ComponentModel.DataAnnotations.EmailAddressAttribute().IsValid(email.Trim()))
+        {
+            TempData["StatusMessage"] = $"\"{email}\" is not an email address.";
+            return RedirectToAction(nameof(Edit), new { id });
+        }
+
+        var (adminId, ip) = CurrentActor();
+        var result = await ambassadorService.ResendInviteAsync(id, email, culture, adminId, ip, ct);
+        TempData["StatusMessage"] = !result.Success
+            ? result.Error + (result.UserId is { } existing ? $" ({Url.Action("Details", "AdminUsers", new { id = existing })})" : "")
+            : result.Error ?? $"A new invitation is on its way to {result.Ambassador!.InviteEmail}. The previous link no longer works.";
+        return RedirectToAction(nameof(Edit), new { id });
+    }
+
+    /// <summary>Cancels a pending invitation and frees the code.</summary>
+    [HttpPost("{id:guid}/withdraw-invite")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = AdminSections.RolesFor.Marketing)]
+    public async Task<IActionResult> WithdrawInvite(Guid id, CancellationToken ct)
+    {
+        var (adminId, ip) = CurrentActor();
+        if (!await ambassadorService.WithdrawInviteAsync(id, adminId, ip, ct))
+        {
+            TempData["StatusMessage"] = "Only a pending invitation can be withdrawn.";
+            return RedirectToAction(nameof(Edit), new { id });
+        }
+        TempData["StatusMessage"] = "Invitation withdrawn; the code is free again.";
+        return RedirectToAction(nameof(Index));
     }
 
     /// <summary>

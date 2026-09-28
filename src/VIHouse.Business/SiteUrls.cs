@@ -92,6 +92,8 @@ public static class SiteUrls
 
     // Referral links — one per thing an ambassador promotes (see ReferralController).
     public static string Referral(string code) => $"/r/{code}";
+    /// <summary>Where an invited ambassador accepts (AmbassadorInviteController). The token is the key.</summary>
+    public static string AmbassadorInvite(string token) => $"{Ambassador}/invite/{token}";
     public static string ReferralExperience(string code, string slug) => $"/r/{code}/e/{slug}";
     public static string ReferralSession(string code, string slug) => $"/r/{code}/s/{slug}";
 

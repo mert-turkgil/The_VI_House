@@ -1,41 +1,59 @@
 @model AdminAmbassadorCreateViewModel
 @{
-    ViewData["Title"] = "New Ambassador";
+    ViewData["Title"] = "Invite an Ambassador";
 }
 
-<form asp-action="Create" method="post" class="admin-form">
-    <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+<div class="admin-card" style="max-width:760px;">
+    <p class="admin-hint" style="margin-top:0;">
+        For someone <strong>without</strong> a VI House account. They get an email with a personal link, valid for
+        @((int)VIHouse.Business.Abstract.IAmbassadorService.InviteLifetime.TotalDays) days. Following it they choose a password,
+        give their real name, billing address and bank details, and accept the ambassador terms (rate, payouts, refunds).
+        Their links and QR codes start working only after that. You never see the link; if it expires, re-send it from their page.
+    </p>
+    <p class="admin-hint">
+        Someone who already has an account is made an ambassador from their user record instead (Users &rarr; the person &rarr; “Make ambassador”).
+    </p>
 
-    <div class="admin-field">
-        <label asp-for="Email">Email</label>
-        <input asp-for="Email" />
-        <span asp-validation-for="Email" class="field-validation-error"></span>
-        <p style="font-size:0.75rem; color:#999; margin:4px 0 0;">If an account with this email already exists, it's reused (and given the Ambassador role) instead of creating a new one.</p>
-    </div>
+    <form asp-action="Create" method="post" class="admin-form">
+        <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+        @if (ViewData["ExistingUserId"] is Guid existingUserId)
+        {
+            <p class="admin-status-message"><a asp-controller="AdminUsers" asp-action="Details" asp-route-id="@existingUserId">Open their user record &rarr;</a></p>
+        }
 
-    <div class="admin-form__grid">
-        <div class="admin-field">
-            <label asp-for="Name"></label>
-            <input asp-for="Name" />
-            <span asp-validation-for="Name" class="field-validation-error"></span>
+        <div class="admin-form__grid">
+            <div class="admin-field">
+                <label asp-for="Name">Display name</label>
+                <input asp-for="Name" />
+                <span asp-validation-for="Name" class="field-validation-error"></span>
+            </div>
+            <div class="admin-field">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" type="email" />
+                <span asp-validation-for="Email" class="field-validation-error"></span>
+            </div>
+            <div class="admin-field">
+                <label asp-for="Code">Code (used as /r/{code})</label>
+                <input asp-for="Code" placeholder="ANTON" />
+                <span asp-validation-for="Code" class="field-validation-error"></span>
+            </div>
+            <div class="admin-field">
+                <label asp-for="CommissionPercent">Commission %</label>
+                <input asp-for="CommissionPercent" type="number" step="0.01" min="0" max="100" />
+                <span asp-validation-for="CommissionPercent" class="field-validation-error"></span>
+            </div>
+            <div class="admin-field">
+                <label asp-for="Culture">Language of the invitation</label>
+                <select asp-for="Culture" asp-items="@(SiteCultures.All.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem(c.NativeLabel, c.Name)))"></select>
+            </div>
         </div>
-        <div class="admin-field">
-            <label asp-for="Code">Code (used as /r/{code})</label>
-            <input asp-for="Code" placeholder="ANTON" />
-            <span asp-validation-for="Code" class="field-validation-error"></span>
-        </div>
-        <div class="admin-field">
-            <label asp-for="CommissionPercent">Commission %</label>
-            <input asp-for="CommissionPercent" type="number" step="0.01" />
-            <span asp-validation-for="CommissionPercent" class="field-validation-error"></span>
-        </div>
-    </div>
 
-    <div>
-        <button type="submit" class="admin-btn">Create Ambassador</button>
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
-    </div>
-</form>
+        <div>
+            <button type="submit" class="admin-btn">Send invitation</button>
+            <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

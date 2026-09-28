@@ -1,0 +1,21 @@
+@model VIHouse.WebUI.Controllers.AmbassadorInviteGateViewModel
+
+<div class="container">
+    <div class="ambassador-invite__panel">
+        <span class="join__eyebrow">@Loc["AmbassadorInvite.Eyebrow"]</span>
+        @if (Model.Gate == VIHouse.WebUI.Controllers.AmbassadorInviteGate.SignIn)
+        {
+            <h1>@Loc["AmbassadorInvite.Gate.SignInHeading"]</h1>
+            <p>@Loc["AmbassadorInvite.Gate.SignInBody", Model.Email]</p>
+            <a class="btn btn--primary" href="@VIHouse.Business.SiteUrls.LoginReturningTo(Model.ReturnUrl)">@Loc["Nav.LogIn"]</a>
+        }
+        else
+        {
+            <h1>@Loc["AmbassadorInvite.Gate.WrongHeading"]</h1>
+            <p>@Loc["AmbassadorInvite.Gate.WrongBody", Model.Email]</p>
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <button type="submit" class="btn btn--primary">@Loc["AmbassadorInvite.Gate.SignOut"]</button>
+            </form>
+        }
+    </div>
+</div>

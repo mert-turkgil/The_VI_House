@@ -1659,4 +1659,70 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Email.SecurityAlert.NewSignIn.Title" xml:space="preserve"><value>New sign-in to your account</value></data>
   <data name="Email.SecurityAlert.NewSignIn.Detail" xml:space="preserve"><value>Your VI House account was just signed in to from an address it has not used in the last thirty days. If that was you — a new phone, a trip, a different network — there is nothing to do.</value></data>
   <data name="Email.SecurityAlert.NewSignIn.Action" xml:space="preserve"><value>Change your password</value></data>
+  <data name="Email.AmbassadorInvite.Subject" xml:space="preserve"><value>You're invited to be a VI House ambassador</value></data>
+  <data name="Email.AmbassadorInvite.Preheader" xml:space="preserve"><value>Accept your invitation to activate your personal referral link.</value></data>
+  <data name="Email.AmbassadorInvite.Heading" xml:space="preserve"><value>An invitation to be an ambassador</value></data>
+  <data name="Email.AmbassadorInvite.Body1" xml:space="preserve"><value>The VI House would like you to represent us. You'll have your own referral link and code, and earn commission on every ticket, membership and session bought through them.</value></data>
+  <data name="Email.AmbassadorInvite.StepsIntro" xml:space="preserve"><value>The link below takes you to one page where you:</value></data>
+  <data name="Email.AmbassadorInvite.Step1" xml:space="preserve"><value>choose a password for your account,</value></data>
+  <data name="Email.AmbassadorInvite.Step2" xml:space="preserve"><value>give your billing address and the bank account commission should be paid to,</value></data>
+  <data name="Email.AmbassadorInvite.Step3" xml:space="preserve"><value>read and accept the ambassador terms. Your link and QR codes start working straight after.</value></data>
+  <data name="Email.AmbassadorInvite.Button" xml:space="preserve"><value>Accept the invitation</value></data>
+  <data name="Email.AmbassadorInvite.ValidUntilLabel" xml:space="preserve"><value>Link valid until</value></data>
+  <data name="Email.AmbassadorInvite.Expiry" xml:space="preserve"><value>The link is personal and works once. If it runs out before you get to it, reply to this email and we'll send a new one.</value></data>
+  <data name="Email.AmbassadorInvite.Footnote" xml:space="preserve"><value>You're receiving this because The VI House invited this address to its ambassador programme. If you weren't expecting it, ignore it — nothing happens unless the link is used.</value></data>
+  <data name="Email.AmbassadorInvite.Signoff" xml:space="preserve"><value>We look forward to working with you.</value></data>
+  <data name="AmbassadorInvite.Title" xml:space="preserve"><value>Ambassador invitation</value></data>
+  <data name="AmbassadorInvite.Eyebrow" xml:space="preserve"><value>Ambassador programme</value></data>
+  <data name="AmbassadorInvite.Heading" xml:space="preserve"><value>Welcome, {0}</value></data>
+  <data name="AmbassadorInvite.Lede" xml:space="preserve"><value>Four short parts, then your referral link and QR codes go live.</value></data>
+  <data name="AmbassadorInvite.Fact.Code" xml:space="preserve"><value>Your code</value></data>
+  <data name="AmbassadorInvite.Fact.Rate" xml:space="preserve"><value>Commission</value></data>
+  <data name="AmbassadorInvite.Fact.Email" xml:space="preserve"><value>Account email</value></data>
+  <data name="AmbassadorInvite.Fact.Expires" xml:space="preserve"><value>Link valid until</value></data>
+  <data name="AmbassadorInvite.Section.You" xml:space="preserve"><value>You and your password</value></data>
+  <data name="AmbassadorInvite.NameHint" xml:space="preserve"><value>Your legal name, as on your bank account — commission is paid to it.</value></data>
+  <data name="AmbassadorInvite.Password" xml:space="preserve"><value>Choose a password</value></data>
+  <data name="AmbassadorInvite.ConfirmPassword" xml:space="preserve"><value>Repeat the password</value></data>
+  <data name="AmbassadorInvite.SignedIn" xml:space="preserve"><value>You're signed in as {0}; your existing password stays as it is.</value></data>
+  <data name="AmbassadorInvite.Section.Billing" xml:space="preserve"><value>Billing address</value></data>
+  <data name="AmbassadorInvite.TaxId" xml:space="preserve"><value>VAT / tax number (optional)</value></data>
+  <data name="AmbassadorInvite.TaxIdHint" xml:space="preserve"><value>Only if you invoice as a business.</value></data>
+  <data name="AmbassadorInvite.Section.Payout" xml:space="preserve"><value>Where we pay your commission</value></data>
+  <data name="AmbassadorInvite.PayoutHint" xml:space="preserve"><value>Commission is paid by bank transfer. Only the House's finance team sees these details.</value></data>
+  <data name="AmbassadorInvite.AccountHolder" xml:space="preserve"><value>Account holder</value></data>
+  <data name="AmbassadorInvite.Bic" xml:space="preserve"><value>BIC / SWIFT (optional)</value></data>
+  <data name="AmbassadorInvite.Section.Terms" xml:space="preserve"><value>Ambassador terms</value></data>
+  <data name="AmbassadorInvite.Terms.Commission" xml:space="preserve"><value>Commission. You earn {0}% of the amount paid for every ticket, membership or session bought through your link or code, at the rate in force on the day of the sale.</value></data>
+  <data name="AmbassadorInvite.Terms.Payouts" xml:space="preserve"><value>Payouts. Commission is paid by bank transfer to the account you give on this page. Every payout is recorded, and your ambassador page shows what you have earned, what has been paid and what is still owed.</value></data>
+  <data name="AmbassadorInvite.Terms.Refunds" xml:space="preserve"><value>Refunds. If a purchase is refunded, in full or in part, the commission on it is reversed in the same proportion. If that commission has already been paid to you, the amount is deducted from your next payout, or repaid to the House if no further payout is due.</value></data>
+  <data name="AmbassadorInvite.Terms.OwnPurchases" xml:space="preserve"><value>Your own purchases. Purchases you make yourself through your own link or code earn no commission unless the House agrees in writing. The House may withdraw commission on purchases that are fraudulent or were not genuinely referred, and will tell you why.</value></data>
+  <data name="AmbassadorInvite.Terms.Changes" xml:space="preserve"><value>Changes. The House will tell you before changing your commission rate. Sales already made keep the rate they were made at.</value></data>
+  <data name="AmbassadorInvite.Terms.Privacy" xml:space="preserve"><value>Privacy. You see counts and amounts only, never the names or contact details of the people you refer. The House keeps your bank details only to pay you.</value></data>
+  <data name="AmbassadorInvite.Accept" xml:space="preserve"><value>I have read and accept the ambassador terms above.</value></data>
+  <data name="AmbassadorInvite.Submit" xml:space="preserve"><value>Accept and activate my link</value></data>
+  <data name="AmbassadorInvite.Welcome" xml:space="preserve"><value>You're an ambassador now — your links and QR codes are live.</value></data>
+  <data name="AmbassadorInvite.Gate.SignInHeading" xml:space="preserve"><value>Sign in to accept</value></data>
+  <data name="AmbassadorInvite.Gate.SignInBody" xml:space="preserve"><value>{0} already has a VI House account. Sign in with it and you'll come straight back here.</value></data>
+  <data name="AmbassadorInvite.Gate.WrongHeading" xml:space="preserve"><value>This invitation is for another account</value></data>
+  <data name="AmbassadorInvite.Gate.WrongBody" xml:space="preserve"><value>It was sent to {0}, but this browser is signed in as someone else. Sign out and open the link again.</value></data>
+  <data name="AmbassadorInvite.Gate.SignOut" xml:space="preserve"><value>Sign out</value></data>
+  <data name="AmbassadorInvite.Expired.Heading" xml:space="preserve"><value>This invitation has expired</value></data>
+  <data name="AmbassadorInvite.Expired.Body" xml:space="preserve"><value>Reply to the invitation email and the House will send you a new link. Your code is still reserved for you.</value></data>
+  <data name="AmbassadorInvite.Invalid.Heading" xml:space="preserve"><value>This link isn't valid</value></data>
+  <data name="AmbassadorInvite.Invalid.Body" xml:space="preserve"><value>It may already have been used, or replaced by a newer invitation. Use the most recent email from The VI House.</value></data>
+  <data name="AmbassadorInvite.Home" xml:space="preserve"><value>Go to the homepage</value></data>
+  <data name="AmbassadorInvite.Error.FirstName" xml:space="preserve"><value>Enter your first name.</value></data>
+  <data name="AmbassadorInvite.Error.LastName" xml:space="preserve"><value>Enter your last name.</value></data>
+  <data name="AmbassadorInvite.Error.Password" xml:space="preserve"><value>Choose a password.</value></data>
+  <data name="AmbassadorInvite.Error.PasswordMismatch" xml:space="preserve"><value>The two passwords don't match.</value></data>
+  <data name="AmbassadorInvite.Error.Address" xml:space="preserve"><value>Enter your address.</value></data>
+  <data name="AmbassadorInvite.Error.City" xml:space="preserve"><value>Enter your city.</value></data>
+  <data name="AmbassadorInvite.Error.PostalCode" xml:space="preserve"><value>Enter your postal code.</value></data>
+  <data name="AmbassadorInvite.Error.Country" xml:space="preserve"><value>Choose your country.</value></data>
+  <data name="AmbassadorInvite.Error.AccountHolder" xml:space="preserve"><value>Enter the name on the bank account.</value></data>
+  <data name="AmbassadorInvite.Error.Iban" xml:space="preserve"><value>Enter your IBAN.</value></data>
+  <data name="AmbassadorInvite.Error.IbanInvalid" xml:space="preserve"><value>That IBAN doesn't check out — look for a missing or swapped character.</value></data>
+  <data name="AmbassadorInvite.Error.Bic" xml:space="preserve"><value>A BIC has 8 or 11 letters and digits.</value></data>
+  <data name="AmbassadorInvite.Error.Terms" xml:space="preserve"><value>Accept the terms to continue.</value></data>
 </root>

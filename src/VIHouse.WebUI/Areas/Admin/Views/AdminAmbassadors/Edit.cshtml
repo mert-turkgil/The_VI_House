@@ -1,6 +1,9 @@
 @model AdminAmbassadorEditViewModel
 @{
     ViewData["Title"] = Model.Name;
+    var amb = Model.Ambassador;
+    var pending = Model.Status == AmbassadorStatus.Pending;
+    var inviteExpired = pending && amb.InviteExpiresAt < DateTimeOffset.UtcNow;
     var stats = Model.Stats;
     var purchases = stats?.Purchases ?? 0;
     var titleByTarget = stats?.Targets.ToDictionary(t => (t.Kind, t.Id), t => t.Title) ?? [];
@@ -24,17 +27,72 @@
 
 <div class="admin-toolbar" style="justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
     <div style="display:flex; align-items:center; gap:10px;">
-        <span class="admin-badge @(Model.Status == AmbassadorStatus.Active ? "admin-badge--open" : "admin-badge--draft")">@Model.Status</span>
+        @if (pending)
+        {
+            <span class="admin-badge @(inviteExpired ? "admin-badge--danger" : "admin-badge--pending")">@(inviteExpired ? "Invitation expired" : "Invited — waiting for them")</span>
+        }
+        else
+        {
+            <span class="admin-badge @(Model.Status == AmbassadorStatus.Active ? "admin-badge--open" : "admin-badge--draft")">@Model.Status</span>
+        }
         <span class="admin-table__sub">Ambassador since @Model.CreatedAt.ToString("d MMM yyyy")</span>
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <a class="admin-btn admin-btn--ghost" asp-controller="AdminUsers" asp-action="Details" asp-route-id="@Model.UserId">Open user record</a>
+        @if (Model.UserId is { } userId)
+        {
+            <a class="admin-btn admin-btn--ghost" asp-controller="AdminUsers" asp-action="Details" asp-route-id="@userId">Open user record</a>
+        }
         <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; All ambassadors</a>
     </div>
 </div>
 
 <div class="admin-review-grid">
     <div class="admin-review-main">
+        @if (pending)
+        {
+            <div class="admin-card">
+                <h2>Invitation</h2>
+                <p class="admin-hint" style="margin-top:0;">
+                    @Model.Name has not accepted yet. There is no account behind this code, and the code <code>@Model.Code</code> is reserved.
+                    The referral link and QR codes do not work until they choose a password, give their details and accept the terms.
+                </p>
+                <dl class="admin-detail-list">
+                    <div><dt>Sent to</dt><dd>@amb.InviteEmail</dd></div>
+                    <div><dt>Language</dt><dd>@SiteCultures.Describe(amb.PreferredCulture).NativeLabel</dd></div>
+                    <div><dt>Last sent</dt><dd>@amb.InviteSentAt?.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
+                    <div><dt>@(inviteExpired ? "Expired" : "Expires")</dt><dd>@amb.InviteExpiresAt?.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
+                </dl>
+                @if (User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin) || User.IsInRole(VIHouse.DataAccess.Identity.Roles.Marketing))
+                {
+                    <form asp-action="ResendInvite" asp-route-id="@Model.Id" method="post" class="admin-form" style="margin-top:12px;">
+                        <div class="admin-form__grid">
+                            <div class="admin-field">
+                                <label for="resend-email">Email</label>
+                                <input id="resend-email" name="email" type="email" value="@amb.InviteEmail" maxlength="256" />
+                                <p class="admin-field__hint">Correct it here if it was mistyped.</p>
+                            </div>
+                            <div class="admin-field">
+                                <label for="resend-culture">Language</label>
+                                <select id="resend-culture" name="culture">
+                                    @foreach (var c in SiteCultures.All)
+                                    {
+                                        <option value="@c.Name" selected="@(c.Name == SiteCultures.Normalise(amb.PreferredCulture))">@c.NativeLabel</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="admin-btn">Re-send invitation</button>
+                        <span class="admin-table__sub">A new link, valid for @((int)VIHouse.Business.Abstract.IAmbassadorService.InviteLifetime.TotalDays) days. The previous one stops working.</span>
+                    </form>
+                    <form asp-action="WithdrawInvite" asp-route-id="@Model.Id" method="post" style="margin-top:12px;"
+                          onsubmit="return confirm('Withdraw the invitation and free the code @Model.Code?');">
+                        <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Withdraw invitation</button>
+                    </form>
+                }
+            </div>
+        }
+        else
+        {
 
         @* --- The link ------------------------------------------------------------------------ *@
         <div class="admin-card referral-card">
@@ -292,6 +350,7 @@
                 </section>
             </div>
         </div>
+        }
     </div>
 
     <div class="admin-review-side">
@@ -403,13 +462,24 @@
                 <div class="admin-field">
                     <label asp-for="CommissionPercent">Commission %</label>
                     <input asp-for="CommissionPercent" type="number" step="0.01" min="0" max="100" />
-                    <p class="admin-field__hint">Applied to every purchase attributed to the link, at the rate in force when it happens.</p>
+                    <p class="admin-field__hint">Applied to every purchase attributed to the link, at the rate in force when it happens.@(pending ? " The invitation page shows the rate as it is when they accept." : "")</p>
                     <span asp-validation-for="CommissionPercent" class="field-validation-error"></span>
                 </div>
                 <div class="admin-field">
                     <label asp-for="Status"></label>
-                    <select asp-for="Status" asp-items="Html.GetEnumSelectList<AmbassadorStatus>()"></select>
-                    <p class="admin-field__hint">Inactive: visits to the link stop being recorded; the account and history stay.</p>
+                    @if (pending)
+                    {
+                        <input type="hidden" asp-for="Status" />
+                        <p style="margin:0;">Pending — becomes Active when they accept the invitation.</p>
+                    }
+                    else
+                    {
+                        <select asp-for="Status">
+                            <option value="@AmbassadorStatus.Active">Active</option>
+                            <option value="@AmbassadorStatus.Inactive">Inactive</option>
+                        </select>
+                        <p class="admin-field__hint">Inactive: visits to the link stop being recorded; the account and history stay.</p>
+                    }
                 </div>
                 @if (User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin) || User.IsInRole(VIHouse.DataAccess.Identity.Roles.Marketing))
                 {
@@ -421,11 +491,67 @@
         <div class="admin-card">
             <h2>Account</h2>
             <dl class="admin-detail-list">
-                <div><dt>Email</dt><dd>@(Model.Email ?? "—")</dd></div>
+                <div><dt>Email</dt><dd>@(Model.Email ?? "—")@if (Model.UserId is null) { <span class="admin-table__sub"> (invited — no account yet)</span> }</dd></div>
+                @if (Model.AccountName is { Length: > 0 } realName)
+                {
+                    <div><dt>Name on account</dt><dd>@realName</dd></div>
+                }
                 <div><dt>Code</dt><dd><code>@Model.Code</code> <span class="admin-table__sub">(fixed — links already shared depend on it)</span></dd></div>
                 <div><dt>Their dashboard</dt><dd><a asp-area="" asp-controller="Ambassador" asp-action="Index" target="_blank" rel="noopener">/ambassador</a> <span class="admin-table__sub">(what they see when signed in)</span></dd></div>
             </dl>
         </div>
+
+        @if (!pending)
+        {
+            <div class="admin-card">
+                <h2>Terms</h2>
+                @if (amb.TermsAcceptedAt is { } accepted)
+                {
+                    <dl class="admin-detail-list">
+                        <div><dt>Accepted</dt><dd>@accepted.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
+                        <div><dt>Version</dt><dd>@amb.TermsVersion</dd></div>
+                        <div><dt>Rate in the terms</dt><dd>@amb.TermsCommissionPercent?.ToString("0.##")%</dd></div>
+                    </dl>
+                    @if (amb.TermsCommissionPercent is { } agreed && agreed != amb.CommissionPercent)
+                    {
+                        <p class="admin-hint" style="color:var(--vih-danger);">The rate is now @amb.CommissionPercent.ToString("0.##")%, not the @agreed.ToString("0.##")% they accepted. Agree the change with them in writing.</p>
+                    }
+                }
+                else
+                {
+                    <p class="admin-hint" style="margin-top:0;">No ambassador terms on record — this ambassador was set up from an existing account, before terms were collected, or by hand.</p>
+                }
+            </div>
+
+            <div class="admin-card">
+                <h2>Billing &amp; payout</h2>
+                @if (amb.HasPayoutDetails)
+                {
+                    <dl class="admin-detail-list">
+                        <div><dt>Account holder</dt><dd>@amb.PayoutAccountHolder</dd></div>
+                        <div><dt>IBAN</dt><dd><code>@(Model.CanSettle ? VIHouse.Business.Concrete.Iban.Format(amb.PayoutIban) : VIHouse.Business.Concrete.Iban.Mask(amb.PayoutIban))</code></dd></div>
+                        @if (Model.CanSettle && amb.PayoutBic is not null)
+                        {
+                            <div><dt>BIC</dt><dd><code>@amb.PayoutBic</code></dd></div>
+                        }
+                        <div><dt>Billing address</dt><dd>@amb.BillingAddressLine1@if (amb.BillingAddressLine2 is not null) { <br />@amb.BillingAddressLine2 }<br />@amb.BillingPostalCode @amb.BillingCity<br />@Countries.NameFor(amb.BillingCountry)</dd></div>
+                        @if (amb.TaxId is not null)
+                        {
+                            <div><dt>Tax / VAT id</dt><dd>@amb.TaxId</dd></div>
+                        }
+                        <div><dt>Given</dt><dd>@amb.PayoutDetailsUpdatedAt?.ToLocalTime().ToString("d MMM yyyy")</dd></div>
+                    </dl>
+                    @if (!Model.CanSettle)
+                    {
+                        <p class="admin-hint">Full bank details are shown to Finance.</p>
+                    }
+                }
+                else
+                {
+                    <p class="admin-hint" style="margin-top:0;">No payout details on record. Ask for them before recording a payout.</p>
+                }
+            </div>
+        }
     </div>
 </div>
 

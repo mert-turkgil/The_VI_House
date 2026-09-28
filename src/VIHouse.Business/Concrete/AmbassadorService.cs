@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Options;
 using VIHouse.Entities.Notifications;
+using VIHouse.Entities.Compliance;
 
 namespace VIHouse.Business.Concrete;
 
@@ -26,6 +27,7 @@ public class AmbassadorService(
     IAuditLogRepository auditLogs,
     IRepository<ReferralConversion> conversions,
     IRepository<ReferralPayout> payouts,
+    IRepository<ConsentRecord> consents,
     IExperienceRepository experiences,
     ISeminarRepository seminars,
     ISeminarEnrollmentRepository seminarEnrollments,
@@ -58,7 +60,7 @@ public class AmbassadorService(
 
             // Buying through your own link is flagged, not refused: the purchase is real, and
             // whether it earns commission is the House's call before the payout.
-            var ambassadorUser = await userManager.FindByIdAsync(ambassador.UserId.ToString());
+            var ambassadorUser = ambassador.UserId is { } ambassadorUserId ? await userManager.FindByIdAsync(ambassadorUserId.ToString()) : null;
             var selfReferral = (buyerUserId is { } buyer && buyer == ambassador.UserId)
                 || (!string.IsNullOrWhiteSpace(buyerEmail) && ambassadorUser?.Email is { } ownEmail
                     && string.Equals(buyerEmail.Trim(), ownEmail, StringComparison.OrdinalIgnoreCase));
@@ -93,7 +95,8 @@ public class AmbassadorService(
             var amountText = amountMinor is { } a && currency is not null ? FormatMoney(a, currency) : null;
             var commissionText = commission is { } c && currency is not null ? FormatMoney(c, currency) : null;
 
-            await notificationService.CreateForUserAsync(ambassador.UserId, NotificationType.ReferralConverted,
+            if (ambassador.UserId is { } notifyUserId)
+                await notificationService.CreateForUserAsync(notifyUserId, NotificationType.ReferralConverted,
                 "Your link just worked",
                 amountText is null ? what : $"{what} {amountText}{(commissionText is null ? "" : $" — your commission {commissionText}")}.",
                 SiteUrls.Ambassador, ct);
@@ -146,35 +149,16 @@ public class AmbassadorService(
 
     public Task<Ambassador?> GetByUserIdAsync(Guid userId, CancellationToken ct = default) => ambassadors.GetByUserIdAsync(userId, ct);
 
-    public async Task<AmbassadorCreationResult> CreateAsync(
-        string email, string name, string code, decimal commissionPercent, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    public async Task<AmbassadorCreationResult> CreateForUserAsync(
+        Guid userId, string name, string code, decimal commissionPercent, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
         if (await ambassadors.GetByCodeAsync(code, ct) is not null)
             return AmbassadorCreationResult.Fail($"Code \"{code}\" is already in use.");
 
-        var user = await userManager.FindByEmailAsync(email);
-        if (user is null)
-        {
-            user = new ApplicationUser
-            {
-                UserName = email,
-                Email = email,
-                EmailConfirmed = true,
-                FirstName = name,
-                LastName = "",
-                Country = "GB",
-                MemberStatus = Entities.Users.MemberStatus.Active,
-            };
-
-            // Random, never-communicated password — same reasoning as PaymentService.ProvisionMemberAccountAsync:
-            // the admin shares a password-reset link instead (built by the caller, see AdminAmbassadorsController).
-            var temporaryPassword = RandomNumberGenerator.GetString(
-                "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!#%", 24);
-
-            var result = await userManager.CreateAsync(user, temporaryPassword);
-            if (!result.Succeeded)
-                return AmbassadorCreationResult.Fail(string.Join("; ", result.Errors.Select(e => e.Description)));
-        }
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null) return AmbassadorCreationResult.Fail("That account no longer exists.");
+        if (await ambassadors.GetByUserIdAsync(userId, ct) is not null)
+            return AmbassadorCreationResult.Fail("They already have a referral link.");
 
         if (!await userManager.IsInRoleAsync(user, Roles.Ambassador))
             await userManager.AddToRoleAsync(user, Roles.Ambassador);
@@ -186,12 +170,232 @@ public class AmbassadorService(
             Name = name,
             CommissionPercent = commissionPercent,
             Status = AmbassadorStatus.Active,
+            ActivatedAt = DateTimeOffset.UtcNow,
         };
         await ambassadors.AddAsync(ambassador, ct);
-        await LogAsync("AmbassadorCreated", ambassador.Id, adminUserId, ipAddress, null, new { ambassador.Code, ambassador.Name }, ct);
+        await LogAsync("AmbassadorCreated", ambassador.Id, adminUserId, ipAddress, null, new { ambassador.Code, ambassador.Name, ambassador.CommissionPercent }, ct);
         await ambassadors.SaveChangesAsync(ct);
 
         return AmbassadorCreationResult.Ok(ambassador, user.Id);
+    }
+
+    public async Task<AmbassadorCreationResult> InviteAsync(AmbassadorInvite invite, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var email = invite.Email.Trim();
+        if (await ambassadors.GetByCodeAsync(invite.Code, ct) is not null)
+            return AmbassadorCreationResult.Fail($"Code \"{invite.Code}\" is already in use.");
+        if (await userManager.FindByEmailAsync(email) is { } existing)
+            return AmbassadorCreationResult.ExistingAccount(existing.Id);
+        if (await ambassadors.GetPendingByInviteEmailAsync(email, ct) is { } pending)
+            return AmbassadorCreationResult.Fail($"{email} already has a pending invitation (code {pending.Code}). Re-send that one instead.");
+
+        var ambassador = new Ambassador
+        {
+            Code = invite.Code,
+            Name = invite.Name,
+            CommissionPercent = invite.CommissionPercent,
+            Status = AmbassadorStatus.Pending,
+            InviteEmail = email,
+            PreferredCulture = SiteCultures.Normalise(invite.Culture),
+        };
+        var token = NewInviteToken(ambassador);
+        await ambassadors.AddAsync(ambassador, ct);
+        await LogAsync("AmbassadorInvited", ambassador.Id, adminUserId, ipAddress, null,
+            new { ambassador.Code, ambassador.Name, ambassador.CommissionPercent, ambassador.InviteEmail, ambassador.InviteExpiresAt }, ct);
+        await ambassadors.SaveChangesAsync(ct);
+
+        var sent = await SendInviteAsync(ambassador, token, ct);
+        return sent ? AmbassadorCreationResult.Ok(ambassador, null) : AmbassadorCreationResult.SavedButNotSent(ambassador);
+    }
+
+    public async Task<AmbassadorCreationResult> ResendInviteAsync(Guid ambassadorId, string? email, string? culture, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        if (ambassador is null || ambassador.Status != AmbassadorStatus.Pending)
+            return AmbassadorCreationResult.Fail("Only a pending invitation can be re-sent.");
+
+        var before = new { ambassador.InviteEmail, ambassador.PreferredCulture, ambassador.InviteExpiresAt };
+        if (!string.IsNullOrWhiteSpace(email) && !string.Equals(email.Trim(), ambassador.InviteEmail, StringComparison.OrdinalIgnoreCase))
+        {
+            var corrected = email.Trim();
+            if (await userManager.FindByEmailAsync(corrected) is { } existing)
+                return AmbassadorCreationResult.ExistingAccount(existing.Id);
+            if (await ambassadors.GetPendingByInviteEmailAsync(corrected, ct) is { } other && other.Id != ambassador.Id)
+                return AmbassadorCreationResult.Fail($"{corrected} already has a pending invitation (code {other.Code}).");
+            ambassador.InviteEmail = corrected;
+        }
+        if (!string.IsNullOrWhiteSpace(culture)) ambassador.PreferredCulture = SiteCultures.Normalise(culture);
+
+        var token = NewInviteToken(ambassador);
+        ambassador.UpdatedAt = DateTimeOffset.UtcNow;
+        await LogAsync("AmbassadorInviteResent", ambassador.Id, adminUserId, ipAddress, before,
+            new { ambassador.InviteEmail, ambassador.PreferredCulture, ambassador.InviteExpiresAt }, ct);
+        await ambassadors.SaveChangesAsync(ct);
+
+        var sent = await SendInviteAsync(ambassador, token, ct);
+        return sent ? AmbassadorCreationResult.Ok(ambassador, null) : AmbassadorCreationResult.SavedButNotSent(ambassador);
+    }
+
+    public async Task<bool> WithdrawInviteAsync(Guid ambassadorId, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        if (ambassador is null || ambassador.Status != AmbassadorStatus.Pending) return false;
+
+        // A pending row has never had a visit, a conversion or a payout (all need Active), so
+        // removing it removes nothing but the reservation.
+        await LogAsync("AmbassadorInviteWithdrawn", ambassador.Id, adminUserId, ipAddress,
+            new { ambassador.Code, ambassador.Name, ambassador.InviteEmail }, null, ct);
+        ambassadors.Remove(ambassador);
+        await ambassadors.SaveChangesAsync(ct);
+        return true;
+    }
+
+    public async Task<AmbassadorInviteLookup> GetInviteAsync(string token, CancellationToken ct = default)
+    {
+        var ambassador = await FindByTokenAsync(token, ct);
+        if (ambassador is null || ambassador.Status != AmbassadorStatus.Pending)
+            return new AmbassadorInviteLookup(AmbassadorInviteState.Invalid, null, null, false, null, null, null);
+        if (ambassador.InviteExpiresAt is not { } expires || expires < DateTimeOffset.UtcNow)
+            return new AmbassadorInviteLookup(AmbassadorInviteState.Expired, ambassador, null, false, null, null, null);
+
+        var account = await userManager.FindByEmailAsync(ambassador.InviteEmail!);
+        return new AmbassadorInviteLookup(AmbassadorInviteState.Valid, ambassador, account?.Id,
+            account is not null && await userManager.HasPasswordAsync(account),
+            account?.FirstName, account?.LastName, account?.Country);
+    }
+
+    public async Task<AmbassadorAcceptResult> AcceptInviteAsync(string token, AmbassadorAcceptance form, Guid? signedInUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var lookup = await GetInviteAsync(token, ct);
+        if (lookup.State == AmbassadorInviteState.Invalid) return AmbassadorAcceptResult.Of(AmbassadorAcceptStatus.Invalid);
+        if (lookup.State == AmbassadorInviteState.Expired) return AmbassadorAcceptResult.Of(AmbassadorAcceptStatus.Expired);
+        var ambassador = lookup.Ambassador!;
+
+        // Everything checkable is checked before anything is written.
+        var errors = new List<string>();
+        if (!form.AcceptedTerms || string.IsNullOrWhiteSpace(form.TermsText)) errors.Add("Terms");
+        if (!Iban.IsValid(form.Iban)) errors.Add("Iban");
+        if (!Iban.IsValidBic(form.Bic)) errors.Add("Bic");
+        if (string.IsNullOrWhiteSpace(form.FirstName) || string.IsNullOrWhiteSpace(form.LastName)) errors.Add("Name");
+        if (string.IsNullOrWhiteSpace(form.AccountHolder)) errors.Add("AccountHolder");
+        if (errors.Count > 0) return AmbassadorAcceptResult.Reject([.. errors]);
+
+        var user = lookup.AccountId is { } accountId ? await userManager.FindByIdAsync(accountId.ToString()) : null;
+        if (user is not null && lookup.AccountHasPassword)
+        {
+            // The address already has a login. Holding the link proves the mailbox, but the account
+            // is theirs to open, not the link's: they sign in with it first.
+            if (signedInUserId is null) return AmbassadorAcceptResult.Of(AmbassadorAcceptStatus.SignInRequired);
+            if (signedInUserId != user.Id) return AmbassadorAcceptResult.Of(AmbassadorAcceptStatus.WrongAccount);
+        }
+        else if (signedInUserId is { } someoneElse && someoneElse != user?.Id)
+        {
+            return AmbassadorAcceptResult.Of(AmbassadorAcceptStatus.WrongAccount);
+        }
+        else if (string.IsNullOrEmpty(form.Password))
+        {
+            return AmbassadorAcceptResult.Reject("Password");
+        }
+
+        if (user is null)
+        {
+            user = new ApplicationUser
+            {
+                UserName = ambassador.InviteEmail,
+                Email = ambassador.InviteEmail,
+                // The only way here is the link sent to this address.
+                EmailConfirmed = true,
+                FirstName = form.FirstName.Trim(),
+                LastName = form.LastName.Trim(),
+                Country = form.Country,
+                MemberStatus = Entities.Users.MemberStatus.Active,
+                PreferredCulture = ambassador.PreferredCulture,
+            };
+            var created = await userManager.CreateAsync(user, form.Password!);
+            if (!created.Succeeded) return AmbassadorAcceptResult.Reject([.. created.Errors.Select(e => e.Description)]);
+        }
+        else
+        {
+            if (!lookup.AccountHasPassword)
+            {
+                var added = await userManager.AddPasswordAsync(user, form.Password!);
+                if (!added.Succeeded) return AmbassadorAcceptResult.Reject([.. added.Errors.Select(e => e.Description)]);
+            }
+            user.EmailConfirmed = true;
+            user.FirstName = form.FirstName.Trim();
+            user.LastName = form.LastName.Trim();
+            user.Country = form.Country;
+            user.PreferredCulture ??= ambassador.PreferredCulture;
+            await userManager.UpdateAsync(user);
+        }
+
+        if (!await userManager.IsInRoleAsync(user, Roles.Ambassador))
+            await userManager.AddToRoleAsync(user, Roles.Ambassador);
+
+        var now = DateTimeOffset.UtcNow;
+        var consent = new ConsentRecord
+        {
+            UserId = user.Id,
+            Type = ConsentType.AmbassadorTerms,
+            Granted = true,
+            Text = $"[{AmbassadorTerms.Version}] {form.TermsText}",
+            GrantedAt = now,
+            IpAddress = ipAddress,
+        };
+        await consents.AddAsync(consent, ct);
+
+        ambassador.UserId = user.Id;
+        ambassador.Status = AmbassadorStatus.Active;
+        ambassador.ActivatedAt = now;
+        ambassador.InviteTokenHash = null;
+        ambassador.TermsVersion = AmbassadorTerms.Version;
+        ambassador.TermsAcceptedAt = now;
+        ambassador.TermsConsentId = consent.Id;
+        ambassador.TermsCommissionPercent = ambassador.CommissionPercent;
+        ambassador.BillingAddressLine1 = form.AddressLine1.Trim();
+        ambassador.BillingAddressLine2 = string.IsNullOrWhiteSpace(form.AddressLine2) ? null : form.AddressLine2.Trim();
+        ambassador.BillingCity = form.City.Trim();
+        ambassador.BillingPostalCode = form.PostalCode.Trim();
+        ambassador.BillingCountry = form.Country;
+        ambassador.TaxId = string.IsNullOrWhiteSpace(form.TaxId) ? null : form.TaxId.Trim();
+        ambassador.PayoutAccountHolder = form.AccountHolder.Trim();
+        ambassador.PayoutIban = Iban.Normalize(form.Iban);
+        ambassador.PayoutBic = string.IsNullOrWhiteSpace(form.Bic) ? null : Iban.Normalize(form.Bic);
+        ambassador.PayoutDetailsUpdatedAt = now;
+        ambassador.UpdatedAt = now;
+
+        // Recorded against the ambassador's own account — they are the one acting here.
+        await LogAsync("AmbassadorActivated", ambassador.Id, user.Id, ipAddress, null,
+            new { ambassador.Code, UserId = user.Id, ambassador.TermsVersion, ambassador.TermsCommissionPercent, ConsentId = consent.Id }, ct);
+        await ambassadors.SaveChangesAsync(ct);
+
+        return new AmbassadorAcceptResult(AmbassadorAcceptStatus.Activated, user.Id, []);
+    }
+
+    /// <summary>32 random bytes, URL-safe. Only the hash is kept; a new token replaces the old one.</summary>
+    private static string NewInviteToken(Ambassador ambassador)
+    {
+        var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        ambassador.InviteTokenHash = HashToken(token);
+        ambassador.InviteSentAt = DateTimeOffset.UtcNow;
+        ambassador.InviteExpiresAt = DateTimeOffset.UtcNow + IAmbassadorService.InviteLifetime;
+        return token;
+    }
+
+    private static string HashToken(string token) => Convert.ToHexStringLower(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(token)));
+
+    private Task<Ambassador?> FindByTokenAsync(string token, CancellationToken ct) =>
+        string.IsNullOrWhiteSpace(token) || token.Length > 100
+            ? Task.FromResult<Ambassador?>(null)
+            : ambassadors.GetByInviteTokenHashAsync(HashToken(token), ct);
+
+    private async Task<bool> SendInviteAsync(Ambassador ambassador, string token, CancellationToken ct)
+    {
+        var culture = ambassador.PreferredCulture ?? SiteCultures.Default;
+        var url = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.InCulture(SiteUrls.AmbassadorInvite(token), culture));
+        return await emailService.SendAsync("AmbassadorInvite", ambassador.InviteEmail!, "You're invited to be a VI House ambassador",
+            new AmbassadorInviteEmailModel(ambassador.Name, url, ambassador.Code, ambassador.CommissionPercent, ambassador.InviteExpiresAt!.Value),
+            culture, nameof(Ambassador), ambassador.Id, ct);
     }
 
     public async Task UpdateAsync(Ambassador updated, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
@@ -203,7 +407,10 @@ public class AmbassadorService(
 
         existing.Name = updated.Name;
         existing.CommissionPercent = updated.CommissionPercent;
-        existing.Status = updated.Status;
+        // Pending only ends by the invitee accepting (AcceptInviteAsync); an admin cannot switch a
+        // pending row on, nor send an accepted one back to pending.
+        if (existing.Status != AmbassadorStatus.Pending && updated.Status != AmbassadorStatus.Pending)
+            existing.Status = updated.Status;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
         // Code is deliberately immutable after creation — changing it would silently orphan every
         // /r/{code} link already handed out.
@@ -424,9 +631,9 @@ public class AmbassadorService(
                     line.Id, sourceEntityType, sourceEntityId, refunded, amount, reversed, line.PayoutId is null ? "" : " after payout");
 
                 var ambassador = await ambassadors.GetByIdAsync(line.AmbassadorId, ct);
-                if (ambassador is not null && takenBack > 0 && line.Currency is not null)
+                if (ambassador?.UserId is { } ambassadorUserId && takenBack > 0 && line.Currency is not null)
                 {
-                    await notificationService.CreateForUserAsync(ambassador.UserId, NotificationType.ReferralConverted,
+                    await notificationService.CreateForUserAsync(ambassadorUserId, NotificationType.ReferralConverted,
                         "A referred purchase was refunded",
                         $"{(refunded >= amount ? "A purchase" : "Part of a purchase")} made through your link was refunded, so {FormatMoney(takenBack, line.Currency)} of commission no longer stands.",
                         SiteUrls.Ambassador, ct);
@@ -494,7 +701,8 @@ public class AmbassadorService(
             new { PayoutId = payout.Id, payout.AmountMinor, payout.Currency, payout.Reference }, ct);
         await payouts.SaveChangesAsync(ct);
 
-        await notificationService.CreateForUserAsync(ambassador.UserId, NotificationType.ReferralConverted,
+        if (ambassador.UserId is { } paidUserId)
+            await notificationService.CreateForUserAsync(paidUserId, NotificationType.ReferralConverted,
             "Commission paid", $"The House has paid you {FormatMoney(owed, currency)} in commission{(payout.Reference is null ? "" : $" (reference {payout.Reference})")}.",
             SiteUrls.Ambassador, ct);
         return ReferralPayoutResult.Ok(payout);
@@ -523,7 +731,7 @@ public class AmbassadorService(
             TopNetworkVisits: top,
             // Only rows recorded since the fingerprint was captured can be judged.
             AutomatedVisits: hashed.Count(v => LooksAutomated(v.UserAgent)),
-            OwnVisits: ambassador is null ? 0 : recent.Count(v => v.VisitorUserId == ambassador.UserId),
+            OwnVisits: ambassador?.UserId is not { } ownUserId ? 0 : recent.Count(v => v.VisitorUserId == ownUserId),
             SelfReferrals: selfReferrals);
     }
 

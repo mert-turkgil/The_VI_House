@@ -23,7 +23,13 @@ public class AdminAmbassadorEditViewModel
 
     // --- Read-only, for the page ----------------------------------------------------------------
 
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
+
+    /// <summary>The whole row, for the invitation, terms and payout panels.</summary>
+    public Ambassador Ambassador { get; set; } = default!;
+
+    /// <summary>Real name on the account, as given when they accepted.</summary>
+    public string? AccountName { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 
     /// <summary>The absolute /r/{code} link — what an admin copies or emails. Built from

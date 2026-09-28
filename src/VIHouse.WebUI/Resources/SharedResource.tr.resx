@@ -1659,4 +1659,70 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Email.SecurityAlert.NewSignIn.Title" xml:space="preserve"><value>Hesabınıza yeni giriş</value></data>
   <data name="Email.SecurityAlert.NewSignIn.Detail" xml:space="preserve"><value>VI House hesabınıza son otuz gündür kullanılmayan bir adresten giriş yapıldı. Bunu siz yaptıysanız — yeni bir telefon, bir seyahat, farklı bir ağ — yapmanız gereken bir şey yok.</value></data>
   <data name="Email.SecurityAlert.NewSignIn.Action" xml:space="preserve"><value>Şifrenizi değiştirin</value></data>
+  <data name="Email.AmbassadorInvite.Subject" xml:space="preserve"><value>The VI House ambassador'ı olmaya davetlisiniz</value></data>
+  <data name="Email.AmbassadorInvite.Preheader" xml:space="preserve"><value>Kişisel referans bağlantınızı etkinleştirmek için davetinizi kabul edin.</value></data>
+  <data name="Email.AmbassadorInvite.Heading" xml:space="preserve"><value>Ambassador olmaya davet</value></data>
+  <data name="Email.AmbassadorInvite.Body1" xml:space="preserve"><value>The VI House sizi temsilcimiz olarak görmek istiyor. Size özel bir referans bağlantısı ve kodu olacak; bunlar üzerinden alınan her bilet, üyelik ve oturumdan komisyon kazanacaksınız.</value></data>
+  <data name="Email.AmbassadorInvite.StepsIntro" xml:space="preserve"><value>Aşağıdaki bağlantı sizi tek bir sayfaya götürür; orada:</value></data>
+  <data name="Email.AmbassadorInvite.Step1" xml:space="preserve"><value>hesabınız için bir şifre belirlersiniz,</value></data>
+  <data name="Email.AmbassadorInvite.Step2" xml:space="preserve"><value>fatura adresinizi ve komisyonun ödeneceği banka hesabını girersiniz,</value></data>
+  <data name="Email.AmbassadorInvite.Step3" xml:space="preserve"><value>ambassador şartlarını okuyup kabul edersiniz. Bağlantınız ve QR kodlarınız hemen ardından çalışmaya başlar.</value></data>
+  <data name="Email.AmbassadorInvite.Button" xml:space="preserve"><value>Daveti kabul et</value></data>
+  <data name="Email.AmbassadorInvite.ValidUntilLabel" xml:space="preserve"><value>Bağlantı geçerlilik tarihi</value></data>
+  <data name="Email.AmbassadorInvite.Expiry" xml:space="preserve"><value>Bağlantı kişiseldir ve bir kez çalışır. Süresi dolarsa bu e-postayı yanıtlayın, size yenisini gönderelim.</value></data>
+  <data name="Email.AmbassadorInvite.Footnote" xml:space="preserve"><value>Bu e-postayı The VI House bu adresi ambassador programına davet ettiği için alıyorsunuz. Beklemiyorduysanız görmezden gelin — bağlantı kullanılmadıkça hiçbir şey olmaz.</value></data>
+  <data name="Email.AmbassadorInvite.Signoff" xml:space="preserve"><value>Sizinle çalışmayı dört gözle bekliyoruz.</value></data>
+  <data name="AmbassadorInvite.Title" xml:space="preserve"><value>Ambassador daveti</value></data>
+  <data name="AmbassadorInvite.Eyebrow" xml:space="preserve"><value>Ambassador programı</value></data>
+  <data name="AmbassadorInvite.Heading" xml:space="preserve"><value>Hoş geldiniz, {0}</value></data>
+  <data name="AmbassadorInvite.Lede" xml:space="preserve"><value>Dört kısa bölüm; ardından referans bağlantınız ve QR kodlarınız etkinleşir.</value></data>
+  <data name="AmbassadorInvite.Fact.Code" xml:space="preserve"><value>Kodunuz</value></data>
+  <data name="AmbassadorInvite.Fact.Rate" xml:space="preserve"><value>Komisyon</value></data>
+  <data name="AmbassadorInvite.Fact.Email" xml:space="preserve"><value>Hesap e-postası</value></data>
+  <data name="AmbassadorInvite.Fact.Expires" xml:space="preserve"><value>Bağlantı geçerlilik tarihi</value></data>
+  <data name="AmbassadorInvite.Section.You" xml:space="preserve"><value>Siz ve şifreniz</value></data>
+  <data name="AmbassadorInvite.NameHint" xml:space="preserve"><value>Banka hesabınızdaki gibi yasal adınız — komisyon bu isme ödenir.</value></data>
+  <data name="AmbassadorInvite.Password" xml:space="preserve"><value>Şifre belirleyin</value></data>
+  <data name="AmbassadorInvite.ConfirmPassword" xml:space="preserve"><value>Şifreyi tekrar girin</value></data>
+  <data name="AmbassadorInvite.SignedIn" xml:space="preserve"><value>{0} olarak giriş yaptınız; mevcut şifreniz aynı kalır.</value></data>
+  <data name="AmbassadorInvite.Section.Billing" xml:space="preserve"><value>Fatura adresi</value></data>
+  <data name="AmbassadorInvite.TaxId" xml:space="preserve"><value>Vergi numarası (isteğe bağlı)</value></data>
+  <data name="AmbassadorInvite.TaxIdHint" xml:space="preserve"><value>Yalnızca şirket olarak fatura kesiyorsanız.</value></data>
+  <data name="AmbassadorInvite.Section.Payout" xml:space="preserve"><value>Komisyonunuzu nereye ödeyelim</value></data>
+  <data name="AmbassadorInvite.PayoutHint" xml:space="preserve"><value>Komisyon banka havalesiyle ödenir. Bu bilgileri yalnızca House'un finans ekibi görür.</value></data>
+  <data name="AmbassadorInvite.AccountHolder" xml:space="preserve"><value>Hesap sahibi</value></data>
+  <data name="AmbassadorInvite.Bic" xml:space="preserve"><value>BIC / SWIFT (isteğe bağlı)</value></data>
+  <data name="AmbassadorInvite.Section.Terms" xml:space="preserve"><value>Ambassador şartları</value></data>
+  <data name="AmbassadorInvite.Terms.Commission" xml:space="preserve"><value>Komisyon. Bağlantınız veya kodunuz üzerinden alınan her bilet, üyelik veya oturum için ödenen tutar üzerinden, satış günündeki geçerli oranla %{0} oranında komisyon kazanırsınız.</value></data>
+  <data name="AmbassadorInvite.Terms.Payouts" xml:space="preserve"><value>Ödemeler. Komisyon bu sayfada verdiğiniz hesaba banka havalesiyle ödenir. Her ödeme kayıt altına alınır; ambassador sayfanız kazandığınızı, ödeneni ve kalan borcu gösterir.</value></data>
+  <data name="AmbassadorInvite.Terms.Refunds" xml:space="preserve"><value>İadeler. Bir alım tamamen ya da kısmen iade edilirse, o alımın komisyonu aynı oranda geri alınır. Bu komisyon size zaten ödendiyse, tutar bir sonraki ödemenizden düşülür; başka ödeme yoksa House'a geri ödenir.</value></data>
+  <data name="AmbassadorInvite.Terms.OwnPurchases" xml:space="preserve"><value>Kendi alımlarınız. Kendi bağlantınız veya kodunuzla kendiniz yaptığınız alımlar, House yazılı olarak onaylamadıkça komisyon kazandırmaz. House, sahte veya gerçekten yönlendirilmemiş alımlardaki komisyonu geri alabilir ve nedenini size bildirir.</value></data>
+  <data name="AmbassadorInvite.Terms.Changes" xml:space="preserve"><value>Değişiklikler. House komisyon oranınızı değiştirmeden önce size bildirir. Önceden yapılmış satışlar yapıldıkları oranı korur.</value></data>
+  <data name="AmbassadorInvite.Terms.Privacy" xml:space="preserve"><value>Gizlilik. Yalnızca sayıları ve tutarları görürsünüz; yönlendirdiğiniz kişilerin adlarını veya iletişim bilgilerini asla görmezsiniz. House banka bilgilerinizi yalnızca size ödeme yapmak için saklar.</value></data>
+  <data name="AmbassadorInvite.Accept" xml:space="preserve"><value>Yukarıdaki ambassador şartlarını okudum ve kabul ediyorum.</value></data>
+  <data name="AmbassadorInvite.Submit" xml:space="preserve"><value>Kabul et ve bağlantımı etkinleştir</value></data>
+  <data name="AmbassadorInvite.Welcome" xml:space="preserve"><value>Artık bir ambassador'sunuz — bağlantılarınız ve QR kodlarınız aktif.</value></data>
+  <data name="AmbassadorInvite.Gate.SignInHeading" xml:space="preserve"><value>Kabul etmek için giriş yapın</value></data>
+  <data name="AmbassadorInvite.Gate.SignInBody" xml:space="preserve"><value>{0} adresinin zaten bir VI House hesabı var. Bu hesapla giriş yapın, doğrudan buraya döneceksiniz.</value></data>
+  <data name="AmbassadorInvite.Gate.WrongHeading" xml:space="preserve"><value>Bu davet başka bir hesap için</value></data>
+  <data name="AmbassadorInvite.Gate.WrongBody" xml:space="preserve"><value>Davet {0} adresine gönderildi, ancak bu tarayıcıda başka biri olarak giriş yapılmış. Çıkış yapıp bağlantıyı yeniden açın.</value></data>
+  <data name="AmbassadorInvite.Gate.SignOut" xml:space="preserve"><value>Çıkış yap</value></data>
+  <data name="AmbassadorInvite.Expired.Heading" xml:space="preserve"><value>Bu davetin süresi doldu</value></data>
+  <data name="AmbassadorInvite.Expired.Body" xml:space="preserve"><value>Davet e-postasını yanıtlayın, House size yeni bir bağlantı göndersin. Kodunuz sizin için ayrılmış durumda.</value></data>
+  <data name="AmbassadorInvite.Invalid.Heading" xml:space="preserve"><value>Bu bağlantı geçerli değil</value></data>
+  <data name="AmbassadorInvite.Invalid.Body" xml:space="preserve"><value>Daha önce kullanılmış ya da daha yeni bir davetle değiştirilmiş olabilir. The VI House'tan gelen en son e-postayı kullanın.</value></data>
+  <data name="AmbassadorInvite.Home" xml:space="preserve"><value>Ana sayfaya git</value></data>
+  <data name="AmbassadorInvite.Error.FirstName" xml:space="preserve"><value>Adınızı girin.</value></data>
+  <data name="AmbassadorInvite.Error.LastName" xml:space="preserve"><value>Soyadınızı girin.</value></data>
+  <data name="AmbassadorInvite.Error.Password" xml:space="preserve"><value>Bir şifre belirleyin.</value></data>
+  <data name="AmbassadorInvite.Error.PasswordMismatch" xml:space="preserve"><value>İki şifre eşleşmiyor.</value></data>
+  <data name="AmbassadorInvite.Error.Address" xml:space="preserve"><value>Adresinizi girin.</value></data>
+  <data name="AmbassadorInvite.Error.City" xml:space="preserve"><value>Şehrinizi girin.</value></data>
+  <data name="AmbassadorInvite.Error.PostalCode" xml:space="preserve"><value>Posta kodunuzu girin.</value></data>
+  <data name="AmbassadorInvite.Error.Country" xml:space="preserve"><value>Ülkenizi seçin.</value></data>
+  <data name="AmbassadorInvite.Error.AccountHolder" xml:space="preserve"><value>Banka hesabındaki adı girin.</value></data>
+  <data name="AmbassadorInvite.Error.Iban" xml:space="preserve"><value>IBAN'ınızı girin.</value></data>
+  <data name="AmbassadorInvite.Error.IbanInvalid" xml:space="preserve"><value>Bu IBAN geçersiz — eksik veya yer değiştirmiş bir karakter olabilir.</value></data>
+  <data name="AmbassadorInvite.Error.Bic" xml:space="preserve"><value>BIC 8 veya 11 harf ve rakamdan oluşur.</value></data>
+  <data name="AmbassadorInvite.Error.Terms" xml:space="preserve"><value>Devam etmek için şartları kabul edin.</value></data>
 </root>

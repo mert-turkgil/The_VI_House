@@ -1659,4 +1659,70 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Email.SecurityAlert.NewSignIn.Title" xml:space="preserve"><value>Uus sisselogimine teie kontole</value></data>
   <data name="Email.SecurityAlert.NewSignIn.Detail" xml:space="preserve"><value>Teie VI House'i kontole logiti just sisse aadressilt, mida viimase kolmekümne päeva jooksul pole kasutatud. Kui see olite teie — uus telefon, reis, teine võrk — pole midagi vaja teha.</value></data>
   <data name="Email.SecurityAlert.NewSignIn.Action" xml:space="preserve"><value>Muutke oma salasõna</value></data>
+  <data name="Email.AmbassadorInvite.Subject" xml:space="preserve"><value>Kutse: saage The VI House'i saadikuks</value></data>
+  <data name="Email.AmbassadorInvite.Preheader" xml:space="preserve"><value>Isikliku soovituslingi aktiveerimiseks võtke kutse vastu.</value></data>
+  <data name="Email.AmbassadorInvite.Heading" xml:space="preserve"><value>Kutse saada saadikuks</value></data>
+  <data name="Email.AmbassadorInvite.Body1" xml:space="preserve"><value>The VI House soovib, et esindaksite meid. Saate oma soovituslingi ja koodi ning teenite vahendustasu iga nende kaudu ostetud pileti, liikmesuse ja sessiooni pealt.</value></data>
+  <data name="Email.AmbassadorInvite.StepsIntro" xml:space="preserve"><value>Allolev link viib teid lehele, kus te:</value></data>
+  <data name="Email.AmbassadorInvite.Step1" xml:space="preserve"><value>valite oma kontole salasõna,</value></data>
+  <data name="Email.AmbassadorInvite.Step2" xml:space="preserve"><value>sisestate arveldusaadressi ja pangakonto, kuhu vahendustasu makstakse,</value></data>
+  <data name="Email.AmbassadorInvite.Step3" xml:space="preserve"><value>loete ja nõustute saadiku tingimustega. Teie link ja QR-koodid hakkavad kohe pärast seda tööle.</value></data>
+  <data name="Email.AmbassadorInvite.Button" xml:space="preserve"><value>Võta kutse vastu</value></data>
+  <data name="Email.AmbassadorInvite.ValidUntilLabel" xml:space="preserve"><value>Link kehtib kuni</value></data>
+  <data name="Email.AmbassadorInvite.Expiry" xml:space="preserve"><value>Link on isiklik ja töötab ühe korra. Kui see aegub enne, kui jõuate, vastake sellele kirjale ja saadame uue.</value></data>
+  <data name="Email.AmbassadorInvite.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna The VI House kutsus selle aadressi oma saadikuprogrammi. Kui te seda ei oodanud, eirake seda — ilma lingita ei juhtu midagi.</value></data>
+  <data name="Email.AmbassadorInvite.Signoff" xml:space="preserve"><value>Ootame koostööd teiega.</value></data>
+  <data name="AmbassadorInvite.Title" xml:space="preserve"><value>Saadiku kutse</value></data>
+  <data name="AmbassadorInvite.Eyebrow" xml:space="preserve"><value>Saadikuprogramm</value></data>
+  <data name="AmbassadorInvite.Heading" xml:space="preserve"><value>Tere tulemast, {0}</value></data>
+  <data name="AmbassadorInvite.Lede" xml:space="preserve"><value>Neli lühikest osa, siis on teie soovituslink ja QR-koodid aktiivsed.</value></data>
+  <data name="AmbassadorInvite.Fact.Code" xml:space="preserve"><value>Teie kood</value></data>
+  <data name="AmbassadorInvite.Fact.Rate" xml:space="preserve"><value>Vahendustasu</value></data>
+  <data name="AmbassadorInvite.Fact.Email" xml:space="preserve"><value>Konto e-post</value></data>
+  <data name="AmbassadorInvite.Fact.Expires" xml:space="preserve"><value>Link kehtib kuni</value></data>
+  <data name="AmbassadorInvite.Section.You" xml:space="preserve"><value>Teie ja teie salasõna</value></data>
+  <data name="AmbassadorInvite.NameHint" xml:space="preserve"><value>Teie ametlik nimi nagu pangakontol — vahendustasu makstakse sellele.</value></data>
+  <data name="AmbassadorInvite.Password" xml:space="preserve"><value>Valige salasõna</value></data>
+  <data name="AmbassadorInvite.ConfirmPassword" xml:space="preserve"><value>Korrake salasõna</value></data>
+  <data name="AmbassadorInvite.SignedIn" xml:space="preserve"><value>Olete sisse logitud kui {0}; teie praegune salasõna jääb samaks.</value></data>
+  <data name="AmbassadorInvite.Section.Billing" xml:space="preserve"><value>Arveldusaadress</value></data>
+  <data name="AmbassadorInvite.TaxId" xml:space="preserve"><value>KMKR / maksunumber (valikuline)</value></data>
+  <data name="AmbassadorInvite.TaxIdHint" xml:space="preserve"><value>Ainult siis, kui esitate arveid ettevõttena.</value></data>
+  <data name="AmbassadorInvite.Section.Payout" xml:space="preserve"><value>Kuhu me vahendustasu maksame</value></data>
+  <data name="AmbassadorInvite.PayoutHint" xml:space="preserve"><value>Vahendustasu makstakse pangaülekandega. Neid andmeid näeb ainult House'i finantsmeeskond.</value></data>
+  <data name="AmbassadorInvite.AccountHolder" xml:space="preserve"><value>Konto omanik</value></data>
+  <data name="AmbassadorInvite.Bic" xml:space="preserve"><value>BIC / SWIFT (valikuline)</value></data>
+  <data name="AmbassadorInvite.Section.Terms" xml:space="preserve"><value>Saadiku tingimused</value></data>
+  <data name="AmbassadorInvite.Terms.Commission" xml:space="preserve"><value>Vahendustasu. Teenite {0}% iga teie lingi või koodi kaudu ostetud pileti, liikmesuse või sessiooni eest makstud summast, müügipäeval kehtiva määra järgi.</value></data>
+  <data name="AmbassadorInvite.Terms.Payouts" xml:space="preserve"><value>Väljamaksed. Vahendustasu makstakse pangaülekandega sellel lehel antud kontole. Iga väljamakse registreeritakse ja teie saadiku lehel on näha teenitud, välja makstud ja veel maksmata summa.</value></data>
+  <data name="AmbassadorInvite.Terms.Refunds" xml:space="preserve"><value>Tagasimaksed. Kui ost tagastatakse täielikult või osaliselt, tühistatakse selle vahendustasu samas proportsioonis. Kui see on teile juba välja makstud, arvatakse summa maha järgmisest väljamaksest või makstakse House'ile tagasi, kui rohkem väljamakseid ei tule.</value></data>
+  <data name="AmbassadorInvite.Terms.OwnPurchases" xml:space="preserve"><value>Teie enda ostud. Ostud, mille teete ise oma lingi või koodi kaudu, vahendustasu ei too, kui House ei nõustu kirjalikult. House võib tühistada vahendustasu pettuslike või mitte tegelikult soovitatud ostude pealt ja ütleb teile põhjuse.</value></data>
+  <data name="AmbassadorInvite.Terms.Changes" xml:space="preserve"><value>Muudatused. House teatab teile enne vahendustasu määra muutmist. Juba tehtud müügid säilitavad oma määra.</value></data>
+  <data name="AmbassadorInvite.Terms.Privacy" xml:space="preserve"><value>Privaatsus. Näete ainult arve ja summasid, mitte kunagi soovitatud inimeste nimesid ega kontaktandmeid. House hoiab teie pangaandmeid ainult teile maksmiseks.</value></data>
+  <data name="AmbassadorInvite.Accept" xml:space="preserve"><value>Olen ülaltoodud saadiku tingimused läbi lugenud ja nõustun nendega.</value></data>
+  <data name="AmbassadorInvite.Submit" xml:space="preserve"><value>Nõustu ja aktiveeri minu link</value></data>
+  <data name="AmbassadorInvite.Welcome" xml:space="preserve"><value>Olete nüüd saadik — teie lingid ja QR-koodid on aktiivsed.</value></data>
+  <data name="AmbassadorInvite.Gate.SignInHeading" xml:space="preserve"><value>Nõustumiseks logige sisse</value></data>
+  <data name="AmbassadorInvite.Gate.SignInBody" xml:space="preserve"><value>Aadressil {0} on juba VI House'i konto. Logige sellega sisse ja jõuate otse siia tagasi.</value></data>
+  <data name="AmbassadorInvite.Gate.WrongHeading" xml:space="preserve"><value>See kutse on teisele kontole</value></data>
+  <data name="AmbassadorInvite.Gate.WrongBody" xml:space="preserve"><value>See saadeti aadressile {0}, kuid selles brauseris on sisse logitud keegi teine. Logige välja ja avage link uuesti.</value></data>
+  <data name="AmbassadorInvite.Gate.SignOut" xml:space="preserve"><value>Logi välja</value></data>
+  <data name="AmbassadorInvite.Expired.Heading" xml:space="preserve"><value>See kutse on aegunud</value></data>
+  <data name="AmbassadorInvite.Expired.Body" xml:space="preserve"><value>Vastake kutsekirjale ja House saadab teile uue lingi. Teie kood on endiselt teile reserveeritud.</value></data>
+  <data name="AmbassadorInvite.Invalid.Heading" xml:space="preserve"><value>See link ei kehti</value></data>
+  <data name="AmbassadorInvite.Invalid.Body" xml:space="preserve"><value>See võib olla juba kasutatud või asendatud uuema kutsega. Kasutage The VI House'i kõige uuemat kirja.</value></data>
+  <data name="AmbassadorInvite.Home" xml:space="preserve"><value>Avalehele</value></data>
+  <data name="AmbassadorInvite.Error.FirstName" xml:space="preserve"><value>Sisestage eesnimi.</value></data>
+  <data name="AmbassadorInvite.Error.LastName" xml:space="preserve"><value>Sisestage perekonnanimi.</value></data>
+  <data name="AmbassadorInvite.Error.Password" xml:space="preserve"><value>Valige salasõna.</value></data>
+  <data name="AmbassadorInvite.Error.PasswordMismatch" xml:space="preserve"><value>Salasõnad ei ühti.</value></data>
+  <data name="AmbassadorInvite.Error.Address" xml:space="preserve"><value>Sisestage aadress.</value></data>
+  <data name="AmbassadorInvite.Error.City" xml:space="preserve"><value>Sisestage linn.</value></data>
+  <data name="AmbassadorInvite.Error.PostalCode" xml:space="preserve"><value>Sisestage sihtnumber.</value></data>
+  <data name="AmbassadorInvite.Error.Country" xml:space="preserve"><value>Valige riik.</value></data>
+  <data name="AmbassadorInvite.Error.AccountHolder" xml:space="preserve"><value>Sisestage pangakonto omaniku nimi.</value></data>
+  <data name="AmbassadorInvite.Error.Iban" xml:space="preserve"><value>Sisestage IBAN.</value></data>
+  <data name="AmbassadorInvite.Error.IbanInvalid" xml:space="preserve"><value>See IBAN ei ole korrektne — kontrollige puuduvaid või vahetatud märke.</value></data>
+  <data name="AmbassadorInvite.Error.Bic" xml:space="preserve"><value>BIC koosneb 8 või 11 tähest ja numbrist.</value></data>
+  <data name="AmbassadorInvite.Error.Terms" xml:space="preserve"><value>Jätkamiseks nõustuge tingimustega.</value></data>
 </root>
