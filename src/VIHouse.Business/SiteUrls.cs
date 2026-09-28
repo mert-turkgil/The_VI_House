@@ -88,7 +88,6 @@ public static class SiteUrls
     public static string SessionCalendar(string slug) => $"{Sessions}/{slug}/calendar.ics";
     public static string Invitation(string code) => $"/invitation/{code}";
     public static string JoinResume(string code) => $"{Join}/resume/{code}";
-    public static string ApplyFor(string experienceSlug) => $"{Apply}?experience={Uri.EscapeDataString(experienceSlug)}";
 
     // Referral links — one per thing an ambassador promotes (see ReferralController).
     public static string Referral(string code) => $"/r/{code}";

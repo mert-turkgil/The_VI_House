@@ -15,7 +15,7 @@ namespace VIHouse.Entities.Experiences;
 /// So the neutral copy lives on the Experience and is the fallback; this is what a visitor reading
 /// the site in German sees instead.
 /// </summary>
-public class ExperienceTranslation : BaseEntity
+public class ExperienceTranslation : BaseEntity, ITranslation
 {
     public Guid ExperienceId { get; set; }
 

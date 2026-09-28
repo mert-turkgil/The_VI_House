@@ -87,17 +87,11 @@ public record AccessHub(
     string? MeetingUrl,
     List<VIHouse.Entities.Community.CommunityLink> Links)
 {
-    /// <summary>Within the window the stream is worth embedding: a quarter-hour before the start
-    /// until the end (or two hours after the start when no end is set).</summary>
-    public bool IsLiveNow
-    {
-        get
-        {
-            if (StartAtUtc is not { } start) return LiveStreamUrl is not null; // on demand
-            var now = DateTimeOffset.UtcNow;
-            return now >= start.AddMinutes(-15) && now <= (EndAtUtc ?? start.AddHours(2));
-        }
-    }
+    /// <summary>Inside the shared live window (see SessionTiming). Something on demand has no
+    /// window: its stream, if it has one, is always worth embedding.</summary>
+    public bool IsLiveNow => StartAtUtc is null
+        ? LiveStreamUrl is not null
+        : VIHouse.Business.Concrete.SessionTiming.IsLive(StartAtUtc, EndAtUtc, DateTimeOffset.UtcNow);
 
     public bool HasAnythingToOpen => LiveStreamUrl is not null || MeetingUrl is not null || Links.Count > 0;
 }

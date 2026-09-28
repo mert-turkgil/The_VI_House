@@ -16,7 +16,7 @@ namespace VIHouse.Entities.Content;
 /// than rendering blank, so a half-finished translation shows what has been written and the
 /// original for the rest.
 /// </summary>
-public class ContentBlockTranslation : BaseEntity
+public class ContentBlockTranslation : BaseEntity, ITranslation
 {
     public Guid ContentBlockId { get; set; }
 

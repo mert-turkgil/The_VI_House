@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using VIHouse.Business.Options;
 using VIHouse.Entities.Seminars;
+using VIHouse.Business.Concrete;
 
 namespace VIHouse.WebUI.Areas.Admin.ViewModels;
 
@@ -100,8 +101,8 @@ public class AdminSeminarFormViewModel
         MeetingUrl = string.IsNullOrWhiteSpace(MeetingUrl) ? null : MeetingUrl.Trim(),
         LiveStreamUrl = string.IsNullOrWhiteSpace(LiveStreamUrl) ? null : LiveStreamUrl.Trim(),
         TimeZoneId = TimeZoneId,
-        StartAtUtc = ToUtcOffset(StartAtUtc),
-        EndAtUtc = ToUtcOffset(EndAtUtc),
+        StartAtUtc = UtcDates.ToOffset(StartAtUtc),
+        EndAtUtc = UtcDates.ToOffset(EndAtUtc),
         Capacity = Capacity,
         PriceMinor = (long)Math.Round(Price * 100m, MidpointRounding.AwayFromZero),
         Currency = Currency.ToUpperInvariant(),
@@ -131,9 +132,6 @@ public class AdminSeminarFormViewModel
         MemberDiscountPercent = s.MemberDiscountPercent,
         SortOrder = s.SortOrder,
     };
-
-    private static DateTimeOffset? ToUtcOffset(DateTime? value) =>
-        value is null ? null : new DateTimeOffset(DateTime.SpecifyKind(value.Value, DateTimeKind.Utc));
 }
 
 /// <summary>One language's copy. The same form serves every culture; which one is being edited is

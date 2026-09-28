@@ -47,8 +47,6 @@ public class PortalSessionViewModel
     {
         var s = e.Seminar;
         var copy = SeminarContent.Resolve(s, culture);
-        var end = s.EndAtUtc ?? s.StartAtUtc?.AddHours(2);
-
         return new PortalSessionViewModel
         {
             Slug = s.Slug,
@@ -68,8 +66,7 @@ public class PortalSessionViewModel
             ConfirmedAt = e.Enrollment.ConfirmedAt,
             MeetingUrl = s.IsOnline ? s.MeetingUrl : null,
             LiveStreamUrl = s.LiveStreamUrl,
-            IsLiveNow = s.StartAtUtc is { } start && end is { } finish
-                && now >= start.AddHours(-1) && now <= finish,
+            IsLiveNow = SessionTiming.IsLive(s.StartAtUtc, s.EndAtUtc, now),
         };
     }
 }
@@ -95,12 +92,12 @@ public class SessionPortalViewModel
         return new SessionPortalViewModel
         {
             Upcoming = items
-                .Where(i => i.StartAtUtc is { } start && (i.EndAtUtc ?? start.AddHours(2)) >= now)
+                .Where(i => i.StartAtUtc is not null && !SessionTiming.HasEnded(i.StartAtUtc, i.EndAtUtc, now))
                 .OrderBy(i => i.StartAtUtc)
                 .ToList(),
             OnDemand = items.Where(i => i.StartAtUtc is null).ToList(),
             Past = items
-                .Where(i => i.StartAtUtc is { } start && (i.EndAtUtc ?? start.AddHours(2)) < now)
+                .Where(i => SessionTiming.HasEnded(i.StartAtUtc, i.EndAtUtc, now))
                 .OrderByDescending(i => i.StartAtUtc)
                 .ToList(),
             PaidCount = items.Count(i => i.IsPaid),

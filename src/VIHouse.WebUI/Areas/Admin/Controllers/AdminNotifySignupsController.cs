@@ -45,7 +45,7 @@ public class AdminNotifySignupsController(
 
         var result = await launchList.AnnounceAsync(
             ToMessage(form), form.IncludeAlreadyNotified,
-            Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString(), ct);
+            CurrentAdminId(), Ip(), ct);
         if (!result.Ok) return await RefuseAsync(form, result.Message, ct);
 
         TempData["StatusMessage"] = result.Message;

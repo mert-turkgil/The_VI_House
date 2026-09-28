@@ -25,26 +25,13 @@ public static class SeminarContent
     /// </summary>
     public static SeminarTranslation? Resolve(Seminar seminar, string? culture)
     {
-        if (seminar.Translations.Count == 0) return null;
-
-        var wanted = SiteCultures.Normalise(culture);
-
-        return Find(seminar, wanted)
-            ?? FindByLanguage(seminar, wanted)
-            ?? Find(seminar, SiteCultures.Default)
-            ?? seminar.Translations[0];
+        return TranslationLookup.Best(seminar.Translations, culture);
     }
 
     /// <summary>The exact row for one culture, or null. Used by the admin editor, which must be
     /// able to tell "not translated yet" from "translated, falls back to English".</summary>
     public static SeminarTranslation? Find(Seminar seminar, string culture) =>
-        seminar.Translations.FirstOrDefault(t => string.Equals(t.Culture, culture, StringComparison.OrdinalIgnoreCase));
-
-    private static SeminarTranslation? FindByLanguage(Seminar seminar, string culture)
-    {
-        var language = culture.Split('-')[0] + "-";
-        return seminar.Translations.FirstOrDefault(t => t.Culture.StartsWith(language, StringComparison.OrdinalIgnoreCase));
-    }
+        TranslationLookup.Exact(seminar.Translations, culture);
 
     /// <summary>Convenience for the many places that only need a heading.</summary>
     public static string Title(Seminar seminar, string? culture) =>

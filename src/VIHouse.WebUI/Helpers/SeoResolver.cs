@@ -60,9 +60,6 @@ public class SeoResolver(
         return code is null ? clean : $"/{code}{(clean == "/" ? "" : clean)}";
     }
 
-    public string UrlFor(SiteSetting settings, string culture, string path) =>
-        Origin(settings) + PathFor(culture, path);
-
     /// <summary>
     /// The settings copy for a culture, falling back to the default's rather than to null — the
     /// same per-field fallback rule the rest of the site's translations follow.

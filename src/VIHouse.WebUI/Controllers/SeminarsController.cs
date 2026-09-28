@@ -59,7 +59,7 @@ public class SeminarsController(
         var seminar = await seminarService.GetPublicDetailBySlugAsync(slug, await ViewerIsMemberAsync(ct), ViewerIsStaff, ct);
         if (seminar is null) return NotFound();
 
-        var access = await seminarService.GetAccessAsync(seminar, CurrentUserId, ct);
+        var access = await seminarService.GetAccessAsync(seminar, User.UserId(), ct);
         var model = SeminarDetailViewModel.FromEntity(seminar, CultureInfo.CurrentUICulture.Name, access, ViewerIsStaff);
 
         ViewData["Title"] = model.SeoTitle ?? model.Title;
@@ -75,7 +75,7 @@ public class SeminarsController(
     public async Task<IActionResult> Calendar(string slug, CancellationToken ct)
     {
         var seminar = await seminarService.GetPublicDetailBySlugAsync(slug, await ViewerIsMemberAsync(ct), ViewerIsStaff, ct);
-        if (seminar is null) return CurrentUserId is null ? Challenge() : NotFound();
+        if (seminar is null) return User.UserId() is null ? Challenge() : NotFound();
         if (seminar.StartAtUtc is not { } start) return NotFound(); // on demand: nothing to put in a calendar
 
         var culture = CultureInfo.CurrentUICulture.Name;
@@ -83,7 +83,7 @@ public class SeminarsController(
         var ics = IcsCalendar.Build(new IcsCalendar.Event(
             $"session-{seminar.Id}@thevihouse.com",
             $"The VI House — {SeminarContent.Title(seminar, culture)}",
-            start, seminar.EndAtUtc ?? start.AddHours(1),
+            start, SessionTiming.EndOf(start, seminar.EndAtUtc)!.Value,
             seminar.IsOnline ? loc["Seminars.Online"].Value : seminar.Location,
             loc["Calendar.Details", pageUrl].Value, pageUrl));
 
@@ -106,7 +106,7 @@ public class SeminarsController(
         var seminar = await seminarService.GetPublicDetailBySlugAsync(slug, await ViewerIsMemberAsync(ct), ViewerIsStaff, ct);
         if (seminar is null) return NotFound();
 
-        var userId = CurrentUserId;
+        var userId = User.UserId();
         if (userId is null) return Challenge();
 
         var access = await seminarService.GetAccessAsync(seminar, userId, ct);
@@ -187,16 +187,13 @@ public class SeminarsController(
     [HttpGet("media/{id:guid}")]
     public async Task<IActionResult> Media(Guid id, CancellationToken ct)
     {
-        var file = await seminarService.OpenMediaAsync(id, CurrentUserId, await ViewerIsMemberAsync(ct), ViewerIsStaff, ct);
+        var file = await seminarService.OpenMediaAsync(id, User.UserId(), await ViewerIsMemberAsync(ct), ViewerIsStaff, ct);
         if (file is null) return NotFound();
 
         return PhysicalFile(file.PhysicalPath, file.ContentType, enableRangeProcessing: true);
     }
 
     // --- Viewer context ---------------------------------------------------------------------------
-
-    private Guid? CurrentUserId =>
-        Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
 
     /// <summary>
     /// Membership, not the Member role. The role is granted to anyone who pays — a single-ticket

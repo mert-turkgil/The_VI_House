@@ -7,7 +7,6 @@ public interface IContentService
 {
     Task<List<ContentPage>> GetAllPagesAsync(CancellationToken ct = default);
     Task<ContentPage?> GetPageWithBlocksAsync(string slug, CancellationToken ct = default);
-    Task<ContentBlock?> GetBlockAsync(Guid id, CancellationToken ct = default);
 
     Task<ContentBlock> AddBlockAsync(Guid pageId, ContentBlock block, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
     Task UpdateBlockAsync(ContentBlock updated, Guid adminUserId, string? ipAddress, CancellationToken ct = default);

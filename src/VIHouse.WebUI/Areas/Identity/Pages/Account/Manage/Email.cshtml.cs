@@ -19,16 +19,13 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
     public class EmailModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly VIHouse.Business.Abstract.IEmailService _emails;
 
         public EmailModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
             VIHouse.Business.Abstract.IEmailService emails)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _emails = emails;
         }
 

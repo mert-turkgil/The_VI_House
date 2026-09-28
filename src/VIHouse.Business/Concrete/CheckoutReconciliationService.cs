@@ -92,7 +92,7 @@ public class CheckoutReconciliationService(
         logger.LogInformation("Reconciling checkout {SessionId} ({Kind} transaction {TransactionId}) from the provider: {Reported}.",
             sessionId, transaction.Kind, transaction.Id, reported.RawType);
 
-        var result = await dispatcher.DispatchAsync(reported, Sha256Hex(reported.EventId), isReplay: false, ct);
+        var result = await dispatcher.DispatchAsync(reported, Text.Sha256Hex(reported.EventId), isReplay: false, ct);
         if (result.Outcome is WebhookDispatchOutcome.Failed or WebhookDispatchOutcome.InProgress)
             return CheckoutReconcileOutcome.Failed;
 
@@ -104,7 +104,4 @@ public class CheckoutReconciliationService(
             _ => CheckoutReconcileOutcome.StillOpen,
         };
     }
-
-    private static string Sha256Hex(string value) =>
-        Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
 }

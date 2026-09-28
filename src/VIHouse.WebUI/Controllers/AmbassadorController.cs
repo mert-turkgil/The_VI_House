@@ -6,6 +6,7 @@ using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.ViewModels.Ambassador;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -17,13 +18,12 @@ namespace VIHouse.WebUI.Controllers;
 [Route("ambassador")]
 public class AmbassadorController(
     IAmbassadorService ambassadorService,
-    UserManager<ApplicationUser> userManager,
     IOptions<SiteOptions> siteOptions) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        var userId = Guid.Parse(userManager.GetUserId(User)!);
+        var userId = User.RequiredUserId();
         var ambassador = await ambassadorService.GetByUserIdAsync(userId, ct);
         if (ambassador is null) return NotFound();
 

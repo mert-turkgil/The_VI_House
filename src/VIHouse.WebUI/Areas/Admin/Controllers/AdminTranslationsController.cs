@@ -31,8 +31,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 [Route("admin/translations")]
 public class AdminTranslationsController(
     ResxCatalog catalog,
-    IAuditLogRepository auditLogs,
-    UserManager<ApplicationUser> userManager) : AdminControllerBase
+    IAuditLogRepository auditLogs) : AdminControllerBase
 {
     [HttpGet("")]
     public IActionResult Index(string? section, string? q, bool untranslated)
@@ -148,7 +147,7 @@ public class AdminTranslationsController(
 
         await auditLogs.AddAsync(new AuditLogEntry
         {
-            AdminUserId = Guid.Parse(userManager.GetUserId(User)!),
+            AdminUserId = CurrentAdminId(),
             Action = "TranslationUpdated",
             EntityType = "Translation",
             // The key and the language, not the text. Consistent with the rest of the audit log,

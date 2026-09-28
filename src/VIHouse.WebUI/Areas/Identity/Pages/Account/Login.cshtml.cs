@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Logging;
 using VIHouse.DataAccess.Identity;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Areas.Identity.Pages.Account
 {
@@ -99,7 +100,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                 ModelState.AddModelError(string.Empty, ErrorMessage);
             }
 
-            returnUrl = SafeReturnUrl(returnUrl);
+            returnUrl = ReturnUrls.Safe(Url, returnUrl);
 
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -111,7 +112,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl = SafeReturnUrl(returnUrl);
+            returnUrl = ReturnUrls.Safe(Url, returnUrl);
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
@@ -145,23 +146,6 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
-
-        /// <summary>
-        /// A returnUrl is trusted local navigation, not a place to send someone back into the sign-in
-        /// machinery itself. Without the second check, a returnUrl that already points at /login or
-        /// /login/external — which happens whenever the external-login flow's own failure branches
-        /// redirect here carrying whatever returnUrl they were given — gets embedded as this page's
-        /// OWN returnUrl for the next attempt, and the next "Continue with Google" click wraps that
-        /// whole URL as ITS returnUrl again. Each round trip through Google adds one more layer of
-        /// percent-encoding around the last, and ten of those trip the "auth" rate limiter's 429
-        /// before anyone notices — a real incident, not a hypothetical.
-        /// </summary>
-        private string SafeReturnUrl(string returnUrl) =>
-            !string.IsNullOrEmpty(returnUrl)
-            && Url.IsLocalUrl(returnUrl)
-            && !returnUrl.StartsWith(VIHouse.Business.SiteUrls.Login, StringComparison.OrdinalIgnoreCase)
-                ? returnUrl
-                : Url.Content("~/");
 
         // Stamps ApplicationUser.LastLoginAt so the admin "Customers" screen can answer "when did
         // this member last sign in?" without digging through server logs. Only reached on a fully

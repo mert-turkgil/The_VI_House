@@ -27,12 +27,8 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 [Route("admin/settings")]
 public class AdminSiteSettingsController(
     ISiteSettingsService settingsService,
-    ISitemapService sitemap,
-    UserManager<ApplicationUser> userManager) : AdminControllerBase
+    ISitemapService sitemap) : AdminControllerBase
 {
-    /// <summary>Who is making the change, for the audit log. Same helper every admin controller has.</summary>
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 
     [HttpGet("")]
 

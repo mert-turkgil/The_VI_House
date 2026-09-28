@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Concrete;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -53,7 +54,7 @@ public class WebhooksController(
             return BadRequest();
         }
 
-        var result = await dispatcher.DispatchAsync(webhookEvent, Sha256Hex(json), isReplay: false, ct);
+        var result = await dispatcher.DispatchAsync(webhookEvent, Text.Sha256Hex(json), isReplay: false, ct);
 
         return result.Outcome switch
         {
@@ -62,7 +63,4 @@ public class WebhooksController(
             _ => StatusCode(StatusCodes.Status500InternalServerError),
         };
     }
-
-    private static string Sha256Hex(string body) =>
-        Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(body)));
 }

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using VIHouse.Business.Options;
 using VIHouse.Entities.Content;
 using VIHouse.WebUI.Validation;
+using VIHouse.Business.Concrete;
 
 namespace VIHouse.WebUI.Areas.Admin.ViewModels;
 
@@ -70,12 +71,9 @@ public class AdminHeroSlideFormViewModel
         slide.SecondaryCtaUrl = string.IsNullOrWhiteSpace(SecondaryCtaUrl) ? null : SecondaryCtaUrl.Trim();
         slide.SortOrder = SortOrder;
         slide.IsActive = IsActive;
-        slide.VisibleFromUtc = ToUtcOffset(VisibleFromUtc);
-        slide.VisibleUntilUtc = ToUtcOffset(VisibleUntilUtc);
+        slide.VisibleFromUtc = UtcDates.ToOffset(VisibleFromUtc);
+        slide.VisibleUntilUtc = UtcDates.ToOffset(VisibleUntilUtc);
     }
-
-    private static DateTimeOffset? ToUtcOffset(DateTime? value) =>
-        value is null ? null : new DateTimeOffset(DateTime.SpecifyKind(value.Value, DateTimeKind.Utc));
 }
 
 /// <summary>One language's copy for one slide. Which language is being edited travels in
@@ -114,12 +112,12 @@ public class AdminHeroSlideTranslationFormViewModel
 
     public void ApplyTo(HeroSlideTranslation t)
     {
-        t.Eyebrow = Trimmed(Eyebrow);
+        t.Eyebrow = Text.NullIfBlank(Eyebrow);
         t.Heading = Heading.Trim();
-        t.Subheading = Trimmed(Subheading);
-        t.PrimaryCtaLabel = Trimmed(PrimaryCtaLabel);
-        t.SecondaryCtaLabel = Trimmed(SecondaryCtaLabel);
-        t.ImageAlt = Trimmed(ImageAlt);
+        t.Subheading = Text.NullIfBlank(Subheading);
+        t.PrimaryCtaLabel = Text.NullIfBlank(PrimaryCtaLabel);
+        t.SecondaryCtaLabel = Text.NullIfBlank(SecondaryCtaLabel);
+        t.ImageAlt = Text.NullIfBlank(ImageAlt);
     }
 
     public static AdminHeroSlideTranslationFormViewModel FromEntity(Guid slideId, HeroSlideTranslation t) => new()
@@ -141,9 +139,6 @@ public class AdminHeroSlideTranslationFormViewModel
         Culture = culture,
         Heading = string.Empty,
     };
-
-    private static string? Trimmed(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }
 
 /// <summary>Everything the Edit screen shows: the slide's own fields, its image, and one tab per

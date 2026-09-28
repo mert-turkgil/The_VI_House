@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using VIHouse.Business.Abstract;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Services;
 
@@ -27,7 +28,7 @@ public sealed class ReferralFingerprint(IConfiguration configuration)
         }
 
         var userAgent = http.Request.Headers.UserAgent.ToString();
-        Guid? userId = Guid.TryParse(http.User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
+        var userId = http.User.UserId();
         return new ReferralVisitor(ipHash, string.IsNullOrWhiteSpace(userAgent) ? null : userAgent, userId);
     }
 }

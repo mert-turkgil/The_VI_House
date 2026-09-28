@@ -27,7 +27,6 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 [Route("admin/journal")]
 public class AdminJournalController(
     IJournalService journalService,
-    UserManager<ApplicationUser> userManager,
     IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     // --- Index / create ----------------------------------------------------------------------------
@@ -328,7 +327,4 @@ public class AdminJournalController(
     /// whichever language the admin set — same contract as AdminSeminarsController.</summary>
     private string Localised(string? key) =>
         string.IsNullOrWhiteSpace(key) ? loc["Admin.Journal.SaveFailed"].Value : loc[key].Value;
-
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 }

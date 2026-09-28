@@ -122,19 +122,11 @@ public class SitemapService(
     /// translated, it fetches English, and it learns to distrust the annotations on the whole site.
     /// </summary>
     private static IReadOnlyList<string> CulturesOf(Experience e) =>
-        Combine(e.Translations.Select(t => t.Culture));
+        SiteCultures.DefaultFirst(e.Translations.Select(t => t.Culture));
 
     private static IReadOnlyList<string> CulturesOf(JournalPost p) =>
-        Combine(p.Translations.Select(t => t.Culture));
+        SiteCultures.DefaultFirst(p.Translations.Select(t => t.Culture));
 
     private static IReadOnlyList<string> CulturesOf(Seminar s) =>
-        Combine(s.Translations.Select(t => t.Culture));
-
-    private static IReadOnlyList<string> Combine(IEnumerable<string> translated) =>
-    [
-        SiteCultures.Default,
-        .. translated
-            .Where(c => SiteCultures.IsSupported(c) && !string.Equals(c, SiteCultures.Default, StringComparison.OrdinalIgnoreCase))
-            .Distinct(StringComparer.OrdinalIgnoreCase),
-    ];
+        SiteCultures.DefaultFirst(s.Translations.Select(t => t.Culture));
 }

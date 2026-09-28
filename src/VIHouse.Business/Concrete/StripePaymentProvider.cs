@@ -117,7 +117,7 @@ public class StripePaymentProvider : IPaymentProvider
             session = await sessionService.CreateAsync(createOptions, cancellationToken: ct);
         }
 
-        return new CheckoutSessionResult(session.Id, session.Url, ToUtc(session.ExpiresAt));
+        return new CheckoutSessionResult(session.Id, session.Url, UtcDates.ToOffset(session.ExpiresAt));
     }
 
     /// <summary>The key Stripe echoes the company name back under. Alphanumeric, as Stripe requires.</summary>
@@ -125,9 +125,6 @@ public class StripePaymentProvider : IPaymentProvider
 
     private static string? CustomFieldValue(Session? session, string key) =>
         session?.CustomFields?.FirstOrDefault(f => f.Key == key)?.Text?.Value is { Length: > 0 } value ? value : null;
-
-    private static DateTimeOffset? ToUtc(DateTime? value) =>
-        value is null ? null : new DateTimeOffset(DateTime.SpecifyKind(value.Value, DateTimeKind.Utc));
 
     public async Task ExpireCheckoutSessionAsync(string sessionId, CancellationToken ct = default)
     {
@@ -414,7 +411,7 @@ public class StripePaymentProvider : IPaymentProvider
                     // the plan's list price, and the ledger must say what the member paid.
                     AmountMinor = invoice.AmountPaid,
                     Currency = invoice.Currency?.ToUpperInvariant(),
-                    CurrentPeriodEnd = ToUtc(periodEnd),
+                    CurrentPeriodEnd = UtcDates.ToOffset(periodEnd),
                     // The member's copy of this charge, on Stripe's own pages.
                     ReceiptUrl = invoice.HostedInvoiceUrl,
                 };
@@ -444,7 +441,7 @@ public class StripePaymentProvider : IPaymentProvider
                     AmountMinor = invoice.AmountDue,
                     Currency = invoice.Currency?.ToUpperInvariant(),
                     HostedInvoiceUrl = invoice.HostedInvoiceUrl,
-                    NextPaymentAttempt = ToUtc(invoice.NextPaymentAttempt),
+                    NextPaymentAttempt = UtcDates.ToOffset(invoice.NextPaymentAttempt),
                 };
             }
 
@@ -466,7 +463,7 @@ public class StripePaymentProvider : IPaymentProvider
                     SubscriptionId = subscription?.Id,
                     CustomerId = subscription?.CustomerId,
                     CancelAtPeriodEnd = subscription?.CancelAtPeriodEnd,
-                    CurrentPeriodEnd = ToUtc(periodEnd),
+                    CurrentPeriodEnd = UtcDates.ToOffset(periodEnd),
                     SubscriptionStatus = subscription?.Status,
                 };
             }

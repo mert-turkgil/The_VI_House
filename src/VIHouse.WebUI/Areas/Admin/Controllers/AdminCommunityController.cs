@@ -30,8 +30,7 @@ public class AdminCommunityController(
     IAuditLogRepository auditLogs,
     IMembershipService membershipService,
     IRepository<Experience> experiences,
-    IRepository<Seminar> seminars,
-    UserManager<ApplicationUser> userManager) : AdminControllerBase
+    IRepository<Seminar> seminars) : AdminControllerBase
 {
     /// <summary>The three "only for…" selects on the form. Loaded on every render of it so a
     /// validation round-trip does not come back with empty dropdowns.</summary>
@@ -139,9 +138,6 @@ public class AdminCommunityController(
         TempData["StatusMessage"] = "Link deleted.";
         return RedirectToAction(nameof(Index));
     }
-
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>
         auditLogs.AddAsync(new AuditLogEntry

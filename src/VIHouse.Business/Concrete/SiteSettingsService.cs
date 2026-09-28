@@ -73,29 +73,29 @@ public class SiteSettingsService(
         var current = await GetAsync(ct);
         var before = Snapshot(current);
 
-        current.CanonicalBaseUrl = Trim(updated.CanonicalBaseUrl)?.TrimEnd('/');
+        current.CanonicalBaseUrl = Text.NullIfBlank(updated.CanonicalBaseUrl)?.TrimEnd('/');
         current.OrganizationType = string.IsNullOrWhiteSpace(updated.OrganizationType)
             ? "Organization" : updated.OrganizationType.Trim();
-        current.LegalName = Trim(updated.LegalName);
-        current.FoundingDate = Trim(updated.FoundingDate);
-        current.LogoUrl = Trim(updated.LogoUrl);
-        current.DefaultOgImageUrl = Trim(updated.DefaultOgImageUrl);
+        current.LegalName = Text.NullIfBlank(updated.LegalName);
+        current.FoundingDate = Text.NullIfBlank(updated.FoundingDate);
+        current.LogoUrl = Text.NullIfBlank(updated.LogoUrl);
+        current.DefaultOgImageUrl = Text.NullIfBlank(updated.DefaultOgImageUrl);
 
-        current.InstagramUrl = Trim(updated.InstagramUrl);
-        current.LinkedInUrl = Trim(updated.LinkedInUrl);
-        current.XUrl = Trim(updated.XUrl);
-        current.FacebookUrl = Trim(updated.FacebookUrl);
-        current.YouTubeUrl = Trim(updated.YouTubeUrl);
-        current.TikTokUrl = Trim(updated.TikTokUrl);
-        current.TwitterHandle = Trim(updated.TwitterHandle)?.TrimStart('@');
+        current.InstagramUrl = Text.NullIfBlank(updated.InstagramUrl);
+        current.LinkedInUrl = Text.NullIfBlank(updated.LinkedInUrl);
+        current.XUrl = Text.NullIfBlank(updated.XUrl);
+        current.FacebookUrl = Text.NullIfBlank(updated.FacebookUrl);
+        current.YouTubeUrl = Text.NullIfBlank(updated.YouTubeUrl);
+        current.TikTokUrl = Text.NullIfBlank(updated.TikTokUrl);
+        current.TwitterHandle = Text.NullIfBlank(updated.TwitterHandle)?.TrimStart('@');
 
-        current.ContactEmail = Trim(updated.ContactEmail);
-        current.ContactPhone = Trim(updated.ContactPhone);
-        current.StreetAddress = Trim(updated.StreetAddress);
-        current.AddressLocality = Trim(updated.AddressLocality);
-        current.AddressRegion = Trim(updated.AddressRegion);
-        current.PostalCode = Trim(updated.PostalCode);
-        current.AddressCountry = Trim(updated.AddressCountry)?.ToUpperInvariant();
+        current.ContactEmail = Text.NullIfBlank(updated.ContactEmail);
+        current.ContactPhone = Text.NullIfBlank(updated.ContactPhone);
+        current.StreetAddress = Text.NullIfBlank(updated.StreetAddress);
+        current.AddressLocality = Text.NullIfBlank(updated.AddressLocality);
+        current.AddressRegion = Text.NullIfBlank(updated.AddressRegion);
+        current.PostalCode = Text.NullIfBlank(updated.PostalCode);
+        current.AddressCountry = Text.NullIfBlank(updated.AddressCountry)?.ToUpperInvariant();
 
         // Pasting the whole meta tag instead of the token is the most common mistake on this
         // screen, so the token is extracted rather than the value refused.
@@ -103,7 +103,7 @@ public class SiteSettingsService(
         current.BingSiteVerification = ExtractVerificationToken(updated.BingSiteVerification);
 
         current.AllowIndexing = updated.AllowIndexing;
-        current.RobotsExtra = Trim(updated.RobotsExtra);
+        current.RobotsExtra = Text.NullIfBlank(updated.RobotsExtra);
         current.PublishLlmsTxt = updated.PublishLlmsTxt;
 
         current.UpdatedAt = DateTimeOffset.UtcNow;
@@ -137,11 +137,11 @@ public class SiteSettingsService(
 
         existing.SiteName = string.IsNullOrWhiteSpace(form.SiteName) ? "The VI House" : form.SiteName.Trim();
         existing.TitleTemplate = string.IsNullOrWhiteSpace(form.TitleTemplate) ? "{0}" : form.TitleTemplate.Trim();
-        existing.HomeTitle = Trim(form.HomeTitle);
-        existing.DefaultMetaDescription = Trim(form.DefaultMetaDescription);
-        existing.OrganizationDescription = Trim(form.OrganizationDescription);
-        existing.OgImageAlt = Trim(form.OgImageAlt);
-        existing.OgImageUrl = Trim(form.OgImageUrl);
+        existing.HomeTitle = Text.NullIfBlank(form.HomeTitle);
+        existing.DefaultMetaDescription = Text.NullIfBlank(form.DefaultMetaDescription);
+        existing.OrganizationDescription = Text.NullIfBlank(form.OrganizationDescription);
+        existing.OgImageAlt = Text.NullIfBlank(form.OgImageAlt);
+        existing.OgImageUrl = Text.NullIfBlank(form.OgImageUrl);
         existing.UpdatedAt = DateTimeOffset.UtcNow;
 
         await LogAsync("SiteSettingsTranslationSaved", current.Id, adminUserId, ipAddress,
@@ -309,9 +309,6 @@ public class SiteSettingsService(
 
     private void Invalidate() => cache.Remove(CacheKey);
 
-    private static string? Trim(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-
     /// <summary>
     /// Accepts either the bare token or the whole meta tag the search console hands you, and stores
     /// the token. Rendering a nested tag would produce invalid HTML and silently fail verification,
@@ -319,7 +316,7 @@ public class SiteSettingsService(
     /// </summary>
     private static string? ExtractVerificationToken(string? value)
     {
-        var trimmed = Trim(value);
+        var trimmed = Text.NullIfBlank(value);
         if (trimmed is null) return null;
         if (!trimmed.Contains('<')) return trimmed;
 

@@ -49,7 +49,7 @@ public class JoinController(
 
         var form = new JoinFormViewModel
         {
-            Plans = await LoadPlanCardsAsync(ct),
+            Plans = await MembershipPlanCardViewModel.LoadAsync(membershipService, ct),
             PlanId = plan ?? Guid.Empty,
             OpenExperiences = await LoadOpenExperiencesAsync(ct),
         };
@@ -60,19 +60,6 @@ public class JoinController(
 
         ViewData["Title"] = "Join The VI House";
         return View(form);
-    }
-
-    /// <summary>The plan cards with their seat counts. Availability is only looked up for plans
-    /// that have a limit — an unlimited plan has nothing to count.</summary>
-    private async Task<List<MembershipPlanCardViewModel>> LoadPlanCardsAsync(CancellationToken ct)
-    {
-        var cards = new List<MembershipPlanCardViewModel>();
-        foreach (var plan in await membershipService.GetActivePlansAsync(ct))
-        {
-            var availability = plan.MaxMembers is null ? null : await membershipService.GetPlanAvailabilityAsync(plan.Id, ct);
-            cards.Add(MembershipPlanCardViewModel.FromEntity(plan, availability));
-        }
-        return cards;
     }
 
     /// <summary>
@@ -134,7 +121,7 @@ public class JoinController(
 
         if (!ModelState.IsValid)
         {
-            form.Plans = await LoadPlanCardsAsync(ct);
+            form.Plans = await MembershipPlanCardViewModel.LoadAsync(membershipService, ct);
             form.OpenExperiences = await LoadOpenExperiencesAsync(ct);
             ViewData["Title"] = "Join The VI House";
             return View(form);
@@ -166,7 +153,7 @@ public class JoinController(
         if (!result.Success)
         {
             ModelState.AddModelError(string.Empty, result.Error!);
-            form.Plans = await LoadPlanCardsAsync(ct);
+            form.Plans = await MembershipPlanCardViewModel.LoadAsync(membershipService, ct);
             form.OpenExperiences = await LoadOpenExperiencesAsync(ct);
             ViewData["Title"] = "Join The VI House";
             return View(form);

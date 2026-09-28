@@ -11,7 +11,7 @@ namespace VIHouse.Entities.Journal;
 /// so it is always written through JournalService, which sanitises it (see EditorHtml). Never
 /// assign to it from raw request input.
 /// </summary>
-public class JournalPostTranslation : BaseEntity
+public class JournalPostTranslation : BaseEntity, ITranslation
 {
     public Guid JournalPostId { get; set; }
 

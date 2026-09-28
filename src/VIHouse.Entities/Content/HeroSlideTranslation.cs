@@ -10,7 +10,7 @@ namespace VIHouse.Entities.Content;
 /// All plain text — no editor HTML anywhere in the hero, so nothing here needs sanitising and
 /// everything can be rendered with ordinary Razor encoding.
 /// </summary>
-public class HeroSlideTranslation : BaseEntity
+public class HeroSlideTranslation : BaseEntity, ITranslation
 {
     public Guid HeroSlideId { get; set; }
 

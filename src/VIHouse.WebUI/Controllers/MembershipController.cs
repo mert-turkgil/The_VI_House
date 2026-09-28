@@ -12,6 +12,7 @@ using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Services;
 using VIHouse.WebUI.ViewModels.Membership;
 using VIHouse.WebUI.Helpers;
+using VIHouse.Business.Concrete;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -53,20 +54,16 @@ public class MembershipController(
 
         if (features.Value.MembershipSales)
         {
-            foreach (var plan in await membershipService.GetActivePlansAsync(ct))
-            {
-                var availability = plan.MaxMembers is null ? null : await membershipService.GetPlanAvailabilityAsync(plan.Id, ct);
-                model.Plans.Add(MembershipPlanCardViewModel.FromEntity(plan, availability));
-            }
+            model.Plans.AddRange(await MembershipPlanCardViewModel.LoadAsync(membershipService, ct));
         }
 
-        if (model.IsAuthenticated && Guid.TryParse(userManager.GetUserId(User), out var userId))
+        if (model.IsAuthenticated && User.UserId() is { } userId)
         {
             var user = await userManager.FindByIdAsync(userId.ToString());
             model.FirstName = user?.FirstName;
             model.Current = await membershipService.GetMembershipSummaryAsync(userId, ct);
             model.CanManageBilling = model.Current is { HasProviderSubscription: true, Membership.ProviderCustomerId: not null };
-            model.MemberNumber = model.Current is null ? null : $"VIH-{model.Current.Membership.Id:N}".Substring(0, 12).ToUpperInvariant();
+            model.MemberNumber = model.Current is null ? null : MemberNumbers.For(model.Current.Membership.Id);
 
             if (model.Current is null)
             {
@@ -89,7 +86,7 @@ public class MembershipController(
         // product nobody meant to sell.
         if (!features.Value.MembershipSales) return NotFound();
 
-        var userId = Guid.Parse(userManager.GetUserId(User)!);
+        var userId = User.RequiredUserId();
 
         var successUrl = Url.Action(nameof(Success), "Membership", null, Request.Scheme)!;
         successUrl += (successUrl.Contains('?') ? "&" : "?") + "session_id={CHECKOUT_SESSION_ID}";

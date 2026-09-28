@@ -4,7 +4,6 @@ namespace VIHouse.DataAccess.Abstract;
 
 public interface IBookingRepository : IRepository<Booking>
 {
-    Task<Booking?> GetByReferenceAsync(string bookingReference, CancellationToken ct = default);
     Task<List<Booking>> GetByUserAsync(Guid userId, CancellationToken ct = default);
     Task<List<Booking>> GetByExperienceAsync(Guid experienceId, CancellationToken ct = default);
 

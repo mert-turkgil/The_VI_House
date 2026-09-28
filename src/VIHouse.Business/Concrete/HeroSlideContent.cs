@@ -21,26 +21,13 @@ public static class HeroSlideContent
     /// </summary>
     public static HeroSlideTranslation? Resolve(HeroSlide slide, string? culture)
     {
-        if (slide.Translations.Count == 0) return null;
-
-        var wanted = SiteCultures.Normalise(culture);
-
-        return Find(slide, wanted)
-            ?? FindByLanguage(slide, wanted)
-            ?? Find(slide, SiteCultures.Default)
-            ?? slide.Translations[0];
+        return TranslationLookup.Best(slide.Translations, culture);
     }
 
     /// <summary>The exact row for one culture, or null. The admin editor needs this rather than
     /// Resolve, because it must show "not translated yet" instead of quietly displaying English.</summary>
     public static HeroSlideTranslation? Find(HeroSlide slide, string culture) =>
-        slide.Translations.FirstOrDefault(t => string.Equals(t.Culture, culture, StringComparison.OrdinalIgnoreCase));
-
-    private static HeroSlideTranslation? FindByLanguage(HeroSlide slide, string culture)
-    {
-        var language = culture.Split('-')[0] + "-";
-        return slide.Translations.FirstOrDefault(t => t.Culture.StartsWith(language, StringComparison.OrdinalIgnoreCase));
-    }
+        TranslationLookup.Exact(slide.Translations, culture);
 
     /// <summary>Convenience for the admin index, which lists slides by their default-culture heading.</summary>
     public static string Heading(HeroSlide slide, string? culture) =>

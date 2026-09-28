@@ -33,7 +33,6 @@ public class AdminHeroSlidesController(
     IHeroSlideRepository slides,
     IMediaStorage mediaStorage,
     IAuditLogRepository auditLogs,
-    UserManager<ApplicationUser> userManager,
     IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     /// <summary>Where uploaded hero photography is stored, under the media root.</summary>
@@ -397,9 +396,6 @@ public class AdminHeroSlidesController(
         slide.ImageStorageKey is null
             ? slide.ImageUrl
             : Url.Action("HeroImage", "Media", new { area = "", id = slide.Id, v = (slide.UpdatedAt ?? slide.CreatedAt).ToUnixTimeSeconds() });
-
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>
         auditLogs.AddAsync(new AuditLogEntry

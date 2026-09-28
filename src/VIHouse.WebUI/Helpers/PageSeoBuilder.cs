@@ -42,7 +42,7 @@ public static class PageSeoBuilder
             // would render the page as an ordinary document and lose it.
             OgType = "website",
             CanonicalPath = $"/experiences/{e.Slug}",
-            AvailableCultures = Cultures(e.Translations.Select(t => t.Culture)),
+            AvailableCultures = SiteCultures.DefaultFirst(e.Translations.Select(t => t.Culture)),
             ModifiedAt = e.UpdatedAt,
             Breadcrumbs =
             [
@@ -65,7 +65,7 @@ public static class PageSeoBuilder
             ImageAlt = post.CoverImageAlt,
             OgType = "article",
             CanonicalPath = $"/journal/{post.Slug}",
-            AvailableCultures = Cultures(post.Translations.Select(t => t.Culture)),
+            AvailableCultures = SiteCultures.DefaultFirst(post.Translations.Select(t => t.Culture)),
             PublishedAt = post.PublishedAt,
             ModifiedAt = post.UpdatedAt,
             AuthorName = post.AuthorName,
@@ -74,25 +74,6 @@ public static class PageSeoBuilder
             [
                 new SeoBreadcrumb(listingName, "/journal"),
                 new SeoBreadcrumb(JournalContent.Title(post, culture), $"/journal/{post.Slug}"),
-            ],
-        };
-    }
-
-    public static PageSeo ForSeminar(Seminar seminar, string culture, string listingName)
-    {
-        var copy = SeminarContent.Resolve(seminar, culture);
-
-        return new PageSeo
-        {
-            Title = copy?.SeoTitle ?? SeminarContent.Title(seminar, culture),
-            Description = Trim(copy?.SeoDescription ?? Strip(copy?.Summary)),
-            CanonicalPath = $"/sessions/{seminar.Slug}",
-            AvailableCultures = Cultures(seminar.Translations.Select(t => t.Culture)),
-            ModifiedAt = seminar.UpdatedAt,
-            Breadcrumbs =
-            [
-                new SeoBreadcrumb(listingName, "/sessions"),
-                new SeoBreadcrumb(SeminarContent.Title(seminar, culture), $"/sessions/{seminar.Slug}"),
             ],
         };
     }
@@ -167,22 +148,6 @@ public static class PageSeoBuilder
 
         return JsonSerializer.Serialize(data, Json);
     }
-
-    /// <summary>
-    /// The default language plus whichever others actually have a translation row.
-    ///
-    /// Declaring an hreflang for a language the page is not written in is worse than declaring
-    /// none: it tells Google the page is translated, Google fetches it, finds English, and learns
-    /// to discount the annotations across the whole site.
-    /// </summary>
-    private static IReadOnlyList<string> Cultures(IEnumerable<string> translated) =>
-    [
-        SiteCultures.Default,
-        .. translated
-            .Where(c => SiteCultures.IsSupported(c)
-                && !string.Equals(c, SiteCultures.Default, StringComparison.OrdinalIgnoreCase))
-            .Distinct(StringComparer.OrdinalIgnoreCase),
-    ];
 
     /// <summary>
     /// Descriptions often fall back to a rich-text body. Tags in a meta description render as

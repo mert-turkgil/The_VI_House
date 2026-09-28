@@ -22,10 +22,8 @@ public static class ContentBlockContent
     /// </summary>
     public static ContentBlockTranslation? Resolve(ContentBlock? block, string? culture)
     {
-        if (block is null || block.Translations.Count == 0) return null;
-
-        var wanted = SiteCultures.Normalise(culture);
-        return Find(block, wanted) ?? FindByLanguage(block, wanted);
+        if (block is null) return null;
+        return TranslationLookup.Closest(block.Translations, culture);
     }
 
     /// <summary>
@@ -33,13 +31,7 @@ public static class ContentBlockContent
     /// translated yet" from "translated, and falling back to English".
     /// </summary>
     public static ContentBlockTranslation? Find(ContentBlock block, string culture) =>
-        block.Translations.FirstOrDefault(t => string.Equals(t.Culture, culture, StringComparison.OrdinalIgnoreCase));
-
-    private static ContentBlockTranslation? FindByLanguage(ContentBlock block, string culture)
-    {
-        var language = culture.Split('-')[0] + "-";
-        return block.Translations.FirstOrDefault(t => t.Culture.StartsWith(language, StringComparison.OrdinalIgnoreCase));
-    }
+        TranslationLookup.Exact(block.Translations, culture);
 
     // --- Field-by-field readers -------------------------------------------------------------------
     // Each falls back to the block's own column, so a half-written translation shows the translated

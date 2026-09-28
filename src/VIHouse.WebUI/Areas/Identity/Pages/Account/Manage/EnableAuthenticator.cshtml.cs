@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using VIHouse.DataAccess.Identity;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
 {
@@ -161,28 +162,11 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
                 unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
             }
 
-            SharedKey = FormatKey(unformattedKey);
+            SharedKey = AuthenticatorKey.Format(unformattedKey);
 
             var email = await _userManager.GetEmailAsync(user);
             AuthenticatorUri = GenerateQrCodeUri(email, unformattedKey);
             QrSvg = VIHouse.WebUI.Helpers.AuthenticatorQr.Svg(AuthenticatorUri);
-        }
-
-        private string FormatKey(string unformattedKey)
-        {
-            var result = new StringBuilder();
-            int currentPosition = 0;
-            while (currentPosition + 4 < unformattedKey.Length)
-            {
-                result.Append(unformattedKey.AsSpan(currentPosition, 4)).Append(' ');
-                currentPosition += 4;
-            }
-            if (currentPosition < unformattedKey.Length)
-            {
-                result.Append(unformattedKey.AsSpan(currentPosition));
-            }
-
-            return result.ToString().ToLowerInvariant();
         }
 
         private string GenerateQrCodeUri(string email, string unformattedKey)

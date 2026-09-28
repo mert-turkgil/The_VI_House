@@ -22,26 +22,13 @@ public static class JournalContent
     /// </summary>
     public static JournalPostTranslation? Resolve(JournalPost post, string? culture)
     {
-        if (post.Translations.Count == 0) return null;
-
-        var wanted = SiteCultures.Normalise(culture);
-
-        return Find(post, wanted)
-            ?? FindByLanguage(post, wanted)
-            ?? Find(post, SiteCultures.Default)
-            ?? post.Translations[0];
+        return TranslationLookup.Best(post.Translations, culture);
     }
 
     /// <summary>The exact row for one culture, or null. The admin editor needs this rather than
     /// Resolve, because it must show "not translated yet" instead of quietly displaying English.</summary>
     public static JournalPostTranslation? Find(JournalPost post, string culture) =>
-        post.Translations.FirstOrDefault(t => string.Equals(t.Culture, culture, StringComparison.OrdinalIgnoreCase));
-
-    private static JournalPostTranslation? FindByLanguage(JournalPost post, string culture)
-    {
-        var language = culture.Split('-')[0] + "-";
-        return post.Translations.FirstOrDefault(t => t.Culture.StartsWith(language, StringComparison.OrdinalIgnoreCase));
-    }
+        TranslationLookup.Exact(post.Translations, culture);
 
     /// <summary>Convenience for the admin index and the audit log, which list posts by headline.</summary>
     public static string Title(JournalPost post, string? culture) =>

@@ -346,9 +346,6 @@ public class AdminUsersController(
         return stem.Length == 0 ? "" : $"VI-{stem}";
     }
 
-    private Guid CurrentAdminId() => Guid.Parse(userManager.GetUserId(User)!);
-    private string? Ip() => HttpContext.Connection.RemoteIpAddress?.ToString();
-
     // --- Inviting a new admin -------------------------------------------------------------------
 
     [Authorize(Roles = Roles.SuperAdmin)]
@@ -436,7 +433,7 @@ public class AdminUsersController(
     private Task LogAsync(string action, Guid entityId, object? before, object? after, CancellationToken ct) =>
         auditLogs.AddAsync(new AuditLogEntry
         {
-            AdminUserId = Guid.Parse(userManager.GetUserId(User)!),
+            AdminUserId = CurrentAdminId(),
             Action = action,
             EntityType = nameof(ApplicationUser),
             EntityId = entityId,

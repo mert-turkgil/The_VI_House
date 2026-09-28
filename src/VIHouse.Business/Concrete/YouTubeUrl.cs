@@ -40,9 +40,6 @@ public static partial class YouTubeUrl
     /// share sheet, an embed code and the address bar all end up as one string.</summary>
     public static string WatchUrl(string id) => $"https://www.youtube.com/watch?v={id}";
 
-    /// <summary>The privacy-preserving player origin. Only ever built from a parsed id.</summary>
-    public static string EmbedUrl(string id) => $"https://www.youtube-nocookie.com/embed/{id}";
-
     /// <summary>Video still, served by Google's image CDN.</summary>
     public static string ThumbnailUrl(string id) => $"https://i.ytimg.com/vi/{id}/hqdefault.jpg";
 }

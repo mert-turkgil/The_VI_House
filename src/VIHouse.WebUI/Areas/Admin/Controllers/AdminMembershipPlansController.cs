@@ -21,7 +21,6 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 [Route("admin/plans")]
 public class AdminMembershipPlansController(
     IMembershipService membershipService,
-    UserManager<ApplicationUser> userManager,
     IOptions<StripeOptions> stripe) : AdminControllerBase
 {
     [HttpGet("")]
@@ -151,7 +150,4 @@ public class AdminMembershipPlansController(
 
         return RedirectToAction(nameof(Index));
     }
-
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 }

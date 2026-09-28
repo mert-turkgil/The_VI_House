@@ -193,9 +193,6 @@ public class AdminApplicationsController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
-
     private async Task RunTransitionAsync(Guid id, Func<Guid, string?, CancellationToken, Task> action, CancellationToken ct)
     {
         var (adminId, ip) = CurrentActor();

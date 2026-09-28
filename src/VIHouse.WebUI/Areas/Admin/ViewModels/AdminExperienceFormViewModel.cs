@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using VIHouse.Entities.Experiences;
 using VIHouse.WebUI.Validation;
+using VIHouse.Business.Concrete;
 
 namespace VIHouse.WebUI.Areas.Admin.ViewModels;
 
@@ -145,10 +146,10 @@ public class AdminExperienceFormViewModel
         CoverImageUrl = CoverImageUrl,
         CoverImageAlt = CoverImageAlt,
         AudienceTags = AudienceTags,
-        ApplicationOpenAt = ToUtcOffset(ApplicationOpenAt),
-        ApplicationCloseAt = ToUtcOffset(ApplicationCloseAt),
-        SalesOpenAt = ToUtcOffset(SalesOpenAt),
-        SalesCloseAt = ToUtcOffset(SalesCloseAt),
+        ApplicationOpenAt = UtcDates.ToOffset(ApplicationOpenAt),
+        ApplicationCloseAt = UtcDates.ToOffset(ApplicationCloseAt),
+        SalesOpenAt = UtcDates.ToOffset(SalesOpenAt),
+        SalesCloseAt = UtcDates.ToOffset(SalesCloseAt),
         SeoTitle = SeoTitle,
         SeoDescription = SeoDescription,
         SeoOgImageUrl = SeoOgImageUrl,
@@ -190,7 +191,4 @@ public class AdminExperienceFormViewModel
         MemberDiscountPercent = e.MemberDiscountPercent,
         SortOrder = e.SortOrder,
     };
-
-    private static DateTimeOffset? ToUtcOffset(DateTime? value) =>
-        value is null ? null : new DateTimeOffset(DateTime.SpecifyKind(value.Value, DateTimeKind.Utc));
 }

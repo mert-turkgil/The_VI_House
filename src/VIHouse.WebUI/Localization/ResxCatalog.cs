@@ -199,51 +199,6 @@ public sealed partial class ResxCatalog
         }
     }
 
-    /// <summary>
-    /// Adds a key to every file at once, appended before &lt;/root&gt; — which is where the existing
-    /// files have grown. All four must stay in step: a key present in one and absent from another is
-    /// how a language silently starts rendering English.
-    /// </summary>
-    public async Task<bool> AddKeyAsync(string key, IReadOnlyDictionary<string, string> valueBySuffix, CancellationToken ct = default)
-    {
-        await _writeLock.WaitAsync(ct);
-        try
-        {
-            var paths = valueBySuffix.Keys.Select(s => (Suffix: s, Path: PathFor(s))).ToList();
-            if (paths.Any(p => !IsContained(p.Path) || !File.Exists(p.Path))) return false;
-
-            // Read every file and build every replacement before writing any of them, so a key that
-            // already exists somewhere leaves all four untouched rather than half-updated.
-            var pending = new List<(string Suffix, string Path, string Content)>();
-            foreach (var (suffix, path) in paths)
-            {
-                var raw = await File.ReadAllTextAsync(path, Encoding.UTF8, ct);
-                if (EntryRegex(key).IsMatch(raw)) return false;
-
-                var closing = raw.LastIndexOf("</root>", StringComparison.Ordinal);
-                if (closing < 0) return false;
-
-                var newline = DetectNewline(raw);
-                var value = Escape(NormaliseNewlines(valueBySuffix[suffix], newline));
-                var entry = $"  <data name=\"{Escape(key)}\" xml:space=\"preserve\"><value>{value}</value></data>{newline}";
-
-                pending.Add((suffix, path, raw.Insert(closing, entry)));
-            }
-
-            foreach (var (suffix, path, content) in pending)
-            {
-                await WriteAtomicAsync(path, content, ct);
-                _cache.TryRemove(suffix, out _);
-            }
-
-            return true;
-        }
-        finally
-        {
-            _writeLock.Release();
-        }
-    }
-
     /// <summary>The raw bytes of one file, for the "download all four" export.</summary>
     public Task<byte[]> ReadRawAsync(string suffix, CancellationToken ct = default)
     {

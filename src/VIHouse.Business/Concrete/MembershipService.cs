@@ -302,7 +302,7 @@ public class MembershipService(
         {
             logger.LogWarning(ex, "Could not sync membership plan {PlanId} to the payment provider", plan.Id);
             plan.ProviderSyncedAt = null;
-            plan.ProviderSyncError = Truncate(ex.Message, 1000);
+            plan.ProviderSyncError = Text.Clip(ex.Message, 1000);
             return false;
         }
     }
@@ -422,8 +422,8 @@ public class MembershipService(
                 new MembershipConfirmedEmailModel(user.FirstName, plan.Name, expiresAt)
                 {
                     Status = MembershipEmailStatus.Granted,
-                    MemberNumber = $"VIH-{membership.Id:N}"[..12].ToUpperInvariant(),
-                    AccountUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.AccountMembership),
+                    MemberNumber = MemberNumbers.For(membership.Id),
+                    AccountUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.AccountMembership),
                 },
                 user.PreferredCulture ?? SiteCultures.Default,
                 nameof(Membership), membership.Id, ct);
@@ -1200,7 +1200,7 @@ public class MembershipService(
             $"email:PaymentProcessing:{entityType}:{entityId}",
             "PaymentProcessing", email, "We've received your order — payment in progress",
             new PaymentProcessingEmailModel(firstName, what, webhookEvent.AmountMinor ?? plan?.PriceMinor ?? 0, webhookEvent.Currency ?? plan?.Currency ?? "GBP",
-                SiteUrls.Absolute(BaseUrl, userId is null ? SiteUrls.Membership : SiteUrls.AccountMembership)),
+                SiteUrls.Absolute(siteOptions.Value.BaseUrl, userId is null ? SiteUrls.Membership : SiteUrls.AccountMembership)),
             culture,
             entityType, entityId, ct);
 
@@ -1230,7 +1230,7 @@ public class MembershipService(
         if (user?.Email is null) return;
 
         var plan = await plans.GetByIdAsync(membership.PlanId, ct);
-        var accountUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.AccountMembership);
+        var accountUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.AccountMembership);
         var actionUrl = webhookEvent.HostedInvoiceUrl ?? accountUrl;
         var key = webhookEvent.InvoiceId ?? webhookEvent.EventId;
 
@@ -1784,7 +1784,7 @@ public class MembershipService(
             // ResetPassword page decodes with — using the framework primitive here keeps the
             // Business layer free of an ASP.NET Core dependency.
             var encoded = Base64Url.EncodeToString(Encoding.UTF8.GetBytes(token));
-            var setupUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.ResetPassword(encoded));
+            var setupUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.ResetPassword(encoded));
 
             await outbox.EnqueueEmailAsync(
                 $"email:WelcomeSetup:User:{user.Id}",
@@ -1801,8 +1801,8 @@ public class MembershipService(
             {
                 AmountMinor = payment.AmountMinor,
                 Currency = payment.Currency,
-                MemberNumber = $"VIH-{membership.Id:N}"[..12].ToUpperInvariant(),
-                AccountUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.AccountMembership),
+                MemberNumber = MemberNumbers.For(membership.Id),
+                AccountUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.AccountMembership),
             },
             user.PreferredCulture ?? SiteCultures.Default,
             nameof(Membership), membership.Id, ct);
@@ -1873,7 +1873,7 @@ public class MembershipService(
         if (await userManager.FindByEmailAsync(join.Email) is { } user && await GetCurrentMembershipAsync(user.Id, ct) is not null) return;
 
         var plan = await plans.GetByIdAsync(join.PlanId, ct);
-        var resumeUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.JoinResume(join.Code));
+        var resumeUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.JoinResume(join.Code));
 
         await outbox.EnqueueEmailAsync(
             $"email:MembershipResume:PendingJoin:{join.Id}",
@@ -2005,7 +2005,7 @@ public class MembershipService(
         if (user is null) return;
 
         var plan = await plans.GetByIdAsync(membership.PlanId, ct);
-        var accountUrl = SiteUrls.Absolute(BaseUrl, SiteUrls.AccountMembership);
+        var accountUrl = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.AccountMembership);
 
         // The hosted invoice is a direct "pay this" page and needs nothing configured; the billing
         // portal is the fallback (it returns null until it has been set up in the dashboard); the
@@ -2081,7 +2081,7 @@ public class MembershipService(
             await outbox.EnqueueEmailAsync(
                 $"email:MembershipEnded:Membership:{membershipId}",
                 "MembershipEnded", user.Email, "Your membership has ended",
-                new MembershipEndedEmailModel(user.FirstName, planName, endedAt, SiteUrls.Absolute(BaseUrl, SiteUrls.Membership), wasRevoked),
+                new MembershipEndedEmailModel(user.FirstName, planName, endedAt, SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Membership), wasRevoked),
                 user.PreferredCulture ?? SiteCultures.Default,
                 nameof(ApplicationUser), user.Id, ct);
         }
@@ -2109,8 +2109,8 @@ public class MembershipService(
             ? $"/media/site-logo/{settings.Id}"
             : settings.LogoUrl;
 
-        if (string.IsNullOrWhiteSpace(path)) return SiteUrls.Absolute(BaseUrl, "/icons/icon-512.png");
-        return path.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? path : SiteUrls.Absolute(BaseUrl, path);
+        if (string.IsNullOrWhiteSpace(path)) return SiteUrls.Absolute(siteOptions.Value.BaseUrl, "/icons/icon-512.png");
+        return path.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? path : SiteUrls.Absolute(siteOptions.Value.BaseUrl, path);
     }
 
     /// <summary>
@@ -2126,8 +2126,6 @@ public class MembershipService(
 
     private static string PlanCheckoutDescription(MembershipPlan plan) =>
         string.IsNullOrWhiteSpace(plan.Description) ? BillingLine(plan) : $"{plan.Description.Trim()} — {BillingLine(plan)}";
-
-    private string BaseUrl => siteOptions.Value.BaseUrl.TrimEnd('/');
 
     /// <summary>The team inbox — the admin-edited site setting first, the config value behind it.</summary>
     private async Task<string?> ContactEmailAsync(CancellationToken ct)
@@ -2153,8 +2151,6 @@ public class MembershipService(
         plan.Name, plan.PriceMinor, plan.Currency, plan.BillingPeriod, plan.Status, plan.MaxMembers, plan.ProviderProductId, plan.ProviderPriceId,
         plan.IncludesCommunity, plan.IncludesSessions, plan.IncludesDirectory, plan.IncludesMemberCard, plan.DiscordRoleId,
     };
-
-    private static string Truncate(string value, int max) => value.Length <= max ? value : value[..max];
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>
         auditLogs.AddAsync(new AuditLogEntry

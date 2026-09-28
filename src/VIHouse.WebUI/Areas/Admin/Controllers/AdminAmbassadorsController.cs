@@ -17,6 +17,7 @@ using VIHouse.Business.Options;
 using VIHouse.Entities.Referrals;
 
 using VIHouse.WebUI.Helpers;
+using VIHouse.Business.Concrete;
 
 namespace VIHouse.WebUI.Areas.Admin.Controllers;
 
@@ -249,7 +250,4 @@ public class AdminAmbassadorsController(
         TempData["StatusMessage"] = "Changes saved.";
         return RedirectToAction(nameof(Edit), new { id });
     }
-
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 }

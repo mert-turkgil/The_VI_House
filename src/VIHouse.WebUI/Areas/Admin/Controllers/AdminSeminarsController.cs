@@ -366,7 +366,4 @@ public class AdminSeminarsController(
     /// </summary>
     private string Localised(string? errorKey) =>
         string.IsNullOrWhiteSpace(errorKey) ? loc["Seminar.Error.Unknown"].Value : loc[errorKey].Value;
-
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 }

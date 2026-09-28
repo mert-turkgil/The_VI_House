@@ -39,7 +39,6 @@ public class AdminCmsController(
     IRepository<MediaAsset> assets,
     IMediaStorage mediaStorage,
     IAuditLogRepository auditLogs,
-    UserManager<ApplicationUser> userManager,
     IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     /// <summary>Matches HomeController.ParseJsonList, which is what reads these blobs back.</summary>
@@ -95,7 +94,7 @@ public class AdminCmsController(
             // after checking it parses. Saving invalid JSON here would blank the section on the
             // homepage without any error reaching anyone.
             extraJson = string.IsNullOrWhiteSpace(form.ExtraJson) ? null : form.ExtraJson.Trim();
-            if (extraJson is not null && !IsValidJson(extraJson))
+            if (extraJson is not null && !Text.IsValidJson(extraJson))
             {
                 TempData["StatusMessage"] = "That JSON could not be parsed, so nothing was saved. Check for a stray comma or a missing quote.";
                 return RedirectToAction(nameof(Edit), new { id = form.PageSlug });
@@ -108,12 +107,12 @@ public class AdminCmsController(
             Id = form.Id,
             SectionKey = form.SectionKey,
             SortOrder = form.SortOrder,
-            Heading = Trimmed(form.Heading),
-            Subheading = Trimmed(form.Subheading),
-            BodyText = Trimmed(form.BodyText),
-            ImageUrl = Trimmed(form.ImageUrl),
-            CtaLabel = Trimmed(form.CtaLabel),
-            CtaUrl = Trimmed(form.CtaUrl),
+            Heading = Text.NullIfBlank(form.Heading),
+            Subheading = Text.NullIfBlank(form.Subheading),
+            BodyText = Text.NullIfBlank(form.BodyText),
+            ImageUrl = Text.NullIfBlank(form.ImageUrl),
+            CtaLabel = Text.NullIfBlank(form.CtaLabel),
+            CtaUrl = Text.NullIfBlank(form.CtaUrl),
             ExtraJson = extraJson,
         }, adminId, ip, ct);
 
@@ -179,7 +178,7 @@ public class AdminCmsController(
             {
                 SectionKey = form.SectionKey,
                 SortOrder = form.SortOrder,
-                Heading = Trimmed(form.Heading),
+                Heading = Text.NullIfBlank(form.Heading),
             }, adminId, ip, ct);
             TempData["StatusMessage"] = $"\"{form.SectionKey}\" added.";
         }
@@ -425,24 +424,6 @@ public class AdminCmsController(
 
         return rows.ToJsonString(JsonOptions);
     }
-
-    private static bool IsValidJson(string candidate)
-    {
-        try
-        {
-            JsonNode.Parse(candidate);
-            return true;
-        }
-        catch (JsonException)
-        {
-            return false;
-        }
-    }
-
-    private static string? Trimmed(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>
         auditLogs.AddAsync(new AuditLogEntry

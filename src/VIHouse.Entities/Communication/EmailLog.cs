@@ -4,7 +4,7 @@ namespace VIHouse.Entities.Communication;
 
 /// <summary>Audit trail of every transactional email attempted (brief §71). A delivered email keeps
 /// recipient + subject only; the body is held just while a failed one is waiting to be resent.</summary>
-public class EmailLog : BaseEntity
+public class EmailLog : BaseEntity, IMessageLog
 {
     public string TemplateKey { get; set; } = default!;
     public string RecipientEmail { get; set; } = default!;

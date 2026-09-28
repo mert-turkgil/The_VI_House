@@ -11,7 +11,7 @@ namespace VIHouse.Entities.Seminars;
 /// Html.Raw, so it is always written through SeminarService, which sanitises it (see EditorHtml).
 /// Never assign to it from raw request input.
 /// </summary>
-public class SeminarTranslation : BaseEntity
+public class SeminarTranslation : BaseEntity, ITranslation
 {
     public Guid SeminarId { get; set; }
 

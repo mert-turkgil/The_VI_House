@@ -22,8 +22,7 @@ public class AdminExperiencesController(
     IExperienceService experienceService,
     INotificationService notificationService,
     IMembershipService membershipService,
-    IStringLocalizer<SharedResource> loc,
-    UserManager<ApplicationUser> userManager) : AdminControllerBase
+    IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -85,7 +84,7 @@ public class AdminExperiencesController(
             Waitlist = await experienceService.GetWaitlistAsync(id, ct),
             ActiveCulture = active,
             Translations = BuildTranslationTabs(experience),
-            CoverPreviewUrl = CoverUrl(experience),
+            CoverPreviewUrl = ExperienceService.CoverUrl(experience),
             HasUploadedCover = experience.CoverImageStorageKey is not null,
         };
 
@@ -467,7 +466,7 @@ public class AdminExperiencesController(
                 ProgramDays = [.. experience.ProgramDays.OrderBy(d => d.SortOrder)],
                 MemberAccess = await BuildMemberAccessAsync(id, ct),
                 ActiveCulture = form.Culture,
-                CoverPreviewUrl = CoverUrl(experience),
+                CoverPreviewUrl = ExperienceService.CoverUrl(experience),
                 HasUploadedCover = experience.CoverImageStorageKey is not null,
                 Translations = [.. BuildTranslationTabs(experience)
                     .Select(tab => tab.Culture.Name == form.Culture ? tab with { Form = form } : tab)],
@@ -557,16 +556,4 @@ public class AdminExperiencesController(
             .Select(p => new ExperienceMemberAccessOption(
                 p.Id, p.Name, MoneyFormatter.Format(p.PriceMinor, p.Currency), admitted.Contains(p.Id)))];
     }
-
-    /// <summary>
-    /// Where the cover comes from. An uploaded file is streamed by MediaController and stamped with
-    /// the row's UpdatedAt, so replacing it produces a new URL rather than waiting out a cached one.
-    /// </summary>
-    private string? CoverUrl(Experience experience) =>
-        experience.CoverImageStorageKey is null
-            ? experience.CoverImageUrl
-            : Url.Action("ExperienceCover", "Media", new { area = "", id = experience.Id, v = (experience.UpdatedAt ?? experience.CreatedAt).ToUnixTimeSeconds() });
-
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 }

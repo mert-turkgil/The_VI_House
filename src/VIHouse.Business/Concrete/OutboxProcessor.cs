@@ -51,7 +51,7 @@ public class OutboxProcessor(
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                message.LastError = Clip($"{ex.GetType().Name}: {ex.Message}", 2000);
+                message.LastError = Text.Clip($"{ex.GetType().Name}: {ex.Message}", 2000);
                 logger.LogError(ex, "Outbox {Kind} {Key} failed (attempt {Attempt}/{Max}).", message.Kind, message.DedupeKey, message.Attempts, MaxAttempts);
             }
 
@@ -97,6 +97,4 @@ public class OutboxProcessor(
                 throw new InvalidOperationException($"Unknown outbox kind {message.Kind}.");
         }
     }
-
-    private static string Clip(string value, int max) => value.Length <= max ? value : value[..max];
 }

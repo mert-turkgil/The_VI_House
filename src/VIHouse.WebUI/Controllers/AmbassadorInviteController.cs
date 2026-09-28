@@ -90,7 +90,7 @@ public class AmbassadorInviteController(
             Bic = form.Bic,
             TermsText = string.Join("\n", form.Terms),
             AcceptedTerms = form.AcceptTerms,
-        }, CurrentUserId, HttpContext.Connection.RemoteIpAddress?.ToString(), ct);
+        }, User.UserId(), HttpContext.Connection.RemoteIpAddress?.ToString(), ct);
 
         switch (result.Status)
         {
@@ -100,7 +100,7 @@ public class AmbassadorInviteController(
                 {
                     // Signed straight in: the Ambassador role has to be in the cookie. In Production
                     // the onboarding gate then walks them through two-step verification first.
-                    if (CurrentUserId == user.Id) await signInManager.RefreshSignInAsync(user);
+                    if (User.UserId() == user.Id) await signInManager.RefreshSignInAsync(user);
                     else await signInManager.SignInAsync(user, isPersistent: false);
                 }
                 TempData["StatusMessage"] = loc["AmbassadorInvite.Welcome"].Value;
@@ -136,9 +136,6 @@ public class AmbassadorInviteController(
 
     // --- helpers ---------------------------------------------------------------------------------
 
-    private Guid? CurrentUserId =>
-        User.Identity?.IsAuthenticated == true && Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
-
     /// <summary>The token is in the address: keep it out of referrers and search engines.</summary>
     private void Prepare()
     {
@@ -153,7 +150,7 @@ public class AmbassadorInviteController(
     /// </summary>
     private IActionResult? Gate(AmbassadorInviteLookup lookup)
     {
-        var current = CurrentUserId;
+        var current = User.UserId();
         if (lookup.AccountHasPassword && current != lookup.AccountId)
         {
             return View("Gate", new AmbassadorInviteGateViewModel(

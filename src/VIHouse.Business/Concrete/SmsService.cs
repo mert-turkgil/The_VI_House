@@ -28,7 +28,7 @@ public class SmsService(
         var log = new SmsLog
         {
             TemplateKey = templateKey,
-            RecipientPhone = Truncate(normalised ?? (string.IsNullOrWhiteSpace(recipientPhone) ? "—" : recipientPhone.Trim()), 40),
+            RecipientPhone = Text.Clip(normalised ?? (string.IsNullOrWhiteSpace(recipientPhone) ? "—" : recipientPhone.Trim()), 40),
             Status = EmailStatus.Queued,
             RelatedEntityType = relatedEntityType,
             RelatedEntityId = relatedEntityId,
@@ -101,14 +101,11 @@ public class SmsService(
             // that triggered the message — approving an application, confirming a payment. The text
             // is kept so it can be resent from the admin log.
             log.Status = EmailStatus.Failed;
-            log.ErrorMessage = Truncate(ex.Message, 1000);
-            log.Body = Truncate(body, 1600);
+            log.ErrorMessage = Text.Clip(ex.Message, 1000);
+            log.Body = Text.Clip(body, 1600);
             logger.LogError(ex, "Failed to send SMS {TemplateKey} to {Recipient}", log.TemplateKey, phone);
         }
 
         await smsLogs.SaveChangesAsync(ct);
     }
-
-    private static string Truncate(string value, int max) =>
-        value.Length <= max ? value : value[..max];
 }

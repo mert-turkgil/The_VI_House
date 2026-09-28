@@ -12,7 +12,7 @@ namespace VIHouse.Entities.Communication;
 /// a single-use credential for their booking — is kept only while a failed text waits to be resent,
 /// and cleared once it has been.
 /// </summary>
-public class SmsLog : BaseEntity
+public class SmsLog : BaseEntity, IMessageLog
 {
     public string TemplateKey { get; set; } = default!;
 

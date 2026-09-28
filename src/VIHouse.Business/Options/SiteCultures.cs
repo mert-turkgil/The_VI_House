@@ -86,6 +86,16 @@ public static class SiteCultures
     /// <summary>The culture the current request/thread is rendering in, normalised to one of ours.
     /// Only meaningful mid-request — RouteCultureProvider has resolved it from the URL by then;
     /// called outside a request (a background service) it just returns the process default.</summary>
+    /// <summary>The default culture first, then every other supported culture in
+    /// <paramref name="translated"/>, once each — the hreflang/sitemap set for a page.</summary>
+    public static IReadOnlyList<string> DefaultFirst(IEnumerable<string> translated) =>
+    [
+        Default,
+        .. translated
+            .Where(c => IsSupported(c) && !string.Equals(c, Default, StringComparison.OrdinalIgnoreCase))
+            .Distinct(StringComparer.OrdinalIgnoreCase),
+    ];
+
     public static string Current() => Normalise(CultureInfo.CurrentUICulture.Name);
 }
 

@@ -92,8 +92,8 @@ public class AmbassadorService(
                 ReferralConversionKind.SessionPurchase => "Someone who came through your link has bought a place on a session.",
                 _ => "Someone who came through your link has become a member.",
             };
-            var amountText = amountMinor is { } a && currency is not null ? FormatMoney(a, currency) : null;
-            var commissionText = commission is { } c && currency is not null ? FormatMoney(c, currency) : null;
+            var amountText = amountMinor is { } a && currency is not null ? MoneyFormatter.Format(a, currency) : null;
+            var commissionText = commission is { } c && currency is not null ? MoneyFormatter.Format(c, currency) : null;
 
             if (ambassador.UserId is { } notifyUserId)
                 await notificationService.CreateForUserAsync(notifyUserId, NotificationType.ReferralConverted,
@@ -133,13 +133,6 @@ public class AmbassadorService(
             .Take(take)
             .ToList();
 
-    /// <summary>Minor units to "£1,500.00" — the same shape the site's MoneyFormatter produces,
-    /// kept here because the Business layer cannot reach the WebUI helper.</summary>
-    private static string FormatMoney(long minor, string currency)
-    {
-        var symbol = currency.ToUpperInvariant() switch { "GBP" => "£", "EUR" => "€", "USD" => "$", var c => c + " " };
-        return $"{symbol}{minor / 100m:N2}";
-    }
 
     public Task<List<Ambassador>> GetAllAsync(CancellationToken ct = default) => ambassadors.GetAllAsync(ct);
 
@@ -353,11 +346,11 @@ public class AmbassadorService(
         ambassador.TermsConsentId = consent.Id;
         ambassador.TermsCommissionPercent = ambassador.CommissionPercent;
         ambassador.BillingAddressLine1 = form.AddressLine1.Trim();
-        ambassador.BillingAddressLine2 = string.IsNullOrWhiteSpace(form.AddressLine2) ? null : form.AddressLine2.Trim();
+        ambassador.BillingAddressLine2 = Text.NullIfBlank(form.AddressLine2);
         ambassador.BillingCity = form.City.Trim();
         ambassador.BillingPostalCode = form.PostalCode.Trim();
         ambassador.BillingCountry = form.Country;
-        ambassador.TaxId = string.IsNullOrWhiteSpace(form.TaxId) ? null : form.TaxId.Trim();
+        ambassador.TaxId = Text.NullIfBlank(form.TaxId);
         ambassador.PayoutAccountHolder = form.AccountHolder.Trim();
         ambassador.PayoutIban = Iban.Normalize(form.Iban);
         ambassador.PayoutBic = string.IsNullOrWhiteSpace(form.Bic) ? null : Iban.Normalize(form.Bic);
@@ -376,18 +369,16 @@ public class AmbassadorService(
     private static string NewInviteToken(Ambassador ambassador)
     {
         var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)).TrimEnd('=').Replace('+', '-').Replace('/', '_');
-        ambassador.InviteTokenHash = HashToken(token);
+        ambassador.InviteTokenHash = Text.Sha256Hex(token);
         ambassador.InviteSentAt = DateTimeOffset.UtcNow;
         ambassador.InviteExpiresAt = DateTimeOffset.UtcNow + IAmbassadorService.InviteLifetime;
         return token;
     }
 
-    private static string HashToken(string token) => Convert.ToHexStringLower(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(token)));
-
     private Task<Ambassador?> FindByTokenAsync(string token, CancellationToken ct) =>
         string.IsNullOrWhiteSpace(token) || token.Length > 100
             ? Task.FromResult<Ambassador?>(null)
-            : ambassadors.GetByInviteTokenHashAsync(HashToken(token), ct);
+            : ambassadors.GetByInviteTokenHashAsync(Text.Sha256Hex(token), ct);
 
     private async Task<bool> SendInviteAsync(Ambassador ambassador, string token, CancellationToken ct)
     {
@@ -442,20 +433,20 @@ public class AmbassadorService(
             AmbassadorId = ambassador.Id,
             TargetKind = targetKind,
             TargetId = targetId,
-            LandingPath = landingPath is { Length: > 200 } ? landingPath[..200] : landingPath,
+            LandingPath = Text.Clip(landingPath, 200),
             UtmSource = Clip(utmSource),
             UtmMedium = Clip(utmMedium),
             UtmCampaign = Clip(utmCampaign),
             UtmContent = Clip(utmContent),
             IpHash = visitor?.IpHash,
-            UserAgent = visitor?.UserAgent is { Length: > 0 } ua ? (ua.Length > 300 ? ua[..300] : ua) : null,
+            UserAgent = Text.Clip(Text.NullIfBlank(visitor?.UserAgent), 300),
             VisitorUserId = visitor?.UserId,
         }, ct);
         await visits.SaveChangesAsync(ct);
         return true;
 
         // The columns are 100 wide and the values come straight off a query string.
-        static string? Clip(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Length > 100 ? value[..100] : value;
+        static string? Clip(string? value) => Text.Clip(Text.NullIfBlank(value), 100);
     }
 
     public async Task<List<ReferralLinkTarget>> GetLinkTargetsAsync(CancellationToken ct = default)
@@ -635,7 +626,7 @@ public class AmbassadorService(
                 {
                     await notificationService.CreateForUserAsync(ambassadorUserId, NotificationType.ReferralConverted,
                         "A referred purchase was refunded",
-                        $"{(refunded >= amount ? "A purchase" : "Part of a purchase")} made through your link was refunded, so {FormatMoney(takenBack, line.Currency)} of commission no longer stands.",
+                        $"{(refunded >= amount ? "A purchase" : "Part of a purchase")} made through your link was refunded, so {MoneyFormatter.Format(takenBack, line.Currency)} of commission no longer stands.",
                         SiteUrls.Ambassador, ct);
                 }
             }
@@ -655,7 +646,7 @@ public class AmbassadorService(
         var before = new { line.CommissionMinor, line.CommissionReversedMinor, line.PayoutId };
         line.VoidedAt = DateTimeOffset.UtcNow;
         line.VoidedByAdminId = adminUserId;
-        line.VoidReason = reason.Length > 300 ? reason[..300] : reason;
+        line.VoidReason = Text.Clip(reason, 300);
         line.CommissionReversedMinor = line.CommissionMinor.Value;
         line.UpdatedAt = DateTimeOffset.UtcNow;
         await LogAsync("ReferralCommissionVoided", ambassadorId, adminUserId, ipAddress, before,
@@ -677,7 +668,7 @@ public class AmbassadorService(
         var owed = earned - paid;
 
         if (owed != expectedOwedMinor)
-            return ReferralPayoutResult.Fail($"The balance changed to {FormatMoney(owed, currency)} while you were looking (a refund, a sale or another admin's payout). Nothing was recorded — check the figures and try again.");
+            return ReferralPayoutResult.Fail($"The balance changed to {MoneyFormatter.Format(owed, currency)} while you were looking (a refund, a sale or another admin's payout). Nothing was recorded — check the figures and try again.");
         if (owed <= 0)
             return ReferralPayoutResult.Fail($"Nothing is owed in {currency}.");
 
@@ -688,8 +679,8 @@ public class AmbassadorService(
             AmountMinor = owed,
             PaidAt = DateTimeOffset.UtcNow,
             PaidByAdminId = adminUserId,
-            Reference = Clip(reference, 100),
-            Note = Clip(note, 500),
+            Reference = Text.Clip(Text.NullIfBlank(reference), 100),
+            Note = Text.Clip(Text.NullIfBlank(note), 500),
         };
         await payouts.AddAsync(payout, ct);
         foreach (var line in ledger.Where(c => c.PayoutId is null))
@@ -703,12 +694,9 @@ public class AmbassadorService(
 
         if (ambassador.UserId is { } paidUserId)
             await notificationService.CreateForUserAsync(paidUserId, NotificationType.ReferralConverted,
-            "Commission paid", $"The House has paid you {FormatMoney(owed, currency)} in commission{(payout.Reference is null ? "" : $" (reference {payout.Reference})")}.",
+            "Commission paid", $"The House has paid you {MoneyFormatter.Format(owed, currency)} in commission{(payout.Reference is null ? "" : $" (reference {payout.Reference})")}.",
             SiteUrls.Ambassador, ct);
         return ReferralPayoutResult.Ok(payout);
-
-        static string? Clip(string? value, int max) =>
-            string.IsNullOrWhiteSpace(value) ? null : value.Trim().Length > max ? value.Trim()[..max] : value.Trim();
     }
 
     public async Task<List<ReferralPayout>> GetPayoutsAsync(Guid ambassadorId, CancellationToken ct = default) =>

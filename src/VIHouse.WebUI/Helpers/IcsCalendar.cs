@@ -33,7 +33,7 @@ public static class IcsCalendar
         Line($"UID:{e.Uid}");
         Line($"DTSTAMP:{Utc(DateTimeOffset.UtcNow)}");
         Line($"DTSTART:{Utc(e.StartUtc)}");
-        Line($"DTEND:{Utc(e.EndUtc > e.StartUtc ? e.EndUtc : e.StartUtc.AddHours(1))}");
+        Line($"DTEND:{Utc(e.EndUtc > e.StartUtc ? e.EndUtc : e.StartUtc + VIHouse.Business.Concrete.SessionTiming.DefaultLength)}");
         Line($"SUMMARY:{Escape(e.Title)}");
         if (!string.IsNullOrWhiteSpace(e.Location)) Line($"LOCATION:{Escape(e.Location)}");
         if (!string.IsNullOrWhiteSpace(e.Description)) Line($"DESCRIPTION:{Escape(e.Description)}");

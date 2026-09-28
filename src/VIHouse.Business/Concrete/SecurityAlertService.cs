@@ -20,12 +20,10 @@ public class SecurityAlertService(
     private static readonly TimeSpan KnownWindow = TimeSpan.FromDays(30);
     private static readonly TimeSpan Retention = TimeSpan.FromDays(90);
 
-    private string BaseUrl => siteOptions.Value.BaseUrl.TrimEnd('/');
-
     public Task PasswordChangedAsync(Guid userId, string? ipAddress, string? userAgent, CancellationToken ct = default) =>
         SendAsync(userId, "PasswordChanged", "Your password was changed",
             "The password on your VI House account was just changed. If that was you, there is nothing to do.",
-            SiteUrls.Absolute(BaseUrl, SiteUrls.ForgotPassword), "Reset your password", ipAddress, userAgent, ct);
+            SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.ForgotPassword), "Reset your password", ipAddress, userAgent, ct);
 
     public Task TwoFactorChangedAsync(Guid userId, TwoFactorChange change, string? ipAddress, string? userAgent, CancellationToken ct = default) =>
         SendAsync(userId, change switch
@@ -41,7 +39,7 @@ public class SecurityAlertService(
                 _ => "Your authenticator app was reset",
             },
             "The two-step verification settings on your VI House account were just changed. If that was you, there is nothing to do.",
-            SiteUrls.Absolute(BaseUrl, SiteUrls.SecurityTwoFactor), "Review two-step verification", ipAddress, userAgent, ct);
+            SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.SecurityTwoFactor), "Review two-step verification", ipAddress, userAgent, ct);
 
     public async Task RecordSignInAsync(Guid userId, string? ipAddress, string? userAgent, CancellationToken ct = default)
     {
@@ -76,7 +74,7 @@ public class SecurityAlertService(
 
             await SendAsync(userId, "NewSignIn", "New sign-in to your account",
                 "Your VI House account was just signed in to from an address it has not used in the last thirty days. If that was you — a new phone, a trip, a different network — there is nothing to do.",
-                SiteUrls.Absolute(BaseUrl, SiteUrls.SecurityPassword), "Change your password", ip, userAgent, ct);
+                SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.SecurityPassword), "Change your password", ip, userAgent, ct);
         }
         catch (Exception ex)
         {

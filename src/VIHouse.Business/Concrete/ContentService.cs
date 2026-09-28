@@ -18,8 +18,6 @@ public class ContentService(
     public Task<ContentPage?> GetPageWithBlocksAsync(string slug, CancellationToken ct = default) =>
         pages.GetBySlugWithBlocksAsync(slug, ct);
 
-    public Task<ContentBlock?> GetBlockAsync(Guid id, CancellationToken ct = default) => blocks.GetByIdAsync(id, ct);
-
     public async Task<ContentBlock> AddBlockAsync(Guid pageId, ContentBlock block, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
         block.PageId = pageId;
@@ -82,7 +80,7 @@ public class ContentService(
         // the English payload: saving it would empty the section for that language alone, with no
         // error anywhere and nothing on the English page to hint at it.
         var extraJson = string.IsNullOrWhiteSpace(form.ExtraJson) ? null : form.ExtraJson.Trim();
-        if (extraJson is not null && !IsValidJson(extraJson))
+        if (extraJson is not null && !Text.IsValidJson(extraJson))
             return "Admin.Cms.InvalidJson";
 
         var existing = await FindTranslationAsync(form.ContentBlockId, culture, ct);
@@ -93,10 +91,10 @@ public class ContentService(
             await blockTranslations.AddAsync(existing, ct);
         }
 
-        existing.Heading = Trim(form.Heading);
-        existing.Subheading = Trim(form.Subheading);
-        existing.BodyText = Trim(form.BodyText);
-        existing.CtaLabel = Trim(form.CtaLabel);
+        existing.Heading = Text.NullIfBlank(form.Heading);
+        existing.Subheading = Text.NullIfBlank(form.Subheading);
+        existing.BodyText = Text.NullIfBlank(form.BodyText);
+        existing.CtaLabel = Text.NullIfBlank(form.CtaLabel);
         existing.ExtraJson = extraJson;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
 
@@ -133,22 +131,6 @@ public class ContentService(
         return all.FirstOrDefault(t =>
             t.ContentBlockId == blockId
             && string.Equals(t.Culture, culture, StringComparison.OrdinalIgnoreCase));
-    }
-
-    private static string? Trim(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
-
-    private static bool IsValidJson(string value)
-    {
-        try
-        {
-            using var _ = JsonDocument.Parse(value);
-            return true;
-        }
-        catch (JsonException)
-        {
-            return false;
-        }
     }
 
     public async Task RemoveBlockAsync(Guid pageId, Guid blockId, Guid adminUserId, string? ipAddress, CancellationToken ct = default)

@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using VIHouse.DataAccess.Identity;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Areas.Identity.Pages.Account
 {
@@ -26,27 +27,19 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IUserStore<ApplicationUser> _userStore;
-        private readonly IUserEmailStore<ApplicationUser> _emailStore;
-        private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
         private readonly VIHouse.Business.Abstract.ISecurityAlertService _securityAlerts;
 
         public ExternalLoginModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
-            IUserStore<ApplicationUser> userStore,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender,
             VIHouse.Business.Abstract.ISecurityAlertService securityAlerts)
         {
             _signInManager = signInManager;
             _userManager = userManager;
-            _userStore = userStore;
-            _emailStore = GetEmailStore();
             _logger = logger;
             _securityAlerts = securityAlerts;
-            _emailSender = emailSender;
         }
 
         /// <summary>
@@ -90,34 +83,20 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             public string Email { get; set; }
         }
         
-        /// <summary>
-        /// Same rule as LoginModel.SafeReturnUrl, and just as load-bearing here: this is the returnUrl
-        /// that OnPost embeds into the OAuth redirect_uri it hands Google, so an unsanitised value
-        /// doesn't just misdirect one redirect — it gets carried through the whole round trip to
-        /// Google and back, and if it already pointed at /login or /login/external, every failed
-        /// attempt (including the "no VI House account is linked to this Google account" case every
-        /// unlinked visitor hits) wraps it one layer deeper than the last.
-        /// </summary>
-        private string SafeReturnUrl(string returnUrl) =>
-            !string.IsNullOrEmpty(returnUrl)
-            && Url.IsLocalUrl(returnUrl)
-            && !returnUrl.StartsWith(VIHouse.Business.SiteUrls.Login, StringComparison.OrdinalIgnoreCase)
-                ? returnUrl
-                : Url.Content("~/");
 
         public IActionResult OnGet() => RedirectToPage("./Login");
 
         public IActionResult OnPost(string provider, string returnUrl = null)
         {
             // Request a redirect to the external login provider.
-            var redirectUrl = Url.Page("./ExternalLogin", pageHandler: "Callback", values: new { returnUrl = SafeReturnUrl(returnUrl) });
+            var redirectUrl = Url.Page("./ExternalLogin", pageHandler: "Callback", values: new { returnUrl = ReturnUrls.Safe(Url, returnUrl) });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
         }
 
         public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null, string remoteError = null)
         {
-            returnUrl = SafeReturnUrl(returnUrl);
+            returnUrl = ReturnUrls.Safe(Url, returnUrl);
             if (remoteError != null)
             {
                 ErrorMessage = $"Error from external provider: {remoteError}";
@@ -169,32 +148,9 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             // account — it doesn't depend on OnGetCallbackAsync ever having rendered this page's
             // form. Left unguarded, it would create a brand-new ApplicationUser (no role, no
             // approval) for literally any Google email, bypassing the application-approval funnel.
-            returnUrl = SafeReturnUrl(returnUrl);
+            returnUrl = ReturnUrls.Safe(Url, returnUrl);
             ErrorMessage = "No VI House account is linked to this Google account.";
             return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
-        }
-
-        private ApplicationUser CreateUser()
-        {
-            try
-            {
-                return Activator.CreateInstance<ApplicationUser>();
-            }
-            catch
-            {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-                    $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the external login page in /Areas/Identity/Pages/Account/ExternalLogin.cshtml");
-            }
-        }
-
-        private IUserEmailStore<ApplicationUser> GetEmailStore()
-        {
-            if (!_userManager.SupportsUserEmail)
-            {
-                throw new NotSupportedException("The default UI requires a user store with email support.");
-            }
-            return (IUserEmailStore<ApplicationUser>)_userStore;
         }
     }
 }

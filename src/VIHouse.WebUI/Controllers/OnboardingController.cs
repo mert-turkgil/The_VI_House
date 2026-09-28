@@ -288,7 +288,7 @@ public class OnboardingController(
 
         return new TwoFactorSetupViewModel
         {
-            SharedKey = FormatKey(key!),
+            SharedKey = AuthenticatorKey.Format(key!),
             AuthenticatorUri = authenticatorUri,
             QrSvg = AuthenticatorQr.Svg(authenticatorUri),
         };
@@ -336,26 +336,5 @@ public class OnboardingController(
             new ConfirmEmailAddressEmailModel(user.FirstName, link),
             user.PreferredCulture ?? SiteCultures.Default,
             nameof(ApplicationUser), user.Id, ct);
-    }
-
-    /// <summary>Groups the secret into fours — it's meant to be typed by hand into an authenticator
-    /// app when the QR code can't be scanned, and an unbroken 32-character string is hard to keep
-    /// your place in.</summary>
-    private static string FormatKey(string unformattedKey)
-    {
-        var result = new StringBuilder();
-        var position = 0;
-
-        while (position + 4 < unformattedKey.Length)
-        {
-            result.Append(unformattedKey.AsSpan(position, 4)).Append(' ');
-            position += 4;
-        }
-        if (position < unformattedKey.Length)
-        {
-            result.Append(unformattedKey.AsSpan(position));
-        }
-
-        return result.ToString().ToLowerInvariant();
     }
 }

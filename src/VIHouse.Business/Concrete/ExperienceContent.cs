@@ -25,12 +25,7 @@ public static class ExperienceContent
     /// </summary>
     public static ExperienceTranslation? Resolve(Experience experience, string? culture)
     {
-        if (experience.Translations.Count == 0) return null;
-
-        var wanted = SiteCultures.Normalise(culture);
-
-        return Find(experience, wanted)
-            ?? FindByLanguage(experience, wanted);
+        return TranslationLookup.Closest(experience.Translations, culture);
     }
 
     /// <summary>
@@ -38,13 +33,7 @@ public static class ExperienceContent
     /// translated yet" from "translated, and falling back to English".
     /// </summary>
     public static ExperienceTranslation? Find(Experience experience, string culture) =>
-        experience.Translations.FirstOrDefault(t => string.Equals(t.Culture, culture, StringComparison.OrdinalIgnoreCase));
-
-    private static ExperienceTranslation? FindByLanguage(Experience experience, string culture)
-    {
-        var language = culture.Split('-')[0] + "-";
-        return experience.Translations.FirstOrDefault(t => t.Culture.StartsWith(language, StringComparison.OrdinalIgnoreCase));
-    }
+        TranslationLookup.Exact(experience.Translations, culture);
 
     // --- Field-by-field readers -------------------------------------------------------------------
     // Each falls back to the experience's own column, so a partially written translation shows the

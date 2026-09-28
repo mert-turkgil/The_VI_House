@@ -50,7 +50,7 @@ public class PaymentTransactionService(
 
         var transaction = await transactions.GetByIdAsync(transactionId, ct);
         if (transaction is null) return;
-        transaction.FailureMessage = Clip(reason, 1000);
+        transaction.FailureMessage = Text.Clip(reason, 1000);
         await transactions.SaveChangesAsync(ct);
     }
 
@@ -269,6 +269,4 @@ public class PaymentTransactionService(
         if (!updated.Succeeded)
             logger.LogWarning("Could not link customer {CustomerId} to account {UserId}: {Errors}", providerCustomerId, userId, string.Join(" ", updated.Errors.Select(e => e.Description)));
     }
-
-    private static string Clip(string value, int max) => value.Length <= max ? value : value[..max];
 }

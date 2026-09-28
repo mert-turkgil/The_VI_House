@@ -123,14 +123,11 @@ public class SeminarDetailViewModel
     {
         var copy = SeminarContent.Resolve(s, culture);
         var showContent = access.HasAccess || isStaffPreview;
-        var now = DateTimeOffset.UtcNow;
-        var end = s.EndAtUtc ?? s.StartAtUtc?.AddHours(2);
-
         return new SeminarDetailViewModel
         {
             MeetingUrl = showContent && s.IsOnline ? s.MeetingUrl : null,
             LiveStreamUrl = showContent ? s.LiveStreamUrl : null,
-            IsLiveNow = s.StartAtUtc is { } start && end is { } finish && now >= start.AddHours(-1) && now <= finish,
+            IsLiveNow = SessionTiming.IsLive(s.StartAtUtc, s.EndAtUtc, DateTimeOffset.UtcNow),
             Enrollment = access.Enrollment,
             Slug = s.Slug,
             Title = copy?.Title ?? s.Slug,

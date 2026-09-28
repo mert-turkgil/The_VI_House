@@ -75,7 +75,7 @@ public class ExperiencesController(
         if (experience is null || experience.Status == ExperienceStatus.Draft)
             return NotFound();
 
-        var userId = CurrentUserId();
+        var userId = User.UserId();
 
         // Members visibility is now honoured rather than treated as "invisible to everybody".
         // Every consumer used to test == Public, so an admin choosing Members from the dropdown
@@ -117,7 +117,7 @@ public class ExperiencesController(
     [HttpGet("{slug}/calendar.ics")]
     public async Task<IActionResult> Calendar(string slug, CancellationToken ct)
     {
-        var userId = CurrentUserId();
+        var userId = User.UserId();
         var experience = await experienceService.GetPublicDetailBySlugAsync(slug, ct);
         if (experience is null || experience.Status == ExperienceStatus.Draft || !await CanSeeAsync(experience, userId, ct))
             return userId is null ? Challenge() : NotFound();
@@ -153,7 +153,7 @@ public class ExperiencesController(
         var experience = await experienceService.GetPublicDetailBySlugAsync(slug, ct);
         if (experience is null) return NotFound();
 
-        var userId = CurrentUserId();
+        var userId = User.UserId();
         if (!await CanSeeAsync(experience, userId, ct)) return NotFound();
 
         if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(email))
@@ -189,7 +189,7 @@ public class ExperiencesController(
         var experience = await experienceService.GetPublicDetailBySlugAsync(slug, ct);
         if (experience is null) return NotFound();
 
-        var userId = CurrentUserId();
+        var userId = User.UserId();
         if (userId is null) return Challenge();
 
         var (error, reference) = await experienceService.JoinAsMemberAsync(experience.Id, userId.Value, attendance, ct);
@@ -200,9 +200,6 @@ public class ExperiencesController(
 
         return RedirectToAction(nameof(Details), new { slug });
     }
-
-    private Guid? CurrentUserId() =>
-        Guid.TryParse(userManager.GetUserId(User), out var id) ? id : null;
 
     /// <summary>
     /// Whether this person may see the page at all. Mirrors SeminarService's split: visibility gates

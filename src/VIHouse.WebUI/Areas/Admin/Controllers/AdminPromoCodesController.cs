@@ -27,8 +27,7 @@ public class AdminPromoCodesController(
     IPromoCodeRepository promoCodes,
     IExperienceService experienceService,
     IMembershipService membershipService,
-    IAuditLogRepository auditLogs,
-    UserManager<ApplicationUser> userManager) : AdminControllerBase
+    IAuditLogRepository auditLogs) : AdminControllerBase
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -197,9 +196,6 @@ public class AdminPromoCodesController(
             .Select(p => new SelectListItem($"{p.Name} ({p.Currency} {p.PriceMinor / 100m:0.##})", p.Id.ToString()))
             .ToList();
     }
-
-    private (Guid AdminId, string? IpAddress) CurrentActor() =>
-        (Guid.Parse(userManager.GetUserId(User)!), HttpContext.Connection.RemoteIpAddress?.ToString());
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>
         auditLogs.AddAsync(new AuditLogEntry

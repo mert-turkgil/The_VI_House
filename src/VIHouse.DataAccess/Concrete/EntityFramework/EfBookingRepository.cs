@@ -7,9 +7,6 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework;
 
 public class EfBookingRepository(VIHouseDbContext db) : EfRepository<Booking>(db), IBookingRepository
 {
-    public Task<Booking?> GetByReferenceAsync(string bookingReference, CancellationToken ct = default) =>
-        Set.FirstOrDefaultAsync(b => b.BookingReference == bookingReference, ct);
-
     public Task<List<Booking>> GetByUserAsync(Guid userId, CancellationToken ct = default) =>
         Set.Where(b => b.UserId == userId).OrderByDescending(b => b.CreatedAt).ToListAsync(ct);
 

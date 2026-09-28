@@ -56,7 +56,7 @@ public class AccountController(
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null) return Challenge();
 
@@ -76,13 +76,13 @@ public class AccountController(
             Email = user.Email ?? "",
             Membership = membership,
             CanManageBilling = membership is { HasProviderSubscription: true, Membership.ProviderCustomerId: not null },
-            MemberNumber = membership is null ? null : MemberNumberFor(membership.Membership.Id),
+            MemberNumber = membership is null ? null : MemberNumbers.For(membership.Membership.Id),
             ProfileComplete = profile?.IsComplete == true,
             UnreadNotifications = await notificationService.GetUnreadCountAsync(userId, ct),
             TotalSessionCount = enrolments.Count,
             OnDemandSessionCount = enrolments.Count(e => e.Seminar.StartAtUtc is null),
             UpcomingSessions = enrolments
-                .Where(e => e.Seminar.StartAtUtc is { } start && (e.Seminar.EndAtUtc ?? start.AddHours(2)) > now)
+                .Where(e => e.Seminar.StartAtUtc is not null && !SessionTiming.HasEnded(e.Seminar.StartAtUtc, e.Seminar.EndAtUtc, now))
                 .OrderBy(e => e.Seminar.StartAtUtc)
                 .Take(3)
                 .Select(e => new DashboardSessionItem(
@@ -113,7 +113,7 @@ public class AccountController(
         model.UpcomingBookings = model.UpcomingBookings.OrderBy(b => b.StartAtUtc).Take(3).ToList();
 
         if (membership is null && features.Value.MembershipSales)
-            model.Plans = await PlanCardsAsync(ct);
+            model.Plans = await MembershipPlanCardViewModel.LoadAsync(membershipService, ct);
 
         model.Entitlements = membership?.Entitlements;
         model.Hubs = await BuildHubsAsync(myBookings, enrolments, culture, now, ct);
@@ -147,7 +147,7 @@ public class AccountController(
 
         foreach (var (seminar, _) in enrolments)
         {
-            if (seminar.StartAtUtc is { } start && (seminar.EndAtUtc ?? start.AddHours(2)) < now) continue;
+            if (SessionTiming.HasEnded(seminar.StartAtUtc, seminar.EndAtUtc, now)) continue;
             var links = activeLinks.Where(l => l.SeminarId == seminar.Id).OrderBy(l => l.SortOrder).ToList();
             var hub = new AccessHub("session", SeminarContent.Title(seminar, culture), $"/sessions/{seminar.Slug}",
                 seminar.StartAtUtc, seminar.EndAtUtc, seminar.LiveStreamUrl, seminar.MeetingUrl, links);
@@ -162,7 +162,7 @@ public class AccountController(
     [HttpGet("profile")]
     public async Task<IActionResult> Profile(string? returnUrl, CancellationToken ct)
     {
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null) return Challenge();
 
@@ -184,7 +184,7 @@ public class AccountController(
     public async Task<IActionResult> Profile(ProfileFormViewModel form, CancellationToken ct)
     {
         ViewData["Title"] = "My Profile";
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null) return Challenge();
 
@@ -260,7 +260,7 @@ public class AccountController(
     [HttpGet("membership")]
     public async Task<IActionResult> Membership(CancellationToken ct)
     {
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
 
         // A paid checkout the webhook hasn't confirmed yet is settled against the provider first,
         // so this page never tells a paying member they have no membership.
@@ -279,9 +279,9 @@ public class AccountController(
             Current = current,
             History = history,
             CanManageBilling = current is { HasProviderSubscription: true, Membership.ProviderCustomerId: not null },
-            MemberNumber = current is null ? null : MemberNumberFor(current.Membership.Id),
+            MemberNumber = current is null ? null : MemberNumbers.For(current.Membership.Id),
             SalesOpen = features.Value.MembershipSales,
-            Plans = features.Value.MembershipSales ? await PlanCardsAsync(ct) : [],
+            Plans = features.Value.MembershipSales ? await MembershipPlanCardViewModel.LoadAsync(membershipService, ct) : [],
             CommunityEnabled = features.Value.Community,
             DirectoryEnabled = features.Value.MemberDirectory,
         };
@@ -300,7 +300,7 @@ public class AccountController(
     public async Task<IActionResult> Billing(CancellationToken ct)
     {
         var returnUrl = Url.Action(nameof(Membership), "Account", null, Request.Scheme)!;
-        var portalUrl = await membershipService.CreateBillingPortalUrlAsync(CurrentUserId(), returnUrl, ct);
+        var portalUrl = await membershipService.CreateBillingPortalUrlAsync(User.RequiredUserId(), returnUrl, ct);
 
         if (portalUrl is null)
         {
@@ -314,7 +314,7 @@ public class AccountController(
     [HttpGet("card")]
     public async Task<IActionResult> Card(CancellationToken ct)
     {
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
         var membership = await membershipService.GetCurrentMembershipAsync(userId, ct);
         if (membership is null)
         {
@@ -335,7 +335,7 @@ public class AccountController(
         {
             FullName = user is null ? "" : $"{user.FirstName} {user.LastName}",
             PlanName = plan?.Name ?? "Member",
-            MemberNumber = MemberNumberFor(membership.Id),
+            MemberNumber = MemberNumbers.For(membership.Id),
             MemberSince = membership.StartAt,
             ExpiresAt = membership.ExpiresAt,
         });
@@ -356,7 +356,7 @@ public class AccountController(
         // is not open to members either — telling someone to buy their way in would be a lie.
         if (!features.Value.Community) return NotFound();
 
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
         var entitlements = await membershipService.GetEntitlementsAsync(userId, ct);
         if (entitlements is null)
         {
@@ -395,7 +395,7 @@ public class AccountController(
         var link = await communityLinks.GetByIdAsync(linkId, ct);
         if (link is null || !link.IsActive) return NotFound();
 
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
         if (!await MayOpenLinkAsync(userId, link, ct)) return Forbid();
 
         var url = link.DiscordChannelId is { } channel
@@ -425,7 +425,7 @@ public class AccountController(
     public async Task<IActionResult> Notifications(CancellationToken ct)
     {
         ViewData["Title"] = "Notifications";
-        return View(await notificationService.GetForUserAsync(CurrentUserId(), ct));
+        return View(await notificationService.GetForUserAsync(User.RequiredUserId(), ct));
     }
 
     /// <summary>Plain GET, not a POST — clicking a notification both marks it read and takes you to
@@ -435,7 +435,7 @@ public class AccountController(
     [HttpGet("notifications/open/{id:guid}")]
     public async Task<IActionResult> OpenNotification(Guid id, CancellationToken ct)
     {
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
         var notification = (await notificationService.GetForUserAsync(userId, ct)).FirstOrDefault(n => n.Id == id);
         await notificationService.MarkReadAsync(id, userId, ct);
         return notification?.Link is { } link && Url.IsLocalUrl(link) ? Redirect(link) : RedirectToAction(nameof(Notifications));
@@ -445,7 +445,7 @@ public class AccountController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> MarkAllNotificationsRead(string? returnUrl, CancellationToken ct)
     {
-        await notificationService.MarkAllReadAsync(CurrentUserId(), ct);
+        await notificationService.MarkAllReadAsync(User.RequiredUserId(), ct);
         return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : RedirectToAction(nameof(Notifications));
     }
 
@@ -494,7 +494,7 @@ public class AccountController(
     [HttpGet("payments")]
     public async Task<IActionResult> Payments(CancellationToken ct)
     {
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
         await reconciliation.ReconcileForUserAsync(userId, ct);
 
         ViewData["Title"] = "My Payments";
@@ -530,7 +530,7 @@ public class AccountController(
     [HttpGet("bookings")]
     public async Task<IActionResult> Bookings(CancellationToken ct)
     {
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
         // A paid checkout the webhook hasn't confirmed yet is settled against the provider first.
         await reconciliation.ReconcileForUserAsync(userId, ct);
         var userBookings = await bookings.GetByUserAsync(userId, ct);
@@ -571,7 +571,7 @@ public class AccountController(
     [HttpGet("bookings/{reference}")]
     public async Task<IActionResult> Ticket(string reference, CancellationToken ct)
     {
-        var userId = CurrentUserId();
+        var userId = User.RequiredUserId();
         var booking = (await bookings.GetByUserAsync(userId, ct))
             .FirstOrDefault(b => string.Equals(b.BookingReference, reference, StringComparison.OrdinalIgnoreCase));
 
@@ -618,7 +618,7 @@ public class AccountController(
     public async Task<IActionResult> Sessions(CancellationToken ct)
     {
         var culture = CultureInfo.CurrentUICulture.Name;
-        var sessionUserId = CurrentUserId();
+        var sessionUserId = User.RequiredUserId();
         await reconciliation.ReconcileForUserAsync(sessionUserId, ct);
         var enrolments = await seminarService.GetEnrolmentsForUserAsync(sessionUserId, ct);
 
@@ -643,25 +643,5 @@ public class AccountController(
         profile.EarningsBand = form.EarningsBand;
         profile.Visibility = form.VisibleInDirectory ? ProfileVisibility.MembersOnly : ProfileVisibility.Private;
         profile.UpdatedAt = DateTimeOffset.UtcNow;
-    }
-
-    /// <summary>Purely presentational — derived from the Membership row's own id, not a separately
-    /// stored/sequential field, so there's nothing new to keep in sync.</summary>
-    private static string MemberNumberFor(Guid membershipId) =>
-        $"VIH-{membershipId:N}".Substring(0, 12).ToUpperInvariant();
-
-    private Guid CurrentUserId() => Guid.Parse(userManager.GetUserId(User)!);
-
-    /// <summary>The plan cards with seat availability, so a full plan is offered as a waitlist
-    /// here too rather than a checkout that would only be refused.</summary>
-    private async Task<List<MembershipPlanCardViewModel>> PlanCardsAsync(CancellationToken ct)
-    {
-        var cards = new List<MembershipPlanCardViewModel>();
-        foreach (var plan in await membershipService.GetActivePlansAsync(ct))
-        {
-            var availability = plan.MaxMembers is null ? null : await membershipService.GetPlanAvailabilityAsync(plan.Id, ct);
-            cards.Add(MembershipPlanCardViewModel.FromEntity(plan, availability));
-        }
-        return cards;
     }
 }
