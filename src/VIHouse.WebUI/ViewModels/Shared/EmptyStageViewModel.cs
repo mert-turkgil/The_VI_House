@@ -8,7 +8,7 @@ namespace VIHouse.WebUI.ViewModels.Shared;
 /// </summary>
 public record EmptyStageViewModel(string Topic)
 {
-    public static readonly string[] Topics = ["experiences", "sessions", "membership"];
+    public static readonly string[] Topics = ["experiences", "sessions", "membership", "journal"];
 
     public static bool IsTopic(string? topic) => topic is not null && Topics.Contains(topic);
 

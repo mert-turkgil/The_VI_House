@@ -15,6 +15,7 @@
     {
         "experiences" => new[] { "pin", "calendar", "envelope" },
         "sessions" => new[] { "live", "play", "book" },
+        "journal" => new[] { "pen", "quote", "book" },
         _ => new[] { "layers", "people", "glass" },
     };
     var showMessage = TempData.Peek("EmptyStageTopic") as string == Model.Topic;
@@ -66,6 +67,14 @@
                             case "book":
                                 <path pathLength="1" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" />
                                 <path pathLength="1" d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5" />
+                                break;
+                            case "pen":
+                                <path pathLength="1" d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10z" />
+                                <path pathLength="1" d="M13.5 7.5l3 3M4 20h16" />
+                                break;
+                            case "quote":
+                                <path pathLength="1" d="M5 18c2.5-1 4-3 4-6V7H4v6h4" />
+                                <path pathLength="1" d="M15 18c2.5-1 4-3 4-6V7h-5v6h4" />
                                 break;
                             case "layers":
                                 <path pathLength="1" d="M12 3l9 5-9 5-9-5z" />
@@ -120,6 +129,10 @@
             case "experiences":
                 <a class="btn btn--ghost" asp-area="" asp-controller="Membership" asp-action="Index">@Loc["EmptyStage.Action.Membership"]</a>
                 <a class="btn btn--ghost" asp-area="" asp-controller="Journal" asp-action="Index">@Loc["EmptyStage.Action.Journal"]</a>
+                break;
+            case "journal":
+                <a class="btn btn--ghost" asp-area="" asp-controller="About" asp-action="Index">@Loc["EmptyStage.Action.About"]</a>
+                <a class="btn btn--ghost" asp-area="" asp-controller="Contact" asp-action="Index">@Loc["EmptyStage.Action.Contact"]</a>
                 break;
             case "sessions":
                 <a class="btn btn--ghost" asp-area="" asp-controller="Experiences" asp-action="Index">@Loc["EmptyStage.Action.Experiences"]</a>

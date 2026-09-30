@@ -547,6 +547,19 @@ if (app.Environment.IsProduction())
         seedLogger.LogWarning(
             "No seed admin configured. If this is a fresh deployment nobody can sign in — set SeedAdmin or SeedAdmins in appsettings.Production.json.");
     }
+
+    // German/Turkish/Estonian for the seeded homepage sections and journal posts. Runs everywhere:
+    // it only fills languages that have no row yet, and only on content whose English is still the
+    // seeded wording — never on anything an admin has written or translated. See SeedTranslations.
+    try
+    {
+        await VIHouse.DataAccess.Concrete.EntityFramework.Seed.SeedTranslations.ApplyAsync(
+            scope.ServiceProvider.GetRequiredService<VIHouseDbContext>());
+    }
+    catch (Exception ex)
+    {
+        seedLogger.LogError(ex, "Adding seeded translations failed; the site runs on, those sections stay in English.");
+    }
 }
 
 /// Accepts either the original single "SeedAdmin" object or a "SeedAdmins" array (or both, deduped

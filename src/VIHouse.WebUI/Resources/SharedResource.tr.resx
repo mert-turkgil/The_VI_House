@@ -1758,7 +1758,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="EmptyStage.Notify.SignedIn" xml:space="preserve"><value>Açıldığında haber ver</value></data>
   <data name="EmptyStage.Notify.Thanks" xml:space="preserve"><value>Teşekkürler — açılır açılmaz size yazacağız.</value></data>
   <data name="EmptyStage.Action.Membership" xml:space="preserve"><value>Üyeliği keşfedin</value></data>
-  <data name="EmptyStage.Action.Journal" xml:space="preserve"><value>Journal'ı okuyun</value></data>
+  <data name="EmptyStage.Action.Journal" xml:space="preserve"><value>Dergi'yi okuyun</value></data>
   <data name="EmptyStage.Action.Experiences" xml:space="preserve"><value>Deneyimleri görün</value></data>
   <data name="EmptyStage.Action.Contact" xml:space="preserve"><value>Bizimle konuşun</value></data>
   <data name="Notify.Consent" xml:space="preserve"><value>Kaydolarak The VI House'un açıldığında ve deneyimler, oturumlar, üyelik ve kampanyalarla ilgili haberlerle size e-posta göndermesini kabul etmiş olursunuz. Bunlar tanıtım (pazarlama) e-postalarıdır: her mesajda listeden tek tıkla çıkma bağlantısı bulunur ve adresinizi asla kimseyle paylaşmayız.</value></data>
@@ -1815,4 +1815,27 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="HouseGuide.Link.RefundPolicy" xml:space="preserve"><value>İade politikası</value></data>
   <data name="HouseGuide.Link.MyBookings" xml:space="preserve"><value>Rezervasyonlarım</value></data>
   <data name="HouseGuide.Link.ContactForm" xml:space="preserve"><value>İletişim formunu kullanın</value></data>
+  <data name="Journal.Heading" xml:space="preserve"><value>Dergi</value></data>
+  <data name="Journal.Lede" xml:space="preserve"><value>Kurucu hikâyeleri, iş dünyası, teknoloji, sermaye ve kültür — The VI House'un içinden.</value></data>
+  <data name="Journal.Filter.All" xml:space="preserve"><value>Tümü</value></data>
+  <data name="Journal.Filter.AllStories" xml:space="preserve"><value>Tüm yazıları görün</value></data>
+  <data name="Journal.Category.FounderStories" xml:space="preserve"><value>Kurucu Hikâyeleri</value></data>
+  <data name="Journal.Category.Business" xml:space="preserve"><value>İş Dünyası</value></data>
+  <data name="Journal.Category.Technology" xml:space="preserve"><value>Teknoloji</value></data>
+  <data name="Journal.Category.Capital" xml:space="preserve"><value>Sermaye</value></data>
+  <data name="Journal.Category.Culture" xml:space="preserve"><value>Kültür</value></data>
+  <data name="Journal.Category.HouseNotes" xml:space="preserve"><value>House Notları</value></data>
+  <data name="Journal.EmptyCategory.Title" xml:space="preserve"><value>Bu kategoride henüz yazı yok</value></data>
+  <data name="Journal.EmptyCategory.Body" xml:space="preserve"><value>Yeni yazılar düzenli olarak ekleniyor — Dergi'nin geri kalanı bir tık uzağınızda.</value></data>
+  <data name="Journal.Back" xml:space="preserve"><value>Dergi'ye dön</value></data>
+  <data name="EmptyStage.Journal.Eyebrow" xml:space="preserve"><value>Dergi</value></data>
+  <data name="EmptyStage.Journal.Title" xml:space="preserve"><value>İlk hikâyeler yazılıyor</value></data>
+  <data name="EmptyStage.Journal.Body" xml:space="preserve"><value>Kurucu hikâyeleri, odaların içinden notlar ve inşa etmek, sermaye ve kültür üzerine öğrendiklerimiz. İlk yazılar yolda.</value></data>
+  <data name="EmptyStage.Journal.Tile1.Label" xml:space="preserve"><value>Hikâyeler</value></data>
+  <data name="EmptyStage.Journal.Tile1.Caption" xml:space="preserve"><value>Kurucular neyi, nasıl kurduklarını anlatıyor</value></data>
+  <data name="EmptyStage.Journal.Tile2.Label" xml:space="preserve"><value>Sesler</value></data>
+  <data name="EmptyStage.Journal.Tile2.Caption" xml:space="preserve"><value>Odaların içinde konuşulanlar</value></data>
+  <data name="EmptyStage.Journal.Tile3.Label" xml:space="preserve"><value>Notlar</value></data>
+  <data name="EmptyStage.Journal.Tile3.Caption" xml:space="preserve"><value>Sermaye, kültür ve inşa üzerine kısa yazılar</value></data>
+  <data name="EmptyStage.Action.About" xml:space="preserve"><value>House hakkında</value></data>
 </root>

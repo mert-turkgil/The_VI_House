@@ -1815,4 +1815,27 @@ Was möchten Sie wissen?</value></data>
   <data name="HouseGuide.Link.RefundPolicy" xml:space="preserve"><value>Erstattungsrichtlinie</value></data>
   <data name="HouseGuide.Link.MyBookings" xml:space="preserve"><value>Meine Buchungen</value></data>
   <data name="HouseGuide.Link.ContactForm" xml:space="preserve"><value>Zum Kontaktformular</value></data>
+  <data name="Journal.Heading" xml:space="preserve"><value>Das Journal</value></data>
+  <data name="Journal.Lede" xml:space="preserve"><value>Gründergeschichten, Business, Technologie, Kapital und Kultur — aus dem Inneren des VI House.</value></data>
+  <data name="Journal.Filter.All" xml:space="preserve"><value>Alle</value></data>
+  <data name="Journal.Filter.AllStories" xml:space="preserve"><value>Alle Beiträge ansehen</value></data>
+  <data name="Journal.Category.FounderStories" xml:space="preserve"><value>Gründergeschichten</value></data>
+  <data name="Journal.Category.Business" xml:space="preserve"><value>Business</value></data>
+  <data name="Journal.Category.Technology" xml:space="preserve"><value>Technologie</value></data>
+  <data name="Journal.Category.Capital" xml:space="preserve"><value>Kapital</value></data>
+  <data name="Journal.Category.Culture" xml:space="preserve"><value>Kultur</value></data>
+  <data name="Journal.Category.HouseNotes" xml:space="preserve"><value>House-Notizen</value></data>
+  <data name="Journal.EmptyCategory.Title" xml:space="preserve"><value>In dieser Kategorie gibt es noch nichts</value></data>
+  <data name="Journal.EmptyCategory.Body" xml:space="preserve"><value>Neue Beiträge kommen regelmäßig hinzu — der Rest des Journals ist nur einen Klick entfernt.</value></data>
+  <data name="Journal.Back" xml:space="preserve"><value>Zurück zum Journal</value></data>
+  <data name="EmptyStage.Journal.Eyebrow" xml:space="preserve"><value>Das Journal</value></data>
+  <data name="EmptyStage.Journal.Title" xml:space="preserve"><value>Die ersten Geschichten entstehen gerade</value></data>
+  <data name="EmptyStage.Journal.Body" xml:space="preserve"><value>Gründergeschichten, Notizen aus unseren Räumen und was wir über Aufbau, Kapital und Kultur lernen. Die ersten Beiträge sind unterwegs.</value></data>
+  <data name="EmptyStage.Journal.Tile1.Label" xml:space="preserve"><value>Geschichten</value></data>
+  <data name="EmptyStage.Journal.Tile1.Caption" xml:space="preserve"><value>Gründer darüber, was sie aufgebaut haben und wie</value></data>
+  <data name="EmptyStage.Journal.Tile2.Label" xml:space="preserve"><value>Stimmen</value></data>
+  <data name="EmptyStage.Journal.Tile2.Caption" xml:space="preserve"><value>Was in unseren Räumen gesagt wird</value></data>
+  <data name="EmptyStage.Journal.Tile3.Label" xml:space="preserve"><value>Notizen</value></data>
+  <data name="EmptyStage.Journal.Tile3.Caption" xml:space="preserve"><value>Kapital, Kultur und Aufbau, kurz gelesen</value></data>
+  <data name="EmptyStage.Action.About" xml:space="preserve"><value>Über das House</value></data>
 </root>

@@ -5,7 +5,7 @@
 
 <div class="content-hero">
     <div class="container">
-        <span class="content-hero__eyebrow">@Model.CategoryLabel</span>
+        <span class="content-hero__eyebrow">@Loc[$"Journal.Category.{Model.Category}"]</span>
         <h1>@Model.Title</h1>
         <div class="journal-article__meta">
             @if (Model.PublishedAt is not null)
@@ -43,5 +43,5 @@
 </div>
 
 <div class="container journal-article__back">
-    <a href="/journal">&larr; Back to The Journal</a>
+    <a asp-area="" asp-controller="Journal" asp-action="Index">&larr; @Loc["Journal.Back"]</a>
 </div>

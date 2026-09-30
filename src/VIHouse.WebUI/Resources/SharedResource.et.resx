@@ -1815,4 +1815,27 @@ Mida soovite teada?</value></data>
   <data name="HouseGuide.Link.RefundPolicy" xml:space="preserve"><value>Tagasimaksete kord</value></data>
   <data name="HouseGuide.Link.MyBookings" xml:space="preserve"><value>Minu broneeringud</value></data>
   <data name="HouseGuide.Link.ContactForm" xml:space="preserve"><value>Kasuta kontaktivormi</value></data>
+  <data name="Journal.Heading" xml:space="preserve"><value>Ajakiri</value></data>
+  <data name="Journal.Lede" xml:space="preserve"><value>Asutajate lood, äri, tehnoloogia, kapital ja kultuur — otse The VI House'ist.</value></data>
+  <data name="Journal.Filter.All" xml:space="preserve"><value>Kõik</value></data>
+  <data name="Journal.Filter.AllStories" xml:space="preserve"><value>Vaata kõiki lugusid</value></data>
+  <data name="Journal.Category.FounderStories" xml:space="preserve"><value>Asutajate lood</value></data>
+  <data name="Journal.Category.Business" xml:space="preserve"><value>Äri</value></data>
+  <data name="Journal.Category.Technology" xml:space="preserve"><value>Tehnoloogia</value></data>
+  <data name="Journal.Category.Capital" xml:space="preserve"><value>Kapital</value></data>
+  <data name="Journal.Category.Culture" xml:space="preserve"><value>Kultuur</value></data>
+  <data name="Journal.Category.HouseNotes" xml:space="preserve"><value>House'i märkmed</value></data>
+  <data name="Journal.EmptyCategory.Title" xml:space="preserve"><value>Selles kategoorias pole veel midagi</value></data>
+  <data name="Journal.EmptyCategory.Body" xml:space="preserve"><value>Uusi lugusid lisandub regulaarselt — ülejäänud ajakiri on ühe klõpsu kaugusel.</value></data>
+  <data name="Journal.Back" xml:space="preserve"><value>Tagasi ajakirja juurde</value></data>
+  <data name="EmptyStage.Journal.Eyebrow" xml:space="preserve"><value>Ajakiri</value></data>
+  <data name="EmptyStage.Journal.Title" xml:space="preserve"><value>Esimesi lugusid kirjutatakse</value></data>
+  <data name="EmptyStage.Journal.Body" xml:space="preserve"><value>Asutajate lood, märkmed ruumidest ning see, mida õpime ehitamise, kapitali ja kultuuri kohta. Esimesed lood on tulekul.</value></data>
+  <data name="EmptyStage.Journal.Tile1.Label" xml:space="preserve"><value>Lood</value></data>
+  <data name="EmptyStage.Journal.Tile1.Caption" xml:space="preserve"><value>Asutajad sellest, mida ja kuidas nad ehitasid</value></data>
+  <data name="EmptyStage.Journal.Tile2.Label" xml:space="preserve"><value>Hääled</value></data>
+  <data name="EmptyStage.Journal.Tile2.Caption" xml:space="preserve"><value>Mida ruumides räägitakse</value></data>
+  <data name="EmptyStage.Journal.Tile3.Label" xml:space="preserve"><value>Märkmed</value></data>
+  <data name="EmptyStage.Journal.Tile3.Caption" xml:space="preserve"><value>Kapital, kultuur ja ehitamine lühidalt</value></data>
+  <data name="EmptyStage.Action.About" xml:space="preserve"><value>House'ist</value></data>
 </root>

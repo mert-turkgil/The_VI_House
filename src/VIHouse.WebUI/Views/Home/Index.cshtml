@@ -13,4 +13,15 @@
 <partial name="_Stats" model="Model.Stats" />
 <partial name="_Upcoming" model="Model.Upcoming" />
 <partial name="_Signature" model="Model.Signature" />
+@if (Model.Upcoming.Count == 0 && Model.Signature.Count == 0)
+{
+    @* Both experience rows hide themselves when nothing is published; without this the page would
+       jump straight from the numbers to the testimonials. The same designed section as the empty
+       Experiences page, with its notify-me form. *@
+    <section class="home-empty-stage">
+        <div class="container">
+            <partial name="_EmptyStage" model="@(new VIHouse.WebUI.ViewModels.Shared.EmptyStageViewModel("experiences"))" />
+        </div>
+    </section>
+}
 <partial name="_Trust" model="Model.Trust" />

@@ -47,6 +47,12 @@
   }
 }
 
+// On the homepage it sits between two full-bleed dark bands, so it gets its own breathing room.
+.home-empty-stage {
+  padding-block: var(--vih-space-lg);
+  background: var(--vih-surface);
+}
+
 // --- The crest in its ring ---------------------------------------------------------------------------
 
 .empty-stage__mark {

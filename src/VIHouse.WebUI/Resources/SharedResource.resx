@@ -1815,4 +1815,27 @@ What would you like to know?</value></data>
   <data name="HouseGuide.Link.RefundPolicy" xml:space="preserve"><value>Refund policy</value></data>
   <data name="HouseGuide.Link.MyBookings" xml:space="preserve"><value>My bookings</value></data>
   <data name="HouseGuide.Link.ContactForm" xml:space="preserve"><value>Use the contact form</value></data>
+  <data name="Journal.Heading" xml:space="preserve"><value>The Journal</value></data>
+  <data name="Journal.Lede" xml:space="preserve"><value>Founder stories, business, technology, capital and culture — from inside The VI House.</value></data>
+  <data name="Journal.Filter.All" xml:space="preserve"><value>All</value></data>
+  <data name="Journal.Filter.AllStories" xml:space="preserve"><value>See all stories</value></data>
+  <data name="Journal.Category.FounderStories" xml:space="preserve"><value>Founder Stories</value></data>
+  <data name="Journal.Category.Business" xml:space="preserve"><value>Business</value></data>
+  <data name="Journal.Category.Technology" xml:space="preserve"><value>Technology</value></data>
+  <data name="Journal.Category.Capital" xml:space="preserve"><value>Capital</value></data>
+  <data name="Journal.Category.Culture" xml:space="preserve"><value>Culture</value></data>
+  <data name="Journal.Category.HouseNotes" xml:space="preserve"><value>House Notes</value></data>
+  <data name="Journal.EmptyCategory.Title" xml:space="preserve"><value>Nothing in this category yet</value></data>
+  <data name="Journal.EmptyCategory.Body" xml:space="preserve"><value>New stories are added regularly — the rest of the Journal is one click away.</value></data>
+  <data name="Journal.Back" xml:space="preserve"><value>Back to The Journal</value></data>
+  <data name="EmptyStage.Journal.Eyebrow" xml:space="preserve"><value>The Journal</value></data>
+  <data name="EmptyStage.Journal.Title" xml:space="preserve"><value>The first stories are being written</value></data>
+  <data name="EmptyStage.Journal.Body" xml:space="preserve"><value>Founder stories, notes from inside the rooms, and what we learn about building, capital and culture. The first pieces are on their way.</value></data>
+  <data name="EmptyStage.Journal.Tile1.Label" xml:space="preserve"><value>Stories</value></data>
+  <data name="EmptyStage.Journal.Tile1.Caption" xml:space="preserve"><value>Founders on what they built and how</value></data>
+  <data name="EmptyStage.Journal.Tile2.Label" xml:space="preserve"><value>Voices</value></data>
+  <data name="EmptyStage.Journal.Tile2.Caption" xml:space="preserve"><value>What is said inside the rooms</value></data>
+  <data name="EmptyStage.Journal.Tile3.Label" xml:space="preserve"><value>Notes</value></data>
+  <data name="EmptyStage.Journal.Tile3.Caption" xml:space="preserve"><value>Capital, culture and building, in short reads</value></data>
+  <data name="EmptyStage.Action.About" xml:space="preserve"><value>About the House</value></data>
 </root>
