@@ -88,7 +88,7 @@
   <data name="Faq.Q7" xml:space="preserve"><value>Mis kuulub hinna sisse?</value></data>
   <data name="Faq.A7" xml:space="preserve"><value>Iga elamuse lehel on jaotise „Mis on hinna sees" all täpselt kirjas, mis kuulub ja mis ei kuulu hinna sisse. See erineb asukoha ja formaadi kaupa.</value></data>
   <data name="Faq.Q8" xml:space="preserve"><value>Kuidas saan ühendust, kui mu küsimusele siit vastust ei leia?</value></data>
-  <data name="Faq.A8" xml:space="preserve"><value>Kasuta kontaktilehte — iga sõnumit loeb päris inimene.</value></data>
+  <data name="Faq.A8" xml:space="preserve"><value>Kirjutage üldistes küsimustes aadressile concierge@thevihouse.com või broneeringute, maksete ja tagasimaksete asjus aadressile support@thevihouse.com — iga sõnumit loeb päris inimene. Toimib ka kontaktileht.</value></data>
 
   <data name="Contact.Title" xml:space="preserve"><value>Kontakt</value></data>
   <data name="Contact.Eyebrow" xml:space="preserve"><value>Võta ühendust</value></data>
@@ -1030,7 +1030,7 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="ComingSoon.EmailLabel" xml:space="preserve"><value>Teie e-posti aadress</value></data>
   <data name="ComingSoon.EmailPlaceholder" xml:space="preserve"><value>Teie e-posti aadress</value></data>
   <data name="ComingSoon.NotifyMe" xml:space="preserve"><value>Anna teada</value></data>
-  <data name="ComingSoon.DataNote" xml:space="preserve"><value>Kasutame teie aadressi ainult ühel eesmärgil: et anda teada, millal The VI House avaneb. Uudiskirja ei ole, kellelegi teisele me seda ei jaga ja te võite igal ajal paluda selle kustutamist.</value></data>
+  <data name="ComingSoon.DataNote" xml:space="preserve"><value>Registreerudes nõustute, et The VI House võib teile kirjutada avamisel ning uudistega elamuste, sessioonide, liikmesuse ja pakkumiste kohta. Need on turunduskirjad: igas kirjas on link nimekirjast ühe klõpsuga lahkumiseks ja me ei jaga teie aadressi kellegagi.</value></data>
   <data name="ComingSoon.Launching" xml:space="preserve"><value>Avame peagi · 2026</value></data>
   <data name="ComingSoon.RailLeft1" xml:space="preserve"><value>Asutajad</value></data>
   <data name="ComingSoon.RailLeft2" xml:space="preserve"><value>Investorid</value></data>
@@ -1576,7 +1576,7 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Suunamine…</value></data>
   <data name="Email.LaunchAnnouncement.Eyebrow" xml:space="preserve"><value>The VI House</value></data>
   <data name="Email.LaunchAnnouncement.DefaultButton" xml:space="preserve"><value>Külasta The VI House'i</value></data>
-  <data name="Email.LaunchAnnouncement.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna palusite teada anda, kui The VI House avatakse.</value></data>
+  <data name="Email.LaunchAnnouncement.Footnote" xml:space="preserve"><value>Saate selle kirja, kuna registreerusite The VI House'i uudistele ja nõustusite neid e-postiga saama. Nimekirjast saate igal ajal lahkuda alloleva lingiga.</value></data>
   <data name="Email.LaunchAnnouncement.LeaveLead" xml:space="preserve"><value>Ei soovi meilt kirju?</value></data>
   <data name="Email.LaunchAnnouncement.LeaveLink" xml:space="preserve"><value>Eemalda mind nimekirjast.</value></data>
   <data name="ComingSoon.Leave.Title" xml:space="preserve"><value>Lahkuda avamise nimekirjast?</value></data>
@@ -1756,10 +1756,63 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="EmptyStage.Notify.Placeholder" xml:space="preserve"><value>teie@email.ee</value></data>
   <data name="EmptyStage.Notify.Button" xml:space="preserve"><value>Andke teada, kui avaneb</value></data>
   <data name="EmptyStage.Notify.SignedIn" xml:space="preserve"><value>Andke teada, kui avaneb</value></data>
-  <data name="EmptyStage.Notify.Note" xml:space="preserve"><value>Üks kiri, kui see avaneb. Mitte midagi muud ja nimekirjast saate igal ajal lahkuda.</value></data>
   <data name="EmptyStage.Notify.Thanks" xml:space="preserve"><value>Aitäh — kirjutame teile kohe, kui see avaneb.</value></data>
   <data name="EmptyStage.Action.Membership" xml:space="preserve"><value>Tutvu liikmesusega</value></data>
   <data name="EmptyStage.Action.Journal" xml:space="preserve"><value>Loe ajakirja</value></data>
   <data name="EmptyStage.Action.Experiences" xml:space="preserve"><value>Vaata elamusi</value></data>
   <data name="EmptyStage.Action.Contact" xml:space="preserve"><value>Võtke meiega ühendust</value></data>
+  <data name="Notify.Consent" xml:space="preserve"><value>Registreerudes nõustute, et The VI House võib teile kirjutada avamisel ning uudistega elamuste, sessioonide, liikmesuse ja pakkumiste kohta. Need on turunduskirjad: igas kirjas on link nimekirjast ühe klõpsuga lahkumiseks ja me ei jaga teie aadressi kellegagi.</value></data>
+  <data name="About.AskCta" xml:space="preserve"><value>Küsi House'ilt</value></data>
+  <data name="About.Quote" xml:space="preserve"><value>Parimad otsused sünnivad harva koosolekuruumis.</value></data>
+  <data name="About.QuoteBy" xml:space="preserve"><value>Miks House on olemas</value></data>
+  <data name="About.PathHeading" xml:space="preserve"><value>Kuidas sisse saada</value></data>
+  <data name="About.WriteHeading" xml:space="preserve"><value>Kirjutage meile</value></data>
+  <data name="About.WriteLede" xml:space="preserve"><value>Iga sõnumit loeb päris inimene. Enne kirjutamist võib vastus juba olla siin:</value></data>
+  <data name="WriteToUs.Concierge.Label" xml:space="preserve"><value>Concierge</value></data>
+  <data name="WriteToUs.Concierge.For" xml:space="preserve"><value>Liitumine, elamused, liikmesus, press ja koostöö — kõik üldine.</value></data>
+  <data name="WriteToUs.Concierge.Subject" xml:space="preserve"><value>Küsimus The VI House'ile</value></data>
+  <data name="WriteToUs.Support.Label" xml:space="preserve"><value>Tugi</value></data>
+  <data name="WriteToUs.Support.For" xml:space="preserve"><value>Broneeringud, maksed, tagasimaksed ja teie konto. Palun lisage broneeringu number.</value></data>
+  <data name="WriteToUs.Support.Subject" xml:space="preserve"><value>Abi minu broneeringuga</value></data>
+  <data name="WriteToUs.SenderNote" xml:space="preserve"><value>Meie kirjad teile tulevad aadressilt info@thevihouse.com. See aadress ainult saadab — meie kirjale vastates jõuate toeni.</value></data>
+  <data name="HouseGuide.Eyebrow" xml:space="preserve"><value>Kiired küsimused</value></data>
+  <data name="HouseGuide.Heading" xml:space="preserve"><value>Küsi House'ilt</value></data>
+  <data name="HouseGuide.Lede" xml:space="preserve"><value>Valige teema ja viime teid vastuseni — või õige inimeseni, kiri juba adresseeritud.</value></data>
+  <data name="HouseGuide.Status" xml:space="preserve"><value>Iga sõnumit loeb päris inimene</value></data>
+  <data name="HouseGuide.Greeting" xml:space="preserve"><value>Tere — tere tulemast The VI House'i.
+Mida soovite teada?</value></data>
+  <data name="HouseGuide.Typing" xml:space="preserve"><value>Kirjutab</value></data>
+  <data name="HouseGuide.Restart" xml:space="preserve"><value>Küsi midagi muud</value></data>
+  <data name="HouseGuide.StillNeed" xml:space="preserve"><value>Soovite siiski inimesega rääkida? Kirjutage:</value></data>
+  <data name="HouseGuide.Footer" xml:space="preserve"><value>The VI House'i concierge</value></data>
+  <data name="HouseGuide.Join.Label" xml:space="preserve"><value>House'iga liitumine</value></data>
+  <data name="HouseGuide.Join.Intro" xml:space="preserve"><value>Enamik tuleb sisse elamuse kaudu: kandideerite, loeme iga avalduse käsitsi läbi ja heakskiidetud saavad isikliku kutse. Mida soovite teada?</value></data>
+  <data name="HouseGuide.Membership.Label" xml:space="preserve"><value>Liikmesus</value></data>
+  <data name="HouseGuide.Membership.Intro" xml:space="preserve"><value>Liikmesus on House'i aastaringne pool. Mida soovite teada?</value></data>
+  <data name="HouseGuide.Membership.Q1" xml:space="preserve"><value>Mida liikmesus sisaldab?</value></data>
+  <data name="HouseGuide.Membership.A1" xml:space="preserve"><value>Aastaringne asutajate ring: inimesed, vestlused, sessioonid ja kohtumised elamuste vahel. Iga pakett ja selle sisu on liikmesuse lehel.</value></data>
+  <data name="HouseGuide.Membership.Q2" xml:space="preserve"><value>Kuidas liikmeks saada?</value></data>
+  <data name="HouseGuide.Membership.A2" xml:space="preserve"><value>Kui liikmesus on avatud, valite liikmesuse lehel paketi ja liitute kohe. Kui ühtegi paketti pole veel avatud, jätke sinna oma e-post ja anname teada, kui see avaneb.</value></data>
+  <data name="HouseGuide.Experiences.Label" xml:space="preserve"><value>Elamused</value></data>
+  <data name="HouseGuide.Experiences.Intro" xml:space="preserve"><value>Väikesed retriidid ja kohtumised, igaüks hoolikalt koostatud. Mida soovite teada?</value></data>
+  <data name="HouseGuide.Booking.Label" xml:space="preserve"><value>Broneeringud, maksed ja tagasimaksed</value></data>
+  <data name="HouseGuide.Booking.Intro" xml:space="preserve"><value>Nendega tegeleb meie tugimeeskond. Mida vajate?</value></data>
+  <data name="HouseGuide.Booking.Q2" xml:space="preserve"><value>Kus on minu pilet?</value></data>
+  <data name="HouseGuide.Booking.A2" xml:space="preserve"><value>Teie piletid ja broneeringud on konto lehel. Kui te pole veel salasõna määranud, kasutage kirja konto seadistamiseks, mille saatsime pärast makset.</value></data>
+  <data name="HouseGuide.Booking.Q3" xml:space="preserve"><value>Maksega läks midagi valesti</value></data>
+  <data name="HouseGuide.Booking.A3" xml:space="preserve"><value>Vabandame. Kirjutage toele oma broneeringu numbri või makse tegemisel kasutatud e-postiga ja lahendame selle.</value></data>
+  <data name="HouseGuide.Other.Label" xml:space="preserve"><value>Press, partnerid ja kõik muu</value></data>
+  <data name="HouseGuide.Other.Intro" xml:space="preserve"><value>Muidugi. Millest on jutt?</value></data>
+  <data name="HouseGuide.Other.Q1" xml:space="preserve"><value>Pressi- või koostööpäring</value></data>
+  <data name="HouseGuide.Other.A1" xml:space="preserve"><value>Meil on hea meel teist kuulda. Kirjutage concierge'ile paar rida sellest, kes te olete ja mida silmas peate.</value></data>
+  <data name="HouseGuide.Other.Q2" xml:space="preserve"><value>Midagi muud</value></data>
+  <data name="HouseGuide.Other.A2" xml:space="preserve"><value>KKK vastab enamikule küsimustest. Kui teie oma seal pole, kirjutage meile — iga sõnumit loeb päris inimene.</value></data>
+  <data name="HouseGuide.Link.Faq" xml:space="preserve"><value>Loe KKK-d</value></data>
+  <data name="HouseGuide.Link.OpenExperiences" xml:space="preserve"><value>Kandideerimiseks avatud elamused</value></data>
+  <data name="HouseGuide.Link.ApplicationStatus" xml:space="preserve"><value>Kontrolli minu avaldust</value></data>
+  <data name="HouseGuide.Link.Membership" xml:space="preserve"><value>Liikmesuse leht</value></data>
+  <data name="HouseGuide.Link.Experiences" xml:space="preserve"><value>Vaata elamusi</value></data>
+  <data name="HouseGuide.Link.RefundPolicy" xml:space="preserve"><value>Tagasimaksete kord</value></data>
+  <data name="HouseGuide.Link.MyBookings" xml:space="preserve"><value>Minu broneeringud</value></data>
+  <data name="HouseGuide.Link.ContactForm" xml:space="preserve"><value>Kasuta kontaktivormi</value></data>
 </root>

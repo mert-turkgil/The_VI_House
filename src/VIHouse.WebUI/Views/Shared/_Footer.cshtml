@@ -94,16 +94,23 @@
                 </ul>
             </div>
 
-            <div class="site-footer__newsletter">
+            <div class="site-footer__newsletter" id="site-newsletter">
                 <h4>@Loc["Footer.NewsletterHeading"]</h4>
                 <p class="site-footer__newsletter-lede">@Loc["Footer.NewsletterLede"]</p>
-                @* TODO: wire to a real newsletter endpoint once a mailing-list provider is chosen — inert for now
-                rather than a dead POST. *@
-                <form class="site-footer__newsletter-form" onsubmit="return false;">
-                    <input type="email" placeholder="@Loc["Footer.NewsletterPlaceholder"]"
-                           aria-label="@Loc["Footer.NewsletterPlaceholder"]" required />
+                @* The same list as every other "tell me" form (Admin > Launch List, source "footer"),
+                   with the same marketing consent shown and stored. *@
+                @if (TempData.Peek("EmptyStageTopic") as string == "news")
+                {
+                    TempData.Remove("EmptyStageTopic");
+                    <p class="site-footer__newsletter-message" role="status">@TempData["EmptyStageMessage"]</p>
+                }
+                <form class="site-footer__newsletter-form" method="post" asp-area="" asp-controller="Notify" asp-action="Subscribe" asp-route-topic="news">
+                    <input type="hidden" name="returnUrl" value="@($"{Context.Request.PathBase}{Context.Request.Path}")" />
+                    <input type="email" name="email" autocomplete="email" placeholder="@Loc["Footer.NewsletterPlaceholder"]"
+                           aria-label="@Loc["Footer.NewsletterPlaceholder"]" aria-describedby="site-newsletter-consent" required />
                     <button type="submit" aria-label="@Loc["Footer.NewsletterSubmit"]">&rarr;</button>
                 </form>
+                <p class="site-footer__newsletter-consent" id="site-newsletter-consent">@Loc["Notify.Consent"]</p>
             </div>
         </div>
 

@@ -2,36 +2,74 @@
     ViewData["Title"] = Loc["About.Title"];
 }
 
-<div class="content-hero">
+@* --- Hero ------------------------------------------------------------------------------------------ *@
+<div class="content-hero about-hero">
     <div class="container">
         <span class="content-hero__eyebrow">@Loc["About.Eyebrow"]</span>
         <h1>@Loc["About.Heading"]</h1>
         <p>@Loc["About.Subheading"]</p>
+        <div class="about-hero__actions">
+            <a class="btn btn--primary" asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Nav.ApplyToJoin"]</a>
+            <a class="btn btn--ghost-dark" href="#ask">@Loc["About.AskCta"]</a>
+        </div>
     </div>
 </div>
 
-<div class="container content-body">
-    <p>@Loc["About.Paragraph1"]</p>
-    <p>@Loc["About.Paragraph2"]</p>
-    <p>@Loc["About.Paragraph3"]</p>
-
-    <h2>@Loc["About.ValuesHeading"]</h2>
-    <div class="content-values">
-        <div class="content-value">
-            <h3>@Loc["About.Value1Title"]</h3>
-            <p>@Loc["About.Value1Body"]</p>
-        </div>
-        <div class="content-value">
-            <h3>@Loc["About.Value2Title"]</h3>
-            <p>@Loc["About.Value2Body"]</p>
-        </div>
-        <div class="content-value">
-            <h3>@Loc["About.Value3Title"]</h3>
-            <p>@Loc["About.Value3Body"]</p>
-        </div>
+@* --- The story, with its one line pulled out --------------------------------------------------------- *@
+<section class="container about-story">
+    <div class="about-story__text" data-reveal>
+        <p class="about-story__lead">@Loc["About.Paragraph1"]</p>
+        <p>@Loc["About.Paragraph2"]</p>
+        <p>@Loc["About.Paragraph3"]</p>
     </div>
+    <figure class="about-quote" data-reveal data-reveal-delay="120">
+        <span class="about-quote__mark" aria-hidden="true">&ldquo;</span>
+        <blockquote>@Loc["About.Quote"]</blockquote>
+        <figcaption>@Loc["About.QuoteBy"]</figcaption>
+    </figure>
+</section>
 
-    <p style="margin-top:32px;">
-        <a class="btn btn--primary" asp-area="" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Nav.ApplyToJoin"]</a>
+@* --- What we believe ----------------------------------------------------------------------------------- *@
+<section class="about-values">
+    <div class="container">
+        <h2 class="about-section__title" data-reveal>@Loc["About.ValuesHeading"]</h2>
+        <ul class="about-values__grid">
+            @for (var i = 1; i <= 3; i++)
+            {
+                <li class="about-value" tabindex="0" data-reveal data-reveal-delay="@((i - 1) * 120)">
+                    <span class="about-value__num" aria-hidden="true">0@(i)</span>
+                    <h3>@Loc[$"About.Value{i}Title"]</h3>
+                    <p>@Loc[$"About.Value{i}Body"]</p>
+                </li>
+            }
+        </ul>
+    </div>
+</section>
+
+@* --- How you come in ----------------------------------------------------------------------------------- *@
+<section class="container about-path">
+    <h2 class="about-section__title" data-reveal>@Loc["About.PathHeading"]</h2>
+    <ol class="about-path__steps">
+        @for (var i = 1; i <= 4; i++)
+        {
+            <li class="about-path__step" data-reveal data-reveal-delay="@((i - 1) * 100)">
+                <span class="about-path__dot" aria-hidden="true">@i</span>
+                <strong>@Loc[$"Membership.Step{i}.Title"]</strong>
+                <p>@Loc[$"Membership.Step{i}.Body"]</p>
+            </li>
+        }
+    </ol>
+</section>
+
+@* --- Ask the House ------------------------------------------------------------------------------------- *@
+<partial name="_HouseGuide" />
+
+@* --- Write to us --------------------------------------------------------------------------------------- *@
+<section class="container about-contact">
+    <h2 class="about-section__title" data-reveal>@Loc["About.WriteHeading"]</h2>
+    <p class="about-contact__lede" data-reveal>
+        @Loc["About.WriteLede"]
+        <a asp-area="" asp-controller="Faq" asp-action="Index">@Loc["Footer.Faq"]</a>
     </p>
-</div>
+    <partial name="_WriteToUs" />
+</section>

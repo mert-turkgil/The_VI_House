@@ -20,7 +20,7 @@ public class NotifySignupService(
     private const string TemplateKey = "LaunchAnnouncement";
     private static readonly EmailAddressAttribute EmailFormat = new();
 
-    public async Task<string?> SubscribeAsync(string? email, string culture, string? source, CancellationToken ct = default)
+    public async Task<string?> SubscribeAsync(string? email, string culture, string? source, string consentText, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(email)) return "ComingSoon.Notify.Missing";
 
@@ -41,6 +41,7 @@ public class NotifySignupService(
             Email = normalised,
             Culture = SiteCultures.Normalise(culture),
             Source = source,
+            ConsentText = Text.Clip(Text.NullIfBlank(consentText), 1000),
         };
 
         await signups.AddAsync(signup, ct);

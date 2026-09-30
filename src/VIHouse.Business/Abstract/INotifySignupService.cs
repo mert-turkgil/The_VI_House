@@ -15,7 +15,8 @@ public interface INotifySignupService
     /// "ComingSoon.Notify.Already", which is true, is what they wanted to know, and does not invite
     /// someone to keep resubmitting.
     /// </summary>
-    Task<string?> SubscribeAsync(string? email, string culture, string? source, CancellationToken ct = default);
+    /// <param name="consentText">The marketing-consent sentence the form showed, stored with the address.</param>
+    Task<string?> SubscribeAsync(string? email, string culture, string? source, string consentText, CancellationToken ct = default);
 
     /// <summary>How many addresses a send would reach: those not yet notified, or everyone.</summary>
     Task<int> CountRecipientsAsync(bool includeAlreadyNotified, CancellationToken ct = default);

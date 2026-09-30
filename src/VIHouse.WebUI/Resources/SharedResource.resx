@@ -88,7 +88,7 @@
   <data name="Faq.Q7" xml:space="preserve"><value>What's included in the price?</value></data>
   <data name="Faq.A7" xml:space="preserve"><value>Each experience page lists exactly what's included and what isn't under "What's Included." It varies by location and format.</value></data>
   <data name="Faq.Q8" xml:space="preserve"><value>How do I get in touch with a question that isn't answered here?</value></data>
-  <data name="Faq.A8" xml:space="preserve"><value>Use the Contact page — a real person reads every message.</value></data>
+  <data name="Faq.A8" xml:space="preserve"><value>Write to concierge@thevihouse.com for anything general, or support@thevihouse.com for bookings, payments and refunds — a real person reads every message. The Contact page works too.</value></data>
 
   <data name="Contact.Title" xml:space="preserve"><value>Contact</value></data>
   <data name="Contact.Eyebrow" xml:space="preserve"><value>Get in Touch</value></data>
@@ -1030,7 +1030,7 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="ComingSoon.EmailLabel" xml:space="preserve"><value>Your email address</value></data>
   <data name="ComingSoon.EmailPlaceholder" xml:space="preserve"><value>Your email address</value></data>
   <data name="ComingSoon.NotifyMe" xml:space="preserve"><value>Notify Me</value></data>
-  <data name="ComingSoon.DataNote" xml:space="preserve"><value>We'll use your address for one thing only: to tell you when The VI House opens. No newsletter, no sharing with anyone else, and you can ask us to remove it at any time.</value></data>
+  <data name="ComingSoon.DataNote" xml:space="preserve"><value>By signing up you agree that The VI House may email you when it opens, and with news about experiences, sessions, membership and offers. This is marketing email: every message has a one-click link to leave the list, and we never share your address.</value></data>
   <data name="ComingSoon.Launching" xml:space="preserve"><value>Launching soon · 2026</value></data>
   <data name="ComingSoon.RailLeft1" xml:space="preserve"><value>Founders</value></data>
   <data name="ComingSoon.RailLeft2" xml:space="preserve"><value>Investors</value></data>
@@ -1576,7 +1576,7 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Redirecting…</value></data>
   <data name="Email.LaunchAnnouncement.Eyebrow" xml:space="preserve"><value>The VI House</value></data>
   <data name="Email.LaunchAnnouncement.DefaultButton" xml:space="preserve"><value>Visit The VI House</value></data>
-  <data name="Email.LaunchAnnouncement.Footnote" xml:space="preserve"><value>You're receiving this because you asked to be told when The VI House opened.</value></data>
+  <data name="Email.LaunchAnnouncement.Footnote" xml:space="preserve"><value>You're receiving this because you signed up for news from The VI House and agreed to receive it by email. You can leave the list at any time with the link below.</value></data>
   <data name="Email.LaunchAnnouncement.LeaveLead" xml:space="preserve"><value>Don't want to hear from us?</value></data>
   <data name="Email.LaunchAnnouncement.LeaveLink" xml:space="preserve"><value>Take me off the list.</value></data>
   <data name="ComingSoon.Leave.Title" xml:space="preserve"><value>Leave the launch list?</value></data>
@@ -1756,10 +1756,63 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="EmptyStage.Notify.Placeholder" xml:space="preserve"><value>your@email.com</value></data>
   <data name="EmptyStage.Notify.Button" xml:space="preserve"><value>Tell me when it opens</value></data>
   <data name="EmptyStage.Notify.SignedIn" xml:space="preserve"><value>Tell me when it opens</value></data>
-  <data name="EmptyStage.Notify.Note" xml:space="preserve"><value>One email when it opens. Nothing else, and you can leave the list at any time.</value></data>
   <data name="EmptyStage.Notify.Thanks" xml:space="preserve"><value>Thank you — we'll write to you as soon as it opens.</value></data>
   <data name="EmptyStage.Action.Membership" xml:space="preserve"><value>Explore membership</value></data>
   <data name="EmptyStage.Action.Journal" xml:space="preserve"><value>Read the Journal</value></data>
   <data name="EmptyStage.Action.Experiences" xml:space="preserve"><value>See experiences</value></data>
   <data name="EmptyStage.Action.Contact" xml:space="preserve"><value>Talk to us</value></data>
+  <data name="Notify.Consent" xml:space="preserve"><value>By signing up you agree that The VI House may email you when it opens, and with news about experiences, sessions, membership and offers. This is marketing email: every message has a one-click link to leave the list, and we never share your address.</value></data>
+  <data name="About.AskCta" xml:space="preserve"><value>Ask the House</value></data>
+  <data name="About.Quote" xml:space="preserve"><value>The best decisions rarely happen in a boardroom.</value></data>
+  <data name="About.QuoteBy" xml:space="preserve"><value>Why the House exists</value></data>
+  <data name="About.PathHeading" xml:space="preserve"><value>How you come in</value></data>
+  <data name="About.WriteHeading" xml:space="preserve"><value>Write to us</value></data>
+  <data name="About.WriteLede" xml:space="preserve"><value>A real person reads every message. Before you write, the answer may already be in the</value></data>
+  <data name="WriteToUs.Concierge.Label" xml:space="preserve"><value>Concierge</value></data>
+  <data name="WriteToUs.Concierge.For" xml:space="preserve"><value>Joining, experiences, membership, press and partnerships — anything general.</value></data>
+  <data name="WriteToUs.Concierge.Subject" xml:space="preserve"><value>A question for The VI House</value></data>
+  <data name="WriteToUs.Support.Label" xml:space="preserve"><value>Support</value></data>
+  <data name="WriteToUs.Support.For" xml:space="preserve"><value>Bookings, payments, refunds and your account. Please add your booking reference.</value></data>
+  <data name="WriteToUs.Support.Subject" xml:space="preserve"><value>Help with my booking</value></data>
+  <data name="WriteToUs.SenderNote" xml:space="preserve"><value>Our emails to you come from info@thevihouse.com. That address only sends — replying to one of our emails reaches support.</value></data>
+  <data name="HouseGuide.Eyebrow" xml:space="preserve"><value>Quick questions</value></data>
+  <data name="HouseGuide.Heading" xml:space="preserve"><value>Ask the House</value></data>
+  <data name="HouseGuide.Lede" xml:space="preserve"><value>Pick a topic and we'll take you to the answer — or to the right person, with the email already addressed.</value></data>
+  <data name="HouseGuide.Status" xml:space="preserve"><value>A real person reads every message</value></data>
+  <data name="HouseGuide.Greeting" xml:space="preserve"><value>Hello — welcome to The VI House.
+What would you like to know?</value></data>
+  <data name="HouseGuide.Typing" xml:space="preserve"><value>Typing</value></data>
+  <data name="HouseGuide.Restart" xml:space="preserve"><value>Ask something else</value></data>
+  <data name="HouseGuide.StillNeed" xml:space="preserve"><value>Still need a person? Write to</value></data>
+  <data name="HouseGuide.Footer" xml:space="preserve"><value>The VI House concierge</value></data>
+  <data name="HouseGuide.Join.Label" xml:space="preserve"><value>Joining the House</value></data>
+  <data name="HouseGuide.Join.Intro" xml:space="preserve"><value>Most people come in through an experience: you apply, we read every application by hand, and approved applicants receive a private invitation. What would you like to know?</value></data>
+  <data name="HouseGuide.Membership.Label" xml:space="preserve"><value>Membership</value></data>
+  <data name="HouseGuide.Membership.Intro" xml:space="preserve"><value>Membership is the year-round side of the House. What would you like to know?</value></data>
+  <data name="HouseGuide.Membership.Q1" xml:space="preserve"><value>What does membership include?</value></data>
+  <data name="HouseGuide.Membership.A1" xml:space="preserve"><value>A year-round circle of founders: the people, the conversations, sessions and gatherings between the experiences. Every plan and what it includes is on the Membership page.</value></data>
+  <data name="HouseGuide.Membership.Q2" xml:space="preserve"><value>How do I become a member?</value></data>
+  <data name="HouseGuide.Membership.A2" xml:space="preserve"><value>When membership is open you choose a plan on the Membership page and join directly. If no plan is open yet, leave your email there and we'll tell you the moment it is.</value></data>
+  <data name="HouseGuide.Experiences.Label" xml:space="preserve"><value>Experiences</value></data>
+  <data name="HouseGuide.Experiences.Intro" xml:space="preserve"><value>Small retreats and gatherings, each one curated. What would you like to know?</value></data>
+  <data name="HouseGuide.Booking.Label" xml:space="preserve"><value>Bookings, payments &amp; refunds</value></data>
+  <data name="HouseGuide.Booking.Intro" xml:space="preserve"><value>Our support team looks after these. What do you need?</value></data>
+  <data name="HouseGuide.Booking.Q2" xml:space="preserve"><value>Where is my ticket?</value></data>
+  <data name="HouseGuide.Booking.A2" xml:space="preserve"><value>Your tickets and bookings are on your account page. If you haven't set a password yet, use the “Set up your account” email we sent after payment.</value></data>
+  <data name="HouseGuide.Booking.Q3" xml:space="preserve"><value>Something went wrong with a payment</value></data>
+  <data name="HouseGuide.Booking.A3" xml:space="preserve"><value>Sorry about that. Write to support with your booking reference or the email you paid with, and we'll sort it out.</value></data>
+  <data name="HouseGuide.Other.Label" xml:space="preserve"><value>Press, partners &amp; anything else</value></data>
+  <data name="HouseGuide.Other.Intro" xml:space="preserve"><value>Of course. What is it about?</value></data>
+  <data name="HouseGuide.Other.Q1" xml:space="preserve"><value>A press or partnership enquiry</value></data>
+  <data name="HouseGuide.Other.A1" xml:space="preserve"><value>We'd be glad to hear from you. Write to the concierge with a few lines about who you are and what you have in mind.</value></data>
+  <data name="HouseGuide.Other.Q2" xml:space="preserve"><value>Something else</value></data>
+  <data name="HouseGuide.Other.A2" xml:space="preserve"><value>The FAQ answers most questions. If yours isn't there, write to us — a real person reads every message.</value></data>
+  <data name="HouseGuide.Link.Faq" xml:space="preserve"><value>Read the FAQ</value></data>
+  <data name="HouseGuide.Link.OpenExperiences" xml:space="preserve"><value>Experiences open for applications</value></data>
+  <data name="HouseGuide.Link.ApplicationStatus" xml:space="preserve"><value>Check my application</value></data>
+  <data name="HouseGuide.Link.Membership" xml:space="preserve"><value>Membership page</value></data>
+  <data name="HouseGuide.Link.Experiences" xml:space="preserve"><value>See experiences</value></data>
+  <data name="HouseGuide.Link.RefundPolicy" xml:space="preserve"><value>Refund policy</value></data>
+  <data name="HouseGuide.Link.MyBookings" xml:space="preserve"><value>My bookings</value></data>
+  <data name="HouseGuide.Link.ContactForm" xml:space="preserve"><value>Use the contact form</value></data>
 </root>

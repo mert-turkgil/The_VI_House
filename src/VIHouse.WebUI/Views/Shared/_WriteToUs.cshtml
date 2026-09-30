@@ -1,0 +1,33 @@
+@inject Microsoft.Extensions.Options.IOptions<VIHouse.Business.Options.SiteOptions> Site
+@*
+    The two addresses people write to, each with what it is for. Shared by About, Contact and FAQ so
+    the three never disagree. info@ is deliberately absent: it only sends, nobody reads it.
+*@
+@{
+    var concierge = Site.Value.ConciergeEmail;
+    var support = Site.Value.SupportEmail;
+}
+<div class="write-to-us">
+    <a class="write-to-us__card" href="mailto:@concierge?subject=@Uri.EscapeDataString(Loc["WriteToUs.Concierge.Subject"].Value)">
+        <span class="write-to-us__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path pathLength="1" d="M4 5h16v11H8l-4 4z" /><path pathLength="1" d="M8 9.5h8M8 12.5h5" />
+            </svg>
+        </span>
+        <span class="write-to-us__label">@Loc["WriteToUs.Concierge.Label"]</span>
+        <span class="write-to-us__address">@concierge</span>
+        <span class="write-to-us__for">@Loc["WriteToUs.Concierge.For"]</span>
+    </a>
+    <a class="write-to-us__card" href="mailto:@support?subject=@Uri.EscapeDataString(Loc["WriteToUs.Support.Subject"].Value)">
+        <span class="write-to-us__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle pathLength="1" cx="12" cy="12" r="8.5" /><circle pathLength="1" cx="12" cy="12" r="3.5" />
+                <path pathLength="1" d="M5.9 5.9l3.6 3.6M14.5 14.5l3.6 3.6M18.1 5.9l-3.6 3.6M9.5 14.5l-3.6 3.6" />
+            </svg>
+        </span>
+        <span class="write-to-us__label">@Loc["WriteToUs.Support.Label"]</span>
+        <span class="write-to-us__address">@support</span>
+        <span class="write-to-us__for">@Loc["WriteToUs.Support.For"]</span>
+    </a>
+</div>
+<p class="write-to-us__note">@Loc["WriteToUs.SenderNote"]</p>

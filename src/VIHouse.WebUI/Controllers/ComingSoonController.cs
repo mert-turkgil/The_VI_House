@@ -40,7 +40,7 @@ public class ComingSoonController(INotifySignupService signups, IStringLocalizer
         // The culture is taken from the request rather than the form: it is what they were reading
         // when they decided to sign up, and it is the language the launch announcement should be in.
         var key = await signups.SubscribeAsync(
-            email, CultureInfo.CurrentUICulture.Name, source: "coming-soon", ct);
+            email, CultureInfo.CurrentUICulture.Name, source: "coming-soon", consentText: loc["Notify.Consent"].Value, ct: ct);
 
         // POST-redirect-GET, so a refresh after signing up does not resubmit the address and a
         // rate-limit rejection is not what a reload produces.

@@ -38,4 +38,12 @@ public class NotifySignup : BaseEntity
     /// answers, and the reason a second send is not a second mail to the same person.
     /// </summary>
     public DateTimeOffset? NotifiedAt { get; set; }
+
+    /// <summary>
+    /// The consent the person gave, word for word as the form showed it, in their language: signing
+    /// up means agreeing to the House's marketing email (the opening, news, offers). Kept so that
+    /// every announcement sent to this address can be traced back to what was agreed. CreatedAt is
+    /// when.
+    /// </summary>
+    public string? ConsentText { get; set; }
 }

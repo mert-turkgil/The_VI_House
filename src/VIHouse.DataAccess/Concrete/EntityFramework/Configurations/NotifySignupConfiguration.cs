@@ -23,6 +23,7 @@ public class NotifySignupConfiguration : IEntityTypeConfiguration<NotifySignup>
 
         builder.Property(n => n.Culture).HasMaxLength(10).IsRequired();
         builder.Property(n => n.Source).HasMaxLength(50);
+        builder.Property(n => n.ConsentText).HasMaxLength(1000);
 
         // Backs the admin list's ORDER BY. This table only ever grows and is never pruned, so the
         // newest-first page needs to stay cheap however long the curtain is up.

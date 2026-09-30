@@ -94,7 +94,7 @@ else
                            likely thing anyone does from this screen. *@
                         <td><a href="mailto:@row.Email">@row.Email</a></td>
                         <td>@(SiteCultures.Describe(row.Culture).NativeLabel)</td>
-                        <td>@(row.Source ?? "—")</td>
+                        <td title="@(row.ConsentText ?? "No consent wording stored (signed up before it was recorded)")">@(row.Source ?? "—")@if (row.ConsentText is not null) { <span class="admin-table__sub"> &middot; consent &#10003;</span> }</td>
                         <td>
                             @if (row.NotifiedAt is { } notified)
                             {

@@ -88,7 +88,7 @@
   <data name="Faq.Q7" xml:space="preserve"><value>Fiyata neler dahil?</value></data>
   <data name="Faq.A7" xml:space="preserve"><value>Her deneyim sayfası, "Neler Dahil" başlığı altında tam olarak nelerin dahil olup olmadığını listeler. Bu, konuma ve formata göre değişir.</value></data>
   <data name="Faq.Q8" xml:space="preserve"><value>Burada yanıtlanmayan bir sorum varsa nasıl ulaşabilirim?</value></data>
-  <data name="Faq.A8" xml:space="preserve"><value>İletişim sayfasını kullanın — her mesajı gerçek bir kişi okur.</value></data>
+  <data name="Faq.A8" xml:space="preserve"><value>Genel konular için concierge@thevihouse.com, rezervasyon, ödeme ve iadeler için support@thevihouse.com adresine yazın — her mesajı gerçek bir kişi okur. İletişim sayfası da kullanılabilir.</value></data>
 
   <data name="Contact.Title" xml:space="preserve"><value>İletişim</value></data>
   <data name="Contact.Eyebrow" xml:space="preserve"><value>Bize Ulaşın</value></data>
@@ -1030,7 +1030,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="ComingSoon.EmailLabel" xml:space="preserve"><value>E-posta adresiniz</value></data>
   <data name="ComingSoon.EmailPlaceholder" xml:space="preserve"><value>E-posta adresiniz</value></data>
   <data name="ComingSoon.NotifyMe" xml:space="preserve"><value>İlk Sen Öğren</value></data>
-  <data name="ComingSoon.DataNote" xml:space="preserve"><value>Adresinizi yalnızca tek bir şey için kullanacağız: The VI House açıldığında size haber vermek. Bülten yok, kimseyle paylaşım yok ve dilediğiniz zaman silinmesini isteyebilirsiniz.</value></data>
+  <data name="ComingSoon.DataNote" xml:space="preserve"><value>Kaydolarak The VI House'un açıldığında ve deneyimler, oturumlar, üyelik ve kampanyalarla ilgili haberlerle size e-posta göndermesini kabul etmiş olursunuz. Bunlar tanıtım (pazarlama) e-postalarıdır: her mesajda listeden tek tıkla çıkma bağlantısı bulunur ve adresinizi asla kimseyle paylaşmayız.</value></data>
   <data name="ComingSoon.Launching" xml:space="preserve"><value>Yakında · 2026</value></data>
   <data name="ComingSoon.RailLeft1" xml:space="preserve"><value>Kurucular</value></data>
   <data name="ComingSoon.RailLeft2" xml:space="preserve"><value>Yatırımcılar</value></data>
@@ -1576,7 +1576,7 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Auth.Login.Redirecting" xml:space="preserve"><value>Yönlendiriliyor…</value></data>
   <data name="Email.LaunchAnnouncement.Eyebrow" xml:space="preserve"><value>The VI House</value></data>
   <data name="Email.LaunchAnnouncement.DefaultButton" xml:space="preserve"><value>The VI House'u ziyaret edin</value></data>
-  <data name="Email.LaunchAnnouncement.Footnote" xml:space="preserve"><value>Bu e-postayı The VI House açıldığında haber verilmesini istediğiniz için alıyorsunuz.</value></data>
+  <data name="Email.LaunchAnnouncement.Footnote" xml:space="preserve"><value>Bu e-postayı The VI House haberlerine kaydolduğunuz ve e-posta ile almayı kabul ettiğiniz için alıyorsunuz. Aşağıdaki bağlantıyla istediğiniz zaman listeden çıkabilirsiniz.</value></data>
   <data name="Email.LaunchAnnouncement.LeaveLead" xml:space="preserve"><value>Bizden haber almak istemiyor musunuz?</value></data>
   <data name="Email.LaunchAnnouncement.LeaveLink" xml:space="preserve"><value>Beni listeden çıkarın.</value></data>
   <data name="ComingSoon.Leave.Title" xml:space="preserve"><value>Açılış listesinden ayrılmak mı istiyorsunuz?</value></data>
@@ -1756,10 +1756,63 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="EmptyStage.Notify.Placeholder" xml:space="preserve"><value>adiniz@eposta.com</value></data>
   <data name="EmptyStage.Notify.Button" xml:space="preserve"><value>Açıldığında haber ver</value></data>
   <data name="EmptyStage.Notify.SignedIn" xml:space="preserve"><value>Açıldığında haber ver</value></data>
-  <data name="EmptyStage.Notify.Note" xml:space="preserve"><value>Açıldığında tek bir e-posta. Başka hiçbir şey yok; listeden istediğiniz zaman çıkabilirsiniz.</value></data>
   <data name="EmptyStage.Notify.Thanks" xml:space="preserve"><value>Teşekkürler — açılır açılmaz size yazacağız.</value></data>
   <data name="EmptyStage.Action.Membership" xml:space="preserve"><value>Üyeliği keşfedin</value></data>
   <data name="EmptyStage.Action.Journal" xml:space="preserve"><value>Journal'ı okuyun</value></data>
   <data name="EmptyStage.Action.Experiences" xml:space="preserve"><value>Deneyimleri görün</value></data>
   <data name="EmptyStage.Action.Contact" xml:space="preserve"><value>Bizimle konuşun</value></data>
+  <data name="Notify.Consent" xml:space="preserve"><value>Kaydolarak The VI House'un açıldığında ve deneyimler, oturumlar, üyelik ve kampanyalarla ilgili haberlerle size e-posta göndermesini kabul etmiş olursunuz. Bunlar tanıtım (pazarlama) e-postalarıdır: her mesajda listeden tek tıkla çıkma bağlantısı bulunur ve adresinizi asla kimseyle paylaşmayız.</value></data>
+  <data name="About.AskCta" xml:space="preserve"><value>House'a sorun</value></data>
+  <data name="About.Quote" xml:space="preserve"><value>En iyi kararlar nadiren bir toplantı odasında alınır.</value></data>
+  <data name="About.QuoteBy" xml:space="preserve"><value>House neden var</value></data>
+  <data name="About.PathHeading" xml:space="preserve"><value>Nasıl dahil olursunuz</value></data>
+  <data name="About.WriteHeading" xml:space="preserve"><value>Bize yazın</value></data>
+  <data name="About.WriteLede" xml:space="preserve"><value>Her mesajı gerçek bir kişi okur. Yazmadan önce cevap belki zaten şurada:</value></data>
+  <data name="WriteToUs.Concierge.Label" xml:space="preserve"><value>Concierge</value></data>
+  <data name="WriteToUs.Concierge.For" xml:space="preserve"><value>Katılım, deneyimler, üyelik, basın ve iş birlikleri — genel her konu.</value></data>
+  <data name="WriteToUs.Concierge.Subject" xml:space="preserve"><value>The VI House için bir soru</value></data>
+  <data name="WriteToUs.Support.Label" xml:space="preserve"><value>Destek</value></data>
+  <data name="WriteToUs.Support.For" xml:space="preserve"><value>Rezervasyonlar, ödemeler, iadeler ve hesabınız. Lütfen rezervasyon numaranızı ekleyin.</value></data>
+  <data name="WriteToUs.Support.Subject" xml:space="preserve"><value>Rezervasyonumla ilgili yardım</value></data>
+  <data name="WriteToUs.SenderNote" xml:space="preserve"><value>Size gönderdiğimiz e-postalar info@thevihouse.com adresinden gelir. Bu adres yalnızca gönderim içindir — e-postalarımızı yanıtladığınızda destek ekibine ulaşırsınız.</value></data>
+  <data name="HouseGuide.Eyebrow" xml:space="preserve"><value>Hızlı sorular</value></data>
+  <data name="HouseGuide.Heading" xml:space="preserve"><value>House'a sorun</value></data>
+  <data name="HouseGuide.Lede" xml:space="preserve"><value>Bir konu seçin, sizi cevaba — ya da e-postası hazır doğru kişiye — götürelim.</value></data>
+  <data name="HouseGuide.Status" xml:space="preserve"><value>Her mesajı gerçek bir kişi okur</value></data>
+  <data name="HouseGuide.Greeting" xml:space="preserve"><value>Merhaba — The VI House'a hoş geldiniz.
+Ne öğrenmek istersiniz?</value></data>
+  <data name="HouseGuide.Typing" xml:space="preserve"><value>Yazıyor</value></data>
+  <data name="HouseGuide.Restart" xml:space="preserve"><value>Başka bir şey sor</value></data>
+  <data name="HouseGuide.StillNeed" xml:space="preserve"><value>Yine de bir kişiyle mi görüşmek istiyorsunuz? Yazın:</value></data>
+  <data name="HouseGuide.Footer" xml:space="preserve"><value>The VI House concierge ekibi</value></data>
+  <data name="HouseGuide.Join.Label" xml:space="preserve"><value>House'a katılım</value></data>
+  <data name="HouseGuide.Join.Intro" xml:space="preserve"><value>Çoğu kişi bir deneyim üzerinden katılır: başvurursunuz, her başvuruyu tek tek okuruz ve onaylananlar özel bir davet alır. Ne öğrenmek istersiniz?</value></data>
+  <data name="HouseGuide.Membership.Label" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="HouseGuide.Membership.Intro" xml:space="preserve"><value>Üyelik, House'un yıl boyu süren yüzüdür. Ne öğrenmek istersiniz?</value></data>
+  <data name="HouseGuide.Membership.Q1" xml:space="preserve"><value>Üyelik neleri kapsıyor?</value></data>
+  <data name="HouseGuide.Membership.A1" xml:space="preserve"><value>Yıl boyu süren bir kurucular çevresi: deneyimler arasındaki insanlar, sohbetler, oturumlar ve buluşmalar. Her plan ve kapsamı Üyelik sayfasında.</value></data>
+  <data name="HouseGuide.Membership.Q2" xml:space="preserve"><value>Nasıl üye olurum?</value></data>
+  <data name="HouseGuide.Membership.A2" xml:space="preserve"><value>Üyelik açıkken Üyelik sayfasından bir plan seçip doğrudan katılırsınız. Henüz açık plan yoksa e-postanızı orada bırakın, açıldığı anda haber verelim.</value></data>
+  <data name="HouseGuide.Experiences.Label" xml:space="preserve"><value>Deneyimler</value></data>
+  <data name="HouseGuide.Experiences.Intro" xml:space="preserve"><value>Her biri özenle hazırlanmış küçük inziva programları ve buluşmalar. Ne öğrenmek istersiniz?</value></data>
+  <data name="HouseGuide.Booking.Label" xml:space="preserve"><value>Rezervasyon, ödeme ve iadeler</value></data>
+  <data name="HouseGuide.Booking.Intro" xml:space="preserve"><value>Bunlarla destek ekibimiz ilgilenir. Neye ihtiyacınız var?</value></data>
+  <data name="HouseGuide.Booking.Q2" xml:space="preserve"><value>Biletim nerede?</value></data>
+  <data name="HouseGuide.Booking.A2" xml:space="preserve"><value>Biletleriniz ve rezervasyonlarınız hesap sayfanızda. Henüz şifre belirlemediyseniz, ödemeden sonra gönderdiğimiz hesap kurulum e-postasını kullanın.</value></data>
+  <data name="HouseGuide.Booking.Q3" xml:space="preserve"><value>Bir ödemede sorun oldu</value></data>
+  <data name="HouseGuide.Booking.A3" xml:space="preserve"><value>Bunun için üzgünüz. Rezervasyon numaranız veya ödeme yaptığınız e-posta ile destek ekibine yazın, hemen çözelim.</value></data>
+  <data name="HouseGuide.Other.Label" xml:space="preserve"><value>Basın, iş birlikleri ve diğer her şey</value></data>
+  <data name="HouseGuide.Other.Intro" xml:space="preserve"><value>Elbette. Konu nedir?</value></data>
+  <data name="HouseGuide.Other.Q1" xml:space="preserve"><value>Basın veya iş birliği talebi</value></data>
+  <data name="HouseGuide.Other.A1" xml:space="preserve"><value>Sizden haber almaktan memnuniyet duyarız. Kim olduğunuzu ve aklınızdakini birkaç satırla concierge'e yazın.</value></data>
+  <data name="HouseGuide.Other.Q2" xml:space="preserve"><value>Başka bir şey</value></data>
+  <data name="HouseGuide.Other.A2" xml:space="preserve"><value>SSS çoğu soruyu yanıtlar. Sizinki orada yoksa bize yazın — her mesajı gerçek bir kişi okur.</value></data>
+  <data name="HouseGuide.Link.Faq" xml:space="preserve"><value>SSS'yi okuyun</value></data>
+  <data name="HouseGuide.Link.OpenExperiences" xml:space="preserve"><value>Başvuruya açık deneyimler</value></data>
+  <data name="HouseGuide.Link.ApplicationStatus" xml:space="preserve"><value>Başvurumu kontrol et</value></data>
+  <data name="HouseGuide.Link.Membership" xml:space="preserve"><value>Üyelik sayfası</value></data>
+  <data name="HouseGuide.Link.Experiences" xml:space="preserve"><value>Deneyimleri görün</value></data>
+  <data name="HouseGuide.Link.RefundPolicy" xml:space="preserve"><value>İade politikası</value></data>
+  <data name="HouseGuide.Link.MyBookings" xml:space="preserve"><value>Rezervasyonlarım</value></data>
+  <data name="HouseGuide.Link.ContactForm" xml:space="preserve"><value>İletişim formunu kullanın</value></data>
 </root>

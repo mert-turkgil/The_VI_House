@@ -1,0 +1,137 @@
+@inject Microsoft.Extensions.Options.IOptions<VIHouse.Business.Options.SiteOptions> Site
+@*
+    "Ask the House": a guided chat that answers the common questions and, when a person is needed,
+    hands over the right address — concierge@ for anything general, support@ for bookings, payments
+    and refunds. Nothing is collected here: every answer is a link to the FAQ or a page, or a mailto.
+
+    The words are rendered here, in the reader's language, as a JSON island; modules/houseGuide.ts
+    plays them as a conversation. Without script the same answers are shown as a plain list
+    (.house-guide__fallback), which the module removes when it starts.
+*@
+@{
+    var faq = Url.Action("Index", "Faq", new { area = "" });
+    string Faq(int n) => $"{faq}#q{n}";
+    object Link(string labelKey, string? href) => new { label = Loc[labelKey].Value, href };
+    object Question(string labelKey, string answer, params object[] links) => new { label = Loc[labelKey].Value, answer, links };
+
+    var concierge = Site.Value.ConciergeEmail;
+    var support = Site.Value.SupportEmail;
+
+    var data = new
+    {
+        greeting = Loc["HouseGuide.Greeting"].Value,
+        userTopicPrefix = "",
+        restart = Loc["HouseGuide.Restart"].Value,
+        stillNeed = Loc["HouseGuide.StillNeed"].Value,
+        typing = Loc["HouseGuide.Typing"].Value,
+        mail = new
+        {
+            concierge = new { address = concierge, subject = Loc["WriteToUs.Concierge.Subject"].Value },
+            support = new { address = support, subject = Loc["WriteToUs.Support.Subject"].Value },
+        },
+        topics = new object[]
+        {
+            new
+            {
+                id = "join", label = Loc["HouseGuide.Join.Label"].Value, intro = Loc["HouseGuide.Join.Intro"].Value, mail = "concierge",
+                questions = new[]
+                {
+                    Question("Faq.Q1", Loc["Faq.A1"].Value,
+                        Link("HouseGuide.Link.OpenExperiences", Url.Action("Index", "Experiences", new { area = "", status = "ApplicationsOpen" })),
+                        Link("HouseGuide.Link.Faq", Faq(1))),
+                    Question("Faq.Q2", Loc["Faq.A2"].Value,
+                        Link("HouseGuide.Link.ApplicationStatus", Url.Action("Status", "Application", new { area = "" })),
+                        Link("HouseGuide.Link.Faq", Faq(2))),
+                    Question("Faq.Q5", Loc["Faq.A5"].Value, Link("HouseGuide.Link.Faq", Faq(5))),
+                },
+            },
+            new
+            {
+                id = "membership", label = Loc["HouseGuide.Membership.Label"].Value, intro = Loc["HouseGuide.Membership.Intro"].Value, mail = "concierge",
+                questions = new[]
+                {
+                    Question("HouseGuide.Membership.Q1", Loc["HouseGuide.Membership.A1"].Value,
+                        Link("HouseGuide.Link.Membership", Url.Action("Index", "Membership", new { area = "" }))),
+                    Question("HouseGuide.Membership.Q2", Loc["HouseGuide.Membership.A2"].Value,
+                        Link("HouseGuide.Link.Membership", Url.Action("Index", "Membership", new { area = "" })),
+                        Link("HouseGuide.Link.Faq", Faq(6))),
+                },
+            },
+            new
+            {
+                id = "experiences", label = Loc["HouseGuide.Experiences.Label"].Value, intro = Loc["HouseGuide.Experiences.Intro"].Value, mail = "concierge",
+                questions = new[]
+                {
+                    Question("Faq.Q7", Loc["Faq.A7"].Value,
+                        Link("HouseGuide.Link.Experiences", Url.Action("Index", "Experiences", new { area = "" })),
+                        Link("HouseGuide.Link.Faq", Faq(7))),
+                    Question("Faq.Q3", Loc["Faq.A3"].Value, Link("HouseGuide.Link.Faq", Faq(3))),
+                },
+            },
+            new
+            {
+                id = "booking", label = Loc["HouseGuide.Booking.Label"].Value, intro = Loc["HouseGuide.Booking.Intro"].Value, mail = "support",
+                questions = new[]
+                {
+                    Question("Faq.Q4", Loc["Faq.A4"].Value,
+                        Link("HouseGuide.Link.RefundPolicy", Url.Action("Refund", "Legal", new { area = "" })),
+                        Link("HouseGuide.Link.Faq", Faq(4))),
+                    Question("HouseGuide.Booking.Q2", Loc["HouseGuide.Booking.A2"].Value,
+                        Link("HouseGuide.Link.MyBookings", Url.Action("Bookings", "Account", new { area = "" }))),
+                    Question("HouseGuide.Booking.Q3", Loc["HouseGuide.Booking.A3"].Value),
+                },
+            },
+            new
+            {
+                id = "other", label = Loc["HouseGuide.Other.Label"].Value, intro = Loc["HouseGuide.Other.Intro"].Value, mail = "concierge",
+                questions = new[]
+                {
+                    Question("HouseGuide.Other.Q1", Loc["HouseGuide.Other.A1"].Value),
+                    Question("HouseGuide.Other.Q2", Loc["HouseGuide.Other.A2"].Value,
+                        Link("HouseGuide.Link.Faq", faq),
+                        Link("HouseGuide.Link.ContactForm", Url.Action("Index", "Contact", new { area = "" }))),
+                },
+            },
+        },
+    };
+    var json = System.Text.Json.JsonSerializer.Serialize(data);
+}
+
+<section class="house-guide" id="ask" aria-labelledby="house-guide-title">
+    <div class="container house-guide__inner">
+        <div class="house-guide__intro" data-reveal>
+            <span class="house-guide__eyebrow">@Loc["HouseGuide.Eyebrow"]</span>
+            <h2 class="house-guide__title" id="house-guide-title">@Loc["HouseGuide.Heading"]</h2>
+            <p class="house-guide__lede">@Loc["HouseGuide.Lede"]</p>
+        </div>
+
+        <div class="house-guide__card" data-house-guide data-reveal data-reveal-delay="120">
+            <header class="house-guide__head">
+                <span class="house-guide__avatar" aria-hidden="true"><partial name="_Crest" /></span>
+                <span class="house-guide__who">
+                    <strong>The VI House</strong>
+                    <span class="house-guide__status"><span class="house-guide__dot" aria-hidden="true"></span>@Loc["HouseGuide.Status"]</span>
+                </span>
+            </header>
+            <div class="house-guide__progress" aria-hidden="true">
+                <span data-step="0"></span><span data-step="1"></span><span data-step="2"></span>
+            </div>
+
+            <div class="house-guide__body" data-house-guide-body aria-live="polite">
+                @* Shown without script; replaced by the conversation when modules/houseGuide.ts starts. *@
+                <div class="house-guide__fallback">
+                    <p class="house-guide__bubble">@Loc["HouseGuide.Greeting"]</p>
+                    <ul class="house-guide__fallback-list">
+                        <li><a href="@Faq(1)">@Loc["Faq.Q1"]</a></li>
+                        <li><a href="@Faq(4)">@Loc["Faq.Q4"]</a></li>
+                        <li><a href="@Faq(7)">@Loc["Faq.Q7"]</a></li>
+                        <li><a href="@faq">@Loc["HouseGuide.Link.Faq"]</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <footer class="house-guide__foot">@Loc["HouseGuide.Footer"]</footer>
+            <script type="application/json" data-house-guide-data>@Html.Raw(json)</script>
+        </div>
+    </div>
+</section>

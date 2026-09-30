@@ -122,7 +122,7 @@ public class MembershipController(
         if (User.Identity?.IsAuthenticated == true && await userManager.GetUserAsync(User) is { } user)
             email = user.Email;
 
-        var key = await signups.SubscribeAsync(email, CultureInfo.CurrentUICulture.Name, source: $"waitlist:{plan.Name}"[..Math.Min(50, 9 + plan.Name.Length)], ct);
+        var key = await signups.SubscribeAsync(email, CultureInfo.CurrentUICulture.Name, source: $"waitlist:{plan.Name}"[..Math.Min(50, 9 + plan.Name.Length)], consentText: loc["Notify.Consent"].Value, ct: ct);
 
         TempData["WaitlistMessage"] = loc[key ?? "Membership.Waitlist.Thanks"].Value;
         TempData["WaitlistOk"] = key is null || key == "ComingSoon.Notify.Already";

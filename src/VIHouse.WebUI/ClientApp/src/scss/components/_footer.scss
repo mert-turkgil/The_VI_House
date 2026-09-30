@@ -320,3 +320,17 @@
     transform: none;
   }
 }
+
+// The consent sentence and the result of a sign-up, under the footer's email field.
+.site-footer__newsletter-consent {
+  margin: var(--vih-space-xs) 0 0;
+  font-size: var(--vih-text-3xs);
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--vih-cream) 55%, transparent);
+}
+
+.site-footer__newsletter-message {
+  margin: 0 0 var(--vih-space-xs);
+  font-size: var(--vih-text-sm);
+  color: var(--vih-gold-light);
+}

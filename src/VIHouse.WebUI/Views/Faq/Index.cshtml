@@ -15,14 +15,16 @@
     <div class="faq-list">
         @for (var i = 1; i <= QuestionCount; i++)
         {
-            <details class="faq-item">
+            <details class="faq-item" id="q@(i)">
                 <summary>@Loc[$"Faq.Q{i}"]</summary>
                 <p>@Loc[$"Faq.A{i}"]</p>
             </details>
         }
     </div>
 
-    <p style="margin-top:32px; text-align:center;">
-        @Loc["Faq.StillHaveQuestions"] <a asp-controller="Contact" asp-action="Index">@Loc["Footer.ContactUs"]</a>
+    <h2 class="about-section__title" style="margin-top:var(--vih-space-2xl);">@Loc["Faq.StillHaveQuestions"]</h2>
+    <partial name="_WriteToUs" />
+    <p style="margin-top:16px; text-align:center;">
+        <a asp-controller="Contact" asp-action="Index">@Loc["HouseGuide.Link.ContactForm"]</a>
     </p>
 </div>
