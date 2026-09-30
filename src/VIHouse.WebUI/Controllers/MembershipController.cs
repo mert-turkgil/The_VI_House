@@ -42,7 +42,7 @@ public class MembershipController(
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         ViewData["Title"] = loc["Membership.Title"];
-        this.SetSeo(loc["Seo.Membership.Description"].Value, canonicalPath: "/membership");
+        this.SetSeo(loc["Seo.Membership.Description"].Value, canonicalPath: "/membership", pageKey: "membership");
 
         var model = new MembershipPageViewModel
         {

@@ -1,5 +1,4 @@
 @model ExperienceIndexViewModel
-@inject Microsoft.Extensions.Options.IOptions<FeatureOptions> Features
 @*
     The results region on its own, so ExperiencesController.Results can return exactly this fragment
     for the JS filter swap — the same "Razor renders, JS replaces innerHTML" arrangement the site
@@ -15,27 +14,23 @@
         : Loc["Experiences.Count.Many", Model.Cards.Count].Value)
 </p>
 
-@if (Model.Cards.Count == 0)
+@if (Model.Cards.Count == 0 && !Model.HasFilters)
 {
+    @* Nothing published at all: the designed empty section, with a notify-me form. *@
+    <partial name="_EmptyStage" model="@(new VIHouse.WebUI.ViewModels.Shared.EmptyStageViewModel("experiences"))" />
+}
+else if (Model.Cards.Count == 0)
+{
+    @* Published experiences exist, the filters just exclude them all. *@
     <div class="experience-empty">
         <span class="experience-empty__mark" aria-hidden="true">
             <partial name="_Crest" />
         </span>
-
-        @if (Model.HasFilters)
-        {
-            <h2 class="experience-empty__title">@Loc["Experiences.Empty.Filtered.Title"]</h2>
-            <p class="experience-empty__body">@Loc["Experiences.Empty.Filtered.Body"]</p>
-            <a class="btn btn--ghost" href="@Url.Action("Index", "Experiences", new { area = "" })">
-                @Loc["Experiences.Filters.Clear"]
-            </a>
-        }
-        else
-        {
-            <h2 class="experience-empty__title">@Loc["Experiences.Empty.Title"]</h2>
-            <p class="experience-empty__body">@Loc["Experiences.Empty.Body"]</p>
-            <a class="btn btn--primary" href="@(Features.Value.MembershipSales ? "/join" : "/experiences?status=ApplicationsOpen")">@Loc["Nav.ApplyToJoin"]</a>
-        }
+        <h2 class="experience-empty__title">@Loc["Experiences.Empty.Filtered.Title"]</h2>
+        <p class="experience-empty__body">@Loc["Experiences.Empty.Filtered.Body"]</p>
+        <a class="btn btn--ghost" href="@Url.Action("Index", "Experiences", new { area = "" })">
+            @Loc["Experiences.Filters.Clear"]
+        </a>
     </div>
 }
 else

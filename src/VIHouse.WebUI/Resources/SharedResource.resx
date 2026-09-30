@@ -1725,4 +1725,41 @@ Questions. If you believe you're entitled to a refund outside these terms, conta
   <data name="AmbassadorInvite.Error.IbanInvalid" xml:space="preserve"><value>That IBAN doesn't check out — look for a missing or swapped character.</value></data>
   <data name="AmbassadorInvite.Error.Bic" xml:space="preserve"><value>A BIC has 8 or 11 letters and digits.</value></data>
   <data name="AmbassadorInvite.Error.Terms" xml:space="preserve"><value>Accept the terms to continue.</value></data>
+  <data name="EmptyStage.Experiences.Eyebrow" xml:space="preserve"><value>Experiences</value></data>
+  <data name="EmptyStage.Experiences.Title" xml:space="preserve"><value>The first journeys are being planned</value></data>
+  <data name="EmptyStage.Experiences.Body" xml:space="preserve"><value>Retreats, dinners and city gatherings for founders — each one small, each one by invitation. The calendar opens soon.</value></data>
+  <data name="EmptyStage.Experiences.Tile1.Label" xml:space="preserve"><value>Places</value></data>
+  <data name="EmptyStage.Experiences.Tile1.Caption" xml:space="preserve"><value>Hand-picked, and worth the journey</value></data>
+  <data name="EmptyStage.Experiences.Tile2.Label" xml:space="preserve"><value>Dates</value></data>
+  <data name="EmptyStage.Experiences.Tile2.Caption" xml:space="preserve"><value>A small calendar, announced well ahead</value></data>
+  <data name="EmptyStage.Experiences.Tile3.Label" xml:space="preserve"><value>Invitations</value></data>
+  <data name="EmptyStage.Experiences.Tile3.Caption" xml:space="preserve"><value>Every seat is offered, not sold</value></data>
+  <data name="EmptyStage.Sessions.Eyebrow" xml:space="preserve"><value>Sessions</value></data>
+  <data name="EmptyStage.Sessions.Title" xml:space="preserve"><value>The first sessions are on their way</value></data>
+  <data name="EmptyStage.Sessions.Body" xml:space="preserve"><value>Live conversations and recorded talks with founders who have done it before. They will appear here as soon as they are scheduled.</value></data>
+  <data name="EmptyStage.Sessions.Tile1.Label" xml:space="preserve"><value>Live</value></data>
+  <data name="EmptyStage.Sessions.Tile1.Caption" xml:space="preserve"><value>Join the room and ask your question</value></data>
+  <data name="EmptyStage.Sessions.Tile2.Label" xml:space="preserve"><value>On demand</value></data>
+  <data name="EmptyStage.Sessions.Tile2.Caption" xml:space="preserve"><value>Watch when it suits you</value></data>
+  <data name="EmptyStage.Sessions.Tile3.Label" xml:space="preserve"><value>Library</value></data>
+  <data name="EmptyStage.Sessions.Tile3.Caption" xml:space="preserve"><value>Notes and recordings, kept for you</value></data>
+  <data name="EmptyStage.Membership.Eyebrow" xml:space="preserve"><value>Membership</value></data>
+  <data name="EmptyStage.Membership.Title" xml:space="preserve"><value>Membership opens soon</value></data>
+  <data name="EmptyStage.Membership.Body" xml:space="preserve"><value>A year-round circle of founders: the people, the conversations and the gatherings between the experiences. The plans are being finalised.</value></data>
+  <data name="EmptyStage.Membership.Tile1.Label" xml:space="preserve"><value>Plans</value></data>
+  <data name="EmptyStage.Membership.Tile1.Caption" xml:space="preserve"><value>Simple, with nothing hidden</value></data>
+  <data name="EmptyStage.Membership.Tile2.Label" xml:space="preserve"><value>Community</value></data>
+  <data name="EmptyStage.Membership.Tile2.Caption" xml:space="preserve"><value>Founders who understand the journey</value></data>
+  <data name="EmptyStage.Membership.Tile3.Label" xml:space="preserve"><value>Gatherings</value></data>
+  <data name="EmptyStage.Membership.Tile3.Caption" xml:space="preserve"><value>Dinners and meet-ups through the year</value></data>
+  <data name="EmptyStage.Notify.Label" xml:space="preserve"><value>Your email address</value></data>
+  <data name="EmptyStage.Notify.Placeholder" xml:space="preserve"><value>your@email.com</value></data>
+  <data name="EmptyStage.Notify.Button" xml:space="preserve"><value>Tell me when it opens</value></data>
+  <data name="EmptyStage.Notify.SignedIn" xml:space="preserve"><value>Tell me when it opens</value></data>
+  <data name="EmptyStage.Notify.Note" xml:space="preserve"><value>One email when it opens. Nothing else, and you can leave the list at any time.</value></data>
+  <data name="EmptyStage.Notify.Thanks" xml:space="preserve"><value>Thank you — we'll write to you as soon as it opens.</value></data>
+  <data name="EmptyStage.Action.Membership" xml:space="preserve"><value>Explore membership</value></data>
+  <data name="EmptyStage.Action.Journal" xml:space="preserve"><value>Read the Journal</value></data>
+  <data name="EmptyStage.Action.Experiences" xml:space="preserve"><value>See experiences</value></data>
+  <data name="EmptyStage.Action.Contact" xml:space="preserve"><value>Talk to us</value></data>
 </root>

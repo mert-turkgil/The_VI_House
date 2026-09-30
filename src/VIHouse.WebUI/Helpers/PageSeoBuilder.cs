@@ -53,6 +53,31 @@ public static class PageSeoBuilder
         };
     }
 
+    /// <summary>
+    /// A session page: its own SEO title and description, hreflang limited to the languages it is
+    /// written in, and kept out of the index unless the session is public — a members-only
+    /// gathering's page is for its members, not for search results.
+    /// </summary>
+    public static PageSeo ForSeminar(Seminar seminar, string culture, string listingName)
+    {
+        var copy = SeminarContent.Resolve(seminar, culture);
+
+        return new PageSeo
+        {
+            Title = copy?.SeoTitle ?? SeminarContent.Title(seminar, culture),
+            Description = Trim(copy?.SeoDescription ?? Strip(copy?.Summary)),
+            CanonicalPath = $"/sessions/{seminar.Slug}",
+            AvailableCultures = SiteCultures.DefaultFirst(seminar.Translations.Select(t => t.Culture)),
+            ModifiedAt = seminar.UpdatedAt,
+            NoIndex = seminar.Visibility != SeminarVisibility.Public,
+            Breadcrumbs =
+            [
+                new SeoBreadcrumb(listingName, "/sessions"),
+                new SeoBreadcrumb(SeminarContent.Title(seminar, culture), $"/sessions/{seminar.Slug}"),
+            ],
+        };
+    }
+
     public static PageSeo ForJournalPost(JournalPost post, string culture, string listingName)
     {
         var copy = JournalContent.Resolve(post, culture);

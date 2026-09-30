@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -9,7 +10,8 @@ public class FaqController(IStringLocalizer<SharedResource> loc) : Controller
     [HttpGet("")]
     public IActionResult Index()
     {
-        ViewData["Title"] = loc["Faq.Title"];
+        ViewData["Title"] = loc["Faq.Title"].Value;
+        this.SetSeo(canonicalPath: "/faq", pageKey: "faq");
         return View();
     }
 }

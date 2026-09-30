@@ -18,7 +18,10 @@ namespace VIHouse.Business.Concrete;
 public class SitemapService(
     IExperienceService experiences,
     IJournalService journal,
-    ISeminarService seminars) : ISitemapService
+    ISeminarService seminars,
+    IContentPageRepository contentPages,
+    IHeroSlideRepository heroSlides,
+    ISiteSettingsService settings) : ISitemapService
 {
     /// <summary>
     /// Pages that exist in code rather than in the database. Every one is fully translated, so all
@@ -48,9 +51,14 @@ public class SitemapService(
     {
         var all = new List<SitemapEntry>();
 
+        // The homepage is the one fixed page an admin edits week to week (Content, Hero Slides, the
+        // settings screen), so it carries the date of the newest of those edits — that is what tells
+        // a crawler it is worth fetching again.
+        var homeModified = await HomeLastModifiedAsync(ct);
+
         foreach (var (path, freq, priority) in StaticPages)
         {
-            all.Add(new SitemapEntry(path, null, freq, priority, SiteCultures.Names)
+            all.Add(new SitemapEntry(path, path == "/" ? homeModified : null, freq, priority, SiteCultures.Names)
             {
                 Section = "Pages",
             });
@@ -129,4 +137,21 @@ public class SitemapService(
 
     private static IReadOnlyList<string> CulturesOf(Seminar s) =>
         SiteCultures.DefaultFirst(s.Translations.Select(t => t.Culture));
+
+    private async Task<DateTimeOffset?> HomeLastModifiedAsync(CancellationToken ct)
+    {
+        var stamps = new List<DateTimeOffset>();
+
+        if (await contentPages.GetBySlugWithBlocksAsync("home", ct) is { } home)
+        {
+            stamps.AddRange(home.Blocks.Select(b => b.UpdatedAt ?? b.CreatedAt));
+            stamps.AddRange(home.Blocks.SelectMany(b => b.Translations).Select(t => t.UpdatedAt ?? t.CreatedAt));
+        }
+        stamps.AddRange((await heroSlides.GetVisibleAsync(DateTimeOffset.UtcNow, ct)).Select(h => h.UpdatedAt ?? h.CreatedAt));
+
+        var site = await settings.GetCachedAsync(ct);
+        stamps.Add(site.UpdatedAt ?? site.CreatedAt);
+
+        return stamps.Count == 0 ? null : stamps.Max();
+    }
 }

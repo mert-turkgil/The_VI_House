@@ -1725,4 +1725,41 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="AmbassadorInvite.Error.IbanInvalid" xml:space="preserve"><value>Bu IBAN geçersiz — eksik veya yer değiştirmiş bir karakter olabilir.</value></data>
   <data name="AmbassadorInvite.Error.Bic" xml:space="preserve"><value>BIC 8 veya 11 harf ve rakamdan oluşur.</value></data>
   <data name="AmbassadorInvite.Error.Terms" xml:space="preserve"><value>Devam etmek için şartları kabul edin.</value></data>
+  <data name="EmptyStage.Experiences.Eyebrow" xml:space="preserve"><value>Deneyimler</value></data>
+  <data name="EmptyStage.Experiences.Title" xml:space="preserve"><value>İlk yolculuklar planlanıyor</value></data>
+  <data name="EmptyStage.Experiences.Body" xml:space="preserve"><value>Kurucular için inziva programları, akşam yemekleri ve şehir buluşmaları — her biri küçük, her biri davetle. Takvim yakında açılıyor.</value></data>
+  <data name="EmptyStage.Experiences.Tile1.Label" xml:space="preserve"><value>Mekânlar</value></data>
+  <data name="EmptyStage.Experiences.Tile1.Caption" xml:space="preserve"><value>Özenle seçilmiş, yolculuğa değer</value></data>
+  <data name="EmptyStage.Experiences.Tile2.Label" xml:space="preserve"><value>Tarihler</value></data>
+  <data name="EmptyStage.Experiences.Tile2.Caption" xml:space="preserve"><value>Küçük bir takvim, çok önceden duyurulur</value></data>
+  <data name="EmptyStage.Experiences.Tile3.Label" xml:space="preserve"><value>Davetler</value></data>
+  <data name="EmptyStage.Experiences.Tile3.Caption" xml:space="preserve"><value>Her koltuk satılmaz, teklif edilir</value></data>
+  <data name="EmptyStage.Sessions.Eyebrow" xml:space="preserve"><value>Oturumlar</value></data>
+  <data name="EmptyStage.Sessions.Title" xml:space="preserve"><value>İlk oturumlar yolda</value></data>
+  <data name="EmptyStage.Sessions.Body" xml:space="preserve"><value>Bu yolu daha önce yürümüş kurucularla canlı sohbetler ve kayıtlı konuşmalar. Planlanır planlanmaz burada görünecekler.</value></data>
+  <data name="EmptyStage.Sessions.Tile1.Label" xml:space="preserve"><value>Canlı</value></data>
+  <data name="EmptyStage.Sessions.Tile1.Caption" xml:space="preserve"><value>Odaya katılın, sorunuzu sorun</value></data>
+  <data name="EmptyStage.Sessions.Tile2.Label" xml:space="preserve"><value>İsteğe bağlı</value></data>
+  <data name="EmptyStage.Sessions.Tile2.Caption" xml:space="preserve"><value>Size uygun olduğunda izleyin</value></data>
+  <data name="EmptyStage.Sessions.Tile3.Label" xml:space="preserve"><value>Kütüphane</value></data>
+  <data name="EmptyStage.Sessions.Tile3.Caption" xml:space="preserve"><value>Notlar ve kayıtlar, sizin için saklanır</value></data>
+  <data name="EmptyStage.Membership.Eyebrow" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="EmptyStage.Membership.Title" xml:space="preserve"><value>Üyelik yakında açılıyor</value></data>
+  <data name="EmptyStage.Membership.Body" xml:space="preserve"><value>Yıl boyu süren bir kurucular çevresi: deneyimler arasındaki insanlar, sohbetler ve buluşmalar. Planlar son hâlini alıyor.</value></data>
+  <data name="EmptyStage.Membership.Tile1.Label" xml:space="preserve"><value>Planlar</value></data>
+  <data name="EmptyStage.Membership.Tile1.Caption" xml:space="preserve"><value>Sade, gizli hiçbir şey yok</value></data>
+  <data name="EmptyStage.Membership.Tile2.Label" xml:space="preserve"><value>Topluluk</value></data>
+  <data name="EmptyStage.Membership.Tile2.Caption" xml:space="preserve"><value>Bu yolu anlayan kurucular</value></data>
+  <data name="EmptyStage.Membership.Tile3.Label" xml:space="preserve"><value>Buluşmalar</value></data>
+  <data name="EmptyStage.Membership.Tile3.Caption" xml:space="preserve"><value>Yıl boyunca akşam yemekleri ve buluşmalar</value></data>
+  <data name="EmptyStage.Notify.Label" xml:space="preserve"><value>E-posta adresiniz</value></data>
+  <data name="EmptyStage.Notify.Placeholder" xml:space="preserve"><value>adiniz@eposta.com</value></data>
+  <data name="EmptyStage.Notify.Button" xml:space="preserve"><value>Açıldığında haber ver</value></data>
+  <data name="EmptyStage.Notify.SignedIn" xml:space="preserve"><value>Açıldığında haber ver</value></data>
+  <data name="EmptyStage.Notify.Note" xml:space="preserve"><value>Açıldığında tek bir e-posta. Başka hiçbir şey yok; listeden istediğiniz zaman çıkabilirsiniz.</value></data>
+  <data name="EmptyStage.Notify.Thanks" xml:space="preserve"><value>Teşekkürler — açılır açılmaz size yazacağız.</value></data>
+  <data name="EmptyStage.Action.Membership" xml:space="preserve"><value>Üyeliği keşfedin</value></data>
+  <data name="EmptyStage.Action.Journal" xml:space="preserve"><value>Journal'ı okuyun</value></data>
+  <data name="EmptyStage.Action.Experiences" xml:space="preserve"><value>Deneyimleri görün</value></data>
+  <data name="EmptyStage.Action.Contact" xml:space="preserve"><value>Bizimle konuşun</value></data>
 </root>

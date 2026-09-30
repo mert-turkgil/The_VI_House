@@ -14,6 +14,12 @@ public class PageSeo
     public string? Title { get; set; }
 
     /// <summary>
+    /// Which fixed page this is (SeoPages key). When set, the title and description written for it
+    /// in Admin > Settings > Pages, in the reader's language, win over what the page passed in.
+    /// </summary>
+    public string? PageKey { get; set; }
+
+    /// <summary>
     /// Set when the title is already complete and must not be wrapped — the homepage, whose
     /// template output would otherwise read "Home — The VI House" and waste the most valuable
     /// characters on the site.

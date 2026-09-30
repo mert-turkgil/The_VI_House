@@ -30,7 +30,8 @@ using VIHouse.Business;
 // Process-wide fallback only (background services like TicketHoldExpiryService run with no HTTP
 // request, so there's no per-request culture to fall back to) — the real per-request culture for
 // site chrome/static pages is chosen by UseRequestLocalization below, driven by a cookie set via
-// CultureController (brief: EN/DE/TR/ET). Admin area and CMS/experience content stay en-GB only.
+// CultureController (brief: EN/DE/TR/ET). Admin-authored content (CMS sections, experiences,
+// sessions, journal) carries its own per-language translation rows.
 var defaultCulture = new CultureInfo("en-GB");
 CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
 CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
@@ -348,8 +349,8 @@ builder.Services.AddHostedService<MembershipExpirySweepService>();
 // Cookie-driven, not URL-prefixed: switching language never changes the URL (thevihouse.com/about
 // stays thevihouse.com/about in every language), which keeps every existing [Route] attribute
 // untouched and avoids reworking routing across the whole controller set for this pass. Covers
-// site chrome (nav/footer) plus the new About/FAQ/Contact/Legal/Account/Status pages — CMS and
-// Experience content stay English-only for now (they're admin-authored content, not UI chrome).
+// site chrome (nav/footer) plus the About/FAQ/Contact/Legal/Account/Status pages. Admin-authored
+// content is translated through its own translation rows, not through these resources.
 // No ResourcesPath set: SharedResource.cs and its .resx files live in the same folder
 // (Resources/), which makes MSBuild treat them as a "dependent" pair and name the embedded
 // resource after the .cs file's namespace (VIHouse.WebUI.SharedResource.resources) rather than

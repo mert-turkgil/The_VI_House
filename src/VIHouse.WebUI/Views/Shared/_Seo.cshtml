@@ -26,9 +26,10 @@
     // until now. Reading it as the fallback means the whole site gets correct titles immediately,
     // and pages opt into the richer model one at a time — rather than all of them regressing to the
     // bare site name until each has been converted.
+    // ToString, not "is string": most pages set a LocalizedString (Loc["About.Title"]), which
+    // "is string" rejected — those pages silently fell back to the homepage title.
     if (string.IsNullOrWhiteSpace(seoPage.Title)
-        && ViewData["Title"] is string legacyTitle
-        && !string.IsNullOrWhiteSpace(legacyTitle))
+        && ViewData["Title"]?.ToString() is { Length: > 0 } legacyTitle)
     {
         seoPage.Title = legacyTitle;
     }

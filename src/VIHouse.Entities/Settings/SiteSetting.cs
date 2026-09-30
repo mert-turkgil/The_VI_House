@@ -100,4 +100,7 @@ public class SiteSetting : BaseEntity
     public bool PublishLlmsTxt { get; set; } = true;
 
     public List<SiteSettingTranslation> Translations { get; set; } = [];
+
+    /// <summary>Per-page, per-language search titles and descriptions (Admin > Settings > Pages).</summary>
+    public List<PageSeoOverride> PageSeoOverrides { get; set; } = [];
 }

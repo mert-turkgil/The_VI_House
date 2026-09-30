@@ -80,6 +80,19 @@ public class SeoResolver(
         var origin = Origin(settings);
         var path = string.IsNullOrWhiteSpace(page.CanonicalPath) ? StripCulture(requestPath) : page.CanonicalPath;
 
+        // Admin > Settings > Pages, exact language only: a German page must not borrow the English
+        // override — its own built-in German wording is the better fallback.
+        if (page.PageKey is { } key
+            && settings.PageSeoOverrides.FirstOrDefault(o => o.PageKey == key && o.Culture == SiteCultures.Normalise(culture)) is { } custom)
+        {
+            if (!string.IsNullOrWhiteSpace(custom.Title))
+            {
+                page.Title = custom.Title;
+                page.TitleIsComplete = false;
+            }
+            if (!string.IsNullOrWhiteSpace(custom.Description)) page.Description = custom.Description;
+        }
+
         var title = page.Title switch
         {
             null or "" => Coalesce(copy.HomeTitle, page.TitleFallback, copy.SiteName)!,
@@ -254,14 +267,19 @@ public class SeoResolver(
                 ? url
                 : origin + "/" + url.TrimStart('/');
 
+    // Each carries ?v= from the stored file's key. The media endpoint lets caches keep an image for
+    // a week, and every upload writes a new key — so a replaced image gets a new URL and link
+    // previews and browsers fetch it, instead of showing the old one for days.
     private static string? MediaUrlFor(SiteSettingTranslation copy) =>
-        copy.OgImageStorageKey is null ? null : $"/media/site-og/{copy.Id}";
+        copy.OgImageStorageKey is null ? null : $"/media/site-og/{copy.Id}?v={Version(copy.OgImageStorageKey)}";
 
     private static string? LogoMediaUrl(SiteSetting settings) =>
-        settings.LogoStorageKey is null ? null : $"/media/site-logo/{settings.Id}";
+        settings.LogoStorageKey is null ? null : $"/media/site-logo/{settings.Id}?v={Version(settings.LogoStorageKey)}";
 
     private static string? DefaultImageUrl(SiteSetting settings) =>
-        settings.DefaultOgImageStorageKey is null ? null : $"/media/site-og-default/{settings.Id}";
+        settings.DefaultOgImageStorageKey is null ? null : $"/media/site-og-default/{settings.Id}?v={Version(settings.DefaultOgImageStorageKey)}";
+
+    private static string Version(string storageKey) => VIHouse.Business.Concrete.Text.Sha256Hex(storageKey)[..10];
 
     private static string? Coalesce(params string?[] values) =>
         values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));

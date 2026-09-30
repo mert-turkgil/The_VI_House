@@ -11,6 +11,10 @@
 <div class="admin-toolbar">
     <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; All pages</a>
     <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Home" asp-action="Index" target="_blank" rel="noopener">View the page</a>
+    @foreach (var c in SiteCultures.All.Where(c => c.Name != SiteCultures.Default))
+    {
+        <a class="admin-btn admin-btn--ghost admin-btn--sm" href="/@c.UrlCode" target="_blank" rel="noopener">@c.NativeLabel</a>
+    }
 </div>
 
 <p class="admin-hint">
@@ -27,6 +31,13 @@
         @if (schema is not null)
         {
             <p class="admin-hint" style="margin-top:-8px;">@schema.Description</p>
+        }
+        @if (block.SectionKey == "hero" && Model.HeroSlidesActive)
+        {
+            <div class="admin-notice">
+                Hero slides are active, so this fallback is not shown on the site. Edit what visitors see under
+                <a asp-controller="AdminHeroSlides" asp-action="Index">Hero Slides</a>.
+            </div>
         }
         else
         {
@@ -63,7 +74,7 @@
             @if (schema is null || schema.UsesSubheading)
             {
                 <div class="admin-field">
-                    <label>@(block.SectionKey == "trust" ? "Eyebrow" : "Subheading")</label>
+                    <label>@(block.SectionKey is "trust" or "ecosystem" ? "Eyebrow" : "Subheading")</label>
                     <input name="Subheading" value="@block.Subheading" />
                 </div>
             }
@@ -166,8 +177,9 @@
 
             <p class="admin-field__hint" style="margin-top:8px;">
                 English is the section form above &mdash; it is the original every other language
-                falls back to, field by field. Leave a field blank here and that one field shows the
-                English; fill it in and it does not.
+                follows, field by field. Leave a field blank (or identical to the English) and it keeps
+                showing the English, including every later English edit. Fill it in and that one field
+                shows your translation instead.
             </p>
 
             @foreach (var tab in block.Translations)
@@ -175,13 +187,13 @@
                 <details style="margin-top:10px; border-top:1px solid var(--vih-line-on-light); padding-top:10px;">
                     <summary style="cursor:pointer;">
                         @tab.Culture.NativeLabel
-                        @if (tab.IsWritten)
+                        @if (tab.Overrides.Count > 0)
                         {
-                            <span class="admin-lang-chip admin-lang-chip--on">written</span>
+                            <span class="admin-lang-chip admin-lang-chip--on">replaces: @string.Join(", ", tab.Overrides)</span>
                         }
                         else
                         {
-                            <span class="admin-lang-chip" title="Falls back to English">not written</span>
+                            <span class="admin-lang-chip" title="Shows the English">follows English</span>
                         }
                     </summary>
 
@@ -204,7 +216,7 @@
                         @if (schema is null || schema.UsesSubheading)
                         {
                             <div class="admin-field">
-                                <label>@(block.SectionKey == "trust" ? "Eyebrow" : "Subheading")</label>
+                                <label>@(block.SectionKey is "trust" or "ecosystem" ? "Eyebrow" : "Subheading")</label>
                                 <input name="Subheading" value="@tab.Form.Subheading" placeholder="@block.Subheading" />
                             </div>
                         }
@@ -230,13 +242,19 @@
                         {
                             <div class="admin-field">
                                 <label>List content (JSON)</label>
-                                <textarea name="ExtraJson" rows="8" style="font-family:monospace; font-size:0.8125rem;">@tab.Form.ExtraJson</textarea>
+                                <textarea name="ExtraJson" rows="8" style="font-family:monospace; font-size:0.8125rem;"
+                                          placeholder="Empty: this language shows the English list below, and follows every English change.">@tab.Form.ExtraJson</textarea>
                                 <p class="admin-field__hint">
-                                    Pre-filled from the English so you translate the values in place.
-                                    <strong>Keep the keys and the order</strong> &mdash; the same code reads
-                                    both. Translate only what is to the right of each colon. Invalid JSON is
-                                    refused rather than emptying this section for this language.
+                                    Leave empty to keep the English list. To translate it, copy the English below,
+                                    paste it here and change only the text to the right of each colon &mdash;
+                                    <strong>keep the keys and the order</strong>. A translated list replaces the
+                                    whole English list for this language, so later English changes to the list
+                                    must be made here too. Invalid JSON is refused.
                                 </p>
+                                <details>
+                                    <summary style="cursor:pointer; font-size:0.8125rem;">English list, for copying</summary>
+                                    <pre style="font-size:0.75rem; overflow:auto; background:#f6f5f1; padding:12px; border-radius:6px;">@block.ExtraJson</pre>
+                                </details>
                             </div>
                         }
 
@@ -248,11 +266,11 @@
                     @if (tab.IsWritten)
                     {
                         <form asp-action="RemoveSectionTranslation" method="post" style="margin-top:8px;"
-                              onsubmit="return confirm('Remove the @tab.Culture.NativeLabel copy? This section falls back to English.');">
+                              onsubmit="return confirm('Reset @tab.Culture.NativeLabel to English? Its translated fields and list are removed and it follows the English again.');">
                             <input type="hidden" name="blockId" value="@block.Id" />
                             <input type="hidden" name="culture" value="@tab.Culture.Name" />
                             <input type="hidden" name="pageSlug" value="@Model.Slug" />
-                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove @tab.Culture.NativeLabel</button>
+                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Reset @tab.Culture.NativeLabel to English</button>
                         </form>
                     }
                 </details>

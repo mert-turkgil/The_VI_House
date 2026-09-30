@@ -27,7 +27,9 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 [Route("admin/settings")]
 public class AdminSiteSettingsController(
     ISiteSettingsService settingsService,
-    ISitemapService sitemap) : AdminControllerBase
+    ISitemapService sitemap,
+    Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> loc,
+    Microsoft.Extensions.Options.IOptionsMonitor<FeatureOptions> features) : AdminControllerBase
 {
 
     [HttpGet("")]
@@ -66,6 +68,8 @@ public class AdminSiteSettingsController(
             HasUploadedOgImage = settings.DefaultOgImageStorageKey is not null,
             SitemapUrlCount = entries.Sum(e => e.Cultures.Count),
             SitemapPageCount = entries.Count,
+            Pages = PageRows(settings, active),
+            ComingSoonOn = features.CurrentValue.ComingSoon,
         };
 
         foreach (var tab in model.Translations)
@@ -95,6 +99,55 @@ public class AdminSiteSettingsController(
 
         TempData["StatusMessage"] = "Site settings saved.";
         return RedirectToAction(nameof(Index), new { culture });
+    }
+
+    /// <summary>Saves the per-page titles and descriptions for one language. Posted as
+    /// <c>Pages[key].Title</c> / <c>Pages[key].Description</c>; an emptied pair removes the override.</summary>
+    [HttpPost("pages")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SavePages(string culture, CancellationToken ct)
+    {
+        var values = VIHouse.Business.SeoPages.All.ToDictionary(
+            p => p.Key,
+            p => ((string?)Request.Form[$"Pages[{p.Key}].Title"].ToString(), (string?)Request.Form[$"Pages[{p.Key}].Description"].ToString()));
+
+        var (adminId, ip) = CurrentActor();
+        var error = await settingsService.SavePageSeoAsync(culture, values, adminId, ip, ct);
+        TempData["StatusMessage"] = error is null
+            ? $"{SiteCultures.Describe(culture).NativeLabel} page titles and descriptions saved. They are live now."
+            : "That is not a language this site speaks.";
+        return Redirect(Url.Action(nameof(Index), new { culture }) + "#pages");
+    }
+
+    /// <summary>
+    /// The pages, with the built-in wording in <paramref name="culture"/> as the placeholder — so the
+    /// owner sees exactly what an empty field falls back to. The resource lookup runs under that
+    /// culture for the moment it takes, then the admin's own culture is restored.
+    /// </summary>
+    private List<AdminPageSeoRow> PageRows(VIHouse.Entities.Settings.SiteSetting settings, string culture)
+    {
+        var previous = (System.Globalization.CultureInfo.CurrentCulture, System.Globalization.CultureInfo.CurrentUICulture);
+        try
+        {
+            var info = new System.Globalization.CultureInfo(culture);
+            System.Globalization.CultureInfo.CurrentCulture = info;
+            System.Globalization.CultureInfo.CurrentUICulture = info;
+
+            return
+            [
+                .. VIHouse.Business.SeoPages.All.Select(p =>
+                {
+                    var row = settings.PageSeoOverrides.FirstOrDefault(o => o.PageKey == p.Key && o.Culture == culture);
+                    return new AdminPageSeoRow(p.Key, p.Label, p.Path, row?.Title, row?.Description,
+                        loc[p.TitleKey].Value, p.DescriptionKey is null ? null : loc[p.DescriptionKey].Value);
+                }),
+            ];
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentCulture = previous.Item1;
+            System.Globalization.CultureInfo.CurrentUICulture = previous.Item2;
+        }
     }
 
     [HttpPost("save-translation")]

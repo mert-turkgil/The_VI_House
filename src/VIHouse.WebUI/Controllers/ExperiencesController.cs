@@ -29,7 +29,7 @@ public class ExperiencesController(
         // The listing gets its own description rather than inheriting the site default: a set of
         // pages sharing one description is a set Google writes its own snippet for.
         ViewData["Title"] = loc["Experiences.Title"].Value;
-        this.SetSeo(loc["Seo.Experiences.Description"].Value, canonicalPath: "/experiences");
+        this.SetSeo(loc["Seo.Experiences.Description"].Value, canonicalPath: "/experiences", pageKey: "experiences");
         return View(await BuildIndexAsync(city, status, topic, ct));
     }
 

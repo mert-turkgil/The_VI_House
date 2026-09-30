@@ -22,6 +22,11 @@ public interface ISiteSettingsService
     /// <summary>Writes or updates one language's copy. Returns a resource key on failure.</summary>
     Task<string?> SaveTranslationAsync(SiteSettingTranslation form, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 
+    /// <summary>Saves one language's per-page search titles and descriptions. Empty values remove
+    /// the override, so the page shows its built-in wording again.</summary>
+    Task<string?> SavePageSeoAsync(string culture, IReadOnlyDictionary<string, (string? Title, string? Description)> pages,
+        Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
     Task<string?> UploadOgImageAsync(MediaUpload upload, string? culture, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
     Task RemoveOgImageAsync(string? culture, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
     Task<string?> UploadLogoAsync(MediaUpload upload, Guid adminUserId, string? ipAddress, CancellationToken ct = default);

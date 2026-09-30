@@ -15,7 +15,7 @@ public class ContactController(IEmailService emailService, SeoResolver seo, IStr
     public IActionResult Index()
     {
         ViewData["Title"] = loc["Contact.Title"];
-        this.SetSeo(loc["Seo.Contact.Description"].Value, canonicalPath: "/contact");
+        this.SetSeo(loc["Seo.Contact.Description"].Value, canonicalPath: "/contact", pageKey: "contact");
         return View(new ContactFormViewModel());
     }
 

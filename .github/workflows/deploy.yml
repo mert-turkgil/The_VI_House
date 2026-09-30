@@ -38,10 +38,11 @@ concurrency:
 
 env:
   # --- Feature switches (Features section; see VIHouse.Business/Options/FeatureOptions.cs) ---------
-  # ComingSoon holds the public site behind /coming-soon; admins sign in and pass through. Flip to
-  # 'false' and push to launch. (Editing the file on the server also works until the next deploy
-  # writes this value over it again.)
-  FEATURE_COMING_SOON: 'true'
+  # ComingSoon holds the public site behind /coming-soon; admins sign in and pass through. The site
+  # is launched ('false'). The page, the gate and the Launch List stay in the code, so setting it
+  # back to 'true' and pushing closes the curtain again. (Editing the file on the server also works
+  # until the next deploy writes this value over it again.)
+  FEATURE_COMING_SOON: 'false'
   FEATURE_REQUIRE_TWO_FACTOR: 'true'
   FEATURE_MEMBERSHIP_SALES: 'true'
   FEATURE_MEMBER_DIRECTORY: 'false'

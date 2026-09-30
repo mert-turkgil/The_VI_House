@@ -1,0 +1,134 @@
+@using VIHouse.WebUI.ViewModels.Shared
+@model EmptyStageViewModel
+@*
+    The empty state for a listing with nothing published yet. One partial for Experiences, Sessions
+    and Membership (and Join), so the three read as one designed moment rather than three apologies.
+
+    Motion (see _empty-stage.scss): the crest's ring breathes and turns a quarter on hover; each tile
+    lifts, wipes in a gold rule and redraws its icon; a soft light follows the pointer across the
+    panel (modules/emptyStage.ts — without script the panel simply has no light). All of it is
+    decoration and goes away under prefers-reduced-motion; the colour changes stay.
+*@
+@{
+    var k = $"EmptyStage.{Model.Key}";
+    var icons = Model.Topic switch
+    {
+        "experiences" => new[] { "pin", "calendar", "envelope" },
+        "sessions" => new[] { "live", "play", "book" },
+        _ => new[] { "layers", "people", "glass" },
+    };
+    var showMessage = TempData.Peek("EmptyStageTopic") as string == Model.Topic;
+    var message = showMessage ? TempData["EmptyStageMessage"] as string : null;
+    var messageOk = showMessage && TempData["EmptyStageOk"] is true;
+    if (showMessage) TempData.Remove("EmptyStageTopic");
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var returnUrl = $"{Context.Request.PathBase}{Context.Request.Path}";
+}
+
+<section class="empty-stage" id="empty-stage" data-empty-stage aria-labelledby="empty-stage-title">
+    <div class="empty-stage__mark" aria-hidden="true">
+        <span class="empty-stage__ring"></span>
+        <span class="empty-stage__crest"><partial name="_Crest" /></span>
+    </div>
+
+    <span class="empty-stage__eyebrow">@Loc[$"{k}.Eyebrow"]</span>
+    <h2 class="empty-stage__title" id="empty-stage-title">@Loc[$"{k}.Title"]</h2>
+    <p class="empty-stage__body">@Loc[$"{k}.Body"]</p>
+
+    <ul class="empty-stage__tiles">
+        @for (var i = 0; i < 3; i++)
+        {
+            <li class="empty-stage__tile" tabindex="0" data-reveal data-reveal-delay="@(i * 120)">
+                <span class="empty-stage__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        @switch (icons[i])
+                        {
+                            case "pin":
+                                <path pathLength="1" d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" />
+                                <circle pathLength="1" cx="12" cy="10" r="2.5" />
+                                break;
+                            case "calendar":
+                                <rect pathLength="1" x="3.5" y="5" width="17" height="15" rx="2" />
+                                <path pathLength="1" d="M3.5 10h17M8 3v4M16 3v4" />
+                                break;
+                            case "envelope":
+                                <rect pathLength="1" x="3" y="5.5" width="18" height="13" rx="2" />
+                                <path pathLength="1" d="M3.5 7l8.5 6 8.5-6" />
+                                break;
+                            case "live":
+                                <circle pathLength="1" cx="12" cy="12" r="2.5" />
+                                <path pathLength="1" d="M7.5 7.5a6.4 6.4 0 0 0 0 9M16.5 7.5a6.4 6.4 0 0 1 0 9M4.6 4.6a10.5 10.5 0 0 0 0 14.8M19.4 4.6a10.5 10.5 0 0 1 0 14.8" />
+                                break;
+                            case "play":
+                                <circle pathLength="1" cx="12" cy="12" r="9" />
+                                <path pathLength="1" d="M10 8.5l5.5 3.5-5.5 3.5z" />
+                                break;
+                            case "book":
+                                <path pathLength="1" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" />
+                                <path pathLength="1" d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5" />
+                                break;
+                            case "layers":
+                                <path pathLength="1" d="M12 3l9 5-9 5-9-5z" />
+                                <path pathLength="1" d="M3 13l9 5 9-5" />
+                                break;
+                            case "people":
+                                <circle pathLength="1" cx="9" cy="8" r="3.2" />
+                                <path pathLength="1" d="M3 20a6 6 0 0 1 12 0M16 4.8a3.2 3.2 0 0 1 0 6.3M18 14.2a6 6 0 0 1 3 5.8" />
+                                break;
+                            default:
+                                <path pathLength="1" d="M6 3h12l-1 7a5 5 0 0 1-10 0z" />
+                                <path pathLength="1" d="M12 15v5M8 21h8" />
+                                break;
+                        }
+                    </svg>
+                </span>
+                <span class="empty-stage__tile-label">@Loc[$"{k}.Tile{i + 1}.Label"]</span>
+                <span class="empty-stage__tile-caption">@Loc[$"{k}.Tile{i + 1}.Caption"]</span>
+            </li>
+        }
+    </ul>
+
+    <div class="empty-stage__notify">
+        @if (message is not null)
+        {
+            <p class="empty-stage__message @(messageOk ? "empty-stage__message--ok" : "empty-stage__message--bad")" role="status">@message</p>
+        }
+        <form method="post" asp-area="" asp-controller="Notify" asp-action="Subscribe" asp-route-topic="@Model.Topic" class="empty-stage__form">
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
+            @if (signedIn)
+            {
+                <button class="btn btn--primary empty-stage__submit" type="submit">@Loc["EmptyStage.Notify.SignedIn"]</button>
+            }
+            else
+            {
+                <label class="visually-hidden" for="empty-stage-email">@Loc["EmptyStage.Notify.Label"]</label>
+                <input class="empty-stage__input" id="empty-stage-email" type="email" name="email" required autocomplete="email"
+                       placeholder="@Loc["EmptyStage.Notify.Placeholder"]" aria-describedby="empty-stage-note" />
+                <button class="empty-stage__submit" type="submit">
+                    <span>@Loc["EmptyStage.Notify.Button"]</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </button>
+            }
+        </form>
+        <p class="empty-stage__note" id="empty-stage-note">@Loc["EmptyStage.Notify.Note"]</p>
+    </div>
+
+    <div class="empty-stage__actions">
+        @switch (Model.Topic)
+        {
+            case "experiences":
+                <a class="btn btn--ghost" asp-area="" asp-controller="Membership" asp-action="Index">@Loc["EmptyStage.Action.Membership"]</a>
+                <a class="btn btn--ghost" asp-area="" asp-controller="Journal" asp-action="Index">@Loc["EmptyStage.Action.Journal"]</a>
+                break;
+            case "sessions":
+                <a class="btn btn--ghost" asp-area="" asp-controller="Experiences" asp-action="Index">@Loc["EmptyStage.Action.Experiences"]</a>
+                <a class="btn btn--ghost" asp-area="" asp-controller="Journal" asp-action="Index">@Loc["EmptyStage.Action.Journal"]</a>
+                break;
+            default:
+                <a class="btn btn--ghost" asp-area="" asp-controller="Contact" asp-action="Index">@Loc["EmptyStage.Action.Contact"]</a>
+                <a class="btn btn--ghost" asp-area="" asp-controller="Journal" asp-action="Index">@Loc["EmptyStage.Action.Journal"]</a>
+                break;
+        }
+    </div>
+</section>

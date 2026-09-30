@@ -48,7 +48,7 @@ public class SeminarsController(
 
         var culture = CultureInfo.CurrentUICulture.Name;
         ViewData["Title"] = loc["Seminars.Title"].Value;
-        this.SetSeo(loc["Seo.Sessions.Description"].Value, canonicalPath: "/sessions");
+        this.SetSeo(loc["Seo.Sessions.Description"].Value, canonicalPath: "/sessions", pageKey: "sessions");
 
         return View(seminars.Select(s => SeminarCardViewModel.FromEntity(s, culture)).ToList());
     }
@@ -63,6 +63,7 @@ public class SeminarsController(
         var model = SeminarDetailViewModel.FromEntity(seminar, CultureInfo.CurrentUICulture.Name, access, ViewerIsStaff);
 
         ViewData["Title"] = model.SeoTitle ?? model.Title;
+        ViewData["Seo"] = PageSeoBuilder.ForSeminar(seminar, CultureInfo.CurrentUICulture.Name, loc["Seminars.Title"].Value);
         return View(model);
     }
 

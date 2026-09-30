@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
+using VIHouse.Business.Concrete;
 using VIHouse.Business.Options;
 using VIHouse.WebUI.Helpers;
 
@@ -38,7 +39,6 @@ public class SeoController(
     /// other's ranking.
     /// </summary>
     [HttpGet("/sitemap.xml")]
-    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
     public async Task<IActionResult> Sitemap(CancellationToken ct)
     {
         var settings = await settingsService.GetCachedAsync(ct);
@@ -101,7 +101,7 @@ public class SeoController(
         }
 
         var document = new XDocument(new XDeclaration("1.0", "utf-8", null), urlset);
-        return Content(document.Declaration + Environment.NewLine + document, "application/xml", Encoding.UTF8);
+        return Fresh(document.Declaration + Environment.NewLine + document, "application/xml");
     }
 
     /// <summary>
@@ -112,7 +112,6 @@ public class SeoController(
     /// near-duplicate URLs, which is the standard way to spend a crawl budget on nothing.
     /// </summary>
     [HttpGet("/robots.txt")]
-    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
     public async Task<IActionResult> Robots(CancellationToken ct)
     {
         var settings = await settingsService.GetCachedAsync(ct);
@@ -128,7 +127,7 @@ public class SeoController(
             builder.AppendLine("Disallow: /");
             builder.AppendLine();
             builder.AppendLine("# Indexing is switched off in Admin > Site settings > Search visibility.");
-            return Content(builder.ToString(), "text/plain", Encoding.UTF8);
+            return Fresh(builder.ToString(), "text/plain");
         }
 
         foreach (var path in new[]
@@ -159,7 +158,7 @@ public class SeoController(
             builder.AppendLine($"# Plain-language index for language models: {origin}/llms.txt");
         }
 
-        return Content(builder.ToString(), "text/plain", Encoding.UTF8);
+        return Fresh(builder.ToString(), "text/plain");
     }
 
     /// <summary>
@@ -175,32 +174,55 @@ public class SeoController(
     /// coherent position and the two should not be one checkbox.
     /// </summary>
     [HttpGet("/llms.txt")]
-    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
-    public async Task<IActionResult> LlmsTxt(CancellationToken ct)
+    public async Task<IActionResult> LlmsTxt(string? lang, CancellationToken ct)
     {
         var settings = await settingsService.GetCachedAsync(ct);
         if (!settings.PublishLlmsTxt) return NotFound();
 
+        // ?lang=de serves the German notes with German links; no parameter is the English file.
+        var culture = SiteCultures.FromUrlCode(lang) ?? SiteCultures.Default;
         var origin = seo.Origin(settings);
-        var copy = SeoResolver.Copy(settings, SiteCultures.Default);
-        var entries = await sitemap.GetEntriesAsync(ct);
+        var copy = SeoResolver.Copy(settings, culture);
+        var english = SeoResolver.Copy(settings, SiteCultures.Default);
+
+        // Behind the launch curtain every page redirects to /coming-soon, so that is all this lists —
+        // the same narrowing the sitemap applies.
+        var entries = features.CurrentValue.ComingSoon
+            ? [new SitemapEntry("/coming-soon", null, "daily", 1.0, SiteCultures.Names) { Title = copy.SiteName }]
+            : await sitemap.GetEntriesAsync(ct);
 
         var builder = new StringBuilder();
         builder.AppendLine($"# {copy.SiteName}");
         builder.AppendLine();
 
-        var summary = copy.OrganizationDescription ?? copy.DefaultMetaDescription;
+        var summary = copy.OrganizationDescription ?? copy.DefaultMetaDescription
+            ?? english.OrganizationDescription ?? english.DefaultMetaDescription;
         if (!string.IsNullOrWhiteSpace(summary))
         {
             builder.AppendLine($"> {Flatten(summary)}");
             builder.AppendLine();
         }
 
-        builder.AppendLine(
-            $"This site is published in {SiteCultures.All.Count} languages: " +
-            string.Join(", ", SiteCultures.All.Select(c => $"{c.NativeLabel} ({c.HrefLang})")) + ". " +
-            $"English is served at the unprefixed path and the others under a language prefix, " +
-            $"so {origin}/experiences and {origin}/de/experiences are the same page in two languages.");
+        // The owner's own words for assistants (Admin > Settings), in this language or else English.
+        var notes = copy.LlmsNotes ?? english.LlmsNotes;
+        if (!string.IsNullOrWhiteSpace(notes))
+        {
+            builder.AppendLine(notes.Trim().Replace("\r\n", "\n"));
+            builder.AppendLine();
+        }
+        else
+        {
+            builder.AppendLine(
+                $"This site is published in {SiteCultures.All.Count} languages: " +
+                string.Join(", ", SiteCultures.All.Select(c => $"{c.NativeLabel} ({c.HrefLang})")) + ". " +
+                $"English is served at the unprefixed path and the others under a language prefix, " +
+                $"so {origin}/experiences and {origin}/de/experiences are the same page in two languages.");
+            builder.AppendLine();
+        }
+
+        var otherFiles = SiteCultures.All.Where(c => c.Name != culture)
+            .Select(c => c.Name == SiteCultures.Default ? $"{origin}/llms.txt" : $"{origin}/llms.txt?lang={c.UrlCode}");
+        builder.AppendLine("Other languages: " + string.Join(", ", otherFiles));
         builder.AppendLine();
 
         foreach (var section in entries.GroupBy(e => e.Section).OrderBy(g => SectionOrder(g.Key)))
@@ -211,7 +233,7 @@ public class SeoController(
             foreach (var entry in section.OrderByDescending(e => e.Priority).ThenBy(e => e.Path))
             {
                 var label = string.IsNullOrWhiteSpace(entry.Title) ? PrettyName(entry.Path) : entry.Title;
-                var line = $"- [{Flatten(label)}]({origin}{entry.Path})";
+                var line = $"- [{Flatten(label)}]({origin}{SeoResolver.PathFor(culture, entry.Path)})";
 
                 if (!string.IsNullOrWhiteSpace(entry.Summary))
                     line += $": {Flatten(entry.Summary)}";
@@ -222,7 +244,24 @@ public class SeoController(
             builder.AppendLine();
         }
 
-        return Content(builder.ToString(), "text/plain", Encoding.UTF8);
+        return Fresh(builder.ToString(), "text/plain");
+    }
+
+    /// <summary>
+    /// Always revalidated, never stale: an admin edit shows on the very next fetch. A crawler that
+    /// sends back the ETag of what it already has gets an empty 304 instead of the whole file, so
+    /// "never cached" costs almost nothing.
+    /// </summary>
+    private IActionResult Fresh(string body, string mediaType)
+    {
+        var etag = $"\"{Text.Sha256Hex(body)[..32]}\"";
+        Response.Headers.CacheControl = "no-cache";
+        Response.Headers.ETag = etag;
+
+        if (Request.Headers.IfNoneMatch.Any(v => v is not null && v.Split(',').Any(t => t.Trim() == etag || t.Trim() == "*")))
+            return StatusCode(StatusCodes.Status304NotModified);
+
+        return Content(body, mediaType, Encoding.UTF8);
     }
 
     private static int SectionOrder(string section) => section switch

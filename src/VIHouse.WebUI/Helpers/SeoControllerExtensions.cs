@@ -24,9 +24,11 @@ public static class SeoControllerExtensions
         string? canonicalPath = null,
         string? title = null,
         bool titleIsComplete = false,
+        string? pageKey = null,
         params SeoBreadcrumb[] breadcrumbs)
     {
         var seo = controller.ViewData["Seo"] as PageSeo ?? new PageSeo();
+        if (pageKey is not null) seo.PageKey = pageKey;
 
         if (description is not null) seo.Description = description;
         if (canonicalPath is not null) seo.CanonicalPath = canonicalPath;

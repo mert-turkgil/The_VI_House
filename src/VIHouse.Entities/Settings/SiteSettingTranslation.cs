@@ -40,6 +40,9 @@ public class SiteSettingTranslation : BaseEntity
     /// <summary>One-line description of the whole site, for schema.org and llms.txt.</summary>
     public string? OrganizationDescription { get; set; }
 
+    /// <summary>Free text for AI assistants, published at the top of llms.txt for this language.</summary>
+    public string? LlmsNotes { get; set; }
+
     /// <summary>Alt text for the default social image, in this language.</summary>
     public string? OgImageAlt { get; set; }
 

@@ -305,9 +305,10 @@ else
     }
     else if (Model.Plans.Count == 0)
     {
-        @* No plans means membership is not on sale — the ordinary state while the House is
-           application-only (see FeatureOptions.MembershipSales). This is the page's real job in
-           Phase 1: say what membership is, and point at the one way to get it. *@
+        @* No plans published (or sales switched off): the designed empty section first, then how
+           membership works, so the page still explains itself while the plans are being written. *@
+        <partial name="_EmptyStage" model="@(new VIHouse.WebUI.ViewModels.Shared.EmptyStageViewModel("membership"))" />
+
         <div class="membership-route" data-reveal>
             <h2>@Loc["Membership.HowItWorks"]</h2>
             <ol class="membership-route__steps">

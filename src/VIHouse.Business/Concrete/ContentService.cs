@@ -91,12 +91,20 @@ public class ContentService(
             await blockTranslations.AddAsync(existing, ct);
         }
 
-        existing.Heading = Text.NullIfBlank(form.Heading);
-        existing.Subheading = Text.NullIfBlank(form.Subheading);
-        existing.BodyText = Text.NullIfBlank(form.BodyText);
-        existing.CtaLabel = Text.NullIfBlank(form.CtaLabel);
-        existing.ExtraJson = extraJson;
+        // A value identical to the English is not a translation: stored, it would freeze this
+        // language on today's English and hide every later English edit. Stored as null it keeps
+        // inheriting. Lists compare by content, not by whitespace.
+        existing.Heading = Override(form.Heading, block.Heading);
+        existing.Subheading = Override(form.Subheading, block.Subheading);
+        existing.BodyText = Override(form.BodyText, block.BodyText);
+        existing.CtaLabel = Override(form.CtaLabel, block.CtaLabel);
+        existing.ExtraJson = extraJson is not null && SameJson(extraJson, block.ExtraJson) ? null : extraJson;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
+
+        // Nothing left that differs from English: the row itself goes, so the tab reads "not written".
+        if (existing.Heading is null && existing.Subheading is null && existing.BodyText is null
+            && existing.CtaLabel is null && existing.ExtraJson is null)
+            blockTranslations.Remove(existing);
 
         await LogAsync("ContentBlockTranslationSaved", form.ContentBlockId, adminUserId, ipAddress,
             before: null, after: new { culture, block.SectionKey }, ct);
@@ -123,6 +131,27 @@ public class ContentService(
 
         await blocks.SaveChangesAsync(ct);
         return null;
+    }
+
+    private static string? Override(string? translated, string? english)
+    {
+        var value = Text.NullIfBlank(translated);
+        return value is not null && string.Equals(value, english?.Trim(), StringComparison.Ordinal) ? null : value;
+    }
+
+    /// <summary>Two JSON texts with the same content, however they are indented.</summary>
+    private static bool SameJson(string a, string? b)
+    {
+        if (string.IsNullOrWhiteSpace(b)) return false;
+        try
+        {
+            return System.Text.Json.Nodes.JsonNode.DeepEquals(
+                System.Text.Json.Nodes.JsonNode.Parse(a), System.Text.Json.Nodes.JsonNode.Parse(b));
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return false;
+        }
     }
 
     private async Task<ContentBlockTranslation?> FindTranslationAsync(Guid blockId, string culture, CancellationToken ct)

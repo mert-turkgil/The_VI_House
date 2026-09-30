@@ -21,7 +21,7 @@ public class JournalController(IJournalService journalService, IStringLocalizer<
 
         var culture = CultureInfo.CurrentUICulture.Name;
         var model = posts.Select(p => JournalPostCardViewModel.FromEntity(p, culture)).ToList();
-        this.SetSeo(loc["Seo.Journal.Description"].Value, canonicalPath: "/journal");
+        this.SetSeo(loc["Seo.Journal.Description"].Value, canonicalPath: "/journal", pageKey: "journal");
         return View(model);
     }
 

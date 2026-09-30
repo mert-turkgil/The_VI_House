@@ -47,6 +47,12 @@
 
         <div asp-validation-summary="ModelOnly" class="join__error" role="alert"></div>
 
+        @if (!hasPlans)
+        {
+            <partial name="_EmptyStage" model="@(new VIHouse.WebUI.ViewModels.Shared.EmptyStageViewModel("membership"))" />
+        }
+        else
+        {
         <div class="join__layout">
             <form asp-action="Index" method="post" class="join__form" novalidate data-join-form>
                 <input type="hidden" asp-for="ReferralCode" />
@@ -62,11 +68,7 @@
                     </legend>
                     <span asp-validation-for="PlanId" class="join__field-error"></span>
 
-                    @if (!hasPlans)
-                    {
-                        <p class="join__empty">@Loc["Join.NoPlans"]</p>
-                    }
-                    else
+                    @if (hasPlans)
                     {
                         <div class="join__plan-strip" data-swiper-scope>
                             <partial name="~/Views/Home/_CarouselControls.cshtml" model="@((Loc["Home.Hero.Previous"].Value, Loc["Home.Hero.Next"].Value))" />
@@ -339,6 +341,7 @@
                 </div>
             </aside>
         </div>
+        }
 
         @* --- One experience instead --------------------------------------------------------- *@
         @if (Model.OpenExperiences.Count > 0)

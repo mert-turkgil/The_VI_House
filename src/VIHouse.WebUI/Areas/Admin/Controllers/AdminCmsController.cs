@@ -30,12 +30,14 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// The storage did not change. Everything still goes into ContentBlock.ExtraJson in exactly the
 /// shape Views/Home reads, so nothing on the public side knows this screen was rewritten.
 ///
-/// English-only: CMS content stays outside the four-language scope (see Program.cs).
+/// English is the block's own columns; German, Turkish and Estonian are ContentBlockTranslation
+/// rows that override English field by field and inherit whatever they leave blank.
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Content)]
 [Route("admin/content")]
 public class AdminCmsController(
     IContentService contentService,
+    IHeroSlideRepository heroSlides,
     IRepository<MediaAsset> assets,
     IMediaStorage mediaStorage,
     IAuditLogRepository auditLogs,
@@ -101,22 +103,32 @@ public class AdminCmsController(
             }
         }
 
+        // Only the fields this section's form actually shows are taken from the post. The rest keep
+        // what is stored: a field with no input on the page used to arrive empty and be saved as
+        // empty, which quietly wiped the ecosystem eyebrow and every block's image on each save.
+        var page = await contentService.GetPageWithBlocksAsync(form.PageSlug, ct);
+        var current = page?.Blocks.FirstOrDefault(b => b.Id == form.Id);
+        if (current is null) return NotFound();
+
+        bool Shows(bool flag) => schema is null || flag;
+
         var (adminId, ip) = CurrentActor();
         await contentService.UpdateBlockAsync(new ContentBlock
         {
             Id = form.Id,
             SectionKey = form.SectionKey,
             SortOrder = form.SortOrder,
-            Heading = Text.NullIfBlank(form.Heading),
-            Subheading = Text.NullIfBlank(form.Subheading),
-            BodyText = Text.NullIfBlank(form.BodyText),
-            ImageUrl = Text.NullIfBlank(form.ImageUrl),
-            CtaLabel = Text.NullIfBlank(form.CtaLabel),
-            CtaUrl = Text.NullIfBlank(form.CtaUrl),
+            Heading = Shows(schema?.UsesHeading ?? true) ? Text.NullIfBlank(form.Heading) : current.Heading,
+            Subheading = Shows(schema?.UsesSubheading ?? true) ? Text.NullIfBlank(form.Subheading) : current.Subheading,
+            BodyText = Shows(schema?.UsesBody ?? true) ? Text.NullIfBlank(form.BodyText) : current.BodyText,
+            // No section form has an image input; the stored value is always kept.
+            ImageUrl = current.ImageUrl,
+            CtaLabel = Shows(schema?.UsesCta ?? true) ? Text.NullIfBlank(form.CtaLabel) : current.CtaLabel,
+            CtaUrl = Shows(schema?.UsesCta ?? true) ? Text.NullIfBlank(form.CtaUrl) : current.CtaUrl,
             ExtraJson = extraJson,
         }, adminId, ip, ct);
 
-        TempData["StatusMessage"] = $"{schema?.Title ?? form.SectionKey} saved.";
+        TempData["StatusMessage"] = $"{schema?.Title ?? form.SectionKey} saved. It is live on the homepage now.";
         return RedirectToAction(nameof(Edit), new { id = form.PageSlug });
     }
 
@@ -144,7 +156,7 @@ public class AdminCmsController(
 
         TempData["StatusMessage"] = error switch
         {
-            null => $"{SiteCultures.Describe(form.Culture).NativeLabel} saved.",
+            null => $"{SiteCultures.Describe(form.Culture).NativeLabel} saved. Fields left blank or identical to English keep following the English.",
             "Admin.Cms.InvalidJson" => "That JSON could not be parsed, so nothing was saved. Check for a stray comma or a missing quote.",
             "Admin.Cms.DefaultIsOnTheBlock" => "English is edited in the section form above, not as a translation.",
             "Admin.Cms.UnknownCulture" => "That is not a language this site speaks.",
@@ -163,7 +175,7 @@ public class AdminCmsController(
         var (adminId, ip) = CurrentActor();
         await contentService.DeleteBlockTranslationAsync(blockId, culture, adminId, ip, ct);
 
-        TempData["StatusMessage"] = $"{SiteCultures.Describe(culture).NativeLabel} removed — this section falls back to English.";
+        TempData["StatusMessage"] = $"{SiteCultures.Describe(culture).NativeLabel} reset — this section now shows the English, including every later English edit.";
         return RedirectToAction(nameof(Edit), new { id = pageSlug });
     }
 
@@ -303,6 +315,7 @@ public class AdminCmsController(
             Slug = page.Slug,
             Title = page.Title,
             Sections = sections,
+            HeroSlidesActive = (await heroSlides.GetVisibleAsync(DateTimeOffset.UtcNow, ct)).Count > 0,
             Assets = (await assets.GetAllAsync(ct)).OrderByDescending(a => a.CreatedAt).ToList(),
         };
     }
@@ -333,12 +346,22 @@ public class AdminCmsController(
                                 Subheading = row?.Subheading,
                                 BodyText = row?.BodyText,
                                 CtaLabel = row?.CtaLabel,
-                                // Seeded from the English payload when this language has none, so a
-                                // translator edits values inside a structure that already parses
-                                // rather than authoring JSON from an empty box. The shape has to
-                                // match — the same view model reads both.
-                                ExtraJson = row?.ExtraJson ?? block.ExtraJson,
-                            });
+                                // Only this language's own list, never a copy of the English. A
+                                // pre-filled copy became a frozen override the moment the tab was
+                                // saved, and later English edits never reached this language. The
+                                // English is shown beside the box for reference instead.
+                                ExtraJson = row?.ExtraJson,
+                            })
+                        {
+                            Overrides =
+                            [
+                                .. new (string Label, string? Value)[]
+                                {
+                                    ("Heading", row?.Heading), (block.SectionKey is "trust" or "ecosystem" ? "Eyebrow" : "Subheading", row?.Subheading),
+                                    ("Body", row?.BodyText), ("Button label", row?.CtaLabel), ("List", row?.ExtraJson),
+                                }.Where(f => !string.IsNullOrWhiteSpace(f.Value)).Select(f => f.Label),
+                            ],
+                        };
                     }),
             ],
             Id = block.Id,

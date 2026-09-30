@@ -32,13 +32,13 @@ public record ContentSectionSchema(
             UsesHeading: true, UsesSubheading: true, UsesBody: false, UsesCta: true, Rows: null),
 
         new("feature-strip", "Feature strip",
-            "The row of short value statements under the filter bar.",
+            "The row of short value statements under the filter bar. Its heading is read by screen readers only; the rows are what visitors see.",
             UsesHeading: true, UsesSubheading: false, UsesBody: false, UsesCta: false,
             new ContentRowSchema("Feature", ["label", "description"])),
 
         new("ecosystem", "Ecosystem",
             "The four cards: what the House is beyond the retreats.",
-            UsesHeading: true, UsesSubheading: false, UsesBody: true, UsesCta: true,
+            UsesHeading: true, UsesSubheading: true, UsesBody: true, UsesCta: true,
             new ContentRowSchema("Card", ["title", "description", "imageUrl", "imageAlt", "linkLabel", "linkUrl"])),
 
         new("stats", "Statistics",
@@ -83,7 +83,11 @@ public class AdminContentRowViewModel
 /// <summary>One block on the editing screen.</summary>
 /// <param name="IsWritten">False when no row exists for this language yet — it falls back to English.</param>
 public record AdminContentTranslationTab(
-    SiteCulture Culture, bool IsWritten, AdminContentTranslationForm Form);
+    SiteCulture Culture, bool IsWritten, AdminContentTranslationForm Form)
+{
+    /// <summary>Which fields this language replaces; everything else follows the English.</summary>
+    public List<string> Overrides { get; init; } = [];
+}
 
 /// <summary>One language's copy of one homepage section.</summary>
 public class AdminContentTranslationForm
@@ -136,4 +140,8 @@ public class AdminContentPageViewModel
     public string Title { get; set; } = default!;
     public List<AdminContentSectionViewModel> Sections { get; set; } = [];
     public List<MediaAsset> Assets { get; set; } = [];
+
+    /// <summary>True while the Hero Slides carousel has something to show — the "hero" block is
+    /// then a fallback nobody sees.</summary>
+    public bool HeroSlidesActive { get; set; }
 }

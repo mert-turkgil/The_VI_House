@@ -11,7 +11,7 @@ public class AboutController(IStringLocalizer<SharedResource> loc) : Controller
     public IActionResult Index()
     {
         ViewData["Title"] = loc["About.Title"];
-        this.SetSeo(loc["Seo.About.Description"].Value, canonicalPath: "/about");
+        this.SetSeo(loc["Seo.About.Description"].Value, canonicalPath: "/about", pageKey: "about");
         return View();
     }
 }

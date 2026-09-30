@@ -42,11 +42,19 @@
         <span class="admin-stat__value">TXT</span>
         <span class="admin-stat__label">View robots.txt &rarr;</span>
     </a>
-    <a class="admin-stat" href="/llms.txt" target="_blank" rel="noopener">
+    <a class="admin-stat" href="/llms.txt@(Model.ActiveCulture == SiteCultures.Default ? "" : "?lang=" + SiteCultures.Describe(Model.ActiveCulture).UrlCode)" target="_blank" rel="noopener">
         <span class="admin-stat__value">LLM</span>
-        <span class="admin-stat__label">View llms.txt &rarr;</span>
+        <span class="admin-stat__label">View llms.txt (@SiteCultures.Describe(Model.ActiveCulture).NativeLabel) &rarr;</span>
     </a>
 </div>
+@if (Model.ComingSoonOn)
+{
+    <div class="admin-notice">
+        The Coming Soon curtain is on: the live sitemap and llms.txt list only <code>/coming-soon</code> until it is switched off.
+        The counts above are what they will list at launch.
+    </div>
+}
+<p class="admin-hint">Changes here, on the Pages list below and in Content are live on the next page load &mdash; robots.txt, sitemap.xml and llms.txt included.</p>
 
 @* --- Per-language copy -------------------------------------------------------------------------
    Page-per-language rather than tab panels, following the experience and seminar editors: the URL
@@ -119,6 +127,16 @@
         </div>
 
         <div class="admin-field">
+            <label for="LlmsNotes">Notes for AI assistants (llms.txt)</label>
+            <textarea id="LlmsNotes" name="LlmsNotes" rows="6" maxlength="4000">@active.Form.LlmsNotes</textarea>
+            <span class="admin-hint">
+                What an assistant like ChatGPT or Claude should know when it answers questions about the house:
+                who it is for, how to join, what it is not. Plain sentences or short Markdown lists. Shown at the
+                top of llms.txt for this language; the list of pages below it keeps updating by itself.
+            </span>
+        </div>
+
+        <div class="admin-field">
             <label for="OgImageAlt">Social image description</label>
             <input id="OgImageAlt" name="OgImageAlt" value="@active.Form.OgImageAlt" maxlength="300" />
         </div>
@@ -159,6 +177,56 @@
         </form>
     </div>
 </div>
+
+@* --- Per-page search titles and descriptions ------------------------------------------------------ *@
+<div class="admin-card" id="pages" style="margin-bottom:24px;">
+    <h2>Pages &mdash; @active.Culture.NativeLabel</h2>
+    <p class="admin-hint" style="margin-top:0;">
+        What each page shows in Google and in link previews, in @active.Culture.NativeLabel. Leave a field empty to use
+        the page's built-in wording (shown greyed in the box). Google shows about 60 characters of a title and
+        155 of a description. Experiences, sessions and journal posts have their own fields in their editors;
+        the homepage uses the homepage title and default description above.
+    </p>
+    <form asp-action="SavePages" method="post" class="admin-form">
+        <input type="hidden" name="culture" value="@active.Culture.Name" />
+        <table class="admin-table admin-table--compact">
+            <thead><tr><th style="width:130px;">Page</th><th>Title</th><th>Description</th></tr></thead>
+            <tbody>
+                @foreach (var p in Model.Pages)
+                {
+                    <tr>
+                        <td><strong>@p.Label</strong><div class="admin-table__sub"><a href="@(VIHouse.Business.SiteUrls.InCulture(p.Path, active.Culture.Name))" target="_blank" rel="noopener">@p.Path</a></div></td>
+                        <td>
+                            <input name="Pages[@p.Key].Title" value="@p.Title" maxlength="120" placeholder="@p.DefaultTitle" data-count="60" style="width:100%;" />
+                        </td>
+                        <td>
+                            <textarea name="Pages[@p.Key].Description" rows="2" maxlength="320" placeholder="@(p.DefaultDescription ?? "Default description above")" data-count="155" style="width:100%;">@p.Description</textarea>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button type="submit" class="admin-btn" style="margin-top:12px;">Save @active.Culture.NativeLabel pages</button>
+    </form>
+</div>
+
+<script>
+    // A live character count under each field, amber past Google's visible length.
+    document.querySelectorAll('#pages [data-count]').forEach(function (field) {
+        var limit = parseInt(field.getAttribute('data-count'), 10);
+        var note = document.createElement('span');
+        note.className = 'admin-hint';
+        note.style.display = 'block';
+        field.insertAdjacentElement('afterend', note);
+        var update = function () {
+            var n = field.value.length;
+            note.textContent = n === 0 ? 'Using the built-in wording' : n + ' / ~' + limit;
+            note.style.color = n > limit ? 'var(--vih-warning, #b7791f)' : '';
+        };
+        field.addEventListener('input', update);
+        update();
+    });
+</script>
 
 @* --- Everything that is the same in every language --------------------------------------------- *@
 <form asp-action="Index" method="post" class="admin-form">

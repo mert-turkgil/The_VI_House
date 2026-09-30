@@ -2,12 +2,6 @@
 // Built on the same card/hero language as Journal and Experiences rather than a new one; the only
 // genuinely new component here is the access panel, which is the page's real subject.
 
-.seminar-empty {
-  text-align: center;
-  padding: 64px 0;
-  color: rgba(18, 22, 15, 0.55);
-}
-
 .seminar-grid {
   display: grid;
   // min() so the track can collapse below its ideal width. A bare floor of 300px is wider than a

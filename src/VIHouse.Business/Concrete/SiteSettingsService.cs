@@ -21,6 +21,7 @@ namespace VIHouse.Business.Concrete;
 public class SiteSettingsService(
     ISiteSettingRepository repository,
     IRepository<SiteSettingTranslation> translations,
+    IRepository<PageSeoOverride> pageSeo,
     IMediaStorage mediaStorage,
     IMemoryCache cache,
     IOptions<SiteOptions> siteOptions,
@@ -140,6 +141,7 @@ public class SiteSettingsService(
         existing.HomeTitle = Text.NullIfBlank(form.HomeTitle);
         existing.DefaultMetaDescription = Text.NullIfBlank(form.DefaultMetaDescription);
         existing.OrganizationDescription = Text.NullIfBlank(form.OrganizationDescription);
+        existing.LlmsNotes = Text.NullIfBlank(form.LlmsNotes);
         existing.OgImageAlt = Text.NullIfBlank(form.OgImageAlt);
         existing.OgImageUrl = Text.NullIfBlank(form.OgImageUrl);
         existing.UpdatedAt = DateTimeOffset.UtcNow;
@@ -147,6 +149,61 @@ public class SiteSettingsService(
         await LogAsync("SiteSettingsTranslationSaved", current.Id, adminUserId, ipAddress,
             before: null, after: new { culture, existing.SiteName }, ct);
 
+        await repository.SaveChangesAsync(ct);
+        Invalidate();
+        return null;
+    }
+
+    public async Task<string?> SavePageSeoAsync(string culture, IReadOnlyDictionary<string, (string? Title, string? Description)> pages,
+        Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        if (!SiteCultures.IsSupported(culture)) return "Admin.Settings.UnknownCulture";
+        var normalised = SiteCultures.Normalise(culture);
+
+        var current = await GetAsync(ct);
+        var changed = new List<string>();
+
+        foreach (var (key, (title, description)) in pages)
+        {
+            if (!SeoPages.IsKnown(key)) continue;
+
+            var row = current.PageSeoOverrides.FirstOrDefault(p => p.PageKey == key && p.Culture == normalised);
+            var newTitle = Text.Clip(Text.NullIfBlank(title), 120);
+            var newDescription = Text.Clip(Text.NullIfBlank(description), 320);
+
+            if (newTitle is null && newDescription is null)
+            {
+                if (row is not null)
+                {
+                    pageSeo.Remove(row);
+                    current.PageSeoOverrides.Remove(row);
+                    changed.Add(key);
+                }
+                continue;
+            }
+
+            if (row is null)
+            {
+                // Added through its own set: attached via the parent's collection, a new row whose key
+                // is already set (BaseEntity assigns one) is taken for an existing row and UPDATEd.
+                row = new PageSeoOverride { SiteSettingId = current.Id, PageKey = key, Culture = normalised };
+                await pageSeo.AddAsync(row, ct);
+            }
+            else if (row.Title == newTitle && row.Description == newDescription)
+            {
+                continue;
+            }
+
+            row.Title = newTitle;
+            row.Description = newDescription;
+            row.UpdatedAt = DateTimeOffset.UtcNow;
+            changed.Add(key);
+        }
+
+        if (changed.Count == 0) return null;
+
+        current.UpdatedAt = DateTimeOffset.UtcNow;
+        await LogAsync("PageSeoSaved", current.Id, adminUserId, ipAddress, before: null, after: new { culture = normalised, pages = changed }, ct);
         await repository.SaveChangesAsync(ct);
         Invalidate();
         return null;

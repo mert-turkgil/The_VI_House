@@ -1725,4 +1725,41 @@ Küsimused. Kui arvad, et sul on õigus tagasimaksele väljaspool neid tingimusi
   <data name="AmbassadorInvite.Error.IbanInvalid" xml:space="preserve"><value>See IBAN ei ole korrektne — kontrollige puuduvaid või vahetatud märke.</value></data>
   <data name="AmbassadorInvite.Error.Bic" xml:space="preserve"><value>BIC koosneb 8 või 11 tähest ja numbrist.</value></data>
   <data name="AmbassadorInvite.Error.Terms" xml:space="preserve"><value>Jätkamiseks nõustuge tingimustega.</value></data>
+  <data name="EmptyStage.Experiences.Eyebrow" xml:space="preserve"><value>Elamused</value></data>
+  <data name="EmptyStage.Experiences.Title" xml:space="preserve"><value>Esimesi reise planeeritakse</value></data>
+  <data name="EmptyStage.Experiences.Body" xml:space="preserve"><value>Retriidid, õhtusöögid ja linnakohtumised asutajatele — igaüks väike, igaüks kutsega. Kalender avatakse peagi.</value></data>
+  <data name="EmptyStage.Experiences.Tile1.Label" xml:space="preserve"><value>Paigad</value></data>
+  <data name="EmptyStage.Experiences.Tile1.Caption" xml:space="preserve"><value>Hoolikalt valitud ja teekonda väärt</value></data>
+  <data name="EmptyStage.Experiences.Tile2.Label" xml:space="preserve"><value>Kuupäevad</value></data>
+  <data name="EmptyStage.Experiences.Tile2.Caption" xml:space="preserve"><value>Väike kalender, teatatakse aegsasti</value></data>
+  <data name="EmptyStage.Experiences.Tile3.Label" xml:space="preserve"><value>Kutsed</value></data>
+  <data name="EmptyStage.Experiences.Tile3.Caption" xml:space="preserve"><value>Iga kohta pakutakse, mitte ei müüda</value></data>
+  <data name="EmptyStage.Sessions.Eyebrow" xml:space="preserve"><value>Sessioonid</value></data>
+  <data name="EmptyStage.Sessions.Title" xml:space="preserve"><value>Esimesed sessioonid on tulekul</value></data>
+  <data name="EmptyStage.Sessions.Body" xml:space="preserve"><value>Otsevestlused ja salvestatud ettekanded asutajatega, kes on seda juba teinud. Need ilmuvad siia kohe, kui need on ajastatud.</value></data>
+  <data name="EmptyStage.Sessions.Tile1.Label" xml:space="preserve"><value>Otse</value></data>
+  <data name="EmptyStage.Sessions.Tile1.Caption" xml:space="preserve"><value>Tulge tuppa ja esitage oma küsimus</value></data>
+  <data name="EmptyStage.Sessions.Tile2.Label" xml:space="preserve"><value>Järelvaatamine</value></data>
+  <data name="EmptyStage.Sessions.Tile2.Caption" xml:space="preserve"><value>Vaadake siis, kui teile sobib</value></data>
+  <data name="EmptyStage.Sessions.Tile3.Label" xml:space="preserve"><value>Raamatukogu</value></data>
+  <data name="EmptyStage.Sessions.Tile3.Caption" xml:space="preserve"><value>Märkmed ja salvestised, teie jaoks hoitud</value></data>
+  <data name="EmptyStage.Membership.Eyebrow" xml:space="preserve"><value>Liikmesus</value></data>
+  <data name="EmptyStage.Membership.Title" xml:space="preserve"><value>Liikmesus avatakse peagi</value></data>
+  <data name="EmptyStage.Membership.Body" xml:space="preserve"><value>Aastaringne asutajate ring: inimesed, vestlused ja kohtumised elamuste vahel. Paketid on viimistlemisel.</value></data>
+  <data name="EmptyStage.Membership.Tile1.Label" xml:space="preserve"><value>Paketid</value></data>
+  <data name="EmptyStage.Membership.Tile1.Caption" xml:space="preserve"><value>Lihtne, ilma varjatud tingimusteta</value></data>
+  <data name="EmptyStage.Membership.Tile2.Label" xml:space="preserve"><value>Kogukond</value></data>
+  <data name="EmptyStage.Membership.Tile2.Caption" xml:space="preserve"><value>Asutajad, kes teekonda mõistavad</value></data>
+  <data name="EmptyStage.Membership.Tile3.Label" xml:space="preserve"><value>Kohtumised</value></data>
+  <data name="EmptyStage.Membership.Tile3.Caption" xml:space="preserve"><value>Õhtusöögid ja kohtumised aasta läbi</value></data>
+  <data name="EmptyStage.Notify.Label" xml:space="preserve"><value>Teie e-posti aadress</value></data>
+  <data name="EmptyStage.Notify.Placeholder" xml:space="preserve"><value>teie@email.ee</value></data>
+  <data name="EmptyStage.Notify.Button" xml:space="preserve"><value>Andke teada, kui avaneb</value></data>
+  <data name="EmptyStage.Notify.SignedIn" xml:space="preserve"><value>Andke teada, kui avaneb</value></data>
+  <data name="EmptyStage.Notify.Note" xml:space="preserve"><value>Üks kiri, kui see avaneb. Mitte midagi muud ja nimekirjast saate igal ajal lahkuda.</value></data>
+  <data name="EmptyStage.Notify.Thanks" xml:space="preserve"><value>Aitäh — kirjutame teile kohe, kui see avaneb.</value></data>
+  <data name="EmptyStage.Action.Membership" xml:space="preserve"><value>Tutvu liikmesusega</value></data>
+  <data name="EmptyStage.Action.Journal" xml:space="preserve"><value>Loe ajakirja</value></data>
+  <data name="EmptyStage.Action.Experiences" xml:space="preserve"><value>Vaata elamusi</value></data>
+  <data name="EmptyStage.Action.Contact" xml:space="preserve"><value>Võtke meiega ühendust</value></data>
 </root>

@@ -9,6 +9,7 @@ public class EfSiteSettingRepository(VIHouseDbContext db)
 {
     public Task<SiteSetting?> GetWithTranslationsAsync(CancellationToken ct = default) =>
         Set.Include(s => s.Translations)
+            .Include(s => s.PageSeoOverrides)
             // Ordered so that a table which somehow grew a second row still resolves to the same
             // one every time rather than alternating between them.
             .OrderBy(s => s.CreatedAt)

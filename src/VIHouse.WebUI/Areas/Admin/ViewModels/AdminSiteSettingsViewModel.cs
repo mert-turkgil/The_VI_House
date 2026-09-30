@@ -24,6 +24,12 @@ public class AdminSiteSettingsViewModel
 
     /// <summary>What the sitemap actually contains right now — pages, and URLs once every language
     /// is counted. Shown rather than described, so a broken listing query is visible here.</summary>
+    /// <summary>Per-page search titles and descriptions for <see cref="ActiveCulture"/>.</summary>
+    public List<AdminPageSeoRow> Pages { get; set; } = [];
+
+    /// <summary>While the launch curtain is up the live sitemap and llms.txt list only /coming-soon.</summary>
+    public bool ComingSoonOn { get; set; }
+
     public int SitemapUrlCount { get; set; }
     public int SitemapPageCount { get; set; }
 }
@@ -191,6 +197,10 @@ public class AdminSiteSettingsTranslationForm
     [Display(Name = "What the organisation is")]
     public string? OrganizationDescription { get; set; }
 
+    [StringLength(4000)]
+    [Display(Name = "Notes for AI assistants")]
+    public string? LlmsNotes { get; set; }
+
     [StringLength(300)]
     [Display(Name = "Social image description")]
     public string? OgImageAlt { get; set; }
@@ -208,6 +218,7 @@ public class AdminSiteSettingsTranslationForm
         HomeTitle = t.HomeTitle,
         DefaultMetaDescription = t.DefaultMetaDescription,
         OrganizationDescription = t.OrganizationDescription,
+        LlmsNotes = t.LlmsNotes,
         OgImageAlt = t.OgImageAlt,
         OgImageUrl = t.OgImageUrl,
     };
@@ -229,7 +240,13 @@ public class AdminSiteSettingsTranslationForm
         HomeTitle = HomeTitle,
         DefaultMetaDescription = DefaultMetaDescription,
         OrganizationDescription = OrganizationDescription,
+        LlmsNotes = LlmsNotes,
         OgImageAlt = OgImageAlt,
         OgImageUrl = OgImageUrl,
     };
 }
+
+/// <summary>One fixed page's row in Admin > Settings > Pages, for the active language.</summary>
+/// <param name="DefaultTitle">What the page shows when the override is empty, in that language.</param>
+public record AdminPageSeoRow(string Key, string Label, string Path, string? Title, string? Description,
+    string DefaultTitle, string? DefaultDescription);
