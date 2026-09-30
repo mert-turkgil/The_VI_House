@@ -16,5 +16,10 @@ public class JournalPostMediaConfiguration : IEntityTypeConfiguration<JournalPos
         builder.Property(m => m.Title).HasMaxLength(200);
         builder.Property(m => m.ContentType).HasMaxLength(100).IsRequired();
         builder.Property(m => m.OriginalFileName).HasMaxLength(255);
+        builder.Property(m => m.ContentHash).HasMaxLength(64);
+        builder.HasIndex(m => new { m.JournalPostId, m.ContentHash });
+        // Sentinel true: EF sends an explicit false on insert rather than mistaking it for "unset"
+        // and letting the column default turn it back into true.
+        builder.Property(m => m.ShowInGallery).HasDefaultValue(true).HasSentinel(true);
     }
 }

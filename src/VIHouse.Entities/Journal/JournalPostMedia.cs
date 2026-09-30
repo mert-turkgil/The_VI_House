@@ -39,6 +39,29 @@ public class JournalPostMedia : BaseEntity
 
     public string ContentType { get; set; } = default!;
     public long SizeBytes { get; set; }
+
+    /// <summary>
+    /// SHA-256 of the bytes as uploaded (hex), before any resizing. Uploading the same file to the
+    /// same post again finds this and reuses the row instead of storing a second copy. Null for
+    /// files uploaded before the fingerprint existed.
+    /// </summary>
+    public string? ContentHash { get; set; }
     public string? OriginalFileName { get; set; }
     public int SortOrder { get; set; }
+
+    /// <summary>
+    /// What the reader sees under the photograph in the post's gallery, per language: a JSON object
+    /// of culture → text (<c>{"en-GB":"…","de-DE":"…"}</c>). Read and written only through
+    /// JournalMediaCaptions, which also does the fallback to English. JSON rather than a child table
+    /// because a caption is never queried on its own — it only ever travels with its photograph.
+    /// </summary>
+    public string? Captions { get; set; }
+
+    /// <summary>
+    /// Whether a library image appears in the gallery at the foot of the article. On by default: a
+    /// photograph added to the library is, unless the author says otherwise, one they want seen.
+    /// Inline images and the cover never appear there whatever this says — the article already
+    /// shows them.
+    /// </summary>
+    public bool ShowInGallery { get; set; } = true;
 }

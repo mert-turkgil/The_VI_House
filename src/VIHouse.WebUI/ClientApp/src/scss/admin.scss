@@ -2,6 +2,8 @@
 // shared .admin-* component styles). Scoped to things only the admin panel has: the rich text
 // editor chrome and the dashboard charts.
 
+@use 'components/admin-media';
+
 // --- CKEditor -----------------------------------------------------------------------------------
 // CKEditor ships its own theme; these overrides bring it in line with the admin panel's borders,
 // radii and brand colour rather than restyling it wholesale.

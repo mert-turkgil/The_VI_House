@@ -115,10 +115,26 @@ export function initRichTextEditors(): void {
         ],
       },
       image: {
+        // Every position here has a matching rule in _rich-content.scss, which is what makes the
+        // published article look as it does in the editor: "wrap text" floats the picture left or
+        // right with the paragraph running beside it, "break text" puts it on its own line aligned
+        // left, centre or right, and "side" is a right-hand picture at most half the column wide.
+        // Phones get every picture at full width.
         toolbar: [
-          'imageTextAlternative', '|',
-          'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', '|',
-          'toggleImageCaption',
+          'imageStyle:inline', 'imageStyle:wrapText', 'imageStyle:breakText', 'imageStyle:side', '|',
+          'resizeImage', '|',
+          'toggleImageCaption', 'imageTextAlternative',
+        ],
+        // Percentages rather than pixels: the article column is 760px on a laptop and 340px on a
+        // phone, and "half the column" means the same thing on both.
+        resizeUnit: '%',
+        resizeOptions: [
+          { name: 'resizeImage:original', value: null, label: 'Original' },
+          { name: 'resizeImage:custom', value: 'custom', label: 'Custom' },
+          { name: 'resizeImage:25', value: '25', label: '25%' },
+          { name: 'resizeImage:33', value: '33', label: '33%' },
+          { name: 'resizeImage:50', value: '50', label: '50%' },
+          { name: 'resizeImage:75', value: '75', label: '75%' },
         ],
       },
       table: { contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'] },

@@ -174,7 +174,7 @@ public class AdminJournalController(
         if (file is null || file.Length == 0)
         {
             TempData["StatusMessage"] = loc["Seminar.Error.MediaEmpty"].Value;
-            return RedirectToAction(nameof(Edit), new { id });
+            return RedirectToAction(nameof(Edit), null, new { id }, "media-library");
         }
 
         var (adminId, ip) = CurrentActor();
@@ -184,11 +184,13 @@ public class AdminJournalController(
             id, new MediaUpload(file.FileName, file.ContentType, file.Length, stream),
             title, isInline: false, adminId, ip, ct);
 
-        TempData["StatusMessage"] = result.Success
-            ? loc["Admin.Journal.MediaAdded", file.FileName].Value
-            : Localised(result.Error);
+        TempData["StatusMessage"] = !result.Success
+            ? Localised(result.Error)
+            : result.Reused
+                ? loc["Admin.Journal.MediaReused", file.FileName].Value
+                : loc["Admin.Journal.MediaAdded", file.FileName].Value;
 
-        return RedirectToAction(nameof(Edit), new { id });
+        return RedirectToAction(nameof(Edit), null, new { id }, "media-library");
     }
 
     /// <summary>
@@ -228,7 +230,24 @@ public class AdminJournalController(
         var result = await journalService.RemoveMediaAsync(id, mediaId, adminId, ip, ct);
 
         TempData["StatusMessage"] = result.Success ? loc["Admin.Journal.MediaRemoved"].Value : Localised(result.Error);
-        return RedirectToAction(nameof(Edit), new { id });
+        return RedirectToAction(nameof(Edit), null, new { id }, "media-library");
+    }
+
+    /// <summary>
+    /// Saves the media library as arranged on screen: order, captions per language, and which
+    /// photographs the article's gallery shows. One save for all three, so dragging a photograph and
+    /// fixing its caption cannot end up half-applied.
+    /// </summary>
+    [HttpPost("{id:guid}/save-gallery")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveGallery(Guid id, List<AdminJournalGalleryItemForm> items, string? culture, CancellationToken ct)
+    {
+        var (adminId, ip) = CurrentActor();
+        var result = await journalService.SaveGalleryAsync(
+            id, [.. items.Select(i => new JournalGalleryEdit(i.MediaId, i.Captions, i.ShowInGallery))], adminId, ip, ct);
+
+        TempData["StatusMessage"] = result.Success ? loc["Admin.Journal.GallerySaved"].Value : Localised(result.Error);
+        return RedirectToAction(nameof(Edit), null, new { id, culture = SiteCultures.IsSupported(culture) ? culture : null }, "media-library");
     }
 
     [HttpPost("{id:guid}/set-cover")]
@@ -239,7 +258,7 @@ public class AdminJournalController(
         var result = await journalService.SetCoverAsync(id, mediaId, adminId, ip, ct);
 
         TempData["StatusMessage"] = result.Success ? loc["Admin.Journal.CoverChanged"].Value : Localised(result.Error);
-        return RedirectToAction(nameof(Edit), new { id });
+        return RedirectToAction(nameof(Edit), null, new { id }, "media-library");
     }
 
     /// <summary>Uploads a cover and drops the one it replaces — file included.</summary>

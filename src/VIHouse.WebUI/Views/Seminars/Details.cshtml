@@ -168,7 +168,7 @@
 
     @if (Model.BodyHtml is not null)
     {
-        <div class="content-body seminar-detail__body">
+        <div class="content-body rich-content seminar-detail__body">
             @* Sanitised on write by SeminarService (see EditorHtml), so the stored HTML is safe. *@
             @Html.Raw(Model.BodyHtml)
         </div>

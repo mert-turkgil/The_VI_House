@@ -66,6 +66,11 @@ public static class EditorHtml
             sanitizer.AllowedAttributes.Add(attribute);
         }
 
+        // CKEditor writes a resized picture as style="width:40%" and each image as
+        // style="aspect-ratio:1600/1067". Width is already allowed; aspect-ratio is newer than the
+        // sanitizer's default list. Without it the picture's box is not reserved while it loads.
+        sanitizer.AllowedCssProperties.Add("aspect-ratio");
+
         // Only http/https/mailto links survive — this is what blocks `javascript:` hrefs, the most
         // likely way a pasted link turns into script execution. App-relative URLs (every uploaded
         // asset: "/media/seminars/...") carry no scheme at all and are unaffected by this list.

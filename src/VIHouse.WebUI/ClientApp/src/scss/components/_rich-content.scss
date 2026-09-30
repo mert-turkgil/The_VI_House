@@ -1,0 +1,236 @@
+@use '../breakpoints' as bp;
+
+// --- Rich content --------------------------------------------------------------------------------
+// The public side of the admin's CKEditor: journal articles, session bodies and experience
+// descriptions (every view that renders EditorHtml output carries .rich-content next to
+// .content-body).
+//
+// The editor saves a layout as class names and a width, never as geometry:
+//   <figure class="image image-style-align-left image_resized" style="width:40%">
+//     <img src="…" width="1600" height="1067"> <figcaption>…</figcaption>
+//   </figure>
+// Without rules for those classes, every picture falls back to a plain block, and the position the
+// admin chose in the editor is lost. The rules below mirror CKEditor 5's own content styles, so the
+// article looks as it did in the editor, with two deliberate differences:
+//   - Images keep their proportions. The width/height attributes only reserve space; the height
+//     follows the width.
+//   - Below the small breakpoint nothing floats. A 40% photograph beside text on a 360px phone is a
+//     thumbnail beside a column of single words, so it takes the full width instead.
+
+.rich-content {
+  --rich-gap: var(--vih-space-md);
+
+  // A floated image at the end of the article must not escape into the section below.
+  display: flow-root;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  // --- Block images ------------------------------------------------------------------------------
+
+  figure.image {
+    display: table;
+    clear: both;
+    margin: var(--vih-space-lg) auto;
+    min-width: 50px;
+    text-align: center;
+
+    img {
+      display: block;
+      margin: 0 auto;
+      min-width: 100%;
+      border-radius: var(--vih-radius-lg);
+    }
+
+    > figcaption {
+      display: table-caption;
+      caption-side: bottom;
+      padding: var(--vih-space-2xs) var(--vih-space-3xs) 0;
+      font-size: var(--vih-text-sm);
+      line-height: 1.5;
+      color: var(--vih-text-muted);
+      text-align: center;
+      word-break: break-word;
+    }
+  }
+
+  // Resized: the figure carries style="width:N%", the picture fills it. Block, not table, so the
+  // inline width is what sizes the box.
+  figure.image.image_resized {
+    display: block;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    img {
+      width: 100%;
+    }
+
+    > figcaption {
+      display: block;
+    }
+  }
+
+  // --- Inline images (inside a paragraph) --------------------------------------------------------
+
+  p img,
+  .image-inline {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 100%;
+    border-radius: var(--vih-radius-md);
+  }
+
+  img.image_resized {
+    height: auto;
+  }
+
+  // --- Positions ---------------------------------------------------------------------------------
+
+  .image-style-align-left,
+  .image-style-align-right,
+  .image-style-side {
+    clear: none;
+    margin-top: var(--vih-space-3xs);
+    margin-bottom: var(--vih-space-sm);
+  }
+
+  .image-style-align-left {
+    float: left;
+    margin-right: var(--rich-gap);
+  }
+
+  .image-style-align-right {
+    float: right;
+    margin-left: var(--rich-gap);
+  }
+
+  // "Side" is a right-hand picture capped at half the column, like a pull-quote.
+  .image-style-side {
+    float: right;
+    max-width: 50%;
+    margin-left: var(--rich-gap);
+  }
+
+  .image-style-align-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .image-style-block-align-left {
+    max-width: calc(100% - var(--rich-gap));
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  .image-style-block-align-right {
+    max-width: calc(100% - var(--rich-gap));
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  // A picture that starts a paragraph lines up with the paragraph's first line rather than
+  // sitting a gap below it.
+  p + .image-style-align-left,
+  p + .image-style-align-right,
+  p + .image-style-side {
+    margin-top: 0;
+  }
+
+  // Inline pictures wrapped by text sit inside the paragraph, so they need a little room above and
+  // below on their own.
+  img.image-style-align-left,
+  img.image-style-align-right {
+    margin-top: calc(var(--vih-space-3xs) / 2);
+    margin-bottom: var(--vih-space-2xs);
+  }
+
+  // --- Media, tables, quotes -----------------------------------------------------------------------
+
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: var(--vih-space-md) 0;
+    border-radius: var(--vih-radius-lg);
+  }
+
+  h3 {
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-xl);
+    margin: var(--vih-space-lg) 0 var(--vih-space-2xs);
+  }
+
+  ul,
+  ol {
+    margin: 0 0 var(--vih-space-sm);
+    padding-left: 1.4em;
+    line-height: 1.7;
+  }
+
+  blockquote {
+    margin: var(--vih-space-md) 0;
+    padding: var(--vih-space-2xs) 0 var(--vih-space-2xs) var(--vih-space-md);
+    border-left: 2px solid var(--vih-gold);
+    font-family: var(--vih-font-serif);
+    font-size: var(--vih-text-xl);
+    font-style: italic;
+    color: var(--vih-green-900);
+  }
+
+  a {
+    color: var(--vih-green-900);
+    text-decoration: underline;
+    text-decoration-color: var(--vih-gold);
+    text-underline-offset: 3px;
+  }
+
+  figure.table {
+    display: block;
+    margin: var(--vih-space-md) 0;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--vih-text-base);
+  }
+
+  th,
+  td {
+    padding: var(--vih-space-2xs) var(--vih-space-xs);
+    border: 1px solid var(--vih-line-on-light);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  hr {
+    clear: both;
+    margin: var(--vih-space-lg) 0;
+    border: 0;
+    border-top: 1px solid var(--vih-line-on-light);
+  }
+
+  // --- Phones: one column --------------------------------------------------------------------------
+  // !important only on the width: it has to beat the inline style="width:40%" the editor writes,
+  // and nothing else can.
+  @include bp.until(bp.$sm) {
+    .image-style-align-left,
+    .image-style-align-right,
+    .image-style-side,
+    .image-style-block-align-left,
+    .image-style-block-align-right {
+      float: none;
+      max-width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    figure.image.image_resized,
+    img.image_resized {
+      width: 100% !important;
+    }
+  }
+}

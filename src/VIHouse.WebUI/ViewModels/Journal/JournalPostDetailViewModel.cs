@@ -18,6 +18,10 @@ public class JournalPostDetailViewModel
     /// trust here because JournalService sanitises on every write — see EditorHtml.</summary>
     public string BodyHtml { get; set; } = string.Empty;
 
+    /// <summary>The photographs under the article, in the admin's order, captions already in the
+    /// reader's language. Empty hides the section.</summary>
+    public List<JournalGalleryItem> Gallery { get; set; } = [];
+
     public string CategoryLabel => Category.ToDisplayLabel();
 
     /// <param name="culture">The reader's culture, from CurrentUICulture — the same source the
@@ -42,6 +46,8 @@ public class JournalPostDetailViewModel
             // stored as blank-line-separated plain text and would otherwise render as one run-on
             // paragraph. RenderForDisplay then turns any video marker into its click-to-play facade.
             BodyHtml = ArticleHtml.RenderForDisplay(EditorHtml.EnsureHtml(copy?.Body ?? string.Empty), videoPlayLabel),
+            Gallery = [.. JournalService.GalleryMedia(p)
+                .Select(m => new JournalGalleryItem(JournalService.MediaUrl(m.Id), JournalMediaCaptions.Resolve(m, culture)))],
         };
     }
 
@@ -50,3 +56,6 @@ public class JournalPostDetailViewModel
     internal static string? CoverUrl(JournalPost p) =>
         p.CoverMediaId is { } mediaId ? JournalService.MediaUrl(mediaId) : p.CoverImageUrl;
 }
+
+/// <summary>One photograph in the article's gallery.</summary>
+public record JournalGalleryItem(string Url, string? Caption);

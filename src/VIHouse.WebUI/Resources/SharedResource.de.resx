@@ -1838,4 +1838,27 @@ Was möchten Sie wissen?</value></data>
   <data name="EmptyStage.Journal.Tile3.Label" xml:space="preserve"><value>Notizen</value></data>
   <data name="EmptyStage.Journal.Tile3.Caption" xml:space="preserve"><value>Kapital, Kultur und Aufbau, kurz gelesen</value></data>
   <data name="EmptyStage.Action.About" xml:space="preserve"><value>Über das House</value></data>
+  <data name="Journal.Gallery.Eyebrow" xml:space="preserve"><value>Aus der Geschichte</value></data>
+  <data name="Journal.Gallery.Title" xml:space="preserve"><value>Galerie</value></data>
+  <data name="Journal.Gallery.Count" xml:space="preserve"><value>{0} Fotos</value></data>
+  <data name="Journal.Gallery.CountOne" xml:space="preserve"><value>1 Foto</value></data>
+  <data name="Journal.Gallery.Prev" xml:space="preserve"><value>Vorheriges Foto</value></data>
+  <data name="Journal.Gallery.Next" xml:space="preserve"><value>Nächstes Foto</value></data>
+  <data name="Journal.Gallery.Open" xml:space="preserve"><value>Foto {0} von {1} öffnen</value></data>
+  <data name="Journal.Gallery.Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="Admin.Journal.Gallery.Intro" xml:space="preserve"><value>Die Fotos hier erscheinen in dieser Reihenfolge in der Galerie unter dem Artikel. Ziehen Sie eine Karte am Griff oder nutzen Sie die Pfeile, um die Reihenfolge zu ändern, schreiben Sie eine Bildunterschrift je Sprache (leer = Englisch) und schalten Sie Fotos aus, die die Galerie nicht zeigen soll. Das Titelbild steht oben im Artikel und wird nicht wiederholt.</value></data>
+  <data name="Admin.Journal.Gallery.View" xml:space="preserve"><value>Galerie ansehen ({0})</value></data>
+  <data name="Admin.Journal.Gallery.Drag" xml:space="preserve"><value>Zum Sortieren ziehen</value></data>
+  <data name="Admin.Journal.Gallery.Captions" xml:space="preserve"><value>Bildunterschrift</value></data>
+  <data name="Admin.Journal.Gallery.CaptionPlaceholder" xml:space="preserve"><value>Was das Foto zeigt</value></data>
+  <data name="Admin.Journal.Gallery.CaptionInherits" xml:space="preserve"><value>Leer: englische Bildunterschrift</value></data>
+  <data name="Admin.Journal.Gallery.CoverNote" xml:space="preserve"><value>Dies ist das Titelbild: oben im Artikel, nicht in der Galerie.</value></data>
+  <data name="Admin.Journal.Gallery.Show" xml:space="preserve"><value>In der Galerie zeigen</value></data>
+  <data name="Admin.Journal.Gallery.MoveUp" xml:space="preserve"><value>Nach oben</value></data>
+  <data name="Admin.Journal.Gallery.MoveDown" xml:space="preserve"><value>Nach unten</value></data>
+  <data name="Admin.Journal.Gallery.Unsaved" xml:space="preserve"><value>Ungespeicherte Änderungen</value></data>
+  <data name="Admin.Journal.Gallery.Moved" xml:space="preserve"><value>An Position {0} von {1} verschoben</value></data>
+  <data name="Admin.Journal.Gallery.Save" xml:space="preserve"><value>Galerie speichern</value></data>
+  <data name="Admin.Journal.GallerySaved" xml:space="preserve"><value>Galerie gespeichert: Reihenfolge, Bildunterschriften und Sichtbarkeit sind online.</value></data>
+  <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} ist bereits in den Medien dieses Artikels. Die vorhandene Datei wurde verwendet, keine Kopie gespeichert.</value></data>
 </root>

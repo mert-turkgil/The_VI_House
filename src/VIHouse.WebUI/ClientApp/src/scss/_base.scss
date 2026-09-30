@@ -86,6 +86,10 @@ main {
 
 img {
   max-width: 100%;
+  // Keeps the proportions whenever max-width shrinks an image that carries width/height
+  // attributes. Without it the attribute height stays fixed while the width narrows, and the
+  // photograph is squashed (what editor-inserted images in articles were doing).
+  height: auto;
   display: block;
 }
 

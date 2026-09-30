@@ -1,0 +1,384 @@
+// --- Journal media library (Areas/Admin/Views/AdminJournal/Edit.cshtml) --------------------------
+// One card per file: drag grip, thumbnail with its gallery position, captions per language, the
+// gallery switch and the file's actions. modules/mediaLibrary.ts does the dragging and the arrow
+// buttons, and shows the unsaved-changes bar.
+
+.media-library__intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0 12px;
+
+  p {
+    margin: 0;
+    max-width: 70ch;
+    font-size: 0.8125rem;
+    color: var(--vih-text-muted);
+  }
+}
+
+.media-library__list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.media-card {
+  display: grid;
+  grid-template-columns: 28px 168px minmax(0, 1fr) 40px;
+  gap: 16px;
+  align-items: start;
+  padding: 14px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+  transition:
+    box-shadow var(--vih-dur-base) var(--vih-ease-out),
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    opacity var(--vih-dur-base) var(--vih-ease-out),
+    transform var(--vih-dur-base) var(--vih-ease-out);
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--vih-gold) 45%, var(--vih-line-on-light));
+    box-shadow: var(--vih-shadow-sm);
+  }
+
+  // The card being dragged, and the card it would land beside.
+  &.is-dragging {
+    opacity: 0.45;
+    transform: scale(0.99);
+  }
+
+  &.is-drop-target {
+    border-color: var(--vih-gold);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--vih-gold) 35%, transparent);
+  }
+
+  // Briefly after a move, so the eye follows the card to its new place.
+  &.is-moved {
+    animation: media-card-moved 900ms var(--vih-ease-out);
+  }
+
+  @media (max-width: 719px) {
+    grid-template-columns: 24px minmax(0, 1fr) 36px;
+
+    .media-card__body {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+@keyframes media-card-moved {
+  from {
+    border-color: var(--vih-gold);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--vih-gold) 40%, transparent);
+  }
+}
+
+.media-card__grip {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  border-radius: var(--vih-radius-md);
+  color: var(--vih-text-faint);
+  cursor: grab;
+  transition: background-color var(--vih-dur-base) var(--vih-ease-out), color var(--vih-dur-base) var(--vih-ease-out);
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  &:hover {
+    background: var(--vih-surface-sunken);
+    color: var(--vih-green-900);
+  }
+}
+
+.media-card__thumb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface-sunken);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+}
+
+.media-card__kind {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+}
+
+// The photograph's place in the public gallery. Hidden on files the gallery never shows.
+.media-card__position {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  min-width: 24px;
+  padding: 2px 7px;
+  border-radius: var(--vih-radius-pill);
+  background: rgba(0, 26, 2, 0.78);
+  color: var(--vih-cream);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-align: center;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.media-card__body {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.media-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  font-size: 0.75rem;
+  color: var(--vih-text-muted);
+
+  strong {
+    overflow: hidden;
+    max-width: 100%;
+    font-size: 0.875rem;
+    color: var(--vih-ink);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.media-card__captions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 6px 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  legend {
+    margin-bottom: 4px;
+    padding: 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--vih-text-muted);
+  }
+}
+
+.media-card__caption {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-md);
+  overflow: hidden;
+  transition: border-color var(--vih-dur-base) var(--vih-ease-out), box-shadow var(--vih-dur-base) var(--vih-ease-out);
+
+  label {
+    display: grid;
+    place-items: center;
+    flex: 0 0 36px;
+    background: var(--vih-surface-sunken);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--vih-green-900);
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: 7px 10px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 0.8125rem;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &:focus-within {
+    border-color: var(--vih-gold);
+    box-shadow: var(--vih-shadow-focus);
+  }
+
+  // The language whose tab is open above gets a gold label: that is the caption the Insert button
+  // puts under the picture.
+  &.is-active label {
+    background: var(--vih-gold);
+    color: var(--vih-green-950);
+  }
+}
+
+.media-card__note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--vih-text-muted);
+}
+
+.media-card__toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  font-size: 0.8125rem;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.media-card__switch {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  border-radius: var(--vih-radius-pill);
+  background: rgba(18, 22, 15, 0.2);
+  transition: background-color var(--vih-dur-base) var(--vih-ease-out);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--vih-white);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform var(--vih-dur-base) var(--vih-ease-out);
+  }
+}
+
+.media-card__toggle input:checked + .media-card__switch {
+  background: var(--vih-green-900);
+
+  &::after {
+    transform: translateX(14px);
+  }
+}
+
+.media-card__toggle input:focus-visible + .media-card__switch {
+  box-shadow: var(--vih-shadow-focus);
+}
+
+// A photograph switched out of the gallery is shown faded, so the library reads at a glance.
+.media-card.is-hidden-from-gallery .media-card__thumb img {
+  opacity: 0.4;
+  filter: grayscale(0.6);
+}
+
+.media-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.media-card__move {
+  display: grid;
+  gap: 6px;
+}
+
+.media-card__arrow {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-surface);
+  color: var(--vih-green-900);
+  cursor: pointer;
+  transition: background-color var(--vih-dur-base) var(--vih-ease-out), color var(--vih-dur-base) var(--vih-ease-out);
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: var(--vih-green-900);
+    color: var(--vih-cream);
+    outline: none;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+}
+
+// Sticks to the bottom of the screen, so a long library never hides the button that keeps the work.
+.media-library__bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px 0;
+  background: linear-gradient(to top, var(--vih-surface-tinted) 70%, transparent);
+}
+
+.media-library__dirty {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vih-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .media-card,
+  .media-card__thumb img,
+  .media-card__switch,
+  .media-card__switch::after {
+    transition: none;
+  }
+
+  .media-card.is-moved {
+    animation: none;
+  }
+
+  .media-card__thumb:hover img,
+  .media-card.is-dragging {
+    transform: none;
+  }
+}

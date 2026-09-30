@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text.Json;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
@@ -247,6 +248,30 @@ public class JournalService(
         if (upload.Length > MediaPolicy.MaxBytesFor(kind.Value))
             return JournalMediaResult.Fail("Seminar.Error.MediaTooLarge");
 
+        // The same file uploaded twice to one post is stored once. Scoped to the post on purpose:
+        // every file belongs to exactly one post, which is what lets deleting a post take its files
+        // with it. Sharing a file between posts would make that delete unsafe.
+        await using var hashed = await FingerprintAsync(upload, ct);
+        upload = hashed.Upload;
+        var duplicate = post.Media.FirstOrDefault(m => m.ContentHash == hashed.Hash);
+        if (duplicate is not null)
+        {
+            // A library upload of a picture that so far only sat inside the article moves it into
+            // the library, where the admin now wants it. It also stops the prune step from ever
+            // treating it as the article's leftover.
+            if (!isInline && duplicate.IsInline)
+            {
+                duplicate.IsInline = false;
+                if (!string.IsNullOrWhiteSpace(title)) duplicate.Title = title.Trim();
+                post.UpdatedAt = DateTimeOffset.UtcNow;
+                await LogAsync("JournalMediaPromoted", post.Id, adminUserId, ipAddress,
+                    before: new { duplicate.Id, IsInline = true }, after: new { duplicate.Id, IsInline = false }, ct);
+                await posts.SaveChangesAsync(ct);
+            }
+
+            return JournalMediaResult.Ok(duplicate, reused: true);
+        }
+
         var saved = await mediaStorage.SaveAsync(upload, $"journal/{postId:N}", ct);
         if (!saved.Success) return JournalMediaResult.Fail(saved.Error ?? "Seminar.Error.MediaFailed");
 
@@ -259,6 +284,7 @@ public class JournalService(
             IsInline = isInline,
             ContentType = saved.ContentType!,
             SizeBytes = saved.SizeBytes,
+            ContentHash = hashed.Hash,
             OriginalFileName = upload.FileName,
             SortOrder = post.Media.Count == 0 ? 1 : post.Media.Max(m => m.SortOrder) + 1,
         };
@@ -296,6 +322,60 @@ public class JournalService(
         await RemoveMediaRowAsync(post, media, "JournalMediaRemoved", adminUserId, ipAddress, ct);
         return JournalSaveResult.Ok(post.Id);
     }
+
+    public async Task<JournalSaveResult> SaveGalleryAsync(
+        Guid postId, IReadOnlyList<JournalGalleryEdit> items, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var post = await posts.GetWithDetailAsync(postId, ct);
+        if (post is null) return JournalSaveResult.Fail("Journal.Error.NotFound");
+
+        var library = post.Media.Where(m => !m.IsInline).ToDictionary(m => m.Id);
+        var before = library.Values.OrderBy(m => m.SortOrder)
+            .Select(m => new { m.Id, m.SortOrder, m.ShowInGallery, m.Captions }).ToList();
+
+        // Ids from another post, inline assets or a double-submitted delete are ignored rather than
+        // failing the whole save — the rest of what the admin arranged is still worth keeping.
+        var listed = items.Where(i => library.ContainsKey(i.MediaId)).DistinctBy(i => i.MediaId).ToList();
+        foreach (var item in listed)
+        {
+            var media = library[item.MediaId];
+            JournalMediaCaptions.Write(media, item.Captions);
+            media.ShowInGallery = item.ShowInGallery;
+        }
+
+        var order = listed.Select(i => library[i.MediaId])
+            .Concat(library.Values.Where(m => listed.All(i => i.MediaId != m.Id)).OrderBy(m => m.SortOrder))
+            .ToList();
+        for (var i = 0; i < order.Count; i++)
+            order[i].SortOrder = i + 1;
+
+        // Inline assets sort after the library so a later upload's "max + 1" never lands between
+        // two gallery photographs.
+        var next = order.Count;
+        foreach (var inline in post.Media.Where(m => m.IsInline).OrderBy(m => m.SortOrder))
+            inline.SortOrder = ++next;
+
+        post.UpdatedAt = DateTimeOffset.UtcNow;
+
+        await LogAsync("JournalGallerySaved", post.Id, adminUserId, ipAddress, before,
+            after: order.Select(m => new { m.Id, m.SortOrder, m.ShowInGallery, m.Captions }), ct);
+        await posts.SaveChangesAsync(ct);
+
+        return JournalSaveResult.Ok(post.Id);
+    }
+
+    /// <summary>
+    /// The photographs shown in the gallery under the article, in the admin's order: library images
+    /// and GIFs the admin has not hidden. Inline images and the cover are left out because the page
+    /// already shows them.
+    /// </summary>
+    public static IEnumerable<JournalPostMedia> GalleryMedia(JournalPost post) =>
+        post.Media
+            .Where(m => !m.IsInline
+                        && m.ShowInGallery
+                        && m.Id != post.CoverMediaId
+                        && m.Kind is SeminarMediaKind.Image or SeminarMediaKind.Animation)
+            .OrderBy(m => m.SortOrder);
 
     public async Task<JournalSaveResult> SetCoverAsync(
         Guid postId, Guid mediaId, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
@@ -346,7 +426,8 @@ public class JournalService(
         // Replacing means replacing: the old cover's row and its file go, rather than accumulating
         // in the library as a copy of a picture nothing shows. Only when it was not also used
         // inline somewhere in the article.
-        if (previous is not null && !IsReferencedInAnyBody(reloaded, previous))
+        // previous == the upload when the same cover was uploaded again: nothing to replace.
+        if (previous is not null && previous.Id != added.Media.Id && !IsReferencedInAnyBody(reloaded, previous))
             await RemoveMediaRowAsync(reloaded, previous, "JournalCoverReplaced", adminUserId, ipAddress, ct);
 
         return JournalSaveResult.Ok(postId);
@@ -423,6 +504,35 @@ public class JournalService(
     {
         var url = MediaUrl(media.Id);
         return post.Translations.Any(t => t.Body.Contains(url, StringComparison.OrdinalIgnoreCase));
+    }
+
+    /// <summary>
+    /// SHA-256 of an upload, with the upload handed back ready to be read again from the start. A
+    /// stream that cannot rewind is first copied to a temporary file that is deleted when the
+    /// result is disposed.
+    /// </summary>
+    private static async Task<Fingerprint> FingerprintAsync(MediaUpload upload, CancellationToken ct)
+    {
+        var source = upload.Content;
+        FileStream? spill = null;
+        if (!source.CanSeek)
+        {
+            spill = new FileStream(Path.GetTempFileName(), FileMode.Create, FileAccess.ReadWrite, FileShare.None,
+                81920, FileOptions.Asynchronous | FileOptions.DeleteOnClose);
+            await source.CopyToAsync(spill, ct);
+            source = spill;
+        }
+
+        source.Position = 0;
+        var hash = Convert.ToHexString(await SHA256.HashDataAsync(source, ct));
+        source.Position = 0;
+
+        return new Fingerprint(hash, upload with { Content = source }, spill);
+    }
+
+    private sealed record Fingerprint(string Hash, MediaUpload Upload, Stream? Spill) : IAsyncDisposable
+    {
+        public ValueTask DisposeAsync() => Spill?.DisposeAsync() ?? ValueTask.CompletedTask;
     }
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>

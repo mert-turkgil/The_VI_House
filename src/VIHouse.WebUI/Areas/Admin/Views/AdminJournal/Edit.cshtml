@@ -192,7 +192,7 @@
 }
 
 @* --- Media library -------------------------------------------------------------------------------- *@
-<h2 class="admin-section-heading">@Loc["Admin.Journal.Section.Media"]</h2>
+<h2 class="admin-section-heading" id="media-library">@Loc["Admin.Journal.Section.Media"]</h2>
 
 <div class="admin-panel">
     <form asp-action="UploadMedia" asp-route-id="@postId" method="post" enctype="multipart/form-data" class="admin-inline-form">
@@ -205,59 +205,150 @@
 
 @if (Model.Media.Count > 0)
 {
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>@Loc["Admin.Journal.MediaFile"]</th>
-                <th>@Loc["Admin.Journal.MediaKind"]</th>
-                <th>@Loc["Admin.Journal.MediaSize"]</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var media in Model.Media)
+    var galleryCount = Model.Media.Count(m => m.ShowInGallery && m.Id != Model.CoverMediaId && m.Kind is SeminarMediaKind.Image or SeminarMediaKind.Animation);
+
+    @* One form for the whole library: order (drag, or the arrow buttons), captions per language and
+       "show in gallery" are saved together by Save gallery. Delete and Use as cover are buttons of
+       this same form with their own formaction, since forms cannot nest. modules/mediaLibrary.ts adds
+       the dragging and the unsaved-changes bar; without it the arrows still work as plain buttons
+       that move nothing, and the captions and toggles still save. *@
+    <form asp-action="SaveGallery" asp-route-id="@postId" method="post" class="media-library" data-media-library>
+        <input type="hidden" name="culture" value="@active.Culture.Name" />
+
+        <div class="media-library__intro">
+            <p>@Loc["Admin.Journal.Gallery.Intro"]</p>
+            <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Journal" asp-action="Details" asp-route-slug="@Model.Form.Slug" asp-fragment="journal-gallery-title" target="_blank" rel="noopener">@Loc["Admin.Journal.Gallery.View", galleryCount]</a>
+        </div>
+
+        <ol class="media-library__list" data-media-list>
+            @{ var galleryPosition = 0; }
+            @for (var i = 0; i < Model.Media.Count; i++)
             {
+                var media = Model.Media[i];
                 var url = $"/media/journal/{media.Id}";
-                // What the Insert button drops into the article. Images go in as <img>, audio as a
-                // player: CKEditor has no audio plugin, so the markup it will finally be is what
-                // gets inserted, and GeneralHtmlSupport keeps it intact through the model.
+                var isPicture = media.Kind is SeminarMediaKind.Image or SeminarMediaKind.Animation;
+                var isCover = media.Id == Model.CoverMediaId;
+                var captions = JournalMediaCaptions.Read(media);
+                var activeCaption = captions.TryGetValue(active.Culture.Name, out var c) ? c : null;
+                var field = $"items[{media.Id}]";
+                var cardId = $"media-{media.Id:N}";
+                var shownInGallery = isPicture && !isCover && media.ShowInGallery;
+                if (shownInGallery) galleryPosition++;
+                // What the Insert button drops into the article. Images go in as a figure, with the
+                // caption in the language being edited when there is one; audio goes in as a player:
+                // CKEditor has no audio plugin, so the markup it will finally be is what gets
+                // inserted, and GeneralHtmlSupport keeps it intact through the model.
+                var encodedCaption = System.Net.WebUtility.HtmlEncode(activeCaption ?? string.Empty);
                 var insertHtml = media.Kind == SeminarMediaKind.Audio
                     ? $"<p><audio controls src=\"{url}\"></audio></p>"
-                    : $"<figure class=\"image\"><img src=\"{url}\" alt=\"\"></figure>";
-                <tr>
-                    <td>
-                        <a href="@url" target="_blank" rel="noopener">@(media.Title ?? media.OriginalFileName ?? url)</a>
-                        @if (media.Id == Model.CoverMediaId)
+                    : string.IsNullOrWhiteSpace(activeCaption)
+                        ? $"<figure class=\"image\"><img src=\"{url}\" alt=\"\"></figure>"
+                        : $"<figure class=\"image\"><img src=\"{url}\" alt=\"{encodedCaption}\"><figcaption>{encodedCaption}</figcaption></figure>";
+
+                <li class="media-card @(isPicture && !isCover && !media.ShowInGallery ? "is-hidden-from-gallery" : "")"
+                    id="@cardId" data-media-item draggable="true">
+                    <input type="hidden" name="items.Index" value="@media.Id" />
+                    <input type="hidden" name="@(field).MediaId" value="@media.Id" />
+
+                    <div class="media-card__grip" data-media-grip aria-hidden="true" title="@Loc["Admin.Journal.Gallery.Drag"]">
+                        <svg viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.4" /><circle cx="15" cy="6" r="1.4" /><circle cx="9" cy="12" r="1.4" /><circle cx="15" cy="12" r="1.4" /><circle cx="9" cy="18" r="1.4" /><circle cx="15" cy="18" r="1.4" /></svg>
+                    </div>
+
+                    <a class="media-card__thumb" href="@url" target="_blank" rel="noopener" draggable="false">
+                        @if (isPicture)
                         {
-                            <span class="admin-badge admin-badge--open">@Loc["Admin.Journal.IsCover"]</span>
+                            <img src="@url" alt="" loading="lazy" decoding="async" draggable="false" />
                         }
-                    </td>
-                    <td>@media.Kind</td>
-                    <td style="font-size:0.75rem;">@((media.SizeBytes / 1024).ToString("N0")) KB</td>
-                    <td>
-                        @if (media.Kind is SeminarMediaKind.Image or SeminarMediaKind.Animation or SeminarMediaKind.Audio)
+                        else
                         {
-                            <button type="button" class="admin-btn admin-btn--ghost"
-                                    data-insert-html="@insertHtml"
-                                    data-insert-target="@bodyFieldId">@Loc["Admin.Journal.Insert"]</button>
+                            <span class="media-card__kind">@media.Kind</span>
                         }
-                        @if (media.Kind == SeminarMediaKind.Image && media.Id != Model.CoverMediaId)
+                        <span class="media-card__position" data-media-position>@(shownInGallery ? galleryPosition.ToString() : "")</span>
+                    </a>
+
+                    <div class="media-card__body">
+                        <div class="media-card__meta">
+                            <strong title="@media.OriginalFileName">@(media.Title ?? media.OriginalFileName ?? url)</strong>
+                            <span>@media.Kind · @((media.SizeBytes / 1024).ToString("N0")) KB</span>
+                            @if (isCover)
+                            {
+                                <span class="admin-badge admin-badge--open">@Loc["Admin.Journal.IsCover"]</span>
+                            }
+                        </div>
+
+                        @if (isPicture)
                         {
-                            <form asp-action="SetCover" asp-route-id="@postId" method="post" class="admin-inline-form">
-                                <input type="hidden" name="mediaId" value="@media.Id" />
-                                <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Journal.UseAsCover"]</button>
-                            </form>
+                            <fieldset class="media-card__captions">
+                                <legend>@Loc["Admin.Journal.Gallery.Captions"]</legend>
+                                @foreach (var culture in SiteCultures.All)
+                                {
+                                    var value = captions.TryGetValue(culture.Name, out var v) ? v : null;
+                                    var inputId = $"{cardId}-{culture.UrlCode}";
+                                    <div class="media-card__caption @(culture.Name == active.Culture.Name ? "is-active" : "")">
+                                        <label for="@inputId" title="@culture.NativeLabel">@culture.ShortLabel</label>
+                                        <input id="@inputId" type="text" name="@(field).Captions[@culture.Name]" value="@value"
+                                               maxlength="@JournalMediaCaptions.MaxLength" lang="@culture.UrlCode"
+                                               placeholder="@(culture.Name == SiteCultures.Default ? Loc["Admin.Journal.Gallery.CaptionPlaceholder"].Value : Loc["Admin.Journal.Gallery.CaptionInherits"].Value)" />
+                                    </div>
+                                }
+                            </fieldset>
+
+                            @if (isCover)
+                            {
+                                <p class="media-card__note">@Loc["Admin.Journal.Gallery.CoverNote"]</p>
+                                <input type="hidden" name="@(field).ShowInGallery" value="@(media.ShowInGallery ? "true" : "false")" />
+                            }
+                            else
+                            {
+                                <label class="media-card__toggle">
+                                    <input type="checkbox" name="@(field).ShowInGallery" value="true" @(media.ShowInGallery ? "checked" : null) />
+                                    <span class="media-card__switch" aria-hidden="true"></span>
+                                    @Loc["Admin.Journal.Gallery.Show"]
+                                </label>
+                            }
                         }
-                        <form asp-action="RemoveMedia" asp-route-id="@postId" method="post" class="admin-inline-form"
-                              onsubmit="return confirm('@Loc["Admin.Journal.ConfirmRemoveMedia"].Value.Replace("'", "\\'")');">
-                            <input type="hidden" name="mediaId" value="@media.Id" />
-                            <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Journal.Delete"]</button>
-                        </form>
-                    </td>
-                </tr>
+                        else
+                        {
+                            <input type="hidden" name="@(field).ShowInGallery" value="false" />
+                        }
+
+                        <div class="media-card__actions">
+                            @if (media.Kind is SeminarMediaKind.Image or SeminarMediaKind.Animation or SeminarMediaKind.Audio)
+                            {
+                                <button type="button" class="admin-btn admin-btn--ghost"
+                                        data-insert-html="@insertHtml"
+                                        data-insert-target="@bodyFieldId">@Loc["Admin.Journal.Insert"]</button>
+                            }
+                            @if (media.Kind == SeminarMediaKind.Image && !isCover)
+                            {
+                                <button type="submit" class="admin-btn admin-btn--ghost" formnovalidate
+                                        asp-action="SetCover" asp-route-id="@postId" name="mediaId" value="@media.Id">@Loc["Admin.Journal.UseAsCover"]</button>
+                            }
+                            <button type="submit" class="admin-btn admin-btn--danger" formnovalidate
+                                    asp-action="RemoveMedia" asp-route-id="@postId" name="mediaId" value="@media.Id"
+                                    onclick="return confirm('@Loc["Admin.Journal.ConfirmRemoveMedia"].Value.Replace("'", "\\'")');">@Loc["Admin.Journal.Delete"]</button>
+                        </div>
+                    </div>
+
+                    <div class="media-card__move">
+                        <button type="button" class="media-card__arrow" data-media-move="-1" aria-label="@Loc["Admin.Journal.Gallery.MoveUp"]">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" /></svg>
+                        </button>
+                        <button type="button" class="media-card__arrow" data-media-move="1" aria-label="@Loc["Admin.Journal.Gallery.MoveDown"]">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                        </button>
+                    </div>
+                </li>
             }
-        </tbody>
-    </table>
+        </ol>
+
+        <div class="media-library__bar" data-media-bar>
+            <span class="media-library__dirty" data-media-dirty hidden>@Loc["Admin.Journal.Gallery.Unsaved"]</span>
+            <p class="media-library__announce visually-hidden" aria-live="polite" data-media-announce
+               data-template="@Loc["Admin.Journal.Gallery.Moved"]"></p>
+            <button type="submit" class="admin-btn">@Loc["Admin.Journal.Gallery.Save"]</button>
+        </div>
+    </form>
 }
 
 @section Scripts {

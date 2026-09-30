@@ -38,9 +38,84 @@
 @* Sanitised on write by JournalService (see EditorHtml), so the stored HTML is already safe. Video
    markers were turned into click-to-play facades on the way here by ArticleHtml — the player itself
    is built in the browser by modules/video.ts, only once a reader asks for it. *@
-<div class="container content-body journal-article__body">
+<div class="container content-body rich-content journal-article__body">
     @Html.Raw(Model.BodyHtml)
 </div>
+
+@if (Model.Gallery.Count > 0)
+{
+    var total = Model.Gallery.Count;
+
+    @* The photographs from the post's media library, in the order the admin arranged them.
+       modules/carousel.ts makes the track a slider (arrows and progress bar in the header, hidden
+       while everything fits); modules/lightbox.ts opens any photograph full size. Without script the
+       track is a wrapped row of the same figures, and each opens the file itself. *@
+    <section class="journal-gallery" aria-labelledby="journal-gallery-title" data-swiper-scope data-lightbox-scope>
+        <div class="container">
+            <header class="journal-gallery__head">
+                <div>
+                    <span class="journal-gallery__eyebrow">@Loc["Journal.Gallery.Eyebrow"]</span>
+                    <h2 id="journal-gallery-title" class="journal-gallery__title">@Loc["Journal.Gallery.Title"]</h2>
+                    <p class="journal-gallery__count">@Loc[total == 1 ? "Journal.Gallery.CountOne" : "Journal.Gallery.Count", total]</p>
+                </div>
+                <partial name="~/Views/Home/_CarouselControls.cshtml" model="@((Loc["Journal.Gallery.Prev"].Value, Loc["Journal.Gallery.Next"].Value))" />
+            </header>
+
+            <div class="swiper journal-gallery__track" data-swiper data-swiper-per-view="3"
+                 data-swiper-prev-label="@Loc["Journal.Gallery.Prev"]" data-swiper-next-label="@Loc["Journal.Gallery.Next"]">
+                <div class="swiper-wrapper">
+                    @for (var i = 0; i < total; i++)
+                    {
+                        var photo = Model.Gallery[i];
+                        var number = (i + 1).ToString("00");
+                        <div class="swiper-slide">
+                            <figure class="journal-gallery__item">
+                                <a class="journal-gallery__open" href="@photo.Url" target="_blank" rel="noopener"
+                                   data-lightbox-item data-lightbox-caption="@photo.Caption"
+                                   aria-label="@Loc["Journal.Gallery.Open", i + 1, total]">
+                                    @* The caption is the alt text: it is what the photograph shows, in
+                                       the reader's language. No caption means nothing to add. *@
+                                    <img class="journal-gallery__img" src="@photo.Url" alt="@(photo.Caption ?? string.Empty)"
+                                         width="1200" height="900" loading="lazy" decoding="async" />
+                                    <span class="journal-gallery__index" aria-hidden="true">@number<small>/@total.ToString("00")</small></span>
+                                    <span class="journal-gallery__zoom" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4.5 4.5M11 8.5v5M8.5 11h5" /></svg>
+                                    </span>
+                                </a>
+                                @if (!string.IsNullOrWhiteSpace(photo.Caption))
+                                {
+                                    <figcaption class="journal-gallery__caption">@photo.Caption</figcaption>
+                                }
+                            </figure>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <dialog class="lightbox" data-lightbox aria-label="@Loc["Journal.Gallery.Title"]">
+            <div class="lightbox__stage">
+                <figure class="lightbox__figure">
+                    <img class="lightbox__img" alt="" data-lightbox-img />
+                    <figcaption class="lightbox__caption" data-lightbox-text></figcaption>
+                </figure>
+                <p class="lightbox__counter" data-lightbox-counter aria-live="polite"></p>
+                <button type="button" class="lightbox__btn lightbox__btn--close" data-lightbox-close aria-label="@Loc["Journal.Gallery.Close"]">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+                </button>
+                @if (total > 1)
+                {
+                    <button type="button" class="lightbox__btn lightbox__btn--prev" data-lightbox-prev aria-label="@Loc["Journal.Gallery.Prev"]">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+                    </button>
+                    <button type="button" class="lightbox__btn lightbox__btn--next" data-lightbox-next aria-label="@Loc["Journal.Gallery.Next"]">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                }
+            </div>
+        </dialog>
+    </section>
+}
 
 <div class="container journal-article__back">
     <a asp-area="" asp-controller="Journal" asp-action="Index">&larr; @Loc["Journal.Back"]</a>

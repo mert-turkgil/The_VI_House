@@ -1838,4 +1838,27 @@ What would you like to know?</value></data>
   <data name="EmptyStage.Journal.Tile3.Label" xml:space="preserve"><value>Notes</value></data>
   <data name="EmptyStage.Journal.Tile3.Caption" xml:space="preserve"><value>Capital, culture and building, in short reads</value></data>
   <data name="EmptyStage.Action.About" xml:space="preserve"><value>About the House</value></data>
+  <data name="Journal.Gallery.Eyebrow" xml:space="preserve"><value>From the story</value></data>
+  <data name="Journal.Gallery.Title" xml:space="preserve"><value>Gallery</value></data>
+  <data name="Journal.Gallery.Count" xml:space="preserve"><value>{0} photographs</value></data>
+  <data name="Journal.Gallery.CountOne" xml:space="preserve"><value>1 photograph</value></data>
+  <data name="Journal.Gallery.Prev" xml:space="preserve"><value>Previous photograph</value></data>
+  <data name="Journal.Gallery.Next" xml:space="preserve"><value>Next photograph</value></data>
+  <data name="Journal.Gallery.Open" xml:space="preserve"><value>Open photograph {0} of {1}</value></data>
+  <data name="Journal.Gallery.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Admin.Journal.Gallery.Intro" xml:space="preserve"><value>Photographs here appear in the gallery under the article, in this order. Drag a card by its handle or use the arrows to reorder, write a caption in each language (an empty one uses English), and switch off any photograph the gallery should leave out. The cover is shown at the top of the article and is not repeated.</value></data>
+  <data name="Admin.Journal.Gallery.View" xml:space="preserve"><value>View gallery ({0})</value></data>
+  <data name="Admin.Journal.Gallery.Drag" xml:space="preserve"><value>Drag to reorder</value></data>
+  <data name="Admin.Journal.Gallery.Captions" xml:space="preserve"><value>Caption</value></data>
+  <data name="Admin.Journal.Gallery.CaptionPlaceholder" xml:space="preserve"><value>What the photograph shows</value></data>
+  <data name="Admin.Journal.Gallery.CaptionInherits" xml:space="preserve"><value>Empty: uses the English caption</value></data>
+  <data name="Admin.Journal.Gallery.CoverNote" xml:space="preserve"><value>This is the cover: shown at the top of the article, not in the gallery.</value></data>
+  <data name="Admin.Journal.Gallery.Show" xml:space="preserve"><value>Show in gallery</value></data>
+  <data name="Admin.Journal.Gallery.MoveUp" xml:space="preserve"><value>Move up</value></data>
+  <data name="Admin.Journal.Gallery.MoveDown" xml:space="preserve"><value>Move down</value></data>
+  <data name="Admin.Journal.Gallery.Unsaved" xml:space="preserve"><value>Unsaved changes</value></data>
+  <data name="Admin.Journal.Gallery.Moved" xml:space="preserve"><value>Moved to position {0} of {1}</value></data>
+  <data name="Admin.Journal.Gallery.Save" xml:space="preserve"><value>Save gallery</value></data>
+  <data name="Admin.Journal.GallerySaved" xml:space="preserve"><value>Gallery saved: order, captions and visibility are live.</value></data>
+  <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} is already in this article's media, so the existing file was used and no copy was stored.</value></data>
 </root>

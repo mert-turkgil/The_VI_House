@@ -170,6 +170,20 @@ public record AdminJournalTranslationTab(
     SiteCulture Culture, bool IsWritten, bool IsDefault, AdminJournalTranslationFormViewModel Form);
 
 /// <summary>One row of the admin index.</summary>
+/// <summary>
+/// One row of the media library as posted by the gallery form. The rows arrive in the order the
+/// admin dragged them into: the form posts <c>items.Index</c> keyed by media id, and model binding
+/// follows the posted order, so the script never renumbers field names.
+/// </summary>
+public class AdminJournalGalleryItemForm
+{
+    public Guid MediaId { get; set; }
+    public bool ShowInGallery { get; set; }
+
+    /// <summary>Culture → caption; a blank value means "none in this language".</summary>
+    public Dictionary<string, string?> Captions { get; set; } = [];
+}
+
 public class AdminJournalListItemViewModel
 {
     public Guid Id { get; set; }

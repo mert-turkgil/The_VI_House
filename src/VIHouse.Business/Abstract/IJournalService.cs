@@ -52,6 +52,14 @@ public interface IJournalService
     /// <summary>Removes one asset — row first, then the file.</summary>
     Task<JournalSaveResult> RemoveMediaAsync(Guid postId, Guid mediaId, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 
+    /// <summary>
+    /// Saves the media library as the admin arranged it: <paramref name="items"/> is in the order
+    /// the gallery should show, and carries each file's captions and whether it is shown at all.
+    /// Files not listed keep their captions and follow the listed ones in their existing order.
+    /// </summary>
+    Task<JournalSaveResult> SaveGalleryAsync(
+        Guid postId, IReadOnlyList<JournalGalleryEdit> items, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
     /// <summary>Points the post's cover at an existing image, replacing whatever it was. The file
     /// the previous cover used is deleted only if nothing else references it.</summary>
     Task<JournalSaveResult> SetCoverAsync(Guid postId, Guid mediaId, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
@@ -74,8 +82,14 @@ public record JournalSaveResult(bool Success, Guid? PostId, string? Error)
     public static JournalSaveResult Fail(string error) => new(false, null, error);
 }
 
-public record JournalMediaResult(bool Success, JournalPostMedia? Media, string? Error)
+/// <summary>One library file as the admin left it: captions by culture (blank = none in that
+/// language) and whether it appears in the gallery.</summary>
+public record JournalGalleryEdit(Guid MediaId, IReadOnlyDictionary<string, string?> Captions, bool ShowInGallery);
+
+/// <param name="Reused">True when the upload was identical to a file the post already had, so that
+/// file was returned and nothing new was stored.</param>
+public record JournalMediaResult(bool Success, JournalPostMedia? Media, string? Error, bool Reused = false)
 {
-    public static JournalMediaResult Ok(JournalPostMedia media) => new(true, media, null);
+    public static JournalMediaResult Ok(JournalPostMedia media, bool reused = false) => new(true, media, null, reused);
     public static JournalMediaResult Fail(string error) => new(false, null, error);
 }

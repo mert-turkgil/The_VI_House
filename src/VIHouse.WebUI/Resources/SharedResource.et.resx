@@ -1838,4 +1838,27 @@ Mida soovite teada?</value></data>
   <data name="EmptyStage.Journal.Tile3.Label" xml:space="preserve"><value>Märkmed</value></data>
   <data name="EmptyStage.Journal.Tile3.Caption" xml:space="preserve"><value>Kapital, kultuur ja ehitamine lühidalt</value></data>
   <data name="EmptyStage.Action.About" xml:space="preserve"><value>House'ist</value></data>
+  <data name="Journal.Gallery.Eyebrow" xml:space="preserve"><value>Loost</value></data>
+  <data name="Journal.Gallery.Title" xml:space="preserve"><value>Galerii</value></data>
+  <data name="Journal.Gallery.Count" xml:space="preserve"><value>{0} fotot</value></data>
+  <data name="Journal.Gallery.CountOne" xml:space="preserve"><value>1 foto</value></data>
+  <data name="Journal.Gallery.Prev" xml:space="preserve"><value>Eelmine foto</value></data>
+  <data name="Journal.Gallery.Next" xml:space="preserve"><value>Järgmine foto</value></data>
+  <data name="Journal.Gallery.Open" xml:space="preserve"><value>Ava foto {0}/{1}</value></data>
+  <data name="Journal.Gallery.Close" xml:space="preserve"><value>Sulge</value></data>
+  <data name="Admin.Journal.Gallery.Intro" xml:space="preserve"><value>Siinsed fotod ilmuvad artikli all olevasse galeriisse selles järjekorras. Järjekorra muutmiseks lohistage kaarti pidemest või kasutage nooli, kirjutage igas keeles pildiallkiri (tühja puhul kasutatakse inglise oma) ja lülitage välja fotod, mida galerii näitama ei peaks. Kaanepilt on artikli ülaosas ja seda ei korrata.</value></data>
+  <data name="Admin.Journal.Gallery.View" xml:space="preserve"><value>Vaata galeriid ({0})</value></data>
+  <data name="Admin.Journal.Gallery.Drag" xml:space="preserve"><value>Järjestamiseks lohistage</value></data>
+  <data name="Admin.Journal.Gallery.Captions" xml:space="preserve"><value>Pildiallkiri</value></data>
+  <data name="Admin.Journal.Gallery.CaptionPlaceholder" xml:space="preserve"><value>Mida foto näitab</value></data>
+  <data name="Admin.Journal.Gallery.CaptionInherits" xml:space="preserve"><value>Tühi: kasutatakse inglise allkirja</value></data>
+  <data name="Admin.Journal.Gallery.CoverNote" xml:space="preserve"><value>See on kaanepilt: artikli ülaosas, mitte galeriis.</value></data>
+  <data name="Admin.Journal.Gallery.Show" xml:space="preserve"><value>Näita galeriis</value></data>
+  <data name="Admin.Journal.Gallery.MoveUp" xml:space="preserve"><value>Liiguta üles</value></data>
+  <data name="Admin.Journal.Gallery.MoveDown" xml:space="preserve"><value>Liiguta alla</value></data>
+  <data name="Admin.Journal.Gallery.Unsaved" xml:space="preserve"><value>Salvestamata muudatused</value></data>
+  <data name="Admin.Journal.Gallery.Moved" xml:space="preserve"><value>Liigutatud kohale {0}/{1}</value></data>
+  <data name="Admin.Journal.Gallery.Save" xml:space="preserve"><value>Salvesta galerii</value></data>
+  <data name="Admin.Journal.GallerySaved" xml:space="preserve"><value>Galerii salvestatud: järjekord, allkirjad ja nähtavus on avaldatud.</value></data>
+  <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} on selle artikli meedias juba olemas, seega kasutati olemasolevat faili ja koopiat ei salvestatud.</value></data>
 </root>

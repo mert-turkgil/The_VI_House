@@ -7,7 +7,8 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework;
 public class EfJournalPostRepository(VIHouseDbContext db) : EfRepository<JournalPost>(db), IJournalPostRepository
 {
     public Task<JournalPost?> GetBySlugAsync(string slug, CancellationToken ct = default) =>
-        Set.Include(p => p.Translations).FirstOrDefaultAsync(p => p.Slug == slug, ct);
+        // Media for the gallery under the article; the cover needs only its id, which is on the post.
+        Set.Include(p => p.Translations).Include(p => p.Media).FirstOrDefaultAsync(p => p.Slug == slug, ct);
 
     public async Task<List<JournalPost>> GetPublicListingAsync(JournalPostFilter filter, CancellationToken ct = default)
     {

@@ -1838,4 +1838,27 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="EmptyStage.Journal.Tile3.Label" xml:space="preserve"><value>Notlar</value></data>
   <data name="EmptyStage.Journal.Tile3.Caption" xml:space="preserve"><value>Sermaye, kültür ve inşa üzerine kısa yazılar</value></data>
   <data name="EmptyStage.Action.About" xml:space="preserve"><value>House hakkında</value></data>
+  <data name="Journal.Gallery.Eyebrow" xml:space="preserve"><value>Hikâyeden kareler</value></data>
+  <data name="Journal.Gallery.Title" xml:space="preserve"><value>Galeri</value></data>
+  <data name="Journal.Gallery.Count" xml:space="preserve"><value>{0} fotoğraf</value></data>
+  <data name="Journal.Gallery.CountOne" xml:space="preserve"><value>1 fotoğraf</value></data>
+  <data name="Journal.Gallery.Prev" xml:space="preserve"><value>Önceki fotoğraf</value></data>
+  <data name="Journal.Gallery.Next" xml:space="preserve"><value>Sonraki fotoğraf</value></data>
+  <data name="Journal.Gallery.Open" xml:space="preserve"><value>{1} fotoğraftan {0}. fotoğrafı aç</value></data>
+  <data name="Journal.Gallery.Close" xml:space="preserve"><value>Kapat</value></data>
+  <data name="Admin.Journal.Gallery.Intro" xml:space="preserve"><value>Buradaki fotoğraflar makalenin altındaki galeride bu sırayla görünür. Sırayı değiştirmek için kartı tutamağından sürükleyin ya da okları kullanın, her dil için bir açıklama yazın (boş bırakılırsa İngilizcesi kullanılır) ve galeride görünmesini istemediğiniz fotoğrafı kapatın. Kapak görseli makalenin üstünde gösterilir, galeride tekrar edilmez.</value></data>
+  <data name="Admin.Journal.Gallery.View" xml:space="preserve"><value>Galeriyi görüntüle ({0})</value></data>
+  <data name="Admin.Journal.Gallery.Drag" xml:space="preserve"><value>Sıralamak için sürükleyin</value></data>
+  <data name="Admin.Journal.Gallery.Captions" xml:space="preserve"><value>Açıklama</value></data>
+  <data name="Admin.Journal.Gallery.CaptionPlaceholder" xml:space="preserve"><value>Fotoğrafta ne görünüyor</value></data>
+  <data name="Admin.Journal.Gallery.CaptionInherits" xml:space="preserve"><value>Boş: İngilizce açıklama kullanılır</value></data>
+  <data name="Admin.Journal.Gallery.CoverNote" xml:space="preserve"><value>Bu kapak görseli: makalenin üstünde gösterilir, galeride yer almaz.</value></data>
+  <data name="Admin.Journal.Gallery.Show" xml:space="preserve"><value>Galeride göster</value></data>
+  <data name="Admin.Journal.Gallery.MoveUp" xml:space="preserve"><value>Yukarı taşı</value></data>
+  <data name="Admin.Journal.Gallery.MoveDown" xml:space="preserve"><value>Aşağı taşı</value></data>
+  <data name="Admin.Journal.Gallery.Unsaved" xml:space="preserve"><value>Kaydedilmemiş değişiklikler</value></data>
+  <data name="Admin.Journal.Gallery.Moved" xml:space="preserve"><value>{1} içinde {0}. sıraya taşındı</value></data>
+  <data name="Admin.Journal.Gallery.Save" xml:space="preserve"><value>Galeriyi kaydet</value></data>
+  <data name="Admin.Journal.GallerySaved" xml:space="preserve"><value>Galeri kaydedildi: sıra, açıklamalar ve görünürlük yayında.</value></data>
+  <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} bu makalenin medyasında zaten var; mevcut dosya kullanıldı, kopya saklanmadı.</value></data>
 </root>
