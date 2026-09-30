@@ -1861,4 +1861,6 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Admin.Journal.Gallery.Save" xml:space="preserve"><value>Galeriyi kaydet</value></data>
   <data name="Admin.Journal.GallerySaved" xml:space="preserve"><value>Galeri kaydedildi: sıra, açıklamalar ve görünürlük yayında.</value></data>
   <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} bu makalenin medyasında zaten var; mevcut dosya kullanıldı, kopya saklanmadı.</value></data>
+  <data name="Journal.Breadcrumb" xml:space="preserve"><value>Bu yazının yeri</value></data>
+  <data name="Journal.ReadingTime" xml:space="preserve"><value>{0} dk okuma</value></data>
 </root>

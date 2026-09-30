@@ -1861,4 +1861,6 @@ What would you like to know?</value></data>
   <data name="Admin.Journal.Gallery.Save" xml:space="preserve"><value>Save gallery</value></data>
   <data name="Admin.Journal.GallerySaved" xml:space="preserve"><value>Gallery saved: order, captions and visibility are live.</value></data>
   <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} is already in this article's media, so the existing file was used and no copy was stored.</value></data>
+  <data name="Journal.Breadcrumb" xml:space="preserve"><value>Where this story sits</value></data>
+  <data name="Journal.ReadingTime" xml:space="preserve"><value>{0} min read</value></data>
 </root>

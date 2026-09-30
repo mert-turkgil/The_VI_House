@@ -18,6 +18,9 @@
 //     thumbnail beside a column of single words, so it takes the full width instead.
 
 .rich-content {
+  // Prefix for the position rules below; see the note there.
+  $pos: ':is(figure, img).image-style';
+
   --rich-gap: var(--vih-space-md);
 
   // A floated image at the end of the article must not escape into the section below.
@@ -87,44 +90,50 @@
   }
 
   // --- Positions ---------------------------------------------------------------------------------
+  // Written as :is(figure, img).image-style-* so they outrank `figure.image` above. With plain
+  // .image-style-* the figure's `margin: … auto` won, which took the gap away from the text beside a
+  // floated picture and left extra space under it.
 
-  .image-style-align-left,
-  .image-style-align-right,
-  .image-style-side {
+  #{$pos}-align-left,
+  #{$pos}-align-right,
+  #{$pos}-side {
     clear: none;
     margin-top: var(--vih-space-3xs);
     margin-bottom: var(--vih-space-sm);
   }
 
-  .image-style-align-left {
+  #{$pos}-align-left {
     float: left;
+    margin-left: 0;
     margin-right: var(--rich-gap);
   }
 
-  .image-style-align-right {
+  #{$pos}-align-right {
     float: right;
     margin-left: var(--rich-gap);
+    margin-right: 0;
   }
 
   // "Side" is a right-hand picture capped at half the column, like a pull-quote.
-  .image-style-side {
+  #{$pos}-side {
     float: right;
     max-width: 50%;
     margin-left: var(--rich-gap);
+    margin-right: 0;
   }
 
-  .image-style-align-center {
+  #{$pos}-align-center {
     margin-left: auto;
     margin-right: auto;
   }
 
-  .image-style-block-align-left {
+  #{$pos}-block-align-left {
     max-width: calc(100% - var(--rich-gap));
     margin-left: 0;
     margin-right: auto;
   }
 
-  .image-style-block-align-right {
+  #{$pos}-block-align-right {
     max-width: calc(100% - var(--rich-gap));
     margin-left: auto;
     margin-right: 0;
@@ -132,9 +141,9 @@
 
   // A picture that starts a paragraph lines up with the paragraph's first line rather than
   // sitting a gap below it.
-  p + .image-style-align-left,
-  p + .image-style-align-right,
-  p + .image-style-side {
+  p + #{$pos}-align-left,
+  p + #{$pos}-align-right,
+  p + #{$pos}-side {
     margin-top: 0;
   }
 
@@ -217,11 +226,11 @@
   // !important only on the width: it has to beat the inline style="width:40%" the editor writes,
   // and nothing else can.
   @include bp.until(bp.$sm) {
-    .image-style-align-left,
-    .image-style-align-right,
-    .image-style-side,
-    .image-style-block-align-left,
-    .image-style-block-align-right {
+    #{$pos}-align-left,
+    #{$pos}-align-right,
+    #{$pos}-side,
+    #{$pos}-block-align-left,
+    #{$pos}-block-align-right {
       float: none;
       max-width: 100%;
       margin-left: 0;

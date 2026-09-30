@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using VIHouse.Business.Concrete;
 using VIHouse.Entities.Journal;
 using VIHouse.WebUI.Helpers;
@@ -7,6 +8,12 @@ namespace VIHouse.WebUI.ViewModels.Journal;
 public class JournalPostDetailViewModel
 {
     public string Title { get; set; } = default!;
+
+    /// <summary>The post's standfirst, shown under the headline. Null hides it.</summary>
+    public string? Excerpt { get; set; }
+
+    /// <summary>Whole minutes at an unhurried reading pace, never less than one.</summary>
+    public int ReadingMinutes { get; set; } = 1;
     public string Slug { get; set; } = default!;
     public JournalCategory Category { get; set; }
     public string? CoverImageUrl { get; set; }
@@ -36,6 +43,8 @@ public class JournalPostDetailViewModel
         return new JournalPostDetailViewModel
         {
             Title = copy?.Title ?? p.Slug,
+            Excerpt = string.IsNullOrWhiteSpace(copy?.Excerpt) ? null : copy.Excerpt.Trim(),
+            ReadingMinutes = ReadingMinutesFor(copy?.Body),
             Slug = p.Slug,
             Category = p.Category,
             CoverImageUrl = CoverUrl(p),
@@ -49,6 +58,17 @@ public class JournalPostDetailViewModel
             Gallery = [.. JournalService.GalleryMedia(p)
                 .Select(m => new JournalGalleryItem(JournalService.MediaUrl(m.Id), JournalMediaCaptions.Resolve(m, culture)))],
         };
+    }
+
+    // 220 words a minute: slower than skimming, which is how an essay like these is read.
+    private const int WordsPerMinute = 220;
+
+    private static int ReadingMinutesFor(string? body)
+    {
+        if (string.IsNullOrWhiteSpace(body)) return 1;
+        var text = Regex.Replace(body, "<[^>]+>", " ");
+        var words = Regex.Matches(text, @"[\p{L}\p{N}]+(?:['’][\p{L}]+)?").Count;
+        return Math.Max(1, (int)Math.Round(words / (double)WordsPerMinute));
     }
 
     /// <summary>An uploaded cover is streamed by MediaController; a pasted one is used as written.

@@ -3,33 +3,55 @@
     ViewData["Title"] = Model.Title;
 }
 
-<div class="content-hero">
-    <div class="container">
-        <span class="content-hero__eyebrow">@Loc[$"Journal.Category.{Model.Category}"]</span>
-        <h1>@Model.Title</h1>
-        <div class="journal-article__meta">
-            @if (Model.PublishedAt is not null)
-            {
-                <span>@Model.PublishedAt.Value.ToString("d MMMM yyyy")</span>
-            }
+@{
+    var hasCover = !string.IsNullOrEmpty(Model.CoverImageUrl);
+}
+
+@* Editorial header: where the story sits (Journal / category), the headline, the standfirst and a
+   meta row, on the brand green. With a cover, the photograph is a contained frame that straddles
+   the bottom edge of the band, rather than a full-bleed banner whose height grew with the screen. *@
+<header class="article-hero @(hasCover ? "article-hero--with-cover" : "")">
+    <div class="container article-hero__inner">
+        <nav class="article-hero__crumbs" aria-label="@Loc["Journal.Breadcrumb"]">
+            <a asp-area="" asp-controller="Journal" asp-action="Index">@Loc["Journal.Heading"]</a>
+            <span aria-hidden="true">/</span>
+            <a asp-area="" asp-controller="Journal" asp-action="Index" asp-route-category="@Model.Category">@Loc[$"Journal.Category.{Model.Category}"]</a>
+        </nav>
+
+        <h1 class="article-hero__title">@Model.Title</h1>
+
+        @if (Model.Excerpt is not null)
+        {
+            <p class="article-hero__lede">@Model.Excerpt</p>
+        }
+
+        <div class="article-hero__meta">
             @if (!string.IsNullOrWhiteSpace(Model.AuthorName))
             {
-                <span>@Model.AuthorName</span>
+                <span class="article-hero__author">
+                    <span class="article-hero__mark" aria-hidden="true"><partial name="_Crest" /></span>
+                    @Model.AuthorName
+                </span>
             }
+            @if (Model.PublishedAt is not null)
+            {
+                <time datetime="@Model.PublishedAt.Value.ToString("yyyy-MM-dd")">@Model.PublishedAt.Value.ToString("d MMMM yyyy")</time>
+            }
+            <span>@Loc["Journal.ReadingTime", Model.ReadingMinutes]</span>
         </div>
     </div>
-</div>
+</header>
 
-@if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+@if (hasCover)
 {
-    @* Eager + full width: this is the article's lead image, above the fold on most screens, so it
-       should not be lazy-loaded. Decorative — the headline above it already carries the meaning. *@
-    <div class="journal-article__cover">
+    @* Eager: the article's lead image, above the fold on most screens. Decorative — the headline
+       above it already carries the meaning. *@
+    <div class="container article-cover">
         <partial name="_CoverImage" model="@(new CoverImageViewModel {
             Url = Model.CoverImageUrl,
             Alt = Model.CoverImageAlt,
-            Ratio = "21x9",
-            Sizes = "100vw",
+            Ratio = "16x9",
+            Sizes = "(min-width: 1120px) 1040px, calc(100vw - 32px)",
             Eager = true,
         })" />
     </div>

@@ -1,3 +1,5 @@
+@use '../breakpoints' as bp;
+
 // --- Listing (brief §125) -------------------------------------------------------------------------
 // Card grid mirrors .experience-grid/.experience-card exactly (same tokens, same shape) — the
 // Details page reuses .content-hero/.content-body from _content-page.scss instead of duplicating a
@@ -117,21 +119,198 @@
   gap: 6px 14px;
 }
 
-// --- Detail ----------------------------------------------------------------------------------------
-.journal-article__cover {
-  // Sizing moved to .cover (Views/Shared/_CoverImage.cshtml) so the box is reserved before
-  // the photograph loads. This is now only a positioning context for the badge.
+// --- Detail: the article header ----------------------------------------------------------------------
+// Views/Journal/Details.cshtml. A centred editorial header on the brand green: breadcrumb, headline,
+// standfirst and a meta row. The cover is a contained 16:9 frame (wider and flatter from the medium
+// breakpoint, and never taller than 62% of the screen) that straddles the bottom edge of the band.
+// The --with-cover modifier deepens the band by the amount the photograph overlaps it.
+
+.article-hero {
+  --cover-overlap: clamp(72px, 14vw, 180px);
+
   position: relative;
+  padding: var(--vih-space-2xl) 0 var(--vih-space-xl);
+  background:
+    radial-gradient(80% 120% at 50% 0%, color-mix(in srgb, var(--vih-green-800) 55%, transparent) 0%, transparent 70%),
+    var(--vih-green-950);
+  color: var(--vih-cream);
+  text-align: center;
+
+  @include bp.from(bp.$md) {
+    padding-top: var(--vih-space-3xl);
+  }
+
+  &--with-cover {
+    padding-bottom: calc(var(--cover-overlap) + var(--vih-space-lg));
+  }
 }
 
-.journal-article__meta {
-  font-size: 0.8125rem;
+.article-hero__inner {
+  max-width: 860px;
+  animation: vih-article-rise var(--vih-dur-reveal) var(--vih-ease-out) both;
+}
+
+.article-hero__crumbs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--vih-space-2xs);
+  margin-bottom: var(--vih-space-sm);
+  font-size: var(--vih-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+
+  a {
+    color: var(--vih-cream-dim);
+    background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+    transition: color var(--vih-dur-base) var(--vih-ease-out), background-size var(--vih-dur-slow) var(--vih-ease-out);
+
+    &:last-child {
+      color: var(--vih-gold-light);
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--vih-cream);
+      background-size: 100% 1px;
+    }
+  }
+
+  span {
+    color: color-mix(in srgb, var(--vih-cream) 35%, transparent);
+  }
+}
+
+.article-hero__title {
+  margin: 0 auto;
+  max-width: 22ch;
+  font-family: var(--vih-font-serif);
+  font-size: clamp(2rem, 4.6vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.article-hero__lede {
+  margin: var(--vih-space-sm) auto 0;
+  max-width: 58ch;
+  font-size: var(--vih-text-lg);
+  line-height: 1.6;
   color: var(--vih-cream-dim);
+  text-wrap: balance;
+}
+
+.article-hero__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 14px;
+  align-items: center;
   justify-content: center;
-  margin-top: 4px;
+  gap: var(--vih-space-3xs) 0;
+  margin-top: var(--vih-space-md);
+  font-size: var(--vih-text-sm);
+  color: var(--vih-cream-dim);
+
+  // Separated by a small gold dot, drawn so it never wraps onto a line by itself.
+  > * + *::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    margin: 0 var(--vih-space-xs);
+    border-radius: 50%;
+    background: var(--vih-gold);
+    vertical-align: middle;
+  }
+
+  // On a phone the author takes a line of their own and date · reading time share the next, so a
+  // wrapped line never starts with a stray dot.
+  @include bp.until(bp.$sm) {
+    .article-hero__author {
+      flex-basis: 100%;
+      justify-content: center;
+      margin-bottom: var(--vih-space-3xs);
+    }
+
+    .article-hero__author + *::before {
+      display: none;
+    }
+  }
+}
+
+.article-hero__author {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+  font-weight: 600;
+  color: var(--vih-cream);
+}
+
+.article-hero__mark {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid color-mix(in srgb, var(--vih-gold) 70%, transparent);
+  border-radius: 50%;
+  color: var(--vih-gold-light);
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// --- The cover ---------------------------------------------------------------------------------------
+
+.article-cover {
+  position: relative;
+  z-index: 1;
+  max-width: 1072px; // 1040px of photograph plus the gutters
+  margin-top: calc(var(--cover-overlap, 120px) * -1);
+  animation: vih-article-settle 900ms var(--vih-ease-out) 120ms both;
+
+  .cover {
+    border-radius: var(--vih-radius-2xl);
+    box-shadow: 0 24px 60px rgba(0, 26, 2, 0.22), 0 2px 6px rgba(0, 26, 2, 0.12);
+    max-height: 62vh;
+
+    @include bp.from(bp.$md) {
+      aspect-ratio: 2 / 1;
+    }
+  }
+}
+
+// The overlap reads the variable from the band above it, which is a sibling, so it is set once more
+// here at the same value.
+.article-hero--with-cover + .article-cover {
+  --cover-overlap: clamp(72px, 14vw, 180px);
+}
+
+@keyframes vih-article-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes vih-article-settle {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-hero__inner,
+  .article-cover {
+    animation: none;
+  }
+
+  .article-hero__crumbs a {
+    transition: none;
+  }
 }
 
 .journal-article__back {

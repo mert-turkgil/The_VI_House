@@ -1861,4 +1861,6 @@ Mida soovite teada?</value></data>
   <data name="Admin.Journal.Gallery.Save" xml:space="preserve"><value>Salvesta galerii</value></data>
   <data name="Admin.Journal.GallerySaved" xml:space="preserve"><value>Galerii salvestatud: järjekord, allkirjad ja nähtavus on avaldatud.</value></data>
   <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} on selle artikli meedias juba olemas, seega kasutati olemasolevat faili ja koopiat ei salvestatud.</value></data>
+  <data name="Journal.Breadcrumb" xml:space="preserve"><value>Selle loo asukoht</value></data>
+  <data name="Journal.ReadingTime" xml:space="preserve"><value>{0} min lugemist</value></data>
 </root>
