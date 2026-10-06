@@ -1863,4 +1863,123 @@ Mida soovite teada?</value></data>
   <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} on selle artikli meedias juba olemas, seega kasutati olemasolevat faili ja koopiat ei salvestatud.</value></data>
   <data name="Journal.Breadcrumb" xml:space="preserve"><value>Selle loo asukoht</value></data>
   <data name="Journal.ReadingTime" xml:space="preserve"><value>{0} min lugemist</value></data>
+  <data name="Lightbox.Close" xml:space="preserve"><value>Sulge</value></data>
+  <data name="Lightbox.Previous" xml:space="preserve"><value>Eelmine foto</value></data>
+  <data name="Lightbox.Next" xml:space="preserve"><value>Järgmine foto</value></data>
+  <data name="Identity.Error.Default" xml:space="preserve"><value>Meie poolel läks midagi valesti. Palun proovige hetke pärast uuesti.</value></data>
+  <data name="Identity.Error.Concurrency" xml:space="preserve"><value>Teie kontot muudeti samal ajal mujal. Palun laadige leht uuesti ja proovige uuesti.</value></data>
+  <data name="Identity.Error.PasswordMismatch" xml:space="preserve"><value>See ei ole teie praegune parool. Kontrollige seda ja proovige uuesti.</value></data>
+  <data name="Identity.Error.InvalidToken" xml:space="preserve"><value>See link on aegunud või juba kasutatud.</value></data>
+  <data name="Identity.Error.InvalidEmail" xml:space="preserve"><value>„{0}“ ei ole kehtiv e-posti aadress.</value></data>
+  <data name="Identity.Error.DuplicateEmail" xml:space="preserve"><value>{0} on juba seotud teise kontoga.</value></data>
+  <data name="Identity.Error.AlreadyHasPassword" xml:space="preserve"><value>Sellel kontol on juba parool. Kasutage selle asemel „Muuda parooli“.</value></data>
+  <data name="Identity.Error.PasswordTooShort" xml:space="preserve"><value>Kasutage vähemalt {0} märki.</value></data>
+  <data name="Identity.Error.PasswordUniqueChars" xml:space="preserve"><value>Kasutage vähemalt {0} erinevat märki.</value></data>
+  <data name="Identity.Error.PasswordSymbol" xml:space="preserve"><value>Lisage vähemalt üks sümbol, näiteks ! @ # või ?</value></data>
+  <data name="Identity.Error.PasswordDigit" xml:space="preserve"><value>Lisage vähemalt üks number (0–9).</value></data>
+  <data name="Identity.Error.PasswordLower" xml:space="preserve"><value>Lisage vähemalt üks väiketäht (a–z).</value></data>
+  <data name="Identity.Error.PasswordUpper" xml:space="preserve"><value>Lisage vähemalt üks suurtäht (A–Z).</value></data>
+  <data name="Auth.Validation.EmailRequired" xml:space="preserve"><value>Sisestage oma e-posti aadress.</value></data>
+  <data name="Auth.Validation.EmailInvalid" xml:space="preserve"><value>Sisestage e-posti aadress kujul nimi@näide.ee.</value></data>
+  <data name="Auth.Validation.PasswordRequired" xml:space="preserve"><value>Sisestage uus parool.</value></data>
+  <data name="Auth.Validation.PasswordLength" xml:space="preserve"><value>Kasutage vähemalt {2} märki.</value></data>
+  <data name="Auth.Validation.ConfirmRequired" xml:space="preserve"><value>Kinnitamiseks sisestage uus parool uuesti.</value></data>
+  <data name="Auth.Validation.PasswordsDiffer" xml:space="preserve"><value>Kaks parooli ei ühti. Sisestage mõlemasse lahtrisse sama parool.</value></data>
+  <data name="Auth.Validation.CurrentRequired" xml:space="preserve"><value>Sisestage oma praegune parool.</value></data>
+  <data name="Auth.NewPassword" xml:space="preserve"><value>Uus parool</value></data>
+  <data name="Auth.ConfirmPassword" xml:space="preserve"><value>Kinnitage uus parool</value></data>
+  <data name="Auth.Rules.Title" xml:space="preserve"><value>Teie parool vajab</value></data>
+  <data name="Auth.Rules.Length" xml:space="preserve"><value>Vähemalt {0} märki</value></data>
+  <data name="Auth.Rules.Upper" xml:space="preserve"><value>Suurtähte (A–Z)</value></data>
+  <data name="Auth.Rules.Lower" xml:space="preserve"><value>Väiketähte (a–z)</value></data>
+  <data name="Auth.Rules.Digit" xml:space="preserve"><value>Numbrit (0–9)</value></data>
+  <data name="Auth.Rules.Symbol" xml:space="preserve"><value>Sümbolit, näiteks ! @ # ?</value></data>
+  <data name="Auth.Rules.Match" xml:space="preserve"><value>Mõlemad paroolid ühtivad</value></data>
+  <data name="Auth.Rules.Met" xml:space="preserve"><value>täidetud</value></data>
+  <data name="Auth.Rules.Unmet" xml:space="preserve"><value>veel mitte</value></data>
+  <data name="Auth.Security.Eyebrow" xml:space="preserve"><value>Konto turvalisus</value></data>
+  <data name="Auth.BackToSignIn" xml:space="preserve"><value>Tagasi sisselogimise juurde</value></data>
+  <data name="Auth.BackToHome" xml:space="preserve"><value>Tagasi avalehele</value></data>
+  <data name="Auth.Reset.Title" xml:space="preserve"><value>Valige uus parool</value></data>
+  <data name="Auth.Reset.Heading" xml:space="preserve"><value>Valige uus parool</value></data>
+  <data name="Auth.Reset.Lede" xml:space="preserve"><value>Sisestage oma konto e-posti aadress ja valige parool, mida te mujal ei kasuta.</value></data>
+  <data name="Auth.Reset.ErrorTitle" xml:space="preserve"><value>Me ei saanud teie parooli muuta</value></data>
+  <data name="Auth.Reset.Submit" xml:space="preserve"><value>Salvesta uus parool</value></data>
+  <data name="Auth.Reset.Expired.Title" xml:space="preserve"><value>Seda linki ei saa enam kasutada</value></data>
+  <data name="Auth.Reset.Expired.Body" xml:space="preserve"><value>Lähtestamise lingid töötavad ühe korra ja aeguvad 24 tunni pärast, seega on see kas kasutatud või aegunud. Küsige uus ja saadame selle kohe e-postiga.</value></data>
+  <data name="Auth.Reset.Expired.Action" xml:space="preserve"><value>Saada mulle uus link</value></data>
+  <data name="Auth.Forgot.Title" xml:space="preserve"><value>Unustasite parooli?</value></data>
+  <data name="Auth.Forgot.Heading" xml:space="preserve"><value>Unustasite parooli?</value></data>
+  <data name="Auth.Forgot.Lede" xml:space="preserve"><value>Sisestage e-post, mida kasutate The VI House'is, ja saadame teile lingi uue parooli valimiseks. See kehtib 24 tundi.</value></data>
+  <data name="Auth.Forgot.ErrorTitle" xml:space="preserve"><value>Palun kontrollige oma e-posti aadressi</value></data>
+  <data name="Auth.Forgot.Submit" xml:space="preserve"><value>Saada lähtestamise link</value></data>
+  <data name="Auth.ForgotSent.Title" xml:space="preserve"><value>Kontrollige postkasti</value></data>
+  <data name="Auth.ForgotSent.Heading" xml:space="preserve"><value>Kontrollige oma postkasti</value></data>
+  <data name="Auth.ForgotSent.Lede" xml:space="preserve"><value>Kui sellele aadressile on konto, saatsime sinna lingi uue parooli valimiseks.</value></data>
+  <data name="Auth.ForgotSent.Tip1" xml:space="preserve"><value>Link töötab ühe korra ja aegub 24 tunni pärast.</value></data>
+  <data name="Auth.ForgotSent.Tip2" xml:space="preserve"><value>Mõne minuti pärast pole midagi? Kontrollige rämpsposti või reklaamide kausta.</value></data>
+  <data name="Auth.ForgotSent.NothingArrived" xml:space="preserve"><value>Ikka veel midagi?</value></data>
+  <data name="Auth.ForgotSent.SendAgain" xml:space="preserve"><value>Saada uuesti</value></data>
+  <data name="Auth.ResetDone.Title" xml:space="preserve"><value>Parool muudetud</value></data>
+  <data name="Auth.ResetDone.Heading" xml:space="preserve"><value>Teie parool on muudetud</value></data>
+  <data name="Auth.ResetDone.Lede" xml:space="preserve"><value>Nüüd saate uue parooliga sisse logida.</value></data>
+  <data name="Auth.Lockout.Title" xml:space="preserve"><value>Sisselogimine peatatud</value></data>
+  <data name="Auth.Lockout.Heading" xml:space="preserve"><value>Liiga palju katseid</value></data>
+  <data name="Auth.Lockout.Lede" xml:space="preserve"><value>Teie turvalisuse huvides on sellele kontole sisselogimine {0} minutiks peatatud. Pärast seda võite uuesti proovida või valida kohe uue parooli.</value></data>
+  <data name="Auth.Lockout.Reset" xml:space="preserve"><value>Valige uus parool</value></data>
+  <data name="Auth.Denied.Title" xml:space="preserve"><value>Juurdepääs puudub</value></data>
+  <data name="Auth.Denied.Heading" xml:space="preserve"><value>See leht ei kuulu teie konto juurde</value></data>
+  <data name="Auth.Denied.Lede" xml:space="preserve"><value>Olete sisse logitud, kuid teie konto ei hõlma seda ala.</value></data>
+  <data name="Auth.Denied.Account" xml:space="preserve"><value>Minu kontole</value></data>
+  <data name="Auth.Denied.Mistake" xml:space="preserve"><value>Arvate, et see on viga?</value></data>
+  <data name="Auth.Denied.Contact" xml:space="preserve"><value>Võtke meiega ühendust</value></data>
+  <data name="Manage.Password.ErrorTitle" xml:space="preserve"><value>Me ei saanud teie parooli salvestada</value></data>
+  <data name="Manage.Password.Changed" xml:space="preserve"><value>Teie parool on muudetud.</value></data>
+  <data name="Manage.SetPassword.Title" xml:space="preserve"><value>Määrake parool</value></data>
+  <data name="Manage.SetPassword.Lede" xml:space="preserve"><value>Praegu logite sisse Google'iga. Lisage parool, et saaksite sisse logida ka oma e-posti aadressiga.</value></data>
+  <data name="Manage.SetPassword.Submit" xml:space="preserve"><value>Määra parool</value></data>
+  <data name="Manage.SetPassword.Done" xml:space="preserve"><value>Teie parool on määratud.</value></data>
+  <data name="Join.Success.Title" xml:space="preserve"><value>Makse laekunud</value></data>
+  <data name="Join.Success.Pending.Title" xml:space="preserve"><value>Teie makset kinnitatakse</value></data>
+  <data name="Join.Success.MembershipFallback" xml:space="preserve"><value>liikmesus</value></data>
+  <data name="Join.Success.Eyebrow" xml:space="preserve"><value>Makse laekunud</value></data>
+  <data name="Join.Success.Heading" xml:space="preserve"><value>Tere tulemast The VI House'i</value></data>
+  <data name="Join.Success.Lede" xml:space="preserve"><value>Teie {0} liikmesus on aktiivne ja kviitung on teel. Veel kaks lühikest sammu ja kõik on valmis.</value></data>
+  <data name="Join.Success.PassLabel" xml:space="preserve"><value>Teie liikmekaart</value></data>
+  <data name="Join.Success.Active" xml:space="preserve"><value>Aktiivne</value></data>
+  <data name="Join.Success.Paid" xml:space="preserve"><value>Makstud</value></data>
+  <data name="Join.Success.NextTitle" xml:space="preserve"><value>Mis edasi saab</value></data>
+  <data name="Join.Success.Step1.Title" xml:space="preserve"><value>Kviitung saadetud</value></data>
+  <data name="Join.Success.Step1.Body" xml:space="preserve"><value>Teie maksekviitung on postkastis.</value></data>
+  <data name="Join.Success.Step2.Title" xml:space="preserve"><value>Seadistage oma konto</value></data>
+  <data name="Join.Success.Step2.Body" xml:space="preserve"><value>Avage e-kiri „{0}“ ja valige oma parool.</value></data>
+  <data name="Join.Success.Step3.Title" xml:space="preserve"><value>Muutke konto turvaliseks</value></data>
+  <data name="Join.Success.Step3.Body" xml:space="preserve"><value>Juhendame teid kaheastmelise kinnitamise seadistamisel, et ainult teie saaksite sisse logida.</value></data>
+  <data name="Join.Success.StepDone" xml:space="preserve"><value>tehtud</value></data>
+  <data name="Join.Success.Explore" xml:space="preserve"><value>Avastage elamusi</value></data>
+  <data name="Join.Success.Footnote" xml:space="preserve"><value>Kas teil on juba parool? Logige sisse nagu tavaliselt. Muul juhul otsige postkastist „{0}“.</value></data>
+  <data name="Join.Success.Action.Eyebrow" xml:space="preserve"><value>Vajalik kinnitus</value></data>
+  <data name="Join.Success.Action.Heading" xml:space="preserve"><value>Teie pank palub teil selle makse kinnitada</value></data>
+  <data name="Join.Success.Action.Lede" xml:space="preserve"><value>Otsige panga sõnumit või rakenduse teavitust ja kinnitage makse. Liikmesus algab hetkel, mil makse laekub.</value></data>
+  <data name="Join.Success.Action.Footnote" xml:space="preserve"><value>Saadame konto seadistamise lingi, „{0}“, e-postiga kohe, kui makse laekub.</value></data>
+  <data name="Join.Success.Bank.Eyebrow" xml:space="preserve"><value>Makse töötlemisel</value></data>
+  <data name="Join.Success.Bank.Heading" xml:space="preserve"><value>Teie pank kinnitab makset</value></data>
+  <data name="Join.Success.Bank.Lede" xml:space="preserve"><value>Teie makse on vormistatud. Valitud makseviis võtab veidi aega; liikmesus algab hetkel, mil raha laekub, tavaliselt mõne päeva jooksul.</value></data>
+  <data name="Join.Success.Bank.Footnote" xml:space="preserve"><value>Saatsime teile selle kohta teate ja saadame seadistamise lingi, „{0}“, kohe, kui makse laekub. Teilt pole rohkem midagi vaja.</value></data>
+  <data name="Join.Success.Processing.Eyebrow" xml:space="preserve"><value>Üks hetk</value></data>
+  <data name="Join.Success.Processing.Heading" xml:space="preserve"><value>Teie makset kinnitatakse</value></data>
+  <data name="Join.Success.Processing.Lede" xml:space="preserve"><value>Teie pank kinnitas makse ja me viime konto lõpule. Tavaliselt võtab see mõne sekundi ja see leht uueneb ise.</value></data>
+  <data name="Join.Success.Processing.Footnote" xml:space="preserve"><value>Või jälgige postkasti: saadame seadistamise lingi, „{0}“, kohe kui see on valmis.</value></data>
+  <data name="Card.BackNote" xml:space="preserve"><value>See kaart kuulub isikule {0}. Näidake seda registreerimisel.</value></data>
+  <data name="Card.ShowBack" xml:space="preserve"><value>Näita tagakülge</value></data>
+  <data name="Card.ShowFront" xml:space="preserve"><value>Näita esikülge</value></data>
+  <data name="Card.CopyNumber" xml:space="preserve"><value>Kopeeri liikmenumber</value></data>
+  <data name="Card.Copied" xml:space="preserve"><value>Kopeeritud</value></data>
+  <data name="Card.MembershipDetails" xml:space="preserve"><value>Liikmesuse üksikasjad</value></data>
+  <data name="Experiences.Facts.When" xml:space="preserve"><value>Millal</value></data>
+  <data name="Experiences.Facts.Length" xml:space="preserve"><value>Kestus</value></data>
+  <data name="Experiences.Facts.Where" xml:space="preserve"><value>Kus</value></data>
+  <data name="Experiences.Facts.Status" xml:space="preserve"><value>Olek</value></data>
+  <data name="Card.Error.NoMembership" xml:space="preserve"><value>Teil pole veel aktiivset liikmesust.</value></data>
+  <data name="Card.Error.NotInPlan" xml:space="preserve"><value>Digitaalne kaart ei kuulu paketti {0}.</value></data>
 </root>

@@ -1,0 +1,12 @@
+@*
+    The animated "done" mark on the confirmation screens: a ring draws, the tick draws inside it, then
+    a soft gold burst. Decorative: the heading next to it says what happened. Styles and the reduced-
+    motion fallback live in _confirmation.scss.
+*@
+<span class="success-mark" aria-hidden="true">
+    <span class="success-mark__burst"></span>
+    <svg class="success-mark__svg" viewBox="0 0 64 64">
+        <circle class="success-mark__ring" cx="32" cy="32" r="29" pathLength="1" />
+        <path class="success-mark__tick" d="M20 33.5l8 8 16-17" pathLength="1" />
+    </svg>
+</span>

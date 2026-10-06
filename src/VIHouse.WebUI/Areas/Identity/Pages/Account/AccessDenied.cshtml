@@ -1,10 +1,22 @@
-﻿@page
+@page
 @model AccessDeniedModel
 @{
-    ViewData["Title"] = "Access denied";
+    ViewData["Title"] = Loc["Auth.Denied.Title"].Value;
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
-</header>
+<div class="auth-card">
+    <div class="auth-card__head auth-card__head--center">
+        <span class="auth-status auth-status--warning" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6l8-3z" pathLength="1" /><path d="M9.5 9.5l5 5M14.5 9.5l-5 5" pathLength="1" /></svg>
+        </span>
+        <span class="auth-card__eyebrow">@Loc["Auth.Security.Eyebrow"]</span>
+        <h1 class="auth-card__title">@Loc["Auth.Denied.Heading"]</h1>
+        <p class="auth-card__lede">@Loc["Auth.Denied.Lede"]</p>
+    </div>
+
+    <a class="btn btn--primary auth-form__submit" asp-area="" asp-controller="Account" asp-action="Index">@Loc["Auth.Denied.Account"]</a>
+
+    <div class="auth-alt">
+        <p>@Loc["Auth.Denied.Mistake"] <a asp-area="" asp-controller="Contact" asp-action="Index">@Loc["Auth.Denied.Contact"]</a></p>
+    </div>
+</div>

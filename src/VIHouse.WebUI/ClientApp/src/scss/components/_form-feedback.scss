@@ -1,0 +1,373 @@
+@use '../breakpoints' as bp;
+
+// --- Form feedback ----------------------------------------------------------------------------------
+// How a form tells the reader something is wrong, and what is expected before it ever is:
+//
+//   .error-summary    the titled list at the top after a failed POST (_ErrorSummary.cshtml),
+//                     focused by modules/formFeedback.ts.
+//   invalid fields    red border, a soft ring, a one-time nudge, and an icon before the message.
+//   .password-rules   the live checklist (_PasswordRules.cshtml, modules/passwordRules.ts).
+//   .auth-status      the round icon at the top of the result screens (expired link, check your
+//                     inbox, locked out, access denied).
+//
+// Colour carries the state but never alone: every error also has an icon and words, and every met
+// rule a drawn tick, so the forms read the same to someone who cannot tell red from green.
+
+// --- Error summary ------------------------------------------------------------------------------------
+
+.error-summary {
+  display: flex;
+  gap: var(--vih-space-xs);
+  margin: 0 0 var(--vih-space-xs);
+  padding: var(--vih-space-sm);
+  border: 1px solid color-mix(in srgb, var(--vih-danger) 28%, transparent);
+  border-left: 4px solid var(--vih-danger);
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-danger-bg);
+  color: var(--vih-danger-strong);
+  animation: vih-feedback-in var(--vih-dur-slow) var(--vih-ease-out);
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--vih-danger) 30%, transparent);
+  }
+}
+
+.error-summary__icon {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+}
+
+.error-summary__body {
+  min-width: 0;
+}
+
+.error-summary__title {
+  margin: 0 0 var(--vih-space-3xs);
+  font-family: var(--vih-font-sans);
+  font-size: var(--vih-text-md);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--vih-danger-strong);
+}
+
+.error-summary__list {
+  margin: 0;
+  padding-left: 1.1em;
+  font-size: var(--vih-text-base);
+  line-height: 1.55;
+
+  li + li {
+    margin-top: 2px;
+  }
+
+  a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration-thickness: 2px;
+    }
+  }
+}
+
+// --- Invalid fields -------------------------------------------------------------------------------------
+// .input-validation-error is set by the input tag helper (server errors) and by jQuery Unobtrusive
+// Validation (browser errors), so both paths look the same. The nudge plays once, when the class
+// arrives.
+
+.auth-field__input.input-validation-error,
+.auth-field__input[aria-invalid='true'],
+.join__field input.input-validation-error {
+  border-color: var(--vih-danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vih-danger) 14%, transparent);
+  animation: vih-field-nudge 380ms var(--vih-ease-out);
+
+  &:focus {
+    border-color: var(--vih-danger);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--vih-danger) 24%, transparent);
+  }
+}
+
+// The message under a field: an icon, then the words. :empty keeps a cleared message from leaving an
+// icon behind.
+.auth-field__error.field-validation-error,
+.join__field-error.field-validation-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: var(--vih-text-sm);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--vih-danger-strong);
+  animation: vih-feedback-in var(--vih-dur-base) var(--vih-ease-out);
+
+  &::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+    background: currentColor;
+    // A circle with an exclamation mark, as a mask so it takes the text colour.
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm-.75 3.5h1.5v5h-1.5zm0 6.25h1.5v1.5h-1.5z'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  &:empty {
+    display: none;
+  }
+}
+
+@keyframes vih-field-nudge {
+  0%,
+  100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-2px); }
+}
+
+@keyframes vih-feedback-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+// Edge and old IE draw their own reveal eye inside a password box once something is typed, which
+// put two eyes side by side wherever the site's own show/hide toggle already sits.
+.auth-password-toggle input::-ms-reveal,
+.auth-password-toggle input::-ms-clear {
+  display: none;
+}
+
+// --- Password rules -----------------------------------------------------------------------------------
+
+.password-rules {
+  margin-top: var(--vih-space-2xs);
+  padding: var(--vih-space-xs) var(--vih-space-sm);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-surface-tinted);
+  transition: border-color var(--vih-dur-slow) var(--vih-ease-out), background-color var(--vih-dur-slow) var(--vih-ease-out);
+
+  &.is-complete {
+    border-color: color-mix(in srgb, var(--vih-success) 45%, transparent);
+    background: var(--vih-success-bg);
+  }
+
+  &.is-attempted:not(.is-complete) {
+    animation: vih-field-nudge 380ms var(--vih-ease-out);
+  }
+}
+
+.password-rules__title {
+  margin: 0 0 var(--vih-space-2xs);
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+}
+
+.password-rules__list {
+  display: grid;
+  gap: 6px var(--vih-space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include bp.from(bp.$sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.password-rules__item {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+  font-size: var(--vih-text-sm);
+  line-height: 1.35;
+  color: var(--vih-text-muted);
+  transition: color var(--vih-dur-base) var(--vih-ease-out);
+
+  &.is-met {
+    color: var(--vih-ink);
+  }
+
+  &.is-error {
+    color: var(--vih-danger-strong);
+    font-weight: 600;
+  }
+}
+
+.password-rules__mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid color-mix(in srgb, var(--vih-text-muted) 55%, transparent);
+  border-radius: 50%;
+  color: var(--vih-white);
+  transition:
+    background-color var(--vih-dur-base) var(--vih-ease-out),
+    border-color var(--vih-dur-base) var(--vih-ease-out),
+    transform var(--vih-dur-slow) var(--vih-ease-out);
+
+  svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset var(--vih-dur-slow) var(--vih-ease-out) 60ms;
+  }
+
+  .is-met & {
+    border-color: var(--vih-success);
+    background: var(--vih-success);
+    transform: scale(1.08);
+
+    path {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .is-error & {
+    border-color: var(--vih-danger);
+  }
+}
+
+// --- Result-screen icons and centred heads -------------------------------------------------------------
+
+.auth-card__head--center {
+  text-align: center;
+
+  .auth-card__lede {
+    margin-inline: auto;
+    max-width: 40ch;
+  }
+}
+
+.auth-status {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto var(--vih-space-sm);
+  border-radius: 50%;
+  animation: vih-status-pop 520ms var(--vih-ease-out) both;
+
+  svg {
+    width: 32px;
+    height: 32px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  // Shapes that carry pathLength="1" draw themselves in.
+  [pathLength] {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: vih-status-draw 900ms var(--vih-ease-out) 200ms forwards;
+  }
+
+  &--warning {
+    background: color-mix(in srgb, var(--vih-gold) 16%, transparent);
+    color: var(--vih-gold);
+  }
+
+  &--danger {
+    background: var(--vih-danger-bg);
+    color: var(--vih-danger);
+  }
+
+  &--mail {
+    background: color-mix(in srgb, var(--vih-green-900) 9%, transparent);
+    color: var(--vih-green-900);
+  }
+}
+
+@keyframes vih-status-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes vih-status-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+// A short list of next steps or tips on a result screen.
+.auth-checklist {
+  margin: 0 0 var(--vih-space-md);
+  padding: var(--vih-space-sm) var(--vih-space-sm) var(--vih-space-sm) calc(var(--vih-space-sm) + 1.1em);
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-surface-tinted);
+  font-size: var(--vih-text-base);
+  line-height: 1.6;
+  color: var(--vih-text-secondary);
+
+  li + li {
+    margin-top: var(--vih-space-3xs);
+  }
+}
+
+// --- Reduced motion ---------------------------------------------------------------------------------------
+// The nudge, the pop and the draw go; the colours, icons and words all stay.
+
+@media (prefers-reduced-motion: reduce) {
+  .error-summary,
+  .auth-field__input.input-validation-error,
+  .auth-field__input[aria-invalid='true'],
+  .join__field input.input-validation-error,
+  .auth-field__error.field-validation-error,
+  .join__field-error.field-validation-error,
+  .password-rules.is-attempted,
+  .auth-status {
+    animation: none;
+  }
+
+  .password-rules__mark,
+  .password-rules__mark path {
+    transition: none;
+  }
+
+  .auth-status [pathLength] {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .is-met .password-rules__mark {
+    transform: none;
+  }
+}

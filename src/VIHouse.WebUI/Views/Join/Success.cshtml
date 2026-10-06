@@ -1,10 +1,17 @@
 @model JoinSuccessViewModel
+@{
+    var info = Model.Info;
+    var plan = info.PlanName ?? Loc["Join.Success.MembershipFallback"].Value;
+    var setupSubject = Loc["Email.WelcomeSetup.Subject"].Value;
+    var pending = !info.IsConfirmed;
+    ViewData["Title"] = info.IsConfirmed ? Loc["Join.Success.Title"].Value : Loc["Join.Success.Pending.Title"].Value;
+}
 
 @section Styles {
     @* A session id in the query string is unguessable, but a page that only ever says "just a
        moment" is still not something a crawler should keep. *@
     <meta name="robots" content="noindex" />
-    @if (!Model.Info.IsConfirmed && !Model.Info.AwaitingBank && !Model.Info.RequiresAction)
+    @if (!info.IsConfirmed && !info.AwaitingBank && !info.RequiresAction)
     {
         @* The webhook usually lands within seconds of the redirect; polling by reload is the
            simplest thing that shows the confirmed state without the visitor having to act. *@
@@ -12,59 +19,116 @@
     }
 }
 
-<div class="onboarding">
-    <div class="container onboarding__inner onboarding__inner--narrow">
-        @if (Model.Info.IsConfirmed)
+@*
+    After a membership checkout. Four states, decided by the payment's own status:
+      confirmed       the success mark, a preview of the member pass, and the three next steps;
+      requires action the bank wants the buyer to approve the payment;
+      awaiting bank   a delayed payment method, money not landed yet;
+      processing      the redirect beat the webhook by a moment; the page refreshes itself.
+    Styles: _confirmation.scss.
+*@
+<section class="confirm @(pending ? "confirm--pending" : null)">
+    <div class="container confirm__inner">
+        @if (info.IsConfirmed)
         {
-            <span class="onboarding__eyebrow">Payment received</span>
-            <h1>You're in</h1>
-            <p class="onboarding__lede">
-                Your @(Model.Info.PlanName ?? "membership") is active and we've emailed your receipt.
-                One more step: a separate email, “@Loc["Email.WelcomeSetup.Subject"]”, carries the link to
-                choose your password — open it and we'll walk you through securing your account.
-            </p>
-            <a class="btn btn--primary" asp-area="Identity" asp-page="/Account/Login">Sign in</a>
-            <p class="onboarding__footnote">
-                Already have a password? Sign in as usual. Otherwise, check your inbox for
-                “@Loc["Email.WelcomeSetup.Subject"]”.
-            </p>
-        }
-        else if (Model.Info.RequiresAction)
-        {
-            <span class="onboarding__eyebrow">Confirmation needed</span>
-            <h1>Your bank needs you to confirm this payment</h1>
-            <p class="onboarding__lede">
-                Look for your bank's message or app prompt and confirm the payment. Your membership starts the moment
-                it clears, and we'll email your account setup link then.
-            </p>
-        }
-        else if (Model.Info.AwaitingBank)
-        {
-            <span class="onboarding__eyebrow">Payment in progress</span>
-            <h1>Your bank is confirming the payment</h1>
-            <p class="onboarding__lede">
-                Your checkout is complete. The payment method you chose takes a little while to clear,
-                so your membership starts the moment the money lands — usually within a few days.
-            </p>
-            <p class="onboarding__footnote">
-                We've emailed you a note about this, and we'll email again with your account setup link
-                as soon as the payment arrives. Nothing further is needed from you.
-            </p>
+            <header class="confirm__head">
+                <partial name="_SuccessMark" />
+                <span class="confirm__eyebrow">@Loc["Join.Success.Eyebrow"]</span>
+                <h1 class="confirm__title">@Loc["Join.Success.Heading"]</h1>
+                <p class="confirm__lede">@Loc["Join.Success.Lede", plan]</p>
+            </header>
+
+            <div class="confirm__grid">
+                @* A preview of the card that waits in the member area, so the purchase is something
+                   the buyer can see, not only a sentence. *@
+                <div class="confirm-pass" aria-label="@Loc["Join.Success.PassLabel"]">
+                    <div class="confirm-pass__top">
+                        <span class="confirm-pass__crest" aria-hidden="true"><partial name="_Crest" /></span>
+                        <span class="confirm-pass__brand">The VI House</span>
+                        <span class="confirm-pass__status"><i aria-hidden="true"></i>@Loc["Join.Success.Active"]</span>
+                    </div>
+                    <span class="confirm-pass__plan">@plan</span>
+                    <dl class="confirm-pass__facts">
+                        @if (info.ExpiresAt is { } expires)
+                        {
+                            <div>
+                                <dt>@Loc["Card.ValidUntil"]</dt>
+                                <dd>@expires.ToString("d MMMM yyyy")</dd>
+                            </div>
+                        }
+                        <div>
+                            <dt>@Loc["Join.Success.Paid"]</dt>
+                            <dd>@MoneyFormatter.Format(info.AmountMinor, info.Currency)</dd>
+                        </div>
+                    </dl>
+                    <span class="confirm-pass__sheen" aria-hidden="true"></span>
+                </div>
+
+                <div class="confirm-steps">
+                    <h2 class="confirm-steps__title">@Loc["Join.Success.NextTitle"]</h2>
+                    <ol class="confirm-steps__list">
+                        <li class="confirm-steps__item is-done">
+                            <span class="confirm-steps__mark" aria-hidden="true">
+                                <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" /></svg>
+                            </span>
+                            <div>
+                                <strong>@Loc["Join.Success.Step1.Title"]</strong>
+                                <p>@Loc["Join.Success.Step1.Body"]</p>
+                            </div>
+                            <span class="visually-hidden">@Loc["Join.Success.StepDone"]</span>
+                        </li>
+                        <li class="confirm-steps__item is-current">
+                            <span class="confirm-steps__mark" aria-hidden="true">2</span>
+                            <div>
+                                <strong>@Loc["Join.Success.Step2.Title"]</strong>
+                                <p>@Loc["Join.Success.Step2.Body", setupSubject]</p>
+                            </div>
+                        </li>
+                        <li class="confirm-steps__item">
+                            <span class="confirm-steps__mark" aria-hidden="true">3</span>
+                            <div>
+                                <strong>@Loc["Join.Success.Step3.Title"]</strong>
+                                <p>@Loc["Join.Success.Step3.Body"]</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="confirm__actions">
+                <a class="btn btn--primary" asp-area="Identity" asp-page="/Account/Login">@Loc["Auth.Login.Submit"]</a>
+                <a class="btn btn--ghost" asp-area="" asp-controller="Experiences" asp-action="Index">@Loc["Join.Success.Explore"]</a>
+            </div>
+            <p class="confirm__footnote">@Loc["Join.Success.Footnote", setupSubject]</p>
         }
         else
         {
-            @* The browser redirect can beat Stripe's webhook by a moment. The payment isn't lost —
-               the webhook is what confirms it — so this says "wait", never "failed". *@
-            <span class="onboarding__eyebrow">Just a moment</span>
-            <h1>Confirming your payment</h1>
-            <p class="onboarding__lede">
-                Your bank has approved the payment and we're finalising your account. This usually
-                takes a few seconds.
-            </p>
-            <p class="onboarding__footnote">
-                Refresh this page in a moment, or watch your inbox — we'll email your account setup
-                link as soon as it's ready. Nothing further is needed from you.
-            </p>
+            var state = info.RequiresAction ? "Action" : info.AwaitingBank ? "Bank" : "Processing";
+
+            <header class="confirm__head">
+                <span class="confirm-pending confirm-pending--@state.ToLowerInvariant()" aria-hidden="true">
+                    <span class="confirm-pending__ring"></span>
+                    <svg viewBox="0 0 24 24">
+                        @if (info.RequiresAction)
+                        {
+                            <rect x="7" y="3" width="10" height="18" rx="2" /><path d="M11 17.5h2" />
+                        }
+                        else if (info.AwaitingBank)
+                        {
+                            <path d="M4 9.5L12 5l8 4.5M5.5 10v7M10 10v7M14 10v7M18.5 10v7M4 19h16" />
+                        }
+                        else
+                        {
+                            <circle cx="12" cy="12" r="1.2" /><circle cx="7" cy="12" r="1.2" /><circle cx="17" cy="12" r="1.2" />
+                        }
+                    </svg>
+                </span>
+                <span class="confirm__eyebrow">@Loc[$"Join.Success.{state}.Eyebrow"]</span>
+                <h1 class="confirm__title">@Loc[$"Join.Success.{state}.Heading"]</h1>
+                <p class="confirm__lede">@Loc[$"Join.Success.{state}.Lede"]</p>
+            </header>
+
+            <p class="confirm__footnote confirm__footnote--card">@Loc[$"Join.Success.{state}.Footnote", setupSubject]</p>
         }
     </div>
-</div>
+</section>

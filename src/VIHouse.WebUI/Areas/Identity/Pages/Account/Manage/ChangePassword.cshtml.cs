@@ -7,10 +7,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using VIHouse.DataAccess.Identity;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
 {
@@ -20,13 +22,16 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
         private readonly ISecurityAlertService _securityAlerts;
+        private readonly IStringLocalizer<SharedResource> _loc;
 
         public ChangePasswordModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<ChangePasswordModel> logger,
-            ISecurityAlertService securityAlerts)
+            ISecurityAlertService securityAlerts,
+            IStringLocalizer<SharedResource> loc)
         {
+            _loc = loc;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
@@ -57,19 +62,19 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "Auth.Validation.CurrentRequired")]
             [DataType(DataType.Password)]
-            [Display(Name = "Current password")]
+            [Display(Name = "Manage.Password.Current")]
             public string OldPassword { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Auth.Validation.PasswordRequired")]
+            [StringLength(100, ErrorMessage = "Auth.Validation.PasswordLength", MinimumLength = 10)] // minimum matches Program.cs
             [DataType(DataType.Password)]
-            [Display(Name = "New password")]
+            [Display(Name = "Auth.NewPassword")]
             public string NewPassword { get; set; }
 
             /// <summary>
@@ -77,8 +82,9 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm new password")]
-            [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+            [Required(ErrorMessage = "Auth.Validation.ConfirmRequired")]
+            [Display(Name = "Auth.ConfirmPassword")]
+            [Compare("NewPassword", ErrorMessage = "Auth.Validation.PasswordsDiffer")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -115,17 +121,15 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
-                foreach (var error in changePasswordResult.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                // A wrong current password goes on the current-password box, rule failures on the new one.
+                IdentityErrorMapping.AddTo(ModelState, changePasswordResult, "Input.NewPassword", "Input.OldPassword");
                 return Page();
             }
 
             await _signInManager.RefreshSignInAsync(user);
             await _securityAlerts.PasswordChangedAsync(user.Id, HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
             _logger.LogInformation("User changed their password successfully.");
-            StatusMessage = "Your password has been changed.";
+            StatusMessage = _loc["Manage.Password.Changed"].Value;
 
             return RedirectToPage();
         }

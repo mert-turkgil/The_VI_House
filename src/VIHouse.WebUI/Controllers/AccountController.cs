@@ -2,6 +2,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Concrete;
@@ -49,7 +50,8 @@ public class AccountController(
     IDiscordInviteService discordInvites,
     IOptions<SmsOptions> smsOptions,
     IOptions<FeatureOptions> features,
-    IApplicationService applicationService) : Controller
+    IApplicationService applicationService,
+    IStringLocalizer<SharedResource> loc) : Controller
 {
     // --- Dashboard -----------------------------------------------------------------------------
 
@@ -318,19 +320,18 @@ public class AccountController(
         var membership = await membershipService.GetCurrentMembershipAsync(userId, ct);
         if (membership is null)
         {
-            TempData["MembershipError"] = "You don't have an active membership yet.";
+            TempData["MembershipError"] = loc["Card.Error.NoMembership"].Value;
             return RedirectToAction(nameof(Membership));
         }
 
         var plan = await membershipService.GetPlanAsync(membership.PlanId, ct);
         if (plan is { IncludesMemberCard: false })
         {
-            TempData["MembershipError"] = $"The digital card is not part of {plan.Name}.";
+            TempData["MembershipError"] = loc["Card.Error.NotInPlan", plan.Name].Value;
             return RedirectToAction(nameof(Membership));
         }
         var user = await userManager.FindByIdAsync(userId.ToString());
 
-        ViewData["Title"] = "My Membership Card";
         return View(new DigitalMemberCardViewModel
         {
             FullName = user is null ? "" : $"{user.FirstName} {user.LastName}",

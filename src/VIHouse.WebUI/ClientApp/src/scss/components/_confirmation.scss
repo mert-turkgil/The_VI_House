@@ -1,0 +1,524 @@
+@use '../breakpoints' as bp;
+
+// --- Confirmation screens -------------------------------------------------------------------------------
+// Views/Join/Success.cshtml (and _SuccessMark wherever a "done" moment needs one, e.g. the password
+// reset confirmation). One centred head, then on a confirmed payment a two-column grid: the member
+// pass preview and the next steps, stacked pass-first on a phone.
+//
+// Motion: the mark draws itself, a gold burst rings out once, the pass rises in with a slow foil
+// sheen, and the steps stagger in. Transform, opacity and stroke offsets only; all of it is off under
+// prefers-reduced-motion at the bottom of this file.
+
+.confirm {
+  position: relative;
+  overflow: hidden;
+  padding: var(--vih-space-2xl) 0 var(--vih-section-y);
+  background:
+    radial-gradient(70% 50% at 50% 0%, color-mix(in srgb, var(--vih-gold) 14%, transparent) 0%, transparent 70%),
+    var(--vih-cream);
+
+  @include bp.from(bp.$md) {
+    padding-top: var(--vih-space-3xl);
+  }
+}
+
+.confirm__inner {
+  max-width: 980px;
+}
+
+.confirm__head {
+  max-width: 620px;
+  margin: 0 auto var(--vih-space-xl);
+  text-align: center;
+
+  > * {
+    animation: vih-confirm-rise var(--vih-dur-reveal) var(--vih-ease-out) both;
+  }
+
+  > :nth-child(2) { animation-delay: 220ms; }
+  > :nth-child(3) { animation-delay: 300ms; }
+  > :nth-child(4) { animation-delay: 380ms; }
+}
+
+.confirm__eyebrow {
+  display: block;
+  margin-bottom: var(--vih-space-2xs);
+  font-size: var(--vih-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+}
+
+.confirm__title {
+  margin: 0 0 var(--vih-space-xs);
+  font-family: var(--vih-font-serif);
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--vih-green-900);
+  text-wrap: balance;
+}
+
+.confirm__lede {
+  margin: 0 auto;
+  max-width: 52ch;
+  font-size: var(--vih-text-lg);
+  line-height: 1.65;
+  color: var(--vih-text-secondary);
+  text-wrap: pretty;
+}
+
+.confirm__grid {
+  display: grid;
+  gap: var(--vih-space-lg);
+  align-items: start;
+
+  @include bp.from(bp.$md) {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: var(--vih-space-xl);
+    align-items: center;
+  }
+}
+
+.confirm__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--vih-space-xs);
+  margin-top: var(--vih-space-xl);
+
+  .btn {
+    min-height: 48px;
+  }
+
+  @include bp.until(bp.$sm) {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+.confirm__footnote {
+  max-width: 56ch;
+  margin: var(--vih-space-sm) auto 0;
+  font-size: var(--vih-text-sm);
+  line-height: 1.6;
+  color: var(--vih-text-muted);
+  text-align: center;
+
+  &--card {
+    padding: var(--vih-space-sm) var(--vih-space-md);
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: var(--vih-radius-lg);
+    background: var(--vih-surface);
+  }
+}
+
+// --- The success mark (_SuccessMark.cshtml) --------------------------------------------------------------
+
+.success-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto var(--vih-space-sm);
+  color: var(--vih-green-900);
+}
+
+.success-mark__svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.success-mark__ring {
+  stroke: var(--vih-gold);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  fill: color-mix(in srgb, var(--vih-gold) 10%, transparent);
+  animation: vih-mark-draw 700ms var(--vih-ease-out) 100ms forwards;
+}
+
+.success-mark__tick {
+  stroke: var(--vih-green-900);
+  stroke-width: 3.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: vih-mark-draw 420ms var(--vih-ease-out) 700ms forwards;
+}
+
+// One soft gold ring that spreads and fades as the tick lands.
+.success-mark__burst {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--vih-gold) 70%, transparent);
+  opacity: 0;
+  animation: vih-mark-burst 900ms var(--vih-ease-out) 950ms;
+}
+
+@keyframes vih-mark-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes vih-mark-burst {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+// --- The pass preview -------------------------------------------------------------------------------------
+
+.confirm-pass {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  aspect-ratio: 1.586;
+  width: 100%;
+  max-width: 440px;
+  margin-inline: auto;
+  padding: clamp(18px, 5vw, 28px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: var(--vih-radius-2xl);
+  background:
+    radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--vih-gold) 22%, transparent) 0%, transparent 55%),
+    linear-gradient(135deg, var(--vih-green-950) 0%, var(--vih-green-800) 100%);
+  color: var(--vih-cream);
+  box-shadow: 0 24px 60px rgba(0, 26, 2, 0.28), inset 0 0 0 1px color-mix(in srgb, var(--vih-gold) 40%, transparent);
+  animation: vih-pass-in 900ms var(--vih-ease-out) 450ms both;
+  transition: transform var(--vih-dur-slow) var(--vih-ease-out), box-shadow var(--vih-dur-slow) var(--vih-ease-out);
+
+  &:hover {
+    transform: translateY(-4px) rotate(-0.6deg);
+    box-shadow: 0 32px 70px rgba(0, 26, 2, 0.34), inset 0 0 0 1px var(--vih-gold);
+  }
+}
+
+// A band of light that crosses the card every few seconds, like foil catching a lamp.
+.confirm-pass__sheen {
+  position: absolute;
+  inset: -40% -60%;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.12) 50%, transparent 60%);
+  transform: translateX(-60%);
+  animation: vih-pass-sheen 5.5s var(--vih-ease-in-out) 1.6s infinite;
+  pointer-events: none;
+}
+
+.confirm-pass__top {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+}
+
+.confirm-pass__crest {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  color: var(--vih-gold-light);
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.confirm-pass__brand {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-sm);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.confirm-pass__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: var(--vih-radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: var(--vih-text-3xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #6fd38f;
+    box-shadow: 0 0 0 0 rgba(111, 211, 143, 0.6);
+    animation: vih-pass-live 2.2s var(--vih-ease-out) infinite;
+  }
+}
+
+.confirm-pass__plan {
+  font-family: var(--vih-font-serif);
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  line-height: 1.1;
+  color: var(--vih-gold-light);
+}
+
+.confirm-pass__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs) var(--vih-space-lg);
+  margin: 0;
+
+  div {
+    display: grid;
+    gap: 2px;
+  }
+
+  dt {
+    font-size: var(--vih-text-3xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--vih-cream) 65%, transparent);
+  }
+
+  dd {
+    margin: 0;
+    font-size: var(--vih-text-base);
+    font-weight: 600;
+  }
+}
+
+@keyframes vih-pass-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) rotate(-2deg) scale(0.96);
+  }
+}
+
+@keyframes vih-pass-sheen {
+  0%,
+  55% { transform: translateX(-60%); }
+  100% { transform: translateX(60%); }
+}
+
+@keyframes vih-pass-live {
+  0% { box-shadow: 0 0 0 0 rgba(111, 211, 143, 0.6); }
+  70%,
+  100% { box-shadow: 0 0 0 8px rgba(111, 211, 143, 0); }
+}
+
+// --- Next steps (a Bootstrap-style list group, with a connecting line) -----------------------------------
+
+.confirm-steps {
+  padding: var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+  box-shadow: var(--vih-shadow-sm);
+}
+
+.confirm-steps__title {
+  margin: 0 0 var(--vih-space-sm);
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-xl);
+  font-weight: 500;
+  color: var(--vih-green-900);
+}
+
+.confirm-steps__list {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.confirm-steps__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: var(--vih-space-xs);
+  padding: var(--vih-space-xs) var(--vih-space-2xs);
+  border-radius: var(--vih-radius-md);
+  animation: vih-confirm-rise var(--vih-dur-reveal) var(--vih-ease-out) both;
+  transition: background-color var(--vih-dur-base) var(--vih-ease-out);
+
+  &:nth-child(1) { animation-delay: 650ms; }
+  &:nth-child(2) { animation-delay: 750ms; }
+  &:nth-child(3) { animation-delay: 850ms; }
+
+  // The line from one step's mark down to the next.
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--vih-space-2xs) + 15px);
+    top: calc(var(--vih-space-xs) + 34px);
+    bottom: calc(var(--vih-space-xs) * -1 + 2px);
+    width: 2px;
+    border-radius: 2px;
+    background: var(--vih-line-on-light);
+  }
+
+  &.is-done:not(:last-child)::after {
+    background: var(--vih-gold);
+  }
+
+  &:hover {
+    background: var(--vih-surface-tinted);
+  }
+
+  strong {
+    display: block;
+    font-size: var(--vih-text-md);
+    color: var(--vih-ink);
+  }
+
+  p {
+    margin: 2px 0 0;
+    font-size: var(--vih-text-sm);
+    line-height: 1.55;
+    color: var(--vih-text-secondary);
+  }
+}
+
+.confirm-steps__mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid var(--vih-line-on-light);
+  border-radius: 50%;
+  background: var(--vih-surface);
+  font-size: var(--vih-text-sm);
+  font-weight: 700;
+  color: var(--vih-text-muted);
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .is-done & {
+    border-color: var(--vih-green-900);
+    background: var(--vih-green-900);
+    color: var(--vih-cream);
+  }
+
+  // The step waiting on the reader: a gold ring that breathes.
+  .is-current & {
+    border-color: var(--vih-gold);
+    color: var(--vih-green-900);
+    animation: vih-step-breathe 2.4s var(--vih-ease-in-out) infinite;
+  }
+}
+
+@keyframes vih-step-breathe {
+  0%,
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--vih-gold) 45%, transparent); }
+  50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--vih-gold) 0%, transparent); }
+}
+
+// --- Pending states ---------------------------------------------------------------------------------------
+
+.confirm-pending {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  margin: 0 auto var(--vih-space-sm);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--vih-gold) 10%, transparent);
+  color: var(--vih-green-900);
+
+  svg {
+    width: 34px;
+    height: 34px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  // The ring turns slowly: something is happening, nothing is wrong.
+  &__ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid color-mix(in srgb, var(--vih-gold) 25%, transparent);
+    border-top-color: var(--vih-gold);
+    animation: vih-pending-turn 1.6s linear infinite;
+  }
+
+  // The bank needs the buyer: the ring pulses instead, which reads as "your turn".
+  &--action &__ring {
+    border-color: var(--vih-gold);
+    animation: vih-step-breathe 2s var(--vih-ease-in-out) infinite;
+  }
+
+  &--bank &__ring {
+    animation-duration: 3.2s;
+  }
+}
+
+@keyframes vih-pending-turn {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes vih-confirm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+// --- Reduced motion ----------------------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm__head > *,
+  .confirm-pass,
+  .confirm-pass__sheen,
+  .confirm-pass__status i,
+  .confirm-steps__item,
+  .confirm-steps__mark,
+  .success-mark__burst,
+  .confirm-pending__ring {
+    animation: none;
+  }
+
+  .success-mark__ring,
+  .success-mark__tick {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .confirm-pass,
+  .confirm-pass:hover {
+    transform: none;
+    transition: none;
+  }
+
+  .confirm-pass__sheen {
+    display: none;
+  }
+}

@@ -17,8 +17,44 @@
 // =================================================================================================
 
 .experiences-header {
-  // .content-hero already supplies the green ground and centred type; this only adjusts rhythm.
-  padding-bottom: var(--vih-space-lg);
+  // .content-hero already supplies the green ground and centred type; this adds rhythm, a soft gold
+  // light from above, and a gold rule that draws itself under the heading.
+  position: relative;
+  overflow: hidden;
+  padding-bottom: var(--vih-space-xl);
+  background:
+    radial-gradient(60% 120% at 50% -10%, color-mix(in srgb, var(--vih-gold) 16%, transparent) 0%, transparent 70%),
+    var(--vih-green-950);
+
+  .container > * {
+    animation: vih-header-rise var(--vih-dur-reveal) var(--vih-ease-out) both;
+  }
+
+  .container > :nth-child(2) { animation-delay: 90ms; }
+  .container > :nth-child(3) { animation-delay: 180ms; }
+
+  h1::after {
+    content: '';
+    display: block;
+    width: 56px;
+    height: 2px;
+    margin: var(--vih-space-sm) auto 0;
+    border-radius: var(--vih-radius-pill);
+    background: var(--vih-gold);
+    transform-origin: center;
+    animation: vih-rule-draw 900ms var(--vih-ease-out) 300ms both;
+  }
+}
+
+@keyframes vih-header-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes vih-rule-draw {
+  from { transform: scaleX(0); }
 }
 
 .experiences-body {
@@ -148,12 +184,18 @@
     margin-inline: calc(var(--vih-space-md) * -1);
     padding-inline: var(--vih-space-md);
     -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    // The rail fades out at both edges, which says "there is more this way" without an arrow.
+    mask-image: linear-gradient(90deg, transparent 0, #000 var(--vih-space-md), #000 calc(100% - 40px), transparent 100%);
 
     &::-webkit-scrollbar { display: none; }
   }
 }
 
 .experience-filters__chips {
+  // Positioned, so each chip's offsetLeft/offsetTop (which filters.ts gives the pill) are measured
+  // from the group itself.
+  position: relative;
   display: flex;
   gap: var(--vih-space-2xs);
   align-items: center;
@@ -168,6 +210,10 @@
 }
 
 .experience-filters__chip {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
   padding: 8px var(--vih-space-sm);
   border: 1px solid var(--vih-line-on-light);
   border-radius: var(--vih-radius-pill);
@@ -177,7 +223,8 @@
   white-space: nowrap;
   transition: border-color var(--vih-dur-base) var(--vih-ease),
               color var(--vih-dur-base) var(--vih-ease),
-              background-color var(--vih-dur-base) var(--vih-ease);
+              background-color var(--vih-dur-base) var(--vih-ease),
+              transform var(--vih-dur-fast) var(--vih-ease);
 
   &:hover {
     border-color: var(--vih-green-900);
@@ -198,6 +245,47 @@
   &:focus-visible {
     outline: 2px solid var(--vih-focus-ring);
     outline-offset: 2px;
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  // A finger needs a bigger target than a cursor.
+  @include bp.until(bp.$lg) {
+    min-height: 44px;
+    scroll-snap-align: center;
+  }
+}
+
+// The pill that slides behind the active chip (filters.ts). Once it is there, the active chip's own
+// background steps aside so the pill shows through, and only the text colour changes.
+.experience-filters__pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-green-900);
+  box-shadow: 0 6px 16px rgba(0, 35, 10, 0.22);
+  pointer-events: none;
+  transition:
+    transform 420ms var(--vih-ease-out),
+    width 420ms var(--vih-ease-out),
+    height 420ms var(--vih-ease-out),
+    opacity var(--vih-dur-base) var(--vih-ease);
+
+  .is-placing & {
+    transition: none;
+  }
+}
+
+.experience-filters__chips.has-pill .experience-filters__chip--active {
+  background: transparent;
+  border-color: transparent;
+
+  &:hover {
+    background: transparent;
   }
 }
 
@@ -232,6 +320,11 @@
 }
 
 // --- Grid + card ----------------------------------------------------------------------------------
+// The card reads like an event listing (date block on the photograph, where, what, when, price).
+// Motion, all transform/opacity: the photograph pushes in slowly (Ken Burns), a gold rule draws
+// under the title, the date block lifts and the arrow slides in. Text never moves; moving type is
+// most of what makes a hover effect feel cheap. On a touch screen there is no hover to wait for, so
+// the arrow is always shown and the card answers a tap with a slight press instead.
 
 .experience-grid {
   display: grid;
@@ -247,7 +340,39 @@
   }
 }
 
+// The reveal wrapper. Flex, so every card in a row stretches to the tallest one.
+.experience-grid__cell {
+  display: flex;
+  min-width: 0;
+
+  > .experience-card {
+    flex: 1;
+  }
+}
+
+// While a filter change is loading the old cards dim; the new ones then rise in one after another.
+[data-experience-results] {
+  transition: opacity var(--vih-dur-base) var(--vih-ease-out);
+
+  &.is-loading {
+    opacity: 0.45;
+  }
+
+  &.is-entering .experience-grid__cell {
+    animation: vih-card-enter 600ms var(--vih-ease-out) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+}
+
+@keyframes vih-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+}
+
 .experience-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--vih-surface);
@@ -255,15 +380,23 @@
   border-radius: var(--vih-radius-xl);
   overflow: hidden;
   color: inherit;
+  -webkit-tap-highlight-color: transparent;
   transition: transform var(--vih-dur-slow) var(--vih-ease-out),
               box-shadow var(--vih-dur-slow) var(--vih-ease-out),
               border-color var(--vih-dur-base) var(--vih-ease);
 
   &:hover,
   &:focus-visible {
-    transform: translateY(-4px);
-    box-shadow: var(--vih-shadow-md);
-    border-color: transparent;
+    transform: translateY(-6px);
+    box-shadow: 0 22px 44px rgba(0, 35, 10, 0.14);
+    border-color: color-mix(in srgb, var(--vih-gold) 40%, transparent);
+  }
+
+  // A pressed state for touch: the card gives under the finger, which tells a phone user the tap
+  // registered before the next page arrives.
+  &:active {
+    transform: translateY(-2px) scale(0.985);
+    transition-duration: var(--vih-dur-fast);
   }
 
   &:focus-visible {
@@ -271,20 +404,30 @@
     outline-offset: 3px;
   }
 
-  // The photograph pushes in on hover; the text stays perfectly still. Moving type is most of what
-  // makes a hover effect feel cheap.
+  // The slow push-in. Longer than the lift on purpose: the card arrives, then the photograph keeps
+  // drifting a moment longer, which is what makes it read as a camera move rather than a zoom.
   .cover__img {
-    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+    transition: transform 1400ms var(--vih-ease-out);
+    transform-origin: 60% 40%;
   }
 
   &:hover .cover__img,
   &:focus-visible .cover__img {
-    transform: scale(1.04);
+    transform: scale(1.08) translate(-1%, 1%);
   }
 }
 
 .experience-card__media {
   position: relative;
+}
+
+// A darkening at the top edge, so the badge and the date block stay legible on a bright sky.
+.experience-card__shade {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 45%;
+  background: linear-gradient(to bottom, rgba(0, 26, 2, 0.45), transparent);
+  pointer-events: none;
 }
 
 .experience-card__badge {
@@ -310,28 +453,101 @@
   &--closed { background: var(--vih-scrim-soft); }
 }
 
+// The date tile, top right: day large, month small, like a ticket stub.
+.experience-card__date {
+  position: absolute;
+  top: var(--vih-space-xs);
+  right: var(--vih-space-xs);
+  display: grid;
+  justify-items: center;
+  min-width: 52px;
+  padding: 6px 8px 5px;
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-surface);
+  box-shadow: 0 6px 18px rgba(0, 26, 2, 0.2);
+  line-height: 1;
+  transition: transform var(--vih-dur-slow) var(--vih-ease-out), box-shadow var(--vih-dur-slow) var(--vih-ease-out);
+
+  .experience-card:hover &,
+  .experience-card:focus-visible & {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(0, 26, 2, 0.26);
+  }
+}
+
+.experience-card__day {
+  font-family: var(--vih-font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--vih-green-900);
+}
+
+.experience-card__month {
+  margin-top: 3px;
+  font-size: var(--vih-text-3xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vih-gold);
+}
+
 .experience-card__body {
   display: flex;
   flex-direction: column;
   flex: 1;
   padding: var(--vih-space-md);
+
+  @include bp.until(bp.$sm) {
+    padding: var(--vih-space-sm) var(--vih-space-sm) var(--vih-space-md);
+  }
 }
 
 .experience-card__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: var(--vih-text-2xs);
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--vih-gold);
   margin-bottom: var(--vih-space-2xs);
+
+  svg {
+    width: 13px;
+    height: 13px;
+    flex: 0 0 auto;
+  }
 }
 
 .experience-card__title {
+  position: relative;
   font-family: var(--vih-font-serif);
   font-size: var(--vih-text-xl);
   line-height: 1.25;
   color: var(--vih-green-900);
-  margin: 0 0 var(--vih-space-2xs);
+  margin: 0 0 var(--vih-space-xs);
+  padding-bottom: var(--vih-space-2xs);
+
+  // The gold rule that draws under the title on hover.
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 48px;
+    height: 2px;
+    border-radius: var(--vih-radius-pill);
+    background: var(--vih-gold);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--vih-dur-reveal) var(--vih-ease-out);
+  }
+
+  .experience-card:hover &::after,
+  .experience-card:focus-visible &::after {
+    transform: scaleX(1);
+  }
 }
 
 .experience-card__summary {
@@ -339,12 +555,17 @@
   line-height: 1.65;
   color: var(--vih-text-secondary);
   margin: 0 0 var(--vih-space-sm);
+  // Three lines at most, so one long summary cannot make its whole row of cards tall.
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .experience-card__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--vih-space-3xs) var(--vih-space-xs);
+  gap: var(--vih-space-3xs) var(--vih-space-sm);
   font-size: var(--vih-text-sm);
   color: var(--vih-text-muted);
   // Pins the price row to the bottom whatever the summary length, so a row of cards lines up on the
@@ -352,12 +573,25 @@
   margin-top: auto;
 }
 
+.experience-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+    color: var(--vih-gold);
+  }
+}
+
 .experience-card__foot {
   display: flex;
   // Wraps because a long localised price and "Deneyimi gör →" together overflow a single-column
   // card on a narrow phone, and squashing the price is the worst of the available outcomes.
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: var(--vih-space-2xs);
   margin-top: var(--vih-space-sm);
@@ -381,18 +615,43 @@
 }
 
 .experience-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 8px 14px;
+  border-radius: var(--vih-radius-pill);
   font-size: var(--vih-text-sm);
   font-weight: 600;
-  color: var(--vih-gold);
+  color: var(--vih-green-900);
+  background: color-mix(in srgb, var(--vih-gold) 14%, transparent);
   opacity: 0;
-  transform: translateX(-4px);
+  transform: translateX(-6px);
   transition: opacity var(--vih-dur-base) var(--vih-ease),
-              transform var(--vih-dur-base) var(--vih-ease);
+              transform var(--vih-dur-slow) var(--vih-ease-out),
+              background-color var(--vih-dur-base) var(--vih-ease);
+
+  svg {
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform var(--vih-dur-slow) var(--vih-ease-out);
+  }
 
   .experience-card:hover &,
   .experience-card:focus-visible & {
     opacity: 1;
     transform: none;
+    background: var(--vih-gold);
+    color: var(--vih-green-950);
+
+    svg {
+      transform: translateX(3px);
+    }
   }
 }
 
@@ -400,6 +659,17 @@
 // semantically — but it must still appear for anyone who cannot see the hover state.
 @media (hover: none) {
   .experience-card__cta { opacity: 1; transform: none; }
+}
+
+// Phones: a wider, shorter photograph so the first card and its title both fit on the first screen.
+@include bp.until(bp.$sm) {
+  .experience-card .cover {
+    aspect-ratio: 16 / 10;
+  }
+
+  .experience-card__title {
+    font-size: var(--vih-text-lg);
+  }
 }
 
 // --- Empty state -------------------------------------------------------------------------------------
@@ -439,8 +709,15 @@
 // Detail
 // =================================================================================================
 
+// --- Hero -------------------------------------------------------------------------------------------------
+// Most of a phone's first screen (78svh: the small viewport height, so the browser's own toolbars
+// never push the title off), the clamp on wider screens. The photograph settles from a slow zoom on
+// arrival (Ken Burns), drifts at a third of the scroll speed on desktop (modules/heroParallax.ts),
+// and the words rise in one after another.
+
 .experience-hero {
   position: relative;
+  overflow: hidden;
   color: var(--vih-cream);
   background: var(--vih-green-950);
 }
@@ -448,8 +725,17 @@
 .experience-hero__media {
   position: absolute;
   inset: 0;
+  will-change: transform;
 
   .cover { height: 100%; aspect-ratio: auto; }
+
+  .cover__img {
+    animation: vih-hero-settle 2400ms var(--vih-ease-out) both;
+  }
+}
+
+@keyframes vih-hero-settle {
+  from { transform: scale(1.12); }
 }
 
 .experience-hero__scrim {
@@ -461,6 +747,9 @@
 
 .experience-hero__inner {
   position: relative;
+  // A soft shadow under the words, so the gold eyebrow and the meta line stay legible on a bright
+  // sky as well as on the dark scrim.
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -470,12 +759,39 @@
   // ran the text to the edge of the screen. Only the vertical rhythm belongs here.
   padding-block: var(--vih-space-2xl) var(--vih-space-xl);
 
+  // Room at the bottom for the key-facts tiles that overlap the hero from the medium breakpoint.
+  @include bp.from(bp.$md) {
+    padding-bottom: calc(var(--vih-space-xl) + 56px);
+  }
+
+  @include bp.until(bp.$md) {
+    min-height: 78svh;
+    padding-bottom: var(--vih-space-lg);
+  }
+
+  > * {
+    animation: vih-hero-rise var(--vih-dur-reveal) var(--vih-ease-out) both;
+  }
+
+  > :nth-child(1) { animation-delay: 150ms; }
+  > :nth-child(2) { animation-delay: 260ms; }
+  > :nth-child(3) { animation-delay: 370ms; }
+  > :nth-child(4) { animation-delay: 480ms; }
+
   h1 {
     font-family: var(--vih-font-serif);
     font-size: var(--vih-display-lg);
     line-height: 1.1;
     margin: 0 0 var(--vih-space-xs);
     max-width: 18ch;
+    text-wrap: balance;
+  }
+}
+
+@keyframes vih-hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
   }
 }
 
@@ -490,6 +806,11 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--vih-gold-light);
+
+  // The badge sits in the flow here, not over a photograph corner.
+  .experience-card__badge {
+    position: static;
+  }
 }
 
 .experience-hero__meta {
@@ -505,19 +826,166 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--vih-space-2xs);
+
+  .btn {
+    min-height: 48px;
+  }
+
+  @include bp.until(bp.$sm) {
+    > .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// --- Key facts -------------------------------------------------------------------------------------------
+
+.experience-facts-wrap {
+  position: relative;
+  z-index: 2;
+  margin-top: var(--vih-space-md);
+
+  @include bp.from(bp.$md) {
+    margin-top: -48px;
+  }
+}
+
+.experience-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--vih-space-2xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include bp.from(bp.$md) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--vih-space-sm);
+  }
+}
+
+.experience-fact {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    'icon label'
+    'icon value'
+    'icon note';
+  align-items: center;
+  column-gap: var(--vih-space-xs);
+  min-width: 0;
+  padding: var(--vih-space-sm);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+  box-shadow: var(--vih-shadow-sm);
+  transition:
+    transform var(--vih-dur-slow) var(--vih-ease-out),
+    box-shadow var(--vih-dur-slow) var(--vih-ease-out),
+    border-color var(--vih-dur-slow) var(--vih-ease-out);
+
+  // A gold rule that wipes across the top edge on hover.
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: var(--vih-space-sm);
+    right: var(--vih-space-sm);
+    height: 2px;
+    border-radius: var(--vih-radius-pill);
+    background: var(--vih-gold);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--vih-dur-reveal) var(--vih-ease-out);
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--vih-shadow-md);
+    border-color: color-mix(in srgb, var(--vih-gold) 45%, var(--vih-line-on-light));
+  }
+
+  &:hover::before {
+    transform: scaleX(1);
+  }
+
+  @include bp.until(bp.$sm) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'icon' 'label' 'value' 'note';
+    row-gap: 2px;
+    padding: var(--vih-space-xs);
+  }
+}
+
+.experience-fact__icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid color-mix(in srgb, var(--vih-gold) 55%, transparent);
+  border-radius: 50%;
+  color: var(--vih-green-900);
+  background: var(--vih-cream);
+  transition: background-color var(--vih-dur-slow) var(--vih-ease-out), color var(--vih-dur-slow) var(--vih-ease-out), transform var(--vih-dur-slow) var(--vih-ease-out);
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .experience-fact:hover & {
+    background: var(--vih-green-900);
+    color: var(--vih-cream);
+    transform: rotate(-8deg);
+  }
+
+  @include bp.until(bp.$sm) {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 4px;
+  }
+}
+
+.experience-fact__label {
+  grid-area: label;
+  font-size: var(--vih-text-3xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+}
+
+.experience-fact__value {
+  grid-area: value;
+  font-size: var(--vih-text-md);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--vih-green-900);
+  overflow-wrap: anywhere;
+}
+
+.experience-fact__note {
+  grid-area: note;
+  font-size: var(--vih-text-xs);
+  color: var(--vih-text-muted);
+  overflow-wrap: anywhere;
 }
 
 // --- Sticky sub-nav ---------------------------------------------------------------------------------
+// Full width by being outside .container (Details.cshtml), not by bleeding out of it: the bleed
+// used 100vw, which on Windows includes the scrollbar and made the page scroll sideways.
 
 .experience-subnav {
   position: sticky;
   top: var(--vih-header-height);
   z-index: var(--vih-z-sticky);
-  background: var(--vih-surface);
+  margin-top: var(--vih-space-lg);
+  background: color-mix(in srgb, var(--vih-surface) 92%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: 1px solid var(--vih-line-on-light);
-  // Bleeds past .container so the rule spans the viewport while the links stay aligned to the grid.
-  margin-inline: calc(50% - 50vw);
-  padding-inline: calc(50vw - 50%);
   overflow-x: auto;
   scrollbar-width: none;
 
@@ -525,6 +993,11 @@
 }
 
 .experience-subnav__list {
+  // Positioned, so the sliding indicator (subnav.ts) is measured from the list. max-content so the
+  // links overflow (and the bar scrolls sideways) on a phone rather than squashing.
+  position: relative;
+  width: max-content;
+  min-width: 100%;
   display: flex;
   gap: var(--vih-space-md);
   list-style: none;
@@ -534,8 +1007,10 @@
 }
 
 .experience-subnav__link {
-  display: inline-block;
-  padding: var(--vih-space-xs) 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0;
   font-size: var(--vih-text-sm);
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -550,6 +1025,22 @@
     color: var(--vih-green-900);
     border-bottom-color: var(--vih-gold);
   }
+
+  .has-indicator &--active {
+    border-bottom-color: transparent;
+  }
+}
+
+.experience-subnav__indicator {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-gold);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 450ms var(--vih-ease-out), width 450ms var(--vih-ease-out), opacity var(--vih-dur-base) var(--vih-ease);
 }
 
 .experience-body {
@@ -562,6 +1053,12 @@
     grid-template-columns: minmax(0, 1fr) 340px;
     gap: var(--vih-space-3xl);
   }
+
+  // Every track may shrink below its content's natural width; a long word in a programme title
+  // would otherwise widen the column past the phone screen.
+  > * {
+    min-width: 0;
+  }
 }
 
 .experience-section {
@@ -569,7 +1066,8 @@
 
   & + & { margin-top: var(--vih-space-2xl); }
 
-  > h2 {
+  > h2,
+  .experience-section__head h2 {
     font-family: var(--vih-font-serif);
     font-size: var(--vih-text-2xl);
     color: var(--vih-green-900);
@@ -581,6 +1079,30 @@
     line-height: 1.75;
     color: var(--vih-text-secondary);
   }
+}
+
+.experience-section .content-body {
+  // The description is editor HTML in .content-body for its typography; the article page's own
+  // 48px/96px padding and 760px column do not belong inside a section that has its own rhythm.
+  max-width: none;
+  margin: 0;
+  padding-block: 0;
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  p:empty {
+    display: none;
+  }
+}
+
+.experience-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--vih-space-2xs) var(--vih-space-sm);
 }
 
 // --- Audience chips ------------------------------------------------------------------------------------
@@ -601,27 +1123,58 @@
   font-size: var(--vih-text-sm);
   color: var(--vih-green-900);
   background: var(--vih-warning-bg);
+  transition: background-color var(--vih-dur-base) var(--vih-ease), color var(--vih-dur-base) var(--vih-ease), transform var(--vih-dur-base) var(--vih-ease-out);
+
+  &:hover {
+    background: var(--vih-green-900);
+    color: var(--vih-cream);
+    transform: translateY(-2px);
+  }
 }
 
-// --- Programme -------------------------------------------------------------------------------------------
+// --- Programme: a timeline ---------------------------------------------------------------------------------
+// One card per day. Inside, the sessions hang off a rail; where the browser supports scroll-driven
+// animation, a gold line fills the rail as the day scrolls through the screen. Elsewhere the rail
+// is simply drawn in the line colour.
+
+.experience-program__day {
+  padding: var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+  transition: border-color var(--vih-dur-slow) var(--vih-ease-out), box-shadow var(--vih-dur-slow) var(--vih-ease-out);
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--vih-gold) 40%, var(--vih-line-on-light));
+    box-shadow: var(--vih-shadow-sm);
+  }
+
+  @include bp.until(bp.$sm) {
+    padding: var(--vih-space-sm);
+  }
+}
 
 .experience-program__day + .experience-program__day {
-  margin-top: var(--vih-space-lg);
+  margin-top: var(--vih-space-sm);
 }
 
 .experience-program__day-head {
   display: flex;
-  align-items: baseline;
-  gap: var(--vih-space-2xs);
-  margin-bottom: var(--vih-space-xs);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs) var(--vih-space-xs);
+  margin-bottom: var(--vih-space-sm);
 }
 
 .experience-program__day-num {
-  font-size: var(--vih-text-2xs);
+  padding: 4px 10px;
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-green-900);
+  font-size: var(--vih-text-3xs);
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--vih-gold);
+  color: var(--vih-gold-light);
 }
 
 .experience-program__day-title {
@@ -635,54 +1188,105 @@
   list-style: none;
   margin: 0;
   padding: 0 0 0 var(--vih-space-md);
-  // The rail. A pseudo-element rather than a border so it can stop short of the last item's baseline
-  // instead of running past it.
   position: relative;
 
+  // The rail.
   &::before {
     content: '';
     position: absolute;
     left: 0;
     top: 6px;
     bottom: 6px;
-    width: 1px;
+    width: 2px;
+    border-radius: 2px;
     background: var(--vih-line-on-light);
   }
+
+  // The gold progress line over it, filled by scroll position where supported.
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--vih-gold);
+    transform-origin: top center;
+    transform: scaleY(0);
+  }
+
+  @supports (animation-timeline: view()) {
+    &::after {
+      animation: vih-rail-fill linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 55%;
+    }
+  }
+
+  @supports not (animation-timeline: view()) {
+    &::after {
+      transform: scaleY(1);
+      opacity: 0.35;
+    }
+  }
+}
+
+@keyframes vih-rail-fill {
+  to { transform: scaleY(1); }
 }
 
 .experience-program__session {
   position: relative;
-  padding-bottom: var(--vih-space-sm);
+  margin: 0 0 var(--vih-space-2xs) calc(var(--vih-space-2xs) * -1);
+  padding: var(--vih-space-2xs) var(--vih-space-2xs) var(--vih-space-2xs) var(--vih-space-2xs);
+  border-radius: var(--vih-radius-md);
+  transition: background-color var(--vih-dur-base) var(--vih-ease);
 
+  // The stop on the rail.
   &::before {
     content: '';
     position: absolute;
-    left: calc(var(--vih-space-md) * -1);
-    top: 7px;
-    width: 7px;
-    height: 7px;
-    margin-left: -3px;
+    left: calc(var(--vih-space-md) * -1 + var(--vih-space-2xs) + 1px);
+    top: calc(var(--vih-space-2xs) + 6px);
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    border: 2px solid var(--vih-gold);
     border-radius: 50%;
-    background: var(--vih-gold);
+    background: var(--vih-surface);
+    transition: background-color var(--vih-dur-base) var(--vih-ease), transform var(--vih-dur-slow) var(--vih-ease-out);
   }
 
-  &:last-child { padding-bottom: 0; }
+  &:hover {
+    background: var(--vih-surface-tinted);
+
+    &::before {
+      background: var(--vih-gold);
+      transform: scale(1.25);
+    }
+  }
+
+  &:last-child { margin-bottom: 0; }
 }
 
 .experience-program__time {
-  display: block;
-  font-size: var(--vih-text-sm);
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--vih-radius-sm);
+  background: var(--vih-surface-sunken);
+  font-size: var(--vih-text-xs);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  // Was #888, which is 3.54:1 on white and fails WCAG AA. These are session times — content, not
-  // decoration — so they have to clear it.
-  color: var(--vih-text-muted);
+  // These are session times — content, not decoration — so they clear WCAG AA.
+  color: var(--vih-text-secondary);
 }
 
 .experience-program__session-title {
   font-size: var(--vih-text-md);
   font-weight: 600;
   color: var(--vih-ink);
-  margin: 2px 0 0;
+  margin: 4px 0 0;
 }
 
 .experience-program__speaker {
@@ -707,10 +1311,25 @@
 
 .experience-inclusions {
   display: grid;
-  gap: var(--vih-space-md);
+  gap: var(--vih-space-sm);
 
   @include bp.from(bp.$sm) {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+.experience-inclusions__col {
+  padding: var(--vih-space-md);
+  border-radius: var(--vih-radius-xl);
+  border: 1px solid var(--vih-line-on-light);
+
+  &--included {
+    background: color-mix(in srgb, var(--vih-success) 6%, var(--vih-surface));
+    border-color: color-mix(in srgb, var(--vih-success) 22%, transparent);
+  }
+
+  &--excluded {
+    background: var(--vih-surface-tinted);
   }
 }
 
@@ -741,20 +1360,64 @@
 
 .experience-inclusions__mark {
   flex: 0 0 auto;
-  width: 16px;
-  height: 16px;
-  margin-top: 3px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  border-radius: 50%;
 
-  .experience-inclusions__col--included & { color: var(--vih-success); }
-  .experience-inclusions__col--excluded & { color: var(--vih-text-faint); }
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .experience-inclusions__col--included & {
+    background: var(--vih-success);
+    color: var(--vih-white);
+  }
+
+  .experience-inclusions__col--excluded & {
+    background: var(--vih-surface-sunken);
+    color: var(--vih-text-faint);
+  }
+
+  // Each mark pops in, one after another, once its column has been revealed.
+  .reveal & {
+    transform: scale(0);
+  }
+
+  .reveal.is-visible & {
+    transform: scale(1);
+    transition: transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @for $i from 1 through 10 {
+    .reveal.is-visible .experience-inclusions__item:nth-child(#{$i}) & {
+      transition-delay: #{120 + $i * 70}ms;
+    }
+  }
 }
 
 // --- FAQ --------------------------------------------------------------------------------------------------------
+// The answer opens smoothly where the browser can animate to height: auto (interpolate-size and
+// ::details-content); elsewhere it opens at once, exactly as <details> always has.
 
 .experience-faq__item {
   border-bottom: 1px solid var(--vih-line-on-light);
+  interpolate-size: allow-keywords;
 
   &[open] .experience-faq__chevron { transform: rotate(180deg); }
+
+  &::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size var(--vih-dur-slow) var(--vih-ease-out), content-visibility var(--vih-dur-slow) allow-discrete;
+  }
+
+  &[open]::details-content {
+    block-size: auto;
+  }
 }
 
 .experience-faq__q {
@@ -762,14 +1425,22 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--vih-space-sm);
-  padding: var(--vih-space-sm) 0;
+  min-height: 56px;
+  padding: var(--vih-space-sm) var(--vih-space-2xs);
+  margin-inline: calc(var(--vih-space-2xs) * -1);
+  border-radius: var(--vih-radius-md);
   cursor: pointer;
   font-size: var(--vih-text-md);
   font-weight: 600;
   color: var(--vih-green-900);
   list-style: none;
+  transition: background-color var(--vih-dur-base) var(--vih-ease);
 
   &::-webkit-details-marker { display: none; }
+
+  &:hover {
+    background: var(--vih-surface-tinted);
+  }
 
   &:focus-visible {
     outline: 2px solid var(--vih-focus-ring);
@@ -779,10 +1450,24 @@
 
 .experience-faq__chevron {
   flex: 0 0 auto;
-  width: 14px;
-  height: 14px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--vih-gold) 14%, transparent);
   color: var(--vih-gold);
-  transition: transform var(--vih-dur-base) var(--vih-ease);
+  transition: transform var(--vih-dur-slow) var(--vih-ease-out), background-color var(--vih-dur-base) var(--vih-ease);
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .experience-faq__item[open] & {
+    background: var(--vih-gold);
+    color: var(--vih-green-950);
+  }
 }
 
 .experience-faq__a {
@@ -794,23 +1479,167 @@
 }
 
 // --- Gallery ----------------------------------------------------------------------------------------------------------
+// A phone gets a native swipe row (scroll-snap; no library, the browser's own momentum). From the
+// medium breakpoint it becomes a bento: the first photograph large, four around it, and "+N" on the
+// last tile when there are more. Every tile opens the shared lightbox.
+
+.experience-gallery__count {
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
 
 .experience-gallery {
-  margin-top: var(--vih-space-md);
+  display: flex;
+  gap: var(--vih-space-2xs);
+  margin-inline: calc(var(--vih-gutter) * -1);
+  padding-inline: var(--vih-gutter);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--vih-gutter);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 
-  .swiper-slide { height: auto; }
+  &::-webkit-scrollbar { display: none; }
+
+  @include bp.from(bp.$md) {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: clamp(120px, 14vw, 170px);
+    gap: var(--vih-space-xs);
+    margin-inline: 0;
+    padding-inline: 0;
+    overflow: visible;
+
+    // Fewer photographs, simpler shapes: one fills the row, two share it, three put the first large.
+    &[data-count='1'] { grid-template-columns: 1fr; grid-auto-rows: clamp(220px, 30vw, 380px); }
+    &[data-count='2'] { grid-template-columns: 1fr 1fr; grid-auto-rows: clamp(200px, 24vw, 300px); }
+    &[data-count='3'] { grid-template-columns: 2fr 1fr; }
+    &[data-count='4'] { grid-template-columns: 2fr 1fr; }
+  }
 }
 
 .experience-gallery__item {
-  margin: 0;
-  border-radius: var(--vih-radius-lg);
+  position: relative;
+  flex: 0 0 82%;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface-sunken);
+  scroll-snap-align: start;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+
+  @include bp.from(bp.$md) {
+    aspect-ratio: auto;
+
+    // Five (or more): the lead photograph spans two columns and two rows, four tiles beside it.
+    .experience-gallery[data-count='5'] > &:first-child {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    // Three: the lead photograph beside a column of two. Four: beside a column of three.
+    .experience-gallery[data-count='3'] > &:first-child {
+      grid-row: span 2;
+    }
+
+    .experience-gallery[data-count='4'] > &:first-child {
+      grid-row: span 3;
+    }
+
+    &--overflow {
+      display: none;
+    }
+  }
+
+  // A gold frame drawn inside the edge on hover.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    z-index: 2;
+    border: 1px solid color-mix(in srgb, var(--vih-gold-light) 80%, transparent);
+    border-radius: calc(var(--vih-radius-lg) - 4px);
+    opacity: 0;
+    transform: scale(1.04);
+    transition: opacity var(--vih-dur-slow) var(--vih-ease-out), transform var(--vih-dur-reveal) var(--vih-ease-out);
+    pointer-events: none;
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--vih-focus-ring);
+    outline-offset: 3px;
+  }
+
+  &:active {
+    transform: scale(0.985);
+  }
 }
 
+.experience-gallery__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1100ms var(--vih-ease-out);
+
+  .experience-gallery__item:hover &,
+  .experience-gallery__item:focus-visible & {
+    transform: scale(1.07);
+  }
+}
+
+// The caption rises in from the bottom over a dark wash on hover; always shown on touch screens.
 .experience-gallery__caption {
-  margin-top: var(--vih-space-3xs);
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  padding: var(--vih-space-lg) var(--vih-space-sm) var(--vih-space-sm);
+  background: linear-gradient(to top, rgba(0, 26, 2, 0.75), transparent);
   font-size: var(--vih-text-sm);
-  color: var(--vih-text-muted);
+  line-height: 1.4;
+  color: var(--vih-cream);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--vih-dur-slow) var(--vih-ease-out), transform var(--vih-dur-slow) var(--vih-ease-out);
+
+  .experience-gallery__item:hover &,
+  .experience-gallery__item:focus-visible & {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (hover: none) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.experience-gallery__more {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: none;
+  place-items: center;
+  background: rgba(0, 26, 2, 0.55);
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-3xl);
+  color: var(--vih-cream);
+  transition: background-color var(--vih-dur-slow) var(--vih-ease-out);
+
+  @include bp.from(bp.$md) {
+    display: grid;
+  }
+
+  .experience-gallery__item:hover & {
+    background: rgba(0, 26, 2, 0.4);
+  }
 }
 
 // --- Ticket panel --------------------------------------------------------------------------------------------------------
@@ -822,6 +1651,11 @@
   background: var(--vih-surface-tinted);
   border: 1px solid var(--vih-line-on-light);
   border-radius: var(--vih-radius-xl);
+  scroll-margin-top: calc(var(--vih-header-height) + 64px);
+
+  @include bp.until(bp.$lg) {
+    position: static;
+  }
 }
 
 .experience-ticket-panel__title {
@@ -831,11 +1665,48 @@
   margin: 0 0 var(--vih-space-sm);
 }
 
+// A ticket stub: notches cut into both sides at the perforation, which runs between what the ticket
+// is and what it costs. The notches are circles in the panel's own colour.
 .experience-ticket {
-  padding: var(--vih-space-xs) 0;
-  border-top: 1px solid var(--vih-line-on-light);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--vih-space-sm);
+  margin-bottom: var(--vih-space-xs);
+  padding: var(--vih-space-sm) var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface);
+  transition: transform var(--vih-dur-slow) var(--vih-ease-out), box-shadow var(--vih-dur-slow) var(--vih-ease-out), border-color var(--vih-dur-slow) var(--vih-ease-out);
 
-  &:first-of-type { border-top: 0; padding-top: 0; }
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: 50%;
+    background: var(--vih-surface-tinted);
+  }
+
+  &::before { left: -8px; clip-path: inset(0 0 0 50%); }
+  &::after { right: -8px; clip-path: inset(0 50% 0 0); }
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: var(--vih-gold);
+    box-shadow: var(--vih-shadow-gold);
+  }
+}
+
+.experience-ticket__main {
+  min-width: 0;
+  padding-right: var(--vih-space-sm);
+  border-right: 1px dashed color-mix(in srgb, var(--vih-text-muted) 40%, transparent);
 }
 
 .experience-ticket__title {
@@ -849,24 +1720,42 @@
   font-family: var(--vih-font-serif);
   font-size: var(--vih-text-xl);
   color: var(--vih-green-900);
+  white-space: nowrap;
 }
 
 .experience-ticket__perks {
   margin: var(--vih-space-3xs) 0 0;
-  font-size: var(--vih-text-sm);
-  color: var(--vih-text-muted);
+  font-size: var(--vih-text-sm) !important;
+  line-height: 1.5 !important;
+  color: var(--vih-text-muted) !important;
 }
 
 // Real scarcity from TicketType.Inventory, and only shown at five or fewer — never at zero, where
 // the status badge already says waitlist or closed. Brief §15: no invented urgency.
 .experience-ticket__inventory {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin-top: var(--vih-space-3xs);
   font-size: var(--vih-text-2xs);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--vih-danger);
+
+  i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: vih-low-stock 1.8s var(--vih-ease-out) infinite;
+  }
+}
+
+@keyframes vih-low-stock {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--vih-danger) 55%, transparent); }
+  70%,
+  100% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--vih-danger) 0%, transparent); }
 }
 
 // "Members save 20%" under the panel title — gold, small, a fact not a banner.
@@ -888,10 +1777,15 @@
 
 .experience-ticket-panel__cta {
   width: 100%;
+  min-height: 48px;
   margin-top: var(--vih-space-sm);
 }
 
 // --- Mobile CTA ------------------------------------------------------------------------------------------------------------
+// Fixed to the bottom of a phone, above the home indicator (safe-area inset; the viewport meta
+// carries viewport-fit=cover so the inset is real on an iPhone). modules/mobileCta.ts adds
+// .is-enhanced and then slides it in only while neither the hero buttons nor the ticket panel are on
+// screen. Without the script it is simply always there.
 
 .experience-mobile-cta {
   position: fixed;
@@ -903,13 +1797,31 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--vih-space-sm);
-  padding: var(--vih-space-2xs) var(--vih-space-sm);
-  background: var(--vih-green-950);
+  padding: var(--vih-space-2xs) calc(var(--vih-space-sm) + env(safe-area-inset-right, 0px)) calc(var(--vih-space-2xs) + env(safe-area-inset-bottom, 0px)) calc(var(--vih-space-sm) + env(safe-area-inset-left, 0px));
+  background: color-mix(in srgb, var(--vih-green-950) 90%, transparent);
+  backdrop-filter: saturate(1.3) blur(14px);
   border-top: 1px solid var(--vih-line-on-dark);
-  padding-bottom: calc(var(--vih-space-2xs) + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -12px 30px rgba(0, 26, 2, 0.25);
+  transition: transform 420ms var(--vih-ease-out), opacity var(--vih-dur-base) var(--vih-ease);
+
+  &.is-enhanced:not(.is-visible) {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+
+  .btn {
+    min-height: 44px;
+  }
 
   @include bp.from(bp.$lg) {
     display: none;
+  }
+}
+
+// Room under the footer for the bar, so it never covers the last links on the page.
+@include bp.until(bp.$lg) {
+  body:has(.experience-mobile-cta) .site-footer {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -921,6 +1833,73 @@
     display: block;
     font-family: var(--vih-font-serif);
     font-size: var(--vih-text-lg);
+  }
+}
+
+// --- Reduced motion (detail page) ---------------------------------------------------------------------------
+// Movement goes; colour feedback stays.
+
+@media (prefers-reduced-motion: reduce) {
+  .experience-hero__media .cover__img,
+  .experience-hero__inner > *,
+  .experience-ticket__inventory i,
+  .experiences-header .container > *,
+  .experiences-header h1::after,
+  [data-experience-results].is-entering .experience-grid__cell {
+    animation: none;
+  }
+
+  .experience-program__sessions::after {
+    animation: none;
+    transform: scaleY(1);
+    opacity: 0.35;
+  }
+
+  .experience-card,
+  .experience-card .cover__img,
+  .experience-card__date,
+  .experience-card__title::after,
+  .experience-card__cta,
+  .experience-card__cta svg,
+  .experience-fact,
+  .experience-fact::before,
+  .experience-fact__icon,
+  .experience-subnav__indicator,
+  .experience-filters__pill,
+  .experience-filters__chip,
+  .experience-gallery__img,
+  .experience-gallery__item::after,
+  .experience-gallery__caption,
+  .experience-ticket,
+  .experience-mobile-cta,
+  .experience-program__session::before,
+  .experience-faq__chevron,
+  .experience-audience__tag {
+    transition: none;
+  }
+
+  .experience-faq__item::details-content {
+    transition: none;
+  }
+
+  .experience-card:hover,
+  .experience-card:focus-visible,
+  .experience-card:active,
+  .experience-card:hover .cover__img,
+  .experience-card:focus-visible .cover__img,
+  .experience-card:hover .experience-card__date,
+  .experience-fact:hover,
+  .experience-fact:hover .experience-fact__icon,
+  .experience-gallery__item:hover .experience-gallery__img,
+  .experience-gallery__item:active,
+  .experience-ticket:hover,
+  .experience-audience__tag:hover,
+  .experience-filters__chip:active {
+    transform: none;
+  }
+
+  .reveal .experience-inclusions__mark {
+    transform: none;
   }
 }
 

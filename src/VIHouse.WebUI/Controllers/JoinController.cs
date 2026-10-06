@@ -237,7 +237,7 @@ public class JoinController(
         var info = await membershipService.GetConfirmationBySessionAsync(sessionId, ct);
         if (info is null) return NotFound();
 
-        ViewData["Title"] = info.IsConfirmed ? "Welcome to The VI House" : info.AwaitingBank ? "Payment in progress" : "Confirming your payment";
+        // The page title is set by the view, in the reader's language.
         return View(new JoinSuccessViewModel(info));
     }
 }

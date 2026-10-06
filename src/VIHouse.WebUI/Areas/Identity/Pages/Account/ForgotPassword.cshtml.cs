@@ -50,9 +50,19 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Auth.Validation.EmailRequired")]
+            [EmailAddress(ErrorMessage = "Auth.Validation.EmailInvalid")]
+            [Display(Name = "Auth.Email")]
             public string Email { get; set; }
+        }
+
+        /// <summary>
+        /// Pre-fills the address when the reader arrives from an expired reset link ("Send me a new
+        /// link"), so asking again is one press.
+        /// </summary>
+        public void OnGet(string email = null)
+        {
+            Input = new InputModel { Email = email };
         }
 
         public async Task<IActionResult> OnPostAsync()

@@ -1,0 +1,29 @@
+@model (string Label, bool Multiple)
+@*
+    The full-size photograph viewer: a native <dialog> that modules/lightbox.ts fills from the
+    a[data-lightbox-item] links in the same [data-lightbox-scope]. Shared by the journal gallery and
+    the experience gallery, so both behave and look the same. Styles: _lightbox.scss.
+    Model: the dialog's accessible name, and whether there is more than one photograph (no arrows
+    for a single one).
+*@
+<dialog class="lightbox" data-lightbox aria-label="@Model.Label">
+    <div class="lightbox__stage">
+        <figure class="lightbox__figure">
+            <img class="lightbox__img" alt="" data-lightbox-img />
+            <figcaption class="lightbox__caption" data-lightbox-text></figcaption>
+        </figure>
+        <p class="lightbox__counter" data-lightbox-counter aria-live="polite"></p>
+        <button type="button" class="lightbox__btn lightbox__btn--close" data-lightbox-close aria-label="@Loc["Lightbox.Close"]">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+        @if (Model.Multiple)
+        {
+            <button type="button" class="lightbox__btn lightbox__btn--prev" data-lightbox-prev aria-label="@Loc["Lightbox.Previous"]">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+            </button>
+            <button type="button" class="lightbox__btn lightbox__btn--next" data-lightbox-next aria-label="@Loc["Lightbox.Next"]">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+            </button>
+        }
+    </div>
+</dialog>

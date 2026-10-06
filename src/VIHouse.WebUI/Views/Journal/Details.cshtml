@@ -115,27 +115,7 @@
             </div>
         </div>
 
-        <dialog class="lightbox" data-lightbox aria-label="@Loc["Journal.Gallery.Title"]">
-            <div class="lightbox__stage">
-                <figure class="lightbox__figure">
-                    <img class="lightbox__img" alt="" data-lightbox-img />
-                    <figcaption class="lightbox__caption" data-lightbox-text></figcaption>
-                </figure>
-                <p class="lightbox__counter" data-lightbox-counter aria-live="polite"></p>
-                <button type="button" class="lightbox__btn lightbox__btn--close" data-lightbox-close aria-label="@Loc["Journal.Gallery.Close"]">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
-                </button>
-                @if (total > 1)
-                {
-                    <button type="button" class="lightbox__btn lightbox__btn--prev" data-lightbox-prev aria-label="@Loc["Journal.Gallery.Prev"]">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
-                    </button>
-                    <button type="button" class="lightbox__btn lightbox__btn--next" data-lightbox-next aria-label="@Loc["Journal.Gallery.Next"]">
-                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
-                    </button>
-                }
-            </div>
-        </dialog>
+        <partial name="_Lightbox" model="@((Loc["Journal.Gallery.Title"].Value, total > 1))" />
     </section>
 }
 

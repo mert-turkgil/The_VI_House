@@ -1,37 +1,73 @@
 @model DigitalMemberCardViewModel
 @{
     ViewData["Title"] = Loc["Card.Title"];
+    var validUntil = Model.ExpiresAt?.ToString("MMM yyyy") ?? Loc["Card.NoExpiry"].Value;
 }
 
+@*
+    The digital membership card. Front and back faces in one element that turns over:
+      - with a mouse, the card tilts towards the pointer and a foil sheen follows it
+        (modules/memberCard.ts sets --tilt-x/--tilt-y/--glare-x/--glare-y);
+      - the flip button (and a tap on touch screens) turns it to the back, which carries the member
+        number large enough to read across a reception desk.
+    Without the script the front is simply shown, and the back's facts are all on the front anyway.
+    Print keeps the front only, flat and bordered (_auth.scss, @media print).
+*@
 <div class="account-manage">
     <partial name="_AccountNav" />
     <div class="account-manage__content">
-        <h1>@Loc["Card.Title"]</h1>
-        <p style="color:#666; font-size:0.875rem; margin:-8px 0 32px;">@Loc["Card.Intro"]</p>
+        <h1 class="member-card-page__title">@Loc["Card.Title"]</h1>
+        <p class="member-card-page__intro">@Loc["Card.Intro"]</p>
 
-        <div class="member-card-visual" id="member-card">
-            <div class="member-card-visual__top">
-                <span class="member-card-visual__crest"><partial name="_Crest" /></span>
-                <span class="member-card-visual__brand">The VI House</span>
-            </div>
-            <div class="member-card-visual__tier">@Model.PlanName</div>
-            <div class="member-card-visual__name">@Model.FullName</div>
-            <div class="member-card-visual__footer">
-                <div>
-                    <span class="member-card-visual__label">@Loc["Card.MemberSince"]</span>
-                    <span class="member-card-visual__value">@Model.MemberSince.ToString("MMM yyyy")</span>
+        <div class="member-card-stage" data-member-pass>
+            <div class="member-pass" id="member-pass">
+                <div class="member-pass__face member-pass__face--front">
+                    <span class="member-pass__watermark" aria-hidden="true"><partial name="_Crest" /></span>
+                    <div class="member-pass__top">
+                        <span class="member-pass__crest" aria-hidden="true"><partial name="_Crest" /></span>
+                        <span class="member-pass__brand">The VI House</span>
+                        <span class="member-pass__status"><i aria-hidden="true"></i>@Loc["Join.Success.Active"]</span>
+                    </div>
+                    <div>
+                        <div class="member-pass__tier">@Model.PlanName</div>
+                        <div class="member-pass__name">@Model.FullName</div>
+                    </div>
+                    <dl class="member-pass__facts">
+                        <div>
+                            <dt>@Loc["Card.MemberSince"]</dt>
+                            <dd>@Model.MemberSince.ToString("MMM yyyy")</dd>
+                        </div>
+                        <div>
+                            <dt>@Loc["Card.ValidUntil"]</dt>
+                            <dd>@validUntil</dd>
+                        </div>
+                        <div>
+                            <dt>@Loc["Card.MemberNumber"]</dt>
+                            <dd class="member-pass__number">@Model.MemberNumber</dd>
+                        </div>
+                    </dl>
+                    <span class="member-pass__glare" aria-hidden="true"></span>
                 </div>
-                <div>
-                    <span class="member-card-visual__label">@Loc["Card.ValidUntil"]</span>
-                    <span class="member-card-visual__value">@(Model.ExpiresAt?.ToString("MMM yyyy") ?? Loc["Card.NoExpiry"])</span>
-                </div>
-                <div>
-                    <span class="member-card-visual__label">@Loc["Card.MemberNumber"]</span>
-                    <span class="member-card-visual__value">@Model.MemberNumber</span>
+
+                <div class="member-pass__face member-pass__face--back" aria-hidden="true">
+                    <span class="member-pass__stripe"></span>
+                    <div class="member-pass__back-body">
+                        <span class="member-pass__back-label">@Loc["Card.MemberNumber"]</span>
+                        <span class="member-pass__back-number">@Model.MemberNumber</span>
+                        <span class="member-pass__back-meta">@Model.PlanName · @Loc["Card.ValidUntil"] @validUntil</span>
+                        <span class="member-pass__back-note">@Loc["Card.BackNote", Model.FullName]</span>
+                    </div>
+                    <span class="member-pass__glare" aria-hidden="true"></span>
                 </div>
             </div>
         </div>
 
-        <button type="button" class="btn btn--primary member-card-print-btn" onclick="window.print()">@Loc["Card.Print"]</button>
+        <div class="member-card-actions">
+            <button type="button" class="btn btn--primary" onclick="window.print()">@Loc["Card.Print"]</button>
+            <button type="button" class="btn btn--ghost" data-member-card-flip aria-controls="member-pass" aria-pressed="false"
+                    data-label-front="@Loc["Card.ShowFront"]" data-label-back="@Loc["Card.ShowBack"]" hidden>@Loc["Card.ShowBack"]</button>
+            <button type="button" class="btn btn--ghost" data-copy="@Model.MemberNumber" data-copied-label="@Loc["Card.Copied"]">@Loc["Card.CopyNumber"]</button>
+            <a class="member-card-actions__link" asp-controller="Account" asp-action="Membership">@Loc["Card.MembershipDetails"] &rarr;</a>
+        </div>
     </div>
 </div>

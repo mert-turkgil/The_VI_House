@@ -80,7 +80,9 @@
             }
         </div>
 
-        <div class="experience-hero__actions">
+        @* data-hero-actions: modules/mobileCta.ts shows the sticky phone bar once this has scrolled
+           out of view, so the two buttons are never on screen at the same time. *@
+        <div class="experience-hero__actions" data-hero-actions>
             @if (Model.CanApply)
             {
                 <a class="btn btn--primary" href="/apply?experience=@Model.Slug">@Loc["Experiences.Apply"]</a>
@@ -103,20 +105,66 @@
     </div>
 }
 
-<div class="container">
-    <nav class="experience-subnav" aria-label="@Model.Title" data-subnav>
-        <ul class="experience-subnav__list">
-            @foreach (var item in navItems)
+@* Key facts, the four things a visitor scans for, as tiles that overlap the bottom of the hero on
+   a wide screen and sit in a 2x2 grid on a phone. The icon redraws itself on hover. *@
+<div class="container experience-facts-wrap">
+    <ul class="experience-facts">
+        <li class="experience-fact" data-reveal>
+            <span class="experience-fact__icon"><partial name="_Icon" model="@("calendar")" /></span>
+            <span class="experience-fact__label">@Loc["Experiences.Facts.When"]</span>
+            <strong class="experience-fact__value">@Model.StartAtUtc.ToString("d MMM")&ndash;@Model.EndAtUtc.ToString("d MMM yyyy")</strong>
+        </li>
+        <li class="experience-fact" data-reveal data-reveal-delay="80">
+            <span class="experience-fact__icon"><partial name="_Icon" model="@("clock")" /></span>
+            <span class="experience-fact__label">@Loc["Experiences.Facts.Length"]</span>
+            <strong class="experience-fact__value">@Loc[Model.DurationKey, Model.DurationDays]</strong>
+        </li>
+        <li class="experience-fact" data-reveal data-reveal-delay="160">
+            <span class="experience-fact__icon"><partial name="_Icon" model="@("map-pin")" /></span>
+            <span class="experience-fact__label">@Loc["Experiences.Facts.Where"]</span>
+            <strong class="experience-fact__value">@Model.City</strong>
+            @if (!string.IsNullOrWhiteSpace(Model.Venue))
             {
-                <li>
-                    <a class="experience-subnav__link" href="#@item.Id" data-subnav-link="@item.Id">
-                        @Loc[item.Key]
-                    </a>
-                </li>
+                <span class="experience-fact__note">@Model.Venue</span>
             }
-        </ul>
+        </li>
+        <li class="experience-fact" data-reveal data-reveal-delay="240">
+            <span class="experience-fact__icon"><partial name="_Icon" model="@("ticket")" /></span>
+            @if (Model.CheapestTicket is { } fromTicket)
+            {
+                <span class="experience-fact__label">@Loc["Experiences.From"]</span>
+                <strong class="experience-fact__value">@MoneyFormatter.Format(fromTicket.PriceMinor, fromTicket.Currency)</strong>
+            }
+            else
+            {
+                <span class="experience-fact__label">@Loc["Experiences.Facts.Status"]</span>
+                <strong class="experience-fact__value">@Loc[Model.StatusKey]</strong>
+            }
+        </li>
+    </ul>
+</div>
+
+@* The sub-nav sits outside .container so it is full width on its own, with the links aligned to
+   the grid by an inner container. It used to bleed out of the container with calc(50% - 50vw),
+   which on Windows (100vw includes the scrollbar) made every experience page scroll sideways.
+   The wrapper is what the sticky bar sticks within, so it lets go before the footer. *@
+<div class="experience-main">
+    <nav class="experience-subnav" aria-label="@Model.Title" data-subnav>
+        <div class="container">
+            <ul class="experience-subnav__list">
+                @foreach (var item in navItems)
+                {
+                    <li>
+                        <a class="experience-subnav__link" href="#@item.Id" data-subnav-link="@item.Id">
+                            @Loc[item.Key]
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
     </nav>
 
+<div class="container">
     <div class="experience-body">
         <div>
             <section class="experience-section" id="about" data-subnav-section="about">
@@ -151,7 +199,7 @@
 
                     @foreach (var day in Model.ProgramDays)
                     {
-                        <div class="experience-program__day">
+                        <div class="experience-program__day" data-reveal>
                             <div class="experience-program__day-head">
                                 <span class="experience-program__day-num">@Loc["Experiences.Programme.Day",
                                                                 day.DayNumber]</span>
@@ -201,7 +249,7 @@
                         <div class="experience-inclusions">
                             @if (Model.Included.Count > 0)
                             {
-                                <div class="experience-inclusions__col experience-inclusions__col--included">
+                                <div class="experience-inclusions__col experience-inclusions__col--included" data-reveal>
                                     <h3 class="experience-inclusions__heading">@Loc["Experiences.Included"]</h3>
                                     <ul class="experience-inclusions__list">
                                         @foreach (var item in Model.Included)
@@ -222,7 +270,7 @@
 
                             @if (Model.NotIncluded.Count > 0)
                             {
-                                <div class="experience-inclusions__col experience-inclusions__col--excluded">
+                                <div class="experience-inclusions__col experience-inclusions__col--excluded" data-reveal data-reveal-delay="120">
                                     <h3 class="experience-inclusions__heading">@Loc["Experiences.NotIncluded"]</h3>
                                     <ul class="experience-inclusions__list">
                                         @foreach (var item in Model.NotIncluded)
@@ -243,43 +291,48 @@
 
                 @if (hasGallery)
                 {
-                    <section class="experience-section" id="gallery" data-subnav-section="gallery">
-                        <h2>@Loc["Experiences.Section.Gallery"]</h2>
+                    var shown = Model.Gallery.Count;
+                    // A bento on wide screens shows five tiles; the fifth carries "+N" when there are
+                    // more. Every photograph is still a link in the lightbox's list, so the arrows
+                    // there reach all of them.
+                    var bentoTiles = 5;
 
-                        @* Model.Gallery was loaded by the repository and never rendered until now. Uses
-                       the Swiper instance the site already ships — no new library. *@
-                        <div class="experience-gallery swiper" data-swiper data-swiper-per-view="2"
-                             data-swiper-prev-label="@Loc["Experiences.Gallery.Prev"]"
-                             data-swiper-next-label="@Loc["Experiences.Gallery.Next"]">
-                            <div class="swiper-wrapper">
-                                @foreach (var image in Model.Gallery)
-                                {
-                                    <div class="swiper-slide">
-                                        <figure class="experience-gallery__item">
-                                            @* Real alt here, unlike the covers: these sit away from any
-                                           heading that describes them. AltText is null-safe — a null
-                                           becomes alt="" (decorative), never the experience title,
-                                           which would make a screen reader read it six times. *@
-                                            @* Resolved, not the raw column: an uploaded photograph has no
-                                           Url and is streamed by MediaController instead. *@
-                                            <partial name="_CoverImage" model="@(new CoverImageViewModel
-                                                     {
-                                                         Url = ExperienceService.GalleryImageUrl(image),
-                                                         Alt = image.AltText,
-                                                         Ratio = "4x3",
-                                                         Sizes = "(min-width: 960px) 40vw, 90vw",
-                                                     })" />
-                                        </figure>
-                                        @if (!string.IsNullOrWhiteSpace(image.AltText))
-                                        {
-                                            <figcaption class="experience-gallery__caption">@image.AltText</figcaption>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                            <div class="swiper-button-prev"></div>
-                            <div class="swiper-button-next"></div>
+                    <section class="experience-section" id="gallery" data-subnav-section="gallery" data-lightbox-scope>
+                        <div class="experience-section__head">
+                            <h2>@Loc["Experiences.Section.Gallery"]</h2>
+                            <span class="experience-gallery__count">@Loc[shown == 1 ? "Journal.Gallery.CountOne" : "Journal.Gallery.Count", shown]</span>
                         </div>
+
+                        @* A native scroll-snap row on a phone (swipe, no library) and a bento grid from
+                           the medium breakpoint. Each tile opens the shared lightbox (_Lightbox). *@
+                        <div class="experience-gallery" data-count="@Math.Min(shown, bentoTiles)">
+                            @for (var g = 0; g < shown; g++)
+                            {
+                                var image = Model.Gallery[g];
+                                var url = ExperienceService.GalleryImageUrl(image);
+                                var extra = shown - bentoTiles;
+                                <a class="experience-gallery__item @(g >= bentoTiles ? "experience-gallery__item--overflow" : null)"
+                                   href="@url" target="_blank" rel="noopener"
+                                   data-lightbox-item data-lightbox-caption="@image.AltText"
+                                   aria-label="@Loc["Journal.Gallery.Open", g + 1, shown]">
+                                    @* Real alt here, unlike the covers: these sit away from any heading
+                                       that describes them. A null AltText becomes alt="" (decorative),
+                                       never the experience title. *@
+                                    <img class="experience-gallery__img" src="@url" alt="@(image.AltText ?? string.Empty)"
+                                         loading="lazy" decoding="async" width="1200" height="900" />
+                                    @if (!string.IsNullOrWhiteSpace(image.AltText))
+                                    {
+                                        <span class="experience-gallery__caption" aria-hidden="true">@image.AltText</span>
+                                    }
+                                    @if (g == bentoTiles - 1 && extra > 0)
+                                    {
+                                        <span class="experience-gallery__more" aria-hidden="true">+@extra</span>
+                                    }
+                                </a>
+                            }
+                        </div>
+
+                        <partial name="_Lightbox" model="@((Loc["Experiences.Section.Gallery"].Value, shown > 1))" />
                     </section>
                 }
 
@@ -308,7 +361,7 @@
 
             @* id so the sticky mobile bar can send someone to the waitlist form, which is too tall to
            render inside the bar itself. *@
-            <aside class="experience-ticket-panel" id="tickets">
+            <aside class="experience-ticket-panel" id="tickets" data-ticket-panel>
                 <h2 class="experience-ticket-panel__title">@Loc["Experiences.Tickets.Title"]</h2>
                 @if (Model.MemberDiscountPercent > 0 && Model.TicketTypes.Count > 0)
                 {
@@ -323,9 +376,11 @@
                 {
                     foreach (var ticket in Model.TicketTypes)
                     {
+                        @* A ticket stub: notched edges and a perforation between what it is and what it
+                           costs. *@
                         <div class="experience-ticket">
+                            <div class="experience-ticket__main">
                             <p class="experience-ticket__title">@ticket.Title</p>
-                            <span class="experience-ticket__price">@MoneyFormatter.Format(ticket.PriceMinor, ticket.Currency)</span>
 
                             @if (!string.IsNullOrWhiteSpace(ticket.PerksText))
                             {
@@ -337,9 +392,11 @@
                            and "0 places left" as a nudge would be invented urgency (brief §15). *@
                             @if (ticket.Inventory > 0 && ticket.Inventory <= 5)
                             {
-                                <span class="experience-ticket__inventory">@Loc["Experiences.Tickets.PlacesLeft",
+                                <span class="experience-ticket__inventory"><i aria-hidden="true"></i>@Loc["Experiences.Tickets.PlacesLeft",
                                                         ticket.Inventory]</span>
-                                }
+                            }
+                            </div>
+                            <span class="experience-ticket__price">@MoneyFormatter.Format(ticket.PriceMinor, ticket.Currency)</span>
                             </div>
                         }
                     }
@@ -414,13 +471,14 @@
                 <a asp-area="" asp-controller="Experiences" asp-action="Index">&larr; @Loc["Experiences.BackToAll"]</a>
             </p>
         </div>
+</div>
 
         @*
     The sticky bar. This used to be wrapped in @if (Model.CanApply), so a Coming Soon experience had
     no bottom bar at all — on a phone you scrolled the entire page and arrived at nothing. It now
     renders in both cases and carries the gate when there is nothing to buy.
 *@
-        <div class="experience-mobile-cta">
+        <div class="experience-mobile-cta" data-mobile-cta>
             @if (Model.CanApply)
             {
                 <span class="experience-mobile-cta__price">

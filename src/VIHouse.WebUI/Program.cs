@@ -64,6 +64,8 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     })
     .AddEntityFrameworkStores<VIHouseDbContext>()
     .AddDefaultTokenProviders()
+    // Password and token errors in the reader's language, worded as what to do next.
+    .AddErrorDescriber<LocalizedIdentityErrorDescriber>()
     .AddDefaultUI();
 
 // The sign-in URLs the cookie challenges to. AddDefaultUI sets /Identity/Account/* through its own

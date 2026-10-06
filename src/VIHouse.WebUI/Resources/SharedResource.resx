@@ -1863,4 +1863,123 @@ What would you like to know?</value></data>
   <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} is already in this article's media, so the existing file was used and no copy was stored.</value></data>
   <data name="Journal.Breadcrumb" xml:space="preserve"><value>Where this story sits</value></data>
   <data name="Journal.ReadingTime" xml:space="preserve"><value>{0} min read</value></data>
+  <data name="Lightbox.Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Lightbox.Previous" xml:space="preserve"><value>Previous photograph</value></data>
+  <data name="Lightbox.Next" xml:space="preserve"><value>Next photograph</value></data>
+  <data name="Identity.Error.Default" xml:space="preserve"><value>Something went wrong on our side. Please try again in a moment.</value></data>
+  <data name="Identity.Error.Concurrency" xml:space="preserve"><value>Your account was changed somewhere else at the same time. Please reload the page and try again.</value></data>
+  <data name="Identity.Error.PasswordMismatch" xml:space="preserve"><value>That's not your current password. Check it and try again.</value></data>
+  <data name="Identity.Error.InvalidToken" xml:space="preserve"><value>This link has expired or has already been used.</value></data>
+  <data name="Identity.Error.InvalidEmail" xml:space="preserve"><value>“{0}” isn't a valid email address.</value></data>
+  <data name="Identity.Error.DuplicateEmail" xml:space="preserve"><value>{0} is already linked to another account.</value></data>
+  <data name="Identity.Error.AlreadyHasPassword" xml:space="preserve"><value>This account already has a password. Use “Change password” instead.</value></data>
+  <data name="Identity.Error.PasswordTooShort" xml:space="preserve"><value>Use at least {0} characters.</value></data>
+  <data name="Identity.Error.PasswordUniqueChars" xml:space="preserve"><value>Use at least {0} different characters.</value></data>
+  <data name="Identity.Error.PasswordSymbol" xml:space="preserve"><value>Add at least one symbol, such as ! @ # or ?</value></data>
+  <data name="Identity.Error.PasswordDigit" xml:space="preserve"><value>Add at least one number (0–9).</value></data>
+  <data name="Identity.Error.PasswordLower" xml:space="preserve"><value>Add at least one lowercase letter (a–z).</value></data>
+  <data name="Identity.Error.PasswordUpper" xml:space="preserve"><value>Add at least one capital letter (A–Z).</value></data>
+  <data name="Auth.Validation.EmailRequired" xml:space="preserve"><value>Enter your email address.</value></data>
+  <data name="Auth.Validation.EmailInvalid" xml:space="preserve"><value>Enter an email address in the format name@example.com.</value></data>
+  <data name="Auth.Validation.PasswordRequired" xml:space="preserve"><value>Enter a new password.</value></data>
+  <data name="Auth.Validation.PasswordLength" xml:space="preserve"><value>Use at least {2} characters.</value></data>
+  <data name="Auth.Validation.ConfirmRequired" xml:space="preserve"><value>Type the new password again to confirm it.</value></data>
+  <data name="Auth.Validation.PasswordsDiffer" xml:space="preserve"><value>The two passwords don't match. Type the same password in both boxes.</value></data>
+  <data name="Auth.Validation.CurrentRequired" xml:space="preserve"><value>Enter your current password.</value></data>
+  <data name="Auth.NewPassword" xml:space="preserve"><value>New password</value></data>
+  <data name="Auth.ConfirmPassword" xml:space="preserve"><value>Confirm new password</value></data>
+  <data name="Auth.Rules.Title" xml:space="preserve"><value>Your password needs</value></data>
+  <data name="Auth.Rules.Length" xml:space="preserve"><value>At least {0} characters</value></data>
+  <data name="Auth.Rules.Upper" xml:space="preserve"><value>A capital letter (A–Z)</value></data>
+  <data name="Auth.Rules.Lower" xml:space="preserve"><value>A lowercase letter (a–z)</value></data>
+  <data name="Auth.Rules.Digit" xml:space="preserve"><value>A number (0–9)</value></data>
+  <data name="Auth.Rules.Symbol" xml:space="preserve"><value>A symbol, such as ! @ # ?</value></data>
+  <data name="Auth.Rules.Match" xml:space="preserve"><value>Both passwords match</value></data>
+  <data name="Auth.Rules.Met" xml:space="preserve"><value>done</value></data>
+  <data name="Auth.Rules.Unmet" xml:space="preserve"><value>not yet</value></data>
+  <data name="Auth.Security.Eyebrow" xml:space="preserve"><value>Account security</value></data>
+  <data name="Auth.BackToSignIn" xml:space="preserve"><value>Back to sign in</value></data>
+  <data name="Auth.BackToHome" xml:space="preserve"><value>Back to the home page</value></data>
+  <data name="Auth.Reset.Title" xml:space="preserve"><value>Choose a new password</value></data>
+  <data name="Auth.Reset.Heading" xml:space="preserve"><value>Choose a new password</value></data>
+  <data name="Auth.Reset.Lede" xml:space="preserve"><value>Enter the email address of your account, then choose a password you don't use anywhere else.</value></data>
+  <data name="Auth.Reset.ErrorTitle" xml:space="preserve"><value>We couldn't change your password</value></data>
+  <data name="Auth.Reset.Submit" xml:space="preserve"><value>Save new password</value></data>
+  <data name="Auth.Reset.Expired.Title" xml:space="preserve"><value>This link can't be used any more</value></data>
+  <data name="Auth.Reset.Expired.Body" xml:space="preserve"><value>Reset links work once and expire after 24 hours, so this one has either been used or run out. Ask for a new one and we'll email it straight away.</value></data>
+  <data name="Auth.Reset.Expired.Action" xml:space="preserve"><value>Send me a new link</value></data>
+  <data name="Auth.Forgot.Title" xml:space="preserve"><value>Forgot your password?</value></data>
+  <data name="Auth.Forgot.Heading" xml:space="preserve"><value>Forgot your password?</value></data>
+  <data name="Auth.Forgot.Lede" xml:space="preserve"><value>Enter the email you use for The VI House and we'll send you a link to choose a new password. It works for 24 hours.</value></data>
+  <data name="Auth.Forgot.ErrorTitle" xml:space="preserve"><value>Please check your email address</value></data>
+  <data name="Auth.Forgot.Submit" xml:space="preserve"><value>Send reset link</value></data>
+  <data name="Auth.ForgotSent.Title" xml:space="preserve"><value>Check your inbox</value></data>
+  <data name="Auth.ForgotSent.Heading" xml:space="preserve"><value>Check your inbox</value></data>
+  <data name="Auth.ForgotSent.Lede" xml:space="preserve"><value>If an account exists for that address, we've sent it a link to choose a new password.</value></data>
+  <data name="Auth.ForgotSent.Tip1" xml:space="preserve"><value>The link works once and expires after 24 hours.</value></data>
+  <data name="Auth.ForgotSent.Tip2" xml:space="preserve"><value>Nothing after a few minutes? Check your spam or promotions folder.</value></data>
+  <data name="Auth.ForgotSent.NothingArrived" xml:space="preserve"><value>Still nothing?</value></data>
+  <data name="Auth.ForgotSent.SendAgain" xml:space="preserve"><value>Send it again</value></data>
+  <data name="Auth.ResetDone.Title" xml:space="preserve"><value>Password changed</value></data>
+  <data name="Auth.ResetDone.Heading" xml:space="preserve"><value>Your password has been changed</value></data>
+  <data name="Auth.ResetDone.Lede" xml:space="preserve"><value>You can sign in with your new password now.</value></data>
+  <data name="Auth.Lockout.Title" xml:space="preserve"><value>Sign-in paused</value></data>
+  <data name="Auth.Lockout.Heading" xml:space="preserve"><value>Too many attempts</value></data>
+  <data name="Auth.Lockout.Lede" xml:space="preserve"><value>For your security, sign-in to this account is paused for {0} minutes. You can try again after that, or choose a new password now.</value></data>
+  <data name="Auth.Lockout.Reset" xml:space="preserve"><value>Choose a new password</value></data>
+  <data name="Auth.Denied.Title" xml:space="preserve"><value>No access</value></data>
+  <data name="Auth.Denied.Heading" xml:space="preserve"><value>This page isn't part of your account</value></data>
+  <data name="Auth.Denied.Lede" xml:space="preserve"><value>You're signed in, but your account doesn't include this area.</value></data>
+  <data name="Auth.Denied.Account" xml:space="preserve"><value>Go to my account</value></data>
+  <data name="Auth.Denied.Mistake" xml:space="preserve"><value>Think this is a mistake?</value></data>
+  <data name="Auth.Denied.Contact" xml:space="preserve"><value>Contact us</value></data>
+  <data name="Manage.Password.ErrorTitle" xml:space="preserve"><value>We couldn't save your password</value></data>
+  <data name="Manage.Password.Changed" xml:space="preserve"><value>Your password has been changed.</value></data>
+  <data name="Manage.SetPassword.Title" xml:space="preserve"><value>Set a password</value></data>
+  <data name="Manage.SetPassword.Lede" xml:space="preserve"><value>You sign in with Google at the moment. Add a password so you can also sign in with your email address.</value></data>
+  <data name="Manage.SetPassword.Submit" xml:space="preserve"><value>Set password</value></data>
+  <data name="Manage.SetPassword.Done" xml:space="preserve"><value>Your password has been set.</value></data>
+  <data name="Join.Success.Title" xml:space="preserve"><value>Payment received</value></data>
+  <data name="Join.Success.Pending.Title" xml:space="preserve"><value>Confirming your payment</value></data>
+  <data name="Join.Success.MembershipFallback" xml:space="preserve"><value>membership</value></data>
+  <data name="Join.Success.Eyebrow" xml:space="preserve"><value>Payment received</value></data>
+  <data name="Join.Success.Heading" xml:space="preserve"><value>Welcome to The VI House</value></data>
+  <data name="Join.Success.Lede" xml:space="preserve"><value>Your {0} membership is active and your receipt is on its way. Two short steps and you're all set.</value></data>
+  <data name="Join.Success.PassLabel" xml:space="preserve"><value>Your membership pass</value></data>
+  <data name="Join.Success.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Join.Success.Paid" xml:space="preserve"><value>Paid</value></data>
+  <data name="Join.Success.NextTitle" xml:space="preserve"><value>What happens next</value></data>
+  <data name="Join.Success.Step1.Title" xml:space="preserve"><value>Receipt sent</value></data>
+  <data name="Join.Success.Step1.Body" xml:space="preserve"><value>Your payment receipt is in your inbox.</value></data>
+  <data name="Join.Success.Step2.Title" xml:space="preserve"><value>Set up your account</value></data>
+  <data name="Join.Success.Step2.Body" xml:space="preserve"><value>Open the email “{0}” and choose your password.</value></data>
+  <data name="Join.Success.Step3.Title" xml:space="preserve"><value>Secure your account</value></data>
+  <data name="Join.Success.Step3.Body" xml:space="preserve"><value>We'll walk you through two-step verification, so only you can sign in.</value></data>
+  <data name="Join.Success.StepDone" xml:space="preserve"><value>done</value></data>
+  <data name="Join.Success.Explore" xml:space="preserve"><value>Explore experiences</value></data>
+  <data name="Join.Success.Footnote" xml:space="preserve"><value>Already have a password? Sign in as usual. Otherwise, look for “{0}” in your inbox.</value></data>
+  <data name="Join.Success.Action.Eyebrow" xml:space="preserve"><value>Confirmation needed</value></data>
+  <data name="Join.Success.Action.Heading" xml:space="preserve"><value>Your bank needs you to confirm this payment</value></data>
+  <data name="Join.Success.Action.Lede" xml:space="preserve"><value>Look for your bank's message or app prompt and confirm the payment. Your membership starts the moment it clears.</value></data>
+  <data name="Join.Success.Action.Footnote" xml:space="preserve"><value>We'll email your account setup link, “{0}”, as soon as the payment clears.</value></data>
+  <data name="Join.Success.Bank.Eyebrow" xml:space="preserve"><value>Payment in progress</value></data>
+  <data name="Join.Success.Bank.Heading" xml:space="preserve"><value>Your bank is confirming the payment</value></data>
+  <data name="Join.Success.Bank.Lede" xml:space="preserve"><value>Your checkout is complete. The payment method you chose takes a little while to clear, so your membership starts the moment the money lands, usually within a few days.</value></data>
+  <data name="Join.Success.Bank.Footnote" xml:space="preserve"><value>We've emailed you a note about this, and we'll email your setup link, “{0}”, as soon as the payment arrives. Nothing more is needed from you.</value></data>
+  <data name="Join.Success.Processing.Eyebrow" xml:space="preserve"><value>Just a moment</value></data>
+  <data name="Join.Success.Processing.Heading" xml:space="preserve"><value>Confirming your payment</value></data>
+  <data name="Join.Success.Processing.Lede" xml:space="preserve"><value>Your bank has approved the payment and we're finishing your account. This usually takes a few seconds, and this page updates by itself.</value></data>
+  <data name="Join.Success.Processing.Footnote" xml:space="preserve"><value>Or watch your inbox: we'll email your setup link, “{0}”, as soon as it's ready.</value></data>
+  <data name="Card.BackNote" xml:space="preserve"><value>This card belongs to {0}. Show it at check-in.</value></data>
+  <data name="Card.ShowBack" xml:space="preserve"><value>Show the back</value></data>
+  <data name="Card.ShowFront" xml:space="preserve"><value>Show the front</value></data>
+  <data name="Card.CopyNumber" xml:space="preserve"><value>Copy member number</value></data>
+  <data name="Card.Copied" xml:space="preserve"><value>Copied</value></data>
+  <data name="Card.MembershipDetails" xml:space="preserve"><value>Membership details</value></data>
+  <data name="Experiences.Facts.When" xml:space="preserve"><value>When</value></data>
+  <data name="Experiences.Facts.Length" xml:space="preserve"><value>Length</value></data>
+  <data name="Experiences.Facts.Where" xml:space="preserve"><value>Where</value></data>
+  <data name="Experiences.Facts.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Card.Error.NoMembership" xml:space="preserve"><value>You don't have an active membership yet.</value></data>
+  <data name="Card.Error.NotInPlan" xml:space="preserve"><value>The digital card isn't part of {0}.</value></data>
 </root>

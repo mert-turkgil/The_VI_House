@@ -35,10 +35,16 @@ else if (Model.Cards.Count == 0)
 }
 else
 {
+    @* Each cell rises in as it enters the viewport (modules/reveal.ts), one after another along a row:
+       the delay steps by 80ms and stops growing after the sixth card, so a long list never makes
+       anyone wait. After a filter swap the new cells are not observed, so they animate in with
+       .is-entering instead (modules/filters.ts) and are visible either way. *@
     <div class="experience-grid">
-        @foreach (var card in Model.Cards)
+        @for (var i = 0; i < Model.Cards.Count; i++)
         {
-            <partial name="_ExperienceCard" model="card" />
+            <div class="experience-grid__cell" data-reveal data-reveal-delay="@(Math.Min(i, 5) * 80)" style="--i: @Math.Min(i, 5)">
+                <partial name="_ExperienceCard" model="Model.Cards[i]" />
+            </div>
         }
     </div>
 }

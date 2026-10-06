@@ -45,7 +45,7 @@
                         <div class="join__row">
                             <div class="join__field">
                                 <label asp-for="Password">@Loc["AmbassadorInvite.Password"]</label>
-                                <input asp-for="Password" autocomplete="new-password" />
+                                <input asp-for="Password" autocomplete="new-password" aria-describedby="Password-rules" />
                                 <span asp-validation-for="Password" class="join__field-error"></span>
                             </div>
                             <div class="join__field">
@@ -54,6 +54,7 @@
                                 <span asp-validation-for="ConfirmPassword" class="join__field-error"></span>
                             </div>
                         </div>
+                        <partial name="_PasswordRules" model="@(("Password", (string?)"ConfirmPassword"))" />
                     }
                     else
                     {

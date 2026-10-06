@@ -1863,4 +1863,123 @@ Was möchten Sie wissen?</value></data>
   <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} ist bereits in den Medien dieses Artikels. Die vorhandene Datei wurde verwendet, keine Kopie gespeichert.</value></data>
   <data name="Journal.Breadcrumb" xml:space="preserve"><value>Wo dieser Beitrag steht</value></data>
   <data name="Journal.ReadingTime" xml:space="preserve"><value>{0} Min. Lesezeit</value></data>
+  <data name="Lightbox.Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="Lightbox.Previous" xml:space="preserve"><value>Vorheriges Foto</value></data>
+  <data name="Lightbox.Next" xml:space="preserve"><value>Nächstes Foto</value></data>
+  <data name="Identity.Error.Default" xml:space="preserve"><value>Bei uns ist etwas schiefgelaufen. Bitte versuchen Sie es gleich noch einmal.</value></data>
+  <data name="Identity.Error.Concurrency" xml:space="preserve"><value>Ihr Konto wurde gleichzeitig an anderer Stelle geändert. Bitte laden Sie die Seite neu und versuchen Sie es erneut.</value></data>
+  <data name="Identity.Error.PasswordMismatch" xml:space="preserve"><value>Das ist nicht Ihr aktuelles Passwort. Bitte prüfen Sie es und versuchen Sie es erneut.</value></data>
+  <data name="Identity.Error.InvalidToken" xml:space="preserve"><value>Dieser Link ist abgelaufen oder wurde bereits verwendet.</value></data>
+  <data name="Identity.Error.InvalidEmail" xml:space="preserve"><value>„{0}“ ist keine gültige E-Mail-Adresse.</value></data>
+  <data name="Identity.Error.DuplicateEmail" xml:space="preserve"><value>{0} ist bereits mit einem anderen Konto verknüpft.</value></data>
+  <data name="Identity.Error.AlreadyHasPassword" xml:space="preserve"><value>Dieses Konto hat bereits ein Passwort. Nutzen Sie stattdessen „Passwort ändern“.</value></data>
+  <data name="Identity.Error.PasswordTooShort" xml:space="preserve"><value>Verwenden Sie mindestens {0} Zeichen.</value></data>
+  <data name="Identity.Error.PasswordUniqueChars" xml:space="preserve"><value>Verwenden Sie mindestens {0} verschiedene Zeichen.</value></data>
+  <data name="Identity.Error.PasswordSymbol" xml:space="preserve"><value>Fügen Sie mindestens ein Sonderzeichen hinzu, z. B. ! @ # oder ?</value></data>
+  <data name="Identity.Error.PasswordDigit" xml:space="preserve"><value>Fügen Sie mindestens eine Ziffer hinzu (0–9).</value></data>
+  <data name="Identity.Error.PasswordLower" xml:space="preserve"><value>Fügen Sie mindestens einen Kleinbuchstaben hinzu (a–z).</value></data>
+  <data name="Identity.Error.PasswordUpper" xml:space="preserve"><value>Fügen Sie mindestens einen Großbuchstaben hinzu (A–Z).</value></data>
+  <data name="Auth.Validation.EmailRequired" xml:space="preserve"><value>Geben Sie Ihre E-Mail-Adresse ein.</value></data>
+  <data name="Auth.Validation.EmailInvalid" xml:space="preserve"><value>Geben Sie eine E-Mail-Adresse im Format name@beispiel.de ein.</value></data>
+  <data name="Auth.Validation.PasswordRequired" xml:space="preserve"><value>Geben Sie ein neues Passwort ein.</value></data>
+  <data name="Auth.Validation.PasswordLength" xml:space="preserve"><value>Verwenden Sie mindestens {2} Zeichen.</value></data>
+  <data name="Auth.Validation.ConfirmRequired" xml:space="preserve"><value>Geben Sie das neue Passwort zur Bestätigung noch einmal ein.</value></data>
+  <data name="Auth.Validation.PasswordsDiffer" xml:space="preserve"><value>Die beiden Passwörter stimmen nicht überein. Geben Sie in beiden Feldern dasselbe Passwort ein.</value></data>
+  <data name="Auth.Validation.CurrentRequired" xml:space="preserve"><value>Geben Sie Ihr aktuelles Passwort ein.</value></data>
+  <data name="Auth.NewPassword" xml:space="preserve"><value>Neues Passwort</value></data>
+  <data name="Auth.ConfirmPassword" xml:space="preserve"><value>Neues Passwort bestätigen</value></data>
+  <data name="Auth.Rules.Title" xml:space="preserve"><value>Ihr Passwort braucht</value></data>
+  <data name="Auth.Rules.Length" xml:space="preserve"><value>Mindestens {0} Zeichen</value></data>
+  <data name="Auth.Rules.Upper" xml:space="preserve"><value>Einen Großbuchstaben (A–Z)</value></data>
+  <data name="Auth.Rules.Lower" xml:space="preserve"><value>Einen Kleinbuchstaben (a–z)</value></data>
+  <data name="Auth.Rules.Digit" xml:space="preserve"><value>Eine Ziffer (0–9)</value></data>
+  <data name="Auth.Rules.Symbol" xml:space="preserve"><value>Ein Sonderzeichen, z. B. ! @ # ?</value></data>
+  <data name="Auth.Rules.Match" xml:space="preserve"><value>Beide Passwörter stimmen überein</value></data>
+  <data name="Auth.Rules.Met" xml:space="preserve"><value>erfüllt</value></data>
+  <data name="Auth.Rules.Unmet" xml:space="preserve"><value>noch nicht</value></data>
+  <data name="Auth.Security.Eyebrow" xml:space="preserve"><value>Kontosicherheit</value></data>
+  <data name="Auth.BackToSignIn" xml:space="preserve"><value>Zurück zur Anmeldung</value></data>
+  <data name="Auth.BackToHome" xml:space="preserve"><value>Zurück zur Startseite</value></data>
+  <data name="Auth.Reset.Title" xml:space="preserve"><value>Neues Passwort wählen</value></data>
+  <data name="Auth.Reset.Heading" xml:space="preserve"><value>Wählen Sie ein neues Passwort</value></data>
+  <data name="Auth.Reset.Lede" xml:space="preserve"><value>Geben Sie die E-Mail-Adresse Ihres Kontos ein und wählen Sie ein Passwort, das Sie nirgendwo sonst verwenden.</value></data>
+  <data name="Auth.Reset.ErrorTitle" xml:space="preserve"><value>Wir konnten Ihr Passwort nicht ändern</value></data>
+  <data name="Auth.Reset.Submit" xml:space="preserve"><value>Neues Passwort speichern</value></data>
+  <data name="Auth.Reset.Expired.Title" xml:space="preserve"><value>Dieser Link ist nicht mehr gültig</value></data>
+  <data name="Auth.Reset.Expired.Body" xml:space="preserve"><value>Links zum Zurücksetzen funktionieren einmal und laufen nach 24 Stunden ab – dieser wurde also bereits verwendet oder ist abgelaufen. Fordern Sie einen neuen an, wir senden ihn sofort per E-Mail.</value></data>
+  <data name="Auth.Reset.Expired.Action" xml:space="preserve"><value>Neuen Link senden</value></data>
+  <data name="Auth.Forgot.Title" xml:space="preserve"><value>Passwort vergessen?</value></data>
+  <data name="Auth.Forgot.Heading" xml:space="preserve"><value>Passwort vergessen?</value></data>
+  <data name="Auth.Forgot.Lede" xml:space="preserve"><value>Geben Sie die E-Mail-Adresse ein, die Sie für The VI House verwenden. Wir senden Ihnen einen Link, mit dem Sie ein neues Passwort wählen. Er ist 24 Stunden gültig.</value></data>
+  <data name="Auth.Forgot.ErrorTitle" xml:space="preserve"><value>Bitte prüfen Sie Ihre E-Mail-Adresse</value></data>
+  <data name="Auth.Forgot.Submit" xml:space="preserve"><value>Link zum Zurücksetzen senden</value></data>
+  <data name="Auth.ForgotSent.Title" xml:space="preserve"><value>Prüfen Sie Ihren Posteingang</value></data>
+  <data name="Auth.ForgotSent.Heading" xml:space="preserve"><value>Prüfen Sie Ihren Posteingang</value></data>
+  <data name="Auth.ForgotSent.Lede" xml:space="preserve"><value>Falls zu dieser Adresse ein Konto existiert, haben wir einen Link zum Festlegen eines neuen Passworts gesendet.</value></data>
+  <data name="Auth.ForgotSent.Tip1" xml:space="preserve"><value>Der Link funktioniert einmal und läuft nach 24 Stunden ab.</value></data>
+  <data name="Auth.ForgotSent.Tip2" xml:space="preserve"><value>Nach ein paar Minuten nichts da? Prüfen Sie Ihren Spam- oder Werbeordner.</value></data>
+  <data name="Auth.ForgotSent.NothingArrived" xml:space="preserve"><value>Immer noch nichts?</value></data>
+  <data name="Auth.ForgotSent.SendAgain" xml:space="preserve"><value>Erneut senden</value></data>
+  <data name="Auth.ResetDone.Title" xml:space="preserve"><value>Passwort geändert</value></data>
+  <data name="Auth.ResetDone.Heading" xml:space="preserve"><value>Ihr Passwort wurde geändert</value></data>
+  <data name="Auth.ResetDone.Lede" xml:space="preserve"><value>Sie können sich jetzt mit Ihrem neuen Passwort anmelden.</value></data>
+  <data name="Auth.Lockout.Title" xml:space="preserve"><value>Anmeldung pausiert</value></data>
+  <data name="Auth.Lockout.Heading" xml:space="preserve"><value>Zu viele Versuche</value></data>
+  <data name="Auth.Lockout.Lede" xml:space="preserve"><value>Zu Ihrer Sicherheit ist die Anmeldung bei diesem Konto für {0} Minuten pausiert. Danach können Sie es erneut versuchen – oder jetzt ein neues Passwort wählen.</value></data>
+  <data name="Auth.Lockout.Reset" xml:space="preserve"><value>Neues Passwort wählen</value></data>
+  <data name="Auth.Denied.Title" xml:space="preserve"><value>Kein Zugriff</value></data>
+  <data name="Auth.Denied.Heading" xml:space="preserve"><value>Diese Seite gehört nicht zu Ihrem Konto</value></data>
+  <data name="Auth.Denied.Lede" xml:space="preserve"><value>Sie sind angemeldet, aber Ihr Konto umfasst diesen Bereich nicht.</value></data>
+  <data name="Auth.Denied.Account" xml:space="preserve"><value>Zu meinem Konto</value></data>
+  <data name="Auth.Denied.Mistake" xml:space="preserve"><value>Sie halten das für einen Fehler?</value></data>
+  <data name="Auth.Denied.Contact" xml:space="preserve"><value>Kontaktieren Sie uns</value></data>
+  <data name="Manage.Password.ErrorTitle" xml:space="preserve"><value>Wir konnten Ihr Passwort nicht speichern</value></data>
+  <data name="Manage.Password.Changed" xml:space="preserve"><value>Ihr Passwort wurde geändert.</value></data>
+  <data name="Manage.SetPassword.Title" xml:space="preserve"><value>Passwort festlegen</value></data>
+  <data name="Manage.SetPassword.Lede" xml:space="preserve"><value>Sie melden sich derzeit mit Google an. Legen Sie ein Passwort fest, um sich auch mit Ihrer E-Mail-Adresse anmelden zu können.</value></data>
+  <data name="Manage.SetPassword.Submit" xml:space="preserve"><value>Passwort festlegen</value></data>
+  <data name="Manage.SetPassword.Done" xml:space="preserve"><value>Ihr Passwort wurde festgelegt.</value></data>
+  <data name="Join.Success.Title" xml:space="preserve"><value>Zahlung erhalten</value></data>
+  <data name="Join.Success.Pending.Title" xml:space="preserve"><value>Ihre Zahlung wird bestätigt</value></data>
+  <data name="Join.Success.MembershipFallback" xml:space="preserve"><value>Mitgliedschaft</value></data>
+  <data name="Join.Success.Eyebrow" xml:space="preserve"><value>Zahlung erhalten</value></data>
+  <data name="Join.Success.Heading" xml:space="preserve"><value>Willkommen im VI House</value></data>
+  <data name="Join.Success.Lede" xml:space="preserve"><value>Ihre {0}-Mitgliedschaft ist aktiv und Ihre Quittung ist unterwegs. Noch zwei kurze Schritte, dann ist alles bereit.</value></data>
+  <data name="Join.Success.PassLabel" xml:space="preserve"><value>Ihr Mitgliedsausweis</value></data>
+  <data name="Join.Success.Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="Join.Success.Paid" xml:space="preserve"><value>Bezahlt</value></data>
+  <data name="Join.Success.NextTitle" xml:space="preserve"><value>So geht es weiter</value></data>
+  <data name="Join.Success.Step1.Title" xml:space="preserve"><value>Quittung gesendet</value></data>
+  <data name="Join.Success.Step1.Body" xml:space="preserve"><value>Ihre Zahlungsquittung liegt in Ihrem Posteingang.</value></data>
+  <data name="Join.Success.Step2.Title" xml:space="preserve"><value>Konto einrichten</value></data>
+  <data name="Join.Success.Step2.Body" xml:space="preserve"><value>Öffnen Sie die E-Mail „{0}“ und wählen Sie Ihr Passwort.</value></data>
+  <data name="Join.Success.Step3.Title" xml:space="preserve"><value>Konto absichern</value></data>
+  <data name="Join.Success.Step3.Body" xml:space="preserve"><value>Wir führen Sie durch die Bestätigung in zwei Schritten, damit nur Sie sich anmelden können.</value></data>
+  <data name="Join.Success.StepDone" xml:space="preserve"><value>erledigt</value></data>
+  <data name="Join.Success.Explore" xml:space="preserve"><value>Experiences entdecken</value></data>
+  <data name="Join.Success.Footnote" xml:space="preserve"><value>Sie haben bereits ein Passwort? Melden Sie sich wie gewohnt an. Andernfalls suchen Sie in Ihrem Posteingang nach „{0}“.</value></data>
+  <data name="Join.Success.Action.Eyebrow" xml:space="preserve"><value>Bestätigung erforderlich</value></data>
+  <data name="Join.Success.Action.Heading" xml:space="preserve"><value>Ihre Bank bittet Sie, diese Zahlung zu bestätigen</value></data>
+  <data name="Join.Success.Action.Lede" xml:space="preserve"><value>Achten Sie auf die Nachricht oder App-Anfrage Ihrer Bank und bestätigen Sie die Zahlung. Ihre Mitgliedschaft beginnt, sobald sie eingeht.</value></data>
+  <data name="Join.Success.Action.Footnote" xml:space="preserve"><value>Sobald die Zahlung eingegangen ist, senden wir Ihnen den Link zur Kontoeinrichtung, „{0}“, per E-Mail.</value></data>
+  <data name="Join.Success.Bank.Eyebrow" xml:space="preserve"><value>Zahlung in Bearbeitung</value></data>
+  <data name="Join.Success.Bank.Heading" xml:space="preserve"><value>Ihre Bank bestätigt die Zahlung</value></data>
+  <data name="Join.Success.Bank.Lede" xml:space="preserve"><value>Ihr Bezahlvorgang ist abgeschlossen. Die gewählte Zahlungsart braucht etwas Zeit; Ihre Mitgliedschaft beginnt, sobald das Geld eingeht – meist innerhalb weniger Tage.</value></data>
+  <data name="Join.Success.Bank.Footnote" xml:space="preserve"><value>Wir haben Ihnen dazu eine Nachricht geschickt und senden den Einrichtungslink, „{0}“, sobald die Zahlung eingeht. Sie müssen nichts weiter tun.</value></data>
+  <data name="Join.Success.Processing.Eyebrow" xml:space="preserve"><value>Einen Moment</value></data>
+  <data name="Join.Success.Processing.Heading" xml:space="preserve"><value>Ihre Zahlung wird bestätigt</value></data>
+  <data name="Join.Success.Processing.Lede" xml:space="preserve"><value>Ihre Bank hat die Zahlung genehmigt, wir stellen Ihr Konto fertig. Das dauert meist nur ein paar Sekunden; diese Seite aktualisiert sich von selbst.</value></data>
+  <data name="Join.Success.Processing.Footnote" xml:space="preserve"><value>Oder behalten Sie Ihren Posteingang im Blick: Den Einrichtungslink, „{0}“, senden wir, sobald er bereit ist.</value></data>
+  <data name="Card.BackNote" xml:space="preserve"><value>Diese Karte gehört {0}. Zeigen Sie sie beim Check-in vor.</value></data>
+  <data name="Card.ShowBack" xml:space="preserve"><value>Rückseite zeigen</value></data>
+  <data name="Card.ShowFront" xml:space="preserve"><value>Vorderseite zeigen</value></data>
+  <data name="Card.CopyNumber" xml:space="preserve"><value>Mitgliedsnummer kopieren</value></data>
+  <data name="Card.Copied" xml:space="preserve"><value>Kopiert</value></data>
+  <data name="Card.MembershipDetails" xml:space="preserve"><value>Details zur Mitgliedschaft</value></data>
+  <data name="Experiences.Facts.When" xml:space="preserve"><value>Wann</value></data>
+  <data name="Experiences.Facts.Length" xml:space="preserve"><value>Dauer</value></data>
+  <data name="Experiences.Facts.Where" xml:space="preserve"><value>Wo</value></data>
+  <data name="Experiences.Facts.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Card.Error.NoMembership" xml:space="preserve"><value>Sie haben noch keine aktive Mitgliedschaft.</value></data>
+  <data name="Card.Error.NotInPlan" xml:space="preserve"><value>Die digitale Karte ist nicht Teil von {0}.</value></data>
 </root>

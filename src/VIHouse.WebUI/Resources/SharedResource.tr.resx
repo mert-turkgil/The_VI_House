@@ -1863,4 +1863,123 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Admin.Journal.MediaReused" xml:space="preserve"><value>{0} bu makalenin medyasında zaten var; mevcut dosya kullanıldı, kopya saklanmadı.</value></data>
   <data name="Journal.Breadcrumb" xml:space="preserve"><value>Bu yazının yeri</value></data>
   <data name="Journal.ReadingTime" xml:space="preserve"><value>{0} dk okuma</value></data>
+  <data name="Lightbox.Close" xml:space="preserve"><value>Kapat</value></data>
+  <data name="Lightbox.Previous" xml:space="preserve"><value>Önceki fotoğraf</value></data>
+  <data name="Lightbox.Next" xml:space="preserve"><value>Sonraki fotoğraf</value></data>
+  <data name="Identity.Error.Default" xml:space="preserve"><value>Bizim tarafımızda bir sorun oluştu. Lütfen biraz sonra tekrar deneyin.</value></data>
+  <data name="Identity.Error.Concurrency" xml:space="preserve"><value>Hesabınız aynı anda başka bir yerde değiştirildi. Lütfen sayfayı yenileyip tekrar deneyin.</value></data>
+  <data name="Identity.Error.PasswordMismatch" xml:space="preserve"><value>Bu mevcut şifreniz değil. Kontrol edip tekrar deneyin.</value></data>
+  <data name="Identity.Error.InvalidToken" xml:space="preserve"><value>Bu bağlantının süresi dolmuş ya da daha önce kullanılmış.</value></data>
+  <data name="Identity.Error.InvalidEmail" xml:space="preserve"><value>“{0}” geçerli bir e-posta adresi değil.</value></data>
+  <data name="Identity.Error.DuplicateEmail" xml:space="preserve"><value>{0} zaten başka bir hesaba bağlı.</value></data>
+  <data name="Identity.Error.AlreadyHasPassword" xml:space="preserve"><value>Bu hesabın zaten bir şifresi var. Bunun yerine “Şifreyi değiştir”i kullanın.</value></data>
+  <data name="Identity.Error.PasswordTooShort" xml:space="preserve"><value>En az {0} karakter kullanın.</value></data>
+  <data name="Identity.Error.PasswordUniqueChars" xml:space="preserve"><value>En az {0} farklı karakter kullanın.</value></data>
+  <data name="Identity.Error.PasswordSymbol" xml:space="preserve"><value>En az bir sembol ekleyin, örneğin ! @ # veya ?</value></data>
+  <data name="Identity.Error.PasswordDigit" xml:space="preserve"><value>En az bir rakam ekleyin (0–9).</value></data>
+  <data name="Identity.Error.PasswordLower" xml:space="preserve"><value>En az bir küçük harf ekleyin (a–z).</value></data>
+  <data name="Identity.Error.PasswordUpper" xml:space="preserve"><value>En az bir büyük harf ekleyin (A–Z).</value></data>
+  <data name="Auth.Validation.EmailRequired" xml:space="preserve"><value>E-posta adresinizi girin.</value></data>
+  <data name="Auth.Validation.EmailInvalid" xml:space="preserve"><value>E-posta adresini ad@ornek.com biçiminde girin.</value></data>
+  <data name="Auth.Validation.PasswordRequired" xml:space="preserve"><value>Yeni bir şifre girin.</value></data>
+  <data name="Auth.Validation.PasswordLength" xml:space="preserve"><value>En az {2} karakter kullanın.</value></data>
+  <data name="Auth.Validation.ConfirmRequired" xml:space="preserve"><value>Onaylamak için yeni şifreyi tekrar yazın.</value></data>
+  <data name="Auth.Validation.PasswordsDiffer" xml:space="preserve"><value>İki şifre eşleşmiyor. Her iki kutuya da aynı şifreyi yazın.</value></data>
+  <data name="Auth.Validation.CurrentRequired" xml:space="preserve"><value>Mevcut şifrenizi girin.</value></data>
+  <data name="Auth.NewPassword" xml:space="preserve"><value>Yeni şifre</value></data>
+  <data name="Auth.ConfirmPassword" xml:space="preserve"><value>Yeni şifreyi onaylayın</value></data>
+  <data name="Auth.Rules.Title" xml:space="preserve"><value>Şifrenizde olması gerekenler</value></data>
+  <data name="Auth.Rules.Length" xml:space="preserve"><value>En az {0} karakter</value></data>
+  <data name="Auth.Rules.Upper" xml:space="preserve"><value>Bir büyük harf (A–Z)</value></data>
+  <data name="Auth.Rules.Lower" xml:space="preserve"><value>Bir küçük harf (a–z)</value></data>
+  <data name="Auth.Rules.Digit" xml:space="preserve"><value>Bir rakam (0–9)</value></data>
+  <data name="Auth.Rules.Symbol" xml:space="preserve"><value>Bir sembol, örneğin ! @ # ?</value></data>
+  <data name="Auth.Rules.Match" xml:space="preserve"><value>İki şifre eşleşiyor</value></data>
+  <data name="Auth.Rules.Met" xml:space="preserve"><value>tamam</value></data>
+  <data name="Auth.Rules.Unmet" xml:space="preserve"><value>henüz değil</value></data>
+  <data name="Auth.Security.Eyebrow" xml:space="preserve"><value>Hesap güvenliği</value></data>
+  <data name="Auth.BackToSignIn" xml:space="preserve"><value>Girişe dön</value></data>
+  <data name="Auth.BackToHome" xml:space="preserve"><value>Ana sayfaya dön</value></data>
+  <data name="Auth.Reset.Title" xml:space="preserve"><value>Yeni şifre belirleyin</value></data>
+  <data name="Auth.Reset.Heading" xml:space="preserve"><value>Yeni bir şifre belirleyin</value></data>
+  <data name="Auth.Reset.Lede" xml:space="preserve"><value>Hesabınızın e-posta adresini girin, ardından başka hiçbir yerde kullanmadığınız bir şifre belirleyin.</value></data>
+  <data name="Auth.Reset.ErrorTitle" xml:space="preserve"><value>Şifrenizi değiştiremedik</value></data>
+  <data name="Auth.Reset.Submit" xml:space="preserve"><value>Yeni şifreyi kaydet</value></data>
+  <data name="Auth.Reset.Expired.Title" xml:space="preserve"><value>Bu bağlantı artık kullanılamıyor</value></data>
+  <data name="Auth.Reset.Expired.Body" xml:space="preserve"><value>Sıfırlama bağlantıları bir kez çalışır ve 24 saat sonra sona erer; bu bağlantı ya kullanılmış ya da süresi dolmuş. Yenisini isteyin, hemen e-postayla gönderelim.</value></data>
+  <data name="Auth.Reset.Expired.Action" xml:space="preserve"><value>Bana yeni bir bağlantı gönder</value></data>
+  <data name="Auth.Forgot.Title" xml:space="preserve"><value>Şifrenizi mi unuttunuz?</value></data>
+  <data name="Auth.Forgot.Heading" xml:space="preserve"><value>Şifrenizi mi unuttunuz?</value></data>
+  <data name="Auth.Forgot.Lede" xml:space="preserve"><value>The VI House için kullandığınız e-postayı girin; yeni bir şifre belirlemeniz için size bir bağlantı gönderelim. Bağlantı 24 saat geçerlidir.</value></data>
+  <data name="Auth.Forgot.ErrorTitle" xml:space="preserve"><value>Lütfen e-posta adresinizi kontrol edin</value></data>
+  <data name="Auth.Forgot.Submit" xml:space="preserve"><value>Sıfırlama bağlantısı gönder</value></data>
+  <data name="Auth.ForgotSent.Title" xml:space="preserve"><value>Gelen kutunuzu kontrol edin</value></data>
+  <data name="Auth.ForgotSent.Heading" xml:space="preserve"><value>Gelen kutunuzu kontrol edin</value></data>
+  <data name="Auth.ForgotSent.Lede" xml:space="preserve"><value>Bu adrese ait bir hesap varsa, yeni şifre belirlemek için bir bağlantı gönderdik.</value></data>
+  <data name="Auth.ForgotSent.Tip1" xml:space="preserve"><value>Bağlantı bir kez çalışır ve 24 saat sonra sona erer.</value></data>
+  <data name="Auth.ForgotSent.Tip2" xml:space="preserve"><value>Birkaç dakika içinde gelmediyse spam veya promosyonlar klasörünü kontrol edin.</value></data>
+  <data name="Auth.ForgotSent.NothingArrived" xml:space="preserve"><value>Hâlâ gelmedi mi?</value></data>
+  <data name="Auth.ForgotSent.SendAgain" xml:space="preserve"><value>Tekrar gönder</value></data>
+  <data name="Auth.ResetDone.Title" xml:space="preserve"><value>Şifre değiştirildi</value></data>
+  <data name="Auth.ResetDone.Heading" xml:space="preserve"><value>Şifreniz değiştirildi</value></data>
+  <data name="Auth.ResetDone.Lede" xml:space="preserve"><value>Artık yeni şifrenizle giriş yapabilirsiniz.</value></data>
+  <data name="Auth.Lockout.Title" xml:space="preserve"><value>Giriş duraklatıldı</value></data>
+  <data name="Auth.Lockout.Heading" xml:space="preserve"><value>Çok fazla deneme</value></data>
+  <data name="Auth.Lockout.Lede" xml:space="preserve"><value>Güvenliğiniz için bu hesaba giriş {0} dakika süreyle duraklatıldı. Bu süreden sonra tekrar deneyebilir ya da şimdi yeni bir şifre belirleyebilirsiniz.</value></data>
+  <data name="Auth.Lockout.Reset" xml:space="preserve"><value>Yeni şifre belirleyin</value></data>
+  <data name="Auth.Denied.Title" xml:space="preserve"><value>Erişim yok</value></data>
+  <data name="Auth.Denied.Heading" xml:space="preserve"><value>Bu sayfa hesabınızın kapsamında değil</value></data>
+  <data name="Auth.Denied.Lede" xml:space="preserve"><value>Giriş yaptınız ancak hesabınız bu alanı kapsamıyor.</value></data>
+  <data name="Auth.Denied.Account" xml:space="preserve"><value>Hesabıma git</value></data>
+  <data name="Auth.Denied.Mistake" xml:space="preserve"><value>Bunun bir hata olduğunu mu düşünüyorsunuz?</value></data>
+  <data name="Auth.Denied.Contact" xml:space="preserve"><value>Bize ulaşın</value></data>
+  <data name="Manage.Password.ErrorTitle" xml:space="preserve"><value>Şifrenizi kaydedemedik</value></data>
+  <data name="Manage.Password.Changed" xml:space="preserve"><value>Şifreniz değiştirildi.</value></data>
+  <data name="Manage.SetPassword.Title" xml:space="preserve"><value>Şifre belirleyin</value></data>
+  <data name="Manage.SetPassword.Lede" xml:space="preserve"><value>Şu anda Google ile giriş yapıyorsunuz. E-posta adresinizle de giriş yapabilmek için bir şifre ekleyin.</value></data>
+  <data name="Manage.SetPassword.Submit" xml:space="preserve"><value>Şifreyi belirle</value></data>
+  <data name="Manage.SetPassword.Done" xml:space="preserve"><value>Şifreniz belirlendi.</value></data>
+  <data name="Join.Success.Title" xml:space="preserve"><value>Ödeme alındı</value></data>
+  <data name="Join.Success.Pending.Title" xml:space="preserve"><value>Ödemeniz onaylanıyor</value></data>
+  <data name="Join.Success.MembershipFallback" xml:space="preserve"><value>üyelik</value></data>
+  <data name="Join.Success.Eyebrow" xml:space="preserve"><value>Ödeme alındı</value></data>
+  <data name="Join.Success.Heading" xml:space="preserve"><value>The VI House'a hoş geldiniz</value></data>
+  <data name="Join.Success.Lede" xml:space="preserve"><value>{0} üyeliğiniz aktif ve makbuzunuz yolda. İki kısa adım kaldı, sonra her şey hazır.</value></data>
+  <data name="Join.Success.PassLabel" xml:space="preserve"><value>Üyelik kartınız</value></data>
+  <data name="Join.Success.Active" xml:space="preserve"><value>Aktif</value></data>
+  <data name="Join.Success.Paid" xml:space="preserve"><value>Ödenen</value></data>
+  <data name="Join.Success.NextTitle" xml:space="preserve"><value>Sırada ne var</value></data>
+  <data name="Join.Success.Step1.Title" xml:space="preserve"><value>Makbuz gönderildi</value></data>
+  <data name="Join.Success.Step1.Body" xml:space="preserve"><value>Ödeme makbuzunuz gelen kutunuzda.</value></data>
+  <data name="Join.Success.Step2.Title" xml:space="preserve"><value>Hesabınızı kurun</value></data>
+  <data name="Join.Success.Step2.Body" xml:space="preserve"><value>“{0}” başlıklı e-postayı açın ve şifrenizi belirleyin.</value></data>
+  <data name="Join.Success.Step3.Title" xml:space="preserve"><value>Hesabınızı güvenceye alın</value></data>
+  <data name="Join.Success.Step3.Body" xml:space="preserve"><value>Yalnızca sizin giriş yapabilmeniz için iki adımlı doğrulamada size yol göstereceğiz.</value></data>
+  <data name="Join.Success.StepDone" xml:space="preserve"><value>tamamlandı</value></data>
+  <data name="Join.Success.Explore" xml:space="preserve"><value>Deneyimleri keşfedin</value></data>
+  <data name="Join.Success.Footnote" xml:space="preserve"><value>Zaten bir şifreniz var mı? Her zamanki gibi giriş yapın. Yoksa gelen kutunuzda “{0}” e-postasını arayın.</value></data>
+  <data name="Join.Success.Action.Eyebrow" xml:space="preserve"><value>Onay gerekiyor</value></data>
+  <data name="Join.Success.Action.Heading" xml:space="preserve"><value>Bankanız bu ödemeyi onaylamanızı istiyor</value></data>
+  <data name="Join.Success.Action.Lede" xml:space="preserve"><value>Bankanızın mesajını veya uygulama bildirimini bulun ve ödemeyi onaylayın. Üyeliğiniz ödeme geçtiği anda başlar.</value></data>
+  <data name="Join.Success.Action.Footnote" xml:space="preserve"><value>Ödeme geçer geçmez hesap kurulum bağlantınızı, “{0}”, e-postayla göndereceğiz.</value></data>
+  <data name="Join.Success.Bank.Eyebrow" xml:space="preserve"><value>Ödeme işleniyor</value></data>
+  <data name="Join.Success.Bank.Heading" xml:space="preserve"><value>Bankanız ödemeyi onaylıyor</value></data>
+  <data name="Join.Success.Bank.Lede" xml:space="preserve"><value>Ödemeniz tamamlandı. Seçtiğiniz ödeme yönteminin onaylanması biraz zaman alır; üyeliğiniz para ulaştığı anda, genellikle birkaç gün içinde başlar.</value></data>
+  <data name="Join.Success.Bank.Footnote" xml:space="preserve"><value>Bununla ilgili size bir not gönderdik; ödeme ulaşır ulaşmaz kurulum bağlantınızı, “{0}”, e-postayla göndereceğiz. Sizin başka bir şey yapmanız gerekmiyor.</value></data>
+  <data name="Join.Success.Processing.Eyebrow" xml:space="preserve"><value>Bir saniye</value></data>
+  <data name="Join.Success.Processing.Heading" xml:space="preserve"><value>Ödemeniz onaylanıyor</value></data>
+  <data name="Join.Success.Processing.Lede" xml:space="preserve"><value>Bankanız ödemeyi onayladı, hesabınızı tamamlıyoruz. Bu genellikle birkaç saniye sürer ve bu sayfa kendiliğinden güncellenir.</value></data>
+  <data name="Join.Success.Processing.Footnote" xml:space="preserve"><value>Ya da gelen kutunuzu izleyin: kurulum bağlantınızı, “{0}”, hazır olur olmaz göndereceğiz.</value></data>
+  <data name="Card.BackNote" xml:space="preserve"><value>Bu kart {0} adına kayıtlıdır. Girişte gösterin.</value></data>
+  <data name="Card.ShowBack" xml:space="preserve"><value>Arka yüzü göster</value></data>
+  <data name="Card.ShowFront" xml:space="preserve"><value>Ön yüzü göster</value></data>
+  <data name="Card.CopyNumber" xml:space="preserve"><value>Üye numarasını kopyala</value></data>
+  <data name="Card.Copied" xml:space="preserve"><value>Kopyalandı</value></data>
+  <data name="Card.MembershipDetails" xml:space="preserve"><value>Üyelik ayrıntıları</value></data>
+  <data name="Experiences.Facts.When" xml:space="preserve"><value>Ne zaman</value></data>
+  <data name="Experiences.Facts.Length" xml:space="preserve"><value>Süre</value></data>
+  <data name="Experiences.Facts.Where" xml:space="preserve"><value>Nerede</value></data>
+  <data name="Experiences.Facts.Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Card.Error.NoMembership" xml:space="preserve"><value>Henüz aktif bir üyeliğiniz yok.</value></data>
+  <data name="Card.Error.NotInPlan" xml:space="preserve"><value>Dijital kart {0} kapsamında değil.</value></data>
 </root>

@@ -1,0 +1,201 @@
+@use '../breakpoints' as bp;
+
+// --- Lightbox (Views/Shared/_Lightbox.cshtml, modules/lightbox.ts) -------------------------------------------------------------------
+// A native <dialog>: showModal() gives it the top layer, the inert page behind, Escape to close and
+// focus return, so the script only has to swap the photograph.
+
+.lightbox {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--vih-cream);
+
+  // Blurred as well as darkened, so the white article behind does not show through as shapes.
+  &::backdrop {
+    background: rgba(0, 18, 2, 0.96);
+    backdrop-filter: blur(10px);
+  }
+
+  &[open] {
+    animation: vih-lightbox-in var(--vih-dur-slow) var(--vih-ease-out);
+  }
+}
+
+.lightbox__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--vih-space-2xl) var(--vih-space-sm) var(--vih-space-lg);
+
+  @include bp.from(bp.$md) {
+    padding: var(--vih-space-2xl) calc(var(--vih-space-2xl) + var(--vih-space-lg)) var(--vih-space-xl);
+  }
+}
+
+.lightbox__figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--vih-space-xs);
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+}
+
+.lightbox__img {
+  width: auto;
+  height: auto;
+  max-width: min(100%, 1400px);
+  max-height: calc(100dvh - 180px);
+  object-fit: contain;
+  border-radius: var(--vih-radius-lg);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+
+  &.is-changing {
+    animation: vih-lightbox-swap var(--vih-dur-slow) var(--vih-ease-out);
+  }
+}
+
+.lightbox__caption {
+  max-width: 64ch;
+  font-size: var(--vih-text-md);
+  line-height: 1.55;
+  text-align: center;
+  color: var(--vih-cream-dim);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.lightbox__counter {
+  position: absolute;
+  top: var(--vih-space-sm);
+  left: var(--vih-space-md);
+  margin: 0;
+  font-size: var(--vih-text-xs);
+  letter-spacing: 0.18em;
+  color: var(--vih-gold-light);
+}
+
+.lightbox__btn {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--vih-gold) 70%, transparent);
+  border-radius: 50%;
+  background: rgba(0, 26, 2, 0.6);
+  color: var(--vih-cream);
+  cursor: pointer;
+  transition:
+    background-color var(--vih-dur-base) var(--vih-ease-out),
+    color var(--vih-dur-base) var(--vih-ease-out),
+    transform var(--vih-dur-base) var(--vih-ease-out);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--vih-gold);
+    color: var(--vih-green-950);
+    outline: none;
+  }
+
+  &:focus-visible {
+    box-shadow: var(--vih-shadow-focus);
+  }
+
+  &--close {
+    top: var(--vih-space-xs);
+    right: var(--vih-space-sm);
+  }
+
+  // Arrows sit at the sides on wider screens and at the bottom corners on a phone, where the sides
+  // belong to the photograph.
+  &--prev,
+  &--next {
+    bottom: var(--vih-space-sm);
+
+    @include bp.from(bp.$md) {
+      top: 50%;
+      bottom: auto;
+      translate: 0 -50%;
+    }
+  }
+
+  &--prev {
+    left: var(--vih-space-sm);
+
+    @include bp.from(bp.$md) {
+      left: var(--vih-space-md);
+    }
+  }
+
+  &--next {
+    right: var(--vih-space-sm);
+
+    @include bp.from(bp.$md) {
+      right: var(--vih-space-md);
+    }
+  }
+
+  &--prev:hover,
+  &--prev:focus-visible {
+    transform: translateX(-3px);
+  }
+
+  &--next:hover,
+  &--next:focus-visible {
+    transform: translateX(3px);
+  }
+}
+
+@keyframes vih-lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes vih-lightbox-swap {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox__btn {
+    transition: none;
+  }
+
+  .lightbox__btn--prev:hover,
+  .lightbox__btn--prev:focus-visible,
+  .lightbox__btn--next:hover,
+  .lightbox__btn--next:focus-visible {
+    transform: none;
+  }
+
+  .lightbox[open],
+  .lightbox__img.is-changing {
+    animation: none;
+  }
+}

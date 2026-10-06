@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.WebUtilities;
 using VIHouse.DataAccess.Identity;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Areas.Identity.Pages.Account
 {
@@ -45,26 +46,33 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [EmailAddress]
+            // Messages are SharedResource keys (DataAnnotations localisation, Program.cs), so the
+            // browser-side check speaks the page's language too.
+            [Required(ErrorMessage = "Auth.Validation.EmailRequired")]
+            [EmailAddress(ErrorMessage = "Auth.Validation.EmailInvalid")]
+            [Display(Name = "Auth.Email")]
             public string Email { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            // MinimumLength matches options.Password.RequiredLength in Program.cs. It was 6, so the
+            // browser happily accepted a password the server was then going to refuse.
+            [Required(ErrorMessage = "Auth.Validation.PasswordRequired")]
+            [StringLength(100, ErrorMessage = "Auth.Validation.PasswordLength", MinimumLength = 10)]
             [DataType(DataType.Password)]
+            [Display(Name = "Auth.NewPassword")]
             public string Password { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+            [Required(ErrorMessage = "Auth.Validation.ConfirmRequired")]
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Auth.ConfirmPassword")]
+            [Compare("Password", ErrorMessage = "Auth.Validation.PasswordsDiffer")]
             public string ConfirmPassword { get; set; }
 
             /// <summary>
@@ -76,24 +84,41 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
 
         }
 
+        /// <summary>
+        /// True when the emailed link cannot be used: missing, mangled by a mail client, expired or
+        /// already used. The page then explains that and offers a new link, instead of the bare 400
+        /// (or, for a mangled code, the 500) the scaffold produced.
+        /// </summary>
+        public bool LinkInvalid { get; private set; }
+
         public IActionResult OnGet(string code = null)
         {
-            if (code == null)
+            Input = new InputModel();
+
+            try
             {
-                return BadRequest("A code must be supplied for password reset.");
+                Input.Code = code is null ? null : Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             }
-            else
+            catch (FormatException)
             {
-                Input = new InputModel
-                {
-                    Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
-                };
-                return Page();
+                Input.Code = null;
             }
+
+            LinkInvalid = string.IsNullOrEmpty(Input.Code);
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // No code means the form was not reached through a reset link at all; "the Code field
+            // is required" would be the least helpful thing to say about that.
+            if (string.IsNullOrEmpty(Input?.Code))
+            {
+                ModelState.Clear();
+                LinkInvalid = true;
+                return Page();
+            }
+
             if (!ModelState.IsValid)
             {
                 return Page();
@@ -125,10 +150,16 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                 return RedirectToPage("./ResetPasswordConfirmation");
             }
 
-            foreach (var error in result.Errors)
+            // An expired or reused link is not something the reader can fix by retyping, so it gets
+            // its own state with a way to request a new link, not a line in the error list.
+            if (IdentityErrorMapping.IsInvalidToken(result))
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                LinkInvalid = true;
+                return Page();
             }
+
+            // Each message on the field it is about ("add a symbol" under the password box).
+            IdentityErrorMapping.AddTo(ModelState, result, newPasswordKey: "Input.Password");
             return Page();
         }
     }

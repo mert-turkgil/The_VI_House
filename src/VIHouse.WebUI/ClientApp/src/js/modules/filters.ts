@@ -13,6 +13,10 @@
 
 const DEBOUNCE_MS = 250;
 
+// How long the new cards' entrance runs (the last of six staggered cells, plus its own animation).
+// The class is removed afterwards so a later hover is not fighting a finished animation.
+const ENTER_MS = 1000;
+
 export function initExperienceFilters(): void {
   const form = document.querySelector<HTMLFormElement>('[data-experience-filters]');
   const results = document.querySelector<HTMLElement>('[data-experience-results]');
@@ -26,6 +30,53 @@ export function initExperienceFilters(): void {
   // order and leave the grid showing the results of a filter the visitor already moved past.
   let inFlight: AbortController | null = null;
   let debounce: number | undefined;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /**
+   * The gold pill behind each chip group's active chip. One element per group, moved with a
+   * transform, so changing the filter slides it from the old chip to the new one instead of one
+   * chip switching off and another switching on. The group gets .has-pill, which makes the chips'
+   * own active background transparent; without this script the chips keep their own background.
+   */
+  const groups = Array.from(document.querySelectorAll<HTMLElement>('.experience-filters__chips'));
+  groups.forEach((group) => {
+    const pill = document.createElement('span');
+    pill.className = 'experience-filters__pill';
+    pill.setAttribute('aria-hidden', 'true');
+    group.prepend(pill);
+    group.classList.add('has-pill');
+  });
+
+  function placePills(): void {
+    groups.forEach((group) => {
+      const pill = group.querySelector<HTMLElement>('.experience-filters__pill');
+      const active = group.querySelector<HTMLElement>('.experience-filters__chip--active');
+      if (!pill) return;
+      if (!active) {
+        pill.style.opacity = '0';
+        return;
+      }
+      pill.style.opacity = '1';
+      pill.style.width = `${active.offsetWidth}px`;
+      pill.style.height = `${active.offsetHeight}px`;
+      pill.style.transform = `translate(${active.offsetLeft}px, ${active.offsetTop}px)`;
+
+      // On a phone the rail scrolls: bring the newly active chip into view within the rail only,
+      // never by scrolling the page.
+      const rail = group.closest<HTMLElement>('.experience-filters__chips-scroll');
+      if (rail && rail.scrollWidth > rail.clientWidth) {
+        const target = active.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2;
+        rail.scrollTo({ left: Math.max(0, target), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+      }
+    });
+  }
+
+  // First placement without a slide (it would otherwise fly in from the corner on page load).
+  groups.forEach((group) => group.classList.add('is-placing'));
+  placePills();
+  requestAnimationFrame(() => groups.forEach((group) => group.classList.remove('is-placing')));
+  window.addEventListener('resize', placePills);
+  document.fonts?.ready.then(placePills);
 
   /**
    * Makes the panel agree with the filter that was just applied — the city select's value, which
@@ -60,6 +111,8 @@ export function initExperienceFilters(): void {
 
     const clear = document.querySelector<HTMLAnchorElement>('[data-experience-clear]');
     if (clear) clear.hidden = !status && !city && !topic;
+
+    placePills();
   }
 
   async function apply(query: string, push: boolean): Promise<void> {
@@ -74,6 +127,8 @@ export function initExperienceFilters(): void {
     inFlight = controller;
 
     results!.setAttribute('aria-busy', 'true');
+    // The current cards dim while the new ones load, so the click visibly did something.
+    results!.classList.add('is-loading');
 
     try {
       const response = await fetch(`/experiences/results${query}`, {
@@ -83,6 +138,13 @@ export function initExperienceFilters(): void {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       results!.innerHTML = await response.text();
+
+      // The swapped-in cells were never seen by the scroll-reveal observer, so they get their own
+      // staggered entrance (CSS, reading each cell's --i). Visible without it either way.
+      if (!prefersReducedMotion) {
+        results!.classList.add('is-entering');
+        window.setTimeout(() => results!.classList.remove('is-entering'), ENTER_MS);
+      }
 
       if (push) history.pushState({}, '', `/experiences${query}`);
       bindChips();
@@ -94,6 +156,7 @@ export function initExperienceFilters(): void {
     } finally {
       if (inFlight === controller) {
         results!.removeAttribute('aria-busy');
+        results!.classList.remove('is-loading');
         inFlight = null;
       }
     }

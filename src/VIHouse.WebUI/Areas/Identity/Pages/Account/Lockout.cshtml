@@ -1,10 +1,28 @@
-﻿@page
+@page
 @model LockoutModel
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Options
+@inject IOptions<IdentityOptions> IdentityOptions
 @{
-    ViewData["Title"] = "Locked out";
+    ViewData["Title"] = Loc["Auth.Lockout.Title"].Value;
+    // The same setting the lockout itself uses (Program.cs), so the page never promises a wait that
+    // is shorter or longer than the real one.
+    var minutes = (int)Math.Ceiling(IdentityOptions.Value.Lockout.DefaultLockoutTimeSpan.TotalMinutes);
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">This account has been locked out, please try again later.</p>
-</header>
+<div class="auth-card">
+    <div class="auth-card__head auth-card__head--center">
+        <span class="auth-status auth-status--danger" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2" pathLength="1" /><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" pathLength="1" /></svg>
+        </span>
+        <span class="auth-card__eyebrow">@Loc["Auth.Security.Eyebrow"]</span>
+        <h1 class="auth-card__title">@Loc["Auth.Lockout.Heading"]</h1>
+        <p class="auth-card__lede">@Loc["Auth.Lockout.Lede", minutes]</p>
+    </div>
+
+    <a class="btn btn--primary auth-form__submit" asp-page="./ForgotPassword">@Loc["Auth.Lockout.Reset"]</a>
+
+    <div class="auth-alt">
+        <p><a asp-area="" asp-controller="Home" asp-action="Index">@Loc["Auth.BackToHome"]</a></p>
+    </div>
+</div>

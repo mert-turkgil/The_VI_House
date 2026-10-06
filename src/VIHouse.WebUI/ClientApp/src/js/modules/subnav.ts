@@ -25,6 +25,28 @@ export function initSubnav(): void {
   if (!('IntersectionObserver' in window)) return;
 
   const ACTIVE = 'experience-subnav__link--active';
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // One gold bar under the list that slides from link to link, instead of each link's own underline
+  // switching off and on. The list gets .has-indicator, which hides those underlines.
+  const list = nav.querySelector<HTMLElement>('.experience-subnav__list');
+  const indicator = document.createElement('span');
+  indicator.className = 'experience-subnav__indicator';
+  indicator.setAttribute('aria-hidden', 'true');
+  list?.append(indicator);
+  list?.classList.add('has-indicator');
+  let activeId: string | null = null;
+
+  function placeIndicator(): void {
+    const link = activeId ? links.get(activeId) : null;
+    if (!link) {
+      indicator.style.opacity = '0';
+      return;
+    }
+    indicator.style.opacity = '1';
+    indicator.style.width = `${link.offsetWidth}px`;
+    indicator.style.transform = `translateX(${link.offsetLeft}px)`;
+  }
 
   function setActive(id: string): void {
     links.forEach((link, key) => {
@@ -35,10 +57,23 @@ export function initSubnav(): void {
       else link.removeAttribute('aria-current');
     });
 
-    // Keep the active chip in view on narrow screens, where the sub-nav scrolls horizontally.
-    // 'nearest' so it only moves when it actually has to.
-    links.get(id)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    activeId = id;
+    placeIndicator();
+
+    // Keep the active link in view on narrow screens, where the sub-nav scrolls sideways. The nav
+    // itself is scrolled rather than calling scrollIntoView, which can also nudge the page
+    // vertically on mobile Safari mid-scroll.
+    const link = links.get(id);
+    if (link && nav!.scrollWidth > nav!.clientWidth) {
+      const navBox = nav!.getBoundingClientRect();
+      const linkBox = link.getBoundingClientRect();
+      const left = nav!.scrollLeft + (linkBox.left - navBox.left) - (nav!.clientWidth - linkBox.width) / 2;
+      nav!.scrollTo({ left: Math.max(0, left), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    }
   }
+
+  window.addEventListener('resize', placeIndicator);
+  document.fonts?.ready.then(placeIndicator);
 
   // Track every section's visibility rather than reacting to individual entries: with several
   // short sections on screen at once, "the last one that fired" is not the same as "the one the

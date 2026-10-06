@@ -6,9 +6,11 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using VIHouse.DataAccess.Identity;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
 {
@@ -16,11 +18,14 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IStringLocalizer<SharedResource> _loc;
 
         public SetPasswordModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IStringLocalizer<SharedResource> loc)
         {
+            _loc = loc;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -49,10 +54,10 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Auth.Validation.PasswordRequired")]
+            [StringLength(100, ErrorMessage = "Auth.Validation.PasswordLength", MinimumLength = 10)] // minimum matches Program.cs
             [DataType(DataType.Password)]
-            [Display(Name = "New password")]
+            [Display(Name = "Auth.NewPassword")]
             public string NewPassword { get; set; }
 
             /// <summary>
@@ -60,8 +65,9 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm new password")]
-            [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+            [Required(ErrorMessage = "Auth.Validation.ConfirmRequired")]
+            [Display(Name = "Auth.ConfirmPassword")]
+            [Compare("NewPassword", ErrorMessage = "Auth.Validation.PasswordsDiffer")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -99,15 +105,12 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             var addPasswordResult = await _userManager.AddPasswordAsync(user, Input.NewPassword);
             if (!addPasswordResult.Succeeded)
             {
-                foreach (var error in addPasswordResult.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                IdentityErrorMapping.AddTo(ModelState, addPasswordResult, "Input.NewPassword");
                 return Page();
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your password has been set.";
+            StatusMessage = _loc["Manage.SetPassword.Done"].Value;
 
             return RedirectToPage();
         }

@@ -870,89 +870,324 @@
 }
 
 // --- Digital Member Card (brief §208) --------------------------------------------------------
-// ISO/IEC 7810 ID-1 aspect ratio (the same proportions as a physical card), so it reads as a
-// "card" rather than just another content box, and prints/exports sensibly at that shape too.
-.member-card-visual {
+// Views/Account/Card.cshtml. ISO/IEC 7810 ID-1 proportions (a real card's shape, which also prints
+// sensibly), two faces that turn over, a pointer tilt with a foil glare (modules/memberCard.ts sets
+// --tilt-x/--tilt-y/--glare-x/--glare-y), a gold hairline, a watermark crest and a live "Active"
+// chip. Only transform and opacity move; reduced motion keeps the card still and flips instantly.
+
+.member-card-page__title {
+  margin: 0 0 var(--vih-space-2xs);
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-display-sm);
+  color: var(--vih-green-900);
+}
+
+.member-card-page__intro {
+  margin: 0 0 var(--vih-space-lg);
+  max-width: 52ch;
+  font-size: var(--vih-text-base);
+  line-height: 1.6;
+  color: var(--vih-text-muted);
+}
+
+.member-card-stage {
+  max-width: 440px;
+  perspective: 1200px;
+  animation: vih-card-arrive 900ms var(--vih-ease-out) both;
+}
+
+.member-pass {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --glare-x: 30%;
+  --glare-y: 0%;
+
+  position: relative;
   width: 100%;
-  max-width: 400px;
   aspect-ratio: 1.586;
-  border-radius: 16px;
-  padding: 28px;
-  background: linear-gradient(135deg, var(--vih-green-950) 0%, var(--vih-green-800) 100%);
-  color: var(--vih-cream);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 20px 48px rgba(0, 35, 10, 0.28);
-}
+  transform-style: preserve-3d;
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transition: transform 700ms var(--vih-ease-out);
 
-.member-card-visual__top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+  // Follows the pointer closely while tilting; settles slowly when the pointer leaves.
+  &.is-tilting {
+    transition: transform 120ms linear;
+  }
 
-.member-card-visual__crest {
-  width: 28px;
-  height: 28px;
-  flex-shrink: 0;
-}
+  &.is-flipped {
+    transform: rotateX(var(--tilt-x)) rotateY(calc(180deg + var(--tilt-y)));
+  }
 
-.member-card-visual__brand {
-  font-family: var(--vih-font-serif);
-  font-size: 0.8125rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.member-card-visual__tier {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--vih-gold-light);
-}
-
-.member-card-visual__name {
-  font-family: var(--vih-font-serif);
-  font-size: 1.5rem;
-  margin-top: -6px;
-}
-
-.member-card-visual__footer {
-  display: flex;
-  gap: 24px;
-
-  > div {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+  @media (hover: none) {
+    cursor: pointer;
   }
 }
 
-.member-card-visual__label {
-  font-size: 0.625rem;
+.member-pass__face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(18px, 5vw, 28px);
+  border-radius: var(--vih-radius-2xl);
+  background:
+    radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--vih-gold) 20%, transparent) 0%, transparent 55%),
+    linear-gradient(135deg, var(--vih-green-950) 0%, var(--vih-green-800) 100%);
+  color: var(--vih-cream);
+  box-shadow:
+    0 24px 56px rgba(0, 26, 2, 0.3),
+    inset 0 0 0 1px color-mix(in srgb, var(--vih-gold) 45%, transparent);
+  backface-visibility: hidden;
+
+  &--back {
+    transform: rotateY(180deg);
+    justify-content: flex-start;
+    padding: 0;
+  }
+}
+
+// The big crest pressed into the card, bottom right.
+.member-pass__watermark {
+  position: absolute;
+  right: -8%;
+  bottom: -18%;
+  z-index: -1;
+  width: 62%;
+  color: var(--vih-gold-light);
+  opacity: 0.07;
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
+}
+
+// Foil glare: a soft light where the pointer is, strongest while tilting.
+.member-pass__glare {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(circle at var(--glare-x) var(--glare-y), rgba(255, 255, 255, 0.18), transparent 45%);
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
+  transition: opacity var(--vih-dur-slow) var(--vih-ease-out);
+  pointer-events: none;
+
+  .is-tilting & {
+    opacity: 1;
+  }
+}
+
+.member-pass__top {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+}
+
+.member-pass__crest {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  color: var(--vih-gold-light);
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.member-pass__brand {
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-sm);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--vih-cream-dim);
-  opacity: 0.7;
 }
 
-.member-card-visual__value {
-  font-size: 0.8125rem;
+.member-pass__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: var(--vih-radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: var(--vih-text-3xs);
   font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #6fd38f;
+    animation: vih-card-live 2.2s var(--vih-ease-out) infinite;
+  }
 }
 
-.member-card-print-btn {
-  margin-top: 24px;
+.member-pass__tier {
+  font-size: var(--vih-text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--vih-gold-light);
+}
+
+.member-pass__name {
+  margin-top: 4px;
+  font-family: var(--vih-font-serif);
+  font-size: clamp(1.25rem, 5.4vw, 1.6rem);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.member-pass__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs) clamp(14px, 5vw, 28px);
+  margin: 0;
+
+  div {
+    display: grid;
+    gap: 2px;
+  }
+
+  dt {
+    font-size: var(--vih-text-3xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--vih-cream) 65%, transparent);
+  }
+
+  dd {
+    margin: 0;
+    font-size: var(--vih-text-sm);
+    font-weight: 600;
+  }
+}
+
+.member-pass__number,
+.member-pass__back-number {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.06em;
+}
+
+// --- Back face ---
+
+.member-pass__stripe {
+  display: block;
+  height: 22%;
+  margin-top: 9%;
+  background: linear-gradient(90deg, #0b0f0a, #1b211a 50%, #0b0f0a);
+}
+
+.member-pass__back-body {
+  display: grid;
+  gap: 4px;
+  padding: clamp(14px, 4vw, 22px) clamp(18px, 5vw, 28px);
+}
+
+.member-pass__back-label {
+  font-size: var(--vih-text-3xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--vih-cream) 65%, transparent);
+}
+
+.member-pass__back-number {
+  font-size: clamp(1.25rem, 6vw, 1.75rem);
+  color: var(--vih-gold-light);
+}
+
+.member-pass__back-meta {
+  font-size: var(--vih-text-sm);
+}
+
+.member-pass__back-note {
+  margin-top: 6px;
+  font-size: var(--vih-text-xs);
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--vih-cream) 70%, transparent);
+}
+
+// --- Actions ---
+
+.member-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-xs);
+  margin-top: var(--vih-space-lg);
+
+  .btn {
+    min-height: 44px;
+  }
+
+  @include bp.until(bp.$sm) {
+    .btn {
+      flex: 1 1 calc(50% - var(--vih-space-xs));
+      justify-content: center;
+    }
+  }
+}
+
+.member-card-actions__link {
+  font-size: var(--vih-text-sm);
+  font-weight: 600;
+  color: var(--vih-green-900);
+  background: linear-gradient(var(--vih-gold), var(--vih-gold)) no-repeat 0 100% / 0 1px;
+  transition: background-size var(--vih-dur-slow) var(--vih-ease-out);
+
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  @include bp.until(bp.$sm) {
+    flex-basis: 100%;
+    padding: var(--vih-space-2xs) 0;
+  }
+}
+
+@keyframes vih-card-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(20px) rotate(-1.5deg);
+  }
+}
+
+@keyframes vih-card-live {
+  0% { box-shadow: 0 0 0 0 rgba(111, 211, 143, 0.6); }
+  70%,
+  100% { box-shadow: 0 0 0 8px rgba(111, 211, 143, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .member-card-stage,
+  .member-pass__status i {
+    animation: none;
+  }
+
+  .member-pass,
+  .member-pass.is-tilting,
+  .member-pass__glare,
+  .member-card-actions__link {
+    transition: none;
+  }
 }
 
 @media print {
   .site-header,
   .site-footer,
   .site-mobile-nav,
-  .account-manage__nav,
-  .member-card-print-btn {
+  .account-manage__aside,
+  .member-card-actions,
+  .member-card-page__intro,
+  .member-pass__face--back,
+  .member-pass__glare {
     display: none !important;
   }
 
@@ -961,9 +1196,19 @@
     padding: 0;
   }
 
-  .member-card-visual {
+  .member-card-stage {
+    animation: none;
+  }
+
+  .member-pass,
+  .member-pass.is-flipped {
+    transform: none;
+  }
+
+  .member-pass__face--front {
     box-shadow: none;
     border: 1px solid #000;
+    print-color-adjust: exact;
   }
 }
 

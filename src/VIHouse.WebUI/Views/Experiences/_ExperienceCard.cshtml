@@ -1,10 +1,12 @@
 @model ExperienceCardViewModel
 @*
-    One experience card. Extracted because this markup was previously duplicated verbatim in
-    Views/Application/ChooseExperience.cshtml, so every fix — the <img> conversion, the localized
-    status badge — had to be made twice or silently applied to only one of them.
-*@
+    One experience card, shaped like an event listing: the photograph with the status badge and a
+    date block on it, then where, what, when and the price.
 
+    Motion (all in _experiences.scss): the photograph slowly pushes in, a gold rule draws under the
+    title, the date block lifts and the arrow slides in. On a phone the card answers the tap with a
+    slight press instead. Text never moves.
+*@
 @{ var href = Model.Href ?? Url.Action("Details", "Experiences", new { area = "", slug = Model.Slug }); }
 <a class="experience-card" href="@href" data-vt-cover>
     <div class="experience-card__media">
@@ -15,13 +17,23 @@
             Sizes = "(min-width: 1200px) 30vw, (min-width: 720px) 45vw, 100vw",
             Zoom = true,
         })" />
+        <span class="experience-card__shade" aria-hidden="true"></span>
         <span class="experience-card__badge experience-card__badge--@Model.StatusModifier">
             @Loc[Model.StatusKey]
+        </span>
+        @* The day and month a visitor scans for first, in the reader's culture ("29 Kas" in Turkish).
+           The full range is in the meta row below, so this one is decorative. *@
+        <span class="experience-card__date" aria-hidden="true">
+            <span class="experience-card__day">@Model.StartAtUtc.ToString("dd")</span>
+            <span class="experience-card__month">@Model.StartAtUtc.ToString("MMM")</span>
         </span>
     </div>
 
     <div class="experience-card__body">
-        <span class="experience-card__eyebrow">@Model.City, @Model.Country</span>
+        <span class="experience-card__eyebrow">
+            <partial name="_Icon" model="@("map-pin")" />
+            @Model.City, @Model.Country
+        </span>
         <h3 class="experience-card__title">@Model.Title</h3>
 
         @if (!string.IsNullOrWhiteSpace(Model.ShortSummary))
@@ -31,9 +43,13 @@
 
         <div class="experience-card__meta">
             <span class="experience-card__meta-item">
+                <partial name="_Icon" model="@("calendar")" />
                 @Model.StartAtUtc.ToString("d MMM")&ndash;@Model.EndAtUtc.ToString("d MMM yyyy")
             </span>
-            <span class="experience-card__meta-item">@Loc[Model.DurationKey, Model.DurationDays]</span>
+            <span class="experience-card__meta-item">
+                <partial name="_Icon" model="@("clock")" />
+                @Loc[Model.DurationKey, Model.DurationDays]
+            </span>
         </div>
 
         <div class="experience-card__foot">
@@ -44,9 +60,12 @@
                     @MoneyFormatter.Format(Model.FromPriceMinor.Value, Model.Currency!)
                 </span>
             }
-            @* Visual affordance only — the whole card is the link, so this must not be another
-               tab stop or another thing for a screen reader to announce. *@
-            <span class="experience-card__cta" aria-hidden="true">@Loc["Experiences.View"] &rarr;</span>
+            @* Visual affordance only. The whole card is the link, so this must not be another tab
+               stop or another thing for a screen reader to announce. *@
+            <span class="experience-card__cta" aria-hidden="true">
+                @Loc["Experiences.View"]
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </span>
         </div>
     </div>
 </a>
