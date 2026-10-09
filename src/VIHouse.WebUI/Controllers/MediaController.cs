@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
+using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Content;
 using VIHouse.Entities.Experiences;
 using VIHouse.Entities.Settings;
+using VIHouse.WebUI.Helpers;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -17,8 +20,10 @@ namespace VIHouse.WebUI.Controllers;
 /// in Production. They go to the media root instead (outside wwwroot, see LocalMediaStorage) and
 /// come back out through here.
 ///
-/// No access check, unlike SeminarsController.Media — a hero slide is the first thing an anonymous
-/// visitor sees, so its photograph is public by definition. The storage key is never taken from the
+/// No access check for the site's own imagery, unlike SeminarsController.Media — a hero slide is the
+/// first thing an anonymous visitor sees, so its photograph is public by definition. The exceptions
+/// are files whose owner has not gone public yet: an unpublished article's media, and an
+/// influencer's photo before their first published article. The storage key is never taken from the
 /// request: it is read from the slide row, which is what stops this being an arbitrary-file reader.
 ///
 /// Note the absence of VaryByQueryKeys on the version-stamped routes. It is a *server-side*
@@ -32,6 +37,7 @@ namespace VIHouse.WebUI.Controllers;
 public class MediaController(
     IHeroSlideRepository heroSlides,
     IJournalService journalService,
+    IAmbassadorService ambassadors,
     IRepository<MediaAsset> assets,
     IExperienceRepository experiences,
     IRepository<ExperienceImage> galleryImages,
@@ -135,17 +141,6 @@ public class MediaController(
     }
 
     /// <summary>
-    /// An asset belonging to a journal article — the URL written into the body by the editor.
-    ///
-    /// Addressed by media id rather than by article slug so it survives the post being renamed, and
-    /// range-enabled because audio is served through here: without it a browser cannot seek in a
-    /// track, it can only play from the beginning.
-    ///
-    /// Cached for a day rather than a week (the hero's version-stamped URLs can be cached hard;
-    /// these are not stamped), and only for as long as the row exists — a deleted asset 404s
-    /// immediately at the origin.
-    /// </summary>
-    /// <summary>
     /// An unowned asset — the images admins upload for homepage content. Cached for a day, like
     /// journal media: the URL carries no version stamp, and an asset that is replaced is a new
     /// upload with a new id rather than the same id with new bytes.
@@ -163,13 +158,55 @@ public class MediaController(
         return PhysicalFile(file.PhysicalPath, file.ContentType);
     }
 
+    /// <summary>
+    /// An asset belonging to a journal article — the URL written into the body by the editor.
+    ///
+    /// Addressed by media id rather than by article slug so it survives the post being renamed, and
+    /// range-enabled because audio is served through here: without it a browser cannot seek in a
+    /// track, it can only play from the beginning.
+    ///
+    /// Public, and cached for a day, once the article is published (the URL is not version-stamped).
+    /// Before that — a draft, or an influencer's submission — only the staff and the article's
+    /// author get it, and nothing along the way may keep a copy.
+    /// </summary>
     [HttpGet("journal/{mediaId:guid}")]
-    [ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any)]
     public async Task<IActionResult> JournalMedia(Guid mediaId, CancellationToken ct)
     {
-        var file = await journalService.OpenMediaAsync(mediaId, ct);
-        if (file is null) return NotFound();
+        var media = await journalService.OpenMediaAsync(mediaId, ct);
+        if (media is null) return NotFound();
 
-        return PhysicalFile(file.PhysicalPath, file.ContentType, enableRangeProcessing: true);
+        if (media.IsPublic) CachePublicly(TimeSpan.FromDays(1));
+        else if (IsStaffOr(media.AuthorUserId)) KeepPrivate();
+        else return NotFound();
+
+        return PhysicalFile(media.File.PhysicalPath, media.File.ContentType, enableRangeProcessing: true);
     }
+
+    /// <summary>
+    /// An influencer's profile photo. Public once they have a published article — it is in the
+    /// author box under it. Until then only the staff and the influencer see it. The links carry a
+    /// version stamp (see SiteUrls.InfluencerPhoto), so a new photo is a new URL.
+    /// </summary>
+    [HttpGet("influencer/{id:guid}")]
+    public async Task<IActionResult> InfluencerPhoto(Guid id, CancellationToken ct)
+    {
+        var influencer = await ambassadors.GetByIdAsync(id, ct);
+        if (influencer?.PhotoStorageKey is null) return NotFound();
+
+        if (influencer.UserId is { } userId && await journalService.HasPublishedAsync(userId, ct)) CachePublicly(TimeSpan.FromDays(7));
+        else if (IsStaffOr(influencer.UserId)) KeepPrivate();
+        else return NotFound();
+
+        var file = await ambassadors.OpenPhotoAsync(id, ct);
+        return file is null ? NotFound() : PhysicalFile(file.PhysicalPath, file.ContentType);
+    }
+
+    private bool IsStaffOr(Guid? ownerUserId) =>
+        Roles.AdminRoles.Any(User.IsInRole) || (ownerUserId is not null && User.UserId() == ownerUserId);
+
+    private void CachePublicly(TimeSpan maxAge) =>
+        Response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue { Public = true, MaxAge = maxAge };
+
+    private void KeepPrivate() =>
+        Response.GetTypedHeaders().CacheControl = new CacheControlHeaderValue { Private = true, NoStore = true };
 }

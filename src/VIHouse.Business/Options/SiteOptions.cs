@@ -6,6 +6,13 @@ public class SiteOptions
     /// <summary>Absolute base URL, needed to build links (e.g. invitation URLs) inside emails, where there's no HttpContext to derive it from.</summary>
     public string BaseUrl { get; set; } = "";
 
+    /// <summary>
+    /// Where the admin panel answers, for links in emails to staff. Production can pin the panel to
+    /// its own host (the top-level "AdminHost" setting); Program.cs fills this from it, and falls
+    /// back to <see cref="BaseUrl"/> when the panel shares the site's host.
+    /// </summary>
+    public string AdminBaseUrl { get; set; } = "";
+
     /// <summary>Inbox that receives the public Contact page's messages. Empty in Production until a real mailbox is set up.</summary>
     public string ContactEmail { get; set; } = "";
 

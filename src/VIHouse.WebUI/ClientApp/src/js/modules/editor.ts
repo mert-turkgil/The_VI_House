@@ -83,10 +83,14 @@ export function initRichTextEditors(): void {
     TableToolbar, Underline,
   } = ckeditor as CKEditorNamespace & { ClassicEditor: CKEditorNamespace['ClassicEditor'] };
 
+  // The editor's settings and labels: on <body> in the admin panel (_AdminLayout), on the writer's
+  // own root in the influencer area (Shared/_CkEditorAssets), which has no panel body to carry them.
+  const settings = (document.querySelector<HTMLElement>('[data-ckeditor-license]') ?? document.body).dataset;
+
   // The real key is only valid for the hosts it was issued for, so it comes from configuration
-  // (rendered onto <body> by _AdminLayout) rather than being compiled in. An environment with none
-  // configured falls back to 'GPL', which is the correct value for a GPL deployment.
-  const licenseKey = document.body.dataset.ckeditorLicense || 'GPL';
+  // rather than being compiled in. An environment with none configured falls back to 'GPL', which
+  // is the correct value for a GPL deployment.
+  const licenseKey = settings.ckeditorLicense || 'GPL';
 
   // Plugins that make writing easier but are not essential. Taken only when the CDN build has them,
   // so a different bundle never breaks the editor: it just has fewer buttons.
@@ -94,9 +98,9 @@ export function initRichTextEditors(): void {
   const extras = [...optional('WordCount'), ...optional('FindAndReplace'), ...optional('RemoveFormat'), ...optional('Strikethrough')];
   const has = (name: string): boolean => !!ckeditor[name];
 
-  // The editor's own buttons and tooltips in the panel's language, from CKEditor's translations;
-  // the heading names are ours, so they come from <body> like every other panel text.
-  const labels = document.body.dataset;
+  // The editor's own buttons and tooltips in the reader's language, from CKEditor's translations;
+  // the heading names are ours, so they come with the settings above.
+  const labels = settings;
   const language = labels.uiLanguage || 'en';
 
   textareas.forEach((textarea) => {

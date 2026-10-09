@@ -20,26 +20,53 @@
             @* No action: it posts back to this same address (token and language prefix included). *@
             <form method="post" class="join__form" novalidate asp-antiforgery="true">
 
-                @* --- 1. You ------------------------------------------------------------------- *@
+                @* --- What the House entered: shown back, changed only by the House --------------- *@
+                <section class="join__step join__details" aria-labelledby="onfile-heading">
+                    <h2 class="join__legend" id="onfile-heading" style="display:block;">@Loc["AmbassadorInvite.Section.OnFile"]</h2>
+                    <dl class="ambassador-invite__onfile">
+                        @if (Model.LegalName is not null)
+                        {
+                            <div><dt>@Loc["AmbassadorInvite.OnFile.LegalName"]</dt><dd>@Model.LegalName</dd></div>
+                        }
+                        @if (Model.BillingPlace is not null)
+                        {
+                            <div><dt>@Loc["AmbassadorInvite.OnFile.Billing"]</dt><dd>@Model.BillingPlace</dd></div>
+                        }
+                        @if (Model.MaskedIban is not null)
+                        {
+                            <div><dt>@Loc["AmbassadorInvite.OnFile.Bank"]</dt><dd class="ambassador-invite__mono">@Model.MaskedIban</dd></div>
+                        }
+                        @if (Model.Channels.Count > 0)
+                        {
+                            <div>
+                                <dt>@Loc["AmbassadorInvite.OnFile.Channels"]</dt>
+                                <dd>
+                                    <ul class="ambassador-invite__channels">
+                                        @foreach (var channel in Model.Channels)
+                                        {
+                                            <li>
+                                                <span>@Loc.Label(channel.Platform)</span>
+                                                <a href="@channel.Url" rel="noopener noreferrer nofollow" target="_blank">@SocialLinks.Handle(channel.Url)</a>
+                                                @if (channel.Audience is { } audience)
+                                                {
+                                                    <span class="ambassador-invite__audience">@Loc["Influencer.Audience", audience.ToString("N0")]</span>
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                </dd>
+                            </div>
+                        }
+                    </dl>
+                    <p class="join__hint">@Loc["AmbassadorInvite.OnFile.Hint"]</p>
+                </section>
+
+                @* --- 1. Password ------------------------------------------------------------- *@
                 <fieldset class="join__step join__details">
                     <legend class="join__legend">
                         <span class="join__legend-num" aria-hidden="true">1</span>
-                        <span class="join__legend-text">@Loc["AmbassadorInvite.Section.You"]</span>
+                        <span class="join__legend-text">@Loc["AmbassadorInvite.Section.Password"]</span>
                     </legend>
-                    <div class="join__row">
-                        <div class="join__field">
-                            <label asp-for="FirstName">@Loc["Form.FirstName"]</label>
-                            <input asp-for="FirstName" autocomplete="given-name" />
-                            <span asp-validation-for="FirstName" class="join__field-error"></span>
-                        </div>
-                        <div class="join__field">
-                            <label asp-for="LastName">@Loc["Form.LastName"]</label>
-                            <input asp-for="LastName" autocomplete="family-name" />
-                            <span asp-validation-for="LastName" class="join__field-error"></span>
-                        </div>
-                    </div>
-                    <span class="join__hint">@Loc["AmbassadorInvite.NameHint"]</span>
-
                     @if (Model.NeedsPassword)
                     {
                         <div class="join__row">
@@ -62,78 +89,12 @@
                     }
                 </fieldset>
 
-                @* --- 2. Billing address ------------------------------------------------------- *@
-                <fieldset class="join__step join__details">
-                    <legend class="join__legend">
-                        <span class="join__legend-num" aria-hidden="true">2</span>
-                        <span class="join__legend-text">@Loc["AmbassadorInvite.Section.Billing"]</span>
-                    </legend>
-                    <div class="join__row">
-                        <div class="join__field">
-                            <label asp-for="AddressLine1">@Loc["Form.AddressLine1"]</label>
-                            <input asp-for="AddressLine1" autocomplete="address-line1" />
-                            <span asp-validation-for="AddressLine1" class="join__field-error"></span>
-                        </div>
-                        <div class="join__field">
-                            <label asp-for="AddressLine2">@Loc["Form.AddressLine2"]</label>
-                            <input asp-for="AddressLine2" autocomplete="address-line2" />
-                        </div>
-                    </div>
-                    <div class="join__row">
-                        <div class="join__field">
-                            <label asp-for="PostalCode">@Loc["Form.PostalCode"]</label>
-                            <input asp-for="PostalCode" autocomplete="postal-code" />
-                            <span asp-validation-for="PostalCode" class="join__field-error"></span>
-                        </div>
-                        <div class="join__field">
-                            <label asp-for="City">@Loc["Form.City"]</label>
-                            <input asp-for="City" autocomplete="address-level2" />
-                            <span asp-validation-for="City" class="join__field-error"></span>
-                        </div>
-                    </div>
-                    <div class="join__row">
-                        <div class="join__field">
-                            <label asp-for="Country">@Loc["Form.Country"]</label>
-                            <select asp-for="Country" asp-items='@Countries.SelectList(Model.Country, Loc["Form.ChooseCountry"].Value)' autocomplete="country"></select>
-                            <span asp-validation-for="Country" class="join__field-error"></span>
-                        </div>
-                        <div class="join__field">
-                            <label asp-for="TaxId">@Loc["AmbassadorInvite.TaxId"]</label>
-                            <input asp-for="TaxId" autocomplete="off" />
-                            <span class="join__hint">@Loc["AmbassadorInvite.TaxIdHint"]</span>
-                        </div>
-                    </div>
-                </fieldset>
-
-                @* --- 3. Bank details ---------------------------------------------------------- *@
-                <fieldset class="join__step join__details">
-                    <legend class="join__legend">
-                        <span class="join__legend-num" aria-hidden="true">3</span>
-                        <span class="join__legend-text">@Loc["AmbassadorInvite.Section.Payout"]</span>
-                    </legend>
-                    <p class="join__hint" style="margin-top:0;">@Loc["AmbassadorInvite.PayoutHint"]</p>
-                    <div class="join__field">
-                        <label asp-for="AccountHolder">@Loc["AmbassadorInvite.AccountHolder"]</label>
-                        <input asp-for="AccountHolder" autocomplete="name" />
-                        <span asp-validation-for="AccountHolder" class="join__field-error"></span>
-                    </div>
-                    <div class="join__row">
-                        <div class="join__field">
-                            <label asp-for="Iban">IBAN</label>
-                            <input asp-for="Iban" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="GB29 NWBK 6016 1331 9268 19" />
-                            <span asp-validation-for="Iban" class="join__field-error"></span>
-                        </div>
-                        <div class="join__field">
-                            <label asp-for="Bic">@Loc["AmbassadorInvite.Bic"]</label>
-                            <input asp-for="Bic" autocomplete="off" autocapitalize="characters" spellcheck="false" />
-                            <span asp-validation-for="Bic" class="join__field-error"></span>
-                        </div>
-                    </div>
-                </fieldset>
-
-                @* --- 4. Terms ----------------------------------------------------------------- *@
+                @* --- 2. Terms ----------------------------------------------------------------- *@
                 <div class="join__step join__pay">
-                    <h2 class="join__legend" style="display:block;">@Loc["AmbassadorInvite.Section.Terms"]</h2>
+                    <h2 class="join__legend" style="display:block;">
+                        <span class="join__legend-num" aria-hidden="true">2</span>
+                        <span class="join__legend-text">@Loc["AmbassadorInvite.Section.Terms"]</span>
+                    </h2>
                     <ol class="ambassador-invite__terms" tabindex="0" aria-label="@Loc["AmbassadorInvite.Section.Terms"]">
                         @foreach (var term in Model.Terms)
                         {

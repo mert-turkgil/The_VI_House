@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Journal;
 
 namespace VIHouse.DataAccess.Concrete.EntityFramework.Configurations;
@@ -17,6 +18,13 @@ public class JournalPostConfiguration : IEntityTypeConfiguration<JournalPost>
         builder.Property(p => p.AuthorName).HasMaxLength(150);
         builder.Property(p => p.CoverImageUrl).HasMaxLength(1000);
         builder.Property(p => p.CoverImageAlt).HasMaxLength(300);
+        builder.Property(p => p.ReviewNote).HasMaxLength(1000);
+
+        // An influencer's submission. SetNull, not Restrict: a person deleting their own account
+        // (Manage → Delete personal data) must not be blocked by an article; the post stays with the
+        // House, uncredited.
+        builder.HasIndex(p => p.AuthorUserId);
+        builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(p => p.AuthorUserId).OnDelete(DeleteBehavior.SetNull);
 
         // Deleting a post takes its copy and its files with it. The files themselves are removed by
         // JournalService after the delete commits — the database cascade only clears the rows that

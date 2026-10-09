@@ -7,7 +7,7 @@
 //   .admin-confirm        the confirmation dialog (modules/adminConfirm.ts)
 //   .admin-counter        character counters (modules/adminForms.ts)
 //   .admin-empty          a list with nothing in it yet
-//   .writer*              the journal writer (AdminJournal/Edit, Create; modules/journalWriter.ts)
+//   .writer*              the journal writer — moved to _writer.scss, shared with the influencer area
 //   phones                tables as stacked cards, a lighter top bar, quick actions in the menu
 //
 // Tokens only, and every motion is switched off under prefers-reduced-motion at the end.
@@ -312,6 +312,145 @@
     line-height: 1.45;
     color: var(--vih-text-muted);
   }
+}
+
+// --- Influencer page ---------------------------------------------------------------------------------------
+
+.admin-subhead {
+  margin: var(--vih-space-md) 0 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vih-text-secondary);
+}
+
+.admin-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// Platform / address / audience, one row per channel; on a phone the address takes its own line.
+.admin-channels {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  legend {
+    margin-bottom: 4px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--vih-text-secondary);
+  }
+}
+
+.admin-channels__head,
+.admin-channels__row {
+  display: grid;
+  grid-template-columns: minmax(0, 9rem) minmax(0, 1fr) minmax(0, 7.5rem);
+  gap: 8px;
+}
+
+.admin-channels__head {
+  font-size: 0.75rem;
+  color: var(--vih-text-faint);
+}
+
+.admin-channels__row {
+  select,
+  input {
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: 4px;
+    font: inherit;
+    font-size: 0.875rem;
+    background: var(--vih-white);
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-channels__head { display: none; }
+
+  .admin-channels__row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 7rem);
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--vih-line-on-light);
+
+    input[type='url'] { grid-column: 1 / -1; grid-row: 2; }
+  }
+}
+
+.admin-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-checklist__item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 0.875rem;
+
+  &.is-missing { color: var(--vih-danger); }
+  &.is-done { color: var(--vih-text-secondary); }
+}
+
+.admin-checklist__mark { width: 1em; font-weight: 700; }
+
+.admin-checklist__who {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--vih-text-faint);
+}
+
+.admin-influencer-photo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: var(--vih-space-md);
+
+  img,
+  .admin-influencer-photo__empty {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .admin-influencer-photo__empty {
+    display: grid;
+    place-items: center;
+    background: var(--vih-surface-sunken);
+    font-family: var(--vih-font-serif);
+    font-size: 2rem;
+    color: var(--vih-text-faint);
+  }
+}
+
+.admin-influencer-photo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+
+  form { margin: 0; }
+  .admin-field__hint { flex-basis: 100%; margin: 0; }
+}
+
+.admin-disclosure {
+  margin-top: 12px;
+
+  > summary { list-style: none; cursor: pointer; }
+  > summary::-webkit-details-marker { display: none; }
 }
 
 .admin-optional {
@@ -644,329 +783,6 @@
   display: none;
 }
 
-// --- The writer -----------------------------------------------------------------------------------------------------------
-
-.writer {
-  display: grid;
-  gap: var(--vih-space-lg);
-  align-items: start;
-
-  @media (min-width: 1100px) {
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: var(--vih-space-xl);
-  }
-}
-
-.writer__main {
-  min-width: 0;
-}
-
-.writer__form {
-  display: grid;
-  // One column that may shrink: an implicit track sizes itself to the editor toolbar's full width,
-  // which pushed the text under the sidebar instead of letting CKEditor fold its overflow buttons.
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--vih-space-xs);
-}
-
-.writer__title {
-  width: 100%;
-  padding: var(--vih-space-2xs) 0;
-  border: 0;
-  border-bottom: 1px solid transparent;
-  background: transparent;
-  font-family: var(--vih-font-serif);
-  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
-  font-weight: 600;
-  line-height: 1.15;
-  color: var(--vih-green-900);
-
-  &::placeholder { color: color-mix(in srgb, var(--vih-text-faint) 70%, transparent); }
-
-  &:focus {
-    outline: none;
-    border-bottom-color: var(--vih-gold);
-  }
-
-  &--start {
-    padding: var(--vih-space-2xs) var(--vih-space-xs);
-    border: 1px solid var(--vih-line-on-light);
-    border-radius: var(--vih-radius-md);
-    background: var(--vih-surface);
-    font-size: clamp(1.4rem, 3vw, 1.9rem);
-  }
-}
-
-.writer__standfirst {
-  width: 100%;
-  padding: var(--vih-space-2xs) 0;
-  border: 0;
-  border-bottom: 1px dashed var(--vih-line-on-light);
-  background: transparent;
-  resize: vertical;
-  font: inherit;
-  font-size: var(--vih-text-lg);
-  line-height: 1.6;
-  color: var(--vih-text-secondary);
-
-  &:focus {
-    outline: none;
-    border-bottom-color: var(--vih-gold);
-  }
-}
-
-.writer__editor {
-  margin-top: var(--vih-space-2xs);
-
-  .ck.ck-editor__editable_inline {
-    min-height: 460px;
-    font-size: 1.0625rem;
-  }
-}
-
-.writer__status {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--vih-space-2xs) var(--vih-space-sm);
-  font-size: var(--vih-text-sm);
-  color: var(--vih-text-muted);
-}
-
-.writer__autosave {
-  flex: 1;
-  font-size: var(--vih-text-xs);
-}
-
-.writer__focus {
-  min-height: 36px;
-  padding: 0 var(--vih-space-xs);
-  border: 1px solid var(--vih-line-on-light);
-  border-radius: var(--vih-radius-pill);
-  background: var(--vih-surface);
-  font: inherit;
-  font-size: var(--vih-text-xs);
-  font-weight: 600;
-  color: var(--vih-green-900);
-  cursor: pointer;
-
-  &:hover { border-color: var(--vih-green-900); }
-}
-
-// The save bar sticks to the bottom of the screen while the article is long, so Save is never a
-// scroll away.
-.writer__actions {
-  position: sticky;
-  bottom: 0;
-  z-index: 3;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--vih-space-2xs);
-  padding: var(--vih-space-xs) 0 calc(var(--vih-space-xs) + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(to top, var(--vih-surface-tinted) 75%, transparent);
-
-  .admin-btn { min-height: 44px; }
-  .admin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-}
-
-.writer__shortcut {
-  margin-left: auto;
-  font-size: var(--vih-text-2xs);
-  color: var(--vih-text-faint);
-
-  @media (hover: none) { display: none; }
-}
-
-.writer__delete-translation {
-  margin-top: var(--vih-space-sm);
-}
-
-.writer__side {
-  display: grid;
-  gap: var(--vih-space-sm);
-  min-width: 0;
-
-  @media (min-width: 1100px) {
-    position: sticky;
-    top: calc(var(--vih-space-md) + 88px);
-    max-height: calc(100vh - 120px);
-    overflow-y: auto;
-    padding-right: 4px;
-    scrollbar-width: thin;
-  }
-
-  .publish-card { margin: 0; }
-}
-
-.writer-card {
-  border: 1px solid var(--vih-line-on-light);
-  border-radius: var(--vih-radius-xl);
-  background: var(--vih-surface);
-
-  > summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 48px;
-    padding: var(--vih-space-2xs) var(--vih-space-sm);
-    cursor: pointer;
-    list-style: none;
-    font-size: var(--vih-text-sm);
-    font-weight: 700;
-    color: var(--vih-green-900);
-
-    &::-webkit-details-marker { display: none; }
-
-    &::after {
-      content: '';
-      width: 8px;
-      height: 8px;
-      border-right: 2px solid var(--vih-gold);
-      border-bottom: 2px solid var(--vih-gold);
-      transform: rotate(45deg);
-      transition: transform var(--vih-dur-base) var(--vih-ease);
-    }
-  }
-
-  &[open] > summary::after {
-    transform: rotate(-135deg);
-  }
-
-  &--danger > summary { color: var(--vih-danger-strong); }
-}
-
-.writer-card__body {
-  display: grid;
-  gap: var(--vih-space-xs);
-  padding: 0 var(--vih-space-sm) var(--vih-space-sm);
-}
-
-.writer-card__cover {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  border-radius: var(--vih-radius-md);
-}
-
-.writer-card__empty {
-  margin: 0;
-  padding: var(--vih-space-sm);
-  border: 1px dashed var(--vih-line-on-light);
-  border-radius: var(--vih-radius-md);
-  font-size: var(--vih-text-sm);
-  color: var(--vih-text-muted);
-  text-align: center;
-}
-
-.writer-card__upload {
-  display: grid;
-  gap: var(--vih-space-2xs);
-
-  input[type='file'] { max-width: 100%; font-size: var(--vih-text-sm); }
-}
-
-.writer-card__url {
-  overflow-wrap: anywhere;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  color: var(--vih-green-900);
-}
-
-.writer-card__advanced {
-  summary {
-    cursor: pointer;
-    font-size: var(--vih-text-xs);
-    color: var(--vih-text-muted);
-  }
-
-  input { width: 100%; margin-top: var(--vih-space-2xs); }
-}
-
-// How the post will look as a search result.
-.serp-preview {
-  display: grid;
-  gap: 2px;
-  padding: var(--vih-space-xs);
-  border: 1px solid var(--vih-line-on-light);
-  border-radius: var(--vih-radius-md);
-  background: var(--vih-white);
-  font-family: Arial, sans-serif;
-}
-
-.serp-preview__url {
-  overflow: hidden;
-  font-size: 12px;
-  color: #4d5156;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.serp-preview__title {
-  font-size: 18px;
-  line-height: 1.3;
-  color: #1a0dab;
-}
-
-.serp-preview__desc {
-  font-size: 13px;
-  line-height: 1.5;
-  color: #4d5156;
-}
-
-.writer-restore {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--vih-space-2xs) var(--vih-space-xs);
-  padding: var(--vih-space-xs) var(--vih-space-sm);
-  border: 1px solid color-mix(in srgb, var(--vih-gold) 60%, transparent);
-  border-radius: var(--vih-radius-md);
-  background: var(--vih-warning-bg);
-  font-size: var(--vih-text-sm);
-
-  span { flex: 1 1 260px; }
-}
-
-// Focus mode: the article fills the screen; everything else waits.
-.writer--focus {
-  .writer__main {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    overflow-y: auto;
-    padding: var(--vih-space-lg) max(var(--vih-space-md), calc((100vw - 820px) / 2)) 0;
-    background: var(--vih-surface-tinted);
-  }
-
-  .writer__langs,
-  .admin-notice,
-  .writer__delete-translation {
-    display: none;
-  }
-}
-
-body.writer-focus-open {
-  overflow: hidden;
-}
-
-// "New article"
-.writer-start {
-  max-width: 880px;
-}
-
-.writer-start__form {
-  display: grid;
-  gap: var(--vih-space-md);
-}
-
-.writer-start__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--vih-space-2xs);
-
-  .admin-btn { min-height: 48px; }
-}
-
 // --- Phones ------------------------------------------------------------------------------------------------------------------
 
 @media (max-width: 959px) {
@@ -1068,8 +884,7 @@ body.writer-focus-open {
   }
 
   .admin-choice,
-  .admin-help__toggle svg,
-  .writer-card > summary::after {
+  .admin-help__toggle svg {
     transition: none;
   }
 }

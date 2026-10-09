@@ -1,0 +1,4 @@
+// The influencer writer's stylesheet (Views/Influencer/Write), loaded after main.css, which already
+// has the tokens and the shared .admin-* form styles. The writer itself is the panel's, from one
+// partial, so the two can never drift apart.
+@use 'components/writer';

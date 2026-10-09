@@ -1,0 +1,74 @@
+@using VIHouse.WebUI.ViewModels.Ambassador
+@model InfluencerPayoutForm
+@*
+    Legal name, billing address, tax id and bank — what the House pays against. On the invitation
+    form and, for Finance, on the influencer's page. The prefix ("Payout" or "PayoutForm") is the name
+    the posting action binds.
+*@
+@{
+    var prefix = (string)ViewData["Prefix"]!;
+    string Id(string field) => $"{prefix}_{field}";
+    string Name(string field) => $"{prefix}.{field}";
+    string Error(string field) => ViewData.ModelState.TryGetValue(Name(field), out var entry) && entry.Errors.Count > 0
+        ? entry.Errors[0].ErrorMessage : "";
+}
+<h3 class="admin-subhead">@Loc["Admin.Influencer.LegalAndBilling"]</h3>
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label for="@Id("LegalFirstName")">@Loc["Admin.Influencer.LegalFirstName"]</label>
+        <input id="@Id("LegalFirstName")" name="@Name("LegalFirstName")" value="@Model.LegalFirstName" maxlength="100" autocomplete="off" />
+        <span class="field-validation-error">@Error("LegalFirstName")</span>
+    </div>
+    <div class="admin-field">
+        <label for="@Id("LegalLastName")">@Loc["Admin.Influencer.LegalLastName"]</label>
+        <input id="@Id("LegalLastName")" name="@Name("LegalLastName")" value="@Model.LegalLastName" maxlength="100" autocomplete="off" />
+    </div>
+</div>
+<p class="admin-field__hint" style="margin-top:-8px;">@Loc["Admin.Influencer.LegalNameHint"]</p>
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label for="@Id("AddressLine1")">@Loc["Admin.Influencer.AddressLine1"]</label>
+        <input id="@Id("AddressLine1")" name="@Name("AddressLine1")" value="@Model.AddressLine1" maxlength="200" autocomplete="off" />
+        <span class="field-validation-error">@Error("AddressLine1")</span>
+    </div>
+    <div class="admin-field">
+        <label for="@Id("AddressLine2")">@Loc["Admin.Influencer.AddressLine2"] <span class="admin-optional">@Loc["Admin.Form.Optional"]</span></label>
+        <input id="@Id("AddressLine2")" name="@Name("AddressLine2")" value="@Model.AddressLine2" maxlength="200" autocomplete="off" />
+    </div>
+    <div class="admin-field">
+        <label for="@Id("PostalCode")">@Loc["Admin.Influencer.PostalCode"]</label>
+        <input id="@Id("PostalCode")" name="@Name("PostalCode")" value="@Model.PostalCode" maxlength="20" autocomplete="off" />
+    </div>
+    <div class="admin-field">
+        <label for="@Id("City")">@Loc["Admin.Influencer.City"]</label>
+        <input id="@Id("City")" name="@Name("City")" value="@Model.City" maxlength="100" autocomplete="off" />
+    </div>
+    <div class="admin-field">
+        <label for="@Id("Country")">@Loc["Admin.Influencer.Country"]</label>
+        <select id="@Id("Country")" name="@Name("Country")" asp-items='@Countries.SelectList(Model.Country, Loc["Form.ChooseCountry"].Value)'></select>
+        <span class="field-validation-error">@Error("Country")</span>
+    </div>
+    <div class="admin-field">
+        <label for="@Id("TaxId")">@Loc["Admin.Influencer.TaxId"] <span class="admin-optional">@Loc["Admin.Form.Optional"]</span></label>
+        <input id="@Id("TaxId")" name="@Name("TaxId")" value="@Model.TaxId" maxlength="40" autocomplete="off" />
+    </div>
+</div>
+
+<h3 class="admin-subhead">@Loc["Admin.Influencer.Bank"]</h3>
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label for="@Id("AccountHolder")">@Loc["Admin.Influencer.AccountHolder"]</label>
+        <input id="@Id("AccountHolder")" name="@Name("AccountHolder")" value="@Model.AccountHolder" maxlength="150" autocomplete="off" />
+        <span class="field-validation-error">@Error("AccountHolder")</span>
+    </div>
+    <div class="admin-field">
+        <label for="@Id("Iban")">IBAN</label>
+        <input id="@Id("Iban")" name="@Name("Iban")" value="@Iban.Format(Model.Iban)" maxlength="50" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="GB29 NWBK 6016 1331 9268 19" />
+        <span class="field-validation-error">@Error("Iban")</span>
+    </div>
+    <div class="admin-field">
+        <label for="@Id("Bic")">BIC <span class="admin-optional">@Loc["Admin.Form.Optional"]</span></label>
+        <input id="@Id("Bic")" name="@Name("Bic")" value="@Model.Bic" maxlength="15" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+        <span class="field-validation-error">@Error("Bic")</span>
+    </div>
+</div>

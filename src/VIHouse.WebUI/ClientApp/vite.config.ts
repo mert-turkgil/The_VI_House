@@ -6,10 +6,10 @@ import { fileURLToPath } from 'node:url';
 // hence deriving it from import.meta.url instead.
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Two entry points, not one: the public site loads main.{css,js}, the admin panel loads
-// admin.{css,js}. They're split because the admin bundle carries CKEditor and Chart.js, which
-// together dwarf everything on the public site and are useless to a visitor — a single shared
-// bundle would push all of that onto every homepage load. Filenames stay fixed (non-hashed) and are
+// Three entry points, not one: the public site loads main.{css,js}, the admin panel loads
+// admin.{css,js}, and the influencer's article writer adds writer.{css,js} to its one page. They're
+// split because the admin bundle carries Chart.js and the editor glue, which are useless to a
+// visitor — a single shared bundle would push all of that onto every homepage load. Filenames stay fixed (non-hashed) and are
 // referenced directly from _Layout.cshtml / _AdminLayout.cshtml with asp-append-version for
 // cache-busting. Triggered automatically by `dotnet build`/`dotnet run` via the NpmInstall/ViteBuild
 // MSBuild targets in VIHouse.WebUI.csproj.
@@ -21,6 +21,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'src/js/main.ts'),
         admin: resolve(__dirname, 'src/js/admin.ts'),
+        writer: resolve(__dirname, 'src/js/writer.ts'),
       },
       output: {
         entryFileNames: '[name].js',

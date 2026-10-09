@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
+using VIHouse.Business;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Concrete;
 using VIHouse.Business.Options;
@@ -58,6 +59,11 @@ public class AccountController(
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
     {
+        // An influencer with no membership has nothing on the member dashboard; their account is
+        // the influencer area.
+        if (InfluencerAccess.IsInfluencerOnly(User))
+            return LocalRedirect(SiteUrls.InCulture(SiteUrls.Influencer, CultureInfo.CurrentUICulture.Name));
+
         var userId = User.RequiredUserId();
         var user = await userManager.FindByIdAsync(userId.ToString());
         if (user is null) return Challenge();

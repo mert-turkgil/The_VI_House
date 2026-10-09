@@ -1,0 +1,15 @@
+@model WithdrawalPaidEmailModel
+@{
+    ViewData["Subject"] = Loc["Email.WithdrawalPaid.Subject"].Value;
+    ViewData["Preheader"] = string.Format(Loc["Email.WithdrawalPaid.Preheader"].Value, Model.Amount);
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteAmbassador"].Value;
+    var rows = new List<(string, string)> { (Loc["Email.Common.DetailAmountLabel"].Value, Model.Amount) };
+    if (!string.IsNullOrWhiteSpace(Model.Reference)) rows.Add((Loc["Email.WithdrawalPaid.ReferenceLabel"].Value, Model.Reference));
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowAmbassador"].Value, Loc["Email.WithdrawalPaid.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.Name)</p>
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.WithdrawalPaid.Body1"].Value, Model.Amount)</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+<p style="margin:0 0 20px;">@Loc["Email.WithdrawalPaid.Body2"]</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.DashboardUrl, Loc["Email.Common.ButtonOpenEarnings"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

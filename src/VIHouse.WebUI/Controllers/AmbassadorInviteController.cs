@@ -16,14 +16,16 @@ using VIHouse.WebUI.ViewModels.Ambassador;
 namespace VIHouse.WebUI.Controllers;
 
 /// <summary>
-/// Where an invited ambassador lands from their email (/ambassador/invite/{token}). There is no
-/// public way to become an ambassador: without a live token this page says the link is not valid
-/// and nothing else. Accepting creates (or attaches) the account, confirms the email — only the
-/// person holding the email could have followed the link — records the terms consent and payout
-/// details, and switches the links on. See AmbassadorService.AcceptInviteAsync.
+/// Where an invited influencer lands from their email (/influencer/invite/{token}). There is no
+/// public way to become an influencer: without a live token this page says the link is not valid
+/// and nothing else. The House has already entered their profile, billing and bank details; the
+/// page shows them back and asks only for a password and the terms. Accepting creates (or
+/// attaches) the account, confirms the email — only the person holding the email could have
+/// followed the link — records the terms consent and switches the links on. See
+/// AmbassadorService.AcceptInviteAsync.
 /// </summary>
 [AllowAnonymous]
-[Route("ambassador/invite")]
+[Route("influencer/invite")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class AmbassadorInviteController(
     IAmbassadorService ambassadorService,
@@ -40,14 +42,7 @@ public class AmbassadorInviteController(
 
         if (Gate(lookup) is { } gate) return gate;
 
-        var ambassador = lookup.Ambassador!;
-        return View(Fill(new AmbassadorInviteViewModel
-        {
-            FirstName = lookup.AccountFirstName ?? "",
-            LastName = lookup.AccountLastName ?? "",
-            Country = lookup.AccountCountry ?? "",
-            AccountHolder = "",
-        }, token, lookup));
+        return View(Fill(new AmbassadorInviteViewModel(), token, lookup));
     }
 
     [HttpPost("{token}")]
@@ -64,30 +59,13 @@ public class AmbassadorInviteController(
 
         if (form.NeedsPassword && string.IsNullOrEmpty(form.Password))
             ModelState.AddModelError(nameof(form.Password), loc["AmbassadorInvite.Error.Password"]);
-        if (!string.IsNullOrWhiteSpace(form.Iban) && !Iban.IsValid(form.Iban))
-            ModelState.AddModelError(nameof(form.Iban), loc["AmbassadorInvite.Error.IbanInvalid"]);
-        if (!Iban.IsValidBic(form.Bic))
-            ModelState.AddModelError(nameof(form.Bic), loc["AmbassadorInvite.Error.Bic"]);
-        if (!string.IsNullOrWhiteSpace(form.Country) && !Countries.IsValid(form.Country))
-            ModelState.AddModelError(nameof(form.Country), loc["AmbassadorInvite.Error.Country"]);
         if (!form.AcceptTerms)
             ModelState.AddModelError(nameof(form.AcceptTerms), loc["AmbassadorInvite.Error.Terms"]);
         if (!ModelState.IsValid) return View(form);
 
         var result = await ambassadorService.AcceptInviteAsync(token, new AmbassadorAcceptance
         {
-            FirstName = form.FirstName,
-            LastName = form.LastName,
             Password = form.NeedsPassword ? form.Password : null,
-            AddressLine1 = form.AddressLine1,
-            AddressLine2 = form.AddressLine2,
-            City = form.City,
-            PostalCode = form.PostalCode,
-            Country = form.Country,
-            TaxId = form.TaxId,
-            AccountHolder = form.AccountHolder,
-            Iban = form.Iban,
-            Bic = form.Bic,
             TermsText = string.Join("\n", form.Terms),
             AcceptedTerms = form.AcceptTerms,
         }, User.UserId(), HttpContext.Connection.RemoteIpAddress?.ToString(), ct);
@@ -104,7 +82,7 @@ public class AmbassadorInviteController(
                     else await signInManager.SignInAsync(user, isPersistent: false);
                 }
                 TempData["StatusMessage"] = loc["AmbassadorInvite.Welcome"].Value;
-                return LocalRedirect(SiteUrls.InCulture(SiteUrls.Ambassador, CultureInfo.CurrentUICulture.Name));
+                return LocalRedirect(SiteUrls.InCulture(SiteUrls.Influencer, CultureInfo.CurrentUICulture.Name));
 
             case AmbassadorAcceptStatus.Invalid:
             case AmbassadorAcceptStatus.Expired:
@@ -119,11 +97,7 @@ public class AmbassadorInviteController(
                 {
                     var (field, key) = error switch
                     {
-                        "Iban" => (nameof(form.Iban), "AmbassadorInvite.Error.IbanInvalid"),
-                        "Bic" => (nameof(form.Bic), "AmbassadorInvite.Error.Bic"),
                         "Terms" => (nameof(form.AcceptTerms), "AmbassadorInvite.Error.Terms"),
-                        "Name" => (nameof(form.FirstName), "AmbassadorInvite.Error.FirstName"),
-                        "AccountHolder" => (nameof(form.AccountHolder), "AmbassadorInvite.Error.AccountHolder"),
                         "Password" => (nameof(form.Password), "AmbassadorInvite.Error.Password"),
                         // Identity's own password-rule messages.
                         _ => (nameof(form.Password), null),
@@ -181,16 +155,12 @@ public class AmbassadorInviteController(
         model.ExpiresAt = a.InviteExpiresAt!.Value;
         model.Email = a.InviteEmail!;
         model.NeedsPassword = !lookup.AccountHasPassword;
-        var rate = a.CommissionPercent.ToString("0.##", CultureInfo.CurrentCulture);
-        model.Terms =
-        [
-            loc["AmbassadorInvite.Terms.Commission", rate].Value,
-            loc["AmbassadorInvite.Terms.Payouts"].Value,
-            loc["AmbassadorInvite.Terms.Refunds"].Value,
-            loc["AmbassadorInvite.Terms.OwnPurchases"].Value,
-            loc["AmbassadorInvite.Terms.Changes"].Value,
-            loc["AmbassadorInvite.Terms.Privacy"].Value,
-        ];
+        model.LegalName = Text.NullIfBlank($"{a.LegalFirstName} {a.LegalLastName}".Trim());
+        model.BillingPlace = a.BillingCity is null ? null
+            : a.BillingCountry is { } country ? $"{a.BillingCity}, {Countries.NameFor(country)}" : a.BillingCity;
+        model.MaskedIban = a.HasPayoutDetails ? Iban.Mask(a.PayoutIban) : null;
+        model.Channels = a.Channels;
+        model.Terms = InfluencerTerms.Lines(loc, a.CommissionPercent);
         return model;
     }
 }

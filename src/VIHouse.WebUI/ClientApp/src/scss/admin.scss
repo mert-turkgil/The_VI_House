@@ -4,46 +4,7 @@
 
 @use 'components/admin-media';
 @use 'components/admin-ux';
-
-// --- CKEditor -----------------------------------------------------------------------------------
-// CKEditor ships its own theme; these overrides bring it in line with the admin panel's borders,
-// radii and brand colour rather than restyling it wholesale.
-.ck.ck-editor {
-  --ck-color-base-border: rgba(18, 22, 15, 0.18);
-  --ck-color-focus-border: var(--vih-gold);
-  --ck-color-button-on-background: rgba(184, 149, 90, 0.18);
-  --ck-color-button-on-color: var(--vih-green-900);
-  --ck-border-radius: 6px;
-
-  max-width: 100%;
-}
-
-.ck.ck-editor__editable_inline {
-  min-height: 420px;
-  padding: 18px 20px;
-  font-family: var(--vih-font-sans);
-  line-height: 1.7;
-
-  // Mirror the public Journal article's typography so the editor is a fair preview of the result.
-  h2,
-  h3 {
-    font-family: var(--vih-font-serif);
-    color: var(--vih-green-900);
-  }
-
-  blockquote {
-    border-left: 3px solid var(--vih-gold);
-    padding-left: 16px;
-    font-style: italic;
-    color: rgba(18, 22, 15, 0.72);
-  }
-}
-
-.ck.ck-toolbar {
-  border-top-left-radius: 6px !important;
-  border-top-right-radius: 6px !important;
-  background: #f6f5f1 !important;
-}
+@use 'components/writer';
 
 // --- Dashboard charts ---------------------------------------------------------------------------
 .admin-chart-grid {

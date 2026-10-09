@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
+using VIHouse.Entities.Referrals;
 
 namespace VIHouse.WebUI.Controllers;
 
@@ -126,13 +127,25 @@ public class DevEmailPreviewController(IEmailTemplateRenderer renderer, IWebHost
         new("AdminInvite", "AdminInvite", "Your VI House admin access", "SuperAdmin invites a staff account", "Account",
             () => new AdminInviteEmailModel("Ada", $"{Site}/reset-password?code=…", "Mert Türkgil", "Editor, Marketing")),
 
-        // --- Ambassadors
-        new("AmbassadorInvite", "AmbassadorInvite", "You're invited to be a VI House ambassador", "Admin > Ambassadors > Invite (or Re-send invitation)", "Ambassadors",
-            () => new AmbassadorInviteEmailModel("Anton", $"{Site}/ambassador/invite/sample-token", "ANTON", 15m, Sample.AddDays(7))),
-        new("AmbassadorLink", "AmbassadorLink", "Your VI House referral link", "Admin > Ambassador > Send link", "Ambassadors",
-            () => new AmbassadorLinkEmailModel("Anton", $"{Site}/r/ANTON", "ANTON", 15m, $"{Site}/ambassador", "Lovely to have you on board — here is your link for the launch post.")),
-        new("ReferralConverted", "ReferralConverted", "Your referral link just worked", "Any referral conversion (application, approval, ticket, membership, session)", "Ambassadors",
-            () => new ReferralConvertedEmailModel("Anton", "Someone who came through your link has bought a place on a session.", "£120.00", "£18.00", $"{Site}/ambassador")),
+        // --- Influencers
+        new("AmbassadorInvite", "AmbassadorInvite", "You're invited to be a VI House influencer", "Admin > Influencers > Invite (or Re-send invitation)", "Influencers",
+            () => new AmbassadorInviteEmailModel("Anton", $"{Site}/influencer/invite/sample-token", "ANTON", 15m, Sample.AddDays(7))),
+        new("AmbassadorLink", "AmbassadorLink", "Your VI House referral link", "Admin > Influencer > Send link", "Influencers",
+            () => new AmbassadorLinkEmailModel("Anton", $"{Site}/r/ANTON", "ANTON", 15m, $"{Site}/influencer", "Lovely to have you on board — here is your link for the launch post.")),
+        new("ReferralConverted", "ReferralConverted", "Your referral link just worked", "Any referral conversion (application, approval, ticket, membership, session)", "Influencers",
+            () => new ReferralConvertedEmailModel("Anton", ReferralConversionKind.SessionPurchase, "£120.00", "£18.00", $"{Site}/influencer")),
+        new("WithdrawalRequested", "WithdrawalRequested", "An influencer asked to be paid", "Influencer area > Earnings > Request withdrawal (to Finance and SuperAdmins)", "Influencers",
+            () => new WithdrawalRequestedEmailModel("Anton", "£86.40", "Before the end of the month if possible — thank you!", $"{Site}/admin/withdrawals")),
+        new("WithdrawalPaid", "WithdrawalPaid", "Your commission has been paid", "Admin > Withdrawals > Pay, or Admin > Influencer > Record payout", "Influencers",
+            () => new WithdrawalPaidEmailModel("Anton", "£86.40", "VIH-PAY-0042", $"{Site}/influencer/earnings")),
+        new("WithdrawalRejected", "WithdrawalRejected", "About your withdrawal request", "Admin > Withdrawals > Reject", "Influencers",
+            () => new WithdrawalRejectedEmailModel("Anton", "£86.40", "Two of these purchases were refunded this week — please request again once the balance settles.", $"{Site}/influencer/earnings")),
+        new("JournalSubmitted", "JournalSubmitted", "An influencer article is waiting for review", "Influencer area > Journal > Submit for review (to Editors, Marketing and SuperAdmins)", "Influencers",
+            () => new JournalSubmittedEmailModel("Anton", "Ten mornings in Lisbon", $"{Site}/admin/journal/00000000-0000-0000-0000-000000000000")),
+        new("JournalChangesRequested", "JournalChangesRequested", "Your article needs a few changes", "Admin > Journal > Request changes", "Influencers",
+            () => new JournalChangesRequestedEmailModel("Anton", "Ten mornings in Lisbon", "Lovely piece. Could you add a sentence on how you found the House, and a photo of the terrace?", $"{Site}/influencer/journal/00000000-0000-0000-0000-000000000000")),
+        new("JournalPublished", "JournalPublished", "Your article is live", "Admin > Journal > Publish (an influencer's article)", "Influencers",
+            () => new JournalPublishedEmailModel("Anton", "Ten mornings in Lisbon", $"{Site}/journal/ten-mornings-in-lisbon")),
 
         // --- Launch list
         new("LaunchAnnouncement", "LaunchAnnouncement", "The VI House is open", "Admin sends an announcement to the launch list", "Launch list",

@@ -5,7 +5,7 @@ namespace VIHouse.WebUI.Middleware;
 
 /// <summary>
 /// 301s the URLs the site used to have — /Identity/Account/…, /Admin/AdminUsers/Details/{id},
-/// /Home/Index — to the ones it has now. They are gone from routing entirely (no conventional
+/// /Home/Index, /ambassador/… — to the ones it has now. They are gone from routing entirely (no conventional
 /// routes remain, and the Identity pages carry only their clean selector), but links to them are
 /// still out in the world: every password-reset and confirmation email sent before this change
 /// points at /Identity/Account/ResetPassword?code=…, and admins have the old panel bookmarked.
@@ -26,6 +26,11 @@ public sealed partial class LegacyUrlRedirect(RequestDelegate next, LinkGenerato
 
     [GeneratedRegex(@"^/(?:(?<culture>[a-z]{2})/)?home(?:/(?<action>index|privacy|error))?/?$", RegexOptions.IgnoreCase)]
     private static partial Regex HomePattern();
+
+    /// <summary>The influencer area was the ambassador page, and invitations already in inboxes
+    /// still say /ambassador/invite/{token}. Everything under it moved one-for-one.</summary>
+    [GeneratedRegex(@"^/(?:(?<culture>[a-z]{2})/)?ambassador(?<rest>/.*)?$", RegexOptions.IgnoreCase)]
+    private static partial Regex AmbassadorPattern();
 
     public async Task InvokeAsync(HttpContext context)
     {
@@ -77,6 +82,9 @@ public sealed partial class LegacyUrlRedirect(RequestDelegate next, LinkGenerato
             };
             return WithCulture(target, CultureOf(home));
         }
+
+        if (AmbassadorPattern().Match(path) is { Success: true } ambassador)
+            return WithCulture(VIHouse.Business.SiteUrls.Influencer + ambassador.Groups["rest"].Value.TrimEnd('/'), CultureOf(ambassador));
 
         return null;
     }

@@ -1,0 +1,32 @@
+@model string
+@using System.Globalization
+@*
+    CKEditor, from its CDN — for the admin panel (_AdminLayout) and the influencer's writer
+    (Influencer/Write). Model "styles" renders the stylesheet (for <head>), "scripts" the bundle
+    and, outside English, its translation. The version is pinned here and nowhere else: an upgrade
+    is these URLs.
+
+    Why the CDN and not npm: a licence key is issued for a distribution channel, and ours covers
+    "cloud" — see ClientApp modules/editor.ts. A classic script runs during parsing while the page's
+    bundle is a deferred module, so window.CKEDITOR is defined by the time the bundle looks for it.
+    If the CDN is unreachable every editor stays a plain textarea, which still saves.
+
+    The key (CkEditor:LicenseKey) is issued per host: Production's must cover the public host as
+    well as the admin one, or the influencer writer falls back to that plain textarea.
+*@
+@{
+    const string Cdn = "https://cdn.ckeditor.com/ckeditor5/48.4.0";
+    var language = VIHouse.Business.Options.SiteCultures.Describe(CultureInfo.CurrentUICulture.Name).UrlCode;
+}
+@if (Model == "styles")
+{
+    <link rel="stylesheet" href="@Cdn/ckeditor5.css" crossorigin="anonymous" />
+}
+else
+{
+    <script src="@Cdn/ckeditor5.umd.js" crossorigin="anonymous"></script>
+    @if (language != "en")
+    {
+        <script src="@Cdn/translations/@(language).umd.js" crossorigin="anonymous"></script>
+    }
+}

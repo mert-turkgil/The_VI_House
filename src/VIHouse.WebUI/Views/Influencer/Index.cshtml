@@ -1,0 +1,72 @@
+@model InfluencerOverviewViewModel
+@{
+    var stats = Model.Stats;
+}
+
+<div class="account-manage">
+    <partial name="_InfluencerNav" />
+    <div class="account-manage__content">
+        <header class="account-page__head">
+            <h1>@Loc["Ambassador.Dashboard.Welcome", Model.Influencer.Name]</h1>
+            <p class="account-page__lede">@Loc["Ambassador.Dashboard.Intro", Model.Influencer.CommissionPercent.ToString("0.##")]</p>
+        </header>
+
+        @if (TempData["StatusMessage"] is string status)
+        {
+            <div class="@(TempData["StatusIsError"] is true ? "vih-alert vih-alert--danger" : "contact-success")" role="status" style="margin-bottom:20px;">@status</div>
+        }
+
+        @if (Model.Terms is { } terms)
+        {
+            <section class="account-notice" aria-labelledby="terms-heading">
+                <div>
+                    <strong id="terms-heading">@Loc["AmbassadorInvite.Section.Terms"]</strong>
+                    <ol class="ambassador-invite__terms" tabindex="0">
+                        @foreach (var term in terms) { <li>@term</li> }
+                    </ol>
+                    <form asp-action="AcceptTerms" method="post">
+                        <label><input type="checkbox" name="accept" value="true" required /> @Loc["AmbassadorInvite.Accept"]</label>
+                        <button type="submit" class="btn btn--primary btn--sm">@Loc["Influencer.AcceptTerms"]</button>
+                    </form>
+                </div>
+            </section>
+        }
+
+        @if (Model.Missing.Count > 0)
+        {
+            <section class="account-notice" role="status">
+                <div>
+                    <strong>@Loc["Influencer.Missing.Heading"]</strong>
+                    <p>@Loc["Influencer.Missing.Body"]</p>
+                    <ul>
+                        @foreach (var item in Model.Missing) { <li>@Loc.Label(item)</li> }
+                    </ul>
+                </div>
+            </section>
+        }
+
+        <section class="ambassador-section">
+            <h2>@Loc["Ambassador.Performance.Heading"]</h2>
+            <p class="ambassador-section__lede">@Loc["Ambassador.Performance.Privacy"]</p>
+            <div class="admin-kpi-grid">
+                <div class="admin-kpi-card"><div class="admin-kpi-card__value">@stats.Visits</div><div class="admin-kpi-card__label">@Loc["Ambassador.Links.Visits"]</div></div>
+                <div class="admin-kpi-card"><div class="admin-kpi-card__value">@stats.Applications</div><div class="admin-kpi-card__label">@Loc["Ambassador.Links.Applications"]</div></div>
+                <div class="admin-kpi-card"><div class="admin-kpi-card__value">@stats.Purchases</div><div class="admin-kpi-card__label">@Loc["Ambassador.Links.Purchases"]</div></div>
+                @foreach (var b in stats.Balances)
+                {
+                    <div class="admin-kpi-card admin-kpi-card--accent">
+                        <div class="admin-kpi-card__value">@MoneyFormatter.Format(Math.Max(0, b.OwedMinor), b.Currency)</div>
+                        <div class="admin-kpi-card__label">@Loc["Ambassador.Performance.Owed"] (@b.Currency)</div>
+                    </div>
+                }
+            </div>
+            <p><a class="btn btn--ghost btn--sm" asp-action="Earnings">@Loc["Influencer.Nav.Earnings"]</a></p>
+        </section>
+
+        <section class="ambassador-section" id="referral-links">
+            <h2>@Loc["Ambassador.Links.Title"]</h2>
+            <p class="ambassador-section__lede">@Loc["Ambassador.Links.Intro"]</p>
+            <partial name="_ReferralLinks" model="Model.Links" />
+        </section>
+    </div>
+</div>

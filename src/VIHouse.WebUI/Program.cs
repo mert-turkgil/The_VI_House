@@ -174,16 +174,38 @@ if (!string.IsNullOrWhiteSpace(cookieDomain))
 // placeholder in appsettings.Production.json) just doesn't show the button instead of crashing —
 // same secrets policy as Stripe: user-secrets in Development, appsettings.Production.json on the
 // server, never a committed file.
+//
+// Sign in with Apple follows the same policy and the same switch: registered only when all of
+// Authentication:Apple:{ClientId (the Services ID), TeamId, KeyId, PrivateKey (the .p8 text)} are
+// set. The client secret is a short-lived JWT the handler signs with that key, so nothing expires
+// on a schedule the House has to remember.
+var authentication = builder.Services.AddAuthentication();
 var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
 var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret))
 {
-    builder.Services.AddAuthentication()
-        .AddGoogle(options =>
-        {
-            options.ClientId = googleClientId;
-            options.ClientSecret = googleClientSecret;
-        });
+    authentication.AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = googleClientSecret;
+        options.Events.OnRemoteFailure = ExternalSignIn.Failed;
+    });
+}
+
+var apple = builder.Configuration.GetSection("Authentication:Apple");
+if (new[] { "ClientId", "TeamId", "KeyId", "PrivateKey" }.All(key => !string.IsNullOrWhiteSpace(apple[key])))
+{
+    // A secret pasted as one line keeps its line breaks as "\n"; the PEM reader needs real ones.
+    var applePrivateKey = apple["PrivateKey"]!.Replace("\\n", "\n").Trim();
+    authentication.AddApple(options =>
+    {
+        options.ClientId = apple["ClientId"]!;
+        options.TeamId = apple["TeamId"]!;
+        options.KeyId = apple["KeyId"]!;
+        options.GenerateClientSecret = true;
+        options.PrivateKey = (_, _) => Task.FromResult(applePrivateKey.AsMemory());
+        options.Events.OnRemoteFailure = ExternalSignIn.Failed;
+    });
 }
 
 // --- Uploaded media ----------------------------------------------------------------------------
@@ -254,6 +276,8 @@ builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IMembershipService, MembershipService>();
 builder.Services.AddScoped<IAmbassadorService, AmbassadorService>();
+// Bell + email to whichever staff roles handle an influencer's submission or withdrawal request.
+builder.Services.AddScoped<StaffAlerts>();
 builder.Services.AddScoped<ISecurityAlertService, SecurityAlertService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IJournalService, JournalService>();
@@ -298,6 +322,7 @@ builder.Services.AddScoped<IPaymentCatalogProvider, StripeCatalogProvider>();
 // are secret and come from user-secrets/environment variables only — see SmtpOptions.
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
 builder.Services.Configure<SiteOptions>(builder.Configuration.GetSection("Site"));
+builder.Services.Configure<ReferralOptions>(builder.Configuration.GetSection("Referrals"));
 
 // Site:BaseUrl is what every link inside an email is built from. Production sets it explicitly.
 // Left empty (Development), it is taken from the addresses this process is told to listen on
@@ -308,6 +333,10 @@ builder.Services.PostConfigure<SiteOptions>(site =>
 {
     if (string.IsNullOrWhiteSpace(site.BaseUrl))
         site.BaseUrl = ListenUrls.ToBaseUrl(builder.Configuration["urls"]) ?? "";
+    if (string.IsNullOrWhiteSpace(site.AdminBaseUrl))
+        site.AdminBaseUrl = builder.Configuration["AdminHost"] is { Length: > 0 } adminHostName
+            ? $"https://{adminHostName}"
+            : site.BaseUrl;
 });
 
 // What is open and what is still behind the curtain — see FeatureOptions. Everything defaults to

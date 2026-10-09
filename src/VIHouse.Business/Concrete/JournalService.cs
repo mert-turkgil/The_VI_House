@@ -1,10 +1,15 @@
 using System.Security.Cryptography;
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
+using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
 using VIHouse.Entities.Journal;
+using VIHouse.Entities.Notifications;
 using VIHouse.Entities.Seminars;
 
 namespace VIHouse.Business.Concrete;
@@ -33,7 +38,13 @@ public class JournalService(
     IRepository<JournalPostTranslation> translations,
     IRepository<JournalPostMedia> mediaRows,
     IMediaStorage mediaStorage,
-    IAuditLogRepository auditLogs) : IJournalService
+    IAuditLogRepository auditLogs,
+    INotificationService notifications,
+    IEmailService emailService,
+    StaffAlerts staffAlerts,
+    UserManager<ApplicationUser> userManager,
+    IOptions<SiteOptions> siteOptions,
+    ILogger<JournalService> logger) : IJournalService
 {
     /// <summary>
     /// How an asset is addressed once it is in an article body. Slug-free by design: this URL is
@@ -52,15 +63,17 @@ public class JournalService(
     public Task<List<JournalPost>> SearchPublishedAsync(string term, CancellationToken ct = default) =>
         posts.SearchPublishedAsync(term, ct);
 
-    public Task<JournalPostMedia?> GetMediaAsync(Guid mediaId, CancellationToken ct = default) =>
-        posts.GetMediaAsync(mediaId, ct);
-
-    public async Task<MediaFileInfo?> OpenMediaAsync(Guid mediaId, CancellationToken ct = default)
+    public async Task<JournalMediaFile?> OpenMediaAsync(Guid mediaId, CancellationToken ct = default)
     {
         var media = await posts.GetMediaAsync(mediaId, ct);
+        if (media is null) return null;
+        var post = await posts.GetByIdAsync(media.JournalPostId, ct);
+        if (post is null) return null;
+
         // The storage key comes from the row, never from the request — which is what keeps this
         // from being an arbitrary-file reader with a Guid for a filename.
-        return media is null ? null : await mediaStorage.GetAsync(media.StorageKey, ct);
+        var file = await mediaStorage.GetAsync(media.StorageKey, ct);
+        return file is null ? null : new JournalMediaFile(file, post.Status == JournalPostStatus.Published, post.AuthorUserId);
     }
 
     // --- Admin: the post itself --------------------------------------------------------------------
@@ -142,6 +155,9 @@ public class JournalService(
         existing.Status = updated.Status;
         if (existing.PublishedAt is null && updated.Status == JournalPostStatus.Published)
             existing.PublishedAt = DateTimeOffset.UtcNow;
+        var wentLive = before.Status != JournalPostStatus.Published && existing.Status == JournalPostStatus.Published;
+        // The editors' last note was about a version that is now the published one.
+        if (wentLive) existing.ReviewNote = null;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
 
         await LogAsync("JournalPostUpdated", existing.Id, adminUserId, ipAddress,
@@ -150,6 +166,14 @@ public class JournalService(
         // No explicit Update() call: `existing` is already tracked, loaded on this same scoped
         // DbContext — same reasoning as ExperienceService.UpdateCoreFieldsAsync.
         await posts.SaveChangesAsync(ct);
+
+        if (wentLive && existing.AuthorUserId is { } authorId)
+        {
+            var title = JournalContent.Title(existing, SiteCultures.Default);
+            await TellAuthorAsync(authorId, "Your article is live", $"\"{title}\" has been published in The Journal.",
+                SiteUrls.JournalPost(existing.Slug), "JournalPublished", "Your article is live",
+                (name, url) => new JournalPublishedEmailModel(name, title, url), existing.Id, ct);
+        }
 
         return JournalSaveResult.Ok(existing.Id);
     }
@@ -476,6 +500,149 @@ public class JournalService(
 
         return JournalSaveResult.Ok(post.Id);
     }
+
+    // --- Influencer authors ------------------------------------------------------------------------
+    //
+    // An influencer writes in English only; the editors translate, set the slug and the search text,
+    // and publish. The author may change a post while it is a Draft or has been sent back; once
+    // Submitted it is the editors' until they decide. Every call names the author, and a post that is
+    // not theirs is "not found" — never "forbidden", which would confirm that it exists.
+
+    public Task<List<JournalPost>> GetForAuthorAsync(Guid authorUserId, CancellationToken ct = default) =>
+        posts.GetByAuthorAsync(authorUserId, ct);
+
+    public async Task<JournalPost?> GetOwnAsync(Guid postId, Guid authorUserId, CancellationToken ct = default) =>
+        await posts.GetWithDetailAsync(postId, ct) is { } post && post.AuthorUserId == authorUserId ? post : null;
+
+    public async Task<JournalPost?> GetEditableForAuthorAsync(Guid postId, Guid authorUserId, CancellationToken ct = default) =>
+        await GetOwnAsync(postId, authorUserId, ct) is { } post && IsEditableByAuthor(post.Status) ? post : null;
+
+    public static bool IsEditableByAuthor(JournalPostStatus status) =>
+        status is JournalPostStatus.Draft or JournalPostStatus.ChangesRequested;
+
+    public Task<JournalSaveResult> StartForAuthorAsync(Guid authorUserId, string authorName, JournalCategory category,
+        string title, string? excerpt, string? ipAddress, CancellationToken ct = default) =>
+        CreateAsync(
+            new JournalPost { Category = category, Status = JournalPostStatus.Draft, AuthorUserId = authorUserId, AuthorName = authorName },
+            new JournalPostTranslation { Title = title.Trim(), Excerpt = Text.NullIfBlank(excerpt?.Trim()), Body = string.Empty },
+            authorUserId, ipAddress, ct);
+
+    public async Task<JournalSaveResult> SaveForAuthorAsync(Guid postId, Guid authorUserId, JournalAuthorDraft draft, bool submit,
+        string? ipAddress, CancellationToken ct = default)
+    {
+        var post = await GetEditableForAuthorAsync(postId, authorUserId, ct);
+        if (post is null) return JournalSaveResult.Fail("Journal.Error.NotFound");
+        if (string.IsNullOrWhiteSpace(draft.Title)) return JournalSaveResult.Fail("Influencer.Journal.Error.Title");
+        if (submit && CountWords(EditorHtml.Sanitize(draft.Body)) == 0) return JournalSaveResult.Fail("Influencer.Journal.Error.Body");
+
+        // The search text belongs to the editors; it rides through untouched.
+        var english = JournalContent.Find(post, SiteCultures.Default);
+        var copy = await SaveTranslationAsync(post.Id, new JournalPostTranslation
+        {
+            Culture = SiteCultures.Default,
+            Title = draft.Title,
+            Excerpt = draft.Excerpt,
+            Body = draft.Body,
+            SeoTitle = english?.SeoTitle,
+            SeoDescription = english?.SeoDescription,
+        }, authorUserId, ipAddress, ct);
+        if (!copy.Success) return copy;
+
+        var before = new { post.Category, post.Status };
+        post.Category = draft.Category;
+        post.CoverImageAlt = Text.NullIfBlank(draft.CoverImageAlt?.Trim());
+        if (submit)
+        {
+            post.Status = JournalPostStatus.Submitted;
+            post.SubmittedAt = DateTimeOffset.UtcNow;
+        }
+        post.UpdatedAt = DateTimeOffset.UtcNow;
+        await LogAsync(submit ? "JournalPostSubmitted" : "JournalDraftSaved", post.Id, authorUserId, ipAddress,
+            before, new { post.Category, post.Status }, ct);
+        await posts.SaveChangesAsync(ct);
+
+        if (submit)
+        {
+            var title = draft.Title.Trim();
+            var author = post.AuthorName ?? "";
+            await staffAlerts.SendAsync(Roles.JournalReviewers,
+                "Article submitted for review", $"{author} sent \"{title}\" for review.", $"/admin/journal/{post.Id}",
+                "JournalSubmitted", "An influencer article is waiting for review",
+                link => new JournalSubmittedEmailModel(author, title, link),
+                nameof(JournalPost), post.Id, ct);
+        }
+        return JournalSaveResult.Ok(post.Id);
+    }
+
+    public async Task<JournalSaveResult> WithdrawSubmissionAsync(Guid postId, Guid authorUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var post = await GetOwnAsync(postId, authorUserId, ct);
+        if (post is null || post.Status != JournalPostStatus.Submitted) return JournalSaveResult.Fail("Journal.Error.NotFound");
+
+        post.Status = JournalPostStatus.Draft;
+        post.SubmittedAt = null;
+        post.UpdatedAt = DateTimeOffset.UtcNow;
+        await LogAsync("JournalSubmissionWithdrawn", post.Id, authorUserId, ipAddress,
+            new { Status = JournalPostStatus.Submitted }, new { post.Status }, ct);
+        await posts.SaveChangesAsync(ct);
+        return JournalSaveResult.Ok(post.Id);
+    }
+
+    public async Task<JournalSaveResult> RequestChangesAsync(Guid postId, string note, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var post = await posts.GetWithDetailAsync(postId, ct);
+        if (post is null) return JournalSaveResult.Fail("Journal.Error.NotFound");
+        if (post.AuthorUserId is not { } authorId || post.Status != JournalPostStatus.Submitted)
+            return JournalSaveResult.Fail("Admin.Journal.Error.NotSubmitted");
+        if (string.IsNullOrWhiteSpace(note)) return JournalSaveResult.Fail("Admin.Journal.Error.NoteRequired");
+
+        post.Status = JournalPostStatus.ChangesRequested;
+        post.ReviewNote = Text.Clip(note.Trim(), 1000);
+        post.UpdatedAt = DateTimeOffset.UtcNow;
+        await LogAsync("JournalChangesRequested", post.Id, adminUserId, ipAddress,
+            new { Status = JournalPostStatus.Submitted }, new { post.Status, post.ReviewNote }, ct);
+        await posts.SaveChangesAsync(ct);
+
+        var title = JournalContent.Title(post, SiteCultures.Default);
+        await TellAuthorAsync(authorId, "Your article needs a few changes", $"The editors sent \"{title}\" back: {post.ReviewNote}",
+            SiteUrls.InfluencerJournalPost(post.Id), "JournalChangesRequested", "Your article needs a few changes",
+            (name, url) => new JournalChangesRequestedEmailModel(name, title, post.ReviewNote!, url), post.Id, ct);
+        return JournalSaveResult.Ok(post.Id);
+    }
+
+    public Task<int> CountSubmittedAsync(CancellationToken ct = default) =>
+        posts.CountAsync(p => p.Status == JournalPostStatus.Submitted, ct);
+
+    public async Task<bool> HasPublishedAsync(Guid authorUserId, CancellationToken ct = default) =>
+        await posts.CountAsync(p => p.AuthorUserId == authorUserId && p.Status == JournalPostStatus.Published, ct) > 0;
+
+    /// <summary>A bell notification and an email in the author's language. Never throws: the
+    /// editors' decision has been saved, and a mail hiccup must not make it look as if it failed.</summary>
+    private async Task TellAuthorAsync<TModel>(Guid authorUserId, string title, string body, string path,
+        string emailTemplate, string emailSubject, Func<string, string, TModel> model, Guid postId, CancellationToken ct)
+    {
+        try
+        {
+            var user = await userManager.FindByIdAsync(authorUserId.ToString());
+            if (user is null) return;
+            await notifications.CreateForUserAsync(user.Id, NotificationType.Influencer, title, body, path, ct);
+            if (user.Email is null) return;
+            var url = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.InCulture(path, user.PreferredCulture));
+            await emailService.SendAsync(emailTemplate, user.Email, emailSubject, model(user.FirstName, url),
+                user.PreferredCulture ?? SiteCultures.Default, nameof(JournalPost), postId, ct);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Could not tell author {AuthorId} about {Template} for post {PostId}.", authorUserId, emailTemplate, postId);
+        }
+    }
+
+    /// <summary>Words in an HTML body — what "is there an article yet" means.</summary>
+    public static int CountWords(string? html) =>
+        string.IsNullOrWhiteSpace(html)
+            ? 0
+            : System.Text.RegularExpressions.Regex.Matches(
+                System.Text.RegularExpressions.Regex.Replace(html, "<[^>]+>", " "), @"[\p{L}\p{N}]+").Count;
 
     // --- Helpers -------------------------------------------------------------------------------------
 

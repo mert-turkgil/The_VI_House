@@ -34,5 +34,27 @@ public class AmbassadorConfiguration : IEntityTypeConfiguration<Ambassador>
         builder.Property(a => a.PayoutIban).HasMaxLength(34);
         builder.Property(a => a.PayoutBic).HasMaxLength(11);
         builder.Ignore(a => a.HasPayoutDetails);
+
+        builder.Property(a => a.LegalFirstName).HasMaxLength(100);
+        builder.Property(a => a.LegalLastName).HasMaxLength(100);
+        builder.Property(a => a.Bio).HasMaxLength(1000);
+        builder.Property(a => a.Niche).HasMaxLength(200);
+        builder.Property(a => a.PhotoStorageKey).HasMaxLength(300);
+
+        builder.HasMany(a => a.Channels)
+            .WithOne()
+            .HasForeignKey(c => c.AmbassadorId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+public class AmbassadorChannelConfiguration : IEntityTypeConfiguration<AmbassadorChannel>
+{
+    public void Configure(EntityTypeBuilder<AmbassadorChannel> builder)
+    {
+        builder.ToTable("AmbassadorChannels");
+        builder.Property(c => c.Platform).HasConversion<string>().HasMaxLength(20);
+        builder.Property(c => c.Url).HasMaxLength(300).IsRequired();
+        builder.HasIndex(c => new { c.AmbassadorId, c.SortOrder });
     }
 }

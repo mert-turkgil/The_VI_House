@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="~/dist/main.css" asp-append-version="true" />
     @* CKEditor's own theme, from the same CDN as its script below. The .ck-* overrides in
        ClientApp/src/scss/admin.scss are custom-property assignments and apply to it unchanged. *@
-    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/48.4.0/ckeditor5.css" crossorigin="anonymous" />
+    <partial name="/Views/Shared/_CkEditorAssets.cshtml" model='"styles"' />
     <link rel="stylesheet" href="~/dist/admin.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -215,17 +215,9 @@
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    @* CKEditor, from the CDN; see the comment above <body>, and ClientApp modules/editor.ts for how
-       it is picked up (window.CKEDITOR). Version pinned here and nowhere else: an upgrade is these
-       URLs. A classic script runs during parsing while admin.js is a deferred module, so CKEDITOR is
-       always defined by the time the bundle looks for it. If the CDN is unreachable the panel still
-       works: every editor stays a plain textarea. The translation file gives the editor's own
-       buttons and tooltips the panel's language. *@
-    <script src="https://cdn.ckeditor.com/ckeditor5/48.4.0/ckeditor5.umd.js" crossorigin="anonymous"></script>
-    @if (uiCulture.UrlCode != "en")
-    {
-        <script src="https://cdn.ckeditor.com/ckeditor5/48.4.0/translations/@(uiCulture.UrlCode).umd.js" crossorigin="anonymous"></script>
-    }
+    @* CKEditor, from the CDN — see _CkEditorAssets for why, and ClientApp modules/editor.ts for how
+       it is picked up (window.CKEDITOR). *@
+    <partial name="/Views/Shared/_CkEditorAssets.cshtml" model='"scripts"' />
     <script type="module" src="~/dist/admin.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

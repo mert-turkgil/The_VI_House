@@ -1,0 +1,55 @@
+@using VIHouse.DataAccess.Identity
+@*
+    The influencer area's menu: the account sidebar's markup and behaviour (modules/accountNav.ts),
+    with the influencer's own sections. Also shown on the shared account pages (security,
+    notifications) for an influencer who is not a member — see _AccountNav.
+*@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var onSecurityPages = ViewContext.RouteData.Values["page"]?.ToString()?.StartsWith("/Account/Manage", StringComparison.OrdinalIgnoreCase) == true;
+    var inArea = controller == "Influencer";
+    string? section = onSecurityPages ? "Security"
+        : !inArea ? (controller == "Account" && action == "Notifications" ? "Notifications" : null)
+        : action switch
+        {
+            "Journal" or "NewArticle" or "Write" => "Journal",
+            "Earnings" => "Earnings",
+            "Profile" => "Profile",
+            _ => "Overview",
+        };
+    string NavClass(string name) => section == name ? "active" : "";
+    var currentLabel = section is null ? Loc["Influencer.Nav.Overview"].Value : Loc[$"Influencer.Nav.{section}"].Value;
+}
+<div class="account-manage__aside" data-account-nav-root>
+    <button type="button" class="account-manage__toggle" data-account-nav-toggle aria-controls="influencer-nav" aria-expanded="false">
+        <span class="account-manage__toggle-label">@currentLabel</span>
+        <span class="account-manage__toggle-icon" aria-hidden="true"><partial name="_Icon" model='@("chevron-down")' /></span>
+    </button>
+    <nav class="account-manage__nav" id="influencer-nav" data-account-nav aria-label="@Loc["Influencer.Nav.Aria"]">
+        <a class="account-manage__link @NavClass("Overview")" asp-controller="Influencer" asp-action="Index">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("layout-dashboard")' /></span><span>@Loc["Influencer.Nav.Overview"]</span>
+        </a>
+        <a class="account-manage__link @NavClass("Journal")" asp-controller="Influencer" asp-action="Journal">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("file-text")' /></span><span>@Loc["Influencer.Nav.Journal"]</span>
+        </a>
+        <a class="account-manage__link @NavClass("Earnings")" asp-controller="Influencer" asp-action="Earnings">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("tag")' /></span><span>@Loc["Influencer.Nav.Earnings"]</span>
+        </a>
+        <a class="account-manage__link @NavClass("Profile")" asp-controller="Influencer" asp-action="Profile">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("user-round")' /></span><span>@Loc["Influencer.Nav.Profile"]</span>
+        </a>
+        <a class="account-manage__link @NavClass("Notifications")" asp-controller="Account" asp-action="Notifications">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("bell")' /></span><span>@Loc["Notif.Title"]</span>
+        </a>
+        <a class="account-manage__link @NavClass("Security")" asp-area="Identity" asp-page="/Account/Manage/Index">
+            <span class="account-manage__icon"><partial name="_Icon" model='@("settings")' /></span><span>@Loc["Influencer.Nav.Security"]</span>
+        </a>
+        @if (!InfluencerAccess.IsInfluencerOnly(User))
+        {
+            <a class="account-manage__link" asp-controller="Account" asp-action="Index">
+                <span class="account-manage__icon"><partial name="_Icon" model='@("layers")' /></span><span>@Loc["Influencer.Nav.MemberAccount"]</span>
+            </a>
+        }
+    </nav>
+</div>

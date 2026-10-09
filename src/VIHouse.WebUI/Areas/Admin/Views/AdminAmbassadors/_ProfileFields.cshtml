@@ -1,0 +1,52 @@
+@using VIHouse.WebUI.ViewModels.Ambassador
+@model InfluencerProfileForm
+@*
+    Niche, bio and the channels table, for the invitation form and the profile card. The prefix
+    ("Profile" or "ProfileForm") is the name the posting action binds. Rows with no address are
+    ignored, so a few empty ones are always offered and no script is needed to add one.
+*@
+@{
+    var prefix = (string)ViewData["Prefix"]!;
+    var platforms = Enum.GetValues<SocialPlatform>();
+    string Error(string field) => ViewData.ModelState.TryGetValue($"{prefix}.{field}", out var entry) && entry.Errors.Count > 0
+        ? entry.Errors[0].ErrorMessage : "";
+}
+<div class="admin-form__grid">
+    <div class="admin-field">
+        <label for="@(prefix)_Niche">@Loc["Admin.Influencer.Niche"]</label>
+        <input id="@(prefix)_Niche" name="@(prefix).Niche" value="@Model.Niche" maxlength="200" placeholder="@Loc["Admin.Influencer.NichePlaceholder"]" />
+        <p class="admin-field__hint">@Loc["Admin.Influencer.NicheHint"]</p>
+    </div>
+</div>
+<div class="admin-field">
+    <label for="@(prefix)_Bio">@Loc["Admin.Influencer.Bio"]</label>
+    <textarea id="@(prefix)_Bio" name="@(prefix).Bio" rows="4" maxlength="1000" data-counter>@Model.Bio</textarea>
+    <p class="admin-field__hint">@Loc["Admin.Influencer.BioHint"]</p>
+    <span class="field-validation-error">@Error("Bio")</span>
+</div>
+
+<fieldset class="admin-channels">
+    <legend>@Loc["Admin.Influencer.Channels"]</legend>
+    <p class="admin-field__hint">@Loc["Admin.Influencer.ChannelsHint"]</p>
+    <div class="admin-channels__head" aria-hidden="true">
+        <span>@Loc["Admin.Influencer.Platform"]</span>
+        <span>@Loc["Admin.Influencer.ChannelUrl"]</span>
+        <span>@Loc["Admin.Influencer.Audience"]</span>
+    </div>
+    @for (var i = 0; i < Model.Channels.Count; i++)
+    {
+        var row = Model.Channels[i];
+        var name = $"{prefix}.Channels[{i}]";
+        <div class="admin-channels__row">
+            <select name="@(name).Platform" aria-label="@Loc["Admin.Influencer.Platform"]">
+                @foreach (var p in platforms)
+                {
+                    <option value="@p" selected="@(p == row.Platform)">@Loc.Label(p)</option>
+                }
+            </select>
+            <input name="@(name).Url" value="@row.Url" type="url" maxlength="300" inputmode="url" placeholder="https://instagram.com/…" aria-label="@Loc["Admin.Influencer.ChannelUrl"]" />
+            <input name="@(name).Audience" value="@row.Audience" type="number" min="0" step="1" inputmode="numeric" placeholder="12000" aria-label="@Loc["Admin.Influencer.Audience"]" />
+        </div>
+    }
+    <span class="field-validation-error">@Error("Channels")</span>
+</fieldset>

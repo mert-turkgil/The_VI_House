@@ -4,8 +4,9 @@ namespace VIHouse.Entities.Journal;
 
 /// <summary>
 /// Brief §125: SEO/thought-leadership editorial content — Founder Stories, Business, Technology,
-/// Capital, Culture, House Notes. Admin-authored only, never user-generated; deliberately not
-/// branded "Blog" anywhere in the UI (brief §126).
+/// Capital, Culture, House Notes. Written by the House, or submitted by an invited influencer
+/// (<see cref="AuthorUserId"/>) and published only once an admin approves it; never open to the
+/// public. Deliberately not branded "Blog" anywhere in the UI (brief §126).
 ///
 /// Every word a reader sees lives on <see cref="JournalPostTranslation"/>, one row per language the
 /// admin has actually written — the same split Seminar and HeroSlide make. What stays here is the
@@ -41,6 +42,18 @@ public class JournalPost : BaseEntity
     public string? CoverImageAlt { get; set; }
 
     public string? AuthorName { get; set; }
+
+    /// <summary>
+    /// The influencer who wrote it, when it came in as a submission. Null for posts the House wrote.
+    /// Only this account and admins can see the post before it is published.
+    /// </summary>
+    public Guid? AuthorUserId { get; set; }
+
+    /// <summary>When the influencer last sent it for review.</summary>
+    public DateTimeOffset? SubmittedAt { get; set; }
+
+    /// <summary>What the admin asked to change when sending a submission back.</summary>
+    public string? ReviewNote { get; set; }
 
     /// <summary>Set once, the first time Status flips to Published. Drives "newest first"
     /// sort/display; a later unpublish/republish cycle does not reset it.</summary>

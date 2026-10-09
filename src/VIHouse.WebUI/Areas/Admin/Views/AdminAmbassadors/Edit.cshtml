@@ -41,6 +41,88 @@
 
 <div class="admin-review-grid">
     <div class="admin-review-main">
+        @* --- What is still missing before they can be paid ------------------------------------ *@
+        <div class="admin-card" id="requirements">
+            <h2>@Loc["Admin.Influencer.Requirements"]</h2>
+            @if (Model.Missing.Count == 0)
+            {
+                <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Influencer.RequirementsComplete"]</p>
+            }
+            else
+            {
+                <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Influencer.RequirementsIntro"]</p>
+            }
+            <ul class="admin-checklist">
+                @foreach (var requirement in Enum.GetValues<InfluencerRequirement>())
+                {
+                    var done = !Model.Missing.Contains(requirement);
+                    <li class="admin-checklist__item @(done ? "is-done" : "is-missing")">
+                        <span class="admin-checklist__mark" aria-hidden="true">@(done ? "✓" : "•")</span>
+                        <span>@Loc.Label(requirement)</span>
+                        <span class="admin-checklist__who">@Loc[requirement is InfluencerRequirement.Terms ? "Admin.Influencer.Who.Influencer" : requirement is InfluencerRequirement.LegalName or InfluencerRequirement.BillingAddress or InfluencerRequirement.BankDetails ? "Admin.Influencer.Who.Finance" : "Admin.Influencer.Who.Marketing"]</span>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        @* --- Public profile: Marketing keeps it, the influencer can too ------------------------ *@
+        <div class="admin-card" id="profile">
+            <h2>@Loc["Admin.Influencer.Section.Profile"]</h2>
+            <div class="admin-influencer-photo">
+                @if (Model.PhotoUrl is not null)
+                {
+                    <img src="@Model.PhotoUrl" alt="" width="96" height="96" loading="lazy" />
+                }
+                else
+                {
+                    <span class="admin-influencer-photo__empty" aria-hidden="true">@Model.Name[..1]</span>
+                }
+                @if (Model.CanEditProfile)
+                {
+                    <div class="admin-influencer-photo__actions">
+                        <form asp-action="UploadPhoto" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="admin-inline-upload">
+                            <label class="admin-btn admin-btn--ghost admin-btn--sm">
+                                <input type="file" name="photo" accept=".jpg,.jpeg,.png,.webp,.avif" class="visually-hidden" data-autosubmit />
+                                @Loc[Model.PhotoUrl is null ? "Admin.Influencer.AddPhoto" : "Admin.Influencer.ReplacePhoto"]
+                            </label>
+                            <noscript><button type="submit" class="admin-btn admin-btn--sm">@Loc["Admin.Common.Upload"]</button></noscript>
+                        </form>
+                        @if (Model.PhotoUrl is not null)
+                        {
+                            <form asp-action="RemovePhoto" asp-route-id="@Model.Id" method="post" data-confirm="@Loc["Admin.Influencer.RemovePhotoConfirm"]">
+                                <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">@Loc["Admin.Influencer.RemovePhoto"]</button>
+                            </form>
+                        }
+                        <p class="admin-field__hint">@Loc["Admin.Influencer.PhotoHint"]</p>
+                    </div>
+                }
+            </div>
+            @if (Model.CanEditProfile)
+            {
+                <form asp-action="SaveProfile" asp-route-id="@Model.Id" method="post" class="admin-form" style="max-width:none;">
+                    <partial name="_ProfileFields" model="Model.ProfileForm" view-data='@(new ViewDataDictionary(ViewData) { ["Prefix"] = "ProfileForm" })' />
+                    <div><button type="submit" class="admin-btn">@Loc["Admin.Influencer.SaveProfile"]</button></div>
+                </form>
+            }
+            else
+            {
+                <dl class="admin-detail-list">
+                    <div><dt>@Loc["Admin.Influencer.Niche"]</dt><dd>@(amb.Niche ?? "—")</dd></div>
+                    <div><dt>@Loc["Admin.Influencer.Bio"]</dt><dd style="white-space:pre-line;">@(amb.Bio ?? "—")</dd></div>
+                    <div>
+                        <dt>@Loc["Admin.Influencer.Channels"]</dt>
+                        <dd>
+                            @if (amb.Channels.Count == 0) { <text>—</text> }
+                            @foreach (var c in amb.Channels)
+                            {
+                                <div>@Loc.Label(c.Platform): <a href="@c.Url" target="_blank" rel="noopener noreferrer">@VIHouse.Business.SocialLinks.Handle(c.Url)</a>@if (c.Audience is { } audience) { <span class="admin-table__sub"> · @audience.ToString("N0")</span> }</div>
+                            }
+                        </dd>
+                    </div>
+                </dl>
+            }
+        </div>
+
         @if (pending)
         {
             <div class="admin-card">
@@ -231,7 +313,7 @@
                         @foreach (var t in stats.Targets)
                         {
                             <tr>
-                                <td><span class="admin-badge admin-badge--draft">@Loc.Label(t.Kind)</span> @(t.Kind == ReferralTargetKind.Site ? Loc["Admin.Ambassadors.WholeSite"].Value : t.Title)</td>
+                                <td><span class="admin-badge admin-badge--draft">@Loc.Label(t.Kind)</span> @(t.Kind == ReferralTargetKind.Site ? Loc["Admin.Ambassadors.WholeSite"].Value : t.Title ?? Loc["Admin.Influencer.NoLongerListed"].Value)</td>
                                 <td style="text-align:right;">@t.Visits</td>
                                 <td style="text-align:right;">@t.Applications</td>
                                 <td style="text-align:right;">@t.Purchases</td>
@@ -343,6 +425,34 @@
             </div>
         </div>
         }
+
+        @* --- Their journal articles ---------------------------------------------------------- *@
+        @if (Model.UserId is not null)
+        {
+            <div class="admin-card" id="journal">
+                <h2>@Loc["Admin.Influencer.Journal"]</h2>
+                @if (Model.Posts.Count == 0)
+                {
+                    <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Influencer.JournalNone"]</p>
+                }
+                else
+                {
+                    <table class="admin-table admin-table--compact">
+                        <thead><tr><th>@Loc["Admin.Common.Title"]</th><th>@Loc["Admin.Common.Status"]</th><th>@Loc["Admin.Common.Date"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var post in Model.Posts)
+                            {
+                                <tr>
+                                    <td><a asp-controller="AdminJournal" asp-action="Edit" asp-route-id="@post.Id">@JournalContent.Title(post, SiteCultures.Default)</a></td>
+                                    <td><span class="admin-badge @(post.Status switch { JournalPostStatus.Published => "admin-badge--open", JournalPostStatus.Submitted => "admin-badge--pending", _ => "admin-badge--draft" })">@Loc["Admin.Publish.Status." + post.Status]</span></td>
+                                    <td>@((post.PublishedAt ?? post.SubmittedAt ?? post.CreatedAt).ToLocalTime().ToString("d MMM yyyy"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        }
     </div>
 
     <div class="admin-review-side">
@@ -410,6 +520,27 @@
                     </tbody>
                 </table>
             }
+
+            @if (Model.Withdrawals.Count > 0)
+            {
+                <h3 id="withdrawals">@Loc["Admin.Influencer.WithdrawalRequests"]</h3>
+                <ul class="admin-inline-list" style="margin-bottom:0;">
+                    @foreach (var w in Model.Withdrawals.Take(10))
+                    {
+                        <li class="admin-inline-list__row">
+                            <span>
+                                <strong>@MoneyFormatter.Format(w.RequestedMinor, w.Currency)</strong>
+                                <span class="admin-table__sub">@w.RequestedAt.ToLocalTime().ToString("d MMM yyyy")</span>
+                            </span>
+                            <span class="admin-badge @(w.Status == WithdrawalStatus.Open ? "admin-badge--pending" : w.Status == WithdrawalStatus.Paid ? "admin-badge--open" : "admin-badge--draft")">@Loc.Label(w.Status)</span>
+                        </li>
+                    }
+                </ul>
+                @if (Model.Withdrawals.Any(w => w.Status == WithdrawalStatus.Open))
+                {
+                    <p class="admin-hint"><a asp-controller="AdminWithdrawals" asp-action="Index">@Loc["Admin.Influencer.OpenInWithdrawals"]</a></p>
+                }
+            }
         </div>
 
         @* --- Fraud signals ---------------------------------------------------------------------- *@
@@ -426,7 +557,7 @@
                     <ul style="margin:0 0 12px; padding-left:18px;">
                         @foreach (var w in sig.Warnings)
                         {
-                            <li style="margin-bottom:6px;">@w</li>
+                            <li style="margin-bottom:6px;">@Loc[w.Key, w.Args]</li>
                         }
                     </ul>
                 }
@@ -489,7 +620,7 @@
                     <div><dt>@Loc["Admin.Ambassadors.NameOnAccount"]</dt><dd>@realName</dd></div>
                 }
                 <div><dt>@Loc["Admin.Ambassadors.Code"]</dt><dd><code>@Model.Code</code> <span class="admin-table__sub">@Loc["Admin.Ambassadors.FixedLinksAlreadySharedDependOn"]</span></dd></div>
-                <div><dt>@Loc["Admin.Ambassadors.TheirDashboard"]</dt><dd><a asp-area="" asp-controller="Ambassador" asp-action="Index" target="_blank" rel="noopener">/ambassador</a> <span class="admin-table__sub">@Loc["Admin.Ambassadors.WhatTheySeeWhenSignedIn"]</span></dd></div>
+                <div><dt>@Loc["Admin.Ambassadors.TheirDashboard"]</dt><dd><a asp-area="" asp-controller="Influencer" asp-action="Index" target="_blank" rel="noopener">/influencer</a> <span class="admin-table__sub">@Loc["Admin.Ambassadors.WhatTheySeeWhenSignedIn"]</span></dd></div>
             </dl>
         </div>
 
@@ -515,35 +646,54 @@
                 }
             </div>
 
-            <div class="admin-card">
-                <h2>@Loc["Admin.Ambassadors.BillingPayout"]</h2>
-                @if (amb.HasPayoutDetails)
-                {
-                    <dl class="admin-detail-list">
-                        <div><dt>@Loc["Admin.Ambassadors.AccountHolder"]</dt><dd>@amb.PayoutAccountHolder</dd></div>
-                        <div><dt>IBAN</dt><dd><code>@(Model.CanSettle ? VIHouse.Business.Concrete.Iban.Format(amb.PayoutIban) : VIHouse.Business.Concrete.Iban.Mask(amb.PayoutIban))</code></dd></div>
-                        @if (Model.CanSettle && amb.PayoutBic is not null)
-                        {
-                            <div><dt>BIC</dt><dd><code>@amb.PayoutBic</code></dd></div>
-                        }
-                        <div><dt>@Loc["Admin.Ambassadors.BillingAddress"]</dt><dd>@amb.BillingAddressLine1@if (amb.BillingAddressLine2 is not null) { <br />@amb.BillingAddressLine2 }<br />@amb.BillingPostalCode @amb.BillingCity<br />@Countries.NameFor(amb.BillingCountry)</dd></div>
-                        @if (amb.TaxId is not null)
-                        {
-                            <div><dt>@Loc["Admin.Ambassadors.TaxVATId"]</dt><dd>@amb.TaxId</dd></div>
-                        }
-                        <div><dt>@Loc["Admin.Ambassadors.Given"]</dt><dd>@amb.PayoutDetailsUpdatedAt?.ToLocalTime().ToString("d MMM yyyy")</dd></div>
-                    </dl>
-                    @if (!Model.CanSettle)
-                    {
-                        <p class="admin-hint">@Loc["Admin.Ambassadors.FullBankDetailsAreShownTo"]</p>
-                    }
-                }
-                else
-                {
-                    <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.NoPayoutDetailsOnRecordAsk"]</p>
-                }
-            </div>
         }
+
+        @* --- Legal identity and bank: what the House pays against. Finance keeps it. ---------- *@
+        <div class="admin-card" id="payout-details">
+            <h2>@Loc["Admin.Ambassadors.BillingPayout"]</h2>
+            @if (amb.HasPayoutDetails)
+            {
+                <dl class="admin-detail-list">
+                    @if (amb.LegalFirstName is not null)
+                    {
+                        <div><dt>@Loc["Admin.Influencer.LegalName"]</dt><dd>@amb.LegalFirstName @amb.LegalLastName</dd></div>
+                    }
+                    <div><dt>@Loc["Admin.Ambassadors.AccountHolder"]</dt><dd>@amb.PayoutAccountHolder</dd></div>
+                    <div><dt>IBAN</dt><dd><code>@(Model.CanSettle ? Iban.Format(amb.PayoutIban) : Iban.Mask(amb.PayoutIban))</code></dd></div>
+                    @if (Model.CanSettle && amb.PayoutBic is not null)
+                    {
+                        <div><dt>BIC</dt><dd><code>@amb.PayoutBic</code></dd></div>
+                    }
+                    <div><dt>@Loc["Admin.Ambassadors.BillingAddress"]</dt><dd>@amb.BillingAddressLine1@if (amb.BillingAddressLine2 is not null) { <br />@amb.BillingAddressLine2 }<br />@amb.BillingPostalCode @amb.BillingCity<br />@Countries.NameFor(amb.BillingCountry)</dd></div>
+                    @if (amb.TaxId is not null)
+                    {
+                        <div><dt>@Loc["Admin.Ambassadors.TaxVATId"]</dt><dd>@amb.TaxId</dd></div>
+                    }
+                    <div><dt>@Loc["Admin.Influencer.BankChanged"]</dt><dd>@amb.PayoutDetailsUpdatedAt?.ToLocalTime().ToString("d MMM yyyy")</dd></div>
+                </dl>
+                @if (!Model.CanSettle)
+                {
+                    <p class="admin-hint">@Loc["Admin.Ambassadors.FullBankDetailsAreShownTo"]</p>
+                }
+            }
+            else
+            {
+                <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Influencer.NoPayoutDetails"]</p>
+            }
+
+            @if (Model.CanSettle)
+            {
+                <details class="admin-disclosure" open="@Model.EditPayoutDetails">
+                    <summary class="admin-btn admin-btn--ghost admin-btn--sm">@Loc["Admin.Influencer.EditPayoutDetails"]</summary>
+                    <form asp-action="SavePayoutDetails" asp-route-id="@Model.Id" method="post" class="admin-form" style="margin-top:12px;">
+                        <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+                        <partial name="_PayoutFields" model="Model.PayoutForm" view-data='@(new ViewDataDictionary(ViewData) { ["Prefix"] = "PayoutForm" })' />
+                        <p class="admin-field__hint">@Loc["Admin.Influencer.PayoutAudited"]</p>
+                        <div><button type="submit" class="admin-btn">@Loc["Admin.Influencer.SavePayoutDetails"]</button></div>
+                    </form>
+                </details>
+            }
+        </div>
     </div>
 </div>
 

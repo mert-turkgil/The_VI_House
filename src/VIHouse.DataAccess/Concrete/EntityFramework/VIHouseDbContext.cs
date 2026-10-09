@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Applications;
@@ -69,6 +69,8 @@ public class VIHouseDbContext(DbContextOptions<VIHouseDbContext> options)
     public DbSet<ReferralVisit> ReferralVisits => Set<ReferralVisit>();
     public DbSet<ReferralConversion> ReferralConversions => Set<ReferralConversion>();
     public DbSet<ReferralPayout> ReferralPayouts => Set<ReferralPayout>();
+    public DbSet<ReferralWithdrawalRequest> ReferralWithdrawalRequests => Set<ReferralWithdrawalRequest>();
+    public DbSet<AmbassadorChannel> AmbassadorChannels => Set<AmbassadorChannel>();
 
     public DbSet<Seminar> Seminars => Set<Seminar>();
     public DbSet<SeminarTranslation> SeminarTranslations => Set<SeminarTranslation>();

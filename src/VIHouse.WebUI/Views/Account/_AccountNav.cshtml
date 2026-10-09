@@ -6,6 +6,13 @@
 @inject IMembershipService MembershipService
 @inject UserManager<ApplicationUser> UserManager
 @inject IOptions<FeatureOptions> Features
+@if (InfluencerAccess.IsInfluencerOnly(User))
+{
+    @* Someone who is only an influencer has no membership, bookings or card to list — on the shared
+       account pages (security, notifications) they get their own menu. *@
+    <partial name="/Views/Influencer/_InfluencerNav.cshtml" />
+    return;
+}
 @{
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
     string NavClass(string action) => string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase) ? "active" : "";
@@ -94,7 +101,7 @@
         }
         @if (isAmbassador)
         {
-            <a class="account-manage__link" asp-controller="Ambassador" asp-action="Index">
+            <a class="account-manage__link" asp-controller="Influencer" asp-action="Index">
                 <span class="account-manage__icon"><partial name="_Icon" model='@("megaphone")' /></span><span>@Loc["Ambassador.Nav"]</span>
             </a>
         }

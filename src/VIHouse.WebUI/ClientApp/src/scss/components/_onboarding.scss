@@ -1650,6 +1650,41 @@
   li + li { margin-top: 10px; }
 }
 
+// What the House entered on the invitee's behalf, shown back so they can say if it's wrong.
+.ambassador-invite__onfile {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 12px;
+
+  > div {
+    display: grid;
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    gap: 4px 16px;
+  }
+
+  dt { color: var(--vih-text-muted); font-size: 0.875rem; }
+  dd { margin: 0; overflow-wrap: anywhere; }
+
+  @media (max-width: 560px) {
+    > div { grid-template-columns: minmax(0, 1fr); }
+  }
+}
+
+.ambassador-invite__mono { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+
+.ambassador-invite__channels {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+  li > span:first-child { font-weight: 600; }
+}
+
+.ambassador-invite__audience { color: var(--vih-text-muted); font-size: 0.875rem; }
+
 .ambassador-invite__panel {
   max-width: 560px;
   margin: 0 auto;

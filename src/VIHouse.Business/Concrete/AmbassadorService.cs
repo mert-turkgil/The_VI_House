@@ -1,4 +1,3 @@
-using VIHouse.Business;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
@@ -27,16 +26,22 @@ public class AmbassadorService(
     IAuditLogRepository auditLogs,
     IRepository<ReferralConversion> conversions,
     IRepository<ReferralPayout> payouts,
+    IRepository<ReferralWithdrawalRequest> withdrawals,
     IRepository<ConsentRecord> consents,
     IExperienceRepository experiences,
     ISeminarRepository seminars,
     ISeminarEnrollmentRepository seminarEnrollments,
     INotificationService notificationService,
     IEmailService emailService,
+    IMediaStorage mediaStorage,
+    StaffAlerts staffAlerts,
     IOptions<SiteOptions> siteOptions,
+    IOptions<ReferralOptions> referralOptions,
     ILogger<AmbassadorService> logger,
     UserManager<ApplicationUser> userManager) : IAmbassadorService
 {
+    public long MinimumWithdrawalMinor => referralOptions.Value.MinimumWithdrawalMinor;
+
     public async Task RecordConversionAsync(string? referralCode, ReferralConversionKind kind, string sourceEntityType, Guid sourceEntityId,
         long? amountMinor = null, string? currency = null,
         ReferralTargetKind targetKind = ReferralTargetKind.Site, Guid? targetId = null,
@@ -46,7 +51,7 @@ public class AmbassadorService(
         try
         {
             var ambassador = await ambassadors.GetByCodeAsync(referralCode.Trim(), ct);
-            // Same rule as RecordVisitAsync: a switched-off ambassador earns nothing new. The code
+            // Same rule as RecordVisitAsync: a switched-off influencer earns nothing new. The code
             // stays on the application/payment row for the record; it just does not reach the ledger.
             if (ambassador is null || ambassador.Status != AmbassadorStatus.Active) return;
 
@@ -81,7 +86,7 @@ public class AmbassadorService(
             }, ct);
             await conversions.SaveChangesAsync(ct);
             if (selfReferral)
-                logger.LogWarning("Self-referral: ambassador {AmbassadorId} bought through their own code ({SourceType} {SourceId}).",
+                logger.LogWarning("Self-referral: influencer {AmbassadorId} bought through their own code ({SourceType} {SourceId}).",
                     ambassador.Id, sourceEntityType, sourceEntityId);
 
             var what = kind switch
@@ -99,14 +104,14 @@ public class AmbassadorService(
                 await notificationService.CreateForUserAsync(notifyUserId, NotificationType.ReferralConverted,
                 "Your link just worked",
                 amountText is null ? what : $"{what} {amountText}{(commissionText is null ? "" : $" — your commission {commissionText}")}.",
-                SiteUrls.Ambassador, ct);
+                SiteUrls.Influencer, ct);
 
             var user = ambassadorUser;
             if (user?.Email is not null)
             {
                 await emailService.SendAsync("ReferralConverted", user.Email, "Your referral link just worked",
-                    new ReferralConvertedEmailModel(ambassador.Name, what, amountText, commissionText,
-                        SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.Ambassador)),
+                    new ReferralConvertedEmailModel(ambassador.Name, kind, amountText, commissionText,
+                        SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.InCulture(SiteUrls.Influencer, user.PreferredCulture))),
                     user.PreferredCulture ?? SiteCultures.Default,
                     nameof(Ambassador), ambassador.Id, ct);
             }
@@ -146,12 +151,12 @@ public class AmbassadorService(
         Guid userId, string name, string code, decimal commissionPercent, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
         if (await ambassadors.GetByCodeAsync(code, ct) is not null)
-            return AmbassadorCreationResult.Fail($"Code \"{code}\" is already in use.");
+            return AmbassadorCreationResult.Fail("Influencer.Error.CodeTaken", code);
 
         var user = await userManager.FindByIdAsync(userId.ToString());
-        if (user is null) return AmbassadorCreationResult.Fail("That account no longer exists.");
+        if (user is null) return AmbassadorCreationResult.Fail("Influencer.Error.AccountGone");
         if (await ambassadors.GetByUserIdAsync(userId, ct) is not null)
-            return AmbassadorCreationResult.Fail("They already have a referral link.");
+            return AmbassadorCreationResult.Fail("Influencer.Error.AlreadyInfluencer");
 
         if (!await userManager.IsInRoleAsync(user, Roles.Ambassador))
             await userManager.AddToRoleAsync(user, Roles.Ambassador);
@@ -164,6 +169,10 @@ public class AmbassadorService(
             CommissionPercent = commissionPercent,
             Status = AmbassadorStatus.Active,
             ActivatedAt = DateTimeOffset.UtcNow,
+            // A starting point for the legal name; Finance confirms it with the rest of the payout
+            // details on the influencer's page.
+            LegalFirstName = Text.NullIfBlank(user.FirstName),
+            LegalLastName = Text.NullIfBlank(user.LastName),
         };
         await ambassadors.AddAsync(ambassador, ct);
         await LogAsync("AmbassadorCreated", ambassador.Id, adminUserId, ipAddress, null, new { ambassador.Code, ambassador.Name, ambassador.CommissionPercent }, ct);
@@ -172,15 +181,17 @@ public class AmbassadorService(
         return AmbassadorCreationResult.Ok(ambassador, user.Id);
     }
 
-    public async Task<AmbassadorCreationResult> InviteAsync(AmbassadorInvite invite, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    public async Task<AmbassadorCreationResult> InviteAsync(AmbassadorInvite invite, MediaUpload? photo, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
         var email = invite.Email.Trim();
         if (await ambassadors.GetByCodeAsync(invite.Code, ct) is not null)
-            return AmbassadorCreationResult.Fail($"Code \"{invite.Code}\" is already in use.");
+            return AmbassadorCreationResult.Fail("Influencer.Error.CodeTaken", invite.Code);
         if (await userManager.FindByEmailAsync(email) is { } existing)
             return AmbassadorCreationResult.ExistingAccount(existing.Id);
         if (await ambassadors.GetPendingByInviteEmailAsync(email, ct) is { } pending)
-            return AmbassadorCreationResult.Fail($"{email} already has a pending invitation (code {pending.Code}). Re-send that one instead.");
+            return AmbassadorCreationResult.Fail("Influencer.Error.PendingExists", email, pending.Code);
+        if (InfluencerValidation.Payout(invite.Payout).Concat(InfluencerValidation.Profile(invite.Profile)).FirstOrDefault() is { } invalid)
+            return AmbassadorCreationResult.Fail(invalid);
 
         var ambassador = new Ambassador
         {
@@ -191,11 +202,17 @@ public class AmbassadorService(
             InviteEmail = email,
             PreferredCulture = SiteCultures.Normalise(invite.Culture),
         };
+        ApplyProfile(ambassador, invite.Profile);
+        ApplyPayout(ambassador, invite.Payout);
         var token = NewInviteToken(ambassador);
         await ambassadors.AddAsync(ambassador, ct);
         await LogAsync("AmbassadorInvited", ambassador.Id, adminUserId, ipAddress, null,
             new { ambassador.Code, ambassador.Name, ambassador.CommissionPercent, ambassador.InviteEmail, ambassador.InviteExpiresAt }, ct);
         await ambassadors.SaveChangesAsync(ct);
+
+        // The photo needs the row's id for its folder, so it follows the save. A refused file does
+        // not cancel the invitation; the requirement checklist keeps asking for a photo.
+        if (photo is not null) await SetPhotoAsync(ambassador.Id, photo, adminUserId, ipAddress, ct);
 
         var sent = await SendInviteAsync(ambassador, token, ct);
         return sent ? AmbassadorCreationResult.Ok(ambassador, null) : AmbassadorCreationResult.SavedButNotSent(ambassador);
@@ -205,7 +222,7 @@ public class AmbassadorService(
     {
         var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
         if (ambassador is null || ambassador.Status != AmbassadorStatus.Pending)
-            return AmbassadorCreationResult.Fail("Only a pending invitation can be re-sent.");
+            return AmbassadorCreationResult.Fail("Influencer.Error.OnlyPendingResend");
 
         var before = new { ambassador.InviteEmail, ambassador.PreferredCulture, ambassador.InviteExpiresAt };
         if (!string.IsNullOrWhiteSpace(email) && !string.Equals(email.Trim(), ambassador.InviteEmail, StringComparison.OrdinalIgnoreCase))
@@ -214,7 +231,7 @@ public class AmbassadorService(
             if (await userManager.FindByEmailAsync(corrected) is { } existing)
                 return AmbassadorCreationResult.ExistingAccount(existing.Id);
             if (await ambassadors.GetPendingByInviteEmailAsync(corrected, ct) is { } other && other.Id != ambassador.Id)
-                return AmbassadorCreationResult.Fail($"{corrected} already has a pending invitation (code {other.Code}).");
+                return AmbassadorCreationResult.Fail("Influencer.Error.PendingExists", corrected, other.Code);
             ambassador.InviteEmail = corrected;
         }
         if (!string.IsNullOrWhiteSpace(culture)) ambassador.PreferredCulture = SiteCultures.Normalise(culture);
@@ -235,11 +252,13 @@ public class AmbassadorService(
         if (ambassador is null || ambassador.Status != AmbassadorStatus.Pending) return false;
 
         // A pending row has never had a visit, a conversion or a payout (all need Active), so
-        // removing it removes nothing but the reservation.
+        // removing it removes nothing but the reservation — and the photo the admin uploaded.
+        var photoKey = ambassador.PhotoStorageKey;
         await LogAsync("AmbassadorInviteWithdrawn", ambassador.Id, adminUserId, ipAddress,
             new { ambassador.Code, ambassador.Name, ambassador.InviteEmail }, null, ct);
         ambassadors.Remove(ambassador);
         await ambassadors.SaveChangesAsync(ct);
+        if (photoKey is not null) await mediaStorage.DeleteAsync(photoKey, ct);
         return true;
     }
 
@@ -247,14 +266,13 @@ public class AmbassadorService(
     {
         var ambassador = await FindByTokenAsync(token, ct);
         if (ambassador is null || ambassador.Status != AmbassadorStatus.Pending)
-            return new AmbassadorInviteLookup(AmbassadorInviteState.Invalid, null, null, false, null, null, null);
+            return new AmbassadorInviteLookup(AmbassadorInviteState.Invalid, null, null, false);
         if (ambassador.InviteExpiresAt is not { } expires || expires < DateTimeOffset.UtcNow)
-            return new AmbassadorInviteLookup(AmbassadorInviteState.Expired, ambassador, null, false, null, null, null);
+            return new AmbassadorInviteLookup(AmbassadorInviteState.Expired, ambassador, null, false);
 
         var account = await userManager.FindByEmailAsync(ambassador.InviteEmail!);
         return new AmbassadorInviteLookup(AmbassadorInviteState.Valid, ambassador, account?.Id,
-            account is not null && await userManager.HasPasswordAsync(account),
-            account?.FirstName, account?.LastName, account?.Country);
+            account is not null && await userManager.HasPasswordAsync(account));
     }
 
     public async Task<AmbassadorAcceptResult> AcceptInviteAsync(string token, AmbassadorAcceptance form, Guid? signedInUserId, string? ipAddress, CancellationToken ct = default)
@@ -264,14 +282,7 @@ public class AmbassadorService(
         if (lookup.State == AmbassadorInviteState.Expired) return AmbassadorAcceptResult.Of(AmbassadorAcceptStatus.Expired);
         var ambassador = lookup.Ambassador!;
 
-        // Everything checkable is checked before anything is written.
-        var errors = new List<string>();
-        if (!form.AcceptedTerms || string.IsNullOrWhiteSpace(form.TermsText)) errors.Add("Terms");
-        if (!Iban.IsValid(form.Iban)) errors.Add("Iban");
-        if (!Iban.IsValidBic(form.Bic)) errors.Add("Bic");
-        if (string.IsNullOrWhiteSpace(form.FirstName) || string.IsNullOrWhiteSpace(form.LastName)) errors.Add("Name");
-        if (string.IsNullOrWhiteSpace(form.AccountHolder)) errors.Add("AccountHolder");
-        if (errors.Count > 0) return AmbassadorAcceptResult.Reject([.. errors]);
+        if (!form.AcceptedTerms || string.IsNullOrWhiteSpace(form.TermsText)) return AmbassadorAcceptResult.Reject("Terms");
 
         var user = lookup.AccountId is { } accountId ? await userManager.FindByIdAsync(accountId.ToString()) : null;
         if (user is not null && lookup.AccountHasPassword)
@@ -290,6 +301,11 @@ public class AmbassadorService(
             return AmbassadorAcceptResult.Reject("Password");
         }
 
+        // The account is named after the legal name the House entered; the display name is the
+        // fallback for an invitation made before legal names were asked for.
+        var firstName = ambassador.LegalFirstName ?? ambassador.Name;
+        var lastName = ambassador.LegalLastName ?? "";
+
         if (user is null)
         {
             user = new ApplicationUser
@@ -298,9 +314,9 @@ public class AmbassadorService(
                 Email = ambassador.InviteEmail,
                 // The only way here is the link sent to this address.
                 EmailConfirmed = true,
-                FirstName = form.FirstName.Trim(),
-                LastName = form.LastName.Trim(),
-                Country = form.Country,
+                FirstName = firstName,
+                LastName = lastName,
+                Country = ambassador.BillingCountry ?? "",
                 MemberStatus = Entities.Users.MemberStatus.Active,
                 PreferredCulture = ambassador.PreferredCulture,
             };
@@ -315,9 +331,9 @@ public class AmbassadorService(
                 if (!added.Succeeded) return AmbassadorAcceptResult.Reject([.. added.Errors.Select(e => e.Description)]);
             }
             user.EmailConfirmed = true;
-            user.FirstName = form.FirstName.Trim();
-            user.LastName = form.LastName.Trim();
-            user.Country = form.Country;
+            if (string.IsNullOrWhiteSpace(user.FirstName)) user.FirstName = firstName;
+            if (string.IsNullOrWhiteSpace(user.LastName)) user.LastName = lastName;
+            if (string.IsNullOrWhiteSpace(user.Country)) user.Country = ambassador.BillingCountry ?? "";
             user.PreferredCulture ??= ambassador.PreferredCulture;
             await userManager.UpdateAsync(user);
         }
@@ -326,43 +342,56 @@ public class AmbassadorService(
             await userManager.AddToRoleAsync(user, Roles.Ambassador);
 
         var now = DateTimeOffset.UtcNow;
-        var consent = new ConsentRecord
-        {
-            UserId = user.Id,
-            Type = ConsentType.AmbassadorTerms,
-            Granted = true,
-            Text = $"[{AmbassadorTerms.Version}] {form.TermsText}",
-            GrantedAt = now,
-            IpAddress = ipAddress,
-        };
-        await consents.AddAsync(consent, ct);
+        var consent = await RecordTermsAsync(ambassador, user.Id, form.TermsText, ipAddress, now, ct);
 
         ambassador.UserId = user.Id;
         ambassador.Status = AmbassadorStatus.Active;
         ambassador.ActivatedAt = now;
         ambassador.InviteTokenHash = null;
-        ambassador.TermsVersion = AmbassadorTerms.Version;
-        ambassador.TermsAcceptedAt = now;
-        ambassador.TermsConsentId = consent.Id;
-        ambassador.TermsCommissionPercent = ambassador.CommissionPercent;
-        ambassador.BillingAddressLine1 = form.AddressLine1.Trim();
-        ambassador.BillingAddressLine2 = Text.NullIfBlank(form.AddressLine2);
-        ambassador.BillingCity = form.City.Trim();
-        ambassador.BillingPostalCode = form.PostalCode.Trim();
-        ambassador.BillingCountry = form.Country;
-        ambassador.TaxId = Text.NullIfBlank(form.TaxId);
-        ambassador.PayoutAccountHolder = form.AccountHolder.Trim();
-        ambassador.PayoutIban = Iban.Normalize(form.Iban);
-        ambassador.PayoutBic = string.IsNullOrWhiteSpace(form.Bic) ? null : Iban.Normalize(form.Bic);
-        ambassador.PayoutDetailsUpdatedAt = now;
         ambassador.UpdatedAt = now;
 
-        // Recorded against the ambassador's own account — they are the one acting here.
+        // Recorded against the influencer's own account — they are the one acting here.
         await LogAsync("AmbassadorActivated", ambassador.Id, user.Id, ipAddress, null,
             new { ambassador.Code, UserId = user.Id, ambassador.TermsVersion, ambassador.TermsCommissionPercent, ConsentId = consent.Id }, ct);
         await ambassadors.SaveChangesAsync(ct);
 
         return new AmbassadorAcceptResult(AmbassadorAcceptStatus.Activated, user.Id, []);
+    }
+
+    public async Task<bool> AcceptTermsAsync(Guid ambassadorId, Guid userId, string termsText, string? ipAddress, CancellationToken ct = default)
+    {
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        if (ambassador is null || ambassador.UserId != userId || ambassador.TermsAcceptedAt is not null
+            || string.IsNullOrWhiteSpace(termsText)) return false;
+
+        var consent = await RecordTermsAsync(ambassador, userId, termsText, ipAddress, DateTimeOffset.UtcNow, ct);
+        await LogAsync("AmbassadorTermsAccepted", ambassador.Id, userId, ipAddress, null,
+            new { ambassador.TermsVersion, ambassador.TermsCommissionPercent, ConsentId = consent.Id }, ct);
+        await ambassadors.SaveChangesAsync(ct);
+        return true;
+    }
+
+    /// <summary>The ConsentRecord holding the exact wording shown, and the terms stamp on the row.
+    /// Saved by the caller.</summary>
+    private async Task<ConsentRecord> RecordTermsAsync(Ambassador ambassador, Guid userId, string termsText, string? ipAddress, DateTimeOffset now, CancellationToken ct)
+    {
+        var consent = new ConsentRecord
+        {
+            UserId = userId,
+            Type = ConsentType.AmbassadorTerms,
+            Granted = true,
+            Text = $"[{AmbassadorTerms.Version}] {termsText}",
+            GrantedAt = now,
+            IpAddress = ipAddress,
+        };
+        await consents.AddAsync(consent, ct);
+
+        ambassador.TermsVersion = AmbassadorTerms.Version;
+        ambassador.TermsAcceptedAt = now;
+        ambassador.TermsConsentId = consent.Id;
+        ambassador.TermsCommissionPercent = ambassador.CommissionPercent;
+        ambassador.UpdatedAt = now;
+        return consent;
     }
 
     /// <summary>32 random bytes, URL-safe. Only the hash is kept; a new token replaces the old one.</summary>
@@ -383,8 +412,8 @@ public class AmbassadorService(
     private async Task<bool> SendInviteAsync(Ambassador ambassador, string token, CancellationToken ct)
     {
         var culture = ambassador.PreferredCulture ?? SiteCultures.Default;
-        var url = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.InCulture(SiteUrls.AmbassadorInvite(token), culture));
-        return await emailService.SendAsync("AmbassadorInvite", ambassador.InviteEmail!, "You're invited to be a VI House ambassador",
+        var url = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.InCulture(SiteUrls.InfluencerInvite(token), culture));
+        return await emailService.SendAsync("AmbassadorInvite", ambassador.InviteEmail!, "You're invited to be a VI House influencer",
             new AmbassadorInviteEmailModel(ambassador.Name, url, ambassador.Code, ambassador.CommissionPercent, ambassador.InviteExpiresAt!.Value),
             culture, nameof(Ambassador), ambassador.Id, ct);
     }
@@ -410,6 +439,144 @@ public class AmbassadorService(
             before, new { existing.Name, existing.CommissionPercent, existing.Status }, ct);
         await ambassadors.SaveChangesAsync(ct);
     }
+
+    // --- Profile -----------------------------------------------------------------------------------
+
+    public async Task<InfluencerSaveResult> UpdateProfileAsync(Guid ambassadorId, InfluencerProfileInput profile, Guid actorUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        if (ambassador is null) return InfluencerSaveResult.Fail("Influencer.Error.NotFound");
+        if (InfluencerValidation.Profile(profile) is { Count: > 0 } errors) return InfluencerSaveResult.Fail([.. errors]);
+
+        var before = ProfileSnapshot(ambassador);
+        ApplyProfile(ambassador, profile);
+        ambassador.UpdatedAt = DateTimeOffset.UtcNow;
+
+        await LogAsync("InfluencerProfileUpdated", ambassador.Id, actorUserId, ipAddress, before, ProfileSnapshot(ambassador), ct);
+        await ambassadors.SaveChangesAsync(ct);
+        return InfluencerSaveResult.Ok();
+    }
+
+    public async Task<InfluencerSaveResult> UpdatePayoutIdentityAsync(Guid ambassadorId, InfluencerPayoutInput payout, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        if (ambassador is null) return InfluencerSaveResult.Fail("Influencer.Error.NotFound");
+        if (InfluencerValidation.Payout(payout) is { Count: > 0 } errors) return InfluencerSaveResult.Fail([.. errors]);
+
+        // The IBAN is masked in the audit trail: the log is read by more people than Finance.
+        var before = new
+        {
+            ambassador.LegalFirstName, ambassador.LegalLastName, ambassador.BillingAddressLine1, ambassador.BillingCity,
+            ambassador.BillingPostalCode, ambassador.BillingCountry, ambassador.TaxId, ambassador.PayoutAccountHolder,
+            Iban = Iban.Mask(ambassador.PayoutIban), ambassador.PayoutBic,
+        };
+        var bankBefore = (ambassador.PayoutAccountHolder, ambassador.PayoutIban, ambassador.PayoutBic);
+        ApplyPayout(ambassador, payout);
+        var bankChanged = bankBefore != (ambassador.PayoutAccountHolder, ambassador.PayoutIban, ambassador.PayoutBic);
+        if (!bankChanged) ambassador.PayoutDetailsUpdatedAt = ambassador.PayoutDetailsUpdatedAt ?? DateTimeOffset.UtcNow;
+        ambassador.UpdatedAt = DateTimeOffset.UtcNow;
+
+        await LogAsync(bankChanged ? "AmbassadorPayoutDetailsChanged" : "AmbassadorPayoutIdentityUpdated", ambassador.Id, adminUserId, ipAddress, before,
+            new
+            {
+                ambassador.LegalFirstName, ambassador.LegalLastName, ambassador.BillingAddressLine1, ambassador.BillingCity,
+                ambassador.BillingPostalCode, ambassador.BillingCountry, ambassador.TaxId, ambassador.PayoutAccountHolder,
+                Iban = Iban.Mask(ambassador.PayoutIban), ambassador.PayoutBic,
+            }, ct);
+        await ambassadors.SaveChangesAsync(ct);
+        return InfluencerSaveResult.Ok();
+    }
+
+    public async Task<InfluencerSaveResult> SetPhotoAsync(Guid ambassadorId, MediaUpload upload, Guid actorUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        if (ambassador is null) return InfluencerSaveResult.Fail("Influencer.Error.NotFound");
+        if (!InfluencerValidation.IsPhoto(upload.FileName, upload.Length)) return InfluencerSaveResult.Fail("Influencer.Error.Photo");
+
+        var saved = await mediaStorage.SaveAsync(upload, $"influencers/{ambassador.Id:N}", ct);
+        if (!saved.Success) return InfluencerSaveResult.Fail("Influencer.Error.Photo");
+
+        var previous = ambassador.PhotoStorageKey;
+        ambassador.PhotoStorageKey = saved.StorageKey;
+        ambassador.UpdatedAt = DateTimeOffset.UtcNow;
+        await LogAsync("InfluencerPhotoChanged", ambassador.Id, actorUserId, ipAddress,
+            new { PhotoStorageKey = previous }, new { ambassador.PhotoStorageKey }, ct);
+        await ambassadors.SaveChangesAsync(ct);
+
+        if (previous is not null) await mediaStorage.DeleteAsync(previous, ct);
+        return InfluencerSaveResult.Ok();
+    }
+
+    public async Task<InfluencerSaveResult> RemovePhotoAsync(Guid ambassadorId, Guid actorUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        if (ambassador is null) return InfluencerSaveResult.Fail("Influencer.Error.NotFound");
+        if (ambassador.PhotoStorageKey is not { } previous) return InfluencerSaveResult.Ok();
+
+        ambassador.PhotoStorageKey = null;
+        ambassador.UpdatedAt = DateTimeOffset.UtcNow;
+        await LogAsync("InfluencerPhotoRemoved", ambassador.Id, actorUserId, ipAddress, new { PhotoStorageKey = previous }, null, ct);
+        await ambassadors.SaveChangesAsync(ct);
+        await mediaStorage.DeleteAsync(previous, ct);
+        return InfluencerSaveResult.Ok();
+    }
+
+    public async Task<MediaFileInfo?> OpenPhotoAsync(Guid ambassadorId, CancellationToken ct = default)
+    {
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        // The key comes from the row, never from the request.
+        return ambassador?.PhotoStorageKey is { } key ? await mediaStorage.GetAsync(key, ct) : null;
+    }
+
+    private static void ApplyProfile(Ambassador ambassador, InfluencerProfileInput profile)
+    {
+        ambassador.Bio = Text.NullIfBlank(profile.Bio?.Trim());
+        ambassador.Niche = Text.NullIfBlank(profile.Niche?.Trim());
+
+        // Replaced in place: the loaded collection is tracked, so removed rows are deleted and new
+        // ones inserted on save.
+        ambassador.Channels.Clear();
+        var order = 0;
+        foreach (var channel in profile.Channels)
+        {
+            ambassador.Channels.Add(new AmbassadorChannel
+            {
+                AmbassadorId = ambassador.Id,
+                Platform = channel.Platform,
+                Url = channel.Url.Trim(),
+                Audience = channel.Audience,
+                SortOrder = ++order,
+            });
+        }
+    }
+
+    private static object ProfileSnapshot(Ambassador a) =>
+        new { a.Bio, a.Niche, Channels = a.Channels.Select(c => new { c.Platform, c.Url, c.Audience }).ToList() };
+
+    private static void ApplyPayout(Ambassador ambassador, InfluencerPayoutInput payout)
+    {
+        ambassador.LegalFirstName = payout.LegalFirstName.Trim();
+        ambassador.LegalLastName = payout.LegalLastName.Trim();
+        ambassador.BillingAddressLine1 = payout.AddressLine1.Trim();
+        ambassador.BillingAddressLine2 = Text.NullIfBlank(payout.AddressLine2?.Trim());
+        ambassador.BillingCity = payout.City.Trim();
+        ambassador.BillingPostalCode = payout.PostalCode.Trim();
+        ambassador.BillingCountry = payout.Country.Trim().ToUpperInvariant();
+        ambassador.TaxId = Text.NullIfBlank(payout.TaxId?.Trim());
+
+        var holder = payout.AccountHolder.Trim();
+        var iban = Iban.Normalize(payout.Iban);
+        var bic = string.IsNullOrWhiteSpace(payout.Bic) ? null : Iban.Normalize(payout.Bic);
+        if (holder != ambassador.PayoutAccountHolder || iban != ambassador.PayoutIban || bic != ambassador.PayoutBic)
+        {
+            ambassador.PayoutAccountHolder = holder;
+            ambassador.PayoutIban = iban;
+            ambassador.PayoutBic = bic;
+            ambassador.PayoutDetailsUpdatedAt = DateTimeOffset.UtcNow;
+        }
+    }
+
+    // --- Links and visits ----------------------------------------------------------------------------
 
     public async Task<bool> RecordVisitAsync(string code, ReferralTargetKind targetKind, Guid? targetId, string? landingPath,
         string? utmSource, string? utmMedium, string? utmCampaign, string? utmContent,
@@ -464,7 +631,7 @@ public class AmbassadorService(
         foreach (var s in await seminars.GetPublicListingAsync(new SeminarFilter { IncludeMembersOnly = true, Take = 200 }, ct))
         {
             targets.Add(new ReferralLinkTarget(ReferralTargetKind.Session, s.Id, s.Slug,
-                SeminarContent.Title(s, SiteCultures.Default), s.IsOnline ? "Online" : s.Location, s.StartAtUtc));
+                SeminarContent.Title(s, SiteCultures.Default), s.IsOnline ? null : s.Location, s.StartAtUtc));
         }
 
         // Soonest sitting first; on-demand sessions (no date) last.
@@ -509,13 +676,6 @@ public class AmbassadorService(
             .Where(c => c.Currency is not null && c.CommissionMinor is not null)
             .GroupBy(c => c.Currency!)
             .ToDictionary(g => g.Key, g => g.Sum(c => c.NetCommissionMinor));
-        var paidByCurrency = (await payouts.FindAsync(p => p.AmbassadorId == ambassadorId, ct))
-            .GroupBy(p => p.Currency)
-            .ToDictionary(g => g.Key, g => g.Sum(p => p.AmountMinor));
-        var balances = commissionByCurrency.Keys.Union(paidByCurrency.Keys)
-            .OrderBy(c => c)
-            .Select(c => new CommissionBalance(c, commissionByCurrency.GetValueOrDefault(c), paidByCurrency.GetValueOrDefault(c)))
-            .ToList();
 
         var targets = await BuildTargetStatsAsync(ambassadorId, allVisits, ct);
 
@@ -530,15 +690,41 @@ public class AmbassadorService(
             CommissionByCurrency: commissionByCurrency,
             Targets: targets)
         {
-            Balances = balances,
+            Balances = await BalancesAsync(ambassadorId, ledger, ct),
         };
+    }
+
+    /// <summary>Earned (net ledger commission) against paid (payouts), per currency.</summary>
+    private async Task<List<CommissionBalance>> BalancesAsync(Guid ambassadorId, List<ReferralConversion> ledger, CancellationToken ct)
+    {
+        var earned = ledger
+            .Where(c => c.Currency is not null && c.CommissionMinor is not null)
+            .GroupBy(c => c.Currency!)
+            .ToDictionary(g => g.Key, g => g.Sum(c => c.NetCommissionMinor));
+        var paid = (await payouts.FindAsync(p => p.AmbassadorId == ambassadorId, ct))
+            .GroupBy(p => p.Currency)
+            .ToDictionary(g => g.Key, g => g.Sum(p => p.AmountMinor));
+        return earned.Keys.Union(paid.Keys)
+            .OrderBy(c => c)
+            .Select(c => new CommissionBalance(c, earned.GetValueOrDefault(c), paid.GetValueOrDefault(c)))
+            .ToList();
+    }
+
+    /// <summary>What is owed in one currency right now.</summary>
+    private async Task<long> OwedAsync(Guid ambassadorId, string currency, CancellationToken ct)
+    {
+        var earned = (await conversions.FindAsync(c => c.AmbassadorId == ambassadorId && c.Currency == currency && c.CommissionMinor != null, ct))
+            .Sum(c => c.NetCommissionMinor);
+        var paid = (await payouts.FindAsync(p => p.AmbassadorId == ambassadorId && p.Currency == currency, ct)).Sum(p => p.AmountMinor);
+        return earned - paid;
     }
 
     /// <summary>
     /// Per link: which post brought the visits, and what those visits turned into. Visits are
     /// grouped by the target recorded at /r/{code}/…, conversions by the target on the ledger row —
     /// so a ticket bought after an experience-scoped link counts under that experience even if the
-    /// buyer wandered around the site first.
+    /// buyer wandered around the site first. The title is null for the site link and for an
+    /// experience or session that is no longer listed; the page names those in its own language.
     /// </summary>
     private async Task<List<ReferralTargetStats>> BuildTargetStatsAsync(Guid ambassadorId, List<ReferralVisit> allVisits, CancellationToken ct)
     {
@@ -560,7 +746,7 @@ public class AmbassadorService(
         var targets = new List<ReferralTargetStats>();
         foreach (var (kind, id) in keys)
         {
-            string title;
+            string? title = null;
             string? slug = null;
             if (kind == ReferralTargetKind.Experience && id is not null && experiencesById.TryGetValue(id.Value, out var experience))
             {
@@ -572,15 +758,6 @@ public class AmbassadorService(
                 title = SeminarContent.Title(seminar, SiteCultures.Default);
                 slug = seminar.Slug;
             }
-            else
-            {
-                title = kind switch
-                {
-                    ReferralTargetKind.Experience => "An experience that is no longer listed",
-                    ReferralTargetKind.Session => "A session that is no longer listed",
-                    _ => "Site link",
-                };
-            }
 
             targets.Add(new ReferralTargetStats(kind, id, title, slug,
                 Visits: allVisits.Count(v => v.TargetKind == kind && v.TargetId == id),
@@ -591,6 +768,8 @@ public class AmbassadorService(
 
         return targets.OrderByDescending(t => t.Purchases).ThenByDescending(t => t.Applications).ThenByDescending(t => t.Visits).ToList();
     }
+
+    // --- The ledger ----------------------------------------------------------------------------------
 
     public async Task ReverseForRefundAsync(string sourceEntityType, Guid sourceEntityId, long refundedMinor, bool full, CancellationToken ct = default)
     {
@@ -627,7 +806,7 @@ public class AmbassadorService(
                     await notificationService.CreateForUserAsync(ambassadorUserId, NotificationType.ReferralConverted,
                         "A referred purchase was refunded",
                         $"{(refunded >= amount ? "A purchase" : "Part of a purchase")} made through your link was refunded, so {MoneyFormatter.Format(takenBack, line.Currency)} of commission no longer stands.",
-                        SiteUrls.Ambassador, ct);
+                        SiteUrls.InfluencerEarnings, ct);
                 }
             }
         }
@@ -660,7 +839,7 @@ public class AmbassadorService(
     {
         currency = currency.Trim().ToUpperInvariant();
         var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
-        if (ambassador is null) return ReferralPayoutResult.Fail("Ambassador not found.");
+        if (ambassador is null) return ReferralPayoutResult.Fail("Influencer.Error.NotFound");
 
         var ledger = await conversions.FindAsync(c => c.AmbassadorId == ambassadorId && c.Currency == currency && c.CommissionMinor != null, ct);
         var earned = ledger.Sum(c => c.NetCommissionMinor);
@@ -668,16 +847,17 @@ public class AmbassadorService(
         var owed = earned - paid;
 
         if (owed != expectedOwedMinor)
-            return ReferralPayoutResult.Fail($"The balance changed to {MoneyFormatter.Format(owed, currency)} while you were looking (a refund, a sale or another admin's payout). Nothing was recorded — check the figures and try again.");
+            return ReferralPayoutResult.Fail("Influencer.Error.BalanceChanged", MoneyFormatter.Format(owed, currency));
         if (owed <= 0)
-            return ReferralPayoutResult.Fail($"Nothing is owed in {currency}.");
+            return ReferralPayoutResult.Fail("Influencer.Error.NothingOwed", currency);
 
+        var now = DateTimeOffset.UtcNow;
         var payout = new ReferralPayout
         {
             AmbassadorId = ambassadorId,
             Currency = currency,
             AmountMinor = owed,
-            PaidAt = DateTimeOffset.UtcNow,
+            PaidAt = now,
             PaidByAdminId = adminUserId,
             Reference = Text.Clip(Text.NullIfBlank(reference), 100),
             Note = Text.Clip(Text.NullIfBlank(note), 500),
@@ -686,16 +866,28 @@ public class AmbassadorService(
         foreach (var line in ledger.Where(c => c.PayoutId is null))
         {
             line.PayoutId = payout.Id;
-            line.UpdatedAt = DateTimeOffset.UtcNow;
+            line.UpdatedAt = now;
         }
+
+        // The payout answers an open withdrawal request in this currency, whichever button paid it.
+        foreach (var request in await withdrawals.FindAsync(r => r.AmbassadorId == ambassadorId && r.Currency == currency && r.Status == WithdrawalStatus.Open, ct))
+        {
+            request.Status = WithdrawalStatus.Paid;
+            request.PayoutId = payout.Id;
+            request.DecidedAt = now;
+            request.DecidedByAdminId = adminUserId;
+            request.DecisionNote = payout.Note;
+            request.UpdatedAt = now;
+        }
+
         await LogAsync("ReferralCommissionPaid", ambassadorId, adminUserId, ipAddress, new { Owed = owed, Currency = currency },
             new { PayoutId = payout.Id, payout.AmountMinor, payout.Currency, payout.Reference }, ct);
         await payouts.SaveChangesAsync(ct);
 
-        if (ambassador.UserId is { } paidUserId)
-            await notificationService.CreateForUserAsync(paidUserId, NotificationType.ReferralConverted,
-            "Commission paid", $"The House has paid you {MoneyFormatter.Format(owed, currency)} in commission{(payout.Reference is null ? "" : $" (reference {payout.Reference})")}.",
-            SiteUrls.Ambassador, ct);
+        await TellInfluencerAsync(ambassador, "Commission paid",
+            $"The House has paid you {MoneyFormatter.Format(owed, currency)} in commission{(payout.Reference is null ? "" : $" (reference {payout.Reference})")}.",
+            "WithdrawalPaid", "Your commission has been paid",
+            (name, url) => new WithdrawalPaidEmailModel(name, MoneyFormatter.Format(owed, currency), payout.Reference, url), ct);
         return ReferralPayoutResult.Ok(payout);
     }
 
@@ -731,6 +923,137 @@ public class AmbassadorService(
     private static readonly string[] AutomatedAgents =
         ["bot", "crawl", "spider", "curl", "wget", "python", "httpclient", "java/", "go-http", "headless", "phantomjs", "scrapy", "okhttp", "axios", "node-fetch", "postman"];
 
+    // --- Withdrawals ---------------------------------------------------------------------------------
+
+    public async Task<WithdrawalResult> RequestWithdrawalAsync(Guid ambassadorId, string currency, string? note, Guid userId, string? ipAddress, CancellationToken ct = default)
+    {
+        currency = (currency ?? "").Trim().ToUpperInvariant();
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        if (ambassador is null || ambassador.UserId != userId) return WithdrawalResult.Fail("Influencer.Error.NotFound");
+        if (ambassador.MissingRequirements().Count > 0) return WithdrawalResult.Fail("Influencer.Error.ProfileIncomplete");
+
+        var owed = await OwedAsync(ambassadorId, currency, ct);
+        if (owed < MinimumWithdrawalMinor)
+            return WithdrawalResult.Fail("Influencer.Error.BelowMinimum", MoneyFormatter.Format(MinimumWithdrawalMinor, currency));
+        if (await withdrawals.CountAsync(r => r.AmbassadorId == ambassadorId && r.Currency == currency && r.Status == WithdrawalStatus.Open, ct) > 0)
+            return WithdrawalResult.Fail("Influencer.Error.AlreadyRequested");
+
+        var request = new ReferralWithdrawalRequest
+        {
+            AmbassadorId = ambassadorId,
+            Currency = currency,
+            RequestedMinor = owed,
+            Note = Text.Clip(Text.NullIfBlank(note?.Trim()), 500),
+            RequestedAt = DateTimeOffset.UtcNow,
+        };
+        await withdrawals.AddAsync(request, ct);
+        await LogAsync("InfluencerWithdrawalRequested", ambassadorId, userId, ipAddress, null,
+            new { RequestId = request.Id, request.Currency, request.RequestedMinor }, ct);
+        await withdrawals.SaveChangesAsync(ct);
+
+        var amount = MoneyFormatter.Format(owed, currency);
+        await staffAlerts.SendAsync(Roles.PayoutApprovers,
+            "Withdrawal requested", $"{ambassador.Name} asked to be paid {amount}.", "/admin/withdrawals",
+            "WithdrawalRequested", "An influencer asked to be paid",
+            link => new WithdrawalRequestedEmailModel(ambassador.Name, amount, request.Note, link),
+            nameof(ReferralWithdrawalRequest), request.Id, ct);
+
+        return WithdrawalResult.Ok(request);
+    }
+
+    public async Task<bool> CancelWithdrawalAsync(Guid ambassadorId, Guid requestId, Guid userId, string? ipAddress, CancellationToken ct = default)
+    {
+        var ambassador = await ambassadors.GetByIdAsync(ambassadorId, ct);
+        var request = await withdrawals.GetByIdAsync(requestId, ct);
+        if (ambassador is null || ambassador.UserId != userId || request is null
+            || request.AmbassadorId != ambassadorId || request.Status != WithdrawalStatus.Open) return false;
+
+        request.Status = WithdrawalStatus.Cancelled;
+        request.DecidedAt = DateTimeOffset.UtcNow;
+        request.UpdatedAt = DateTimeOffset.UtcNow;
+        await LogAsync("InfluencerWithdrawalCancelled", ambassadorId, userId, ipAddress, null, new { RequestId = request.Id }, ct);
+        await withdrawals.SaveChangesAsync(ct);
+        return true;
+    }
+
+    public async Task<List<ReferralWithdrawalRequest>> GetWithdrawalsAsync(Guid ambassadorId, CancellationToken ct = default) =>
+        (await withdrawals.FindAsync(r => r.AmbassadorId == ambassadorId, ct)).OrderByDescending(r => r.RequestedAt).ToList();
+
+    public async Task<List<WithdrawalQueueItem>> GetWithdrawalQueueAsync(CancellationToken ct = default)
+    {
+        var all = await withdrawals.GetAllAsync(ct);
+        var byId = (await ambassadors.GetAllAsync(ct)).ToDictionary(a => a.Id);
+        var items = new List<WithdrawalQueueItem>();
+        foreach (var request in all)
+        {
+            if (!byId.TryGetValue(request.AmbassadorId, out var ambassador)) continue;
+            var owedNow = request.Status == WithdrawalStatus.Open ? await OwedAsync(request.AmbassadorId, request.Currency, ct) : 0;
+            items.Add(new WithdrawalQueueItem(request, ambassador, owedNow));
+        }
+
+        // Open requests oldest first (the queue); decided ones after, most recent first (the record).
+        return items.Where(i => i.Request.Status == WithdrawalStatus.Open).OrderBy(i => i.Request.RequestedAt)
+            .Concat(items.Where(i => i.Request.Status != WithdrawalStatus.Open).OrderByDescending(i => i.Request.DecidedAt ?? i.Request.RequestedAt))
+            .ToList();
+    }
+
+    public Task<int> CountOpenWithdrawalsAsync(CancellationToken ct = default) =>
+        withdrawals.CountAsync(r => r.Status == WithdrawalStatus.Open, ct);
+
+    public async Task<ReferralPayoutResult> PayWithdrawalAsync(Guid requestId, long expectedOwedMinor, string? reference, string? note, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var request = await withdrawals.GetByIdAsync(requestId, ct);
+        if (request is null || request.Status != WithdrawalStatus.Open) return ReferralPayoutResult.Fail("Influencer.Error.RequestNotOpen");
+
+        // The payout settles the request (see MarkCommissionPaidAsync), so there is one way money is
+        // recorded as paid, with one stale-balance guard.
+        return await MarkCommissionPaidAsync(request.AmbassadorId, request.Currency, expectedOwedMinor, reference, note, adminUserId, ipAddress, ct);
+    }
+
+    public async Task<bool> RejectWithdrawalAsync(Guid requestId, string reason, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var request = await withdrawals.GetByIdAsync(requestId, ct);
+        if (request is null || request.Status != WithdrawalStatus.Open || string.IsNullOrWhiteSpace(reason)) return false;
+        var ambassador = await ambassadors.GetByIdAsync(request.AmbassadorId, ct);
+        if (ambassador is null) return false;
+
+        request.Status = WithdrawalStatus.Rejected;
+        request.DecidedAt = DateTimeOffset.UtcNow;
+        request.DecidedByAdminId = adminUserId;
+        request.DecisionNote = Text.Clip(reason.Trim(), 500);
+        request.UpdatedAt = DateTimeOffset.UtcNow;
+        await LogAsync("InfluencerWithdrawalRejected", ambassador.Id, adminUserId, ipAddress, null,
+            new { RequestId = request.Id, request.DecisionNote }, ct);
+        await withdrawals.SaveChangesAsync(ct);
+
+        var amount = MoneyFormatter.Format(request.RequestedMinor, request.Currency);
+        await TellInfluencerAsync(ambassador, "Withdrawal request declined",
+            $"Your request to be paid {amount} was declined: {request.DecisionNote}",
+            "WithdrawalRejected", "About your withdrawal request",
+            (name, url) => new WithdrawalRejectedEmailModel(name, amount, request.DecisionNote!, url), ct);
+        return true;
+    }
+
+    /// <summary>A bell notification and an email (in their language) to the influencer, linking to
+    /// their earnings page. Never throws.</summary>
+    private async Task TellInfluencerAsync<TModel>(Ambassador ambassador, string title, string body,
+        string emailTemplate, string emailSubject, Func<string, string, TModel> model, CancellationToken ct)
+    {
+        if (ambassador.UserId is not { } userId) return;
+        try
+        {
+            await notificationService.CreateForUserAsync(userId, NotificationType.Influencer, title, body, SiteUrls.InfluencerEarnings, ct);
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            if (user?.Email is null) return;
+            var url = SiteUrls.Absolute(siteOptions.Value.BaseUrl, SiteUrls.InCulture(SiteUrls.InfluencerEarnings, user.PreferredCulture));
+            await emailService.SendAsync(emailTemplate, user.Email, emailSubject, model(ambassador.Name, url),
+                user.PreferredCulture ?? SiteCultures.Default, nameof(Ambassador), ambassador.Id, ct);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Could not tell influencer {AmbassadorId} about {Template}.", ambassador.Id, emailTemplate);
+        }
+    }
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>
         auditLogs.AddAsync(new AuditLogEntry

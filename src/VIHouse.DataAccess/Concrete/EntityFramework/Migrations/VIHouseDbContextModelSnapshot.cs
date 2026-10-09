@@ -2038,6 +2038,9 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<Guid?>("AuthorUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Category")
                         .HasColumnType("int");
 
@@ -2058,6 +2061,10 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<DateTimeOffset?>("PublishedAt")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("ReviewNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -2066,10 +2073,15 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<DateTimeOffset?>("SubmittedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorUserId");
 
                     b.HasIndex("Slug")
                         .IsUnique();
@@ -2662,6 +2674,10 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("Bio")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(40)
@@ -2688,10 +2704,22 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
 
+                    b.Property<string>("LegalFirstName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LegalLastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Niche")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("PayoutAccountHolder")
                         .HasMaxLength(150)
@@ -2707,6 +2735,10 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<string>("PayoutIban")
                         .HasMaxLength(34)
                         .HasColumnType("nvarchar(34)");
+
+                    b.Property<string>("PhotoStorageKey")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("PreferredCulture")
                         .HasMaxLength(10)
@@ -2751,6 +2783,44 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Ambassadors", (string)null);
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Referrals.AmbassadorChannel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AmbassadorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Audience")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AmbassadorId", "SortOrder");
+
+                    b.ToTable("AmbassadorChannels", (string)null);
                 });
 
             modelBuilder.Entity("VIHouse.Entities.Referrals.ReferralConversion", b =>
@@ -2944,6 +3014,67 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.HasIndex("AmbassadorId", "TargetKind", "TargetId");
 
                     b.ToTable("ReferralVisits", (string)null);
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Referrals.ReferralWithdrawalRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AmbassadorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateTimeOffset?>("DecidedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("DecidedByAdminId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DecisionNote")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("PayoutId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("RequestedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<long>("RequestedMinor")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PayoutId");
+
+                    b.HasIndex("AmbassadorId", "Currency")
+                        .IsUnique()
+                        .HasFilter("[Status] = 'Open'");
+
+                    b.HasIndex("Status", "RequestedAt");
+
+                    b.ToTable("ReferralWithdrawalRequests", (string)null);
                 });
 
             modelBuilder.Entity("VIHouse.Entities.Seminars.Seminar", b =>
@@ -3823,6 +3954,14 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Journal.JournalPost", b =>
+                {
+                    b.HasOne("VIHouse.DataAccess.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("AuthorUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Journal.JournalPostMedia", b =>
                 {
                     b.HasOne("VIHouse.Entities.Journal.JournalPost", null)
@@ -3907,6 +4046,15 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("VIHouse.Entities.Referrals.AmbassadorChannel", b =>
+                {
+                    b.HasOne("VIHouse.Entities.Referrals.Ambassador", null)
+                        .WithMany("Channels")
+                        .HasForeignKey("AmbassadorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VIHouse.Entities.Referrals.ReferralConversion", b =>
                 {
                     b.HasOne("VIHouse.Entities.Referrals.Ambassador", null)
@@ -3937,6 +4085,20 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .HasForeignKey("AmbassadorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Referrals.ReferralWithdrawalRequest", b =>
+                {
+                    b.HasOne("VIHouse.Entities.Referrals.Ambassador", null)
+                        .WithMany()
+                        .HasForeignKey("AmbassadorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VIHouse.Entities.Referrals.ReferralPayout", null)
+                        .WithMany()
+                        .HasForeignKey("PayoutId")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("VIHouse.Entities.Seminars.SeminarEnrollment", b =>
@@ -4060,6 +4222,11 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Navigation("Media");
 
                     b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("VIHouse.Entities.Referrals.Ambassador", b =>
+                {
+                    b.Navigation("Channels");
                 });
 
             modelBuilder.Entity("VIHouse.Entities.Seminars.Seminar", b =>

@@ -4,18 +4,19 @@ namespace VIHouse.Entities.Referrals;
 
 /// <summary>
 /// Brief §47: "Her partner/influencer unique referral (VI-ANTON) veya URL (thevihouse.com/r/anton)
-/// alabilir." Ambassadors are chosen by the House — there is no public way to become one.
+/// alabilir." Shown to people as an <em>influencer</em>; the code keeps the original name. Influencers
+/// are chosen by the House — there is no public way to become one.
 ///
 /// Two ways in:
-///  - Someone who already has an account is made an ambassador from their user record; the row is
+///  - Someone who already has an account is made an influencer from their user record; the row is
 ///    Active from the start and <see cref="UserId"/> is set.
-///  - Someone new is <em>invited</em>: the admin types name, email, code and rate, the row is
-///    <see cref="AmbassadorStatus.Pending"/> with no account behind it, and the invitation link
-///    goes to <see cref="InviteEmail"/> (the admin never sees it). Following it proves the address,
-///    and the person sets a password, gives their real name and payout details and accepts the
-///    ambassador terms. Only then does the row become Active with a <see cref="UserId"/> — so a
-///    mistyped address never ends up attached to someone's account, notifications or self-referral
-///    checks. The code is reserved the whole time.
+///  - Someone new is <em>invited</em>: the admin enters everything — name, legal name, channels,
+///    profile, billing and bank details, code and rate — the row is
+///    <see cref="AmbassadorStatus.Pending"/> with no account behind it, and the invitation link goes
+///    to <see cref="InviteEmail"/> (the admin never sees it). Following it proves the address; the
+///    person only chooses a password and accepts the influencer terms. Only then does the row become
+///    Active with a <see cref="UserId"/> — so a mistyped address never ends up attached to someone's
+///    account, notifications or self-referral checks. The code is reserved the whole time.
 /// </summary>
 public class Ambassador : BaseEntity
 {
@@ -83,4 +84,55 @@ public class Ambassador : BaseEntity
     public DateTimeOffset? PayoutDetailsUpdatedAt { get; set; }
 
     public bool HasPayoutDetails => !string.IsNullOrWhiteSpace(PayoutIban) && !string.IsNullOrWhiteSpace(PayoutAccountHolder);
+
+    // --- Influencer profile ----------------------------------------------------------------------
+
+    /// <summary>The name on their documents — copied to the account when the invitation is accepted.
+    /// <see cref="Name"/> is the name they publish under.</summary>
+    public string? LegalFirstName { get; set; }
+    public string? LegalLastName { get; set; }
+
+    /// <summary>A few sentences about them — shown in the author box under their published posts.</summary>
+    public string? Bio { get; set; }
+
+    /// <summary>What they make content about and for whom ("founder life, early-stage SaaS, Istanbul").</summary>
+    public string? Niche { get; set; }
+
+    /// <summary>The profile photo, in media storage (not wwwroot). Streamed by MediaController.</summary>
+    public string? PhotoStorageKey { get; set; }
+
+    public List<AmbassadorChannel> Channels { get; set; } = [];
+
+    /// <summary>
+    /// What still stands between this influencer and being fully set up. Withdrawals need the list
+    /// empty: the House can only pay someone whose legal identity, address and bank are on file and
+    /// who has accepted the terms. <see cref="Channels"/> must be loaded.
+    /// </summary>
+    public IReadOnlyList<InfluencerRequirement> MissingRequirements()
+    {
+        var missing = new List<InfluencerRequirement>();
+        if (string.IsNullOrWhiteSpace(LegalFirstName) || string.IsNullOrWhiteSpace(LegalLastName)) missing.Add(InfluencerRequirement.LegalName);
+        if (string.IsNullOrWhiteSpace(BillingAddressLine1) || string.IsNullOrWhiteSpace(BillingCity)
+            || string.IsNullOrWhiteSpace(BillingPostalCode) || string.IsNullOrWhiteSpace(BillingCountry)) missing.Add(InfluencerRequirement.BillingAddress);
+        if (!HasPayoutDetails) missing.Add(InfluencerRequirement.BankDetails);
+        if (TermsAcceptedAt is null) missing.Add(InfluencerRequirement.Terms);
+        if (!Channels.Any(c => c.Audience is > 0)) missing.Add(InfluencerRequirement.Channel);
+        if (string.IsNullOrWhiteSpace(Bio)) missing.Add(InfluencerRequirement.Bio);
+        if (string.IsNullOrWhiteSpace(Niche)) missing.Add(InfluencerRequirement.Niche);
+        if (string.IsNullOrWhiteSpace(PhotoStorageKey)) missing.Add(InfluencerRequirement.Photo);
+        return missing;
+    }
+}
+
+/// <summary>One item of an influencer's profile that must be on file.</summary>
+public enum InfluencerRequirement
+{
+    LegalName,
+    BillingAddress,
+    BankDetails,
+    Terms,
+    Channel,
+    Bio,
+    Niche,
+    Photo,
 }

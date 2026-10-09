@@ -15,5 +15,9 @@ public enum NotificationType
 
     /// <summary>To an ambassador: someone who came through their link applied, was approved, or
     /// paid. Appended for the same reason as the one above.</summary>
-    ReferralConverted
+    ReferralConverted,
+
+    /// <summary>The influencer programme: a journal submission reviewed, a withdrawal decided — to
+    /// the influencer, and to the staff who handle them.</summary>
+    Influencer
 }

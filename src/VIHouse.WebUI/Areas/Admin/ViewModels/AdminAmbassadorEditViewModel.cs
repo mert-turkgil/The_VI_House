@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using VIHouse.Business.Abstract;
 using VIHouse.Entities.Referrals;
+using VIHouse.WebUI.ViewModels.Ambassador;
 
 namespace VIHouse.WebUI.Areas.Admin.ViewModels;
 
@@ -49,8 +50,28 @@ public class AdminAmbassadorEditViewModel
     public List<ReferralPayout> Payouts { get; set; } = [];
     public ReferralFraudSignals? Signals { get; set; }
 
-    /// <summary>Finance and SuperAdmin record payouts and void commission; Marketing sees them.</summary>
+    /// <summary>Finance and SuperAdmin record payouts, void commission and keep the bank details;
+    /// Marketing sees the numbers and the masked IBAN.</summary>
     public bool CanSettle { get; set; }
+
+    /// <summary>Marketing and SuperAdmin keep the public profile: bio, niche, channels, photo.</summary>
+    public bool CanEditProfile { get; set; }
+
+    /// <summary>The checklist: what is still missing before they can be paid (see Ambassador.MissingRequirements).</summary>
+    public IReadOnlyList<InfluencerRequirement> Missing { get; set; } = [];
+
+    public InfluencerProfileForm? ProfileForm { get; set; }
+    public InfluencerPayoutForm? PayoutForm { get; set; }
+
+    /// <summary>True when a refused save of the bank details comes back: the form opens unfolded.</summary>
+    public bool EditPayoutDetails { get; set; }
+
+    public string? PhotoUrl { get; set; }
+
+    /// <summary>Their journal articles, every status — the editors' way in to a submission.</summary>
+    public List<VIHouse.Entities.Journal.JournalPost> Posts { get; set; } = [];
+
+    public List<ReferralWithdrawalRequest> Withdrawals { get; set; } = [];
 
     public static AdminAmbassadorEditViewModel FromEntity(Ambassador a, string? email) => new()
     {

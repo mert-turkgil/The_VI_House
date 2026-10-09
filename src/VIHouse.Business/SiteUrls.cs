@@ -62,11 +62,18 @@ public static class SiteUrls
     // Public pages.
     public const string Experiences = "/experiences";
     public const string Sessions = "/sessions";
+    public const string Journal = "/journal";
     public const string Membership = "/membership";
     public const string Join = "/join";
     public const string Apply = "/apply";
     public const string Contact = "/contact";
-    public const string Ambassador = "/ambassador";
+    /// <summary>The influencer's own area (InfluencerController). /ambassador, its old address, redirects here.</summary>
+    public const string Influencer = "/influencer";
+    public const string InfluencerJournal = "/influencer/journal";
+    public const string InfluencerEarnings = "/influencer/earnings";
+    public const string InfluencerProfile = "/influencer/profile";
+    /// <summary>The public "Become an influencer" page (InfluencersController).</summary>
+    public const string Influencers = "/influencers";
     public const string Admin = "/admin";
 
     /// <summary>The page that takes an address off the launch list — linked from every launch email.
@@ -83,16 +90,22 @@ public static class SiteUrls
     public static string Booking(string reference) => $"{AccountBookings}/{reference}";
     public static string Experience(string slug) => $"{Experiences}/{slug}";
     public static string Session(string slug) => $"{Sessions}/{slug}";
+    public static string JournalPost(string slug) => $"{Journal}/{slug}";
     /// <summary>"Add to calendar" — the event as an .ics file (ExperiencesController/SeminarsController.Calendar).</summary>
     public static string ExperienceCalendar(string slug) => $"{Experiences}/{slug}/calendar.ics";
     public static string SessionCalendar(string slug) => $"{Sessions}/{slug}/calendar.ics";
     public static string Invitation(string code) => $"/invitation/{code}";
     public static string JoinResume(string code) => $"{Join}/resume/{code}";
 
-    // Referral links — one per thing an ambassador promotes (see ReferralController).
+    // Referral links — one per thing an influencer promotes (see ReferralController).
     public static string Referral(string code) => $"/r/{code}";
-    /// <summary>Where an invited ambassador accepts (AmbassadorInviteController). The token is the key.</summary>
-    public static string AmbassadorInvite(string token) => $"{Ambassador}/invite/{token}";
+    /// <summary>Where an invited influencer accepts (AmbassadorInviteController). The token is the key.</summary>
+    public static string InfluencerInvite(string token) => $"{Influencer}/invite/{token}";
+    public static string InfluencerJournalPost(Guid postId) => $"{InfluencerJournal}/{postId}";
+    /// <summary>The profile photo (MediaController.InfluencerPhoto). The stamp, taken from the
+    /// storage key, changes with every new photo, so the URL can be cached hard.</summary>
+    public static string InfluencerPhoto(Guid ambassadorId, string storageKey) =>
+        $"/media/influencer/{ambassadorId}?v={Concrete.Text.Sha256Hex(storageKey)[..8]}";
     public static string ReferralExperience(string code, string slug) => $"/r/{code}/e/{slug}";
     public static string ReferralSession(string code, string slug) => $"/r/{code}/s/{slug}";
 

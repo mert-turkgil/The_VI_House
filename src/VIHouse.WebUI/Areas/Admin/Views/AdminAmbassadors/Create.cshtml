@@ -3,25 +3,25 @@
     ViewData["Title"] = Loc["Admin.Ambassadors.InviteTitle"].Value;
 }
 
-<div class="admin-card" style="max-width:760px;">
-    <p class="admin-hint" style="margin-top:0;">
-        @Loc["Admin.Ambassadors.InviteIntro", (int)VIHouse.Business.Abstract.IAmbassadorService.InviteLifetime.TotalDays]
-    </p>
-    <p class="admin-hint">
-        @Loc["Admin.Ambassadors.SomeoneWhoAlreadyHasAnAccount"]
-    </p>
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="admin-form" style="max-width:860px;">
+    <div class="admin-card">
+        <p class="admin-hint" style="margin-top:0;">
+            @Loc["Admin.Ambassadors.InviteIntro", (int)VIHouse.Business.Abstract.IAmbassadorService.InviteLifetime.TotalDays]
+        </p>
+        <p class="admin-hint">@Loc["Admin.Ambassadors.SomeoneWhoAlreadyHasAnAccount"]</p>
 
-    <form asp-action="Create" method="post" class="admin-form">
         <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
         @if (ViewData["ExistingUserId"] is Guid existingUserId)
         {
             <p class="admin-status-message"><a asp-controller="AdminUsers" asp-action="Details" asp-route-id="@existingUserId">@Loc["Admin.Ambassadors.OpenTheirUserRecord"]</a></p>
         }
 
+        <h2>@Loc["Admin.Influencer.Section.Basics"]</h2>
         <div class="admin-form__grid">
             <div class="admin-field">
                 <label asp-for="Name">@Loc["Admin.Ambassadors.DisplayName"]</label>
                 <input asp-for="Name" />
+                <p class="admin-field__hint">@Loc["Admin.Influencer.DisplayNameHint"]</p>
                 <span asp-validation-for="Name" class="field-validation-error"></span>
             </div>
             <div class="admin-field">
@@ -44,13 +44,31 @@
                 <select asp-for="Culture" asp-items="@(SiteCultures.All.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem(c.NativeLabel, c.Name)))"></select>
             </div>
         </div>
+    </div>
 
-        <div>
-            <button type="submit" class="admin-btn">@Loc["Admin.Ambassadors.SendInvitation"]</button>
-            <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Common.Cancel"]</a>
+    <div class="admin-card">
+        <h2>@Loc["Admin.Influencer.Section.Profile"]</h2>
+        <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Influencer.ProfileIntro"]</p>
+        <partial name="_ProfileFields" model="Model.Profile" view-data='@(new ViewDataDictionary(ViewData) { ["Prefix"] = "Profile" })' />
+        <div class="admin-field">
+            <label asp-for="Photo">@Loc["Admin.Influencer.Photo"]</label>
+            <input asp-for="Photo" type="file" accept=".jpg,.jpeg,.png,.webp,.avif" />
+            <p class="admin-field__hint">@Loc["Admin.Influencer.PhotoHint"]</p>
+            <span asp-validation-for="Photo" class="field-validation-error"></span>
         </div>
-    </form>
-</div>
+    </div>
+
+    <div class="admin-card">
+        <h2>@Loc["Admin.Influencer.Section.Payout"]</h2>
+        <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Influencer.PayoutIntro"]</p>
+        <partial name="_PayoutFields" model="Model.Payout" view-data='@(new ViewDataDictionary(ViewData) { ["Prefix"] = "Payout" })' />
+    </div>
+
+    <div class="admin-form__actions">
+        <button type="submit" class="admin-btn">@Loc["Admin.Ambassadors.SendInvitation"]</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Common.Cancel"]</a>
+    </div>
+</form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

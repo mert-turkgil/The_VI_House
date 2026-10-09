@@ -10,11 +10,9 @@ public interface IJournalService
     Task<JournalPost?> GetPublicDetailBySlugAsync(string slug, CancellationToken ct = default);
     Task<List<JournalPost>> SearchPublishedAsync(string term, CancellationToken ct = default);
 
-    /// <summary>Resolves one media row for the public streaming endpoint, or null if it is gone.</summary>
-    Task<JournalPostMedia?> GetMediaAsync(Guid mediaId, CancellationToken ct = default);
-
-    /// <summary>Opens the bytes behind a media row. Null when the row or the file is missing.</summary>
-    Task<MediaFileInfo?> OpenMediaAsync(Guid mediaId, CancellationToken ct = default);
+    /// <summary>Opens the bytes behind a media row, with what the caller needs to decide who may
+    /// see them. Null when the row, its post or the file is missing.</summary>
+    Task<JournalMediaFile?> OpenMediaAsync(Guid mediaId, CancellationToken ct = default);
 
     // --- Admin --- (every mutation is audit-logged)
     Task<List<JournalPost>> GetAllForAdminAsync(CancellationToken ct = default);
@@ -69,7 +67,51 @@ public interface IJournalService
         Guid postId, MediaUpload upload, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 
     Task<JournalSaveResult> RemoveCoverAsync(Guid postId, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
+    // --- Admin: influencer submissions ---
+
+    /// <summary>Sends a submitted article back to its author with a note they see. The author is
+    /// told by bell and email.</summary>
+    Task<JournalSaveResult> RequestChangesAsync(Guid postId, string note, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>Articles waiting for the editors — the sidebar badge and the Submissions filter.</summary>
+    Task<int> CountSubmittedAsync(CancellationToken ct = default);
+
+    // --- Influencer authors --- (English only; the editors translate and publish)
+
+    /// <summary>One author's own posts, newest first.</summary>
+    Task<List<JournalPost>> GetForAuthorAsync(Guid authorUserId, CancellationToken ct = default);
+
+    /// <summary>The post with its copy and files, or null when it is not this author's.</summary>
+    Task<JournalPost?> GetOwnAsync(Guid postId, Guid authorUserId, CancellationToken ct = default);
+
+    /// <summary>As <see cref="GetOwnAsync"/>, and only while the author may change it (Draft or
+    /// sent back). The guard in front of every author upload and save.</summary>
+    Task<JournalPost?> GetEditableForAuthorAsync(Guid postId, Guid authorUserId, CancellationToken ct = default);
+
+    /// <summary>A new draft credited to the author, named after their display name.</summary>
+    Task<JournalSaveResult> StartForAuthorAsync(Guid authorUserId, string authorName, JournalCategory category,
+        string title, string? excerpt, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>Saves the author's English copy, category and cover description; with
+    /// <paramref name="submit"/>, also hands it to the editors, who are told.</summary>
+    Task<JournalSaveResult> SaveForAuthorAsync(Guid postId, Guid authorUserId, JournalAuthorDraft draft, bool submit,
+        string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>The author takes a submission back to keep working on it.</summary>
+    Task<JournalSaveResult> WithdrawSubmissionAsync(Guid postId, Guid authorUserId, string? ipAddress, CancellationToken ct = default);
+
+    /// <summary>Whether the author has at least one published article — what makes their photo public.</summary>
+    Task<bool> HasPublishedAsync(Guid authorUserId, CancellationToken ct = default);
 }
+
+/// <summary>What an influencer edits on their article: the English copy, the category and the
+/// cover's description.</summary>
+public record JournalAuthorDraft(string Title, string? Excerpt, string Body, JournalCategory Category, string? CoverImageAlt);
+
+/// <summary>A journal file and who may see it: everyone once its post is published, otherwise the
+/// staff and the post's author.</summary>
+public record JournalMediaFile(MediaFileInfo File, bool IsPublic, Guid? AuthorUserId);
 
 /// <summary>
 /// Outcome of an admin write. <see cref="Error"/> is a SharedResource key rather than a sentence,

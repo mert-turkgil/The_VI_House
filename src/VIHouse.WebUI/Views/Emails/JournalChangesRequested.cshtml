@@ -1,0 +1,13 @@
+@model JournalChangesRequestedEmailModel
+@{
+    ViewData["Subject"] = Loc["Email.JournalChangesRequested.Subject"].Value;
+    ViewData["Preheader"] = Model.Title;
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteAmbassador"].Value;
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowJournal"].Value, Loc["Email.JournalChangesRequested.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.Name)</p>
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.JournalChangesRequested.Body1"].Value, Model.Title)</p>
+<partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note(Model.Note, "info", Loc["Email.Common.NoteFromEditorsLabel"].Value))" />
+<p style="margin:0 0 20px;">@Loc["Email.JournalChangesRequested.Body2"]</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.WriterUrl, Loc["Email.JournalChangesRequested.Button"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

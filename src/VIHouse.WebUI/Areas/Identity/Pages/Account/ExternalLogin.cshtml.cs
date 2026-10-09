@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using VIHouse.DataAccess.Identity;
 using VIHouse.WebUI.Helpers;
@@ -29,17 +30,20 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ExternalLoginModel> _logger;
         private readonly VIHouse.Business.Abstract.ISecurityAlertService _securityAlerts;
+        private readonly IStringLocalizer<SharedResource> _loc;
 
         public ExternalLoginModel(
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             ILogger<ExternalLoginModel> logger,
-            VIHouse.Business.Abstract.ISecurityAlertService securityAlerts)
+            VIHouse.Business.Abstract.ISecurityAlertService securityAlerts,
+            IStringLocalizer<SharedResource> loc)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _securityAlerts = securityAlerts;
+            _loc = loc;
         }
 
         /// <summary>
@@ -99,13 +103,14 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             returnUrl = ReturnUrls.Safe(Url, returnUrl);
             if (remoteError != null)
             {
-                ErrorMessage = $"Error from external provider: {remoteError}";
+                // Logged where it happened (ExternalSignIn.Failed); the visitor gets a plain sentence.
+                ErrorMessage = _loc["Auth.External.Failed"].Value;
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information.";
+                ErrorMessage = _loc["Auth.External.Failed"].Value;
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -132,24 +137,24 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             {
                 // Invite-only membership (brief §25): unlike stock Identity scaffolding, an
                 // unrecognized external login must never be offered the "create an account" form —
-                // that would let any Google account holder self-register. Only a Google account
-                // already linked to an existing local account (via Manage/ExternalLogins) can sign
-                // in this way; anyone else is rejected here, same as the branches above.
-                ErrorMessage = "No VI House account is linked to this Google account.";
+                // that would let any Google or Apple account holder self-register. Only an external
+                // account already linked to an existing local account (via Manage/ExternalLogins) can
+                // sign in this way; anyone else is rejected here, same as the branches above.
+                ErrorMessage = _loc["Auth.External.NotLinked", info.ProviderDisplayName ?? info.LoginProvider].Value;
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
         }
 
-        public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
+        public IActionResult OnPostConfirmation(string returnUrl = null)
         {
             // Neutralized, not just OnGetCallbackAsync's branch above: this handler is reachable by
             // a direct POST to ?handler=Confirmation using nothing more than an antiforgery token
-            // from any page on the site plus a completed Google OAuth round-trip for any Google
+            // from any page on the site plus a completed OAuth round-trip for any Google or Apple
             // account — it doesn't depend on OnGetCallbackAsync ever having rendered this page's
             // form. Left unguarded, it would create a brand-new ApplicationUser (no role, no
-            // approval) for literally any Google email, bypassing the application-approval funnel.
+            // approval) for literally any external email, bypassing the application-approval funnel.
             returnUrl = ReturnUrls.Safe(Url, returnUrl);
-            ErrorMessage = "No VI House account is linked to this Google account.";
+            ErrorMessage = _loc["Auth.External.Failed"].Value;
             return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
         }
     }

@@ -1,7 +1,8 @@
 @model ReferralConvertedEmailModel
 @{
     ViewData["Subject"] = Loc["Email.ReferralConverted.Subject"].Value;
-    ViewData["Preheader"] = Model.What;
+    var what = Loc["Email.ReferralConverted.What." + Model.Kind].Value;
+    ViewData["Preheader"] = what;
     ViewData["Footnote"] = Loc["Email.Common.FootnoteAmbassador"].Value;
     var rows = new List<(string, string)>();
     if (Model.Amount is not null) rows.Add((Loc["Email.Common.DetailAmountLabel"].Value, Model.Amount));
@@ -9,7 +10,7 @@
 }
 <partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowAmbassador"].Value, Loc["Email.ReferralConverted.Heading"].Value))" />
 <p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.Name)</p>
-<p style="margin:0 0 20px;">@Model.What</p>
+<p style="margin:0 0 20px;">@what</p>
 @if (rows.Count > 0)
 {
     <partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />

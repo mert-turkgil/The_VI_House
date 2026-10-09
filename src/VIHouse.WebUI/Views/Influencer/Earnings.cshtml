@@ -1,0 +1,122 @@
+@model InfluencerEarningsViewModel
+
+<div class="account-manage">
+    <partial name="_InfluencerNav" />
+    <div class="account-manage__content">
+        <header class="account-page__head">
+            <h1>@Loc["Influencer.Nav.Earnings"]</h1>
+            <p class="account-page__lede">@Loc["Influencer.Earnings.Lede", MoneyFormatter.Format(Model.MinimumMinor, Model.Balances.FirstOrDefault()?.Currency ?? "GBP")]</p>
+        </header>
+
+        @if (TempData["StatusMessage"] is string status)
+        {
+            <div class="@(TempData["StatusIsError"] is true ? "vih-alert vih-alert--danger" : "contact-success")" role="status" style="margin-bottom:20px;">@status</div>
+        }
+
+        <section class="ambassador-section">
+            <h2>@Loc["Influencer.Earnings.Balances"]</h2>
+            @if (Model.Balances.Count == 0)
+            {
+                <p class="ambassador-section__empty">@Loc["Ambassador.Performance.Empty"]</p>
+            }
+            @foreach (var b in Model.Balances)
+            {
+                <div class="account-panel">
+                    <dl class="ambassador-invite__onfile">
+                        <div><dt>@Loc["Ambassador.Performance.Commission"]</dt><dd>@MoneyFormatter.Format(b.EarnedMinor, b.Currency)</dd></div>
+                        <div><dt>@Loc["Ambassador.Performance.Paid"]</dt><dd>@MoneyFormatter.Format(b.PaidMinor, b.Currency)</dd></div>
+                        <div><dt>@Loc["Ambassador.Performance.Owed"]</dt><dd><strong>@MoneyFormatter.Format(Math.Max(0, b.OwedMinor), b.Currency)</strong></dd></div>
+                    </dl>
+                    @if (Model.CanRequest(b))
+                    {
+                        <form asp-action="RequestWithdrawal" method="post">
+                            <input type="hidden" name="currency" value="@b.Currency" />
+                            <label>@Loc["Influencer.Earnings.Note"] <input name="note" maxlength="500" /></label>
+                            <button type="submit" class="btn btn--primary btn--sm">@Loc["Influencer.Earnings.Request", MoneyFormatter.Format(b.OwedMinor, b.Currency)]</button>
+                        </form>
+                    }
+                    else if (Model.HasOpenRequest(b.Currency))
+                    {
+                        <p>@Loc["Influencer.Earnings.RequestOpen"]</p>
+                    }
+                    else if (!Model.ProfileComplete)
+                    {
+                        <p>@Loc["Influencer.Earnings.ProfileIncomplete"]</p>
+                    }
+                </div>
+            }
+        </section>
+
+        <section class="ambassador-section">
+            <h2>@Loc["Influencer.Earnings.Requests"]</h2>
+            @if (Model.Withdrawals.Count == 0)
+            {
+                <p class="ambassador-section__empty">@Loc["Influencer.Earnings.NoRequests"]</p>
+            }
+            else
+            {
+                <ul class="account-list">
+                    @foreach (var w in Model.Withdrawals)
+                    {
+                        <li class="account-list__item">
+                            <div class="account-list__body">
+                                <span class="account-list__title">@MoneyFormatter.Format(w.RequestedMinor, w.Currency) · @Loc.Label(w.Status)</span>
+                                <span class="account-list__meta">@w.RequestedAt.ToLocalTime().ToString("d MMM yyyy")@if (w.DecisionNote is not null && w.Status == WithdrawalStatus.Rejected) { <text> — @w.DecisionNote</text> }</span>
+                            </div>
+                            @if (w.Status == WithdrawalStatus.Open)
+                            {
+                                <form asp-action="CancelWithdrawal" asp-route-requestId="@w.Id" method="post">
+                                    <button type="submit" class="btn btn--ghost btn--sm">@Loc["Influencer.Earnings.Cancel"]</button>
+                                </form>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+
+        <section class="ambassador-section">
+            <h2>@Loc["Ambassador.Conversions.Heading"]</h2>
+            @if (Model.Ledger.Count == 0)
+            {
+                <p class="ambassador-section__empty">@Loc["Ambassador.Conversions.None"]</p>
+            }
+            else
+            {
+                <ol class="ambassador-timeline">
+                    @foreach (var c in Model.Ledger)
+                    {
+                        Model.Titles.TryGetValue((c.TargetKind, c.TargetId), out var about);
+                        <li class="ambassador-timeline__item ambassador-timeline__item--@c.Kind.ToString().ToLowerInvariant()">
+                            <time datetime="@c.OccurredAt.ToString("o")">@c.OccurredAt.ToString("d MMM yyyy, HH:mm")</time>
+                            <span class="ambassador-timeline__what">@Loc.Label(c.Kind)@if (about is not null) { <em class="ambassador-timeline__about"> · @about</em> }</span>
+                            @if (c.AmountMinor is { } amount && c.Currency is not null)
+                            {
+                                <span class="ambassador-timeline__money">@MoneyFormatter.Format(amount, c.Currency)@if (c.CommissionMinor is not null) { <em> · @Loc["Ambassador.Conversions.Commission"] @MoneyFormatter.Format(c.NetCommissionMinor, c.Currency)</em> }</span>
+                            }
+                        </li>
+                    }
+                </ol>
+            }
+        </section>
+
+        @if (Model.Payouts.Count > 0)
+        {
+            <section class="ambassador-section">
+                <h2>@Loc["Influencer.Earnings.Payouts"]</h2>
+                <ul class="account-list">
+                    @foreach (var p in Model.Payouts)
+                    {
+                        <li class="account-list__item"><div class="account-list__body"><span class="account-list__title">@MoneyFormatter.Format(p.AmountMinor, p.Currency)</span><span class="account-list__meta">@p.PaidAt.ToLocalTime().ToString("d MMM yyyy")@(p.Reference is null ? "" : " · " + p.Reference)</span></div></li>
+                    }
+                </ul>
+            </section>
+        }
+
+        <section class="ambassador-section">
+            <h2>@Loc["Influencer.Earnings.Bank"]</h2>
+            <p>@(Model.Influencer.HasPayoutDetails ? Iban.Mask(Model.Influencer.PayoutIban) : Loc["Influencer.Earnings.NoBank"].Value)</p>
+            <p class="ambassador-section__lede">@Loc["Influencer.Earnings.BankHint"]</p>
+        </section>
+    </div>
+</div>

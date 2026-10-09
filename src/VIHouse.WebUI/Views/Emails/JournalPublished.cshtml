@@ -1,0 +1,12 @@
+@model JournalPublishedEmailModel
+@{
+    ViewData["Subject"] = Loc["Email.JournalPublished.Subject"].Value;
+    ViewData["Preheader"] = Model.Title;
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteAmbassador"].Value;
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowJournal"].Value, Loc["Email.JournalPublished.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.Name)</p>
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.JournalPublished.Body1"].Value, Model.Title)</p>
+<p style="margin:0 0 20px;">@Loc["Email.JournalPublished.Body2"]</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.PostUrl, Loc["Email.JournalPublished.Button"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

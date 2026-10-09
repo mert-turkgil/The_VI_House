@@ -1,0 +1,21 @@
+@model WithdrawalRequestedEmailModel
+@{
+    ViewData["Subject"] = string.Format(Loc["Email.WithdrawalRequested.Subject"].Value, Model.InfluencerName);
+    ViewData["Preheader"] = string.Format(Loc["Email.WithdrawalRequested.Preheader"].Value, Model.InfluencerName, Model.Amount);
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteStaff"].Value;
+    var rows = new List<(string, string)>
+    {
+        (Loc["Email.Common.DetailInfluencerLabel"].Value, Model.InfluencerName),
+        (Loc["Email.Common.DetailAmountLabel"].Value, Model.Amount),
+    };
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowStaff"].Value, Loc["Email.WithdrawalRequested.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.WithdrawalRequested.Body1"].Value, Model.InfluencerName, Model.Amount)</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+@if (!string.IsNullOrWhiteSpace(Model.Note))
+{
+    <partial name="/Views/Emails/_EmailNote.cshtml" model="@(new Note(Model.Note, "info", Loc["Email.Common.NoteFromInfluencerLabel"].Value))" />
+}
+<p style="margin:0 0 16px;">@Loc["Email.WithdrawalRequested.Body2"]</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.AdminUrl, Loc["Email.WithdrawalRequested.Button"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

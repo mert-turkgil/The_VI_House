@@ -1,0 +1,17 @@
+@model JournalSubmittedEmailModel
+@{
+    ViewData["Subject"] = string.Format(Loc["Email.JournalSubmitted.Subject"].Value, Model.InfluencerName);
+    ViewData["Preheader"] = Model.Title;
+    ViewData["Footnote"] = Loc["Email.Common.FootnoteStaff"].Value;
+    var rows = new List<(string, string)>
+    {
+        (Loc["Email.Common.DetailInfluencerLabel"].Value, Model.InfluencerName),
+        (Loc["Email.JournalSubmitted.TitleLabel"].Value, Model.Title),
+    };
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.Common.EyebrowStaff"].Value, Loc["Email.JournalSubmitted.Heading"].Value))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.JournalSubmitted.Body1"].Value, Model.InfluencerName)</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+<p style="margin:0 0 16px;">@Loc["Email.JournalSubmitted.Body2"]</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.AdminUrl, Loc["Email.JournalSubmitted.Button"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@((string?)null)" />

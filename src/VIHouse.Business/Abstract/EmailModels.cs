@@ -1,3 +1,5 @@
+using VIHouse.Entities.Referrals;
+
 namespace VIHouse.Business.Abstract;
 
 // Plain content DTOs for the transactional email templates (brief §69). These live in Business
@@ -98,17 +100,35 @@ public record WelcomeSetupEmailModel(string FirstName, string SetupUrl, string? 
     public bool SentByAdmin { get; init; }
 }
 
-/// <summary>To an ambassador when their link converts. Deliberately anonymous — what happened and
-/// what it is worth, never who.</summary>
-public record ReferralConvertedEmailModel(string Name, string What, string? Amount, string? Commission, string DashboardUrl);
+/// <summary>To an influencer when their link converts. Deliberately anonymous — what happened
+/// (<paramref name="Kind"/>, worded by the template) and what it is worth, never who.</summary>
+public record ReferralConvertedEmailModel(string Name, ReferralConversionKind Kind, string? Amount, string? Commission, string DashboardUrl);
 
-/// <summary>An admin sends the ambassador their referral link (and code) — the same thing the
-/// dashboard shows, delivered so it can be forwarded from the inbox.</summary>
-/// <summary>The invitation to become an ambassador. The link is the only way in, so it is only
+/// <summary>The invitation to become an influencer. The link is the only way in, so it is only
 /// ever in this email — the admin who sent it never sees it.</summary>
 public record AmbassadorInviteEmailModel(string Name, string InviteUrl, string Code, decimal CommissionPercent, DateTimeOffset ExpiresAt);
 
+/// <summary>An admin sends the influencer their referral link (and code) — the same thing their
+/// area shows, delivered so it can be forwarded from the inbox.</summary>
 public record AmbassadorLinkEmailModel(string Name, string ReferralUrl, string Code, decimal CommissionPercent, string DashboardUrl, string? Note);
+
+/// <summary>To Finance and SuperAdmins: an influencer asked to be paid what they are owed.</summary>
+public record WithdrawalRequestedEmailModel(string InfluencerName, string Amount, string? Note, string AdminUrl);
+
+/// <summary>To the influencer: the House has sent the transfer.</summary>
+public record WithdrawalPaidEmailModel(string Name, string Amount, string? Reference, string DashboardUrl);
+
+/// <summary>To the influencer: their withdrawal request was declined, and why.</summary>
+public record WithdrawalRejectedEmailModel(string Name, string Amount, string Reason, string DashboardUrl);
+
+/// <summary>To the content staff: an influencer sent an article for review.</summary>
+public record JournalSubmittedEmailModel(string InfluencerName, string Title, string AdminUrl);
+
+/// <summary>To the influencer: the editors sent their article back with a note.</summary>
+public record JournalChangesRequestedEmailModel(string Name, string Title, string Note, string WriterUrl);
+
+/// <summary>To the influencer: their article is live.</summary>
+public record JournalPublishedEmailModel(string Name, string Title, string PostUrl);
 
 /// <summary>Sent when an existing SuperAdmin creates a staff account. Carries the one-time link the
 /// new admin uses to set a password; no credential is ever emailed, and the account cannot be used

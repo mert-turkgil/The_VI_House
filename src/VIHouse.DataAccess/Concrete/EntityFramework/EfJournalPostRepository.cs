@@ -35,6 +35,12 @@ public class EfJournalPostRepository(VIHouseDbContext db) : EfRepository<Journal
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync(ct);
 
+    public async Task<List<JournalPost>> GetByAuthorAsync(Guid authorUserId, CancellationToken ct = default) =>
+        await Set.Include(p => p.Translations)
+            .Where(p => p.AuthorUserId == authorUserId)
+            .OrderByDescending(p => p.CreatedAt)
+            .ToListAsync(ct);
+
     public Task<JournalPost?> GetWithDetailAsync(Guid id, CancellationToken ct = default) =>
         Set.Include(p => p.Translations)
             .Include(p => p.Media)

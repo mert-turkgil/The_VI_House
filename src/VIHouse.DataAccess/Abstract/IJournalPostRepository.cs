@@ -20,11 +20,14 @@ public interface IJournalPostRepository : IRepository<JournalPost>
     /// <summary>Everything the admin index needs, newest first.</summary>
     Task<List<JournalPost>> GetAllWithTranslationsAsync(CancellationToken ct = default);
 
+    /// <summary>One author's posts with their copy, newest first — the influencer's journal list.</summary>
+    Task<List<JournalPost>> GetByAuthorAsync(Guid authorUserId, CancellationToken ct = default);
+
     /// <summary>The full graph — copy and files — for the admin editor and for every mutation that
     /// has to reason about both, which is all of them once media is involved.</summary>
     Task<JournalPost?> GetWithDetailAsync(Guid id, CancellationToken ct = default);
 
-    /// <summary>Resolves the post that owns one media row, for the public streaming endpoint.</summary>
+    /// <summary>One media row, for the streaming endpoint (which then asks who may see its post).</summary>
     Task<JournalPostMedia?> GetMediaAsync(Guid mediaId, CancellationToken ct = default);
 
     /// <summary>
