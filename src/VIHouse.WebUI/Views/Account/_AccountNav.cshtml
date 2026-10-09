@@ -26,6 +26,7 @@
     {
         "Profile" => Loc["Account.NavProfile"].Value,
         "Membership" => Loc["Account.NavMembership"].Value,
+        "Benefits" => Loc["Benefits.Nav"].Value,
         "Bookings" => Loc["Account.NavBookings"].Value,
         "Sessions" => Loc["Account.NavSessions"].Value,
         "Payments" => Loc["Account.NavPayments"].Value,
@@ -60,6 +61,12 @@
         <a class="account-manage__link @NavClass("Membership")" asp-controller="Account" asp-action="Membership">
             <span class="account-manage__icon"><partial name="_Icon" model='@("layers")' /></span><span>@Loc["Account.NavMembership"]</span>
         </a>
+        @if (hasMembership)
+        {
+            <a class="account-manage__link @NavClass("Benefits")" asp-controller="Account" asp-action="Benefits">
+                <span class="account-manage__icon"><partial name="_Icon" model='@("award")' /></span><span>@Loc["Benefits.Nav"]</span>
+            </a>
+        }
         <a class="account-manage__link @NavClass("Bookings")" asp-controller="Account" asp-action="Bookings">
             <span class="account-manage__icon"><partial name="_Icon" model='@("sparkles")' /></span><span>@Loc["Account.NavBookings"]</span>
         </a>

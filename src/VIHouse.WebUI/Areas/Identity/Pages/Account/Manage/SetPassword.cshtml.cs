@@ -19,13 +19,16 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IStringLocalizer<SharedResource> _loc;
+        private readonly VIHouse.Business.Abstract.ISecurityAlertService _securityAlerts;
 
         public SetPasswordModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IStringLocalizer<SharedResource> loc)
+            IStringLocalizer<SharedResource> loc,
+            VIHouse.Business.Abstract.ISecurityAlertService securityAlerts)
         {
             _loc = loc;
+            _securityAlerts = securityAlerts;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -110,6 +113,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             }
 
             await _signInManager.RefreshSignInAsync(user);
+            await _securityAlerts.PasswordChangedAsync(user.Id, HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
             StatusMessage = _loc["Manage.SetPassword.Done"].Value;
 
             return RedirectToPage();

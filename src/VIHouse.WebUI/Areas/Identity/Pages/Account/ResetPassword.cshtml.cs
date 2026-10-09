@@ -23,10 +23,12 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
     public class ResetPasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly VIHouse.Business.Abstract.ISecurityAlertService _securityAlerts;
 
-        public ResetPasswordModel(UserManager<ApplicationUser> userManager)
+        public ResetPasswordModel(UserManager<ApplicationUser> userManager, VIHouse.Business.Abstract.ISecurityAlertService securityAlerts)
         {
             _userManager = userManager;
+            _securityAlerts = securityAlerts;
         }
 
         /// <summary>
@@ -146,6 +148,11 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                     user.EmailConfirmed = true;
                     await _userManager.UpdateAsync(user);
                 }
+
+                // A reset of an existing password is the one change an account owner most needs to
+                // hear about if it was not them. Choosing the first password needs no alert.
+                if (!hadNoPassword)
+                    await _securityAlerts.PasswordChangedAsync(user.Id, HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString());
 
                 return RedirectToPage("./ResetPasswordConfirmation");
             }

@@ -1829,3 +1829,48 @@
 .table-scroll {
   overflow-x: auto;
 }
+
+// --- Founder badge and notes ---------------------------------------------------------------------
+// The Founder mark sits beside a name (account header, member card, directory, benefits title).
+// Gold on deep green, the same pairing as the membership grant, so it reads as part of the family.
+
+.founder-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 3px 10px 3px 8px;
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-green-900);
+  color: var(--vih-gold-light);
+  font-family: var(--vih-font-sans);
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: middle;
+
+  .icon {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// A quiet callout inside the account content — Founder perks, a stream that opens later.
+.account-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: baseline;
+  margin: 0 0 var(--vih-space-md);
+  padding: var(--vih-space-sm) var(--vih-space-md);
+  border-left: 3px solid var(--vih-gold);
+  border-radius: 0 var(--vih-radius-md) var(--vih-radius-md) 0;
+  background: var(--vih-surface-sunken);
+  color: var(--vih-text-secondary);
+  font-size: var(--vih-text-sm);
+
+  strong {
+    color: var(--vih-green-900);
+  }
+}

@@ -1982,4 +1982,79 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Experiences.Facts.Status" xml:space="preserve"><value>Durum</value></data>
   <data name="Card.Error.NoMembership" xml:space="preserve"><value>Henüz aktif bir üyeliğiniz yok.</value></data>
   <data name="Card.Error.NotInPlan" xml:space="preserve"><value>Dijital kart {0} kapsamında değil.</value></data>
+  <data name="Email.RoleChanged.Subject" xml:space="preserve"><value>VI House hesap erişiminiz değişti</value></data>
+  <data name="Email.RoleChanged.Preheader" xml:space="preserve"><value>Bir yönetici hesabınızdaki rolleri güncelledi.</value></data>
+  <data name="Email.RoleChanged.Eyebrow" xml:space="preserve"><value>Hesap güncellemesi</value></data>
+  <data name="Email.RoleChanged.Heading" xml:space="preserve"><value>Erişiminiz değişti</value></data>
+  <data name="Email.RoleChanged.Body" xml:space="preserve"><value>The VI House'taki bir yönetici hesabınızın yetkilerini değiştirdi. Değişiklik birkaç dakika içinde geçerli olur; çıkış yapıp yeniden giriş yaparsanız hemen uygulanır.</value></data>
+  <data name="Email.RoleChanged.AddedLabel" xml:space="preserve"><value>Eklenen</value></data>
+  <data name="Email.RoleChanged.RemovedLabel" xml:space="preserve"><value>Kaldırılan</value></data>
+  <data name="Email.RoleChanged.IfUnexpected" xml:space="preserve"><value>Bunu beklemiyorduysanız bu e-postayı yanıtlayın, bir yetkili ilgilenecektir.</value></data>
+  <data name="Email.RoleChanged.Button" xml:space="preserve"><value>Hesabımı aç</value></data>
+  <data name="Email.FounderWelcome.Subject" xml:space="preserve"><value>Hoş geldiniz, Kurucu Üye</value></data>
+  <data name="Email.FounderWelcome.Preheader" xml:space="preserve"><value>The VI House'a en başından katıldınız — teşekkür ederiz.</value></data>
+  <data name="Email.FounderWelcome.Heading" xml:space="preserve"><value>Artık bir Kurucu Üyesiniz</value></data>
+  <data name="Email.FounderWelcome.Body" xml:space="preserve"><value>The VI House'a lansman döneminde katıldınız; bu nedenle hesabınız artık kalıcı olarak Kurucu Üye statüsü taşıyor. Bu, en başından beri bizimle olanlara teşekkür etme şeklimiz.</value></data>
+  <data name="Email.FounderWelcome.Body2" xml:space="preserve"><value>Kurucu Üyeler, House büyüdükçe ek ayrıcalıklar kazanır. Üyeliğinizin kapsadığı her şey ve tüm Kurucu Üye ayrıcalıkları avantajlar sayfanızda listelenir.</value></data>
+  <data name="Email.FounderWelcome.Button" xml:space="preserve"><value>Avantajlarımı gör</value></data>
+  <data name="Email.FounderWelcome.Signoff" xml:space="preserve"><value>Bize erkenden inandığınız için teşekkür ederiz.</value></data>
+  <data name="Roles.SuperAdmin" xml:space="preserve"><value>Süper yönetici</value></data>
+  <data name="Roles.Editor" xml:space="preserve"><value>Editör</value></data>
+  <data name="Roles.EventManager" xml:space="preserve"><value>Etkinlik yöneticisi</value></data>
+  <data name="Roles.Finance" xml:space="preserve"><value>Finans</value></data>
+  <data name="Roles.Marketing" xml:space="preserve"><value>Pazarlama</value></data>
+  <data name="Roles.Concierge" xml:space="preserve"><value>Konsiyerj</value></data>
+  <data name="Roles.Support" xml:space="preserve"><value>Destek</value></data>
+  <data name="Roles.Member" xml:space="preserve"><value>Üye</value></data>
+  <data name="Roles.Ambassador" xml:space="preserve"><value>Elçi</value></data>
+  <data name="Roles.Founder" xml:space="preserve"><value>Kurucu Üye</value></data>
+  <data name="Admin.Seminar.MembersOpenAt" xml:space="preserve"><value>Üyeler şu tarihten itibaren kaydolabilir (UTC)</value></data>
+  <data name="Admin.Seminar.MembersOpenAt.Hint" xml:space="preserve"><value>Boş = hemen. Kurucu Üyeler, Kurucular bölümünde belirlenen erken erişim günleri kadar önce katılabilir.</value></data>
+  <data name="Benefits.Nav" xml:space="preserve"><value>Avantajlarım</value></data>
+  <data name="Benefits.Title" xml:space="preserve"><value>Üyelik avantajlarınız</value></data>
+  <data name="Benefits.Lede" xml:space="preserve"><value>{0} üyeliğinizin sizin için ücretsiz ya da indirimli kıldığı yaklaşan her şey ve her birinde nerede olduğunuz.</value></data>
+  <data name="Benefits.LedeNoMembership" xml:space="preserve"><value>Üyelik, oturumları ücretsiz ve deneyimleri daha uygun hale getirir. Bir üyeliğin neleri kapsayacağı burada.</value></data>
+  <data name="Benefits.Stat.Included" xml:space="preserve"><value>Dahil</value></data>
+  <data name="Benefits.Stat.Discounted" xml:space="preserve"><value>Üye fiyatı</value></data>
+  <data name="Benefits.NoMembership.Heading" xml:space="preserve"><value>Aktif üyelik yok</value></data>
+  <data name="Benefits.NoMembership.Body" xml:space="preserve"><value>Üyeler dahil olan oturum ve deneyimlere tek tıkla katılır, diğerlerinde üye fiyatı öder.</value></data>
+  <data name="Benefits.Founder.Heading" xml:space="preserve"><value>Kurucu Üye ayrıcalıkları:</value></data>
+  <data name="Benefits.Founder.Discount" xml:space="preserve"><value>ücretli oturum ve biletlerde ek %{0} indirim</value></data>
+  <data name="Benefits.Founder.EarlyAccess" xml:space="preserve"><value>diğer üyelerden {0} gün önce katılım</value></data>
+  <data name="Benefits.Sessions" xml:space="preserve"><value>Oturumlar</value></data>
+  <data name="Benefits.Sessions.Empty" xml:space="preserve"><value>Şu anda planınız için ücretsiz veya indirimli yaklaşan oturum yok.</value></data>
+  <data name="Benefits.Experiences" xml:space="preserve"><value>Deneyimler</value></data>
+  <data name="Benefits.Experiences.Empty" xml:space="preserve"><value>Şu anda planınıza dahil veya indirimli yaklaşan deneyim yok.</value></data>
+  <data name="Benefits.OnDemand" xml:space="preserve"><value>İsteğe bağlı</value></data>
+  <data name="Benefits.Streamed" xml:space="preserve"><value>Canlı yayınlanır</value></data>
+  <data name="Benefits.Badge.Free" xml:space="preserve"><value>Üyelikle ücretsiz</value></data>
+  <data name="Benefits.Badge.Included" xml:space="preserve"><value>Dahil — ücretsiz katılın</value></data>
+  <data name="Benefits.Badge.Discount" xml:space="preserve"><value>%{0} indirim · {1}</value></data>
+  <data name="Benefits.Badge.DiscountFrom" xml:space="preserve"><value>%{0} indirim · {1}'den başlayan</value></data>
+  <data name="Benefits.State.In" xml:space="preserve"><value>Kaydınız var</value></data>
+  <data name="Benefits.State.Pending" xml:space="preserve"><value>Ödeme onaylanıyor</value></data>
+  <data name="Benefits.State.Full" xml:space="preserve"><value>Kontenjan doldu</value></data>
+  <data name="Benefits.State.OpensOn" xml:space="preserve"><value>{0} UTC tarihinde size açılır</value></data>
+  <data name="Benefits.State.NotOpen" xml:space="preserve"><value>Henüz açık değil</value></data>
+  <data name="Benefits.State.Available" xml:space="preserve"><value>Açık — yerinizi alın</value></data>
+  <data name="Benefits.State.JoinFree" xml:space="preserve"><value>Açık — tek tıkla katılın</value></data>
+  <data name="Benefits.State.Apply" xml:space="preserve"><value>Katılmak için başvurun</value></data>
+  <data name="Benefits.Teaser" xml:space="preserve"><value>Yaklaşan {0} dahil ve {1} üye fiyatlı etkinlik — avantajlarınızı görün</value></data>
+  <data name="Benefits.Door.Body" xml:space="preserve"><value>Planınızın ücretsiz veya daha uygun kıldığı her şey.</value></data>
+  <data name="Founder.Badge.Title" xml:space="preserve"><value>The VI House'a lansmanda katıldı</value></data>
+  <data name="Experiences.Stream.Heading" xml:space="preserve"><value>Canlı yayını izleyin</value></data>
+  <data name="Experiences.Stream.Private" xml:space="preserve"><value>Bu yayın onaylı katılımcılar içindir — lütfen bağlantıyı paylaşmayın.</value></data>
+  <data name="Experiences.Stream.OpensAt" xml:space="preserve"><value>Canlı yayın {0} UTC'de, başlangıçtan bir saat önce burada açılır.</value></data>
+  <data name="Experiences.Stream.AfterConfirm" xml:space="preserve"><value>Rezervasyonunuz onaylandığında canlı yayın burada açılır.</value></data>
+  <data name="Experiences.Stream.ForAttendees" xml:space="preserve"><value>Onaylı katılımcılar için bu sayfada canlı yayınlanır.</value></data>
+  <data name="Experiences.Join.OpensAt" xml:space="preserve"><value>Üyeler {0} UTC'den itibaren katılabilir.</value></data>
+  <data name="Experiences.Join.FoundersFrom" xml:space="preserve"><value>Kurucu Üyeler {0} UTC'den itibaren erken katılır.</value></data>
+  <data name="Seminars.Access.OpensAt.Heading" xml:space="preserve"><value>{0} UTC'de üyelere açılır</value></data>
+  <data name="Seminars.Access.OpensAt.Body" xml:space="preserve"><value>Yerinizi almak için o zaman tekrar gelin.</value></data>
+  <data name="Seminars.Access.FounderExtra" xml:space="preserve"><value>Kurucu Üye ek indiriminiz %{0} dahildir.</value></data>
+  <data name="Streams.Heading" xml:space="preserve"><value>Canlı yayınlarınız</value></data>
+  <data name="Streams.Lede" xml:space="preserve"><value>Yeriniz olan deneyim ve oturumlar, canlı oldukları sürece burada yayınlanır.</value></data>
+  <data name="Streams.Kind.Experience" xml:space="preserve"><value>Deneyim</value></data>
+  <data name="Streams.Kind.Session" xml:space="preserve"><value>Oturum</value></data>
+  <data name="Streams.OpensAt" xml:space="preserve"><value>Yayın {0} UTC'de açılır.</value></data>
 </root>

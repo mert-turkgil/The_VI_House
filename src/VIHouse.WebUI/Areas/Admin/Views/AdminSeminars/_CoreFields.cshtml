@@ -104,6 +104,12 @@
     <span asp-validation-for="MemberDiscountPercent" class="field-validation-error"></span>
 </div>
 
+<div class="admin-field" style="max-width:320px;">
+    <label asp-for="MembersOpenAtUtc">@Loc["Admin.Seminar.MembersOpenAt"]</label>
+    <input asp-for="MembersOpenAtUtc" type="datetime-local" />
+    <p class="admin-field__hint">@Loc["Admin.Seminar.MembersOpenAt.Hint"]</p>
+</div>
+
 <div class="admin-field">
     <label asp-for="SortOrder"></label>
     <input asp-for="SortOrder" type="number" />

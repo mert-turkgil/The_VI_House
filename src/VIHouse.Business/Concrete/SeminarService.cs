@@ -28,6 +28,7 @@ public class SeminarService(
     IRepository<SeminarTranslation> translations,
     IRepository<SeminarMedia> mediaRows,
     IMembershipService membershipService,
+    IFounderService founders,
     IProfileRepository profiles,
     IPaymentProvider paymentProvider,
     IMediaStorage mediaStorage,
@@ -100,29 +101,52 @@ public class SeminarService(
 
         // The "free if you're subscribed" rule. Read live rather than from a claim, so a lapsed
         // membership stops covering seminars the moment it lapses rather than at next sign-in.
-        var entitlements = (seminar.IncludedWithMembership || seminar.MemberDiscountPercent > 0)
+        var perks = await founders.GetPerksAsync(userId, ct);
+        var entitlements = (seminar.IncludedWithMembership || seminar.MemberDiscountPercent > 0 || perks.ExtraDiscount > 0)
             ? await membershipService.GetEntitlementsAsync(userId.Value, ct)
             : null;
         var isMember = entitlements is not null;
 
         // The free seat is a tier feature (MembershipPlan.IncludesSessions); a member on a tier
         // without it is still a member for the discount below, just not for the free seat.
-        if (seminar.IncludedWithMembership && isMember && entitlements!.Sessions)
+        var included = seminar.IncludedWithMembership && isMember && entitlements!.Sessions;
+        var discount = isMember ? MemberPricing.Combined(seminar.MemberDiscountPercent, perks.ExtraDiscount) : 0;
+
+        // Members-open date: it holds back the member benefit (the free seat or the member price),
+        // not the session — anyone without a membership goes on to the ordinary price below. A
+        // Founder gets in early, but only while they hold a current membership (checked above).
+        if ((included || discount > 0) && seminar.MembersOpenAtUtc is { } membersOpen
+            && perks.OpensAtFor(membersOpen) is { } opensAt && DateTimeOffset.UtcNow < opensAt)
+            return new SeminarAccessInfo(SeminarAccessOutcome.NotOpen, seminar.PriceMinor, seminar.Currency, seatsRemaining)
+            {
+                OpensAtUtc = opensAt,
+                FounderOpensAtUtc = perks.IsFounder ? null : await FounderOpensAtAsync(membersOpen, ct),
+            };
+
+        if (included)
             return new SeminarAccessInfo(SeminarAccessOutcome.IncludedInMembership, seminar.PriceMinor, seminar.Currency, seatsRemaining) { ProfileIncomplete = profileIncomplete };
 
         // Not covered, but a member: the member price. PriceMinor on the result is what they pay,
         // and EnrolAsync charges exactly that figure.
-        if (isMember && seminar.MemberDiscountPercent > 0)
+        if (discount > 0)
         {
-            return new SeminarAccessInfo(SeminarAccessOutcome.RequiresPayment, MemberPricing.Apply(seminar.PriceMinor, seminar.MemberDiscountPercent), seminar.Currency, seatsRemaining)
+            return new SeminarAccessInfo(SeminarAccessOutcome.RequiresPayment, MemberPricing.Apply(seminar.PriceMinor, discount), seminar.Currency, seatsRemaining)
             {
                 ProfileIncomplete = profileIncomplete,
-                MemberDiscountPercent = seminar.MemberDiscountPercent,
+                MemberDiscountPercent = discount,
+                FounderExtraPercent = perks.ExtraDiscount,
                 FullPriceMinor = seminar.PriceMinor,
             };
         }
 
         return new SeminarAccessInfo(SeminarAccessOutcome.RequiresPayment, seminar.PriceMinor, seminar.Currency, seatsRemaining) { ProfileIncomplete = profileIncomplete };
+    }
+
+    /// <summary>When Founders may enrol, for the "Founders get in early" line non-Founders see.</summary>
+    private async Task<DateTimeOffset?> FounderOpensAtAsync(DateTimeOffset membersOpen, CancellationToken ct)
+    {
+        var programme = await founders.GetProgrammeAsync(ct);
+        return programme.EarlyAccessDays > 0 ? membersOpen.AddDays(-programme.EarlyAccessDays) : null;
     }
 
     public async Task<List<Seminar>> GetEnrolledSeminarsAsync(Guid userId, CancellationToken ct = default)
@@ -593,6 +617,7 @@ public class SeminarService(
         existing.Currency = updated.Currency;
         existing.IncludedWithMembership = updated.IncludedWithMembership;
         existing.MemberDiscountPercent = updated.MemberDiscountPercent;
+        existing.MembersOpenAtUtc = updated.MembersOpenAtUtc;
         existing.SortOrder = updated.SortOrder;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
 

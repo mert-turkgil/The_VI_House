@@ -31,6 +31,10 @@
                     <div>
                         <div class="member-pass__tier">@Model.PlanName</div>
                         <div class="member-pass__name">@Model.FullName</div>
+                        @if (Model.ShowFounderBadge)
+                        {
+                            <div class="member-pass__tier"><partial name="_FounderBadge" /></div>
+                        }
                     </div>
                     <dl class="member-pass__facts">
                         <div>

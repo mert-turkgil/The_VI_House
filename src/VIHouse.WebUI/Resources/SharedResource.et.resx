@@ -1982,4 +1982,79 @@ Mida soovite teada?</value></data>
   <data name="Experiences.Facts.Status" xml:space="preserve"><value>Olek</value></data>
   <data name="Card.Error.NoMembership" xml:space="preserve"><value>Teil pole veel aktiivset liikmesust.</value></data>
   <data name="Card.Error.NotInPlan" xml:space="preserve"><value>Digitaalne kaart ei kuulu paketti {0}.</value></data>
+  <data name="Email.RoleChanged.Subject" xml:space="preserve"><value>Teie VI House'i konto juurdepääs on muutunud</value></data>
+  <data name="Email.RoleChanged.Preheader" xml:space="preserve"><value>Administraator uuendas teie konto rolle.</value></data>
+  <data name="Email.RoleChanged.Eyebrow" xml:space="preserve"><value>Konto uuendus</value></data>
+  <data name="Email.RoleChanged.Heading" xml:space="preserve"><value>Teie juurdepääs on muutunud</value></data>
+  <data name="Email.RoleChanged.Body" xml:space="preserve"><value>The VI House'i administraator muutis, mida teie konto teha saab. Muudatus jõustub mõne minuti jooksul; välja- ja uuesti sisselogimisel kohe.</value></data>
+  <data name="Email.RoleChanged.AddedLabel" xml:space="preserve"><value>Lisatud</value></data>
+  <data name="Email.RoleChanged.RemovedLabel" xml:space="preserve"><value>Eemaldatud</value></data>
+  <data name="Email.RoleChanged.IfUnexpected" xml:space="preserve"><value>Kui te seda ei oodanud, vastake sellele kirjale ja keegi vaatab asja üle.</value></data>
+  <data name="Email.RoleChanged.Button" xml:space="preserve"><value>Ava minu konto</value></data>
+  <data name="Email.FounderWelcome.Subject" xml:space="preserve"><value>Tere tulemast, asutajaliige</value></data>
+  <data name="Email.FounderWelcome.Preheader" xml:space="preserve"><value>Liitusite The VI House'iga päris alguses — aitäh.</value></data>
+  <data name="Email.FounderWelcome.Heading" xml:space="preserve"><value>Te olete asutajaliige</value></data>
+  <data name="Email.FounderWelcome.Body" xml:space="preserve"><value>Liitusite The VI House'iga selle avamise ajal, seega kannab teie konto nüüd alaliselt asutajaliikme staatust. Nii tunnustame neid, kes olid meiega päris algusest.</value></data>
+  <data name="Email.FounderWelcome.Body2" xml:space="preserve"><value>Asutajaliikmed saavad House'i kasvades lisahüvesid. Kõik, mida teie liikmesus sisaldab — ja iga asutajaliikme lisahüve — on loetletud teie hüvede lehel.</value></data>
+  <data name="Email.FounderWelcome.Button" xml:space="preserve"><value>Vaata minu hüvesid</value></data>
+  <data name="Email.FounderWelcome.Signoff" xml:space="preserve"><value>Aitäh, et uskusite meisse varakult.</value></data>
+  <data name="Roles.SuperAdmin" xml:space="preserve"><value>Superadministraator</value></data>
+  <data name="Roles.Editor" xml:space="preserve"><value>Toimetaja</value></data>
+  <data name="Roles.EventManager" xml:space="preserve"><value>Ürituste juht</value></data>
+  <data name="Roles.Finance" xml:space="preserve"><value>Rahandus</value></data>
+  <data name="Roles.Marketing" xml:space="preserve"><value>Turundus</value></data>
+  <data name="Roles.Concierge" xml:space="preserve"><value>Konsjerž</value></data>
+  <data name="Roles.Support" xml:space="preserve"><value>Tugi</value></data>
+  <data name="Roles.Member" xml:space="preserve"><value>Liige</value></data>
+  <data name="Roles.Ambassador" xml:space="preserve"><value>Saadik</value></data>
+  <data name="Roles.Founder" xml:space="preserve"><value>Asutajaliige</value></data>
+  <data name="Admin.Seminar.MembersOpenAt" xml:space="preserve"><value>Liikmed saavad registreeruda alates (UTC)</value></data>
+  <data name="Admin.Seminar.MembersOpenAt.Hint" xml:space="preserve"><value>Tühi = kohe. Asutajaliikmed pääsevad sisse varem, asutajate all määratud varajase juurdepääsu päevade võrra.</value></data>
+  <data name="Benefits.Nav" xml:space="preserve"><value>Minu hüved</value></data>
+  <data name="Benefits.Title" xml:space="preserve"><value>Teie liikmehüved</value></data>
+  <data name="Benefits.Lede" xml:space="preserve"><value>Kõik eelseisev, mille {0} teie jaoks tasuta või soodsamaks muudab — ja kus te igaühega olete.</value></data>
+  <data name="Benefits.LedeNoMembership" xml:space="preserve"><value>Liikmesus muudab sessioonid tasuta ja elamused soodsamaks. Siin on, mida see sisaldaks.</value></data>
+  <data name="Benefits.Stat.Included" xml:space="preserve"><value>Sisaldub</value></data>
+  <data name="Benefits.Stat.Discounted" xml:space="preserve"><value>Liikmehind</value></data>
+  <data name="Benefits.NoMembership.Heading" xml:space="preserve"><value>Kehtiv liikmesus puudub</value></data>
+  <data name="Benefits.NoMembership.Body" xml:space="preserve"><value>Liikmed liituvad sisalduvate sessioonide ja elamustega ühe klõpsuga ning maksavad ülejäänu eest liikmehinda.</value></data>
+  <data name="Benefits.Founder.Heading" xml:space="preserve"><value>Asutajaliikme lisahüved:</value></data>
+  <data name="Benefits.Founder.Discount" xml:space="preserve"><value>lisaks {0}% soodustust tasulistele sessioonidele ja piletitele</value></data>
+  <data name="Benefits.Founder.EarlyAccess" xml:space="preserve"><value>liitumine {0} päeva enne teisi liikmeid</value></data>
+  <data name="Benefits.Sessions" xml:space="preserve"><value>Sessioonid</value></data>
+  <data name="Benefits.Sessions.Empty" xml:space="preserve"><value>Praegu pole teie paketile tasuta ega soodushinnaga eelseisvaid sessioone.</value></data>
+  <data name="Benefits.Experiences" xml:space="preserve"><value>Elamused</value></data>
+  <data name="Benefits.Experiences.Empty" xml:space="preserve"><value>Praegu pole teie paketis sisalduvaid ega soodushinnaga eelseisvaid elamusi.</value></data>
+  <data name="Benefits.OnDemand" xml:space="preserve"><value>Tellitav</value></data>
+  <data name="Benefits.Streamed" xml:space="preserve"><value>Otseülekandega</value></data>
+  <data name="Benefits.Badge.Free" xml:space="preserve"><value>Liikmesusega tasuta</value></data>
+  <data name="Benefits.Badge.Included" xml:space="preserve"><value>Sisaldub — liitu tasuta</value></data>
+  <data name="Benefits.Badge.Discount" xml:space="preserve"><value>{0}% soodsam · {1}</value></data>
+  <data name="Benefits.Badge.DiscountFrom" xml:space="preserve"><value>{0}% soodsam · alates {1}</value></data>
+  <data name="Benefits.State.In" xml:space="preserve"><value>Olete kirjas</value></data>
+  <data name="Benefits.State.Pending" xml:space="preserve"><value>Makset kinnitatakse</value></data>
+  <data name="Benefits.State.Full" xml:space="preserve"><value>Täis</value></data>
+  <data name="Benefits.State.OpensOn" xml:space="preserve"><value>Avaneb teile {0} UTC</value></data>
+  <data name="Benefits.State.NotOpen" xml:space="preserve"><value>Veel avamata</value></data>
+  <data name="Benefits.State.Available" xml:space="preserve"><value>Avatud — võtke oma koht</value></data>
+  <data name="Benefits.State.JoinFree" xml:space="preserve"><value>Avatud — liitu ühe klõpsuga</value></data>
+  <data name="Benefits.State.Apply" xml:space="preserve"><value>Kandideeri osalemiseks</value></data>
+  <data name="Benefits.Teaser" xml:space="preserve"><value>Tulekul {0} sisalduvat ja {1} liikmehinnaga — vaata oma hüvesid</value></data>
+  <data name="Benefits.Door.Body" xml:space="preserve"><value>Kõik, mida teie pakett tasuta või soodsamaks teeb.</value></data>
+  <data name="Founder.Badge.Title" xml:space="preserve"><value>Liitus The VI House'iga avamisel</value></data>
+  <data name="Experiences.Stream.Heading" xml:space="preserve"><value>Vaata otseülekannet</value></data>
+  <data name="Experiences.Stream.Private" xml:space="preserve"><value>See ülekanne on kinnitatud osalejatele — palun ärge jagage linki.</value></data>
+  <data name="Experiences.Stream.OpensAt" xml:space="preserve"><value>Otseülekanne avaneb siin {0} UTC, tund enne algust.</value></data>
+  <data name="Experiences.Stream.AfterConfirm" xml:space="preserve"><value>Otseülekanne avaneb siin, kui teie broneering on kinnitatud.</value></data>
+  <data name="Experiences.Stream.ForAttendees" xml:space="preserve"><value>Kinnitatud osalejatele otseülekandena sellel lehel.</value></data>
+  <data name="Experiences.Join.OpensAt" xml:space="preserve"><value>Liikmed saavad liituda alates {0} UTC.</value></data>
+  <data name="Experiences.Join.FoundersFrom" xml:space="preserve"><value>Asutajaliikmed pääsevad varem, alates {0} UTC.</value></data>
+  <data name="Seminars.Access.OpensAt.Heading" xml:space="preserve"><value>Avaneb liikmetele {0} UTC</value></data>
+  <data name="Seminars.Access.OpensAt.Body" xml:space="preserve"><value>Tulge siis tagasi, et oma koht võtta.</value></data>
+  <data name="Seminars.Access.FounderExtra" xml:space="preserve"><value>Sisaldab teie asutajaliikme lisasoodustust {0}%.</value></data>
+  <data name="Streams.Heading" xml:space="preserve"><value>Teie otseülekanded</value></data>
+  <data name="Streams.Lede" xml:space="preserve"><value>Elamused ja sessioonid, kus teil on koht — kantakse siin üle, kuni need on otse-eetris.</value></data>
+  <data name="Streams.Kind.Experience" xml:space="preserve"><value>Elamus</value></data>
+  <data name="Streams.Kind.Session" xml:space="preserve"><value>Sessioon</value></data>
+  <data name="Streams.OpensAt" xml:space="preserve"><value>Ülekanne avaneb {0} UTC.</value></data>
 </root>

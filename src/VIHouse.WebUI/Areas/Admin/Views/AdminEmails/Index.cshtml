@@ -54,6 +54,46 @@
     failure stays on record marked as resent.
 </p>
 
+@if (!Model.ShowSms)
+{
+    <div class="admin-card" style="margin-bottom:16px;">
+        <h2 style="margin-top:0;">Mail server</h2>
+        @if (Model.SmtpSummary is { } summary)
+        {
+            <p class="admin-hint" style="margin-top:0;">Sending through <code>@summary</code>.</p>
+        }
+        @if (Model.SmtpProblems.Count > 0)
+        {
+            <div class="admin-status-message admin-status-message--error">
+                <strong>Email settings need attention.</strong>
+                <ul style="margin:6px 0 0 18px;">
+                    @foreach (var problem in Model.SmtpProblems)
+                    {
+                        <li>@problem</li>
+                    }
+                </ul>
+                <p style="margin:6px 0 0;">These come from the <code>Smtp</code> settings (in production: the <code>SMTP_*</code> secrets the deploy workflow writes). Fix them, redeploy, then send a test below.</p>
+            </div>
+        }
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+            <form asp-action="SendTest" method="post" style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+                <div class="admin-field" style="margin:0; min-width:260px;">
+                    <label for="test-to">Send a test email to</label>
+                    <input id="test-to" name="to" type="email" placeholder="your own address (default)" />
+                </div>
+                <button type="submit" class="admin-btn">Send test</button>
+            </form>
+            @if (Model.FailedCount > 0)
+            {
+                <form asp-action="RetryFailed" method="post"
+                      onsubmit="return confirm('Resend every failed email from the last 7 days?');">
+                    <button type="submit" class="admin-btn admin-btn--ghost">Retry failed (last 7 days)</button>
+                </form>
+            }
+        </div>
+    </div>
+}
+
 <div class="admin-toolbar">
     <a class="@ChannelClass(false)" asp-action="Index">Email</a>
     <a class="@ChannelClass(true)" asp-action="Index" asp-route-channel="sms">Text messages</a>
@@ -186,9 +226,13 @@ else
                         <td style="font-size:0.75rem;"><code>@row.TemplateKey</code></td>
                         <td><span class="@StatusBadge(row.Status)">@row.Status</span></td>
                         <td class="admin-table__actions">
-                            @if (row.ResentAt is { } resent)
+                            @if (row.ResentAt is { } resent && row.ErrorMessage?.StartsWith(VIHouse.Business.Concrete.OutboxProcessor.RetryingPrefix) == true)
                             {
-                                <span class="admin-badge admin-badge--draft" title="Resent @resent.ToString("d MMM yyyy HH:mm")">Resent</span>
+                                <span class="admin-badge admin-badge--draft" title="Tried again automatically by the outbox">Retried</span>
+                            }
+                            else if (row.ResentAt is { } resentAt)
+                            {
+                                <span class="admin-badge admin-badge--draft" title="Resent @resentAt.ToString("d MMM yyyy HH:mm")">Resent</span>
                             }
                             else if (row.Status == EmailStatus.Failed && !string.IsNullOrEmpty(row.Body))
                             {

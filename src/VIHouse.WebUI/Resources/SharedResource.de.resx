@@ -1982,4 +1982,79 @@ Was möchten Sie wissen?</value></data>
   <data name="Experiences.Facts.Status" xml:space="preserve"><value>Status</value></data>
   <data name="Card.Error.NoMembership" xml:space="preserve"><value>Sie haben noch keine aktive Mitgliedschaft.</value></data>
   <data name="Card.Error.NotInPlan" xml:space="preserve"><value>Die digitale Karte ist nicht Teil von {0}.</value></data>
+  <data name="Email.RoleChanged.Subject" xml:space="preserve"><value>Ihr Zugang zum VI House-Konto wurde geändert</value></data>
+  <data name="Email.RoleChanged.Preheader" xml:space="preserve"><value>Ein Administrator hat die Rollen Ihres Kontos aktualisiert.</value></data>
+  <data name="Email.RoleChanged.Eyebrow" xml:space="preserve"><value>Kontoaktualisierung</value></data>
+  <data name="Email.RoleChanged.Heading" xml:space="preserve"><value>Ihr Zugang wurde geändert</value></data>
+  <data name="Email.RoleChanged.Body" xml:space="preserve"><value>Ein Administrator von The VI House hat geändert, was Ihr Konto tun kann. Die Änderung wird innerhalb weniger Minuten wirksam; durch Ab- und erneutes Anmelden sofort.</value></data>
+  <data name="Email.RoleChanged.AddedLabel" xml:space="preserve"><value>Hinzugefügt</value></data>
+  <data name="Email.RoleChanged.RemovedLabel" xml:space="preserve"><value>Entfernt</value></data>
+  <data name="Email.RoleChanged.IfUnexpected" xml:space="preserve"><value>Falls Sie das nicht erwartet haben, antworten Sie auf diese E-Mail – jemand wird sich darum kümmern.</value></data>
+  <data name="Email.RoleChanged.Button" xml:space="preserve"><value>Mein Konto öffnen</value></data>
+  <data name="Email.FounderWelcome.Subject" xml:space="preserve"><value>Willkommen, Gründungsmitglied</value></data>
+  <data name="Email.FounderWelcome.Preheader" xml:space="preserve"><value>Sie sind The VI House ganz am Anfang beigetreten – danke.</value></data>
+  <data name="Email.FounderWelcome.Heading" xml:space="preserve"><value>Sie sind Gründungsmitglied</value></data>
+  <data name="Email.FounderWelcome.Body" xml:space="preserve"><value>Sie sind The VI House während des Starts beigetreten, daher trägt Ihr Konto nun dauerhaft den Gründerstatus. So würdigen wir die Menschen, die von Anfang an dabei waren.</value></data>
+  <data name="Email.FounderWelcome.Body2" xml:space="preserve"><value>Gründungsmitglieder erhalten zusätzliche Vorteile, während das House wächst. Alles, was Ihre Mitgliedschaft umfasst – und jedes Gründer-Extra – finden Sie auf Ihrer Vorteilsseite.</value></data>
+  <data name="Email.FounderWelcome.Button" xml:space="preserve"><value>Meine Vorteile ansehen</value></data>
+  <data name="Email.FounderWelcome.Signoff" xml:space="preserve"><value>Danke, dass Sie so früh an uns geglaubt haben.</value></data>
+  <data name="Roles.SuperAdmin" xml:space="preserve"><value>Super-Admin</value></data>
+  <data name="Roles.Editor" xml:space="preserve"><value>Redakteur</value></data>
+  <data name="Roles.EventManager" xml:space="preserve"><value>Eventmanager</value></data>
+  <data name="Roles.Finance" xml:space="preserve"><value>Finanzen</value></data>
+  <data name="Roles.Marketing" xml:space="preserve"><value>Marketing</value></data>
+  <data name="Roles.Concierge" xml:space="preserve"><value>Concierge</value></data>
+  <data name="Roles.Support" xml:space="preserve"><value>Support</value></data>
+  <data name="Roles.Member" xml:space="preserve"><value>Mitglied</value></data>
+  <data name="Roles.Ambassador" xml:space="preserve"><value>Botschafter</value></data>
+  <data name="Roles.Founder" xml:space="preserve"><value>Gründungsmitglied</value></data>
+  <data name="Admin.Seminar.MembersOpenAt" xml:space="preserve"><value>Mitglieder können sich anmelden ab (UTC)</value></data>
+  <data name="Admin.Seminar.MembersOpenAt.Hint" xml:space="preserve"><value>Leer = sofort. Gründungsmitglieder kommen um die unter „Gründer“ festgelegten Frühzugangstage früher hinein.</value></data>
+  <data name="Benefits.Nav" xml:space="preserve"><value>Meine Vorteile</value></data>
+  <data name="Benefits.Title" xml:space="preserve"><value>Ihre Mitgliedsvorteile</value></data>
+  <data name="Benefits.Lede" xml:space="preserve"><value>Alles Kommende, das {0} für Sie kostenlos oder günstiger macht – und wo Sie jeweils stehen.</value></data>
+  <data name="Benefits.LedeNoMembership" xml:space="preserve"><value>Eine Mitgliedschaft macht Sessions kostenlos und Experiences günstiger. Hier sehen Sie, was sie umfassen würde.</value></data>
+  <data name="Benefits.Stat.Included" xml:space="preserve"><value>Inklusive</value></data>
+  <data name="Benefits.Stat.Discounted" xml:space="preserve"><value>Mitgliederpreis</value></data>
+  <data name="Benefits.NoMembership.Heading" xml:space="preserve"><value>Keine aktive Mitgliedschaft</value></data>
+  <data name="Benefits.NoMembership.Body" xml:space="preserve"><value>Mitglieder nehmen mit einem Klick an inkludierten Sessions und Experiences teil und zahlen beim Rest Mitgliederpreise.</value></data>
+  <data name="Benefits.Founder.Heading" xml:space="preserve"><value>Gründer-Extras:</value></data>
+  <data name="Benefits.Founder.Discount" xml:space="preserve"><value>zusätzlich {0}% Rabatt auf kostenpflichtige Sessions und Tickets</value></data>
+  <data name="Benefits.Founder.EarlyAccess" xml:space="preserve"><value>Teilnahme {0} Tage vor anderen Mitgliedern</value></data>
+  <data name="Benefits.Sessions" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Benefits.Sessions.Empty" xml:space="preserve"><value>Derzeit gibt es keine kommenden Sessions, die für Ihren Plan kostenlos oder ermäßigt sind.</value></data>
+  <data name="Benefits.Experiences" xml:space="preserve"><value>Experiences</value></data>
+  <data name="Benefits.Experiences.Empty" xml:space="preserve"><value>Derzeit gibt es keine kommenden Experiences, die in Ihrem Plan enthalten oder ermäßigt sind.</value></data>
+  <data name="Benefits.OnDemand" xml:space="preserve"><value>On Demand</value></data>
+  <data name="Benefits.Streamed" xml:space="preserve"><value>Live übertragen</value></data>
+  <data name="Benefits.Badge.Free" xml:space="preserve"><value>Mit Mitgliedschaft kostenlos</value></data>
+  <data name="Benefits.Badge.Included" xml:space="preserve"><value>Inklusive – kostenlos teilnehmen</value></data>
+  <data name="Benefits.Badge.Discount" xml:space="preserve"><value>{0}% Rabatt · {1}</value></data>
+  <data name="Benefits.Badge.DiscountFrom" xml:space="preserve"><value>{0}% Rabatt · ab {1}</value></data>
+  <data name="Benefits.State.In" xml:space="preserve"><value>Sie sind dabei</value></data>
+  <data name="Benefits.State.Pending" xml:space="preserve"><value>Zahlung wird bestätigt</value></data>
+  <data name="Benefits.State.Full" xml:space="preserve"><value>Ausgebucht</value></data>
+  <data name="Benefits.State.OpensOn" xml:space="preserve"><value>Für Sie geöffnet ab {0} UTC</value></data>
+  <data name="Benefits.State.NotOpen" xml:space="preserve"><value>Noch nicht geöffnet</value></data>
+  <data name="Benefits.State.Available" xml:space="preserve"><value>Offen – sichern Sie sich Ihren Platz</value></data>
+  <data name="Benefits.State.JoinFree" xml:space="preserve"><value>Offen – mit einem Klick teilnehmen</value></data>
+  <data name="Benefits.State.Apply" xml:space="preserve"><value>Zur Teilnahme bewerben</value></data>
+  <data name="Benefits.Teaser" xml:space="preserve"><value>{0} inklusive und {1} zum Mitgliederpreis demnächst – Ihre Vorteile ansehen</value></data>
+  <data name="Benefits.Door.Body" xml:space="preserve"><value>Alles, was Ihr Plan kostenlos oder günstiger macht.</value></data>
+  <data name="Founder.Badge.Title" xml:space="preserve"><value>Seit dem Start bei The VI House</value></data>
+  <data name="Experiences.Stream.Heading" xml:space="preserve"><value>Livestream ansehen</value></data>
+  <data name="Experiences.Stream.Private" xml:space="preserve"><value>Dieser Stream ist für bestätigte Teilnehmende – bitte teilen Sie den Link nicht.</value></data>
+  <data name="Experiences.Stream.OpensAt" xml:space="preserve"><value>Der Livestream öffnet hier am {0} UTC, eine Stunde vor Beginn.</value></data>
+  <data name="Experiences.Stream.AfterConfirm" xml:space="preserve"><value>Der Livestream wird hier freigeschaltet, sobald Ihre Buchung bestätigt ist.</value></data>
+  <data name="Experiences.Stream.ForAttendees" xml:space="preserve"><value>Für bestätigte Teilnehmende live auf dieser Seite übertragen.</value></data>
+  <data name="Experiences.Join.OpensAt" xml:space="preserve"><value>Mitglieder können ab {0} UTC teilnehmen.</value></data>
+  <data name="Experiences.Join.FoundersFrom" xml:space="preserve"><value>Gründungsmitglieder sind früher dabei, ab {0} UTC.</value></data>
+  <data name="Seminars.Access.OpensAt.Heading" xml:space="preserve"><value>Für Mitglieder geöffnet ab {0} UTC</value></data>
+  <data name="Seminars.Access.OpensAt.Body" xml:space="preserve"><value>Kommen Sie dann wieder, um Ihren Platz zu sichern.</value></data>
+  <data name="Seminars.Access.FounderExtra" xml:space="preserve"><value>Inklusive Ihres Gründer-Extras von {0}%.</value></data>
+  <data name="Streams.Heading" xml:space="preserve"><value>Ihre Livestreams</value></data>
+  <data name="Streams.Lede" xml:space="preserve"><value>Experiences und Sessions, für die Sie einen Platz haben – hier übertragen, solange sie live sind.</value></data>
+  <data name="Streams.Kind.Experience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Streams.Kind.Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Streams.OpensAt" xml:space="preserve"><value>Stream öffnet {0} UTC.</value></data>
 </root>

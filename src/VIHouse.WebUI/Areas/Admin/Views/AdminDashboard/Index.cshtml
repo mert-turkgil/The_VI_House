@@ -83,19 +83,46 @@
 
 <section class="admin-dashboard-hero" data-reveal>
     <div class="admin-dashboard-hero__content">
-        <span class="admin-eyebrow">Today at a glance</span>
-        <h2>Give your team one clear place to track approvals, bookings, revenue and publishing.</h2>
-        <p>Every key workflow is surfaced as a card, chart or status summary so non-technical operators can see what needs attention immediately.</p>
+        <span class="admin-eyebrow">Today at a glance@(Model.RoleLabels.Count > 0 ? $" · {string.Join(", ", Model.RoleLabels)}" : "")</span>
+        <h2>@(string.IsNullOrWhiteSpace(Model.FirstName) ? "Welcome back." : $"Welcome back, {Model.FirstName}.")</h2>
+        <p>This page shows the parts of the House your role looks after — what needs attention first, then how things are trending.</p>
     </div>
     <div class="admin-dashboard-hero__summary">
-        <div class="admin-dashboard-hero__pill">
-            <strong>@Model.TotalApplications</strong>
-            <span>Total applications</span>
-        </div>
-        <div class="admin-dashboard-hero__pill">
-            <strong>@confirmedBookings</strong>
-            <span>Confirmed bookings</span>
-        </div>
+        @if (Model.CanSeeApplications)
+        {
+            <div class="admin-dashboard-hero__pill">
+                <strong>@Model.TotalApplications</strong>
+                <span>Total applications</span>
+            </div>
+        }
+        @if (Model.CanSeeBookings)
+        {
+            <div class="admin-dashboard-hero__pill">
+                <strong>@confirmedBookings</strong>
+                <span>Confirmed bookings</span>
+            </div>
+        }
+        @if (Model.Events is { } heroEvents)
+        {
+            <div class="admin-dashboard-hero__pill">
+                <strong>@heroEvents.Upcoming.Count</strong>
+                <span>Upcoming in 60 days</span>
+            </div>
+        }
+        @if (Model.Users is { } heroUsers)
+        {
+            <div class="admin-dashboard-hero__pill">
+                <strong>@heroUsers.NewSince</strong>
+                <span>New accounts this week</span>
+            </div>
+        }
+        @if (Model.Content is { } heroContent)
+        {
+            <div class="admin-dashboard-hero__pill">
+                <strong>@heroContent.Drafts</strong>
+                <span>Draft articles</span>
+            </div>
+        }
         @if (money is not null)
         {
             <div class="admin-dashboard-hero__pill">
@@ -106,19 +133,53 @@
     </div>
  </section>
 
+@if (Model.Comms is { } comms && (comms.SmtpProblems.Count > 0 || comms.FailedEmailsLast7Days > 0))
+{
+    <div class="admin-status-message admin-status-message--error" data-reveal>
+        <strong>Email needs attention.</strong>
+        @if (comms.SmtpProblems.Count > 0)
+        {
+            @comms.SmtpProblems[0]
+        }
+        @if (comms.FailedEmailsLast7Days > 0)
+        {
+            @: @comms.FailedEmailsLast7Days email@(comms.FailedEmailsLast7Days == 1 ? "" : "s") failed in the last 7 days (@comms.SentEmailsLast7Days sent).
+        }
+        <a asp-controller="AdminEmails" asp-action="Index">Open Emails &amp; SMS</a> to send a test and retry.
+    </div>
+}
+
+@if (Model.Events is { LiveNow.Count: > 0 } live)
+{
+    <div class="admin-status-message" data-reveal>
+        <strong>Live now:</strong>
+        @string.Join(" · ", live.LiveNow.Select(i => $"{i.Title} ({i.Kind.ToLowerInvariant()}{(i.HasStream ? ", streaming" : ", no stream link")})"))
+    </div>
+}
+
+@if (Model.CanSeeApplications || Model.CanSeeBookings || money is not null)
+{
 <section class="admin-kpi-grid">
+    @if (Model.CanSeeApplications)
+    {
     <article class="admin-kpi-card" data-reveal data-reveal-delay="40">
         <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("file-text")' /></div>
         <div class="admin-kpi-card__value">@Model.PendingApplications</div>
         <div class="admin-kpi-card__label">Applications awaiting review</div>
         <div class="admin-kpi-card__meta">Needs attention now</div>
     </article>
+    }
+    @if (Model.CanSeeBookings)
+    {
     <article class="admin-kpi-card" data-reveal data-reveal-delay="80">
         <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("calendar")' /></div>
         <div class="admin-kpi-card__value">@Model.TotalBookings</div>
         <div class="admin-kpi-card__label">Total bookings</div>
         <div class="admin-kpi-card__meta">@confirmedBookings confirmed</div>
     </article>
+    }
+    @if (Model.CanSeeApplications)
+    {
     <article class="admin-kpi-card" data-reveal data-reveal-delay="120">
         <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("check")' /></div>
         <div class="admin-kpi-card__value">@Model.ConversionToPaidPercent%</div>
@@ -131,6 +192,7 @@
         <div class="admin-kpi-card__label">Applications in motion</div>
         <div class="admin-kpi-card__meta">@waitlistedApplications waitlisted</div>
     </article>
+    }
     @if (money is not null)
     {
         foreach (var c in money.CollectedByCurrency)
@@ -170,6 +232,12 @@
         </article>
     }
 </section>
+}
+
+<partial name="_RolePanels" model="Model" />
+
+@if (Model.CanSeeApplications || Model.CanSeeBookings || money is not null)
+{
 
 <section class="admin-chart-grid">
     @if (money is not null)
@@ -199,6 +267,8 @@
         </article>
     }
 
+    @if (Model.CanSeeApplications)
+    {
     <article class="admin-chart-card" data-reveal data-reveal-delay="60">
         <h2>Application Funnel</h2>
         <span class="admin-chart-card__hint">Where every application currently sits.</span>
@@ -213,7 +283,10 @@
             <div class="admin-chart-empty">No applications yet.</div>
         }
     </article>
+    }
 
+    @if (Model.CanSeeBookings)
+    {
     <article class="admin-chart-card" data-reveal data-reveal-delay="120">
         <h2>Bookings by Status</h2>
         <span class="admin-chart-card__hint">Across every experience.</span>
@@ -228,6 +301,7 @@
             <div class="admin-chart-empty">No bookings yet.</div>
         }
     </article>
+    }
 
     @if (money is not null)
     {
@@ -249,6 +323,8 @@
 </section>
 
 <section class="admin-dashboard-grid">
+    @if (Model.CanSeeApplications)
+    {
     <article class="admin-card admin-card--elevated" data-reveal>
         <div class="admin-section-heading-wrap">
             <div>
@@ -277,7 +353,10 @@
             </table>
         </div>
     </article>
+    }
 
+    @if (Model.CanSeeBookings)
+    {
     <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="80">
         <div class="admin-section-heading-wrap">
             <div>
@@ -311,6 +390,7 @@
             </div>
         }
     </article>
+    }
 
     @if (money is not null)
     {
@@ -384,3 +464,4 @@
         </article>
     }
 </section>
+}

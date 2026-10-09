@@ -39,6 +39,7 @@ public class MembershipService(
     IOutbox outbox,
     IOptions<SiteOptions> siteOptions,
     ISiteSettingsService siteSettings,
+    IFounderService founders,
     UserManager<ApplicationUser> userManager,
     ILogger<MembershipService> logger) : IMembershipService
 {
@@ -407,6 +408,8 @@ public class MembershipService(
             user.MemberStatus = MemberStatus.Active;
             await userManager.UpdateAsync(user);
         }
+
+        await founders.TryGrantForMembershipAsync(userId, membership.StartAt, ct);
 
         await LogAsync("MembershipGranted", membership.Id, adminUserId, ipAddress, null,
             new { UserId = userId, PlanId = planId, plan.Name, ExpiresAt = expiresAt, Note = membership.GrantNote, OverrodeCap = availability.IsFull && overrideCap }, ct);
@@ -1770,6 +1773,8 @@ public class MembershipService(
             user.MemberStatus = MemberStatus.Active;
             await userManager.UpdateAsync(user);
         }
+
+        await founders.TryGrantForMembershipAsync(user.Id, membership.StartAt, ct);
 
         // Someone who joined through /join has no password at all. The setup link is emailed — and
         // only emailed: the success page is reachable by anyone holding the session id from the

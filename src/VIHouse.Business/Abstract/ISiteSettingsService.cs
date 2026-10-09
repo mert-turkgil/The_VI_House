@@ -19,6 +19,11 @@ public interface ISiteSettingsService
 
     Task UpdateAsync(SiteSetting updated, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 
+    /// <summary>Saves only the founder-programme fields — a separate screen with its own roles, so it
+    /// must not be able to overwrite the SEO fields and vice versa.</summary>
+    Task UpdateFounderProgrammeAsync(DateTimeOffset? windowEndsAtUtc, int extraDiscountPercent, int earlyAccessDays,
+        bool badgeEnabled, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
+
     /// <summary>Writes or updates one language's copy. Returns a resource key on failure.</summary>
     Task<string?> SaveTranslationAsync(SiteSettingTranslation form, Guid adminUserId, string? ipAddress, CancellationToken ct = default);
 

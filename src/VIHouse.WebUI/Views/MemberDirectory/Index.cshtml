@@ -58,7 +58,13 @@
                         }
                     </div>
                     <div class="member-card__body">
-                        <h3>@m.FullName</h3>
+                        <h3>
+                            @m.FullName
+                            @if (ViewData["FounderIds"] is HashSet<Guid> founderIds && founderIds.Contains(m.UserId))
+                            {
+                                <partial name="_FounderBadge" />
+                            }
+                        </h3>
                         @if (!string.IsNullOrWhiteSpace(m.JobTitle))
                         {
                             <p class="member-card__role">@m.JobTitle</p>

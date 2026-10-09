@@ -406,6 +406,7 @@
   &--red { background: #ea4335; animation-delay: 0.1s; }
   &--yellow { background: #fbbc05; animation-delay: 0.2s; }
   &--green { background: #34a853; animation-delay: 0.3s; }
+  &--mono { background: var(--vih-ink); }
 }
 
 @keyframes vih-auth-external-bounce {

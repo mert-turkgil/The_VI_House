@@ -23,6 +23,7 @@ public class ExperienceService(
     IBookingRepository bookings,
     IWaitlistRepository waitlist,
     IMembershipService membershipService,
+    IFounderService founders,
     IMediaStorage mediaStorage,
     IEmailService emailService,
     IAuditLogRepository auditLogs) : IExperienceService
@@ -121,6 +122,7 @@ public class ExperienceService(
         existing.AudienceTags = updated.AudienceTags;
         existing.IsSignature = updated.IsSignature;
         existing.MemberDiscountPercent = updated.MemberDiscountPercent;
+        existing.MembersOpenAtUtc = updated.MembersOpenAtUtc;
         existing.SortOrder = updated.SortOrder;
         existing.UpdatedAt = DateTimeOffset.UtcNow;
 
@@ -555,8 +557,12 @@ public class ExperienceService(
             var mine = await bookings.FindAsync(
                 b => b.UserId == id && b.ExperienceId == experience.Id && b.Status != BookingStatus.Cancelled, ct);
 
-            if (mine.FirstOrDefault() is { } booking)
-                return new ExperienceAccessInfo(ExperienceAccessOutcome.AlreadyBooked, booking.BookingReference);
+            // A confirmed booking outranks a pending one, so a buyer with both sees the live stream.
+            if (mine.OrderBy(b => b.Status == BookingStatus.Confirmed ? 0 : 1).FirstOrDefault() is { } booking)
+                return new ExperienceAccessInfo(ExperienceAccessOutcome.AlreadyBooked, booking.BookingReference)
+                {
+                    BookingConfirmed = booking.Status == BookingStatus.Confirmed,
+                };
         }
 
         var admittedPlans = await GetMembershipAccessAsync(experience.Id, ct);
@@ -577,8 +583,24 @@ public class ExperienceService(
         // Read live rather than from a claim, so a lapsed membership stops opening the door the
         // moment it lapses rather than at their next sign-in.
         var membership = await membershipService.GetCurrentMembershipAsync(userId.Value, ct);
+        var admitted = membership is not null && admittedPlans.Contains(membership.PlanId);
 
-        return new ExperienceAccessInfo(membership is not null && admittedPlans.Contains(membership.PlanId)
+        // Members-open date: a Founder joins early, every other member waits for it.
+        if (admitted && experience.MembersOpenAtUtc is { } membersOpen)
+        {
+            var perks = await founders.GetPerksAsync(userId, ct);
+            if (perks.OpensAtFor(membersOpen) is { } opensAt && DateTimeOffset.UtcNow < opensAt)
+            {
+                var programme = await founders.GetProgrammeAsync(ct);
+                return new ExperienceAccessInfo(ExperienceAccessOutcome.NotOpen)
+                {
+                    OpensAtUtc = opensAt,
+                    FounderOpensAtUtc = !perks.IsFounder && programme.EarlyAccessDays > 0 ? membersOpen.AddDays(-programme.EarlyAccessDays) : null,
+                };
+            }
+        }
+
+        return new ExperienceAccessInfo(admitted
             ? ExperienceAccessOutcome.IncludedInMembership
             : ExperienceAccessOutcome.RequiresApplication);
     }
