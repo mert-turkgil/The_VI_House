@@ -135,7 +135,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
                 // that would let any Google account holder self-register. Only a Google account
                 // already linked to an existing local account (via Manage/ExternalLogins) can sign
                 // in this way; anyone else is rejected here, same as the branches above.
-                ErrorMessage = "No VI House account is linked to this Google account.";
+                ErrorMessage = $"No VI House account is linked to this {info.ProviderDisplayName ?? info.LoginProvider} account. Sign in with your email and password, then link it under Security.";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
         }
@@ -149,7 +149,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account
             // form. Left unguarded, it would create a brand-new ApplicationUser (no role, no
             // approval) for literally any Google email, bypassing the application-approval funnel.
             returnUrl = ReturnUrls.Safe(Url, returnUrl);
-            ErrorMessage = "No VI House account is linked to this Google account.";
+            ErrorMessage = "No VI House account is linked to that account.";
             return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
         }
     }

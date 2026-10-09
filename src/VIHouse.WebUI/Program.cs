@@ -208,6 +208,35 @@ if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(goo
         });
 }
 
+// Sign in with Apple — the same rules as Google above: only ever a way into an account that has
+// already linked its Apple ID (Account › Security › External logins), never a way to create one,
+// and registered only when every value is configured. Apple has no static client secret: the
+// handler signs a short-lived JWT with the .p8 key on each sign-in, which is why it needs the
+// Team ID, the Key ID and the key itself rather than a secret string. Apple answers with a POST
+// to /signin-apple (response_mode=form_post), which the handler expects; nothing else is needed.
+//   Authentication:Apple:ClientId     the Services ID identifier, e.g. "com.thevihouse.web"
+//   Authentication:Apple:TeamId       10-character Team ID (top right of the developer portal)
+//   Authentication:Apple:KeyId        10-character Key ID of the "Sign in with Apple" key
+//   Authentication:Apple:PrivateKey   the text of the AuthKey_XXXXXXXXXX.p8 file (header
+//                                     lines optional, "\n" escapes accepted) — a secret
+var appleClientId = builder.Configuration["Authentication:Apple:ClientId"];
+var appleTeamId = builder.Configuration["Authentication:Apple:TeamId"];
+var appleKeyId = builder.Configuration["Authentication:Apple:KeyId"];
+var applePrivateKey = AppleSignInKey.Normalise(builder.Configuration["Authentication:Apple:PrivateKey"]);
+if (!string.IsNullOrWhiteSpace(appleClientId) && !string.IsNullOrWhiteSpace(appleTeamId)
+    && !string.IsNullOrWhiteSpace(appleKeyId) && applePrivateKey is not null)
+{
+    builder.Services.AddAuthentication()
+        .AddApple(options =>
+        {
+            options.ClientId = appleClientId.Trim();
+            options.TeamId = appleTeamId.Trim();
+            options.KeyId = appleKeyId.Trim();
+            options.GenerateClientSecret = true;
+            options.PrivateKey = (_, _) => Task.FromResult(applePrivateKey.AsMemory());
+        });
+}
+
 // --- Uploaded media ----------------------------------------------------------------------------
 // Seminar assets (recordings, stills, decks) live outside both wwwroot and the deployed app
 // directory, for the same two reasons the data-protection key ring does: publishing over the app

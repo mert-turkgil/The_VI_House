@@ -33,17 +33,17 @@
                     <div asp-validation-summary="ModelOnly" class="apply-form__summary"></div>
                     <div class="apply-field">
                         <label asp-for="Name">@Loc["Contact.NameLabel"]</label>
-                        <input asp-for="Name" />
+                        <input asp-for="Name" autocomplete="name" />
                         <span asp-validation-for="Name" class="apply-field__error"></span>
                     </div>
                     <div class="apply-field">
                         <label asp-for="Email">@Loc["Contact.EmailLabel"]</label>
-                        <input asp-for="Email" type="email" />
+                        <input asp-for="Email" type="email" autocomplete="email" />
                         <span asp-validation-for="Email" class="apply-field__error"></span>
                     </div>
                     <div class="apply-field">
                         <label asp-for="Subject">@Loc["Contact.SubjectLabel"]</label>
-                        <input asp-for="Subject" />
+                        <input asp-for="Subject" autocomplete="off" />
                     </div>
                     <div class="apply-field">
                         <label asp-for="Message">@Loc["Contact.MessageLabel"]</label>
