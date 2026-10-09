@@ -1,0 +1,19 @@
+@model RoleChangedEmailModel
+@{
+    ViewData["Subject"] = Loc["Email.RoleChanged.Subject"].Value;
+    ViewData["Preheader"] = Loc["Email.RoleChanged.Preheader"].Value;
+    ViewData["Footnote"] = Loc["Email.SecurityAlert.Footnote"].Value;
+    // Role names arrive as their constants ("EventManager"); each has a reader-language label,
+    // falling back to the constant itself for a role without one.
+    string Label(string role) => Loc[$"Roles.{role}"] is { ResourceNotFound: false } found ? found.Value : role;
+    var rows = new List<(string, string)>();
+    if (Model.Added.Count > 0) rows.Add((Loc["Email.RoleChanged.AddedLabel"].Value, string.Join(", ", Model.Added.Select(Label))));
+    if (Model.Removed.Count > 0) rows.Add((Loc["Email.RoleChanged.RemovedLabel"].Value, string.Join(", ", Model.Removed.Select(Label))));
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading(Loc["Email.RoleChanged.Eyebrow"].Value, Loc["Email.RoleChanged.Heading"].Value, "security"))" />
+<p style="margin:0 0 16px;">@string.Format(Loc["Email.Common.Greeting"].Value, Model.FirstName)</p>
+<p style="margin:0 0 20px;">@Loc["Email.RoleChanged.Body"]</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />
+<p style="margin:0 0 8px;">@Loc["Email.RoleChanged.IfUnexpected"]</p>
+<partial name="/Views/Emails/_EmailButton.cshtml" model="@(new Button(Model.AccountUrl, Loc["Email.RoleChanged.Button"].Value))" />
+<partial name="/Views/Emails/_EmailSignoff.cshtml" model="@(Loc["Email.SecurityAlert.Signoff"].Value)" />

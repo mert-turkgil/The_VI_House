@@ -18,7 +18,13 @@
             }
         </div>
         <div>
-            <h1>@Model.FullName</h1>
+            <h1>
+                @Model.FullName
+                @if (ViewData["FounderIds"] is HashSet<Guid> founderIds && founderIds.Contains(Model.UserId))
+                {
+                    <partial name="_FounderBadge" />
+                }
+            </h1>
             @if (!string.IsNullOrWhiteSpace(Model.JobTitle))
             {
                 <p class="member-detail__role">@Model.JobTitle</p>

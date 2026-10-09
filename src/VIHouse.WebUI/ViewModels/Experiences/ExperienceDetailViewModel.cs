@@ -36,6 +36,20 @@ public class ExperienceDetailViewModel
     /// </summary>
     public ExperienceAccessInfo? Access { get; set; }
 
+    // --- Live stream ---------------------------------------------------------------------------
+    // Only someone with a confirmed booking watches on the site. The URL is set on the model only
+    // for them and only while the stream is open, so it is never in the page source for anyone else.
+
+    /// <summary>The broadcast to embed — set only for a confirmed attendee while it is open.</summary>
+    public string? StreamUrl { get; set; }
+
+    /// <summary>A confirmed attendee before the stream opens: when it will.</summary>
+    public DateTimeOffset? StreamOpensAtUtc { get; set; }
+
+    /// <summary>The experience is streamed at all — enough to tell a non-attendee that booking
+    /// includes the stream, without telling them where it is.</summary>
+    public bool IsStreamed { get; set; }
+
     public ExperienceAttendanceMode AttendanceMode { get; set; } = ExperienceAttendanceMode.InPerson;
 
     public string? CoverImageAlt { get; set; }

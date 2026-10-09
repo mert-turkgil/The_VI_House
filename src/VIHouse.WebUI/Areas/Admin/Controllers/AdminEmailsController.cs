@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using VIHouse.Business.Options;
+using VIHouse.DataAccess.Identity;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Communication;
@@ -28,7 +32,9 @@ public class AdminEmailsController(
     IEmailLogRepository emailLogs,
     ISmsLogRepository smsLogs,
     IEmailService emailService,
-    ISmsService smsService) : AdminControllerBase
+    ISmsService smsService,
+    IOptionsSnapshot<SmtpOptions> smtp,
+    UserManager<ApplicationUser> userManager) : AdminControllerBase
 {
     private const int PageSize = 50;
 
@@ -47,6 +53,10 @@ public class AdminEmailsController(
         {
             ShowSms = showSms,
             SmsConfigured = smsService.IsConfigured,
+            SmtpProblems = smtp.Value.Problems(),
+            SmtpSummary = smtp.Value.IsConfigured
+                ? $"{smtp.Value.Host}:{smtp.Value.Port} as {smtp.Value.FromEmail}{(string.IsNullOrWhiteSpace(smtp.Value.Username) ? " (no sign-in)" : $", signing in as {smtp.Value.Username}")}"
+                : null,
             Status = parsed,
             Page = current,
             PageSize = PageSize,
@@ -72,6 +82,64 @@ public class AdminEmailsController(
         }
 
         return View(model);
+    }
+
+    /// <summary>
+    /// Sends a short message to the signed-in admin and reports exactly what the server said. The
+    /// fastest way to tell "email is broken" from "this one address bounced".
+    /// </summary>
+    [HttpPost("test")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SendTest(string? to, CancellationToken ct)
+    {
+        var me = await userManager.FindByIdAsync(CurrentAdminId().ToString());
+        var recipient = string.IsNullOrWhiteSpace(to) ? me?.Email : to.Trim();
+        if (string.IsNullOrWhiteSpace(recipient) || !recipient.Contains('@'))
+        {
+            TempData["StatusMessage"] = "Enter an email address to send the test to.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        var sent = await emailService.SendAsync("TestEmail", recipient, "The VI House — test email",
+            new TestEmailModel(me?.Email ?? "an administrator", DateTimeOffset.UtcNow, smtp.Value.Host),
+            SiteCultures.Default, ct: ct);
+
+        if (sent)
+        {
+            TempData["StatusMessage"] = $"Test email accepted by {smtp.Value.Host} for {recipient}. If it does not arrive within a few minutes, check the spam folder and the domain's SPF/DKIM records.";
+        }
+        else
+        {
+            var latest = (await emailLogs.GetRecentAsync(EmailStatus.Failed, 0, 1, ct)).FirstOrDefault();
+            TempData["StatusMessage"] = $"Test email to {recipient} FAILED: {latest?.ErrorMessage ?? "unknown error"}";
+        }
+        return RedirectToAction(nameof(Index));
+    }
+
+    /// <summary>Resends every outstanding failure from the last week — for after the mail server
+    /// has been fixed, so nobody has to click Resend row by row.</summary>
+    [HttpPost("retry-failed")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RetryFailed(CancellationToken ct)
+    {
+        var since = DateTimeOffset.UtcNow.AddDays(-7);
+        var failed = (await emailLogs.FindAsync(e => e.Status == EmailStatus.Failed && e.ResentAt == null && e.Body != null && e.CreatedAt >= since, ct))
+            .OrderBy(e => e.CreatedAt).Take(200).ToList();
+
+        int ok = 0, again = 0;
+        foreach (var row in failed)
+        {
+            var result = await emailService.ResendAsync(row.Id, ct);
+            if (result.Sent) ok++; else again++;
+            // A failure after one success usually means a per-recipient problem; a failure on the
+            // very first means the server is still down, and hammering it helps nobody.
+            if (ok == 0 && again >= 3) break;
+        }
+
+        TempData["StatusMessage"] = failed.Count == 0
+            ? "Nothing to retry — no failed emails with a stored copy in the last 7 days."
+            : $"Retried {ok + again} of {failed.Count}: {ok} sent, {again} failed again.";
+        return RedirectToAction(nameof(Index), new { status = again > 0 ? nameof(EmailStatus.Failed) : null });
     }
 
     [HttpPost("{id:guid}/resend")]

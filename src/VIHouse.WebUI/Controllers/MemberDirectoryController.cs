@@ -31,8 +31,15 @@ public class MemberDirectoryController(
     IProfileRepository profiles,
     IMembershipService membershipService,
     UserManager<ApplicationUser> userManager,
+    IFounderService founders,
     IOptions<FeatureOptions> features) : Controller
 {
+    /// <summary>Who to mark as a Founder — empty unless the badge is switched on.</summary>
+    private async Task<HashSet<Guid>> FounderIdsAsync(CancellationToken ct) =>
+        (await founders.GetProgrammeAsync(ct)).BadgeEnabled
+            ? (await userManager.GetUsersInRoleAsync(Roles.Founder)).Select(u => u.Id).ToHashSet()
+            : [];
+
     private async Task<bool> MayViewAsync(CancellationToken ct) =>
         features.Value.MemberDirectory
         && (await MemberAccess.GetEntitlementsAsync(User, membershipService, userManager, ct))?.Directory == true;
@@ -50,6 +57,7 @@ public class MemberDirectoryController(
         ViewData["City"] = city;
         ViewData["Country"] = country;
         ViewData["Search"] = search;
+        ViewData["FounderIds"] = await FounderIdsAsync(ct);
 
         return View(entries.Select(MemberCardViewModel.FromEntry).ToList());
     }
@@ -63,6 +71,7 @@ public class MemberDirectoryController(
         if (entry is null) return NotFound();
 
         ViewData["Title"] = $"{entry.FirstName} {entry.LastName}";
+        ViewData["FounderIds"] = await FounderIdsAsync(ct);
         return View(MemberDetailViewModel.FromEntry(entry));
     }
 }

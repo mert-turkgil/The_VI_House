@@ -32,7 +32,13 @@
         @* --- Who you are to the House ---------------------------------------------------- *@
         <header class="account-dash__hero">
             <span class="account-dash__eyebrow">@Loc["Account.WelcomeBack"]</span>
-            <h1>@Model.FirstName @Model.LastName</h1>
+            <h1>
+                @Model.FirstName @Model.LastName
+                @if (Model.Founder.ShowBadge)
+                {
+                    <partial name="_FounderBadge" />
+                }
+            </h1>
             <div class="account-dash__standing">
                 <span class="account-standing @standingClass">
                     @switch (Model.Standing)
@@ -108,12 +114,19 @@
                         }
                         &middot; @Loc["Card.MemberSince"] @m.Membership.StartAt.ToString("MMMM yyyy")
                     </p>
+                    @if (Model.BenefitsIncluded is { } included && Model.BenefitsDiscounted is { } discounted && included + discounted > 0)
+                    {
+                        <p class="account-membership__term">
+                            <a asp-action="Benefits">@Loc["Benefits.Teaser", included, discounted]</a>
+                        </p>
+                    }
                     <div class="account-membership__actions">
                         @if (Model.Entitlements is { MemberCard: true })
                         {
                             <a class="btn btn--primary" asp-action="Card">@Loc["Card.ViewCard"]</a>
                         }
                         <a class="btn btn--ghost-dark" asp-action="Membership">@Loc["Account.MembershipDetails"]</a>
+                        <a class="btn btn--ghost-dark" asp-action="Benefits">@Loc["Benefits.Nav"]</a>
                         @if (Model.CanManageBilling)
                         {
                             <form asp-action="Billing" method="post">

@@ -17,7 +17,7 @@ public enum NotificationType
     /// paid. Appended for the same reason as the one above.</summary>
     ReferralConverted,
 
-    /// <summary>The influencer programme: a journal submission reviewed, a withdrawal decided — to
-    /// the influencer, and to the staff who handle them.</summary>
-    Influencer
+    /// <summary>Something an admin changed on the account itself — roles, a lock, Founder status.
+    /// Appended for the same reason as the two above.</summary>
+    AccountUpdate
 }

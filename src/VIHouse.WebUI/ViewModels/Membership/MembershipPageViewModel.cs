@@ -30,6 +30,12 @@ public class MembershipPageViewModel
     public bool CommunityEnabled { get; set; }
     public bool DirectoryEnabled { get; set; }
 
+    /// <summary>For a current member: what the plan makes free or cheaper (counts and the founder line).</summary>
+    public MemberBenefits? Benefits { get; set; }
+
+    /// <summary>Live and upcoming (7 days) streams this person may watch here.</summary>
+    public List<MemberStream> Streams { get; set; } = [];
+
     public bool IsMember => Current is not null;
     public bool IsGuest => IsAuthenticated && !IsMember && (BookingCount > 0 || SessionCount > 0);
 }

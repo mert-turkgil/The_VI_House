@@ -4,7 +4,11 @@
 @{
     ViewData["Title"] = Model.Email;
     var allRoles = VIHouse.DataAccess.Identity.Roles.All;
+    var derivedRoles = VIHouse.DataAccess.Identity.Roles.Derived;
     var isSuperAdmin = User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin);
+    var canSeeAmbassadors = VIHouse.WebUI.Areas.Admin.AdminSections.RolesFor.Ambassadors.Split(',').Any(User.IsInRole);
+    var isSelf = string.Equals(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, Model.UserId.ToString(), StringComparison.OrdinalIgnoreCase);
+    var lockedPermanently = Model.LockoutEnd is { } le && le > DateTimeOffset.UtcNow.AddYears(50);
     // Every form on this page is a SuperAdmin action on someone else's account. A protected
     // account (Security:ProtectedAccounts) shows none of them; the controller refuses the POSTs too.
     var canChange = isSuperAdmin && !Model.IsProtected;
@@ -47,9 +51,50 @@
                         else { @string.Join(", ", addressLines) }
                     </dd>
                 </div>
+<<<<<<< HEAD
                 <div><dt>@Loc["Admin.Users.AnnualEarnings"]</dt><dd>@(EarningsBand.LabelFor(Model.Profile?.EarningsBand) ?? "—")</dd></div>
                 <div><dt>@Loc["Admin.Users.Profile"]</dt><dd>@Loc[Model.Profile?.IsComplete == true ? "Admin.Users.ProfileComplete" : "Admin.Users.ProfileIncomplete"]</dd></div>
+=======
+                <div><dt>Annual earnings</dt><dd>@(EarningsBand.LabelFor(Model.Profile?.EarningsBand) ?? "—")</dd></div>
+                <div><dt>Profile</dt><dd>@(Model.Profile?.IsComplete == true ? "Complete" : "Incomplete — the required statements are missing")</dd></div>
+                @if (Model.FounderSince is { } founderSince)
+                {
+                    <div><dt>Founder</dt><dd><span class="admin-badge admin-badge--open">Founder</span> since @founderSince.ToString("d MMM yyyy")</dd></div>
+                }
+>>>>>>> 2efb31ad652d1470ea2aa3684d362b94a3a376fd
             </dl>
+            @if (canChange)
+            {
+                <details style="margin-top:12px;">
+                    <summary class="admin-btn admin-btn--ghost admin-btn--sm" style="display:inline-block;">Edit name &amp; contact details</summary>
+                    <form asp-action="UpdateProfile" asp-route-id="@Model.UserId" method="post" style="margin-top:12px;">
+                        <div class="admin-form__grid">
+                            <div class="admin-field">
+                                <label for="FirstName">First name</label>
+                                <input id="FirstName" name="FirstName" value="@Model.EditForm.FirstName" required maxlength="100" />
+                            </div>
+                            <div class="admin-field">
+                                <label for="LastName">Last name</label>
+                                <input id="LastName" name="LastName" value="@Model.EditForm.LastName" required maxlength="100" />
+                            </div>
+                            <div class="admin-field">
+                                <label for="Phone">Phone</label>
+                                <input id="Phone" name="Phone" value="@Model.EditForm.Phone" type="tel" maxlength="32" />
+                            </div>
+                            <div class="admin-field">
+                                <label for="Country">Country (2 letters)</label>
+                                <input id="Country" name="Country" value="@Model.EditForm.Country" maxlength="2" />
+                            </div>
+                            <div class="admin-field">
+                                <label for="City">City</label>
+                                <input id="City" name="City" value="@Model.EditForm.City" maxlength="100" />
+                            </div>
+                        </div>
+                        <p class="admin-hint">The email address is the sign-in; the member changes it themselves under Security, which confirms the new address first.</p>
+                        <button type="submit" class="admin-btn admin-btn--sm">Save details</button>
+                    </form>
+                </details>
+            }
         </div>
 
         <div class="admin-card">
@@ -156,7 +201,14 @@
                     </div>
                 </dl>
                 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+<<<<<<< HEAD
                     <a class="admin-btn admin-btn--ghost admin-btn--sm" asp-controller="AdminAmbassadors" asp-action="Edit" asp-route-id="@amb.Id">@Loc["Admin.Users.PerformanceSettings"]</a>
+=======
+                    @if (canSeeAmbassadors)
+                    {
+                        <a class="admin-btn admin-btn--ghost admin-btn--sm" asp-controller="AdminAmbassadors" asp-action="Edit" asp-route-id="@amb.Id">Performance &amp; settings</a>
+                    }
+>>>>>>> 2efb31ad652d1470ea2aa3684d362b94a3a376fd
                     @if (canChange)
                     {
                         <form asp-action="SetAmbassadorStatus" asp-route-id="@Model.UserId" method="post" class="admin-inline-form">
@@ -331,6 +383,7 @@
                     </dd>
                 </div>
                 <div>
+<<<<<<< HEAD
                     <dt>@Loc["Admin.Users.EmailConfirmed"]</dt>
                     <dd>@Loc[Model.EmailConfirmed ? "Admin.Common.Yes" : "Admin.Common.No"]</dd>
                 </div>
@@ -342,6 +395,34 @@
                     </div>
                 }
                 <div><dt>@Loc["Admin.Users.AccountCreated"]</dt><dd>@Model.CreatedAt.ToString("dd MMM yyyy")</dd></div>
+=======
+                    <dt>Email confirmed</dt>
+                    <dd>
+                        @(Model.EmailConfirmed ? "Yes" : "No")
+                        @if (!Model.EmailConfirmed && !Model.IsProtected)
+                        {
+                            <form asp-action="ConfirmEmail" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
+                                  onsubmit="return confirm('Mark @Model.Email as confirmed? Only do this once you know they own the address.');">
+                                <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Mark as confirmed</button>
+                            </form>
+                        }
+                    </dd>
+                </div>
+                <div>
+                    <dt>Sign-in</dt>
+                    <dd>
+                        @if (Model.IsLockedOut)
+                        {
+                            <span class="admin-badge admin-badge--closed">@(lockedPermanently ? "Locked by an admin" : $"Locked until {Model.LockoutEnd:dd MMM HH:mm} UTC — too many failed attempts")</span>
+                        }
+                        else
+                        {
+                            <span class="admin-badge admin-badge--open">Allowed</span>
+                        }
+                    </dd>
+                </div>
+                <div><dt>Account created</dt><dd>@Model.CreatedAt.ToString("dd MMM yyyy")</dd></div>
+>>>>>>> 2efb31ad652d1470ea2aa3684d362b94a3a376fd
                 <div>
                     <dt>@Loc["Admin.Users.LastSignIn"]</dt>
                     <dd>@(Model.LastLoginAt?.ToString("dd MMM yyyy, HH:mm") ?? Loc["Admin.Users.NeverSignedIn"].Value)</dd>
@@ -359,6 +440,28 @@
                     </button>
                 </form>
             }
+            @if (canChange && !isSelf)
+            {
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+                    @if (Model.IsLockedOut)
+                    {
+                        <form asp-action="Unlock" asp-route-id="@Model.UserId" method="post" class="admin-inline-form">
+                            <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Unlock account</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Lock" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
+                              onsubmit="return confirm('Lock @Model.Email? They will not be able to sign in until unlocked, and any open session ends within five minutes.');">
+                            <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Lock account</button>
+                        </form>
+                    }
+                    <form asp-action="SignOutEverywhere" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
+                          onsubmit="return confirm('Sign @Model.Email out of every device?');">
+                        <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Sign out everywhere</button>
+                    </form>
+                </div>
+            }
         </div>
 
         <div class="admin-card">
@@ -369,6 +472,7 @@
                     <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
                         @foreach (var role in allRoles)
                         {
+<<<<<<< HEAD
                             <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;">
                                 <input type="checkbox" name="roles" value="@role" checked="@Model.Roles.Contains(role)" />
                                 @Loc["Admin.Role." + role]
@@ -376,6 +480,22 @@
                         }
                     </div>
                     <button type="submit" class="admin-btn" style="width:100%;">@Loc["Admin.Users.SaveRoles"]</button>
+=======
+                            var derived = derivedRoles.Contains(role);
+                            <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;@(derived ? " opacity:.65;" : "")"
+                                   title="@(derived ? "Follows from their membership / referral link — change that instead." : "")">
+                                <input type="checkbox" name="roles" value="@role" checked="@Model.Roles.Contains(role)" disabled="@derived" />
+                                @role
+                                @if (derived)
+                                {
+                                    <span class="admin-table__sub">automatic</span>
+                                }
+                            </label>
+                        }
+                    </div>
+                    <p class="admin-hint" style="font-size:0.8rem;">Member and Ambassador follow from the membership and referral link above. The user is emailed when their roles change.</p>
+                    <button type="submit" class="admin-btn" style="width:100%;">Save Roles</button>
+>>>>>>> 2efb31ad652d1470ea2aa3684d362b94a3a376fd
                 </form>
             }
             else

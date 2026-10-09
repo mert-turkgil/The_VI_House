@@ -1,0 +1,184 @@
+@model AdminDashboardViewModel
+@* The panels that belong to one part of the House each. The controller fills a panel only for the
+   roles that can open the section behind it, so a null panel is simply not this viewer's job. *@
+
+@if (Model.Events is null && Model.Content is null && Model.Users is null && Model.Marketing is null)
+{
+    return;
+}
+
+<section class="admin-dashboard-grid">
+    @if (Model.Events is { } events)
+    {
+        <article class="admin-card admin-card--elevated" data-reveal>
+            <div class="admin-section-heading-wrap">
+                <div>
+                    <span class="admin-eyebrow">Programme</span>
+                    <h2>Coming up</h2>
+                </div>
+                <p>
+                    Experiences and sessions in the next 60 days.
+                    @if (events.DraftExperiences + events.DraftSessions > 0)
+                    {
+                        @: @events.DraftExperiences draft experience@(events.DraftExperiences == 1 ? "" : "s"), @events.DraftSessions draft session@(events.DraftSessions == 1 ? "" : "s").
+                    }
+                </p>
+            </div>
+            @if (events.LiveNow.Count + events.Upcoming.Count == 0)
+            {
+                <div class="admin-empty">
+                    <h3 class="admin-empty__title">Nothing scheduled</h3>
+                    <p>Published experiences and sessions starting in the next 60 days appear here.</p>
+                </div>
+            }
+            else
+            {
+                <div class="admin-table-scroll">
+                    <table class="admin-table">
+                        <thead><tr><th>When (UTC)</th><th>What</th><th>Attending</th><th>Stream</th></tr></thead>
+                        <tbody>
+                            @foreach (var item in events.LiveNow.Concat(events.Upcoming))
+                            {
+                                <tr>
+                                    <td>@(item.StartAtUtc?.ToString("dd MMM, HH:mm") ?? "On demand")</td>
+                                    <td>
+                                        <a asp-controller="@(item.Kind == "Experience" ? "AdminExperiences" : "AdminSeminars")" asp-action="Edit" asp-route-id="@item.Id">@item.Title</a>
+                                        <div class="admin-table__sub">@item.Kind · @item.Status</div>
+                                    </td>
+                                    <td>@item.Attendees</td>
+                                    <td>
+                                        @if (item.IsLiveNow)
+                                        {
+                                            <span class="admin-badge admin-badge--danger">Live</span>
+                                        }
+                                        else if (item.HasStream)
+                                        {
+                                            <span class="admin-badge admin-badge--open">Link set</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="admin-badge admin-badge--draft">No link</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </article>
+    }
+
+    @if (Model.Content is { } content)
+    {
+        <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="60">
+            <div class="admin-section-heading-wrap">
+                <div>
+                    <span class="admin-eyebrow">Journal</span>
+                    <h2>Writing queue</h2>
+                </div>
+                <p>@content.Drafts draft@(content.Drafts == 1 ? "" : "s") · @content.Published published. <a asp-controller="AdminJournal" asp-action="Index">Open the journal</a>.</p>
+            </div>
+            @if (content.RecentDrafts.Count == 0)
+            {
+                <div class="admin-empty">
+                    <h3 class="admin-empty__title">No drafts waiting</h3>
+                    <p>Articles saved as drafts appear here until they are published.</p>
+                </div>
+            }
+            else
+            {
+                <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;">
+                    @foreach (var draft in content.RecentDrafts)
+                    {
+                        <li>
+                            <a asp-controller="AdminJournal" asp-action="Edit" asp-route-id="@draft.Id">@draft.Title</a>
+                            <span class="admin-table__sub"> — edited @draft.UpdatedAt.ToString("dd MMM")</span>
+                        </li>
+                    }
+                </ul>
+            }
+        </article>
+    }
+
+    @if (Model.Users is { } users)
+    {
+        <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="120">
+            <div class="admin-section-heading-wrap">
+                <div>
+                    <span class="admin-eyebrow">People</span>
+                    <h2>Members &amp; accounts</h2>
+                </div>
+                <p>
+                    @users.TotalUsers accounts · @users.Members with the Member role · @users.Founders founder@(users.Founders == 1 ? "" : "s").
+                    <a asp-controller="AdminUsers" asp-action="Index">Open Users</a>.
+                </p>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+                <span class="admin-badge admin-badge--info">@users.NewSince new this week</span>
+                @if (users.UnconfirmedEmail > 0)
+                {
+                    <span class="admin-badge admin-badge--pending">@users.UnconfirmedEmail unconfirmed email@(users.UnconfirmedEmail == 1 ? "" : "s")</span>
+                }
+                @if (users.LockedOut > 0)
+                {
+                    <span class="admin-badge admin-badge--closed">@users.LockedOut locked</span>
+                }
+            </div>
+            @if (users.Newest.Count > 0)
+            {
+                <div class="admin-table-scroll">
+                    <table class="admin-table">
+                        <thead><tr><th>New account</th><th>Joined</th><th>Roles</th></tr></thead>
+                        <tbody>
+                            @foreach (var u in users.Newest)
+                            {
+                                <tr>
+                                    <td><a asp-controller="AdminUsers" asp-action="Details" asp-route-id="@u.UserId">@(string.IsNullOrWhiteSpace(u.Name) ? u.Email : u.Name)</a></td>
+                                    <td>@u.CreatedAt.ToString("dd MMM")</td>
+                                    <td>@(u.Roles.Count == 0 ? "—" : string.Join(", ", u.Roles))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </article>
+    }
+
+    @if (Model.Marketing is { } marketing)
+    {
+        var windowOpen = marketing.FounderWindowEndsAtUtc is { } end && end > DateTimeOffset.UtcNow;
+        <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="180">
+            <div class="admin-section-heading-wrap">
+                <div>
+                    <span class="admin-eyebrow">Launch</span>
+                    <h2>Launch list &amp; founders</h2>
+                </div>
+                <p><a asp-controller="AdminFounders" asp-action="Index">Founder programme</a> · <a asp-controller="AdminNotifySignups" asp-action="Index">Launch list</a></p>
+            </div>
+            <dl class="admin-detail-list">
+                <div><dt>Launch list sign-ups</dt><dd>@marketing.LaunchListSignups</dd></div>
+                <div><dt>Founders</dt><dd>@marketing.Founders</dd></div>
+                <div>
+                    <dt>Founder window</dt>
+                    <dd>
+                        @if (marketing.FounderWindowEndsAtUtc is null)
+                        {
+                            <span class="admin-badge admin-badge--draft">Not set</span>
+                        }
+                        else if (windowOpen)
+                        {
+                            var daysLeft = (int)Math.Ceiling((marketing.FounderWindowEndsAtUtc.Value - DateTimeOffset.UtcNow).TotalDays);
+                            <span class="admin-badge admin-badge--open">Open</span> @:closes @marketing.FounderWindowEndsAtUtc.Value.ToString("dd MMM yyyy") (@daysLeft day@(daysLeft == 1 ? "" : "s") left)
+                        }
+                        else
+                        {
+                            <span class="admin-badge admin-badge--closed">Closed</span> @:@marketing.FounderWindowEndsAtUtc.Value.ToString("dd MMM yyyy")
+                        }
+                    </dd>
+                </div>
+            </dl>
+        </article>
+    }
+</section>

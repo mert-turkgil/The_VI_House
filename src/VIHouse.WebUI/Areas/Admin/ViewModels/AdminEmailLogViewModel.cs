@@ -16,6 +16,12 @@ public class AdminEmailLogViewModel
     /// than "nothing was ever sent".</summary>
     public bool SmsConfigured { get; set; }
 
+    /// <summary>What looks wrong with the SMTP settings (SmtpOptions.Problems), empty when fine.</summary>
+    public IReadOnlyList<string> SmtpProblems { get; set; } = [];
+
+    /// <summary>"host:port as sender" — null when no server is configured at all.</summary>
+    public string? SmtpSummary { get; set; }
+
     /// <summary>Null when showing everything.</summary>
     public EmailStatus? Status { get; set; }
 

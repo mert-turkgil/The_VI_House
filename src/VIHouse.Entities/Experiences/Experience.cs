@@ -103,6 +103,11 @@ public class Experience : BaseEntity
     /// </summary>
     public int MemberDiscountPercent { get; set; }
 
+    /// <summary>
+    /// When members may start to join or enrol. Null = as soon as it is open. Founders get in
+    /// FounderEarlyAccessDays (Admin › Founders) earlier; staff are never held back.
+    /// </summary>
+    public DateTimeOffset? MembersOpenAtUtc { get; set; }
 
     public List<TicketType> TicketTypes { get; set; } = [];
     public List<ExperienceProgramDay> ProgramDays { get; set; } = [];

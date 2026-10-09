@@ -37,6 +37,10 @@ public class AdminUsersController(
     IAuditLogRepository auditLogs,
     IMembershipService membershipService,
     IAmbassadorService ambassadorService,
+    IUserDirectory directory,
+    IFounderService founders,
+    ISecurityAlertService securityAlerts,
+    INotificationService notifications,
     IOptions<SecurityOptions> security,
     IOptions<SiteOptions> siteOptions,
     IStringLocalizer<SharedResource> loc) : AdminControllerBase
@@ -56,29 +60,12 @@ public class AdminUsersController(
     }
 
     [HttpGet("")]
-
-    public async Task<IActionResult> Index(CancellationToken ct)
+    public async Task<IActionResult> Index(string? q, string? role, int page = 1, CancellationToken ct = default)
     {
-        var users = await userManager.Users.ToListAsync(ct);
-        var allApplications = await applications.GetAllAsync(ct);
-        var allBookings = await bookings.GetAllAsync(ct);
-
-        var model = new List<AdminCustomerListItemViewModel>();
-        foreach (var user in users.OrderByDescending(u => u.Id))
-        {
-            var profile = await profiles.GetByUserIdAsync(user.Id, ct);
-            model.Add(new AdminCustomerListItemViewModel
-            {
-                UserId = user.Id,
-                Email = user.Email ?? user.UserName ?? "—",
-                Roles = (await userManager.GetRolesAsync(user)).ToList(),
-                JobTitle = profile?.JobTitle,
-                ApplicationCount = allApplications.Count(a => a.UserId == user.Id),
-                BookingCount = allBookings.Count(b => b.UserId == user.Id),
-            });
-        }
-
-        return View(model);
+        // Searched, filtered and paged in the database: the old screen loaded every account,
+        // application and booking and asked for each user's roles one at a time.
+        var result = await directory.SearchAsync(q, role, page, 25, ct);
+        return View(new AdminUserIndexViewModel { Query = q, Role = role, Page = result });
     }
 
     [HttpGet("{id:guid}")]
@@ -120,6 +107,16 @@ public class AdminUsersController(
             IsLockedOut = await userManager.IsLockedOutAsync(user),
             CreatedAt = user.CreatedAt,
             LastLoginAt = user.LastLoginAt,
+            LockoutEnd = user.LockoutEnd,
+            FounderSince = user.FounderSince,
+            EditForm = new AdminEditUserViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Phone = user.PhoneNumber,
+                Country = user.Country,
+                City = user.City,
+            },
         });
     }
 
@@ -138,12 +135,26 @@ public class AdminUsersController(
         if (RefuseIfProtected(user) is { } refused) return refused;
 
         var current = await userManager.GetRolesAsync(user);
-        var requested = roles.Intersect(Roles.All).ToList();
 
-        // Refuse to let the last SuperAdmin drop their own SuperAdmin role: nobody would be left
-        // able to grant it back, locking role management for everyone permanently.
-        var isSelf = string.Equals(userManager.GetUserId(User), id.ToString(), StringComparison.OrdinalIgnoreCase);
-        if (isSelf && current.Contains(Roles.SuperAdmin) && !requested.Contains(Roles.SuperAdmin))
+        // Member and Ambassador follow from a record (a membership, a referral profile); the form
+        // shows them read-only, and anything posted for them is ignored so the role can never
+        // drift from the record. Grant or revoke the membership / ambassador link instead.
+        var requested = (roles ?? []).Intersect(Roles.All).Except(Roles.Derived)
+            .Concat(current.Intersect(Roles.Derived))
+            .Distinct()
+            .ToList();
+
+        var toAdd = requested.Except(current).ToList();
+        var toRemove = current.Except(requested).ToList();
+
+        if (toAdd.Count == 0 && toRemove.Count == 0)
+        {
+            TempData["StatusMessage"] = "No changes — the roles were already as ticked.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        // Never leave the panel without a SuperAdmin: nobody would be left able to grant it back.
+        if (toRemove.Contains(Roles.SuperAdmin))
         {
             var superAdmins = await userManager.GetUsersInRoleAsync(Roles.SuperAdmin);
             if (superAdmins.Count <= 1)
@@ -153,19 +164,179 @@ public class AdminUsersController(
             }
         }
 
-        var toAdd = requested.Except(current).ToList();
-        var toRemove = current.Except(requested).ToList();
-
-        if (toAdd.Count > 0) await userManager.AddToRolesAsync(user, toAdd);
-        if (toRemove.Count > 0) await userManager.RemoveFromRolesAsync(user, toRemove);
-
-        if (toAdd.Count > 0 || toRemove.Count > 0)
+        var errors = new List<string>();
+        if (toAdd.Count > 0)
         {
-            await LogAsync("UserRolesUpdated", id, new { Roles = current }, new { Roles = requested }, ct);
+            var added = await userManager.AddToRolesAsync(user, toAdd);
+            if (!added.Succeeded) errors.AddRange(added.Errors.Select(e => e.Description));
+        }
+        if (toRemove.Count > 0)
+        {
+            var removed = await userManager.RemoveFromRolesAsync(user, toRemove);
+            if (!removed.Succeeded) errors.AddRange(removed.Errors.Select(e => e.Description));
+        }
+
+        // Re-read rather than trusting the plan: what is logged and emailed is what actually stuck.
+        var after = await userManager.GetRolesAsync(user);
+        var actuallyAdded = after.Except(current).ToList();
+        var actuallyRemoved = current.Except(after).ToList();
+
+        if (actuallyAdded.Count > 0 || actuallyRemoved.Count > 0)
+        {
+            // Rolling the stamp is what makes a removed role stop working within the validation
+            // interval (five minutes, Program.cs) instead of living on in the old cookie.
+            await userManager.UpdateSecurityStampAsync(user);
+
+            await LogAsync("UserRolesUpdated", id, new { Roles = current }, new { Roles = after, Added = actuallyAdded, Removed = actuallyRemoved }, ct);
             await auditLogs.SaveChangesAsync(ct);
+
+            if (actuallyAdded.Contains(Roles.Founder))
+                await founders.MarkGrantedManuallyAsync(user.Id, ct);
+
+            var visibleAdded = actuallyAdded.Where(r => r != Roles.Founder).ToList();
+            if ((visibleAdded.Count > 0 || actuallyRemoved.Count > 0) && !string.IsNullOrWhiteSpace(user.Email))
+            {
+                await emailService.SendAsync(
+                    "RoleChanged", user.Email, "Your VI House account access has changed",
+                    new RoleChangedEmailModel(user.FirstName, visibleAdded, actuallyRemoved,
+                        VIHouse.Business.SiteUrls.Absolute(siteOptions.Value.BaseUrl, VIHouse.Business.SiteUrls.Account)),
+                    user.PreferredCulture ?? SiteCultures.Default, nameof(ApplicationUser), user.Id, ct);
+
+                await notifications.CreateForUserAsync(user.Id, VIHouse.Entities.Notifications.NotificationType.AccountUpdate,
+                    "Your access has changed",
+                    string.Join(" ", new[]
+                    {
+                        visibleAdded.Count > 0 ? $"Added: {string.Join(", ", visibleAdded)}." : null,
+                        actuallyRemoved.Count > 0 ? $"Removed: {string.Join(", ", actuallyRemoved)}." : null,
+                    }.Where(x => x is not null)),
+                    VIHouse.Business.SiteUrls.Account, ct);
+            }
         }
 
         Status(loc["Admin.Users.Msg.RolesUpdated"].Value);
+        TempData["StatusMessage"] = errors.Count > 0
+            ? $"Some role changes failed: {string.Join(" ", errors)}"
+            : $"Roles updated{(actuallyAdded.Count > 0 ? $" — added {string.Join(", ", actuallyAdded)}" : "")}{(actuallyRemoved.Count > 0 ? $" — removed {string.Join(", ", actuallyRemoved)}" : "")}. {user.Email} has been notified; the change applies within five minutes.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    // --- Account controls -------------------------------------------------------------------------
+    // SuperAdmin only, like role changes, and refused for a protected account. Each one rolls the
+    // security stamp so the target's existing sessions end within the validation interval.
+
+    [HttpPost("{id:guid}/lock")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.SuperAdmin)]
+    public async Task<IActionResult> Lock(Guid id, string? reason, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
+        if (string.Equals(userManager.GetUserId(User), id.ToString(), StringComparison.OrdinalIgnoreCase))
+        {
+            TempData["StatusMessage"] = "You can't lock your own account.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        await userManager.SetLockoutEnabledAsync(user, true);
+        await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+        await userManager.UpdateSecurityStampAsync(user);
+
+        await LogAsync("UserLocked", id, null, new { user.Email, Reason = reason, LockedBy = User.Identity?.Name }, ct);
+        await auditLogs.SaveChangesAsync(ct);
+
+        TempData["StatusMessage"] = $"{user.Email} is locked: they can't sign in, and any open session ends within five minutes.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost("{id:guid}/unlock")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.SuperAdmin)]
+    public async Task<IActionResult> Unlock(Guid id, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
+
+        await userManager.SetLockoutEndDateAsync(user, null);
+        await userManager.ResetAccessFailedCountAsync(user);
+
+        await LogAsync("UserUnlocked", id, null, new { user.Email, UnlockedBy = User.Identity?.Name }, ct);
+        await auditLogs.SaveChangesAsync(ct);
+
+        TempData["StatusMessage"] = $"{user.Email} is unlocked and can sign in again.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost("{id:guid}/sign-out-everywhere")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.SuperAdmin)]
+    public async Task<IActionResult> SignOutEverywhere(Guid id, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
+
+        await userManager.UpdateSecurityStampAsync(user);
+        await LogAsync("UserSignedOutEverywhere", id, null, new { user.Email, By = User.Identity?.Name }, ct);
+        await auditLogs.SaveChangesAsync(ct);
+
+        TempData["StatusMessage"] = $"Every session for {user.Email} ends within five minutes.";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    /// <summary>For the member whose confirmation email never arrived, once support has confirmed
+    /// the address another way. Open to the whole Users section — getting members in is their job.</summary>
+    [HttpPost("{id:guid}/confirm-email")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConfirmEmail(Guid id, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
+        if (user.EmailConfirmed)
+        {
+            TempData["StatusMessage"] = "That address is already confirmed.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        user.EmailConfirmed = true;
+        var result = await userManager.UpdateAsync(user);
+        await LogAsync("UserEmailConfirmedByAdmin", id, null, new { user.Email, By = User.Identity?.Name }, ct);
+        await auditLogs.SaveChangesAsync(ct);
+
+        TempData["StatusMessage"] = result.Succeeded
+            ? $"{user.Email} is marked as confirmed."
+            : $"Could not confirm: {string.Join(" ", result.Errors.Select(e => e.Description))}";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost("{id:guid}/update-profile")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = Roles.SuperAdmin)]
+    public async Task<IActionResult> UpdateProfile(Guid id, AdminEditUserViewModel form, CancellationToken ct)
+    {
+        var user = await userManager.FindByIdAsync(id.ToString());
+        if (user is null) return NotFound();
+        if (RefuseIfProtected(user) is { } refused) return refused;
+        if (!ModelState.IsValid)
+        {
+            TempData["StatusMessage"] = "Not saved: " + string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        var before = new { user.FirstName, user.LastName, user.PhoneNumber, user.Country, user.City };
+        user.FirstName = form.FirstName.Trim();
+        user.LastName = form.LastName.Trim();
+        user.PhoneNumber = string.IsNullOrWhiteSpace(form.Phone) ? null : form.Phone.Trim();
+        user.Country = form.Country?.Trim().ToUpperInvariant() ?? "";
+        user.City = string.IsNullOrWhiteSpace(form.City) ? null : form.City.Trim();
+
+        var result = await userManager.UpdateAsync(user);
+        await LogAsync("UserProfileUpdatedByAdmin", id, before, new { user.FirstName, user.LastName, user.PhoneNumber, user.Country, user.City }, ct);
+        await auditLogs.SaveChangesAsync(ct);
+
+        TempData["StatusMessage"] = result.Succeeded ? "Details saved." : $"Not saved: {string.Join(" ", result.Errors.Select(e => e.Description))}";
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -212,6 +383,14 @@ public class AdminUsersController(
         await auditLogs.SaveChangesAsync(ct);
 
         Status(loc["Admin.Users.Msg.TwoFactorReset", user.Email ?? ""].Value);
+        // The owner hears about it: a reset second factor they did not ask for is exactly the kind
+        // of change a security alert exists for.
+        await securityAlerts.TwoFactorChangedAsync(user.Id, TwoFactorChange.AuthenticatorReset,
+            HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString(), ct);
+
+        TempData["StatusMessage"] =
+            $"Two-factor reset for {user.Email}. The panel is closed to them from their next click, their session ends within " +
+            "five minutes, and they'll pair a new authenticator app when they sign in again.";
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -268,6 +447,11 @@ public class AdminUsersController(
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null) return NotFound();
         if (RefuseIfProtected(user) is { } refused) return refused;
+        if (!ModelState.IsValid)
+        {
+            TempData["StatusMessage"] = "Not granted: " + string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            return RedirectToAction(nameof(Details), new { id });
+        }
 
         DateTimeOffset? expiresAt = form.ExpiresOn is { } date
             ? new DateTimeOffset(date.ToDateTime(new TimeOnly(23, 59, 59)), TimeSpan.Zero)
@@ -305,6 +489,11 @@ public class AdminUsersController(
         var user = await userManager.FindByIdAsync(id.ToString());
         if (user is null || user.Email is null) return NotFound();
         if (RefuseIfProtected(user) is { } refused) return refused;
+        if (!ModelState.IsValid)
+        {
+            TempData["StatusMessage"] = "Not created: " + string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            return RedirectToAction(nameof(Details), new { id });
+        }
 
         if (await ambassadorService.GetByUserIdAsync(id, ct) is not null)
         {

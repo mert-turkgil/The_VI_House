@@ -51,172 +51,227 @@
     @Loc["Admin.Emails.Intro"]
 </p>
 
-<div class="admin-toolbar">
-    <a class="@ChannelClass(false)" asp-action="Index">@Loc["Admin.Common.Email"]</a>
-    <a class="@ChannelClass(true)" asp-action="Index" asp-route-channel="sms">@Loc["Admin.Emails.TextMessages"]</a>
-</div>
-
-@if (Model.FailedCount > 0)
+@if (!Model.ShowSms)
 {
-    <div class="admin-status-message">
-        @Loc[Model.ShowSms ? "Admin.Emails.FailedSms" : "Admin.Emails.FailedEmails", Model.FailedCount]
-        <a asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Failed">@Loc["Admin.Emails.ShowThem"]</a>.
-    </div>
-}
-
-@if (Model.OtherChannelFailedCount > 0)
-{
-    @* A failure on the tab you are not looking at is still a failure — say so from either side. *@
-    <div class="admin-status-message">
-        @Loc[Model.ShowSms ? "Admin.Emails.OtherFailedEmail" : "Admin.Emails.OtherFailedSms", Model.OtherChannelFailedCount]
-        <a asp-action="Index" asp-route-channel="@(Model.ShowSms ? null : "sms")" asp-route-status="@EmailStatus.Failed">@Loc["Admin.Emails.ShowThem"]</a>.
-    </div>
-}
-
-<div class="admin-toolbar">
-    <a class="@FilterClass(null)" asp-action="Index" asp-route-channel="@channel">@Loc["Admin.Emails.All"]</a>
-    <a class="@FilterClass(EmailStatus.Sent)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Sent">@Loc["Admin.Emails.Sent"]</a>
-    <a class="@FilterClass(EmailStatus.Queued)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Queued">@Loc["Admin.Emails.Queued"]</a>
-    <a class="@FilterClass(EmailStatus.Failed)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Failed">@Loc["Admin.Emails.Failed"]</a>
-</div>
-
-@if (Model.ShowSms && !Model.SmsConfigured)
-{
-    <p class="admin-hint">
-        @Loc.Html("Admin.Emails.SmsNotConfigured", LocalizerHtml.Code("Sms:Enabled"), LocalizerHtml.Code("Sms__Username"), LocalizerHtml.Code("Sms__Password"))
-    </p>
-}
-
-@if (Model.ShowSms)
-{
-    @if (Model.SmsRows.Count == 0)
-    {
-        <p>@(Model.Status is { } smsFilter ? Loc["Admin.Emails.NoSmsWithStatus", Loc.Label(smsFilter)].Value : Loc["Admin.Emails.NoSms"].Value)</p>
-    }
-    else
-    {
-        <div class="admin-table-scroll">
-            <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>@Loc["Admin.Emails.When"]</th>
-                    <th>@Loc["Admin.Emails.To"]</th>
-                    <th>@Loc["Admin.Emails.Message"]</th>
-                    <th>@Loc["Admin.Common.Status"]</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var row in Model.SmsRows)
+    <div class="admin-card" style="margin-bottom:16px;">
+        <h2 style="margin-top:0;">Mail server</h2>
+        @if (Model.SmtpSummary is { } summary)
+        {
+            <p class="admin-hint" style="margin-top:0;">Sending through <code>@summary</code>.</p>
+        }
+        @if (Model.SmtpProblems.Count > 0)
+        {
+            <div class="admin-status-message admin-status-message--error">
+                <strong>Email settings need attention.</strong>
+                <ul style="margin:6px 0 0 18px;">
+                    @foreach (var problem in Model.SmtpProblems)
+                    {
+                        <li>@problem</li>
+                    }
+                </ul>
+                <p style="margin:6px 0 0;">These come from the <code>Smtp</code> settings (in production: the
+                    <code>SMTP_*</code> secrets the deploy workflow writes). Fix them, redeploy, then send a test below.</p>
+                </div>
+            }
+            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+                <form asp-action="SendTest" method="post" style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+                    <div class="admin-field" style="margin:0; min-width:260px;">
+                        <label for="test-to">Send a test email to</label>
+                        <input id="test-to" name="to" type="email" placeholder="your own address (default)" />
+                    </div>
+                    <button type="submit" class="admin-btn">Send test</button>
+                </form>
+                @if (Model.FailedCount > 0)
                 {
-                    <tr>
-                        <td style="font-size:0.75rem; white-space:nowrap;">@row.CreatedAt.ToString("d MMM yyyy HH:mm")</td>
-                        <td style="font-family:monospace; font-size:0.78rem;">@row.RecipientPhone</td>
-                        <td>
-                            <code style="font-size:0.75rem;">@row.TemplateKey</code>
-                            @if (row.Status == EmailStatus.Failed && !string.IsNullOrWhiteSpace(row.ErrorMessage))
-                            {
-                                @* The gateway's own words. "Not a mobile number", "insufficient
-                                   balance" and "unverified sender id" are all the same 400, and this
-                                   is the only thing that tells them apart. *@
-                                <div style="font-size:0.72rem; color:var(--vih-danger); margin-top:2px;">@row.ErrorMessage</div>
-                            }
-                        </td>
-                        <td><span class="@StatusBadge(row.Status)">@Loc.Label(row.Status)</span></td>
-                        <td class="admin-table__actions">
-                            @if (row.ResentAt is { } resent)
-                            {
-                                <span class="admin-badge admin-badge--draft" title="Resent @resent.ToString("d MMM yyyy HH:mm")">@Loc["Admin.Emails.Resent"]</span>
-                            }
-                            else if (row.Status == EmailStatus.Failed && !string.IsNullOrEmpty(row.Body) && Model.SmsConfigured)
-                            {
-                                <form method="post" asp-action="ResendSms" asp-route-id="@row.Id" asp-route-status="@Model.Status" style="display:inline;">
-                                    <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Emails.Resend"]</button>
-                                </form>
-                            }
-                        </td>
-                    </tr>
+                    <form asp-action="RetryFailed" method="post"
+                          onsubmit="return confirm('Resend every failed email from the last 7 days?');">
+                        <button type="submit" class="admin-btn admin-btn--ghost">Retry failed (last 7 days)</button>
+                    </form>
                 }
-            </tbody>
-        </table>
-    </div>
-    }
-}
-else
-{
-    @if (Model.Rows.Count == 0)
-    {
-        <p>@(Model.Status is { } emailFilter ? Loc["Admin.Emails.NoEmailsWithStatus", Loc.Label(emailFilter)].Value : Loc["Admin.Emails.NoEmails"].Value)</p>
-    }
-    else
-    {
-        <div class="admin-table-scroll">
-            <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>@Loc["Admin.Emails.When"]</th>
-                    <th>@Loc["Admin.Emails.To"]</th>
-                    <th>@Loc["Admin.Emails.Subject"]</th>
-                    <th>@Loc["Admin.Emails.Template"]</th>
-                    <th>@Loc["Admin.Common.Status"]</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var row in Model.Rows)
-                {
-                    <tr>
-                        <td style="font-size:0.75rem; white-space:nowrap;">@row.CreatedAt.ToString("d MMM yyyy HH:mm")</td>
-                        <td>@row.RecipientEmail</td>
-                        <td>
-                            @row.Subject
-                            @if (row.Status == EmailStatus.Failed && !string.IsNullOrWhiteSpace(row.ErrorMessage))
-                            {
-                                @* The provider's own words. Vague enough to be useless when paraphrased,
-                                   and it is the only thing that says whether this was a bad address or a
-                                   dead SMTP host. *@
-                                <div style="font-size:0.72rem; color:var(--vih-danger); margin-top:2px;">@row.ErrorMessage</div>
-                            }
-                        </td>
-                        <td style="font-size:0.75rem;"><code>@row.TemplateKey</code></td>
-                        <td><span class="@StatusBadge(row.Status)">@Loc.Label(row.Status)</span></td>
-                        <td class="admin-table__actions">
-                            @if (row.ResentAt is { } resent)
-                            {
-                                <span class="admin-badge admin-badge--draft" title="Resent @resent.ToString("d MMM yyyy HH:mm")">@Loc["Admin.Emails.Resent"]</span>
-                            }
-                            else if (row.Status == EmailStatus.Failed && !string.IsNullOrEmpty(row.Body))
-                            {
-                                <form method="post" asp-action="ResendEmail" asp-route-id="@row.Id" asp-route-status="@Model.Status" style="display:inline;">
-                                    <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Emails.Resend"]</button>
-                                </form>
-                            }
-                            @if (RelatedHref(row.RelatedEntityType, row.RelatedEntityId) is { } href)
-                            {
-                                <a class="admin-icon-btn" href="@href">@Loc["Admin.Emails.OpenRecord"] &rarr;</a>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+            </div>
         </div>
     }
-}
 
-@if (Model.TotalCount > 0)
-{
-    <div class="admin-toolbar" style="margin-top:16px;">
-        @if (Model.HasPrevious)
-        {
-            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page - 1)">@Loc["Admin.Emails.Newer"]</a>
-        }
-        <span class="admin-hint" style="margin:0;">
-            @Loc[Model.ShowSms ? "Admin.Emails.PageOfSms" : "Admin.Emails.PageOfEmails", Model.Page, Model.TotalPages, Model.TotalCount]
-        </span>
-        @if (Model.HasNext)
-        {
-            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page + 1)">@Loc["Admin.Emails.Older"]</a>
-        }
+    <div class="admin-toolbar">
+        <a class="@ChannelClass(false)" asp-action="Index">@Loc["Admin.Common.Email"]</a>
+        <a class="@ChannelClass(true)" asp-action="Index" asp-route-channel="sms">@Loc["Admin.Emails.TextMessages"]</a>
     </div>
-}
+
+    @if (Model.FailedCount > 0)
+    {
+        <div class="admin-status-message">
+            @Loc[Model.ShowSms ? "Admin.Emails.FailedSms" : "Admin.Emails.FailedEmails", Model.FailedCount]
+            <a asp-action="Index" asp-route-channel="@channel"
+               asp-route-status="@EmailStatus.Failed">@Loc["Admin.Emails.ShowThem"]</a>.
+        </div>
+    }
+
+    @if (Model.OtherChannelFailedCount > 0)
+    {
+        @* A failure on the tab you are not looking at is still a failure — say so from either side. *@
+        <div class="admin-status-message">
+            @Loc[Model.ShowSms ? "Admin.Emails.OtherFailedEmail" : "Admin.Emails.OtherFailedSms", Model.OtherChannelFailedCount]
+            <a asp-action="Index" asp-route-channel="@(Model.ShowSms ? null : "sms")"
+               asp-route-status="@EmailStatus.Failed">@Loc["Admin.Emails.ShowThem"]</a>.
+        </div>
+    }
+
+    <div class="admin-toolbar">
+        <a class="@FilterClass(null)" asp-action="Index" asp-route-channel="@channel">@Loc["Admin.Emails.All"]</a>
+        <a class="@FilterClass(EmailStatus.Sent)" asp-action="Index" asp-route-channel="@channel"
+           asp-route-status="@EmailStatus.Sent">@Loc["Admin.Emails.Sent"]</a>
+        <a class="@FilterClass(EmailStatus.Queued)" asp-action="Index" asp-route-channel="@channel"
+           asp-route-status="@EmailStatus.Queued">@Loc["Admin.Emails.Queued"]</a>
+        <a class="@FilterClass(EmailStatus.Failed)" asp-action="Index" asp-route-channel="@channel"
+           asp-route-status="@EmailStatus.Failed">@Loc["Admin.Emails.Failed"]</a>
+    </div>
+
+    @if (Model.ShowSms && !Model.SmsConfigured)
+    {
+        <p class="admin-hint">
+            @Loc.Html("Admin.Emails.SmsNotConfigured", LocalizerHtml.Code("Sms:Enabled"), LocalizerHtml.Code("Sms__Username"),
+        LocalizerHtml.Code("Sms__Password"))
+        </p>
+    }
+
+    @if (Model.ShowSms)
+    {
+        @if (Model.SmsRows.Count == 0)
+        {
+            <p>@(Model.Status is { } smsFilter ? Loc["Admin.Emails.NoSmsWithStatus", Loc.Label(smsFilter)].Value :
+                    Loc["Admin.Emails.NoSms"].Value)</p>
+            }
+    else
+            {
+                <div class="admin-table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>@Loc["Admin.Emails.When"]</th>
+                                <th>@Loc["Admin.Emails.To"]</th>
+                                <th>@Loc["Admin.Emails.Message"]</th>
+                                <th>@Loc["Admin.Common.Status"]</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.SmsRows)
+                            {
+                                <tr>
+                                    <td style="font-size:0.75rem; white-space:nowrap;">@row.CreatedAt.ToString("d MMM yyyy HH:mm")</td>
+                                    <td style="font-family:monospace; font-size:0.78rem;">@row.RecipientPhone</td>
+                                    <td>
+                                        <code style="font-size:0.75rem;">@row.TemplateKey</code>
+                                        @if (row.Status == EmailStatus.Failed && !string.IsNullOrWhiteSpace(row.ErrorMessage))
+                                        {
+                                            @* The gateway's own words. "Not a mobile number", "insufficient
+                                   balance" and "unverified sender id" are all the same 400, and this
+                                   is the only thing that tells them apart. *@
+                                            <div style="font-size:0.72rem; color:var(--vih-danger); margin-top:2px;">@row.ErrorMessage</div>
+                                        }
+                                    </td>
+                                    <td><span class="@StatusBadge(row.Status)">@Loc.Label(row.Status)</span></td>
+                                    <td class="admin-table__actions">
+                                        @if (row.ResentAt is { } resent)
+                                        {
+                                            <span class="admin-badge admin-badge--draft"
+                                                  title="Resent @resent.ToString("d MMM yyyy HH:mm")">@Loc["Admin.Emails.Resent"]</span>
+                                        }
+                                        else if (row.Status == EmailStatus.Failed && !string.IsNullOrEmpty(row.Body) && Model.SmsConfigured)
+                                        {
+                                            <form method="post" asp-action="ResendSms" asp-route-id="@row.Id" asp-route-status="@Model.Status"
+                                                  style="display:inline;">
+                                                <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Emails.Resend"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+        else
+        {
+            @if (Model.Rows.Count == 0)
+            {
+                <p>@(Model.Status is { } emailFilter ? Loc["Admin.Emails.NoEmailsWithStatus", Loc.Label(emailFilter)].Value :
+                        Loc["Admin.Emails.NoEmails"].Value)</p>
+                }
+    else
+                {
+                    <div class="admin-table-scroll">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>@Loc["Admin.Emails.When"]</th>
+                                    <th>@Loc["Admin.Emails.To"]</th>
+                                    <th>@Loc["Admin.Emails.Subject"]</th>
+                                    <th>@Loc["Admin.Emails.Template"]</th>
+                                    <th>@Loc["Admin.Common.Status"]</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in Model.Rows)
+                                {
+                                    <tr>
+                                        <td style="font-size:0.75rem; white-space:nowrap;">@row.CreatedAt.ToString("d MMM yyyy HH:mm")</td>
+                                        <td>@row.RecipientEmail</td>
+                                        <td>
+                                            @row.Subject
+                                            @if (row.Status == EmailStatus.Failed && !string.IsNullOrWhiteSpace(row.ErrorMessage))
+                                            {
+                                                @* The provider's own words. Vague enough to be useless when paraphrased,
+                                   and it is the only thing that says whether this was a bad address or a
+                                   dead SMTP host. *@
+                                                <div style="font-size:0.72rem; color:var(--vih-danger); margin-top:2px;">@row.ErrorMessage</div>
+                                            }
+                                        </td>
+                                        <td style="font-size:0.75rem;"><code>@row.TemplateKey</code></td>
+                                        <td><span class="@StatusBadge(row.Status)">@Loc.Label(row.Status)</span></td>
+                                        <td class="admin-table__actions">
+                                            @if (row.ResentAt is { } resent &&
+                                    row.ErrorMessage?.StartsWith(VIHouse.Business.Concrete.OutboxProcessor.RetryingPrefix) == true)
+                                            {
+                                                <span class="admin-badge admin-badge--draft"
+                                                      title="Resent @resent.ToString("d MMM yyyy HH:mm")">Resent</span>
+                                            }
+                                            else if (row.Status == EmailStatus.Failed && !string.IsNullOrEmpty(row.Body))
+                                            {
+                                                <form method="post" asp-action="ResendEmail" asp-route-id="@row.Id" asp-route-status="@Model.Status"
+                                                      style="display:inline;">
+                                                    <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Emails.Resend"]</button>
+                                                </form>
+                                            }
+                                            @if (RelatedHref(row.RelatedEntityType, row.RelatedEntityId) is { } href)
+                                            {
+                                                <a class="admin-icon-btn" href="@href">@Loc["Admin.Emails.OpenRecord"] &rarr;</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            }
+
+            @if (Model.TotalCount > 0)
+            {
+                <div class="admin-toolbar" style="margin-top:16px;">
+                    @if (Model.HasPrevious)
+                    {
+                        <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page - 1)">@Loc["Admin.Emails.Newer"]</a>
+                    }
+                    <span class="admin-hint" style="margin:0;">
+                        @Loc[Model.ShowSms ? "Admin.Emails.PageOfSms" : "Admin.Emails.PageOfEmails", Model.Page, Model.TotalPages,
+                    Model.TotalCount]
+                    </span>
+                    @if (Model.HasNext)
+                    {
+                        <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page + 1)">@Loc["Admin.Emails.Older"]</a>
+                    }
+                </div>
+            }

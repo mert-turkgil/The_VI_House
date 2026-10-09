@@ -5,4 +5,7 @@
     <Project Path="src/VIHouse.Entities/VIHouse.Entities.csproj" />
     <Project Path="src/VIHouse.WebUI/VIHouse.WebUI.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/VIHouse.Tests/VIHouse.Tests.csproj" />
+  </Folder>
 </Solution>

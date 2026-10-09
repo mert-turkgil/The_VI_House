@@ -88,6 +88,12 @@ public class Seminar : BaseEntity
     /// </summary>
     public int MemberDiscountPercent { get; set; }
 
+    /// <summary>
+    /// When members may start to join or enrol. Null = as soon as it is open. Founders get in
+    /// FounderEarlyAccessDays (Admin › Founders) earlier; staff are never held back.
+    /// </summary>
+    public DateTimeOffset? MembersOpenAtUtc { get; set; }
+
     /// <summary>Set once, the first time Status flips to Published; a later unpublish/republish
     /// cycle does not reset it. Drives "newest first" ordering — same rule as JournalPost.</summary>
     public DateTimeOffset? PublishedAt { get; set; }

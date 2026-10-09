@@ -66,6 +66,11 @@
         <p class="admin-field__hint">@Loc["Admin.Experiences.PercentageOffEveryTicketForCurrent"]</p>
         <span asp-validation-for="MemberDiscountPercent" class="field-validation-error"></span>
     </div>
+    <div class="admin-field">
+        <label asp-for="MembersOpenAtUtc"></label>
+        <input asp-for="MembersOpenAtUtc" type="datetime-local" />
+        <p class="admin-field__hint">When members whose plan is admitted may join. Empty = straight away. Founders get in earlier by the early-access days set under Founders.</p>
+    </div>
 </div>
 
 <div class="admin-form__grid">

@@ -99,6 +99,26 @@ public class SiteSetting : BaseEntity
     /// </summary>
     public bool PublishLlmsTxt { get; set; } = true;
 
+    // --- Founder programme ------------------------------------------------------------------------
+    // The people who joined at launch. Everyone whose first membership starts before the window
+    // closes is given the Founder role (FounderService); the perks below are what that role buys,
+    // and each one is off until an admin turns it on.
+
+    /// <summary>When the founder window closes. Null means no window is running — nobody new
+    /// becomes a Founder automatically, though an admin can still grant the role by hand.</summary>
+    public DateTimeOffset? FounderWindowEndsAtUtc { get; set; }
+
+    /// <summary>Extra percentage off for Founders, stacked on top of any member discount on a
+    /// session or experience ticket. 0 = no extra discount.</summary>
+    public int FounderExtraDiscountPercent { get; set; }
+
+    /// <summary>How many days before an item's members-open date a Founder may join or enrol.
+    /// 0 = no early access.</summary>
+    public int FounderEarlyAccessDays { get; set; }
+
+    /// <summary>Show the Founder badge on the member card, account and directory.</summary>
+    public bool FounderBadgeEnabled { get; set; }
+
     public List<SiteSettingTranslation> Translations { get; set; } = [];
 
     /// <summary>Per-page, per-language search titles and descriptions (Admin > Settings > Pages).</summary>
