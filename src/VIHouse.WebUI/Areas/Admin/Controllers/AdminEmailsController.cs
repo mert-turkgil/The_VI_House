@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using VIHouse.Business.Options;
 using VIHouse.DataAccess.Identity;
@@ -34,7 +35,8 @@ public class AdminEmailsController(
     IEmailService emailService,
     ISmsService smsService,
     IOptionsSnapshot<SmtpOptions> smtp,
-    UserManager<ApplicationUser> userManager) : AdminControllerBase
+    UserManager<ApplicationUser> userManager,
+    IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     private const int PageSize = 50;
 
@@ -55,7 +57,9 @@ public class AdminEmailsController(
             SmsConfigured = smsService.IsConfigured,
             SmtpProblems = smtp.Value.Problems(),
             SmtpSummary = smtp.Value.IsConfigured
-                ? $"{smtp.Value.Host}:{smtp.Value.Port} as {smtp.Value.FromEmail}{(string.IsNullOrWhiteSpace(smtp.Value.Username) ? " (no sign-in)" : $", signing in as {smtp.Value.Username}")}"
+                ? (string.IsNullOrWhiteSpace(smtp.Value.Username)
+                    ? loc["Admin.Emails.SmtpSummaryAnonymous", $"{smtp.Value.Host}:{smtp.Value.Port}", smtp.Value.FromEmail].Value
+                    : loc["Admin.Emails.SmtpSummary", $"{smtp.Value.Host}:{smtp.Value.Port}", smtp.Value.FromEmail, smtp.Value.Username].Value)
                 : null,
             Status = parsed,
             Page = current,
@@ -96,7 +100,7 @@ public class AdminEmailsController(
         var recipient = string.IsNullOrWhiteSpace(to) ? me?.Email : to.Trim();
         if (string.IsNullOrWhiteSpace(recipient) || !recipient.Contains('@'))
         {
-            TempData["StatusMessage"] = "Enter an email address to send the test to.";
+            Status(loc["Admin.Emails.Msg.TestNeedsAddress"].Value, isError: true);
             return RedirectToAction(nameof(Index));
         }
 
@@ -106,12 +110,13 @@ public class AdminEmailsController(
 
         if (sent)
         {
-            TempData["StatusMessage"] = $"Test email accepted by {smtp.Value.Host} for {recipient}. If it does not arrive within a few minutes, check the spam folder and the domain's SPF/DKIM records.";
+            Status(loc["Admin.Emails.Msg.TestAccepted", smtp.Value.Host, recipient].Value);
         }
         else
         {
+            // The server's own words, untranslated: they are what tells a bad password from a dead host.
             var latest = (await emailLogs.GetRecentAsync(EmailStatus.Failed, 0, 1, ct)).FirstOrDefault();
-            TempData["StatusMessage"] = $"Test email to {recipient} FAILED: {latest?.ErrorMessage ?? "unknown error"}";
+            Status(loc["Admin.Emails.Msg.TestFailed", recipient, latest?.ErrorMessage ?? "?"].Value, isError: true);
         }
         return RedirectToAction(nameof(Index));
     }
@@ -136,9 +141,9 @@ public class AdminEmailsController(
             if (ok == 0 && again >= 3) break;
         }
 
-        TempData["StatusMessage"] = failed.Count == 0
-            ? "Nothing to retry — no failed emails with a stored copy in the last 7 days."
-            : $"Retried {ok + again} of {failed.Count}: {ok} sent, {again} failed again.";
+        Status(failed.Count == 0
+            ? loc["Admin.Emails.Msg.NothingToRetry"].Value
+            : loc["Admin.Emails.Msg.Retried", ok + again, failed.Count, ok, again].Value, isError: again > 0);
         return RedirectToAction(nameof(Index), new { status = again > 0 ? nameof(EmailStatus.Failed) : null });
     }
 

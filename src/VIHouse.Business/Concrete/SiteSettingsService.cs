@@ -91,6 +91,7 @@ public class SiteSettingsService(
         current.TwitterHandle = Text.NullIfBlank(updated.TwitterHandle)?.TrimStart('@');
 
         current.ContactEmail = Text.NullIfBlank(updated.ContactEmail);
+        current.InfluencerEmail = Text.NullIfBlank(updated.InfluencerEmail);
         current.ContactPhone = Text.NullIfBlank(updated.ContactPhone);
         current.StreetAddress = Text.NullIfBlank(updated.StreetAddress);
         current.AddressLocality = Text.NullIfBlank(updated.AddressLocality);
@@ -406,7 +407,7 @@ public class SiteSettingsService(
     private static object Snapshot(SiteSetting s) => new
     {
         s.CanonicalBaseUrl, s.AllowIndexing, s.PublishLlmsTxt, s.TwitterHandle,
-        s.OrganizationType, s.ContactEmail,
+        s.OrganizationType, s.ContactEmail, s.InfluencerEmail,
     };
 
     private Task LogAsync(

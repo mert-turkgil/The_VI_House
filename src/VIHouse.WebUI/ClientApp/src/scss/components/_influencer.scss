@@ -1,0 +1,264 @@
+// --- The influencer's own area (Views/Influencer) --------------------------------------------------
+// The account shell, cards and forms are the account area's; this is only what the influencer pages
+// add: status pills for articles, the editors' note, a row of actions, the writer inside the
+// account column, and the author box under a published influencer article.
+
+.influencer-section {
+  margin-bottom: var(--vih-space-md);
+
+  h2 {
+    margin: 0 0 12px;
+    font-family: var(--vih-font-serif);
+    font-size: 1.25rem;
+  }
+}
+
+.influencer-hint {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+  color: var(--vih-text-muted);
+}
+
+.influencer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 16px 0;
+
+  form { margin: 0; }
+}
+
+.influencer-link {
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.influencer-pill {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--vih-surface-sunken);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+
+  &--waiting { background: color-mix(in srgb, var(--vih-gold) 22%, var(--vih-surface)); }
+  &--action { background: color-mix(in srgb, var(--vih-danger) 14%, var(--vih-surface)); color: var(--vih-danger); }
+  &--live { background: var(--vih-success-bg); color: var(--vih-success); }
+}
+
+.influencer-note {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--vih-gold);
+  background: var(--vih-surface-sunken);
+  font-size: 0.875rem;
+}
+
+// The writer was built for the panel's full width; inside the account column the settings card
+// sits under the article until there is room beside it.
+.influencer-writer {
+  .writer__side { align-self: start; }
+
+  .writer-card h2 {
+    margin: 0 0 10px;
+    font-size: 1rem;
+  }
+
+  .writer__actions .btn { min-height: 44px; }
+}
+
+.influencer-cover {
+  display: grid;
+  gap: 10px;
+
+  form { margin: 0; }
+}
+
+// --- Author box under a published influencer article (Views/Journal/Details) ------------------------
+.author-box {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px 20px;
+  align-items: start;
+  max-width: 760px;
+  margin: var(--vih-space-lg, 48px) auto 0;
+  padding: 24px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface);
+
+  @media (max-width: 560px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.author-box__photo {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author-box__eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+}
+
+.author-box__name {
+  margin: 2px 0 6px;
+  font-family: var(--vih-font-serif);
+  font-size: 1.375rem;
+}
+
+.author-box__bio {
+  margin: 0 0 12px;
+  white-space: pre-line;
+}
+
+.author-box__channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+
+  a { text-decoration: underline; text-underline-offset: 3px; }
+}
+
+// --- Social link cards in articles (ArticleHtml) ------------------------------------------------------
+// A paragraph that was only a link to a post on a social network, shown as a tidy card. No embed, no
+// third-party script: the network's name, the handle, and a link out.
+.link-card {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  max-width: 520px;
+  margin: 1.5em 0;
+  padding: 14px 18px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface);
+  color: inherit;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible { border-color: var(--vih-gold); }
+}
+
+.link-card__platform {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--vih-surface-sunken);
+  font-weight: 700;
+  font-size: 0.8125rem;
+}
+
+.link-card__body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+
+  strong { overflow-wrap: anywhere; }
+  span { font-size: 0.8125rem; color: var(--vih-text-muted); }
+}
+
+// --- "Become an influencer" (Views/Influencers) ------------------------------------------------------
+.influencers-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.influencers-hero__address {
+  font-size: 0.875rem;
+  opacity: 0.85;
+  overflow-wrap: anywhere;
+}
+
+.influencers {
+  display: grid;
+  gap: 56px;
+  padding-bottom: 72px;
+}
+
+.influencers__heading {
+  margin: 0 0 20px;
+  font-family: var(--vih-font-serif);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.influencers__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.influencers__item {
+  padding: 22px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface);
+
+  h3 { margin: 12px 0 6px; font-size: 1.0625rem; }
+  p { margin: 0; color: var(--vih-text-muted); }
+}
+
+.influencers__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--vih-gold) 18%, var(--vih-surface));
+
+  svg { width: 20px; height: 20px; }
+}
+
+.influencers__steps {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding-left: 1.4em;
+
+  li { display: grid; gap: 2px; padding-left: 4px; }
+  span { color: var(--vih-text-muted); }
+}
+
+.influencers__who p { max-width: 70ch; margin: 0; }
+
+.influencers__faq {
+  border-bottom: 1px solid var(--vih-line-on-light);
+  padding: 14px 0;
+
+  summary { cursor: pointer; font-weight: 600; }
+  p { margin: 10px 0 0; max-width: 70ch; color: var(--vih-text-muted); }
+}
+
+.influencers__cta {
+  padding: 32px;
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface-sunken);
+  text-align: center;
+
+  h2 { margin: 0 0 8px; font-family: var(--vih-font-serif); }
+  p { margin: 0 auto 18px; max-width: 60ch; }
+}

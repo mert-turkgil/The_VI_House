@@ -49,7 +49,7 @@
     <div class="admin-card">
         <h2>@Loc["Admin.Influencer.Section.Profile"]</h2>
         <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Influencer.ProfileIntro"]</p>
-        <partial name="_ProfileFields" model="Model.Profile" view-data='@(new ViewDataDictionary(ViewData) { ["Prefix"] = "Profile" })' />
+        <partial name="_InfluencerProfileFields" model="Model.Profile" view-data='@(new ViewDataDictionary(ViewData) { ["Prefix"] = "Profile" })' />
         <div class="admin-field">
             <label asp-for="Photo">@Loc["Admin.Influencer.Photo"]</label>
             <input asp-for="Photo" type="file" accept=".jpg,.jpeg,.png,.webp,.avif" />

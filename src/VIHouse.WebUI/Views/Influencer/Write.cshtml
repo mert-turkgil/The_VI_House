@@ -1,0 +1,159 @@
+@model InfluencerWriteViewModel
+@inject IConfiguration Configuration
+@{
+    var post = Model.Post;
+    var form = Model.Form;
+    var language = VIHouse.Business.Options.SiteCultures.Describe(System.Globalization.CultureInfo.CurrentUICulture.Name).UrlCode;
+}
+
+@section Styles {
+    @if (Model.Editable)
+    {
+        <partial name="_CkEditorAssets" model='"styles"' />
+        <link rel="stylesheet" href="~/dist/writer.css" asp-append-version="true" />
+    }
+}
+
+<div class="account-manage">
+    <partial name="_InfluencerNav" />
+    <div class="account-manage__content">
+        <header class="account-page__head">
+            <p><a asp-action="Journal">&larr; @Loc["Influencer.Journal.Back"]</a></p>
+            @* While editable the headline field right below is the title; a second, larger copy above
+               it only pushes the editor down. Kept for screen readers. *@
+            <h1 class="@(Model.Editable ? "visually-hidden" : null)">@(string.IsNullOrWhiteSpace(form.Title) ? Loc["Influencer.Journal.Untitled"].Value : form.Title)</h1>
+            <p class="account-page__lede">@Loc["Influencer.Journal.Status." + post.Status]</p>
+        </header>
+
+        @if (TempData["StatusMessage"] is string status)
+        {
+            <div class="@(TempData["StatusIsError"] is true ? "vih-alert vih-alert--danger" : "contact-success")" role="status" style="margin-bottom:20px;">@status</div>
+        }
+        <div asp-validation-summary="ModelOnly" class="vih-alert vih-alert--danger" role="alert"></div>
+
+        @if (post.Status == JournalPostStatus.ChangesRequested && post.ReviewNote is { } note)
+        {
+            <div class="account-notice" role="status">
+                <div>
+                    <strong>@Loc["Influencer.Journal.EditorsNote"]</strong>
+                    <p style="white-space:pre-line;">@note</p>
+                </div>
+            </div>
+        }
+
+        @if (!Model.Editable)
+        {
+            @* Submitted: the editors have it. Published: it is theirs now — changes go through them. *@
+            <div class="account-notice" role="status">
+                <div>
+                    <strong>@Loc[post.Status == JournalPostStatus.Published ? "Influencer.Journal.LockedPublished" : "Influencer.Journal.LockedSubmitted"]</strong>
+                    <p>@Loc[post.Status == JournalPostStatus.Published ? "Influencer.Journal.LockedPublishedBody" : "Influencer.Journal.LockedSubmittedBody"]</p>
+                </div>
+            </div>
+            <div class="influencer-actions">
+                <a class="btn btn--primary" href="@Model.PreviewUrl" target="_blank" rel="noopener">@Loc[post.Status == JournalPostStatus.Published ? "Influencer.Journal.ViewLive" : "Influencer.Journal.Preview"]</a>
+                @if (post.Status == JournalPostStatus.Submitted)
+                {
+                    <form asp-action="WithdrawSubmission" asp-route-id="@post.Id" method="post">
+                        <button type="submit" class="btn btn--ghost-dark">@Loc["Influencer.Journal.Withdraw"]</button>
+                    </form>
+                }
+            </div>
+        }
+        else
+        {
+            @* The admin panel's writer — same editor, same autosave, same word count — without the
+               translation tabs, the address or the search settings, which the editors look after. *@
+            <div class="writer influencer-writer" data-writer
+                 data-post-id="@post.Id" data-culture="@VIHouse.Business.Options.SiteCultures.Default" data-updated-at="@Model.UpdatedAtMs"
+                 data-words-label="@Loc["Admin.Writer.Words"]" data-minutes-label="@Loc["Admin.Writer.Minutes"]"
+                 data-autosaved-label="@Loc["Admin.Writer.Autosaved"]" data-restore-label="@Loc["Admin.Writer.Restore"]"
+                 data-restore-yes="@Loc["Admin.Writer.RestoreYes"]" data-restore-no="@Loc["Admin.Writer.RestoreNo"]"
+                 data-ckeditor-license="@Configuration["CkEditor:LicenseKey"]" data-ui-language="@language"
+                 data-editor-paragraph="@Loc["Admin.Editor.Paragraph"]" data-editor-heading="@Loc["Admin.Editor.Heading"]"
+                 data-editor-subheading="@Loc["Admin.Editor.Subheading"]" data-editor-minor="@Loc["Admin.Editor.MinorHeading"]">
+                <div class="writer__main">
+                    <p class="influencer-hint">@Loc["Influencer.Journal.WriterHint"]</p>
+                    <form id="journal-writer" asp-action="Write" asp-route-id="@post.Id" method="post" class="writer__form">
+                        <label class="visually-hidden" for="writer-title">@Loc["Influencer.Journal.Title"]</label>
+                        <input id="writer-title" class="writer__title" name="Title" value="@form.Title" maxlength="200" required
+                               placeholder="@Loc["Admin.Writer.TitlePlaceholder"]" autocomplete="off" data-writer-title />
+
+                        <label class="visually-hidden" for="writer-standfirst">@Loc["Influencer.Journal.Standfirst"]</label>
+                        <textarea id="writer-standfirst" class="writer__standfirst" name="Excerpt" rows="2" maxlength="400"
+                                  placeholder="@Loc["Admin.Writer.StandfirstPlaceholder"]" data-writer-excerpt>@form.Excerpt</textarea>
+
+                        <div class="writer__editor">
+                            @* Images dropped into the editor are uploaded straight away (still images, up
+                               to 12 MB); a YouTube link goes in with the media button and becomes a player. *@
+                            <textarea id="writer-body" name="Body" rows="20" data-ckeditor data-writer-body
+                                      data-placeholder="@Loc["Admin.Writer.BodyPlaceholder"]"
+                                      data-upload-url="@Url.Action("UploadInline", new { id = post.Id })">@form.Body</textarea>
+                        </div>
+
+                        <div class="writer__status" aria-live="polite">
+                            <span data-writer-count>&nbsp;</span>
+                            <span class="writer__autosave" data-writer-autosave></span>
+                            <button type="button" class="writer__focus" data-writer-focus aria-pressed="false"
+                                    data-label-on="@Loc["Admin.Writer.FocusOn"]" data-label-off="@Loc["Admin.Writer.FocusOff"]">@Loc["Admin.Writer.FocusOn"]</button>
+                        </div>
+
+                        <div class="apply-field">
+                            <label for="writer-category">@Loc["Influencer.Journal.Category"]</label>
+                            <select id="writer-category" name="Category">
+                                @foreach (var category in Enum.GetValues<JournalCategory>())
+                                {
+                                    <option value="@category" selected="@(form.Category == category)">@Loc["Journal.Category." + category]</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="writer__actions">
+                            <button type="submit" class="btn btn--ghost-dark" name="intent" value="save" data-default-save>@Loc["Influencer.Journal.SaveDraft"]</button>
+                            <button type="submit" class="btn btn--primary" name="intent" value="submit">@Loc["Influencer.Journal.Submit"]</button>
+                            <a class="influencer-link" href="@Model.PreviewUrl" target="_blank" rel="noopener">@Loc["Influencer.Journal.Preview"]</a>
+                        </div>
+                        <p class="influencer-hint">@Loc["Influencer.Journal.SubmitHint"]</p>
+                    </form>
+                </div>
+
+                <aside class="writer__side" aria-label="@Loc["Influencer.Journal.Cover"]">
+                    <section class="writer-card influencer-cover" id="cover">
+                        <h2>@Loc["Influencer.Journal.Cover"]</h2>
+                        @if (Model.CoverUrl is not null)
+                        {
+                            <img class="writer-card__cover" src="@Model.CoverUrl" alt="" />
+                        }
+                        else
+                        {
+                            <p class="writer-card__empty">@Loc["Influencer.Journal.NoCover"]</p>
+                        }
+                        <form asp-action="UploadCover" asp-route-id="@post.Id" method="post" enctype="multipart/form-data" class="writer-card__upload">
+                            <input type="file" name="cover" accept=".jpg,.jpeg,.png,.webp,.avif" required aria-label="@Loc["Influencer.Journal.Cover"]" />
+                            <button type="submit" class="btn btn--ghost-dark btn--sm">@Loc["Influencer.Journal.UploadCover"]</button>
+                        </form>
+                        @if (Model.CoverUrl is not null)
+                        {
+                            <form asp-action="RemoveCover" asp-route-id="@post.Id" method="post">
+                                <button type="submit" class="btn btn--ghost-dark btn--sm">@Loc["Influencer.Journal.RemoveCover"]</button>
+                            </form>
+                        }
+                        <div class="apply-field">
+                            <label for="cover-alt">@Loc["Influencer.Journal.CoverAlt"]</label>
+                            <input id="cover-alt" form="journal-writer" name="CoverImageAlt" value="@form.CoverImageAlt" maxlength="300" />
+                            <span class="apply-field__hint">@Loc["Influencer.Journal.CoverAltHint"]</span>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @if (Model.Editable)
+    {
+        <partial name="_CkEditorAssets" model='"scripts"' />
+        <script type="module" src="~/dist/writer.js" asp-append-version="true"></script>
+    }
+}

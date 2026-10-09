@@ -21,6 +21,7 @@ public static class SeoPages
         new("about", "/about", "About.Title", "Seo.About.Description"),
         new("faq", "/faq", "Faq.Title", null),
         new("contact", "/contact", "Contact.Title", "Seo.Contact.Description"),
+        new("influencers", "/influencers", "Influencers.Title", "Seo.Influencers.Description"),
         new("terms", "/legal/terms", "Footer.Terms", null),
         new("privacy", "/legal/privacy", "Footer.Privacy", null),
         new("cookies", "/legal/cookies", "Footer.Cookies", null),

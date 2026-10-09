@@ -119,6 +119,44 @@
     </section>
 }
 
+@if (Model.Author is { } author)
+{
+    <aside class="container" aria-labelledby="author-box-name">
+        <div class="author-box">
+            @if (author.PhotoUrl is not null)
+            {
+                <img class="author-box__photo" src="@author.PhotoUrl" alt="" width="88" height="88" loading="lazy" />
+            }
+            <div>
+                <p class="author-box__eyebrow">@Loc["Journal.Author.Eyebrow"]</p>
+                <h2 class="author-box__name" id="author-box-name">@author.Name</h2>
+                @if (author.Niche is not null)
+                {
+                    <p class="author-box__eyebrow" style="text-transform:none; letter-spacing:0;">@author.Niche</p>
+                }
+                @if (author.Bio is not null)
+                {
+                    <p class="author-box__bio">@author.Bio</p>
+                }
+                @if (author.Channels.Count > 0)
+                {
+                    <ul class="author-box__channels">
+                        @foreach (var channel in author.Channels)
+                        {
+                            <li><a href="@channel.Url" target="_blank" rel="noopener noreferrer nofollow">@Loc.Label(channel.Platform) · @SocialLinks.Handle(channel.Url)</a></li>
+                        }
+                    </ul>
+                }
+                @if (author.JoinUrl is not null)
+                {
+                    @* Through their own link, so a reader who joins counts toward their earnings. *@
+                    <a class="btn btn--primary" href="@author.JoinUrl">@Loc["Journal.Author.JoinVia", author.Name]</a>
+                }
+            </div>
+        </div>
+    </aside>
+}
+
 <div class="container journal-article__back">
     <a asp-area="" asp-controller="Journal" asp-action="Index">&larr; @Loc["Journal.Back"]</a>
 </div>

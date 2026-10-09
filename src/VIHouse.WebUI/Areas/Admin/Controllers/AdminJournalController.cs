@@ -27,16 +27,24 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 [Route("admin/journal")]
 public class AdminJournalController(
     IJournalService journalService,
+    IAmbassadorService ambassadors,
     UserManager<ApplicationUser> userManager,
     IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     // --- Index / create ----------------------------------------------------------------------------
 
+    /// <param name="show">"submissions" lists only what influencers sent in and the editors still owe
+    /// an answer — Submitted first, then the ones sent back.</param>
     [HttpGet("")]
-
-    public async Task<IActionResult> Index(CancellationToken ct)
+    public async Task<IActionResult> Index(string? show, CancellationToken ct)
     {
         var all = await journalService.GetAllForAdminAsync(ct);
+        var submissionsOnly = show == "submissions";
+        ViewData["ShowSubmissions"] = submissionsOnly;
+        ViewData["SubmittedCount"] = all.Count(p => p.Status == JournalPostStatus.Submitted);
+        if (submissionsOnly)
+            all = [.. all.Where(p => p.Status is JournalPostStatus.Submitted or JournalPostStatus.ChangesRequested)
+                .OrderBy(p => p.Status != JournalPostStatus.Submitted).ThenBy(p => p.SubmittedAt)];
 
         var model = all.Select(p => new AdminJournalListItemViewModel
         {
@@ -46,6 +54,7 @@ public class AdminJournalController(
             Category = p.Category,
             Status = p.Status,
             PublishedAt = p.PublishedAt,
+            SubmittedBy = p.AuthorUserId is null ? null : p.AuthorName ?? "—",
             TranslatedCultures = [.. p.Translations.Select(t => t.Culture).Order()],
         }).ToList();
 
@@ -106,7 +115,30 @@ public class AdminJournalController(
         var post = await journalService.GetForAdminEditAsync(id, ct);
         if (post is null) return NotFound();
 
-        return View(BuildEditModel(post, culture));
+        return View(await WithSubmissionAsync(BuildEditModel(post, culture), post, ct));
+    }
+
+    /// <summary>
+    /// Sends an influencer's submission back with a note they see in their area and by email. The
+    /// article stays theirs to change; publishing is still this screen's Publish button.
+    /// </summary>
+    [HttpPost("{id:guid}/request-changes")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RequestChanges(Guid id, string? note, CancellationToken ct)
+    {
+        var (adminId, ip) = CurrentActor();
+        var result = await journalService.RequestChangesAsync(id, note ?? "", adminId, ip, ct);
+        Status(result.Success ? loc["Admin.Journal.ChangesRequested"].Value : Localised(result.Error), isError: !result.Success);
+        return RedirectToAction(nameof(Edit), new { id });
+    }
+
+    /// <summary>The "submitted by" banner for an influencer's article.</summary>
+    private async Task<AdminJournalEditViewModel> WithSubmissionAsync(AdminJournalEditViewModel model, JournalPost post, CancellationToken ct)
+    {
+        if (post.AuthorUserId is not { } authorId) return model;
+        var influencer = await ambassadors.GetByUserIdAsync(authorId, ct);
+        model.Submission = new JournalSubmissionInfo(influencer?.Name ?? post.AuthorName ?? "—", influencer?.Id, post.Status, post.SubmittedAt, post.ReviewNote);
+        return model;
     }
 
     /// <summary>
@@ -138,14 +170,14 @@ public class AdminJournalController(
             _ => existing.Status,
         };
 
-        if (!ModelState.IsValid) return View(nameof(Edit), Redisplay(existing, post, copy));
+        if (!ModelState.IsValid) return View(nameof(Edit), await WithSubmissionAsync(Redisplay(existing, post, copy), existing, ct));
 
         var (adminId, ip) = CurrentActor();
         var copyResult = await journalService.SaveTranslationAsync(id, copy.ToEntity(), adminId, ip, ct);
         if (!copyResult.Success)
         {
             ModelState.AddModelError(string.Empty, Localised(copyResult.Error));
-            return View(nameof(Edit), Redisplay(existing, post, copy));
+            return View(nameof(Edit), await WithSubmissionAsync(Redisplay(existing, post, copy), existing, ct));
         }
 
         var postResult = await journalService.UpdateAsync(post.ToEntity(), adminId, ip, ct);
@@ -155,7 +187,7 @@ public class AdminJournalController(
             ModelState.AddModelError(string.Empty, Localised(postResult.Error));
             var reloaded = await journalService.GetForAdminEditAsync(id, ct) ?? existing;
             post.Status = existing.Status;
-            return View(nameof(Edit), Redisplay(reloaded, post, copy));
+            return View(nameof(Edit), await WithSubmissionAsync(Redisplay(reloaded, post, copy), reloaded, ct));
         }
 
         Status((intent, post.Status) switch
@@ -387,7 +419,7 @@ public class AdminJournalController(
     {
         var english = JournalContent.Find(post, SiteCultures.Default);
         var englishUrl = Url.Action(nameof(Edit), new { id = post.Id, culture = SiteCultures.Default });
-        var words = CountWords(english?.Body);
+        var words = JournalService.CountWords(english?.Body);
         var hasCover = post.CoverMediaId is not null || !string.IsNullOrWhiteSpace(post.CoverImageUrl);
         var translated = SiteCultures.All.Count(c => JournalContent.Find(post, c.Name) is not null);
         var firstMissing = SiteCultures.All.FirstOrDefault(c => JournalContent.Find(post, c.Name) is null)?.Name ?? SiteCultures.Default;
@@ -421,12 +453,6 @@ public class AdminJournalController(
 
     /// <summary>Below this the checklist suggests writing more. Advice only; it does not block.</summary>
     private const int MinimumWords = 150;
-
-    private static int CountWords(string? html) =>
-        string.IsNullOrWhiteSpace(html)
-            ? 0
-            : System.Text.RegularExpressions.Regex.Matches(
-                System.Text.RegularExpressions.Regex.Replace(html, "<[^>]+>", " "), @"[\p{L}\p{N}]+").Count;
 
     /// <summary>Service errors arrive as SharedResource keys, not sentences, so the panel speaks
     /// whichever language the admin set — same contract as AdminSeminarsController.</summary>

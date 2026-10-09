@@ -1,0 +1,80 @@
+@model string?
+@{
+    var email = Model;
+    var subject = Uri.EscapeDataString(Loc["Influencers.MailSubject"].Value);
+    var mailto = email is null ? null : $"mailto:{email}?subject={subject}";
+}
+
+<div class="content-hero influencers-hero">
+    <div class="container">
+        <span class="content-hero__eyebrow">@Loc["Influencers.Eyebrow"]</span>
+        <h1>@Loc["Influencers.Heading"]</h1>
+        <p>@Loc["Influencers.Lede"]</p>
+        @if (mailto is not null)
+        {
+            <div class="influencers-hero__actions">
+                <a class="btn btn--primary" href="@mailto">@Loc["Influencers.EmailUs"]</a>
+                <span class="influencers-hero__address">@email</span>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="container content-body influencers">
+    <section aria-labelledby="influencers-get">
+        <h2 id="influencers-get" class="influencers__heading">@Loc["Influencers.Get.Heading"]</h2>
+        <ul class="influencers__grid">
+            @foreach (var (icon, key) in new[] { ("tag", "Links"), ("credit-card", "Commission"), ("layout-dashboard", "Dashboard"), ("file-text", "Journal"), ("layers", "Withdrawals") })
+            {
+                <li class="influencers__item" data-reveal>
+                    <span class="influencers__icon" aria-hidden="true"><partial name="_Icon" model="@icon" /></span>
+                    <h3>@Loc[$"Influencers.Get.{key}"]</h3>
+                    <p>@Loc[$"Influencers.Get.{key}.Body"]</p>
+                </li>
+            }
+        </ul>
+    </section>
+
+    <section aria-labelledby="influencers-how">
+        <h2 id="influencers-how" class="influencers__heading">@Loc["Influencers.How.Heading"]</h2>
+        <ol class="influencers__steps">
+            @for (var step = 1; step <= 4; step++)
+            {
+                <li data-reveal>
+                    <strong>@Loc[$"Influencers.How.Step{step}"]</strong>
+                    <span>@Loc[$"Influencers.How.Step{step}.Body"]</span>
+                </li>
+            }
+        </ol>
+    </section>
+
+    <section aria-labelledby="influencers-who" class="influencers__who">
+        <h2 id="influencers-who" class="influencers__heading">@Loc["Influencers.Who.Heading"]</h2>
+        <p>@Loc["Influencers.Who.Body"]</p>
+    </section>
+
+    <section aria-labelledby="influencers-faq">
+        <h2 id="influencers-faq" class="influencers__heading">@Loc["Influencers.Faq.Heading"]</h2>
+        @for (var q = 1; q <= 4; q++)
+        {
+            <details class="influencers__faq">
+                <summary>@Loc[$"Influencers.Faq.Q{q}"]</summary>
+                <p>@Loc[$"Influencers.Faq.A{q}"]</p>
+            </details>
+        }
+    </section>
+
+    <section class="influencers__cta" aria-labelledby="influencers-cta">
+        <h2 id="influencers-cta">@Loc["Influencers.Cta.Heading"]</h2>
+        <p>@Loc["Influencers.Cta.Body"]</p>
+        @if (mailto is not null)
+        {
+            <a class="btn btn--primary" href="@mailto">@Loc["Influencers.EmailUs"]</a>
+            <p class="influencers-hero__address">@email</p>
+        }
+        else
+        {
+            <a class="btn btn--primary" asp-controller="Contact" asp-action="Index">@Loc["Footer.Contact"]</a>
+        }
+    </section>
+</div>

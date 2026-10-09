@@ -100,7 +100,7 @@
             @if (Model.CanEditProfile)
             {
                 <form asp-action="SaveProfile" asp-route-id="@Model.Id" method="post" class="admin-form" style="max-width:none;">
-                    <partial name="_ProfileFields" model="Model.ProfileForm" view-data='@(new ViewDataDictionary(ViewData) { ["Prefix"] = "ProfileForm" })' />
+                    <partial name="_InfluencerProfileFields" model="Model.ProfileForm" view-data='@(new ViewDataDictionary(ViewData) { ["Prefix"] = "ProfileForm" })' />
                     <div><button type="submit" class="admin-btn">@Loc["Admin.Influencer.SaveProfile"]</button></div>
                 </form>
             }

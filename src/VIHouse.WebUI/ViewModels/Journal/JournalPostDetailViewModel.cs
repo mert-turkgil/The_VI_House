@@ -31,12 +31,16 @@ public class JournalPostDetailViewModel
 
     public string CategoryLabel => Category.ToDisplayLabel();
 
+    /// <summary>Set under an influencer's article (JournalController).</summary>
+    public JournalAuthorBox? Author { get; set; }
+
     /// <param name="culture">The reader's culture, from CurrentUICulture — the same source the
     /// .resx strings around the article use, so the copy can never be in a different language from
     /// the chrome surrounding it.</param>
     /// <param name="videoPlayLabel">Localised accessible name for a video's play button. Passed in
     /// because ArticleHtml lives in Business, which has no localiser and should not grow one.</param>
-    public static JournalPostDetailViewModel FromEntity(JournalPost p, string? culture, string videoPlayLabel)
+    /// <param name="viewOnFormat">"View on {0}" for social link cards, localised for the same reason.</param>
+    public static JournalPostDetailViewModel FromEntity(JournalPost p, string? culture, string videoPlayLabel, string viewOnFormat)
     {
         var copy = JournalContent.Resolve(p, culture);
 
@@ -54,7 +58,7 @@ public class JournalPostDetailViewModel
             // EnsureHtml covers posts written before the editor existed, whose bodies are still
             // stored as blank-line-separated plain text and would otherwise render as one run-on
             // paragraph. RenderForDisplay then turns any video marker into its click-to-play facade.
-            BodyHtml = ArticleHtml.RenderForDisplay(EditorHtml.EnsureHtml(copy?.Body ?? string.Empty), videoPlayLabel),
+            BodyHtml = ArticleHtml.RenderForDisplay(EditorHtml.EnsureHtml(copy?.Body ?? string.Empty), videoPlayLabel, viewOnFormat),
             Gallery = [.. JournalService.GalleryMedia(p)
                 .Select(m => new JournalGalleryItem(JournalService.MediaUrl(m.Id), JournalMediaCaptions.Resolve(m, culture)))],
         };
@@ -79,3 +83,7 @@ public class JournalPostDetailViewModel
 
 /// <summary>One photograph in the article's gallery.</summary>
 public record JournalGalleryItem(string Url, string? Caption);
+
+/// <param name="JoinUrl">The influencer's /r/{code} link; null while their links are switched off.</param>
+public record JournalAuthorBox(string Name, string? PhotoUrl, string? Bio, string? Niche,
+    IReadOnlyList<VIHouse.Entities.Referrals.AmbassadorChannel> Channels, string? JoinUrl);

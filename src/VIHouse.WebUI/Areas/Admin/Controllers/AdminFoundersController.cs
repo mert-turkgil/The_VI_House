@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Concrete;
 
@@ -13,7 +14,7 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 /// </summary>
 [Authorize(Roles = AdminSections.RolesFor.Marketing)]
 [Route("admin/founders")]
-public class AdminFoundersController(IFounderService founders) : AdminControllerBase
+public class AdminFoundersController(IFounderService founders, IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -39,7 +40,7 @@ public class AdminFoundersController(IFounderService founders) : AdminController
     {
         if (!ModelState.IsValid)
         {
-            TempData["StatusMessage"] = "Not saved: " + string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            Status(loc["Admin.Users.Msg.NotSaved", string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))].Value, isError: true);
             return RedirectToAction(nameof(Index));
         }
 
@@ -47,7 +48,7 @@ public class AdminFoundersController(IFounderService founders) : AdminController
             UtcDates.ToOffset(form.WindowEndsAtUtc), form.ExtraDiscountPercent, form.EarlyAccessDays, form.BadgeEnabled),
             CurrentAdminId(), Ip(), ct);
 
-        TempData["StatusMessage"] = "Founder programme saved.";
+        Status(loc["Admin.Founders.Msg.Saved"].Value);
         return RedirectToAction(nameof(Index));
     }
 
@@ -58,14 +59,14 @@ public class AdminFoundersController(IFounderService founders) : AdminController
         var programme = await founders.GetProgrammeAsync(ct);
         if (programme.WindowEndsAtUtc is null)
         {
-            TempData["StatusMessage"] = "Set the founder window's end date first — backfill grants Founder to everyone whose first membership started before it.";
+            Status(loc["Admin.Founders.Msg.NoWindow"].Value, isError: true);
             return RedirectToAction(nameof(Index));
         }
 
         var granted = await founders.BackfillAsync(CurrentAdminId(), Ip(), ct);
-        TempData["StatusMessage"] = granted == 0
-            ? "Everyone who qualifies is already a Founder."
-            : $"{granted} member{(granted == 1 ? "" : "s")} became Founder{(granted == 1 ? "" : "s")} and {(granted == 1 ? "has" : "have")} been sent the welcome email.";
+        Status(granted == 0
+            ? loc["Admin.Founders.Msg.NoneToBackfill"].Value
+            : loc["Admin.Founders.Msg.Backfilled", granted].Value);
         return RedirectToAction(nameof(Index));
     }
 }
@@ -79,17 +80,17 @@ public class AdminFoundersViewModel
 
 public class AdminFounderProgrammeForm
 {
-    [Display(Name = "Founder window closes (UTC)")]
+    [Display(Name = "Admin.Field.FounderWindowEndsAtUtc")]
     public DateTime? WindowEndsAtUtc { get; set; }
 
     [Range(0, 100)]
-    [Display(Name = "Extra discount for Founders (%)")]
+    [Display(Name = "Admin.Field.FounderExtraDiscount")]
     public int ExtraDiscountPercent { get; set; }
 
     [Range(0, 365)]
-    [Display(Name = "Early access (days before members)")]
+    [Display(Name = "Admin.Field.FounderEarlyAccessDays")]
     public int EarlyAccessDays { get; set; }
 
-    [Display(Name = "Show the Founder badge to members")]
+    [Display(Name = "Admin.Field.FounderBadgeEnabled")]
     public bool BadgeEnabled { get; set; }
 }

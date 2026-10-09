@@ -63,6 +63,21 @@ public class ComingSoonGate(RequestDelegate next, IOptionsMonitor<FeatureOptions
         // re-execute the request through this middleware. Gate it and any exception raised on the
         // curtain becomes 500 -> 302 -> 500, forever. The page shows nothing a curtain should hide.
         "Error",
+        // An influencer invited before launch accepts from the link in their email; without this the
+        // invitation would land on the curtain and the programme could not start until launch day.
+        "AmbassadorInvite",
+    };
+
+    /// <summary>
+    /// What a signed-in influencer can reach before launch: their own area, what it links to, and
+    /// what it needs — two-step setup (Onboarding), the language switch, the account pages that
+    /// carry their notifications and security, the QR codes of their links, and the Journal, where
+    /// they preview their own article. Everything else stays behind the curtain for them too,
+    /// including the /r/ links themselves.
+    /// </summary>
+    private static readonly HashSet<string> InfluencerControllers = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Influencer", "Onboarding", "Culture", "Account", "Referral", "Journal",
     };
 
     /// <summary>
@@ -143,13 +158,21 @@ public class ComingSoonGate(RequestDelegate next, IOptionsMonitor<FeatureOptions
         if (string.Equals(values["area"] as string, "Admin", StringComparison.OrdinalIgnoreCase))
             return true;
 
+        var influencer = context.User.IsInRole(Roles.Ambassador);
         return action switch
         {
-            ControllerActionDescriptor controller => OpenControllers.Contains(controller.ControllerName),
-            PageActionDescriptor => values["page"] as string is { } page && OpenPages.Contains(page),
+            ControllerActionDescriptor controller => OpenControllers.Contains(controller.ControllerName)
+                || (influencer && InfluencerControllers.Contains(controller.ControllerName) && !IsReferralRedirect(controller)),
+            PageActionDescriptor => values["page"] as string is { } page
+                && (OpenPages.Contains(page) || (influencer && page.StartsWith("/Account/Manage/", StringComparison.OrdinalIgnoreCase))),
             _ => false,
         };
     }
+
+    /// <summary>The QR images of an influencer's links are open to them; the /r/ links that count a
+    /// visit and set the referral cookie are not, before launch, for anyone.</summary>
+    private static bool IsReferralRedirect(ControllerActionDescriptor action) =>
+        action.ControllerName == "Referral" && !action.ActionName.StartsWith("Qr", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Keeps the reader's language across the bounce, so /de/experiences lands on /de/coming-soon

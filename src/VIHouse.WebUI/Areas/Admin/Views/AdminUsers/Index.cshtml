@@ -1,7 +1,7 @@
 @using VIHouse.DataAccess.Identity
 @model AdminUserIndexViewModel
 @{
-    ViewData["Title"] = "Users";
+    ViewData["Title"] = Loc["Admin.Nav.AdminUsers"].Value;
     var pg = Model.Page;
     var filtered = !string.IsNullOrWhiteSpace(Model.Query) || !string.IsNullOrWhiteSpace(Model.Role);
 
@@ -24,106 +24,103 @@
 
 <form method="get" asp-action="Index" class="admin-toolbar" style="gap:12px; align-items:flex-end; flex-wrap:wrap;">
     <div class="admin-field" style="margin:0; min-width:260px;">
-        <label for="q">Search</label>
-        <input id="q" name="q" value="@Model.Query" placeholder="name, email or phone" />
+        <label for="q">@Loc["Admin.Common.Search"]</label>
+        <input id="q" name="q" value="@Model.Query" placeholder="@Loc["Admin.Users.SearchPlaceholder"]" />
     </div>
     <div class="admin-field" style="margin:0; min-width:180px;">
-        <label for="role">Role</label>
+        <label for="role">@Loc["Admin.Users.Roles"]</label>
         <select id="role" name="role">
-            <option value="">Any role</option>
+            <option value="">@Loc["Admin.Users.AnyRole"]</option>
             @foreach (var r in Roles.All)
             {
-                <option value="@r" selected="@(Model.Role == r)">@r</option>
+                <option value="@r" selected="@(Model.Role == r)">@Loc["Admin.Role." + r]</option>
             }
-            <option value="none" selected="@(Model.Role == "none")">No role</option>
+            <option value="none" selected="@(Model.Role == "none")">@Loc["Admin.Users.NoRole"]</option>
         </select>
     </div>
-    <button type="submit" class="admin-btn">Filter</button>
+    <button type="submit" class="admin-btn">@Loc["Admin.Common.Filter"]</button>
     @if (filtered)
     {
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">Clear</a>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Users.ClearFilter"]</a>
     }
     @* Only SuperAdmin can create staff accounts, so anyone else is not shown a button that would
        just refuse them. *@
     @if (User.IsInRole(Roles.SuperAdmin))
     {
-        <a class="admin-btn admin-btn--ghost" asp-action="Invite" style="margin-left:auto;">+ Invite Admin</a>
+        <a class="admin-btn admin-btn--ghost" asp-action="Invite" style="margin-left:auto;">@Loc["Admin.Users.InviteAdmin"]</a>
     }
 </form>
 
 @if (pg.Rows.Count == 0)
 {
-    <p class="admin-hint">@(filtered ? "No accounts match." : "No registered accounts yet.")</p>
+    <p class="admin-hint">@Loc[filtered ? "Admin.Users.NoMatch" : "Admin.Users.NoRegisteredAccountsYet"]</p>
 }
 else
 {
-    <p class="admin-hint">@pg.Total account@(pg.Total == 1 ? "" : "s")@(filtered ? " match" : ""), newest first — page
-        @pg.Page of @pg.PageCount.</p>
-        <div class="admin-table-scroll">
-            <table class="admin-table">
-                <thead>
+    <p class="admin-hint">@Loc[filtered ? "Admin.Users.CountFiltered" : "Admin.Users.Count", pg.Total, pg.Page, pg.PageCount]</p>
+    <div class="admin-table-scroll">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>@Loc["Admin.Common.Name"]</th>
+                    <th>@Loc["Admin.Common.Email"]</th>
+                    <th>@Loc["Admin.Users.Roles"]</th>
+                    <th>@Loc["Admin.Users.Joined"]</th>
+                    <th>@Loc["Admin.Users.LastSignIn"]</th>
+                    <th>@Loc["Admin.Users.Applications"]</th>
+                    <th>@Loc["Admin.Users.Bookings"]</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in pg.Rows)
+                {
                     <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Roles</th>
-                        <th>Joined</th>
-                        <th>Last sign-in</th>
-                        <th>Applications</th>
-                        <th>Bookings</th>
-                        <th></th>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@u.UserId">@(string.IsNullOrWhiteSpace(u.Name) ? "—" : u.Name)</a>
+                            @if (!string.IsNullOrWhiteSpace(u.JobTitle))
+                            {
+                                <div class="admin-table__sub">@u.JobTitle</div>
+                            }
+                        </td>
+                        <td>
+                            @u.Email
+                            @if (!u.EmailConfirmed)
+                            {
+                                <span class="admin-badge admin-badge--draft" title="@Loc["Admin.Users.UnconfirmedTitle"]">@Loc["Admin.Users.Unconfirmed"]</span>
+                            }
+                            @if (u.IsLockedOut)
+                            {
+                                <span class="admin-badge admin-badge--closed">@Loc["Admin.Users.Locked"]</span>
+                            }
+                        </td>
+                        <td>@(u.Roles.Count == 0 ? "—" : string.Join(", ", u.Roles.Select(r => Loc["Admin.Role." + r].Value)))</td>
+                        <td>@u.CreatedAt.ToString("dd MMM yyyy")</td>
+                        <td>@(u.LastLoginAt?.ToString("dd MMM yyyy") ?? Loc["Admin.Users.Never"].Value)</td>
+                        <td>@u.ApplicationCount</td>
+                        <td>@u.BookingCount</td>
+                        <td class="admin-table__actions">
+                            <a class="admin-icon-btn" asp-action="Details" asp-route-id="@u.UserId">@Loc["Admin.Common.Open"]</a>
+                            <a class="admin-icon-btn" href="mailto:@u.Email">@Loc["Admin.Common.Email"]</a>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var u in pg.Rows)
-                    {
-                        <tr>
-                            <td>
-                                <a asp-action="Details" asp-route-id="@u.UserId">@(string.IsNullOrWhiteSpace(u.Name) ? "—" :
-                                                            u.Name)</a>
-                                    @if (!string.IsNullOrWhiteSpace(u.JobTitle))
-                                    {
-                                        <div class="admin-table__sub">@u.JobTitle</div>
-                                    }
-                                </td>
-                                <td>
-                                    @u.Email
-                                    @if (!u.EmailConfirmed)
-                                    {
-                                        <span class="admin-badge admin-badge--draft" title="Email address not confirmed">unconfirmed</span>
-                                    }
-                                    @if (u.IsLockedOut)
-                                    {
-                                        <span class="admin-badge admin-badge--closed">locked</span>
-                                    }
-                                </td>
-                                <td>@(u.Roles.Count == 0 ? "—" : string.Join(", ", u.Roles))</td>
-                                <td>@u.CreatedAt.ToString("dd MMM yyyy")</td>
-                                <td>@(u.LastLoginAt?.ToString("dd MMM yyyy") ?? "Never")</td>
-                                <td>@u.ApplicationCount</td>
-                                <td>@u.BookingCount</td>
-                                <td class="admin-table__actions">
-                                    <a class="admin-icon-btn" asp-action="Details"
-                                       asp-route-id="@u.UserId">@Loc["Admin.Common.Open"]</a>
-                                    <a class="admin-icon-btn" href="mailto:@u.Email">@Loc["Admin.Common.Email"]</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                }
+            </tbody>
+        </table>
+    </div>
 
-            @if (pg.PageCount > 1)
+    @if (pg.PageCount > 1)
+    {
+        <nav class="admin-toolbar" style="justify-content:center; gap:8px; margin-top:16px;" aria-label="@Loc["Admin.Users.Pages"]">
+            @if (pg.Page > 1)
             {
-                <nav class="admin-toolbar" style="justify-content:center; gap:8px; margin-top:16px;" aria-label="Pages">
-                    @if (pg.Page > 1)
-                    {
-                        <a class="admin-btn admin-btn--ghost admin-btn--sm" href="@PageHref(pg.Page - 1)">&larr; Newer</a>
-                    }
-                    <span class="admin-hint" style="margin:0; align-self:center;">Page @pg.Page of @pg.PageCount</span>
-                    @if (pg.Page < pg.PageCount)
-                    {
-                        <a class="admin-btn admin-btn--ghost admin-btn--sm" href="@PageHref(pg.Page + 1)">Older &rarr;</a>
-                    }
-                </nav>
+                <a class="admin-btn admin-btn--ghost admin-btn--sm" href="@PageHref(pg.Page - 1)">&larr; @Loc["Admin.Users.Newer"]</a>
             }
-        }
+            <span class="admin-hint" style="margin:0; align-self:center;">@Loc["Admin.Common.PageOf", pg.Page, pg.PageCount]</span>
+            @if (pg.Page < pg.PageCount)
+            {
+                <a class="admin-btn admin-btn--ghost admin-btn--sm" href="@PageHref(pg.Page + 1)">@Loc["Admin.Users.Older"] &rarr;</a>
+            }
+        </nav>
+    }
+}

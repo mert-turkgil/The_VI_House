@@ -26,6 +26,48 @@
     <div class="admin-status-message">@status</div>
 }
 
+@* An influencer's article: who wrote it, where it stands, and the one decision only the editors
+   make here besides publishing — sending it back with a note. *@
+@if (Model.Submission is { } submission)
+{
+    <div class="admin-card admin-submission">
+        <p style="margin:0;">
+            <strong>@Loc["Admin.Journal.SubmittedBy", submission.AuthorName]</strong>
+            @if (submission.InfluencerId is { } influencerId)
+            {
+                <a asp-controller="AdminAmbassadors" asp-action="Edit" asp-route-id="@influencerId">@Loc["Admin.Journal.OpenInfluencer"]</a>
+            }
+        </p>
+        <p class="admin-hint" style="margin:6px 0 0;">
+            @(submission.Status switch
+            {
+                JournalPostStatus.Submitted => Loc["Admin.Journal.SubmissionWaiting", submission.SubmittedAt?.ToString("d MMM yyyy, HH:mm") ?? "—"].Value,
+                JournalPostStatus.ChangesRequested => Loc["Admin.Journal.SubmissionReturned"].Value,
+                JournalPostStatus.Published => Loc["Admin.Journal.SubmissionPublished"].Value,
+                _ => Loc["Admin.Journal.SubmissionDraft"].Value,
+            })
+        </p>
+        @if (submission.ReviewNote is { } lastNote && submission.Status != JournalPostStatus.Published)
+        {
+            <p class="admin-hint" style="margin:6px 0 0;"><strong>@Loc["Admin.Journal.LastNote"]</strong> @lastNote</p>
+        }
+        @if (submission.Status == JournalPostStatus.Submitted)
+        {
+            <details class="admin-disclosure">
+                <summary class="admin-btn admin-btn--ghost admin-btn--sm">@Loc["Admin.Journal.RequestChanges"]</summary>
+                <form asp-action="RequestChanges" asp-route-id="@postId" method="post" class="admin-form" style="margin-top:12px;">
+                    <div class="admin-field">
+                        <label for="review-note">@Loc["Admin.Journal.NoteForAuthor"]</label>
+                        <textarea id="review-note" name="note" rows="3" maxlength="1000" required></textarea>
+                        <p class="admin-field__hint">@Loc["Admin.Journal.NoteForAuthorHint"]</p>
+                    </div>
+                    <div><button type="submit" class="admin-btn">@Loc["Admin.Journal.SendBack"]</button></div>
+                </form>
+            </details>
+        }
+    </div>
+}
+
 <partial name="_ErrorSummary" model="@Loc["Admin.Journal.ErrorTitle"].Value" />
 
 <div class="writer" data-writer

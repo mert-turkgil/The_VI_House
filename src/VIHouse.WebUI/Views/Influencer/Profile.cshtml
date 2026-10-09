@@ -1,0 +1,84 @@
+@model InfluencerProfileViewModel
+@{
+    var influencer = Model.Influencer;
+}
+
+<div class="account-manage">
+    <partial name="_InfluencerNav" />
+    <div class="account-manage__content">
+        <header class="account-page__head">
+            <h1>@Loc["Influencer.Nav.Profile"]</h1>
+            <p class="account-page__lede">@Loc["Influencer.Profile.Lede"]</p>
+        </header>
+
+        @if (TempData["StatusMessage"] is string status)
+        {
+            <div class="@(TempData["StatusIsError"] is true ? "vih-alert vih-alert--danger" : "contact-success")" role="status" style="margin-bottom:20px;">@status</div>
+        }
+
+        @* --- Photo ------------------------------------------------------------------------- *@
+        <section class="account-panel influencer-section">
+            <h2>@Loc["Influencer.Profile.Photo"]</h2>
+            <div class="admin-influencer-photo">
+                @if (Model.PhotoUrl is not null)
+                {
+                    <img src="@Model.PhotoUrl" alt="" width="96" height="96" />
+                }
+                else
+                {
+                    <span class="admin-influencer-photo__empty" aria-hidden="true">@influencer.Name[..1]</span>
+                }
+                <div class="admin-influencer-photo__actions">
+                    <form asp-action="UploadPhoto" method="post" enctype="multipart/form-data">
+                        <input type="file" name="photo" accept=".jpg,.jpeg,.png,.webp,.avif" required aria-label="@Loc["Influencer.Profile.Photo"]" />
+                        <button type="submit" class="btn btn--ghost-dark btn--sm">@Loc[Model.PhotoUrl is null ? "Influencer.Profile.AddPhoto" : "Influencer.Profile.ReplacePhoto"]</button>
+                    </form>
+                    @if (Model.PhotoUrl is not null)
+                    {
+                        <form asp-action="RemovePhoto" method="post">
+                            <button type="submit" class="btn btn--ghost-dark btn--sm">@Loc["Influencer.Profile.RemovePhoto"]</button>
+                        </form>
+                    }
+                    <p class="admin-field__hint">@Loc["Influencer.Profile.PhotoHint"]</p>
+                </div>
+            </div>
+        </section>
+
+        @* --- What readers see: niche, bio, channels ---------------------------------------- *@
+        <section class="account-panel influencer-section">
+            <h2>@Loc["Influencer.Profile.Public"]</h2>
+            <p class="influencer-hint">@Loc["Influencer.Profile.PublicHint"]</p>
+            <form asp-action="Profile" method="post" class="admin-form" style="max-width:none;">
+                <div asp-validation-summary="ModelOnly" class="vih-alert vih-alert--danger"></div>
+                <partial name="_InfluencerProfileFields" model="Model.Form" view-data='@(new ViewDataDictionary(ViewData) { ["Prefix"] = "Form" })' />
+                <div><button type="submit" class="btn btn--primary">@Loc["Influencer.Profile.Save"]</button></div>
+            </form>
+        </section>
+
+        @* --- What the House pays against: shown, changed only by the House --------------- *@
+        <section class="account-panel influencer-section">
+            <h2>@Loc["Influencer.Profile.Payout"]</h2>
+            <dl class="ambassador-invite__onfile">
+                <div><dt>@Loc["Influencer.Profile.LegalName"]</dt><dd>@(string.IsNullOrWhiteSpace(influencer.LegalFirstName) ? "—" : $"{influencer.LegalFirstName} {influencer.LegalLastName}")</dd></div>
+                <div>
+                    <dt>@Loc["Influencer.Profile.BillingAddress"]</dt>
+                    <dd>
+                        @if (influencer.BillingAddressLine1 is null)
+                        {
+                            <text>—</text>
+                        }
+                        else
+                        {
+                            @influencer.BillingAddressLine1
+                            if (influencer.BillingAddressLine2 is not null) { <br />@influencer.BillingAddressLine2 }
+                            <br />@influencer.BillingPostalCode @influencer.BillingCity<br />@Countries.NameFor(influencer.BillingCountry)
+                        }
+                    </dd>
+                </div>
+                <div><dt>@Loc["Influencer.Profile.TaxId"]</dt><dd>@(influencer.TaxId ?? "—")</dd></div>
+                <div><dt>@Loc["Influencer.Profile.Bank"]</dt><dd class="ambassador-invite__mono">@(influencer.HasPayoutDetails ? $"{influencer.PayoutAccountHolder} · {Iban.Mask(influencer.PayoutIban)}" : "—")</dd></div>
+            </dl>
+            <p class="influencer-hint">@Loc["Influencer.Profile.PayoutHint"]</p>
+        </section>
+    </div>
+</div>

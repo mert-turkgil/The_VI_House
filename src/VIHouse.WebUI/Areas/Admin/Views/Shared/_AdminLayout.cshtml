@@ -4,6 +4,8 @@
 @inject UserManager<VIHouse.DataAccess.Identity.ApplicationUser> UserManager
 @inject IConfiguration Configuration
 @inject Microsoft.Extensions.Options.IOptions<VIHouse.Business.Options.FeatureOptions> Features
+@inject VIHouse.Business.Abstract.IJournalService JournalService
+@inject VIHouse.Business.Abstract.IAmbassadorService AmbassadorService
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
@@ -20,6 +22,12 @@
     var description = activeNav is null ? null : Loc[activeNav.DescriptionKey];
     var uiCulture = VIHouse.Business.Options.SiteCultures.Describe(CultureInfo.CurrentUICulture.Name);
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
+
+    // Work waiting on someone in this panel, as a count beside the section: influencers' articles
+    // for the editors, withdrawal requests for Finance. Asked only of sections this person sees.
+    var waiting = new Dictionary<string, int>();
+    if (navItems.Any(i => i.Controller == "AdminJournal")) waiting["AdminJournal"] = await JournalService.CountSubmittedAsync();
+    if (navItems.Any(i => i.Controller == "AdminWithdrawals")) waiting["AdminWithdrawals"] = await AmbassadorService.CountOpenWithdrawalsAsync();
 }
 <!DOCTYPE html>
 <html lang="@uiCulture.UrlCode">
@@ -121,6 +129,10 @@
                             <partial name="_Icon" model="@item.Icon" />
                         </span>
                         <span class="admin-sidebar__text">@label</span>
+                        @if (waiting.GetValueOrDefault(item.Controller) is > 0 and var count)
+                        {
+                            <span class="admin-sidebar__badge" title="@Loc["Admin.Shell.Waiting", count]">@count</span>
+                        }
                     </a>
                 </div>
             }

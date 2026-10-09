@@ -72,7 +72,9 @@ public static class AdminSections
         new("AdminWebhooks", "Index", "Stripe Events", "activity", Split(RolesFor.Money)),
         new("AdminPromoCodes", "Index", "Promo Codes", "tag", Split(RolesFor.Money)),
         new("AdminMembershipPlans", "Index", "Membership Plans", "layers", Split(RolesFor.Money)),
-        new("AdminAmbassadors", "Index", "Ambassadors", "megaphone", Split(RolesFor.Ambassadors)),
+        new("AdminAmbassadors", "Index", "Influencers", "megaphone", Split(RolesFor.Ambassadors)),
+        // Influencers asking to be paid — the people who send the money, and nobody else.
+        new("AdminWithdrawals", "Index", "Withdrawals", "credit-card", Split(RolesFor.Money)),
         new("AdminJournal", "Index", "Journal", "book-open", Split(RolesFor.Content)),
         new("AdminCms", "Index", "Content", "pen-square", Split(RolesFor.Content)),
         new("AdminHeroSlides", "Index", "Hero Slides", "image", Split(RolesFor.Content)),

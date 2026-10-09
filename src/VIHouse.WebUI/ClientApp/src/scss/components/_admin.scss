@@ -1497,6 +1497,22 @@ kbd {
   }
 }
 
+// How many things in a section are waiting on someone (_AdminLayout's "waiting").
+.admin-sidebar__badge {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--vih-gold);
+  color: var(--vih-ink);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
+.admin-shell--nav-collapsed .admin-sidebar__badge { display: none; }
+
 .admin-sidebar__text {
   min-width: 0;
   white-space: nowrap;
@@ -2453,4 +2469,149 @@ kbd {
     text-transform: uppercase;
     color: var(--vih-green-900);
   }
+}
+
+// --- Influencer pages (admin and the influencer's own area) ---------------------------------------------------------------------------------------
+
+.admin-subhead {
+  margin: var(--vih-space-md) 0 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vih-text-secondary);
+}
+
+.admin-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// Platform / address / audience, one row per channel; on a phone the address takes its own line.
+.admin-channels {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  legend {
+    margin-bottom: 4px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--vih-text-secondary);
+  }
+}
+
+.admin-channels__head,
+.admin-channels__row {
+  display: grid;
+  grid-template-columns: minmax(0, 9rem) minmax(0, 1fr) minmax(0, 7.5rem);
+  gap: 8px;
+}
+
+.admin-channels__head {
+  font-size: 0.75rem;
+  color: var(--vih-text-faint);
+}
+
+.admin-channels__row {
+  select,
+  input {
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: 4px;
+    font: inherit;
+    font-size: 0.875rem;
+    background: var(--vih-white);
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-channels__head { display: none; }
+
+  .admin-channels__row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 7rem);
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--vih-line-on-light);
+
+    input[type='url'] { grid-column: 1 / -1; grid-row: 2; }
+  }
+}
+
+.admin-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-checklist__item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 0.875rem;
+
+  &.is-missing { color: var(--vih-danger); }
+  &.is-done { color: var(--vih-text-secondary); }
+}
+
+.admin-checklist__mark { width: 1em; font-weight: 700; }
+
+.admin-checklist__who {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--vih-text-faint);
+}
+
+.admin-influencer-photo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: var(--vih-space-md);
+
+  img,
+  .admin-influencer-photo__empty {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .admin-influencer-photo__empty {
+    display: grid;
+    place-items: center;
+    background: var(--vih-surface-sunken);
+    font-family: var(--vih-font-serif);
+    font-size: 2rem;
+    color: var(--vih-text-faint);
+  }
+}
+
+.admin-influencer-photo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+
+  form { margin: 0; }
+  .admin-field__hint { flex-basis: 100%; margin: 0; }
+}
+
+.admin-disclosure {
+  margin-top: 12px;
+
+  > summary { list-style: none; cursor: pointer; }
+  > summary::-webkit-details-marker { display: none; }
+}
+
+.admin-optional {
+  margin-left: 4px;
+  font-weight: 400;
+  color: var(--vih-text-faint);
 }

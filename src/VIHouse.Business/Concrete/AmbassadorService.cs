@@ -27,6 +27,7 @@ public class AmbassadorService(
     IRepository<ReferralConversion> conversions,
     IRepository<ReferralPayout> payouts,
     IRepository<ReferralWithdrawalRequest> withdrawals,
+    IRepository<AmbassadorChannel> channels,
     IRepository<ConsentRecord> consents,
     IExperienceRepository experiences,
     ISeminarRepository seminars,
@@ -202,7 +203,7 @@ public class AmbassadorService(
             InviteEmail = email,
             PreferredCulture = SiteCultures.Normalise(invite.Culture),
         };
-        ApplyProfile(ambassador, invite.Profile);
+        await ApplyProfileAsync(ambassador, invite.Profile, ct);
         ApplyPayout(ambassador, invite.Payout);
         var token = NewInviteToken(ambassador);
         await ambassadors.AddAsync(ambassador, ct);
@@ -449,7 +450,7 @@ public class AmbassadorService(
         if (InfluencerValidation.Profile(profile) is { Count: > 0 } errors) return InfluencerSaveResult.Fail([.. errors]);
 
         var before = ProfileSnapshot(ambassador);
-        ApplyProfile(ambassador, profile);
+        await ApplyProfileAsync(ambassador, profile, ct);
         ambassador.UpdatedAt = DateTimeOffset.UtcNow;
 
         await LogAsync("InfluencerProfileUpdated", ambassador.Id, actorUserId, ipAddress, before, ProfileSnapshot(ambassador), ct);
@@ -528,25 +529,38 @@ public class AmbassadorService(
         return ambassador?.PhotoStorageKey is { } key ? await mediaStorage.GetAsync(key, ct) : null;
     }
 
-    private static void ApplyProfile(Ambassador ambassador, InfluencerProfileInput profile)
+    /// <summary>
+    /// Bio, niche and the channels, replaced as a whole. The old channel rows are removed and the new
+    /// ones added through their repository, not by swapping the navigation collection: a new row
+    /// carries a client-generated Guid key, and EF finding it on an already-tracked influencer by
+    /// graph discovery would take it for an existing row and issue an UPDATE that touches nothing —
+    /// the same reason JournalService and SeminarService add child rows explicitly. On an influencer
+    /// not yet saved (the invitation) the rows simply go in with it.
+    /// </summary>
+    private async Task ApplyProfileAsync(Ambassador ambassador, InfluencerProfileInput profile, CancellationToken ct)
     {
         ambassador.Bio = Text.NullIfBlank(profile.Bio?.Trim());
         ambassador.Niche = Text.NullIfBlank(profile.Niche?.Trim());
 
-        // Replaced in place: the loaded collection is tracked, so removed rows are deleted and new
-        // ones inserted on save.
-        ambassador.Channels.Clear();
+        foreach (var old in ambassador.Channels.ToList())
+        {
+            channels.Remove(old);
+            ambassador.Channels.Remove(old);
+        }
+
         var order = 0;
         foreach (var channel in profile.Channels)
         {
-            ambassador.Channels.Add(new AmbassadorChannel
+            var row = new AmbassadorChannel
             {
                 AmbassadorId = ambassador.Id,
                 Platform = channel.Platform,
                 Url = channel.Url.Trim(),
                 Audience = channel.Audience,
                 SortOrder = ++order,
-            });
+            };
+            await channels.AddAsync(row, ct);
+            ambassador.Channels.Add(row);
         }
     }
 

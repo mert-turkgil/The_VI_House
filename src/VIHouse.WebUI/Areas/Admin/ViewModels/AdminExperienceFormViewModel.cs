@@ -133,9 +133,10 @@ public class AdminExperienceFormViewModel
     [Display(Name = "Admin.Field.MemberDiscount", Description = "Percentage off every ticket for current members. 0 means members pay full price. Who may attend is set by Visibility and the admitted plans, not here.")]
     public int MemberDiscountPercent { get; set; }
 
-    [Display(Name = "Members can join from (UTC)")]
+    [Display(Name = "Admin.Field.MembersOpenAtUtc")]
     public DateTime? MembersOpenAtUtc { get; set; }
 
+    [Display(Name = "Admin.Field.SortOrder")]
     public int SortOrder { get; set; }
 
     public Experience ToEntity() => new()

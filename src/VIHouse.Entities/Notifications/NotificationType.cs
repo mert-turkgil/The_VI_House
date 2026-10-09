@@ -19,5 +19,10 @@ public enum NotificationType
 
     /// <summary>Something an admin changed on the account itself — roles, a lock, Founder status.
     /// Appended for the same reason as the two above.</summary>
-    AccountUpdate
+    AccountUpdate,
+
+    /// <summary>The influencer programme: a journal submission reviewed, a withdrawal decided — to
+    /// the influencer, and to the staff who handle them. Appended after AccountUpdate, for the same
+    /// reason again.</summary>
+    Influencer
 }

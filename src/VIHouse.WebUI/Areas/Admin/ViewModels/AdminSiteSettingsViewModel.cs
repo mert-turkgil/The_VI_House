@@ -78,6 +78,7 @@ public class AdminSiteSettingsForm
     public string? TwitterHandle { get; set; }
 
     [StringLength(320), EmailAddress, Display(Name = "Admin.Field.ContactEmail")] public string? ContactEmail { get; set; }
+    [StringLength(320), EmailAddress, Display(Name = "Admin.Field.InfluencerEmail")] public string? InfluencerEmail { get; set; }
     [StringLength(40), Display(Name = "Admin.Field.ContactPhone")] public string? ContactPhone { get; set; }
     [StringLength(300), Display(Name = "Admin.Field.Street")] public string? StreetAddress { get; set; }
     [StringLength(120), Display(Name = "Admin.Field.City")] public string? AddressLocality { get; set; }
@@ -121,6 +122,7 @@ public class AdminSiteSettingsForm
         TikTokUrl = s.TikTokUrl,
         TwitterHandle = s.TwitterHandle,
         ContactEmail = s.ContactEmail,
+        InfluencerEmail = s.InfluencerEmail,
         ContactPhone = s.ContactPhone,
         StreetAddress = s.StreetAddress,
         AddressLocality = s.AddressLocality,
@@ -155,6 +157,7 @@ public class AdminSiteSettingsForm
         TikTokUrl = TikTokUrl,
         TwitterHandle = TwitterHandle,
         ContactEmail = ContactEmail,
+        InfluencerEmail = InfluencerEmail,
         ContactPhone = ContactPhone,
         StreetAddress = StreetAddress,
         AddressLocality = AddressLocality,

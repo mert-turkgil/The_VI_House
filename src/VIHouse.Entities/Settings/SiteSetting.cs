@@ -64,6 +64,10 @@ public class SiteSetting : BaseEntity
     // --- Contact / place --------------------------------------------------------------------------
 
     public string? ContactEmail { get; set; }
+
+    /// <summary>Where the "Become an influencer" page (/influencers) sends people. Empty falls back to
+    /// <see cref="ContactEmail"/>.</summary>
+    public string? InfluencerEmail { get; set; }
     public string? ContactPhone { get; set; }
     public string? StreetAddress { get; set; }
     public string? AddressLocality { get; set; }

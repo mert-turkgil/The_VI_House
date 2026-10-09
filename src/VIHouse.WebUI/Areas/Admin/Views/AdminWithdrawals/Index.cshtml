@@ -1,0 +1,131 @@
+@model List<WithdrawalQueueItem>
+@{
+    ViewData["Title"] = Loc["Admin.Nav.AdminWithdrawals"].Value;
+    var open = Model.Where(i => i.Request.Status == WithdrawalStatus.Open).ToList();
+    var decided = Model.Where(i => i.Request.Status != WithdrawalStatus.Open).Take(50).ToList();
+
+    string Badge(WithdrawalStatus status) => status switch
+    {
+        WithdrawalStatus.Open => "admin-badge admin-badge--pending",
+        WithdrawalStatus.Paid => "admin-badge admin-badge--open",
+        WithdrawalStatus.Rejected => "admin-badge admin-badge--closed",
+        _ => "admin-badge admin-badge--draft",
+    };
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<h2 class="admin-subhead" style="margin-top:0;">@Loc["Admin.Withdrawals.Open", open.Count]</h2>
+@if (open.Count == 0)
+{
+    <div class="admin-empty">
+        <span class="admin-empty__icon" aria-hidden="true"><partial name="_Icon" model="@("tag")" /></span>
+        <h2 class="admin-empty__title">@Loc["Admin.Withdrawals.NoneOpen"]</h2>
+        <p class="admin-empty__body">@Loc["Admin.Withdrawals.NoneOpenBody"]</p>
+    </div>
+}
+
+@foreach (var item in open)
+{
+    var r = item.Request;
+    var a = item.Ambassador;
+    var moved = item.OwedNowMinor != r.RequestedMinor;
+    <article class="admin-card" style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline;">
+            <h2 style="margin:0;"><a asp-controller="AdminAmbassadors" asp-action="Edit" asp-route-id="@a.Id">@a.Name</a> · @MoneyFormatter.Format(r.RequestedMinor, r.Currency)</h2>
+            <span class="admin-table__sub">@Loc["Admin.Withdrawals.RequestedOn", r.RequestedAt.ToLocalTime().ToString("d MMM yyyy, HH:mm")]</span>
+        </div>
+        @if (r.Note is not null)
+        {
+            <p class="admin-hint"><strong>@Loc["Admin.Withdrawals.TheirNote"]</strong> @r.Note</p>
+        }
+        @if (moved)
+        {
+            <p class="admin-status-message admin-status-message--error" style="margin:12px 0;">
+                @Loc["Admin.Withdrawals.BalanceMoved", MoneyFormatter.Format(item.OwedNowMinor, r.Currency)]
+            </p>
+        }
+
+        <dl class="admin-detail-list">
+            <div><dt>@Loc["Admin.Withdrawals.OwedNow"]</dt><dd><strong>@MoneyFormatter.Format(item.OwedNowMinor, r.Currency)</strong></dd></div>
+            <div><dt>@Loc["Admin.Influencer.LegalName"]</dt><dd>@a.LegalFirstName @a.LegalLastName</dd></div>
+            <div><dt>@Loc["Admin.Ambassadors.AccountHolder"]</dt><dd>@a.PayoutAccountHolder</dd></div>
+            <div><dt>IBAN</dt><dd><code>@Iban.Format(a.PayoutIban)</code></dd></div>
+            @if (a.PayoutBic is not null)
+            {
+                <div><dt>BIC</dt><dd><code>@a.PayoutBic</code></dd></div>
+            }
+            <div><dt>@Loc["Admin.Ambassadors.BillingAddress"]</dt><dd>@a.BillingAddressLine1@if (a.BillingAddressLine2 is not null) { <br />@a.BillingAddressLine2 }<br />@a.BillingPostalCode @a.BillingCity<br />@Countries.NameFor(a.BillingCountry)</dd></div>
+            @if (a.TaxId is not null)
+            {
+                <div><dt>@Loc["Admin.Ambassadors.TaxVATId"]</dt><dd>@a.TaxId</dd></div>
+            }
+            <div><dt>@Loc["Admin.Influencer.BankChanged"]</dt><dd>@a.PayoutDetailsUpdatedAt?.ToLocalTime().ToString("d MMM yyyy")</dd></div>
+        </dl>
+
+        <div class="admin-review-grid" style="margin-top:12px;">
+            @if (item.OwedNowMinor > 0)
+            {
+                <form asp-action="Pay" asp-route-id="@r.Id" method="post" class="admin-form">
+                    <input type="hidden" name="expectedOwedMinor" value="@item.OwedNowMinor" />
+                    <div class="admin-field">
+                        <label for="ref-@r.Id">@Loc["Admin.Ambassadors.TransferReference"]</label>
+                        <input id="ref-@r.Id" name="reference" maxlength="100" placeholder="@Loc["Admin.Ambassadors.EGBankTransferRef"]" />
+                    </div>
+                    <div class="admin-field">
+                        <label for="note-@r.Id">@Loc["Admin.Ambassadors.NoteOptional"]</label>
+                        <input id="note-@r.Id" name="note" maxlength="500" />
+                    </div>
+                    <label class="admin-checkbox" style="display:flex; gap:8px; align-items:flex-start;">
+                        <input type="checkbox" name="confirmed" value="true" required />
+                        <span>@Loc["Admin.Ambassadors.IHaveSent", MoneyFormatter.Format(item.OwedNowMinor, r.Currency), a.Name]</span>
+                    </label>
+                    <div><button type="submit" class="admin-btn">@Loc["Admin.Ambassadors.MarkAsPaid", MoneyFormatter.Format(item.OwedNowMinor, r.Currency)]</button></div>
+                </form>
+            }
+            <form asp-action="Reject" asp-route-id="@r.Id" method="post" class="admin-form">
+                <div class="admin-field">
+                    <label for="reason-@r.Id">@Loc["Admin.Withdrawals.RejectReason"]</label>
+                    <textarea id="reason-@r.Id" name="reason" rows="3" maxlength="500" required></textarea>
+                    <p class="admin-field__hint">@Loc["Admin.Withdrawals.RejectHint"]</p>
+                </div>
+                <div><button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Withdrawals.Reject"]</button></div>
+            </form>
+        </div>
+    </article>
+}
+
+@if (decided.Count > 0)
+{
+    <h2 class="admin-subhead">@Loc["Admin.Withdrawals.Decided"]</h2>
+    <div class="admin-table-scroll">
+        <table class="admin-table" data-admin-table>
+            <thead>
+                <tr>
+                    <th>@Loc["Admin.Withdrawals.Influencer"]</th>
+                    <th>@Loc["Admin.Common.Amount"]</th>
+                    <th>@Loc["Admin.Common.Status"]</th>
+                    <th>@Loc["Admin.Withdrawals.Requested"]</th>
+                    <th>@Loc["Admin.Withdrawals.DecidedOn"]</th>
+                    <th>@Loc["Admin.Withdrawals.DecisionNote"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in decided)
+                {
+                    <tr>
+                        <td><a asp-controller="AdminAmbassadors" asp-action="Edit" asp-route-id="@item.Ambassador.Id">@item.Ambassador.Name</a></td>
+                        <td>@MoneyFormatter.Format(item.Request.RequestedMinor, item.Request.Currency)</td>
+                        <td><span class="@Badge(item.Request.Status)">@Loc.Label(item.Request.Status)</span></td>
+                        <td>@item.Request.RequestedAt.ToLocalTime().ToString("d MMM yyyy")</td>
+                        <td>@(item.Request.DecidedAt?.ToLocalTime().ToString("d MMM yyyy") ?? "—")</td>
+                        <td>@(item.Request.DecisionNote ?? "—")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

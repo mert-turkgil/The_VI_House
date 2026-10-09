@@ -282,6 +282,11 @@
 
         <div class="admin-form__grid">
             <div class="admin-field"><label asp-for="Form.ContactEmail"></label><input asp-for="Form.ContactEmail" /></div>
+            <div class="admin-field">
+                <label asp-for="Form.InfluencerEmail"></label>
+                <input asp-for="Form.InfluencerEmail" />
+                <p class="admin-field__hint">@Loc["Admin.SiteSettings.InfluencerEmailHint"]</p>
+            </div>
             <div class="admin-field"><label asp-for="Form.ContactPhone"></label><input asp-for="Form.ContactPhone" placeholder="+44 20 7000 0000" /></div>
             <div class="admin-field"><label asp-for="Form.StreetAddress"></label><input asp-for="Form.StreetAddress" /></div>
             <div class="admin-field"><label asp-for="Form.AddressLocality"></label><input asp-for="Form.AddressLocality" placeholder="London" /></div>

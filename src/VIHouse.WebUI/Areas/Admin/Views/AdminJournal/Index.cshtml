@@ -2,6 +2,16 @@
 @{
     ViewData["Title"] = Loc["Admin.Journal.Title"].Value;
     var drafts = Model.Count(p => p.Status != JournalPostStatus.Published);
+    var showSubmissions = ViewData["ShowSubmissions"] is true;
+    var submitted = ViewData["SubmittedCount"] as int? ?? 0;
+
+    string StatusBadge(JournalPostStatus status) => status switch
+    {
+        JournalPostStatus.Published => "admin-badge admin-badge--open",
+        JournalPostStatus.Submitted => "admin-badge admin-badge--pending",
+        JournalPostStatus.ChangesRequested => "admin-badge admin-badge--info",
+        _ => "admin-badge admin-badge--draft",
+    };
 }
 
 @if (TempData["StatusMessage"] is string status)
@@ -12,10 +22,16 @@
 <div class="admin-toolbar">
     <a class="admin-btn" asp-action="Create">+ @Loc["Admin.Journal.New"]</a>
     <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Journal" asp-action="Index" target="_blank" rel="noopener">@Loc["Admin.Journal.ViewJournal"]</a>
-    @if (Model.Count > 0)
+    @if (Model.Count > 0 && !showSubmissions)
     {
         <span class="admin-toolbar__note">@Loc["Admin.Journal.Summary", Model.Count - drafts, drafts]</span>
     }
+</div>
+
+@* Influencers' articles waiting for the editors. *@
+<div class="admin-toolbar">
+    <a class="@(showSubmissions ? "admin-btn admin-btn--ghost" : "admin-btn")" asp-action="Index">@Loc["Admin.Journal.Filter.All"]</a>
+    <a class="@(showSubmissions ? "admin-btn" : "admin-btn admin-btn--ghost")" asp-action="Index" asp-route-show="submissions">@Loc["Admin.Journal.Filter.Submissions", submitted]</a>
 </div>
 
 @if (Model.Count == 0)
@@ -49,6 +65,10 @@ else
                         <td>
                             <a class="admin-table__primary" asp-action="Edit" asp-route-id="@post.Id">@post.Title</a>
                             <div class="admin-table__sub">/journal/@post.Slug</div>
+                            @if (post.SubmittedBy is not null)
+                            {
+                                <div class="admin-table__sub">@Loc["Admin.Journal.ByInfluencer", post.SubmittedBy]</div>
+                            }
                         </td>
                         <td>@Loc["Journal.Category." + post.Category]</td>
                         <td>
@@ -62,9 +82,7 @@ else
                             }
                         </td>
                         <td>
-                            <span class="@(post.Status == JournalPostStatus.Published ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")">
-                                @Loc["Admin.Publish.Status." + post.Status]
-                            </span>
+                            <span class="@StatusBadge(post.Status)">@Loc["Admin.Publish.Status." + post.Status]</span>
                         </td>
                         <td class="admin-table__muted">@(post.PublishedAt?.ToString("d MMM yyyy") ?? "—")</td>
                         <td class="admin-table__actions">

@@ -1,0 +1,40 @@
+@model InfluencerStartArticleViewModel
+
+<div class="account-manage">
+    <partial name="_InfluencerNav" />
+    <div class="account-manage__content">
+        <header class="account-page__head">
+            <h1>@Loc["Influencer.Journal.New"]</h1>
+            <p class="account-page__lede">@Loc["Influencer.Journal.NewLede"]</p>
+        </header>
+
+        <form asp-action="NewArticle" method="post" class="apply-form" novalidate>
+            <div asp-validation-summary="ModelOnly" class="apply-form__summary"></div>
+            <fieldset class="apply-form__section">
+                <div class="apply-field">
+                    <label asp-for="Title">@Loc["Influencer.Journal.Title"]</label>
+                    <input asp-for="Title" maxlength="200" autocomplete="off" />
+                    <span asp-validation-for="Title" class="apply-field__error"></span>
+                </div>
+                <div class="apply-field">
+                    <label asp-for="Excerpt">@Loc["Influencer.Journal.Standfirst"]</label>
+                    <textarea asp-for="Excerpt" rows="2" maxlength="400"></textarea>
+                    <span class="apply-field__hint">@Loc["Influencer.Journal.StandfirstHint"]</span>
+                </div>
+                <div class="apply-field">
+                    <label asp-for="Category">@Loc["Influencer.Journal.Category"]</label>
+                    <select asp-for="Category">
+                        @foreach (var category in Enum.GetValues<JournalCategory>())
+                        {
+                            <option value="@category" selected="@(Model.Category == category)">@Loc["Journal.Category." + category]</option>
+                        }
+                    </select>
+                </div>
+            </fieldset>
+            <div class="influencer-actions">
+                <button type="submit" class="btn btn--primary">@Loc["Influencer.Journal.Start"]</button>
+                <a class="btn btn--ghost-dark" asp-action="Journal">@Loc["Influencer.Journal.Back"]</a>
+            </div>
+        </form>
+    </div>
+</div>

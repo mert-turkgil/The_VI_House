@@ -66,7 +66,7 @@
                             @if (w.Status == WithdrawalStatus.Open)
                             {
                                 <form asp-action="CancelWithdrawal" asp-route-requestId="@w.Id" method="post">
-                                    <button type="submit" class="btn btn--ghost btn--sm">@Loc["Influencer.Earnings.Cancel"]</button>
+                                    <button type="submit" class="btn btn--ghost-dark btn--sm">@Loc["Influencer.Earnings.Cancel"]</button>
                                 </form>
                             }
                         </li>

@@ -149,7 +149,7 @@ public class AdminUsersController(
 
         if (toAdd.Count == 0 && toRemove.Count == 0)
         {
-            TempData["StatusMessage"] = "No changes — the roles were already as ticked.";
+            Status(loc["Admin.Users.Msg.RolesUnchanged"].Value);
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -213,10 +213,13 @@ public class AdminUsersController(
             }
         }
 
-        Status(loc["Admin.Users.Msg.RolesUpdated"].Value);
-        TempData["StatusMessage"] = errors.Count > 0
-            ? $"Some role changes failed: {string.Join(" ", errors)}"
-            : $"Roles updated{(actuallyAdded.Count > 0 ? $" — added {string.Join(", ", actuallyAdded)}" : "")}{(actuallyRemoved.Count > 0 ? $" — removed {string.Join(", ", actuallyRemoved)}" : "")}. {user.Email} has been notified; the change applies within five minutes.";
+        // Identity's own error sentences are passed through as they are.
+        Status(errors.Count > 0
+            ? loc["Admin.Users.Msg.RolesFailed", string.Join(" ", errors)].Value
+            : loc["Admin.Users.Msg.RolesChanged",
+                actuallyAdded.Count > 0 ? string.Join(", ", actuallyAdded) : "—",
+                actuallyRemoved.Count > 0 ? string.Join(", ", actuallyRemoved) : "—",
+                user.Email ?? ""].Value, isError: errors.Count > 0);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -234,7 +237,7 @@ public class AdminUsersController(
         if (RefuseIfProtected(user) is { } refused) return refused;
         if (string.Equals(userManager.GetUserId(User), id.ToString(), StringComparison.OrdinalIgnoreCase))
         {
-            TempData["StatusMessage"] = "You can't lock your own account.";
+            Status(loc["Admin.Users.Msg.CantLockSelf"].Value, isError: true);
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -245,7 +248,7 @@ public class AdminUsersController(
         await LogAsync("UserLocked", id, null, new { user.Email, Reason = reason, LockedBy = User.Identity?.Name }, ct);
         await auditLogs.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = $"{user.Email} is locked: they can't sign in, and any open session ends within five minutes.";
+        Status(loc["Admin.Users.Msg.Locked", user.Email ?? ""].Value);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -264,7 +267,7 @@ public class AdminUsersController(
         await LogAsync("UserUnlocked", id, null, new { user.Email, UnlockedBy = User.Identity?.Name }, ct);
         await auditLogs.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = $"{user.Email} is unlocked and can sign in again.";
+        Status(loc["Admin.Users.Msg.Unlocked", user.Email ?? ""].Value);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -281,7 +284,7 @@ public class AdminUsersController(
         await LogAsync("UserSignedOutEverywhere", id, null, new { user.Email, By = User.Identity?.Name }, ct);
         await auditLogs.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = $"Every session for {user.Email} ends within five minutes.";
+        Status(loc["Admin.Users.Msg.SignedOutEverywhere", user.Email ?? ""].Value);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -296,7 +299,7 @@ public class AdminUsersController(
         if (RefuseIfProtected(user) is { } refused) return refused;
         if (user.EmailConfirmed)
         {
-            TempData["StatusMessage"] = "That address is already confirmed.";
+            Status(loc["Admin.Users.Msg.AlreadyConfirmed"].Value);
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -305,9 +308,9 @@ public class AdminUsersController(
         await LogAsync("UserEmailConfirmedByAdmin", id, null, new { user.Email, By = User.Identity?.Name }, ct);
         await auditLogs.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = result.Succeeded
-            ? $"{user.Email} is marked as confirmed."
-            : $"Could not confirm: {string.Join(" ", result.Errors.Select(e => e.Description))}";
+        Status(result.Succeeded
+            ? loc["Admin.Users.Msg.EmailConfirmed", user.Email ?? ""].Value
+            : loc["Admin.Users.Msg.ConfirmFailed", string.Join(" ", result.Errors.Select(e => e.Description))].Value, isError: !result.Succeeded);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -321,7 +324,7 @@ public class AdminUsersController(
         if (RefuseIfProtected(user) is { } refused) return refused;
         if (!ModelState.IsValid)
         {
-            TempData["StatusMessage"] = "Not saved: " + string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            Status(loc["Admin.Users.Msg.NotSaved", string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))].Value, isError: true);
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -336,7 +339,9 @@ public class AdminUsersController(
         await LogAsync("UserProfileUpdatedByAdmin", id, before, new { user.FirstName, user.LastName, user.PhoneNumber, user.Country, user.City }, ct);
         await auditLogs.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = result.Succeeded ? "Details saved." : $"Not saved: {string.Join(" ", result.Errors.Select(e => e.Description))}";
+        Status(result.Succeeded
+            ? loc["Admin.Users.Msg.DetailsSaved"].Value
+            : loc["Admin.Users.Msg.NotSaved", string.Join(" ", result.Errors.Select(e => e.Description))].Value, isError: !result.Succeeded);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -382,15 +387,12 @@ public class AdminUsersController(
             new { user.Email, TwoFactorEnabled = false, ResetBy = User.Identity?.Name }, ct);
         await auditLogs.SaveChangesAsync(ct);
 
-        Status(loc["Admin.Users.Msg.TwoFactorReset", user.Email ?? ""].Value);
         // The owner hears about it: a reset second factor they did not ask for is exactly the kind
         // of change a security alert exists for.
         await securityAlerts.TwoFactorChangedAsync(user.Id, TwoFactorChange.AuthenticatorReset,
             HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString(), ct);
 
-        TempData["StatusMessage"] =
-            $"Two-factor reset for {user.Email}. The panel is closed to them from their next click, their session ends within " +
-            "five minutes, and they'll pair a new authenticator app when they sign in again.";
+        Status(loc["Admin.Users.Msg.TwoFactorReset", user.Email ?? ""].Value);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -449,7 +451,7 @@ public class AdminUsersController(
         if (RefuseIfProtected(user) is { } refused) return refused;
         if (!ModelState.IsValid)
         {
-            TempData["StatusMessage"] = "Not granted: " + string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            Status(loc["Admin.Users.Msg.NotGranted", string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))].Value, isError: true);
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -491,7 +493,7 @@ public class AdminUsersController(
         if (RefuseIfProtected(user) is { } refused) return refused;
         if (!ModelState.IsValid)
         {
-            TempData["StatusMessage"] = "Not created: " + string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            Status(loc["Admin.Users.Msg.NotCreated", string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))].Value, isError: true);
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -505,7 +507,7 @@ public class AdminUsersController(
             user.Id, form.Name.Trim(), form.Code.Trim().ToUpperInvariant(), form.CommissionPercent, CurrentAdminId(), Ip(), ct);
         Status(result.Success
             ? loc["Admin.Users.Msg.ReferralCreated", result.Ambassador!.Code].Value
-            : result.Error, isError: !result.Success);
+            : loc[result.Error!, result.ErrorArgs].Value, isError: !result.Success);
         return RedirectToAction(nameof(Details), new { id });
     }
 

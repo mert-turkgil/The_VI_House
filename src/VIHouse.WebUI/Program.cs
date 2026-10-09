@@ -197,10 +197,9 @@ if (!string.IsNullOrWhiteSpace(cookieDomain))
 // same secrets policy as Stripe: user-secrets in Development, appsettings.Production.json on the
 // server, never a committed file.
 //
-// Sign in with Apple follows the same policy and the same switch: registered only when all of
-// Authentication:Apple:{ClientId (the Services ID), TeamId, KeyId, PrivateKey (the .p8 text)} are
-// set. The client secret is a short-lived JWT the handler signs with that key, so nothing expires
-// on a schedule the House has to remember.
+// Both providers share one builder and one failure handler: cancelling at Google or Apple (or a
+// broken round trip) lands back on the sign-in page with a message, not on the error page — see
+// ExternalSignIn.Failed.
 var authentication = builder.Services.AddAuthentication();
 var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
 var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
@@ -210,22 +209,6 @@ if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(goo
     {
         options.ClientId = googleClientId;
         options.ClientSecret = googleClientSecret;
-        options.Events.OnRemoteFailure = ExternalSignIn.Failed;
-    });
-}
-
-var apple = builder.Configuration.GetSection("Authentication:Apple");
-if (new[] { "ClientId", "TeamId", "KeyId", "PrivateKey" }.All(key => !string.IsNullOrWhiteSpace(apple[key])))
-{
-    // A secret pasted as one line keeps its line breaks as "\n"; the PEM reader needs real ones.
-    var applePrivateKey = apple["PrivateKey"]!.Replace("\\n", "\n").Trim();
-    authentication.AddApple(options =>
-    {
-        options.ClientId = apple["ClientId"]!;
-        options.TeamId = apple["TeamId"]!;
-        options.KeyId = apple["KeyId"]!;
-        options.GenerateClientSecret = true;
-        options.PrivateKey = (_, _) => Task.FromResult(applePrivateKey.AsMemory());
         options.Events.OnRemoteFailure = ExternalSignIn.Failed;
     });
 }
@@ -248,15 +231,15 @@ var applePrivateKey = AppleSignInKey.Normalise(builder.Configuration["Authentica
 if (!string.IsNullOrWhiteSpace(appleClientId) && !string.IsNullOrWhiteSpace(appleTeamId)
     && !string.IsNullOrWhiteSpace(appleKeyId) && applePrivateKey is not null)
 {
-    builder.Services.AddAuthentication()
-        .AddApple(options =>
-        {
-            options.ClientId = appleClientId.Trim();
-            options.TeamId = appleTeamId.Trim();
-            options.KeyId = appleKeyId.Trim();
-            options.GenerateClientSecret = true;
-            options.PrivateKey = (_, _) => Task.FromResult(applePrivateKey.AsMemory());
-        });
+    authentication.AddApple(options =>
+    {
+        options.ClientId = appleClientId.Trim();
+        options.TeamId = appleTeamId.Trim();
+        options.KeyId = appleKeyId.Trim();
+        options.GenerateClientSecret = true;
+        options.PrivateKey = (_, _) => Task.FromResult(applePrivateKey.AsMemory());
+        options.Events.OnRemoteFailure = ExternalSignIn.Failed;
+    });
 }
 
 // --- Uploaded media ----------------------------------------------------------------------------

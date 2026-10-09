@@ -28,6 +28,7 @@ public class SiteSettingConfiguration : IEntityTypeConfiguration<SiteSetting>
         builder.Property(s => s.TwitterHandle).HasMaxLength(50);
 
         builder.Property(s => s.ContactEmail).HasMaxLength(320);
+        builder.Property(s => s.InfluencerEmail).HasMaxLength(320);
         builder.Property(s => s.ContactPhone).HasMaxLength(40);
         builder.Property(s => s.StreetAddress).HasMaxLength(300);
         builder.Property(s => s.AddressLocality).HasMaxLength(120);

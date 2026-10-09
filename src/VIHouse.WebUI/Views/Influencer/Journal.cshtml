@@ -1,0 +1,61 @@
+@model InfluencerJournalViewModel
+@{
+    string Pill(JournalPostStatus status) => status switch
+    {
+        JournalPostStatus.Published => "influencer-pill influencer-pill--live",
+        JournalPostStatus.Submitted => "influencer-pill influencer-pill--waiting",
+        JournalPostStatus.ChangesRequested => "influencer-pill influencer-pill--action",
+        _ => "influencer-pill",
+    };
+}
+
+<div class="account-manage">
+    <partial name="_InfluencerNav" />
+    <div class="account-manage__content">
+        <header class="account-page__head">
+            <h1>@Loc["Influencer.Nav.Journal"]</h1>
+            <p class="account-page__lede">@Loc["Influencer.Journal.Lede"]</p>
+        </header>
+
+        @if (TempData["StatusMessage"] is string status)
+        {
+            <div class="@(TempData["StatusIsError"] is true ? "vih-alert vih-alert--danger" : "contact-success")" role="status" style="margin-bottom:20px;">@status</div>
+        }
+
+        <p><a class="btn btn--primary" asp-action="NewArticle">@Loc["Influencer.Journal.New"]</a></p>
+
+        @if (Model.Posts.Count == 0)
+        {
+            <div class="account-empty">
+                <span class="account-empty__icon"><partial name="_Icon" model='@("file-text")' /></span>
+                <h2>@Loc["Influencer.Journal.Empty"]</h2>
+                <p>@Loc["Influencer.Journal.EmptyBody"]</p>
+            </div>
+        }
+        else
+        {
+            <ul class="account-list">
+                @foreach (var post in Model.Posts)
+                {
+                    <li class="account-list__item">
+                        <div class="account-list__body">
+                            <a class="account-list__title" asp-action="Write" asp-route-id="@post.Id">@JournalContent.Title(post, VIHouse.Business.Options.SiteCultures.Default)</a>
+                            <span class="account-list__meta">
+                                <span class="@Pill(post.Status)">@Loc["Influencer.Journal.Status." + post.Status]</span>
+                                @((post.PublishedAt ?? post.SubmittedAt ?? post.UpdatedAt ?? post.CreatedAt).ToLocalTime().ToString("d MMM yyyy"))
+                            </span>
+                            @if (post.Status == JournalPostStatus.ChangesRequested && post.ReviewNote is { } note)
+                            {
+                                <p class="influencer-note"><strong>@Loc["Influencer.Journal.EditorsNote"]</strong> @note</p>
+                            }
+                        </div>
+                        @if (post.Status == JournalPostStatus.Published)
+                        {
+                            <a class="btn btn--ghost-dark btn--sm" asp-controller="Journal" asp-action="Details" asp-route-slug="@post.Slug">@Loc["Influencer.Journal.ViewLive"]</a>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

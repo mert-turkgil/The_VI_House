@@ -187,7 +187,13 @@ public class AdminJournalEditViewModel
 
     /// <summary>The site's address for the post, for the slug preview and the search snippet.</summary>
     public string PublicUrlBase { get; set; } = default!;
+
+    /// <summary>Set when an influencer wrote the article: who, and where it stands with the editors.</summary>
+    public JournalSubmissionInfo? Submission { get; set; }
 }
+
+/// <param name="InfluencerId">The influencer row, for a link to their page; null if it is gone.</param>
+public record JournalSubmissionInfo(string AuthorName, Guid? InfluencerId, JournalPostStatus Status, DateTimeOffset? SubmittedAt, string? ReviewNote);
 
 /// <param name="IsWritten">False when no row exists for this culture yet.</param>
 public record AdminJournalTranslationTab(
@@ -216,6 +222,9 @@ public class AdminJournalListItemViewModel
     public JournalCategory Category { get; set; }
     public JournalPostStatus Status { get; set; }
     public DateTimeOffset? PublishedAt { get; set; }
+
+    /// <summary>An influencer's article: their display name. Null for the House's own.</summary>
+    public string? SubmittedBy { get; set; }
 
     /// <summary>Which languages have copy — the fastest way to spot a post that went live with
     /// three empty translations.</summary>

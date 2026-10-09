@@ -42,6 +42,7 @@ public class SitemapService(
         ("/about", "monthly", 0.6),
         ("/faq", "monthly", 0.5),
         ("/contact", "monthly", 0.5),
+        ("/influencers", "monthly", 0.4),
         ("/legal/terms", "yearly", 0.2),
         ("/legal/privacy", "yearly", 0.2),
         ("/legal/cookies", "yearly", 0.2),

@@ -13,51 +13,59 @@
         <article class="admin-card admin-card--elevated" data-reveal>
             <div class="admin-section-heading-wrap">
                 <div>
-                    <span class="admin-eyebrow">Programme</span>
-                    <h2>Coming up</h2>
+                    <span class="admin-eyebrow">@Loc["Admin.Dashboard.Panel.Programme"]</span>
+                    <h2>@Loc["Admin.Dashboard.Panel.ComingUp"]</h2>
                 </div>
                 <p>
-                    Experiences and sessions in the next 60 days.
+                    @Loc["Admin.Dashboard.Panel.ComingUpIntro"]
                     @if (events.DraftExperiences + events.DraftSessions > 0)
                     {
-                        @: @events.DraftExperiences draft experience@(events.DraftExperiences == 1 ? "" : "s"), @events.DraftSessions draft session@(events.DraftSessions == 1 ? "" : "s").
+                        @Loc["Admin.Dashboard.Panel.Drafts", events.DraftExperiences, events.DraftSessions]
                     }
                 </p>
             </div>
             @if (events.LiveNow.Count + events.Upcoming.Count == 0)
             {
                 <div class="admin-empty">
-                    <h3 class="admin-empty__title">Nothing scheduled</h3>
-                    <p>Published experiences and sessions starting in the next 60 days appear here.</p>
+                    <h3 class="admin-empty__title">@Loc["Admin.Dashboard.Panel.NothingScheduled"]</h3>
+                    <p>@Loc["Admin.Dashboard.Panel.NothingScheduledBody"]</p>
                 </div>
             }
             else
             {
                 <div class="admin-table-scroll">
                     <table class="admin-table">
-                        <thead><tr><th>When (UTC)</th><th>What</th><th>Attending</th><th>Stream</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>@Loc["Admin.Dashboard.Panel.WhenUtc"]</th>
+                                <th>@Loc["Admin.Dashboard.Panel.What"]</th>
+                                <th>@Loc["Admin.Dashboard.Panel.Attending"]</th>
+                                <th>@Loc["Admin.Dashboard.Panel.Stream"]</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             @foreach (var item in events.LiveNow.Concat(events.Upcoming))
                             {
+                                var isExperience = item.Kind == "Experience";
                                 <tr>
-                                    <td>@(item.StartAtUtc?.ToString("dd MMM, HH:mm") ?? "On demand")</td>
+                                    <td>@(item.StartAtUtc?.ToString("dd MMM, HH:mm") ?? Loc["Admin.Dashboard.Panel.OnDemand"].Value)</td>
                                     <td>
-                                        <a asp-controller="@(item.Kind == "Experience" ? "AdminExperiences" : "AdminSeminars")" asp-action="Edit" asp-route-id="@item.Id">@item.Title</a>
-                                        <div class="admin-table__sub">@item.Kind · @item.Status</div>
+                                        <a asp-controller="@(isExperience ? "AdminExperiences" : "AdminSeminars")" asp-action="Edit" asp-route-id="@item.Id">@item.Title</a>
+                                        <div class="admin-table__sub">@Loc[isExperience ? "Admin.Dashboard.KindExperience" : "Admin.Dashboard.KindSession"] · @item.Status</div>
                                     </td>
                                     <td>@item.Attendees</td>
                                     <td>
                                         @if (item.IsLiveNow)
                                         {
-                                            <span class="admin-badge admin-badge--danger">Live</span>
+                                            <span class="admin-badge admin-badge--danger">@Loc["Admin.Dashboard.Panel.Live"]</span>
                                         }
                                         else if (item.HasStream)
                                         {
-                                            <span class="admin-badge admin-badge--open">Link set</span>
+                                            <span class="admin-badge admin-badge--open">@Loc["Admin.Dashboard.Panel.LinkSet"]</span>
                                         }
                                         else
                                         {
-                                            <span class="admin-badge admin-badge--draft">No link</span>
+                                            <span class="admin-badge admin-badge--draft">@Loc["Admin.Dashboard.Panel.NoLink"]</span>
                                         }
                                     </td>
                                 </tr>
@@ -74,16 +82,16 @@
         <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="60">
             <div class="admin-section-heading-wrap">
                 <div>
-                    <span class="admin-eyebrow">Journal</span>
-                    <h2>Writing queue</h2>
+                    <span class="admin-eyebrow">@Loc["Admin.Dashboard.Panel.Journal"]</span>
+                    <h2>@Loc["Admin.Dashboard.Panel.WritingQueue"]</h2>
                 </div>
-                <p>@content.Drafts draft@(content.Drafts == 1 ? "" : "s") · @content.Published published. <a asp-controller="AdminJournal" asp-action="Index">Open the journal</a>.</p>
+                <p>@Loc["Admin.Dashboard.Panel.WritingCounts", content.Drafts, content.Published] <a asp-controller="AdminJournal" asp-action="Index">@Loc["Admin.Dashboard.Panel.OpenJournal"]</a></p>
             </div>
             @if (content.RecentDrafts.Count == 0)
             {
                 <div class="admin-empty">
-                    <h3 class="admin-empty__title">No drafts waiting</h3>
-                    <p>Articles saved as drafts appear here until they are published.</p>
+                    <h3 class="admin-empty__title">@Loc["Admin.Dashboard.Panel.NoDrafts"]</h3>
+                    <p>@Loc["Admin.Dashboard.Panel.NoDraftsBody"]</p>
                 </div>
             }
             else
@@ -93,7 +101,7 @@
                     {
                         <li>
                             <a asp-controller="AdminJournal" asp-action="Edit" asp-route-id="@draft.Id">@draft.Title</a>
-                            <span class="admin-table__sub"> — edited @draft.UpdatedAt.ToString("dd MMM")</span>
+                            <span class="admin-table__sub"> — @Loc["Admin.Dashboard.Panel.Edited", draft.UpdatedAt.ToString("dd MMM")]</span>
                         </li>
                     }
                 </ul>
@@ -106,37 +114,43 @@
         <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="120">
             <div class="admin-section-heading-wrap">
                 <div>
-                    <span class="admin-eyebrow">People</span>
-                    <h2>Members &amp; accounts</h2>
+                    <span class="admin-eyebrow">@Loc["Admin.Dashboard.Panel.People"]</span>
+                    <h2>@Loc["Admin.Dashboard.Panel.MembersAccounts"]</h2>
                 </div>
                 <p>
-                    @users.TotalUsers accounts · @users.Members with the Member role · @users.Founders founder@(users.Founders == 1 ? "" : "s").
-                    <a asp-controller="AdminUsers" asp-action="Index">Open Users</a>.
+                    @Loc["Admin.Dashboard.Panel.PeopleCounts", users.TotalUsers, users.Members, users.Founders]
+                    <a asp-controller="AdminUsers" asp-action="Index">@Loc["Admin.Dashboard.Panel.OpenUsers"]</a>
                 </p>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-                <span class="admin-badge admin-badge--info">@users.NewSince new this week</span>
+                <span class="admin-badge admin-badge--info">@Loc["Admin.Dashboard.Panel.NewThisWeek", users.NewSince]</span>
                 @if (users.UnconfirmedEmail > 0)
                 {
-                    <span class="admin-badge admin-badge--pending">@users.UnconfirmedEmail unconfirmed email@(users.UnconfirmedEmail == 1 ? "" : "s")</span>
+                    <span class="admin-badge admin-badge--pending">@Loc["Admin.Dashboard.Panel.UnconfirmedEmails", users.UnconfirmedEmail]</span>
                 }
                 @if (users.LockedOut > 0)
                 {
-                    <span class="admin-badge admin-badge--closed">@users.LockedOut locked</span>
+                    <span class="admin-badge admin-badge--closed">@Loc["Admin.Dashboard.Panel.LockedCount", users.LockedOut]</span>
                 }
             </div>
             @if (users.Newest.Count > 0)
             {
                 <div class="admin-table-scroll">
                     <table class="admin-table">
-                        <thead><tr><th>New account</th><th>Joined</th><th>Roles</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>@Loc["Admin.Dashboard.Panel.NewAccount"]</th>
+                                <th>@Loc["Admin.Users.Joined"]</th>
+                                <th>@Loc["Admin.Users.Roles"]</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             @foreach (var u in users.Newest)
                             {
                                 <tr>
                                     <td><a asp-controller="AdminUsers" asp-action="Details" asp-route-id="@u.UserId">@(string.IsNullOrWhiteSpace(u.Name) ? u.Email : u.Name)</a></td>
                                     <td>@u.CreatedAt.ToString("dd MMM")</td>
-                                    <td>@(u.Roles.Count == 0 ? "—" : string.Join(", ", u.Roles))</td>
+                                    <td>@(u.Roles.Count == 0 ? "—" : string.Join(", ", u.Roles.Select(r => Loc["Admin.Role." + r].Value)))</td>
                                 </tr>
                             }
                         </tbody>
@@ -152,29 +166,31 @@
         <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="180">
             <div class="admin-section-heading-wrap">
                 <div>
-                    <span class="admin-eyebrow">Launch</span>
-                    <h2>Launch list &amp; founders</h2>
+                    <span class="admin-eyebrow">@Loc["Admin.Dashboard.Panel.Launch"]</span>
+                    <h2>@Loc["Admin.Dashboard.Panel.LaunchFounders"]</h2>
                 </div>
-                <p><a asp-controller="AdminFounders" asp-action="Index">Founder programme</a> · <a asp-controller="AdminNotifySignups" asp-action="Index">Launch list</a></p>
+                <p><a asp-controller="AdminFounders" asp-action="Index">@Loc["Admin.Dashboard.Panel.FounderProgramme"]</a> · <a asp-controller="AdminNotifySignups" asp-action="Index">@Loc["Admin.Dashboard.Panel.LaunchList"]</a></p>
             </div>
             <dl class="admin-detail-list">
-                <div><dt>Launch list sign-ups</dt><dd>@marketing.LaunchListSignups</dd></div>
-                <div><dt>Founders</dt><dd>@marketing.Founders</dd></div>
+                <div><dt>@Loc["Admin.Dashboard.Panel.LaunchListSignups"]</dt><dd>@marketing.LaunchListSignups</dd></div>
+                <div><dt>@Loc["Admin.Dashboard.Panel.Founders"]</dt><dd>@marketing.Founders</dd></div>
                 <div>
-                    <dt>Founder window</dt>
+                    <dt>@Loc["Admin.Dashboard.Panel.FounderWindow"]</dt>
                     <dd>
                         @if (marketing.FounderWindowEndsAtUtc is null)
                         {
-                            <span class="admin-badge admin-badge--draft">Not set</span>
+                            <span class="admin-badge admin-badge--draft">@Loc["Admin.Dashboard.Panel.NotSet"]</span>
                         }
                         else if (windowOpen)
                         {
                             var daysLeft = (int)Math.Ceiling((marketing.FounderWindowEndsAtUtc.Value - DateTimeOffset.UtcNow).TotalDays);
-                            <span class="admin-badge admin-badge--open">Open</span> @:closes @marketing.FounderWindowEndsAtUtc.Value.ToString("dd MMM yyyy") (@daysLeft day@(daysLeft == 1 ? "" : "s") left)
+                            <span class="admin-badge admin-badge--open">@Loc["Admin.Dashboard.Panel.Open"]</span>
+                            @Loc["Admin.Dashboard.Panel.ClosesOn", marketing.FounderWindowEndsAtUtc.Value.ToString("dd MMM yyyy"), daysLeft]
                         }
                         else
                         {
-                            <span class="admin-badge admin-badge--closed">Closed</span> @:@marketing.FounderWindowEndsAtUtc.Value.ToString("dd MMM yyyy")
+                            <span class="admin-badge admin-badge--closed">@Loc["Admin.Dashboard.Panel.Closed"]</span>
+                            @marketing.FounderWindowEndsAtUtc.Value.ToString("dd MMM yyyy")
                         }
                     </dd>
                 </div>
