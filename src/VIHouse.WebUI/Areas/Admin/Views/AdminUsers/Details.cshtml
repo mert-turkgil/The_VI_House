@@ -7,7 +7,8 @@
     var derivedRoles = VIHouse.DataAccess.Identity.Roles.Derived;
     var isSuperAdmin = User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin);
     var canSeeAmbassadors = VIHouse.WebUI.Areas.Admin.AdminSections.RolesFor.Ambassadors.Split(',').Any(User.IsInRole);
-    var isSelf = string.Equals(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, Model.UserId.ToString(), StringComparison.OrdinalIgnoreCase);
+    var isSelf = string.Equals(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
+Model.UserId.ToString(), StringComparison.OrdinalIgnoreCase);
     var lockedPermanently = Model.LockoutEnd is { } le && le > DateTimeOffset.UtcNow.AddYears(50);
     // Every form on this page is a SuperAdmin action on someone else's account. A protected
     // account (Security:ProtectedAccounts) shows none of them; the controller refuses the POSTs too.
@@ -36,472 +37,555 @@
         <div class="admin-card">
             <h2>@Loc["Admin.Users.Account"]</h2>
             <dl class="admin-detail-list">
-                <div><dt>@Loc["Admin.Common.Email"]</dt><dd>@Model.Email</dd></div>
-                <div><dt>@Loc["Admin.Common.Phone"]</dt><dd>@(Model.Phone ?? "—")</dd></div>
-                <div><dt>@Loc["Admin.Users.TitleProfession"]</dt><dd>@(Model.Profile?.JobTitle ?? "—")</dd></div>
-                <div><dt>@Loc["Admin.Users.Company"]</dt><dd>@(Model.Profile?.Company ?? "—")@(string.IsNullOrWhiteSpace(Model.Profile?.TaxId) ? "" : $" · {Model.Profile!.TaxId}")</dd></div>
+                <div>
+                    <dt>@Loc["Admin.Common.Email"]</dt>
+                    <dd>@Model.Email</dd>
+                </div>
+                <div>
+                    <dt>@Loc["Admin.Common.Phone"]</dt>
+                    <dd>@(Model.Phone ?? "—")</dd>
+                </div>
+                <div>
+                    <dt>@Loc["Admin.Users.TitleProfession"]</dt>
+                    <dd>@(Model.Profile?.JobTitle ?? "—")</dd>
+                </div>
+                <div>
+                    <dt>@Loc["Admin.Users.Company"]</dt>
+                    <dd>@(Model.Profile?.Company ?? "—")@(string.IsNullOrWhiteSpace(Model.Profile?.TaxId) ? "" : $" ·      {Model.Profile!.TaxId}")</dd>
+                </div>
                 <div>
                     <dt>@Loc["Admin.Users.Address"]</dt>
                     <dd>
                         @{
-                            var addressLines = new[] { Model.Profile?.AddressLine1, Model.Profile?.AddressLine2, Model.Profile?.PostalCode }
+                            var addressLines = new[] { Model.Profile?.AddressLine1, Model.Profile?.AddressLine2,
+                        Model.Profile?.PostalCode }
                                 .Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
                         }
-                        @if (addressLines.Count == 0) { <text>&mdash;</text> }
-                        else { @string.Join(", ", addressLines) }
+                        @if (addressLines.Count == 0)
+                        {
+                            <text>&mdash;</text>
+                        }
+                        else
+                        {
+
+                            @string.Join(", ", addressLines)
+                        }
                     </dd>
                 </div>
-<<<<<<< HEAD
-                <div><dt>@Loc["Admin.Users.AnnualEarnings"]</dt><dd>@(EarningsBand.LabelFor(Model.Profile?.EarningsBand) ?? "—")</dd></div>
-                <div><dt>@Loc["Admin.Users.Profile"]</dt><dd>@Loc[Model.Profile?.IsComplete == true ? "Admin.Users.ProfileComplete" : "Admin.Users.ProfileIncomplete"]</dd></div>
-=======
-                <div><dt>Annual earnings</dt><dd>@(EarningsBand.LabelFor(Model.Profile?.EarningsBand) ?? "—")</dd></div>
-                <div><dt>Profile</dt><dd>@(Model.Profile?.IsComplete == true ? "Complete" : "Incomplete — the required statements are missing")</dd></div>
+                <div>
+                    <dt>Annual earnings</dt>
+                    <dd>@(EarningsBand.LabelFor(Model.Profile?.EarningsBand) ?? "—")</dd>
+                </div>
+                <div>
+                    <dt>Profile</dt>
+                    <dd>@(Model.Profile?.IsComplete == true ? "Complete" : "Incomplete — the required statements are missing")</dd>
+                </div>
                 @if (Model.FounderSince is { } founderSince)
                 {
-                    <div><dt>Founder</dt><dd><span class="admin-badge admin-badge--open">Founder</span> since @founderSince.ToString("d MMM yyyy")</dd></div>
+                    <div>
+                        <dt>Founder</dt>
+                        <dd><span class="admin-badge admin-badge--open">Founder</span> since @founderSince.ToString("d MMM yyyy")</dd>
+                    </div>
                 }
->>>>>>> 2efb31ad652d1470ea2aa3684d362b94a3a376fd
             </dl>
             @if (canChange)
             {
                 <details style="margin-top:12px;">
-                    <summary class="admin-btn admin-btn--ghost admin-btn--sm" style="display:inline-block;">Edit name &amp; contact details</summary>
-                    <form asp-action="UpdateProfile" asp-route-id="@Model.UserId" method="post" style="margin-top:12px;">
-                        <div class="admin-form__grid">
-                            <div class="admin-field">
-                                <label for="FirstName">First name</label>
-                                <input id="FirstName" name="FirstName" value="@Model.EditForm.FirstName" required maxlength="100" />
+                    <summary class="admin-btn admin-btn--ghost admin-btn--sm" style="display:inline-block;">Edit name &amp;
+                        contact details</summary>
+                        <form asp-action="UpdateProfile" asp-route-id="@Model.UserId" method="post" style="margin-top:12px;">
+                            <div class="admin-form__grid">
+                                <div class="admin-field">
+                                    <label for="FirstName">First name</label>
+                                    <input id="FirstName" name="FirstName" value="@Model.EditForm.FirstName" required
+                                           maxlength="100" />
+                                </div>
+                                <div class="admin-field">
+                                    <label for="LastName">Last name</label>
+                                    <input id="LastName" name="LastName" value="@Model.EditForm.LastName" required
+                                           maxlength="100" />
+                                </div>
+                                <div class="admin-field">
+                                    <label for="Phone">Phone</label>
+                                    <input id="Phone" name="Phone" value="@Model.EditForm.Phone" type="tel" maxlength="32" />
+                                </div>
+                                <div class="admin-field">
+                                    <label for="Country">Country (2 letters)</label>
+                                    <input id="Country" name="Country" value="@Model.EditForm.Country" maxlength="2" />
+                                </div>
+                                <div class="admin-field">
+                                    <label for="City">City</label>
+                                    <input id="City" name="City" value="@Model.EditForm.City" maxlength="100" />
+                                </div>
                             </div>
-                            <div class="admin-field">
-                                <label for="LastName">Last name</label>
-                                <input id="LastName" name="LastName" value="@Model.EditForm.LastName" required maxlength="100" />
-                            </div>
-                            <div class="admin-field">
-                                <label for="Phone">Phone</label>
-                                <input id="Phone" name="Phone" value="@Model.EditForm.Phone" type="tel" maxlength="32" />
-                            </div>
-                            <div class="admin-field">
-                                <label for="Country">Country (2 letters)</label>
-                                <input id="Country" name="Country" value="@Model.EditForm.Country" maxlength="2" />
-                            </div>
-                            <div class="admin-field">
-                                <label for="City">City</label>
-                                <input id="City" name="City" value="@Model.EditForm.City" maxlength="100" />
-                            </div>
-                        </div>
-                        <p class="admin-hint">The email address is the sign-in; the member changes it themselves under Security, which confirms the new address first.</p>
-                        <button type="submit" class="admin-btn admin-btn--sm">Save details</button>
-                    </form>
-                </details>
-            }
-        </div>
+                            <p class="admin-hint">The email address is the sign-in; the member changes it themselves under
+                                Security, which confirms the new address first.</p>
+                                <button type="submit" class="admin-btn admin-btn--sm">Save details</button>
+                            </form>
+                        </details>
+                    }
+                </div>
 
-        <div class="admin-card">
-            <h2>@Loc["Admin.Users.Membership"]</h2>
-            @if (Model.Membership is { } m)
-            {
-                <dl class="admin-detail-list">
-                    <div><dt>@Loc["Admin.Users.Plan"]</dt><dd>@m.Plan.Name</dd></div>
-                    <div>
-                        <dt>@Loc["Admin.Common.Status"]</dt>
-                        <dd>
-                            <span class="admin-badge @(m.IsPastDue ? "admin-badge--closed" : "admin-badge--open")">@Loc.Label(m.Membership.Status)</span>
-                            @if (m.IsComplimentary)
-                            {
-                                <span class="admin-badge admin-badge--draft">@Loc["Admin.Users.Complimentary"]</span>
-                            }
-                        </dd>
-                    </div>
-                    <div><dt>@Loc["Admin.Users.Since"]</dt><dd>@m.Membership.StartAt.ToString("d MMM yyyy")</dd></div>
-                    <div><dt>@Loc[m.IsRecurring && !m.IsComplimentary ? "Admin.Users.Renews" : "Admin.Users.Ends"]</dt><dd>@(m.Membership.ExpiresAt?.ToString("d MMM yyyy") ?? Loc["Admin.Users.Never"].Value)</dd></div>
-                    @if (m.IsComplimentary && !string.IsNullOrWhiteSpace(m.Membership.GrantNote))
+                <div class="admin-card">
+                    <h2>@Loc["Admin.Users.Membership"]</h2>
+                    @if (Model.Membership is { } m)
                     {
-                        <div><dt>@Loc["Admin.Users.GrantedBecause"]</dt><dd>@m.Membership.GrantNote</dd></div>
-                    }
-                </dl>
-                @if (canChange)
-                {
-                    <form asp-action="RevokeMembership" asp-route-id="@Model.UserId" method="post" class="admin-inline-form" style="margin-top:12px;"
-                          data-confirm="End @m.Plan.Name for @Model.Email today?">
-                        <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">@Loc["Admin.Users.EndMembership"]</button>
-                    </form>
-                    @if (m.HasProviderSubscription && !m.IsComplimentary)
-                    {
-                        <p class="admin-hint">@Loc["Admin.Users.BilledByStripe"]</p>
-                    }
-                }
-            }
-            else
-            {
-                <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Users.NoCurrentMembership"]</p>
-                @if (canChange && Model.Plans.Count > 0)
-                {
-                    @* Influencers, partners, make-goods: a real membership with no purchase. *@
-                    <form asp-action="GrantMembership" asp-route-id="@Model.UserId" method="post" class="admin-form" style="margin-top:12px;">
-                        <div class="admin-form__grid">
-                            <div class="admin-field">
-                                <label for="grant-plan">@Loc["Admin.Users.GrantPlan"]</label>
-                                <select id="grant-plan" name="PlanId">
-                                    @foreach (var plan in Model.Plans)
+                        <dl class="admin-detail-list">
+                            <div>
+                                <dt>@Loc["Admin.Users.Plan"]</dt>
+                                <dd>@m.Plan.Name</dd>
+                            </div>
+                            <div>
+                                <dt>@Loc["Admin.Common.Status"]</dt>
+                                <dd>
+                                    <span
+                                    class="admin-badge @(m.IsPastDue ? "admin-badge--closed" : "admin-badge--open")">@Loc.Label(m.Membership.Status)</span>
+                                    @if (m.IsComplimentary)
                                     {
-                                        <option value="@plan.Id">@plan.Name — @MoneyFormatter.Format(plan.PriceMinor, plan.Currency)@(plan.MaxMembers is { } max ? $" · limit {max}" : "")</option>
+                                        <span class="admin-badge admin-badge--draft">@Loc["Admin.Users.Complimentary"]</span>
                                     }
-                                </select>
+                                </dd>
                             </div>
-                            <div class="admin-field">
-                                <label for="grant-until">@Loc["Admin.Users.ValidUntil"]</label>
-                                <input id="grant-until" name="ExpiresOn" type="date" min="@DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd")" />
-                                <p class="admin-hint">@Loc["Admin.Users.BlankThePlanSOwnPeriod"]</p>
+                            <div><dt>@Loc["Admin.Users.Since"]</dt>
+                                <dd>@m.Membership.StartAt.ToString("d MMM yyyy")</dd>
                             </div>
-                        </div>
-                        <div class="admin-field">
-                            <label for="grant-note">@Loc["Admin.Users.ReasonKeptOnTheRecord"]</label>
-                            <input id="grant-note" name="Note" maxlength="500" placeholder="@Loc["Admin.Users.EGContentPartner12Month"]" />
-                        </div>
-                        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem; margin-bottom:12px;">
-                            <input type="checkbox" name="OverrideCap" value="true" />
-                            @Loc["Admin.Users.GrantEvenIfThePlanIs"]
-                        </label>
-                        <button type="submit" class="admin-btn">@Loc["Admin.Users.GrantMembership"]</button>
-                    </form>
-                }
-            }
-            @if (Model.MembershipHistory.Count > 1 || (Model.MembershipHistory.Count == 1 && Model.Membership is null))
-            {
-                <h3 style="margin-top:20px;">@Loc["Admin.Users.History"]</h3>
-                <table class="admin-table">
-                    <thead><tr><th>@Loc["Admin.Users.Plan"]</th><th>@Loc["Admin.Common.Status"]</th><th>@Loc["Admin.Users.From"]</th><th>@Loc["Admin.Users.To"]</th><th>@Loc["Admin.Users.Source"]</th></tr></thead>
-                    <tbody>
-                        @foreach (var h in Model.MembershipHistory)
-                        {
-                            <tr>
-                                <td>@h.Plan.Name</td>
-                                <td>@Loc.Label(h.Membership.Status)</td>
-                                <td>@h.Membership.StartAt.ToString("d MMM yyyy")</td>
-                                <td>@(h.Membership.ExpiresAt?.ToString("d MMM yyyy") ?? "—")</td>
-                                <td>@Loc[h.IsComplimentary ? "Admin.Users.Complimentary" : "Admin.Users.PaidMembership"]</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
-
-        <div class="admin-card">
-            <h2>@Loc["Admin.Users.ReferralLink"]</h2>
-            @if (Model.Ambassador is { } amb)
-            {
-                <dl class="admin-detail-list">
-                    <div><dt>@Loc["Admin.Users.Link"]</dt><dd><code>/r/@amb.Code</code></dd></div>
-                    <div><dt>@Loc["Admin.Users.Commission"]</dt><dd>@amb.CommissionPercent%</dd></div>
-                    <div>
-                        <dt>@Loc["Admin.Common.Status"]</dt>
-                        <dd><span class="admin-badge @(amb.Status == AmbassadorStatus.Active ? "admin-badge--open" : "admin-badge--draft")">@Loc.Label(amb.Status)</span></dd>
-                    </div>
-                </dl>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
-<<<<<<< HEAD
-                    <a class="admin-btn admin-btn--ghost admin-btn--sm" asp-controller="AdminAmbassadors" asp-action="Edit" asp-route-id="@amb.Id">@Loc["Admin.Users.PerformanceSettings"]</a>
-=======
-                    @if (canSeeAmbassadors)
-                    {
-                        <a class="admin-btn admin-btn--ghost admin-btn--sm" asp-controller="AdminAmbassadors" asp-action="Edit" asp-route-id="@amb.Id">Performance &amp; settings</a>
-                    }
->>>>>>> 2efb31ad652d1470ea2aa3684d362b94a3a376fd
-                    @if (canChange)
-                    {
-                        <form asp-action="SetAmbassadorStatus" asp-route-id="@Model.UserId" method="post" class="admin-inline-form">
-                            <input type="hidden" name="status" value="@(amb.Status == AmbassadorStatus.Active ? AmbassadorStatus.Inactive : AmbassadorStatus.Active)" />
-                            <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">@Loc[amb.Status == AmbassadorStatus.Active ? "Admin.Users.PauseLink" : "Admin.Users.ReactivateLink"]</button>
-                        </form>
-                    }
-                </div>
-            }
-            else
-            {
-                <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Users.NoReferralLink"]</p>
-                @if (canChange)
-                {
-                    <form asp-action="MakeAmbassador" asp-route-id="@Model.UserId" method="post" class="admin-form" style="margin-top:12px;">
-                        <div class="admin-form__grid">
-                            <div class="admin-field">
-                                <label asp-for="AmbassadorForm.Name">@Loc["Admin.Users.DisplayName"]</label>
-                                <input asp-for="AmbassadorForm.Name" name="Name" />
+                            <div>
+                                <dt>@Loc[m.IsRecurring && !m.IsComplimentary ? "Admin.Users.Renews" : "Admin.Users.Ends"]</dt>
+                                <dd>@(m.Membership.ExpiresAt?.ToString("d MMM yyyy") ?? Loc["Admin.Users.Never"].Value)</dd>
                             </div>
-                            <div class="admin-field">
-                                <label asp-for="AmbassadorForm.Code">@Loc["Admin.Ambassadors.CodeLabel"]</label>
-                                <input asp-for="AmbassadorForm.Code" name="Code" placeholder="VI-ANTON" />
-                            </div>
-                            <div class="admin-field">
-                                <label asp-for="AmbassadorForm.CommissionPercent">@Loc["Admin.Users.Commission27"]</label>
-                                <input asp-for="AmbassadorForm.CommissionPercent" name="CommissionPercent" type="number" step="0.01" min="0" max="100" />
-                            </div>
-                        </div>
-                        <button type="submit" class="admin-btn">@Loc["Admin.Users.CreateReferralLink"]</button>
-                    </form>
-                }
-            }
-        </div>
-
-        @if (!string.IsNullOrWhiteSpace(Model.Profile?.About) || !string.IsNullOrWhiteSpace(Model.Profile?.Expectations))
-        {
-            <div class="admin-card">
-                <h2>@Loc["Admin.Users.InTheirWords"]</h2>
-                @if (!string.IsNullOrWhiteSpace(Model.Profile?.About))
-                {
-                    <p><strong>@Loc["Admin.Users.About"]</strong><br />@Model.Profile.About</p>
-                }
-                @if (!string.IsNullOrWhiteSpace(Model.Profile?.Expectations))
-                {
-                    <p><strong>@Loc["Admin.Users.Expectations"]</strong><br />@Model.Profile.Expectations</p>
-                }
-            </div>
-        }
-
-        <div class="admin-card">
-            <h2>@Loc["Admin.Users.Applications"]</h2>
-            @if (Model.Applications.Count == 0)
-            {
-                <p>@Loc["Admin.Users.NoApplicationsFromThisAccount"]</p>
-            }
-            else
-            {
-                <table class="admin-table">
-                    <thead><tr><th>@Loc["Admin.Common.Status"]</th><th>@Loc["Admin.Users.Submitted"]</th></tr></thead>
-                    <tbody>
-                        @foreach (var a in Model.Applications)
+                            @if (m.IsComplimentary && !string.IsNullOrWhiteSpace(m.Membership.GrantNote))
+                            {
+                                <div><dt>@Loc["Admin.Users.GrantedBecause"]</dt>
+                                    <dd>@m.Membership.GrantNote</dd>
+                                </div>
+                            }
+                        </dl>
+                        @if (canChange)
                         {
-                            <tr>
-                                <td><a asp-area="Admin" asp-controller="AdminApplications" asp-action="Details" asp-route-id="@a.Id">@Loc.Label(a.Status)</a></td>
-                                <td>@(a.SubmittedAt?.ToString("dd MMM yyyy") ?? "—")</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
-
-        <div class="admin-card">
-            <h2>@Loc["Admin.Users.MembershipPayments"]</h2>
-            @if (Model.MembershipPayments.Count == 0)
-            {
-                <p>@Loc["Admin.Users.NoMembershipPurchasesFromThisAccount"]</p>
-            }
-            else
-            {
-                <table class="admin-table">
-                    <thead><tr><th>@Loc["Admin.Common.Date"]</th><th>@Loc["Admin.Common.Status"]</th><th>@Loc["Admin.Common.Amount"]</th><th>@Loc["Admin.Users.StripeReference"]</th></tr></thead>
-                    <tbody>
-                        @foreach (var mp in Model.MembershipPayments)
-                        {
-                            <tr>
-                                <td>@mp.CreatedAt.ToString("dd MMM yyyy")</td>
-                                <td>@Loc.Label(mp.Status)</td>
-                                <td>@MoneyFormatter.Format(mp.AmountMinor, mp.Currency)</td>
-                                <td><code style="font-size:0.75rem;">@mp.ProviderReference</code></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
-
-        <div class="admin-card">
-            <h2>@Loc["Admin.Users.ExperiencePayments"]</h2>
-            @if (Model.Payments.Count == 0)
-            {
-                <p>@Loc["Admin.Users.NoExperiencePaymentsFromThisAccount"]</p>
-            }
-            else
-            {
-                <table class="admin-table">
-                    <thead><tr><th>@Loc["Admin.Common.Date"]</th><th>@Loc["Admin.Users.Provider"]</th><th>@Loc["Admin.Common.Status"]</th><th>@Loc["Admin.Common.Amount"]</th></tr></thead>
-                    <tbody>
-                        @foreach (var p in Model.Payments)
-                        {
-                            <tr>
-                                <td><a asp-area="Admin" asp-controller="AdminPayments" asp-action="Details" asp-route-id="@p.Id">@p.CreatedAt.ToString("dd MMM yyyy")</a></td>
-                                <td>@Loc.Label(p.Provider)</td>
-                                <td>@Loc.Label(p.Status)</td>
-                                <td>@MoneyFormatter.Format(p.AmountMinor, p.Currency)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
-
-        <div class="admin-card">
-            <h2>@Loc["Admin.Users.Bookings"]</h2>
-            @if (Model.Bookings.Count == 0)
-            {
-                <p>@Loc["Admin.Users.NoBookingsFromThisAccount"]</p>
-            }
-            else
-            {
-                <table class="admin-table">
-                    <thead><tr><th>@Loc["Admin.Users.Reference"]</th><th>@Loc["Admin.Common.Status"]</th><th>@Loc["Admin.Common.Amount"]</th></tr></thead>
-                    <tbody>
-                        @foreach (var b in Model.Bookings)
-                        {
-                            <tr>
-                                <td><a asp-area="Admin" asp-controller="AdminBookings" asp-action="Details" asp-route-id="@b.Id">@b.BookingReference</a></td>
-                                <td>@Loc.Label(b.Status)</td>
-                                <td>@MoneyFormatter.Format(b.AmountMinor, b.Currency)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        </div>
-    </div>
-
-    <div class="admin-review-side">
-        <div class="admin-card">
-            <h2>@Loc["Admin.Users.AccountHealth"]</h2>
-            <dl class="admin-detail-list">
-                <div><dt>@Loc["Admin.Users.MemberStatus"]</dt><dd>@Loc.Label(Model.MemberStatus)</dd></div>
-                <div>
-                    <dt>@Loc["Admin.Users.TwoFactor"]</dt>
-                    <dd>
-                        @* 2FA is mandatory site-wide (OnboardingRequirementFilter), so "Not set up"
-                           is also the answer to "why is this member stuck on a setup page?" *@
-                        <span class="@(Model.TwoFactorEnabled ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")">
-                            @Loc[Model.TwoFactorEnabled ? "Admin.Users.TwoFactorOn" : "Admin.Users.TwoFactorOff"]
-                        </span>
-                        @* SuperAdmin-only, and only worth offering once there is a pairing to clear.
-                           Covers the lost-phone case, and is what makes a first-login enrolment
-                           repeatable when rehearsing the flow before launch. *@
-                        @if (Model.TwoFactorEnabled && canChange)
-                        {
-                            <form asp-action="ResetTwoFactor" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
-                                  data-confirm="@Loc["Admin.Users.ResetTwoFactorConfirm", Model.Email ?? ""]">
-                                <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">@Loc["Admin.Users.ResetTwoFactor"]</button>
+                            <form asp-action="RevokeMembership" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
+                                  style="margin-top:12px;" data-confirm="End @m.Plan.Name for @Model.Email today?">
+                                <button type="submit"
+                                        class="admin-btn admin-btn--danger admin-btn--sm">@Loc["Admin.Users.EndMembership"]</button>
                             </form>
+                            @if (m.HasProviderSubscription && !m.IsComplimentary)
+                            {
+                                <p class="admin-hint">@Loc["Admin.Users.BilledByStripe"]</p>
+                            }
                         }
-                    </dd>
-                </div>
-                <div>
-<<<<<<< HEAD
-                    <dt>@Loc["Admin.Users.EmailConfirmed"]</dt>
-                    <dd>@Loc[Model.EmailConfirmed ? "Admin.Common.Yes" : "Admin.Common.No"]</dd>
-                </div>
-                @if (Model.IsLockedOut)
-                {
-                    <div>
-                        <dt>@Loc["Admin.Users.LockedOut"]</dt>
-                        <dd><span class="admin-badge admin-badge--closed">@Loc["Admin.Users.YesTooManyFailedAttempts"]</span></dd>
-                    </div>
-                }
-                <div><dt>@Loc["Admin.Users.AccountCreated"]</dt><dd>@Model.CreatedAt.ToString("dd MMM yyyy")</dd></div>
-=======
-                    <dt>Email confirmed</dt>
-                    <dd>
-                        @(Model.EmailConfirmed ? "Yes" : "No")
-                        @if (!Model.EmailConfirmed && !Model.IsProtected)
-                        {
-                            <form asp-action="ConfirmEmail" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
-                                  onsubmit="return confirm('Mark @Model.Email as confirmed? Only do this once you know they own the address.');">
-                                <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Mark as confirmed</button>
-                            </form>
-                        }
-                    </dd>
-                </div>
-                <div>
-                    <dt>Sign-in</dt>
-                    <dd>
-                        @if (Model.IsLockedOut)
-                        {
-                            <span class="admin-badge admin-badge--closed">@(lockedPermanently ? "Locked by an admin" : $"Locked until {Model.LockoutEnd:dd MMM HH:mm} UTC — too many failed attempts")</span>
-                        }
-                        else
-                        {
-                            <span class="admin-badge admin-badge--open">Allowed</span>
-                        }
-                    </dd>
-                </div>
-                <div><dt>Account created</dt><dd>@Model.CreatedAt.ToString("dd MMM yyyy")</dd></div>
->>>>>>> 2efb31ad652d1470ea2aa3684d362b94a3a376fd
-                <div>
-                    <dt>@Loc["Admin.Users.LastSignIn"]</dt>
-                    <dd>@(Model.LastLoginAt?.ToString("dd MMM yyyy, HH:mm") ?? Loc["Admin.Users.NeverSignedIn"].Value)</dd>
-                </div>
-            </dl>
-            @* For the member whose setup email never arrived or expired. The link goes to the address on
-               the account, never to the admin — see AdminUsersController.SendSetupLink. Open to support
-               staff too (not SuperAdmin-only like role changes): getting a member in is their job. *@
-            @if (!Model.IsProtected)
-            {
-                <form asp-action="SendSetupLink" asp-route-id="@Model.UserId" method="post" class="admin-inline-form" style="margin-top:12px;"
-                      data-confirm="@Loc[Model.LastLoginAt is null ? "Admin.Users.SetupLinkConfirm" : "Admin.Users.ResetLinkConfirm", Model.Email ?? ""]">
-                    <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">
-                        @Loc[Model.LastLoginAt is null ? "Admin.Users.SendSetupEmail" : "Admin.Users.SendResetEmail"]
-                    </button>
-                </form>
-            }
-            @if (canChange && !isSelf)
-            {
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
-                    @if (Model.IsLockedOut)
-                    {
-                        <form asp-action="Unlock" asp-route-id="@Model.UserId" method="post" class="admin-inline-form">
-                            <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Unlock account</button>
-                        </form>
                     }
                     else
                     {
-                        <form asp-action="Lock" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
-                              onsubmit="return confirm('Lock @Model.Email? They will not be able to sign in until unlocked, and any open session ends within five minutes.');">
-                            <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Lock account</button>
-                        </form>
-                    }
-                    <form asp-action="SignOutEverywhere" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
-                          onsubmit="return confirm('Sign @Model.Email out of every device?');">
-                        <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Sign out everywhere</button>
-                    </form>
-                </div>
-            }
-        </div>
-
-        <div class="admin-card">
-            <h2>@Loc["Admin.Users.Roles"]</h2>
-            @if (canChange)
-            {
-                <form asp-action="UpdateRoles" asp-route-id="@Model.UserId" method="post">
-                    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
-                        @foreach (var role in allRoles)
+                        <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Users.NoCurrentMembership"]</p>
+                        @if (canChange && Model.Plans.Count > 0)
                         {
-<<<<<<< HEAD
-                            <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;">
-                                <input type="checkbox" name="roles" value="@role" checked="@Model.Roles.Contains(role)" />
-                                @Loc["Admin.Role." + role]
-                            </label>
+                            @* Influencers, partners, make-goods: a real membership with no purchase. *@
+                            <form asp-action="GrantMembership" asp-route-id="@Model.UserId" method="post" class="admin-form"
+                                  style="margin-top:12px;">
+                                <div class="admin-form__grid">
+                                    <div class="admin-field">
+                                        <label for="grant-plan">@Loc["Admin.Users.GrantPlan"]</label>
+                                        <select id="grant-plan" name="PlanId">
+                                            @foreach (var plan in Model.Plans)
+                                            {
+                                                <option value="@plan.Id">@plan.Name — @MoneyFormatter.Format(plan.PriceMinor,
+                                                                                    plan.Currency)@(plan.MaxMembers is { } max ? $" · limit {max}" : "")</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="admin-field">
+                                            <label for="grant-until">@Loc["Admin.Users.ValidUntil"]</label>
+                                            <input id="grant-until" name="ExpiresOn" type="date"
+                                                   min="@DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-dd")" />
+                                            <p class="admin-hint">@Loc["Admin.Users.BlankThePlanSOwnPeriod"]</p>
+                                        </div>
+                                    </div>
+                                    <div class="admin-field">
+                                        <label for="grant-note">@Loc["Admin.Users.ReasonKeptOnTheRecord"]</label>
+                                        <input id="grant-note" name="Note" maxlength="500"
+                                               placeholder="@Loc["Admin.Users.EGContentPartner12Month"]" />
+                                    </div>
+                                    <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem; margin-bottom:12px;">
+                                        <input type="checkbox" name="OverrideCap" value="true" />
+                                        @Loc["Admin.Users.GrantEvenIfThePlanIs"]
+                                    </label>
+                                    <button type="submit" class="admin-btn">@Loc["Admin.Users.GrantMembership"]</button>
+                                </form>
+                            }
+                        }
+                        @if (Model.MembershipHistory.Count > 1 || (Model.MembershipHistory.Count == 1 && Model.Membership is null))
+                        {
+                            <h3 style="margin-top:20px;">@Loc["Admin.Users.History"]</h3>
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>@Loc["Admin.Users.Plan"]</th>
+                                        <th>@Loc["Admin.Common.Status"]</th>
+                                        <th>@Loc["Admin.Users.From"]</th>
+                                        <th>@Loc["Admin.Users.To"]</th>
+                                        <th>@Loc["Admin.Users.Source"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var h in Model.MembershipHistory)
+                                    {
+                                        <tr>
+                                            <td>@h.Plan.Name</td>
+                                            <td>@Loc.Label(h.Membership.Status)</td>
+                                            <td>@h.Membership.StartAt.ToString("d MMM yyyy")</td>
+                                            <td>@(h.Membership.ExpiresAt?.ToString("d MMM yyyy") ?? "—")</td>
+                                            <td>@Loc[h.IsComplimentary ? "Admin.Users.Complimentary" : "Admin.Users.PaidMembership"]</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         }
                     </div>
-                    <button type="submit" class="admin-btn" style="width:100%;">@Loc["Admin.Users.SaveRoles"]</button>
-=======
-                            var derived = derivedRoles.Contains(role);
-                            <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;@(derived ? " opacity:.65;" : "")"
-                                   title="@(derived ? "Follows from their membership / referral link — change that instead." : "")">
-                                <input type="checkbox" name="roles" value="@role" checked="@Model.Roles.Contains(role)" disabled="@derived" />
-                                @role
-                                @if (derived)
-                                {
-                                    <span class="admin-table__sub">automatic</span>
+
+                    <div class="admin-card">
+                        <h2>@Loc["Admin.Users.ReferralLink"]</h2>
+                        @if (Model.Ambassador is { } amb)
+                        {
+                            <dl class="admin-detail-list">
+                                <div>
+                                    <dt>@Loc["Admin.Users.Link"]</dt>
+                                    <dd><code>/r/@amb.Code</code></dd>
+                                </div>
+                                <div>
+                                    <dt>@Loc["Admin.Users.Commission"]</dt>
+                                    <dd>@amb.CommissionPercent%</dd>
+                                </div>
+                                <div>
+                                    <dt>@Loc["Admin.Common.Status"]</dt>
+                                    <dd><span
+                                        class="admin-badge @(amb.Status == AmbassadorStatus.Active ? "admin-badge--open" : "admin-badge--draft")">@Loc.Label(amb.Status)</span></dd>
+                                    </div>
+                                </dl>
+                                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+                                    @if (canSeeAmbassadors)
+                                    {
+                                        <a class="admin-btn admin-btn--ghost admin-btn--sm" asp-controller="AdminAmbassadors" asp-action="Edit"
+                                           asp-route-id="@amb.Id">Performance &amp; settings</a>
+                                    }
+                                    @if (canChange)
+                                    {
+                                        <form asp-action="SetAmbassadorStatus" asp-route-id="@Model.UserId" method="post"
+                                              class="admin-inline-form">
+                                            <input type="hidden" name="status"
+                                                   value="@(amb.Status == AmbassadorStatus.Active ? AmbassadorStatus.Inactive : AmbassadorStatus.Active)" />
+                                            <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">@Loc[amb.Status ==
+                                                                        AmbassadorStatus.Active ? "Admin.Users.PauseLink" : "Admin.Users.ReactivateLink"]</button>
+                                            </form>
+                                        }
+                                    </div>
                                 }
-                            </label>
-                        }
-                    </div>
-                    <p class="admin-hint" style="font-size:0.8rem;">Member and Ambassador follow from the membership and referral link above. The user is emailed when their roles change.</p>
-                    <button type="submit" class="admin-btn" style="width:100%;">Save Roles</button>
->>>>>>> 2efb31ad652d1470ea2aa3684d362b94a3a376fd
-                </form>
-            }
             else
-            {
-                <p style="margin:0; font-size:0.875rem;">@(Model.Roles.Count == 0 ? "—" : string.Join(", ", Model.Roles.Select(r => Loc["Admin.Role." + r].Value)))</p>
-            }
-        </div>
-    </div>
-</div>
+                                {
+                                    <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Users.NoReferralLink"]</p>
+                                    @if (canChange)
+                                    {
+                                        <form asp-action="MakeAmbassador" asp-route-id="@Model.UserId" method="post" class="admin-form"
+                                              style="margin-top:12px;">
+                                            <div class="admin-form__grid">
+                                                <div class="admin-field">
+                                                    <label asp-for="AmbassadorForm.Name">@Loc["Admin.Users.DisplayName"]</label>
+                                                    <input asp-for="AmbassadorForm.Name" name="Name" />
+                                                </div>
+                                                <div class="admin-field">
+                                                    <label asp-for="AmbassadorForm.Code">@Loc["Admin.Ambassadors.CodeLabel"]</label>
+                                                    <input asp-for="AmbassadorForm.Code" name="Code" placeholder="VI-ANTON" />
+                                                </div>
+                                                <div class="admin-field">
+                                                    <label asp-for="AmbassadorForm.CommissionPercent">@Loc["Admin.Users.Commission27"]</label>
+                                                    <input asp-for="AmbassadorForm.CommissionPercent" name="CommissionPercent" type="number"
+                                                           step="0.01" min="0" max="100" />
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="admin-btn">@Loc["Admin.Users.CreateReferralLink"]</button>
+                                        </form>
+                                    }
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(Model.Profile?.About) ||
+                            !string.IsNullOrWhiteSpace(Model.Profile?.Expectations))
+                            {
+                                <div class="admin-card">
+                                    <h2>@Loc["Admin.Users.InTheirWords"]</h2>
+                                    @if (!string.IsNullOrWhiteSpace(Model.Profile?.About))
+                                    {
+                                        <p><strong>@Loc["Admin.Users.About"]</strong><br />@Model.Profile.About</p>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(Model.Profile?.Expectations))
+                                    {
+                                        <p><strong>@Loc["Admin.Users.Expectations"]</strong><br />@Model.Profile.Expectations</p>
+                                    }
+                                </div>
+                            }
+
+                            <div class="admin-card">
+                                <h2>@Loc["Admin.Users.Applications"]</h2>
+                                @if (Model.Applications.Count == 0)
+                                {
+                                    <p>@Loc["Admin.Users.NoApplicationsFromThisAccount"]</p>
+                                }
+                                else
+                                {
+                                    <table class="admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th>@Loc["Admin.Common.Status"]</th>
+                                                <th>@Loc["Admin.Users.Submitted"]</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var a in Model.Applications)
+                                            {
+                                                <tr>
+                                                    <td><a asp-area="Admin" asp-controller="AdminApplications" asp-action="Details"
+                                                               asp-route-id="@a.Id">@Loc.Label(a.Status)</a></td>
+                                                        <td>@(a.SubmittedAt?.ToString("dd MMM yyyy") ?? "—")</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                </div>
+
+                                <div class="admin-card">
+                                    <h2>@Loc["Admin.Users.MembershipPayments"]</h2>
+                                    @if (Model.MembershipPayments.Count == 0)
+                                    {
+                                        <p>@Loc["Admin.Users.NoMembershipPurchasesFromThisAccount"]</p>
+                                    }
+                                    else
+                                    {
+                                        <table class="admin-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>@Loc["Admin.Common.Date"]</th>
+                                                    <th>@Loc["Admin.Common.Status"]</th>
+                                                    <th>@Loc["Admin.Common.Amount"]</th>
+                                                    <th>@Loc["Admin.Users.StripeReference"]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var mp in Model.MembershipPayments)
+                                                {
+                                                    <tr>
+                                                        <td>@mp.CreatedAt.ToString("dd MMM yyyy")</td>
+                                                        <td>@Loc.Label(mp.Status)</td>
+                                                        <td>@MoneyFormatter.Format(mp.AmountMinor, mp.Currency)</td>
+                                                        <td><code style="font-size:0.75rem;">@mp.ProviderReference</code></td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                </div>
+
+                                <div class="admin-card">
+                                    <h2>@Loc["Admin.Users.ExperiencePayments"]</h2>
+                                    @if (Model.Payments.Count == 0)
+                                    {
+                                        <p>@Loc["Admin.Users.NoExperiencePaymentsFromThisAccount"]</p>
+                                    }
+                                    else
+                                    {
+                                        <table class="admin-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>@Loc["Admin.Common.Date"]</th>
+                                                    <th>@Loc["Admin.Users.Provider"]</th>
+                                                    <th>@Loc["Admin.Common.Status"]</th>
+                                                    <th>@Loc["Admin.Common.Amount"]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var p in Model.Payments)
+                                                {
+                                                    <tr>
+                                                        <td><a asp-area="Admin" asp-controller="AdminPayments" asp-action="Details"
+                                                                   asp-route-id="@p.Id">@p.CreatedAt.ToString("dd MMM yyyy")</a></td>
+                                                            <td>@Loc.Label(p.Provider)</td>
+                                                            <td>@Loc.Label(p.Status)</td>
+                                                            <td>@MoneyFormatter.Format(p.AmountMinor, p.Currency)</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+                                    </div>
+
+                                    <div class="admin-card">
+                                        <h2>@Loc["Admin.Users.Bookings"]</h2>
+                                        @if (Model.Bookings.Count == 0)
+                                        {
+                                            <p>@Loc["Admin.Users.NoBookingsFromThisAccount"]</p>
+                                        }
+                                        else
+                                        {
+                                            <table class="admin-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>@Loc["Admin.Users.Reference"]</th>
+                                                        <th>@Loc["Admin.Common.Status"]</th>
+                                                        <th>@Loc["Admin.Common.Amount"]</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var b in Model.Bookings)
+                                                    {
+                                                        <tr>
+                                                            <td><a asp-area="Admin" asp-controller="AdminBookings" asp-action="Details"
+                                                                       asp-route-id="@b.Id">@b.BookingReference</a></td>
+                                                                <td>@Loc.Label(b.Status)</td>
+                                                                <td>@MoneyFormatter.Format(b.AmountMinor, b.Currency)</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="admin-review-side">
+                                        <div class="admin-card">
+                                            <h2>@Loc["Admin.Users.AccountHealth"]</h2>
+                                            <dl class="admin-detail-list">
+                                                <div>
+                                                    <dt>@Loc["Admin.Users.MemberStatus"]</dt>
+                                                    <dd>@Loc.Label(Model.MemberStatus)</dd>
+                                                </div>
+                                                <div>
+                                                    <dt>@Loc["Admin.Users.TwoFactor"]</dt>
+                                                    <dd>
+                                                        @* 2FA is mandatory site-wide (OnboardingRequirementFilter), so "Not set up"
+                           is also the answer to "why is this member stuck on a setup page?" *@
+                                                        <span
+                                                            class="@(Model.TwoFactorEnabled ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")">
+                                                            @Loc[Model.TwoFactorEnabled ? "Admin.Users.TwoFactorOn" : "Admin.Users.TwoFactorOff"]
+                                                        </span>
+                                                        @* SuperAdmin-only, and only worth offering once there is a pairing to clear.
+                           Covers the lost-phone case, and is what makes a first-login enrolment
+                           repeatable when rehearsing the flow before launch. *@
+                                                        @if (Model.TwoFactorEnabled && canChange)
+                                                        {
+                                                            <form asp-action="ResetTwoFactor" asp-route-id="@Model.UserId" method="post"
+                                                                  class="admin-inline-form"
+                                                                  data-confirm="@Loc["Admin.Users.ResetTwoFactorConfirm", Model.Email ?? ""]">
+                                                                <button type="submit"
+                                                                        class="admin-btn admin-btn--ghost admin-btn--sm">@Loc["Admin.Users.ResetTwoFactor"]</button>
+                                                            </form>
+                                                        }
+                                                    </dd>
+                                                </div>
+                                                <div>
+                                                    <dt>Email confirmed</dt>
+                                                    <dd>
+                                                        @(Model.EmailConfirmed ? "Yes" : "No")
+                                                        @if (!Model.EmailConfirmed && !Model.IsProtected)
+                                                        {
+                                                            <form asp-action="ConfirmEmail" asp-route-id="@Model.UserId" method="post"
+                                                                  class="admin-inline-form"
+                                                                  onsubmit="return confirm('Mark @Model.Email as confirmed? Only do this once you know they own the address.');">
+                                                                <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Mark as
+                                                                    confirmed</button>
+                                                                </form>
+                                                            }
+                                                        </dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt>Sign-in</dt>
+                                                        <dd>
+                                                            @if (Model.IsLockedOut)
+                                                            {
+                                                                <span class="admin-badge admin-badge--closed">@(lockedPermanently ? "Locked by an admin" :
+                                                                                                $"Locked until {Model.LockoutEnd:dd MMM HH:mm} UTC — too many failed attempts")</span>
+                                                                }
+                        else
+                                                                {
+                                                                    <span class="admin-badge admin-badge--open">Allowed</span>
+                                                                }
+                                                            </dd>
+                                                        </div>
+                                                        <div>
+                                                            <dt>Account created</dt>
+                                                            <dd>@Model.CreatedAt.ToString("dd MMM yyyy")</dd>
+                                                        </div>
+                                                        <div>
+                                                            <dt>@Loc["Admin.Users.LastSignIn"]</dt>
+                                                            <dd>@(Model.LastLoginAt?.ToString("dd MMM yyyy, HH:mm") ?? Loc["Admin.Users.NeverSignedIn"].Value)
+                                                            </dd>
+                                                        </div>
+                                                    </dl>
+                                                    @* For the member whose setup email never arrived or expired. The link goes to the address on
+               the account, never to the admin — see AdminUsersController.SendSetupLink. Open to support
+               staff too (not SuperAdmin-only like role changes): getting a member in is their job. *@
+                                                    @if (!Model.IsProtected)
+                                                    {
+                                                        <form asp-action="SendSetupLink" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
+                                                              style="margin-top:12px;"
+                                                              data-confirm="@Loc[Model.LastLoginAt is null ? "Admin.Users.SetupLinkConfirm" : "Admin.Users.ResetLinkConfirm", Model.Email ?? ""]">
+                                                            <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">
+                                                                @Loc[Model.LastLoginAt is null ? "Admin.Users.SendSetupEmail" : "Admin.Users.SendResetEmail"]
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                    @if (canChange && !isSelf)
+                                                    {
+                                                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+                                                            @if (Model.IsLockedOut)
+                                                            {
+                                                                <form asp-action="Unlock" asp-route-id="@Model.UserId" method="post" class="admin-inline-form">
+                                                                    <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Unlock account</button>
+                                                                </form>
+                                                            }
+                                                            else
+                                                            {
+                                                                <form asp-action="Lock" asp-route-id="@Model.UserId" method="post" class="admin-inline-form"
+                                                                      onsubmit="return confirm('Lock @Model.Email? They will not be able to sign in until unlocked, and any open session ends within five minutes.');">
+                                                                    <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Lock account</button>
+                                                                </form>
+                                                            }
+                                                            <form asp-action="SignOutEverywhere" asp-route-id="@Model.UserId" method="post"
+                                                                  class="admin-inline-form" onsubmit="return confirm('Sign @Model.Email out of every device?');">
+                                                                <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Sign out everywhere</button>
+                                                            </form>
+                                                        </div>
+                                                    }
+                                                </div>
+
+                                                <div class="admin-card">
+                                                    <h2>@Loc["Admin.Users.Roles"]</h2>
+                                                    @if (canChange)
+                                                    {
+                                                        <form asp-action="UpdateRoles" asp-route-id="@Model.UserId" method="post">
+                                                            <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+                                                                @foreach (var role in allRoles)
+                                                                {
+                                                                    var derived = derivedRoles.Contains(role);
+                                                                    <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;@(derived ? " opacity:.65;" : "")"
+                                                                           title="@(derived ? "Follows from their membership / referral link — change that instead." : "")">
+                                                                        <input type="checkbox" name="roles" value="@role" checked="@Model.Roles.Contains(role)"
+                                                                               disabled="@derived" />
+                                                                        @role
+                                                                        @if (derived)
+                                                                        {
+                                                                            <span class="admin-table__sub">automatic</span>
+                                                                        }
+                                                                    </label>
+                                                                }
+                                                            </div>
+                                                            <p class="admin-hint" style="font-size:0.8rem;">Member and Ambassador follow from the membership and
+                                                                referral link above. The user is emailed when their roles change.</p>
+                                                                <button type="submit" class="admin-btn" style="width:100%;">Save Roles</button>
+                                                            </form>
+                                                        }
+            else
+                                                        {
+                                                            <p style="margin:0; font-size:0.875rem;">@(Model.Roles.Count == 0 ? "—" : string.Join(", ",
+                                                                                Model.Roles.Select(r => Loc["Admin.Role." + r].Value)))</p>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
