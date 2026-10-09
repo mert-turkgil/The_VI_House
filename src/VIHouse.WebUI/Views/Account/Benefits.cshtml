@@ -6,21 +6,21 @@
     ViewData["Title"] = Loc["Benefits.Title"];
     var b = Model.Benefits;
 
-    string SessionState(SeminarAccessInfo access) => access.Outcome switch
+    string SessionState(SeminarAccessInfo? access) => access?.Outcome switch
     {
         SeminarAccessOutcome.Enrolled => Loc["Benefits.State.In"].Value,
         SeminarAccessOutcome.PendingPayment => Loc["Benefits.State.Pending"].Value,
         SeminarAccessOutcome.SoldOut => Loc["Benefits.State.Full"].Value,
-        SeminarAccessOutcome.NotOpen when access.OpensAtUtc is { } opens => Loc["Benefits.State.OpensOn", opens.ToString("d MMM yyyy, HH:mm")].Value,
+        SeminarAccessOutcome.NotOpen when access!.OpensAtUtc is { } opens => Loc["Benefits.State.OpensOn", opens.ToString("d MMM yyyy, HH:mm")].Value,
         SeminarAccessOutcome.NotOpen => Loc["Benefits.State.NotOpen"].Value,
         _ => Loc["Benefits.State.Available"].Value,
     };
 
-    string ExperienceState(ExperienceAccessInfo access) => access.Outcome switch
+    string ExperienceState(ExperienceAccessInfo? access) => access?.Outcome switch
     {
         ExperienceAccessOutcome.AlreadyBooked => Loc["Benefits.State.In"].Value,
         ExperienceAccessOutcome.IncludedInMembership => Loc["Benefits.State.JoinFree"].Value,
-        ExperienceAccessOutcome.NotOpen when access.OpensAtUtc is { } opens => Loc["Benefits.State.OpensOn", opens.ToString("d MMM yyyy, HH:mm")].Value,
+        ExperienceAccessOutcome.NotOpen when access!.OpensAtUtc is { } opens => Loc["Benefits.State.OpensOn", opens.ToString("d MMM yyyy, HH:mm")].Value,
         ExperienceAccessOutcome.NotOpen => Loc["Benefits.State.NotOpen"].Value,
         _ => Loc["Benefits.State.Apply"].Value,
     };

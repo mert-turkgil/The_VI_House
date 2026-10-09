@@ -74,7 +74,7 @@ public class MembershipController(
             }
             else
             {
-                model.Benefits = await memberBenefits.GetAsync(userId, ct);
+                model.Benefits = await memberBenefits.GetAsync(userId, withAccess: false, ct);
             }
 
             // Anyone with a confirmed place watches from here too — members and ticket holders alike.

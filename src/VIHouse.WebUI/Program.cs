@@ -514,8 +514,9 @@ builder.Services.AddHealthChecks()
 
 // --- Reverse proxy -----------------------------------------------------------------------------
 // Off by default: in-process IIS already sees the real client and scheme. Behind a CDN or proxy
-// (Cloudflare, a load balancer) turn on ForwardedHeaders:Enabled, so Request.Scheme is https in
-// generated links and the rate limiter keys on the visitor's address rather than the proxy's.
+// (Cloudflare, a load balancer) turn on ForwardedHeaders:Enabled and list the proxy's addresses
+// under ForwardedHeaders:KnownProxies / KnownNetworks, so Request.Scheme is https in generated
+// links and the rate limiter keys on the visitor's address rather than the proxy's.
 var forwardedHeadersEnabled = builder.Configuration.GetValue<bool>("ForwardedHeaders:Enabled");
 if (forwardedHeadersEnabled)
 {
@@ -524,10 +525,14 @@ if (forwardedHeadersEnabled)
         options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor
             | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
         options.ForwardLimit = builder.Configuration.GetValue<int?>("ForwardedHeaders:ForwardLimit") ?? 1;
-        // The proxy's addresses are not known ahead of time on shared hosting; ForwardLimit = 1
-        // takes only the hop the proxy itself added.
-        options.KnownIPNetworks.Clear();
-        options.KnownProxies.Clear();
+        // Only the proxies named here are believed: anyone else could send X-Forwarded-For to
+        // dodge the per-address rate limits or falsify the addresses in audit and security mails.
+        // ForwardedHeaders:KnownProxies takes addresses ("203.0.113.7"), KnownNetworks takes CIDR
+        // ranges ("173.245.48.0/20" — Cloudflare publishes its list). Loopback stays trusted.
+        foreach (var proxy in builder.Configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>() ?? [])
+            if (System.Net.IPAddress.TryParse(proxy, out var address)) options.KnownProxies.Add(address);
+        foreach (var network in builder.Configuration.GetSection("ForwardedHeaders:KnownNetworks").Get<string[]>() ?? [])
+            if (System.Net.IPNetwork.TryParse(network, out var range)) options.KnownIPNetworks.Add(range);
     });
 }
 

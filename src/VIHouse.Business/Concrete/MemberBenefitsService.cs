@@ -16,7 +16,7 @@ public class MemberBenefitsService(
     IRepository<ExperienceMembershipAccess> membershipAccess,
     ITicketTypeRepository ticketTypes) : IMemberBenefitsService
 {
-    public async Task<MemberBenefits?> GetAsync(Guid userId, CancellationToken ct = default)
+    public async Task<MemberBenefits?> GetAsync(Guid userId, bool withAccess = true, CancellationToken ct = default)
     {
         var membership = await membershipService.GetCurrentMembershipAsync(userId, ct);
         if (membership is null) return null;
@@ -37,7 +37,7 @@ public class MemberBenefitsService(
             var discount = MemberPricing.Combined(seminar.MemberDiscountPercent, perks.ExtraDiscount);
             if (!included && discount <= 0) continue;
 
-            var access = await seminarService.GetAccessAsync(seminar, userId, ct);
+            var access = withAccess ? await seminarService.GetAccessAsync(seminar, userId, ct) : null;
             sessionRows.Add(new SessionBenefit(seminar,
                 included ? BenefitKind.Included : BenefitKind.Discounted, access,
                 included ? 100 : discount,
@@ -67,7 +67,7 @@ public class MemberBenefitsService(
                 var cheapest = tickets.GetValueOrDefault(experience.Id)?.Where(t => t.PriceMinor > 0).OrderBy(t => t.PriceMinor).FirstOrDefault();
                 if (!included && (discount <= 0 || cheapest is null)) continue;
 
-                var access = await experienceService.GetAccessAsync(experience, userId, ct);
+                var access = withAccess ? await experienceService.GetAccessAsync(experience, userId, ct) : null;
                 experienceRows.Add(new ExperienceBenefit(experience,
                     included ? BenefitKind.Included : BenefitKind.Discounted, access,
                     included ? 100 : discount,

@@ -121,7 +121,7 @@ public class AccountController(
 
         model.Entitlements = membership?.Entitlements;
         model.Founder = await founders.GetPerksAsync(userId, ct);
-        if (membership is not null && await memberBenefits.GetAsync(userId, ct) is { } benefits)
+        if (membership is not null && await memberBenefits.GetAsync(userId, withAccess: false, ct) is { } benefits)
         {
             model.BenefitsIncluded = benefits.IncludedCount;
             model.BenefitsDiscounted = benefits.DiscountedCount;
@@ -649,7 +649,7 @@ public class AccountController(
     public async Task<IActionResult> Benefits(CancellationToken ct)
     {
         var userId = User.RequiredUserId();
-        var benefits = await memberBenefits.GetAsync(userId, ct);
+        var benefits = await memberBenefits.GetAsync(userId, ct: ct);
         var model = new BenefitsPageViewModel
         {
             Benefits = benefits,

@@ -11,8 +11,11 @@ namespace VIHouse.Business.Abstract;
 /// </summary>
 public interface IMemberBenefitsService
 {
+    /// <param name="withAccess">False for a summary (counts only): skips the per-item access check,
+    /// which costs a few queries per row, so the dashboard and membership page stay cheap.
+    /// <see cref="SessionBenefit.Access"/> / <see cref="ExperienceBenefit.Access"/> are then null.</param>
     /// <returns>Null when the user holds no current membership.</returns>
-    Task<MemberBenefits?> GetAsync(Guid userId, CancellationToken ct = default);
+    Task<MemberBenefits?> GetAsync(Guid userId, bool withAccess = true, CancellationToken ct = default);
 }
 
 public enum BenefitKind
@@ -24,9 +27,9 @@ public enum BenefitKind
     Discounted,
 }
 
-public record SessionBenefit(Seminar Seminar, BenefitKind Kind, SeminarAccessInfo Access, int DiscountPercent, long PriceMinor, long FullPriceMinor);
+public record SessionBenefit(Seminar Seminar, BenefitKind Kind, SeminarAccessInfo? Access, int DiscountPercent, long PriceMinor, long FullPriceMinor);
 
-public record ExperienceBenefit(Experience Experience, BenefitKind Kind, ExperienceAccessInfo Access, int DiscountPercent,
+public record ExperienceBenefit(Experience Experience, BenefitKind Kind, ExperienceAccessInfo? Access, int DiscountPercent,
     long? FromPriceMinor, long? FullFromPriceMinor, string? Currency);
 
 public record MemberBenefits(

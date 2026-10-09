@@ -226,9 +226,13 @@ else
                         <td style="font-size:0.75rem;"><code>@row.TemplateKey</code></td>
                         <td><span class="@StatusBadge(row.Status)">@row.Status</span></td>
                         <td class="admin-table__actions">
-                            @if (row.ResentAt is { } resent)
+                            @if (row.ResentAt is { } resent && row.ErrorMessage?.StartsWith(VIHouse.Business.Concrete.OutboxProcessor.RetryingPrefix) == true)
                             {
-                                <span class="admin-badge admin-badge--draft" title="Resent @resent.ToString("d MMM yyyy HH:mm")">Resent</span>
+                                <span class="admin-badge admin-badge--draft" title="Tried again automatically by the outbox">Retried</span>
+                            }
+                            else if (row.ResentAt is { } resentAt)
+                            {
+                                <span class="admin-badge admin-badge--draft" title="Resent @resentAt.ToString("d MMM yyyy HH:mm")">Resent</span>
                             }
                             else if (row.Status == EmailStatus.Failed && !string.IsNullOrEmpty(row.Body))
                             {
