@@ -1,7 +1,7 @@
 @using VIHouse.DataAccess.Identity
 @model AdminInviteViewModel
 @{
-    ViewData["Title"] = "Invite Admin";
+    ViewData["Title"] = Loc["Admin.Users.InviteTitle"].Value;
     var justIssued = Model.IssuedSetupUrl is not null;
 }
 
@@ -13,18 +13,15 @@
 @if (justIssued)
 {
     <div class="admin-card" style="margin-bottom:24px;">
-        <h2>Setup link for @Model.IssuedEmail</h2>
+        <h2>@Loc["Admin.Users.SetupLinkFor", Model.IssuedEmail ?? ""]</h2>
         <p class="admin-hint">
-            This link has been emailed to them. It works once and lets them set a password — if the
-            email doesn't arrive, send them this directly over a channel you trust. It won't be
-            shown again.
+            @Loc["Admin.Users.ThisLinkHasBeenEmailedTo"]
         </p>
         <p><code style="word-break:break-all; font-size:0.75rem;">@Model.IssuedSetupUrl</code></p>
         <p class="admin-hint">
-            After setting a password they'll be walked through confirming their email and scanning a
-            QR code for two-factor. The admin panel stays closed until both are done.
+            @Loc["Admin.Users.AfterSettingAPasswordTheyLl"]
         </p>
-        <a class="admin-btn" asp-action="Index">Back to Users</a>
+        <a class="admin-btn" asp-action="Index">@Loc["Admin.Users.BackToUsers94"]</a>
     </div>
 }
 
@@ -32,9 +29,7 @@
     <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
 
     <p class="admin-hint">
-        Creates a staff account and emails a one-time setup link. You never choose their password —
-        they set their own, then must confirm their email address and switch on two-factor
-        authentication before the panel will open for them.
+        @Loc["Admin.Users.CreatesAStaffAccountAndEmails"]
     </p>
 
     <div class="admin-form__grid">
@@ -71,19 +66,18 @@
             {
                 <label class="admin-role-option">
                     <input type="checkbox" name="Roles" value="@role" checked="@(Model.Roles.Contains(role))" />
-                    <span>@role</span>
+                    <span>@Loc["Admin.Role." + role]</span>
                 </label>
             }
         </div>
         <span class="admin-hint">
-            SuperAdmin can manage roles and invite other admins. Every other role can use the panel
-            but not change who has access.
+            @Loc["Admin.Users.SuperAdminCanManageRolesAndInvite"]
         </span>
     </div>
 
     <div>
-        <button type="submit" class="admin-btn">Create Admin &amp; Send Setup Link</button>
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
+        <button type="submit" class="admin-btn">@Loc["Admin.Users.CreateAdminSendSetupLink"]</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Common.Cancel"]</a>
     </div>
 </form>
 

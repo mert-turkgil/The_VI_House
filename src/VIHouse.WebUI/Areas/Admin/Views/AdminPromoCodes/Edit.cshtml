@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Mvc.Rendering
 @model AdminPromoCodeFormViewModel
 @{
-    ViewData["Title"] = Model.Id is null ? "New Promo Code" : $"Promo Code — {Model.Code}";
+    ViewData["Title"] = Model.Id is null ? Loc["Admin.PromoCodes.NewTitle"].Value : Loc["Admin.PromoCodes.EditTitle", Model.Code ?? ""].Value;
     var experiences = ViewData["Experiences"] as List<SelectListItem> ?? [];
     var plans = ViewData["Plans"] as List<SelectListItem> ?? [];
     var redemptions = ViewData["RedemptionCount"] as int?;
@@ -17,11 +17,11 @@
             <label asp-for="Code"></label>
             <input asp-for="Code" placeholder="VI250" style="text-transform:uppercase;" />
             <span asp-validation-for="Code" class="field-validation-error"></span>
-            <p class="admin-field__hint">Stored in capitals; members can type it either way.</p>
+            <p class="admin-field__hint">@Loc["Admin.PromoCodes.CodeHint"]</p>
         </div>
         <div class="admin-field">
             <label asp-for="Type"></label>
-            <select asp-for="Type" asp-items="Html.GetEnumSelectList<PromoCodeType>()"></select>
+            <select asp-for="Type" asp-items="Loc.Options<PromoCodeType>()"></select>
         </div>
     </div>
 
@@ -30,25 +30,25 @@
             <label asp-for="Value"></label>
             <input asp-for="Value" type="number" step="0.01" min="0" />
             <span asp-validation-for="Value" class="field-validation-error"></span>
-            <p class="admin-field__hint">A percentage takes 1–100. A fixed discount takes whole units — 250 means £250, not £2.50.</p>
+            <p class="admin-field__hint">@Loc["Admin.PromoCodes.APercentageTakes1100A"]</p>
         </div>
         <div class="admin-field">
             <label asp-for="Currency"></label>
             <input asp-for="Currency" maxlength="3" placeholder="GBP" />
-            <p class="admin-field__hint">Ignored for a percentage.</p>
+            <p class="admin-field__hint">@Loc["Admin.PromoCodes.IgnoredForAPercentage"]</p>
         </div>
     </div>
 
     <div class="admin-field">
         <label asp-for="Scope"></label>
-        <select asp-for="Scope" asp-items="Html.GetEnumSelectList<PromoScope>()"></select>
-        <p class="admin-field__hint">A code is for experience tickets or for membership checkout, not both.</p>
+        <select asp-for="Scope" asp-items="Loc.Options<PromoScope>()"></select>
+        <p class="admin-field__hint">@Loc["Admin.PromoCodes.ACodeIsForExperienceTickets"]</p>
     </div>
 
     <div class="admin-field" data-promo-scope="Experiences">
         <label asp-for="ExperienceId"></label>
         <select asp-for="ExperienceId" asp-items="experiences">
-            <option value="">Any experience</option>
+            <option value="">@Loc["Admin.PromoCodes.AnyExperience"]</option>
         </select>
     </div>
 
@@ -56,20 +56,20 @@
         <div class="admin-field">
             <label asp-for="MembershipPlanId"></label>
             <select asp-for="MembershipPlanId" asp-items="plans">
-                <option value="">Any plan</option>
+                <option value="">@Loc["Admin.PromoCodes.AnyPlan"]</option>
             </select>
         </div>
         <div class="admin-field">
             <label asp-for="MembershipDuration"></label>
-            <select asp-for="MembershipDuration" asp-items="Html.GetEnumSelectList<PromoDuration>()"></select>
-            <p class="admin-field__hint">Applied as a coupon on the Stripe checkout. "Forever" keeps discounting every renewal.</p>
+            <select asp-for="MembershipDuration" asp-items="Loc.Options<PromoDuration>()"></select>
+            <p class="admin-field__hint">@Loc["Admin.PromoCodes.AppliedAsACouponOnThe"]</p>
         </div>
     </div>
 
     <div class="admin-field">
         <label asp-for="RestrictedToEmail"></label>
         <input asp-for="RestrictedToEmail" type="email" placeholder="name@example.com" />
-        <p class="admin-field__hint">Reserve the code for one person. They must check out with this exact address.</p>
+        <p class="admin-field__hint">@Loc["Admin.PromoCodes.ReserveTheCodeForOnePerson"]</p>
         <span asp-validation-for="RestrictedToEmail" class="field-validation-error"></span>
     </div>
 
@@ -80,7 +80,7 @@
             <span asp-validation-for="MaxRedemptions" class="field-validation-error"></span>
             @if (redemptions is > 0)
             {
-                <p class="admin-field__hint">Redeemed @redemptions time(s) so far. That count cannot be edited.</p>
+                <p class="admin-field__hint">@Loc["Admin.PromoCodes.RedeemedSoFar", redemptions]</p>
             }
         </div>
         <div class="admin-field">
@@ -92,13 +92,13 @@
     <div class="admin-field">
         <label style="display:flex; align-items:center; gap:8px;">
             <input asp-for="IsActive" type="checkbox" />
-            Accepted at checkout
+            @Loc["Admin.PromoCodes.AcceptedAtCheckout"]
         </label>
     </div>
 
     <div>
-        <button type="submit" class="admin-btn">@(Model.Id is null ? "Create Code" : "Save Changes")</button>
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
+        <button type="submit" class="admin-btn">@Loc[Model.Id is null ? "Admin.PromoCodes.CreateCode" : "Admin.Publish.Update"]</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Common.Cancel"]</a>
     </div>
 </form>
 

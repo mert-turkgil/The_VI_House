@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.Entities.Commerce;
@@ -22,7 +23,8 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 public class AdminWebhooksController(
     IWebhookEventRepository events,
     IPaymentProvider paymentProvider,
-    IPaymentWebhookDispatcher dispatcher) : AdminControllerBase
+    IPaymentWebhookDispatcher dispatcher,
+    IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     private const int PageSize = 100;
 
@@ -49,20 +51,20 @@ public class AdminWebhooksController(
         var webhookEvent = await paymentProvider.FetchWebhookEventAsync(eventId, ct);
         if (webhookEvent is null)
         {
-            TempData["StatusMessage"] = $"Stripe no longer has event {eventId} (events are kept for 30 days), so it cannot be re-run.";
+            Status(loc["Admin.Webhooks.Msg.Gone", eventId].Value, isError: true);
             return RedirectToAction(nameof(Index));
         }
 
         // The hash on the row is the one from the original delivery; a re-run is the same event.
         var result = await dispatcher.DispatchAsync(webhookEvent, row.PayloadHash, isReplay: true, ct);
-        TempData["StatusMessage"] = result.Outcome switch
+        Status(result.Outcome switch
         {
-            WebhookDispatchOutcome.Processed => $"Event {eventId} re-run and processed.",
-            WebhookDispatchOutcome.Ignored => $"Event {eventId} re-run; no handler acts on {webhookEvent.RawType}.",
-            WebhookDispatchOutcome.InProgress => $"Event {eventId} is being processed by another attempt right now.",
-            WebhookDispatchOutcome.Failed => $"Event {eventId} failed again: {result.Error}",
-            _ => $"Event {eventId}: nothing to do.",
-        };
+            WebhookDispatchOutcome.Processed => loc["Admin.Webhooks.Msg.Processed", eventId].Value,
+            WebhookDispatchOutcome.Ignored => loc["Admin.Webhooks.Msg.Ignored", eventId, webhookEvent.RawType].Value,
+            WebhookDispatchOutcome.InProgress => loc["Admin.Webhooks.Msg.InProgress", eventId].Value,
+            WebhookDispatchOutcome.Failed => loc["Admin.Webhooks.Msg.Failed", eventId, result.Error ?? ""].Value,
+            _ => loc["Admin.Webhooks.Msg.Nothing", eventId].Value,
+        }, isError: result.Outcome == WebhookDispatchOutcome.Failed);
         return RedirectToAction(nameof(Index), new { status = row.Status == WebhookEventStatus.Failed ? "Failed" : null });
     }
 }

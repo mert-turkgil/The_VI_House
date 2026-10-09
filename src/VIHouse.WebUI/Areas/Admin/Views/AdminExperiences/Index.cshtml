@@ -1,6 +1,6 @@
 @model List<AdminExperienceListItemViewModel>
 @{
-    ViewData["Title"] = "Experiences";
+    ViewData["Title"] = Loc["Admin.Nav.AdminExperiences"].Value;
 }
 
 @if (TempData["StatusMessage"] is string status)
@@ -9,12 +9,12 @@
 }
 
 <div class="admin-toolbar">
-    <a class="admin-btn" asp-action="Create">+ New Experience</a>
+    <a class="admin-btn" asp-action="Create">@Loc["Admin.Experiences.NewExperience"]</a>
 </div>
 
 @if (Model.Count == 0)
 {
-    <p>No experiences yet.</p>
+    <p>@Loc["Admin.Experiences.NoExperiencesYet"]</p>
 }
 else
 {
@@ -22,11 +22,11 @@ else
     <table class="admin-table" data-admin-table>
         <thead>
             <tr>
-                <th>Title</th>
-                <th>Location</th>
-                <th>Starts</th>
-                <th>Status</th>
-                <th>Tickets</th>
+                <th>@Loc["Admin.Common.Title"]</th>
+                <th>@Loc["Admin.Experiences.Location"]</th>
+                <th>@Loc["Admin.Experiences.Starts"]</th>
+                <th>@Loc["Admin.Common.Status"]</th>
+                <th>@Loc["Admin.Experiences.Tickets"]</th>
                 <th></th>
             </tr>
         </thead>
@@ -45,13 +45,13 @@ else
                     <td><a asp-action="Edit" asp-route-id="@e.Id">@e.Title</a></td>
                     <td>@e.City, @e.Country</td>
                     <td>@e.StartAtUtc.ToString("dd MMM yyyy")</td>
-                    <td><span class="@badgeClass">@e.Status.ToDisplayLabel()</span></td>
+                    <td><span class="@badgeClass">@Loc.Label(e.Status)</span></td>
                     <td>@e.TicketTypeCount</td>
                     <td class="admin-table__actions">
-                        <a class="admin-icon-btn" asp-area="" asp-controller="Experiences" asp-action="Details" asp-route-slug="@e.Slug" target="_blank" rel="noopener">View</a>
-                        <a class="admin-icon-btn" asp-action="Edit" asp-route-id="@e.Id">Edit</a>
-                        <form asp-action="Delete" asp-route-id="@e.Id" method="post" onsubmit="return confirm('Delete this experience?');" style="display:inline;">
-                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Delete</button>
+                        <a class="admin-icon-btn" asp-area="" asp-controller="Experiences" asp-action="Details" asp-route-slug="@e.Slug" target="_blank" rel="noopener">@Loc["Admin.Common.View"]</a>
+                        <a class="admin-icon-btn" asp-action="Edit" asp-route-id="@e.Id">@Loc["Admin.Common.Edit"]</a>
+                        <form asp-action="Delete" asp-route-id="@e.Id" method="post" data-confirm="@Loc["Admin.Experiences.DeleteThisExperience"]" style="display:inline;">
+                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">@Loc["Admin.Common.Delete"]</button>
                         </form>
                     </td>
                 </tr>

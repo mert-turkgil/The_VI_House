@@ -79,7 +79,7 @@ public class AdminSeminarsController(
             return View(form);
         }
 
-        TempData["StatusMessage"] = loc["Admin.Seminar.Created", form.DefaultTranslation.Title].Value;
+        Status(loc["Admin.Seminar.Created", form.DefaultTranslation.Title].Value);
         return RedirectToAction(nameof(Edit), new { id = result.SeminarId });
     }
 
@@ -112,8 +112,21 @@ public class AdminSeminarsController(
             return await RedisplayEditAsync(id, form, SiteCultures.Default, ct);
         }
 
-        TempData["StatusMessage"] = loc["Admin.Seminar.Saved"].Value;
+        Status(await SavedMessageAsync(id, loc["Admin.Seminar.Saved"].Value, ct));
         return RedirectToAction(nameof(Edit), new { id });
+    }
+
+    /// <summary>
+    /// "Saved", plus, while the session is still a draft, the reminder that saving is not publishing.
+    /// Without it a saved draft looked exactly like a published session, which is how a session the
+    /// owner had "published" stayed invisible.
+    /// </summary>
+    private async Task<string> SavedMessageAsync(Guid id, string saved, CancellationToken ct)
+    {
+        var current = await seminarService.GetForAdminEditAsync(id, ct);
+        return current is { Status: SeminarStatus.Draft }
+            ? $"{saved} {loc["Admin.Seminar.StillDraft"].Value}"
+            : saved;
     }
 
     // --- Translations ------------------------------------------------------------------------------
@@ -141,9 +154,9 @@ public class AdminSeminarsController(
         var (adminId, ip) = CurrentActor();
         var result = await seminarService.SaveTranslationAsync(id, form.ToEntity(), adminId, ip, ct);
 
-        TempData["StatusMessage"] = result.Success
-            ? loc["Admin.Seminar.TranslationSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value
-            : Localised(result.Error);
+        Status(result.Success
+            ? await SavedMessageAsync(id, loc["Admin.Seminar.TranslationSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value, ct)
+            : Localised(result.Error), isError: !result.Success);
 
         return RedirectToAction(nameof(Edit), new { id, culture = form.Culture });
     }
@@ -155,9 +168,9 @@ public class AdminSeminarsController(
         var (adminId, ip) = CurrentActor();
         var result = await seminarService.DeleteTranslationAsync(id, culture, adminId, ip, ct);
 
-        TempData["StatusMessage"] = result.Success
+        Status(result.Success
             ? loc["Admin.Seminar.TranslationDeleted", SiteCultures.Describe(culture).NativeLabel].Value
-            : Localised(result.Error);
+            : Localised(result.Error), isError: !result.Success);
 
         return RedirectToAction(nameof(Edit), new { id });
     }
@@ -171,9 +184,9 @@ public class AdminSeminarsController(
         var (adminId, ip) = CurrentActor();
         var result = await seminarService.SetStatusAsync(id, status, adminId, ip, ct);
 
-        TempData["StatusMessage"] = result.Success
+        Status(result.Success
             ? loc["Admin.Seminar.Status." + status].Value
-            : Localised(result.Error);
+            : Localised(result.Error), isError: !result.Success);
 
         return RedirectToAction(nameof(Edit), new { id });
     }
@@ -195,7 +208,7 @@ public class AdminSeminarsController(
     {
         if (file is null || file.Length == 0)
         {
-            TempData["StatusMessage"] = loc["Seminar.Error.MediaEmpty"].Value;
+            Status(loc["Seminar.Error.MediaEmpty"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id });
         }
 
@@ -206,9 +219,9 @@ public class AdminSeminarsController(
             id, new MediaUpload(file.FileName, file.ContentType, file.Length, stream),
             title, isInline: false, adminId, ip, ct);
 
-        TempData["StatusMessage"] = result.Success
+        Status(result.Success
             ? loc["Admin.Seminar.MediaAdded", file.FileName].Value
-            : Localised(result.Error);
+            : Localised(result.Error), isError: !result.Success);
 
         return RedirectToAction(nameof(Edit), new { id });
     }
@@ -252,7 +265,7 @@ public class AdminSeminarsController(
         var (adminId, ip) = CurrentActor();
         var result = await seminarService.RemoveMediaAsync(id, mediaId, adminId, ip, ct);
 
-        TempData["StatusMessage"] = result.Success ? loc["Admin.Seminar.MediaRemoved"].Value : Localised(result.Error);
+        Status(result.Success ? loc["Admin.Seminar.MediaRemoved"].Value : Localised(result.Error), isError: !result.Success);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -263,7 +276,7 @@ public class AdminSeminarsController(
         var (adminId, ip) = CurrentActor();
         var result = await seminarService.SetCoverAsync(id, mediaId, adminId, ip, ct);
 
-        TempData["StatusMessage"] = result.Success ? loc["Admin.Seminar.CoverSet"].Value : Localised(result.Error);
+        Status(result.Success ? loc["Admin.Seminar.CoverSet"].Value : Localised(result.Error), isError: !result.Success);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -305,11 +318,11 @@ public class AdminSeminarsController(
 
         if (!result.Success)
         {
-            TempData["StatusMessage"] = Localised(result.Error);
+            Status(Localised(result.Error), isError: true);
             return RedirectToAction(nameof(Edit), new { id });
         }
 
-        TempData["StatusMessage"] = loc["Admin.Seminar.Deleted"].Value;
+        Status(loc["Admin.Seminar.Deleted"].Value);
         return RedirectToAction(nameof(Index));
     }
 
@@ -344,6 +357,49 @@ public class AdminSeminarsController(
             EnrolmentCount = (await seminarService.GetEnrollmentsForAdminAsync(seminar.Id, ct))
                 .Count(e => e.Status == SeminarEnrollmentStatus.Confirmed),
             ActiveCulture = active,
+            PublishCard = BuildPublishCard(seminar),
+        };
+    }
+
+    /// <summary>
+    /// The session's state in words. The required checks are the ones SetStatusAsync enforces (an
+    /// English title and description, because every other language falls back to them); the rest is
+    /// advice that does not block publishing.
+    /// </summary>
+    private PublishCardViewModel BuildPublishCard(Seminar seminar)
+    {
+        var english = SeminarContent.Find(seminar, SiteCultures.Default);
+        var copyUrl = Url.Action(nameof(Edit), new { id = seminar.Id, culture = SiteCultures.Default }) + "#copy";
+        var translated = SiteCultures.All.Count(c => SeminarContent.Find(seminar, c.Name) is not null);
+        var firstMissing = SiteCultures.All.FirstOrDefault(c => SeminarContent.Find(seminar, c.Name) is null)?.Name ?? SiteCultures.Default;
+
+        var sentence = seminar.Status switch
+        {
+            SeminarStatus.Published => loc["Admin.Publish.Sentence.Live", (seminar.PublishedAt ?? seminar.UpdatedAt ?? DateTimeOffset.UtcNow).ToString("d MMMM yyyy")].Value,
+            SeminarStatus.Archived => loc["Admin.Seminar.Sentence.Archived"].Value,
+            _ => loc["Admin.Publish.Sentence.Draft"].Value,
+        };
+
+        return new PublishCardViewModel
+        {
+            IsPublished = seminar.Status == SeminarStatus.Published,
+            IsArchived = seminar.Status == SeminarStatus.Archived,
+            StatusLabel = loc["Admin.Seminar.StatusName." + seminar.Status].Value,
+            StatusSentence = sentence,
+            AudienceSentence = loc["Admin.Seminar.Audience." + seminar.Visibility].Value,
+            AudienceWarning = seminar.Visibility != SeminarVisibility.Public,
+            Checks =
+            [
+                new(loc["Admin.Publish.Check.EnglishTitle"].Value, !string.IsNullOrWhiteSpace(english?.Title), true, copyUrl),
+                new(loc["Admin.Publish.Check.EnglishBody"].Value, !string.IsNullOrWhiteSpace(english?.BodyHtml), true, copyUrl),
+                new(loc["Admin.Seminar.Check.Schedule"].Value, seminar.StartAtUtc is not null, false, "#details"),
+                new(loc["Admin.Publish.Check.Cover"].Value, seminar.CoverMediaId is not null, false, "#media"),
+                new(loc["Admin.Publish.Check.Languages", translated, SiteCultures.All.Count].Value, translated == SiteCultures.All.Count, false,
+                    Url.Action(nameof(Edit), new { id = seminar.Id, culture = firstMissing }) + "#copy"),
+            ],
+            PreviewUrl = Url.Action("Details", "Seminars", new { area = "", slug = seminar.Slug }),
+            StatusAction = Url.Action(nameof(SetStatus), new { id = seminar.Id }),
+            AllowArchive = true,
         };
     }
 

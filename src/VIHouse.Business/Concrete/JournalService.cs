@@ -74,6 +74,24 @@ public class JournalService(
     public async Task<JournalSaveResult> CreateAsync(
         JournalPost post, JournalPostTranslation defaultTranslation, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
+        // The slug is optional at creation: an empty one comes from the title. A generated slug that
+        // is already taken gets -2, -3 … (nobody chose it, so nobody should have to fix it); a slug
+        // the editor typed that is taken is refused with a message.
+        var typed = Slugs.From(post.Slug);
+        var slug = typed.Length > 0 ? typed : Slugs.From(defaultTranslation.Title);
+        if (slug.Length == 0) return JournalSaveResult.Fail("Journal.Error.SlugEmpty");
+        if (typed.Length > 0)
+        {
+            if (await posts.SlugExistsAsync(slug, null, ct)) return JournalSaveResult.Fail("Journal.Error.SlugTaken");
+        }
+        else
+        {
+            var candidate = slug;
+            for (var n = 2; await posts.SlugExistsAsync(candidate, null, ct); n++) candidate = $"{slug}-{n}";
+            slug = candidate;
+        }
+        post.Slug = slug;
+
         defaultTranslation.JournalPostId = post.Id;
         defaultTranslation.Culture = SiteCultures.Default;
         defaultTranslation.Body = EditorHtml.Sanitize(defaultTranslation.Body);
@@ -110,9 +128,13 @@ public class JournalService(
             return JournalSaveResult.Fail("Journal.Error.BodyRequiredToPublish");
         }
 
+        var slug = Slugs.From(updated.Slug);
+        if (slug.Length == 0) return JournalSaveResult.Fail("Journal.Error.SlugEmpty");
+        if (await posts.SlugExistsAsync(slug, existing.Id, ct)) return JournalSaveResult.Fail("Journal.Error.SlugTaken");
+
         var before = new { existing.Slug, existing.Category, existing.Status };
 
-        existing.Slug = updated.Slug;
+        existing.Slug = slug;
         existing.Category = updated.Category;
         existing.CoverImageUrl = updated.CoverImageUrl;
         existing.CoverImageAlt = updated.CoverImageAlt;

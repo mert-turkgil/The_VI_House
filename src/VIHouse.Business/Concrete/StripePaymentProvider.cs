@@ -224,11 +224,15 @@ public class StripePaymentProvider : IPaymentProvider
                 charge?.AmountCaptured, card?.Brand, card?.Last4, charge?.ReceiptUrl,
                 charge?.Refunded, charge?.AmountRefunded, charge?.Disputed);
         }
-        catch (StripeException ex)
+        catch (Exception ex) when (ex is StripeException or HttpRequestException
+                                   || ex is TaskCanceledException && !ct.IsCancellationRequested)
         {
             // Covers "no such session" (e.g. the pending_ placeholder ProviderReference from a
             // checkout that never reached Stripe — see PaymentService.InitiateCheckoutAsync) as
-            // well as genuine network/API failures. The caller falls back to local DB fields.
+            // well as genuine network/API failures. Stripe.net reports an unreachable host or a
+            // timeout as HttpRequestException / TaskCanceledException rather than StripeException,
+            // which used to turn the admin payment page into a 500 whenever Stripe could not be
+            // reached. The caller falls back to local DB fields.
             logger.LogWarning(ex, "Could not fetch live Stripe details for {ProviderReference}", providerReference);
             return null;
         }

@@ -11,7 +11,7 @@ public class AdminAmbassadorCreateViewModel
     public string Name { get; set; } = default!;
 
     [Required, StringLength(40)]
-    [RegularExpression("^[A-Za-z0-9-]+$", ErrorMessage = "Letters, numbers and hyphens only — this becomes part of a public URL.")]
+    [RegularExpression("^[A-Za-z0-9-]+$", ErrorMessage = "Admin.Validation.LettersNumbersAndHyphensOnlyThis")]
     public string Code { get; set; } = default!;
 
     [Required, Range(0, 100)]

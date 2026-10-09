@@ -1982,4 +1982,1410 @@ What would you like to know?</value></data>
   <data name="Experiences.Facts.Status" xml:space="preserve"><value>Status</value></data>
   <data name="Card.Error.NoMembership" xml:space="preserve"><value>You don't have an active membership yet.</value></data>
   <data name="Card.Error.NotInPlan" xml:space="preserve"><value>The digital card isn't part of {0}.</value></data>
+  <data name="Admin.Ambassadors.ARefundLandedAfterThisWas" xml:space="preserve"><value>A refund landed after this was paid out. Recover it, or it nets off the next payout automatically.</value></data>
+  <data name="Admin.Ambassadors.Accepted" xml:space="preserve"><value>Accepted</value></data>
+  <data name="Admin.Ambassadors.Account" xml:space="preserve"><value>Account</value></data>
+  <data name="Admin.Ambassadors.AccountHolder" xml:space="preserve"><value>Account holder</value></data>
+  <data name="Admin.Ambassadors.AllAmbassadors" xml:space="preserve"><value>← All ambassadors</value></data>
+  <data name="Admin.Ambassadors.Applications" xml:space="preserve"><value>Applications</value></data>
+  <data name="Admin.Ambassadors.Approved" xml:space="preserve"><value>Approved</value></data>
+  <data name="Admin.Ambassadors.AutomatedLooking" xml:space="preserve"><value>Automated-looking</value></data>
+  <data name="Admin.Ambassadors.BillingAddress" xml:space="preserve"><value>Billing address</value></data>
+  <data name="Admin.Ambassadors.BillingPayout" xml:space="preserve"><value>Billing &amp; payout</value></data>
+  <data name="Admin.Ambassadors.BusiestNetwork" xml:space="preserve"><value>Busiest network</value></data>
+  <data name="Admin.Ambassadors.Campaign" xml:space="preserve"><value>Campaign</value></data>
+  <data name="Admin.Ambassadors.ClickToCopy" xml:space="preserve"><value>Click to copy</value></data>
+  <data name="Admin.Ambassadors.Code" xml:space="preserve"><value>Code</value></data>
+  <data name="Admin.Ambassadors.CodeLabel" xml:space="preserve"><value>Code (used in the link /r/CODE)</value></data>
+  <data name="Admin.Ambassadors.Commission" xml:space="preserve"><value>Commission %</value></data>
+  <data name="Admin.Ambassadors.Commission92" xml:space="preserve"><value>Commission</value></data>
+  <data name="Admin.Ambassadors.CommissionEarnedIn" xml:space="preserve"><value>Commission earned ({0})</value></data>
+  <data name="Admin.Ambassadors.CommissionRule" xml:space="preserve"><value>Commission is taken at the rate in force when each sale happened. Refunds take it back pro rata; withdrawn lines earn nothing.</value></data>
+  <data name="Admin.Ambassadors.CommissionWithdrawn" xml:space="preserve"><value>Commission withdrawn</value></data>
+  <data name="Admin.Ambassadors.Copied" xml:space="preserve"><value>Copied</value></data>
+  <data name="Admin.Ambassadors.CopyLink" xml:space="preserve"><value>Copy link</value></data>
+  <data name="Admin.Ambassadors.CopyTrackedLink" xml:space="preserve"><value>Copy tracked link</value></data>
+  <data name="Admin.Ambassadors.CorrectItHereIfItWas" xml:space="preserve"><value>Correct it here if it was mistyped.</value></data>
+  <data name="Admin.Ambassadors.CountsAndRevenueOnlyNoNames" xml:space="preserve"><value>Counts and revenue only — no names or contact details of referred people are shown (brief §49).</value></data>
+  <data name="Admin.Ambassadors.DisplayName" xml:space="preserve"><value>Display name</value></data>
+  <data name="Admin.Ambassadors.DistinctNetworks" xml:space="preserve"><value>Distinct networks</value></data>
+  <data name="Admin.Ambassadors.EGBankTransferRef" xml:space="preserve"><value>e.g. bank transfer ref.</value></data>
+  <data name="Admin.Ambassadors.EGLovelyToHaveYou" xml:space="preserve"><value>e.g. Lovely to have you on board — here is your link for the launch post.</value></data>
+  <data name="Admin.Ambassadors.EarnedIn" xml:space="preserve"><value>Earned ({0})</value></data>
+  <data name="Admin.Ambassadors.EmailLinkTo" xml:space="preserve"><value>Email the link to {0}</value></data>
+  <data name="Admin.Ambassadors.FinanceRecordsPayouts" xml:space="preserve"><value>Finance records payouts.</value></data>
+  <data name="Admin.Ambassadors.FixedLinksAlreadySharedDependOn" xml:space="preserve"><value>(fixed — links already shared depend on it)</value></data>
+  <data name="Admin.Ambassadors.FullBankDetailsAreShownTo" xml:space="preserve"><value>Full bank details are shown to Finance.</value></data>
+  <data name="Admin.Ambassadors.GiveEachChannelItsOwnLink" xml:space="preserve"><value>Give each channel its own link so "Visits by source" below shows where the traffic comes from. Tags are appended as UTM parameters and recorded on every visit.</value></data>
+  <data name="Admin.Ambassadors.Given" xml:space="preserve"><value>Given</value></data>
+  <data name="Admin.Ambassadors.IHaveSent" xml:space="preserve"><value>I have sent {0} to {1}.</value></data>
+  <data name="Admin.Ambassadors.IPAddressesAreStoredOnlyAs" xml:space="preserve"><value>IP addresses are stored only as a keyed hash. Repeat landings from one network on one link within 30 minutes count once.</value></data>
+  <data name="Admin.Ambassadors.Inactive" xml:space="preserve"><value>Inactive</value></data>
+  <data name="Admin.Ambassadors.InactiveHint" xml:space="preserve"><value>Inactive: visits to the link stop being recorded; the account and history stay.</value></data>
+  <data name="Admin.Ambassadors.Invitation" xml:space="preserve"><value>Invitation</value></data>
+  <data name="Admin.Ambassadors.InviteAnAmbassador" xml:space="preserve"><value>+ Invite an ambassador</value></data>
+  <data name="Admin.Ambassadors.InviteExpired" xml:space="preserve"><value>Expired</value></data>
+  <data name="Admin.Ambassadors.InviteExpires" xml:space="preserve"><value>Expires</value></data>
+  <data name="Admin.Ambassadors.InviteIntro" xml:space="preserve"><value>For someone without a VI House account. They get an email with a personal link, valid for {0} days. Following it they choose a password, give their real name, billing address and bank details, and accept the ambassador terms (rate, payouts, refunds). Their links and QR codes start working only after that. You never see the link; if it expires, re-send it from their page.</value></data>
+  <data name="Admin.Ambassadors.InviteTitle" xml:space="preserve"><value>Invite an ambassador</value></data>
+  <data name="Admin.Ambassadors.InvitedNoAccountYet" xml:space="preserve"><value>(invited — no account yet)</value></data>
+  <data name="Admin.Ambassadors.LanguageOfTheInvitation" xml:space="preserve"><value>Language of the invitation</value></data>
+  <data name="Admin.Ambassadors.LastSent" xml:space="preserve"><value>Last sent</value></data>
+  <data name="Admin.Ambassadors.Link" xml:space="preserve"><value>Link</value></data>
+  <data name="Admin.Ambassadors.LinkHint" xml:space="preserve"><value>Absolute, ready to paste. Anyone who lands on it is cookied for 30 days and credited to {0} when they apply, join or pay.</value></data>
+  <data name="Admin.Ambassadors.LinksPerExperienceAndSession" xml:space="preserve"><value>Links per experience and session</value></data>
+  <data name="Admin.Ambassadors.MarkAsPaid" xml:space="preserve"><value>Mark {0} as paid</value></data>
+  <data name="Admin.Ambassadors.Medium" xml:space="preserve"><value>Medium</value></data>
+  <data name="Admin.Ambassadors.Msg.CommissionWithdrawn" xml:space="preserve"><value>Commission withdrawn for that line.</value></data>
+  <data name="Admin.Ambassadors.Msg.ConfirmTransfer" xml:space="preserve"><value>Tick the box to confirm the transfer has actually been made.</value></data>
+  <data name="Admin.Ambassadors.Msg.InviteResent" xml:space="preserve"><value>A new invitation is on its way to {0}. The previous link no longer works.</value></data>
+  <data name="Admin.Ambassadors.Msg.InviteSent" xml:space="preserve"><value>Invitation sent to {0}. The code {1} is reserved; the links go live once they accept.</value></data>
+  <data name="Admin.Ambassadors.Msg.LinkNotSent" xml:space="preserve"><value>The email to {0} could not be sent — check Emails &amp; SMS for the error. The link is still {1}.</value></data>
+  <data name="Admin.Ambassadors.Msg.LinkSent" xml:space="preserve"><value>Link sent to {0}.</value></data>
+  <data name="Admin.Ambassadors.Msg.NoEmail" xml:space="preserve"><value>This ambassador has no email address on their account.</value></data>
+  <data name="Admin.Ambassadors.Msg.NotAcceptedYet" xml:space="preserve"><value>The referral link does not work until they accept the invitation.</value></data>
+  <data name="Admin.Ambassadors.Msg.NotAnEmail" xml:space="preserve"><value>“{0}” is not an email address.</value></data>
+  <data name="Admin.Ambassadors.Msg.NothingToWithdraw" xml:space="preserve"><value>That line has no commission to withdraw (already withdrawn, or not a purchase).</value></data>
+  <data name="Admin.Ambassadors.Msg.OnlyPendingWithdrawn" xml:space="preserve"><value>Only a pending invitation can be withdrawn.</value></data>
+  <data name="Admin.Ambassadors.Msg.PayoutRecorded" xml:space="preserve"><value>Recorded: {0} paid. The ambassador has been notified.</value></data>
+  <data name="Admin.Ambassadors.Msg.PayoutRecordedRef" xml:space="preserve"><value>Recorded: {0} paid (ref. {1}). The ambassador has been notified.</value></data>
+  <data name="Admin.Ambassadors.Msg.ReasonNeeded" xml:space="preserve"><value>Give a reason for withdrawing the commission — it is kept on the record.</value></data>
+  <data name="Admin.Ambassadors.Msg.Withdrawn" xml:space="preserve"><value>Invitation withdrawn; the code is free again.</value></data>
+  <data name="Admin.Ambassadors.NameOnAccount" xml:space="preserve"><value>Name on account</value></data>
+  <data name="Admin.Ambassadors.NetOfRefunds" xml:space="preserve"><value>net of refunds</value></data>
+  <data name="Admin.Ambassadors.NewLinkValidFor" xml:space="preserve"><value>A new link, valid for {0} days. The previous one stops working.</value></data>
+  <data name="Admin.Ambassadors.NoAmbassadorTermsOnRecordThis" xml:space="preserve"><value>No ambassador terms on record — this ambassador was set up from an existing account, before terms were collected, or by hand.</value></data>
+  <data name="Admin.Ambassadors.NoAmbassadorsYet" xml:space="preserve"><value>No ambassadors yet.</value></data>
+  <data name="Admin.Ambassadors.NoPayoutDetailsOnRecordAsk" xml:space="preserve"><value>No payout details on record. Ask for them before recording a payout.</value></data>
+  <data name="Admin.Ambassadors.NoVisitsYet" xml:space="preserve"><value>No visits yet.</value></data>
+  <data name="Admin.Ambassadors.NotAcceptedYet" xml:space="preserve"><value>{0} has not accepted yet. There is no account behind this code, and the code {1} is reserved. The referral link and QR codes do not work until they choose a password, give their details and accept the terms.</value></data>
+  <data name="Admin.Ambassadors.NoteOptional" xml:space="preserve"><value>Note (optional)</value></data>
+  <data name="Admin.Ambassadors.NothingEarnedYet" xml:space="preserve"><value>Nothing earned yet.</value></data>
+  <data name="Admin.Ambassadors.NothingUnusual" xml:space="preserve"><value>Nothing unusual in the last {0} days.</value></data>
+  <data name="Admin.Ambassadors.NothingYetEachApplicationApprovalAnd" xml:space="preserve"><value>Nothing yet. Each application, approval and purchase through the link will appear here as it happens.</value></data>
+  <data name="Admin.Ambassadors.OpenInNewTab" xml:space="preserve"><value>Open in new tab</value></data>
+  <data name="Admin.Ambassadors.OpenTheirUserRecord" xml:space="preserve"><value>Open their user record →</value></data>
+  <data name="Admin.Ambassadors.OpenUserRecord" xml:space="preserve"><value>Open user record</value></data>
+  <data name="Admin.Ambassadors.Overpaid" xml:space="preserve"><value>Overpaid</value></data>
+  <data name="Admin.Ambassadors.Owed" xml:space="preserve"><value>Owed</value></data>
+  <data name="Admin.Ambassadors.OwnClicks" xml:space="preserve"><value>Own clicks</value></data>
+  <data name="Admin.Ambassadors.Paid" xml:space="preserve"><value>Paid</value></data>
+  <data name="Admin.Ambassadors.PaidOut" xml:space="preserve"><value>Paid out</value></data>
+  <data name="Admin.Ambassadors.PartlyRefunded" xml:space="preserve"><value>Partly refunded ({0})</value></data>
+  <data name="Admin.Ambassadors.Payouts" xml:space="preserve"><value>Payouts</value></data>
+  <data name="Admin.Ambassadors.PendingBecomesActiveWhenTheyAccept" xml:space="preserve"><value>Pending — becomes Active when they accept the invitation.</value></data>
+  <data name="Admin.Ambassadors.PerPageLinksHint" xml:space="preserve"><value>Each published experience and session has its own link and QR code. A visitor lands straight on that page, the visit is counted against it, and whatever they do next — apply, buy a ticket, enrol — is credited to {0} under that link. These are the same links and downloads {0} sees on their own dashboard.</value></data>
+  <data name="Admin.Ambassadors.Performance" xml:space="preserve"><value>Performance</value></data>
+  <data name="Admin.Ambassadors.PersonalNoteOptional" xml:space="preserve"><value>Personal note (optional)</value></data>
+  <data name="Admin.Ambassadors.PurchaseSplit" xml:space="preserve"><value>({0} tickets · {1} memberships · {2} sessions)</value></data>
+  <data name="Admin.Ambassadors.Purchases" xml:space="preserve"><value>Purchases</value></data>
+  <data name="Admin.Ambassadors.QRCodeForTheReferralLink" xml:space="preserve"><value>QR code for the referral link</value></data>
+  <data name="Admin.Ambassadors.RateChanged" xml:space="preserve"><value>The rate is now {0}%, not the {1}% they accepted. Agree the change with them in writing.</value></data>
+  <data name="Admin.Ambassadors.RateHint" xml:space="preserve"><value>Applied to every purchase attributed to the link, at the rate in force when it happens.</value></data>
+  <data name="Admin.Ambassadors.RateHintPending" xml:space="preserve"><value>The invitation page shows the rate as it is when they accept.</value></data>
+  <data name="Admin.Ambassadors.RateInTheTerms" xml:space="preserve"><value>Rate in the terms</value></data>
+  <data name="Admin.Ambassadors.ReSendInvitation" xml:space="preserve"><value>Re-send invitation</value></data>
+  <data name="Admin.Ambassadors.ReasonEGSelfReferral" xml:space="preserve"><value>Reason, e.g. self-referral</value></data>
+  <data name="Admin.Ambassadors.RecentActivity" xml:space="preserve"><value>Recent activity</value></data>
+  <data name="Admin.Ambassadors.Reference" xml:space="preserve"><value>Reference</value></data>
+  <data name="Admin.Ambassadors.ReferralLink" xml:space="preserve"><value>Referral link</value></data>
+  <data name="Admin.Ambassadors.ReferralLink84" xml:space="preserve"><value>Referral Link</value></data>
+  <data name="Admin.Ambassadors.Refunded" xml:space="preserve"><value>Refunded</value></data>
+  <data name="Admin.Ambassadors.RevenueIn" xml:space="preserve"><value>Revenue ({0})</value></data>
+  <data name="Admin.Ambassadors.SaveChanges" xml:space="preserve"><value>Save changes</value></data>
+  <data name="Admin.Ambassadors.ScanOrDropOnASlide" xml:space="preserve"><value>Scan or drop on a slide</value></data>
+  <data name="Admin.Ambassadors.SelfReferral" xml:space="preserve"><value>Self-referral</value></data>
+  <data name="Admin.Ambassadors.SelfReferrals" xml:space="preserve"><value>Self-referrals</value></data>
+  <data name="Admin.Ambassadors.SendEmail" xml:space="preserve"><value>Send email</value></data>
+  <data name="Admin.Ambassadors.SendInvitation" xml:space="preserve"><value>Send invitation</value></data>
+  <data name="Admin.Ambassadors.SentTo" xml:space="preserve"><value>Sent to</value></data>
+  <data name="Admin.Ambassadors.Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Admin.Ambassadors.Signals" xml:space="preserve"><value>Signals</value></data>
+  <data name="Admin.Ambassadors.Since" xml:space="preserve"><value>Ambassador since {0}</value></data>
+  <data name="Admin.Ambassadors.SiteLink" xml:space="preserve"><value>Site link</value></data>
+  <data name="Admin.Ambassadors.SomeoneWhoAlreadyHasAnAccount" xml:space="preserve"><value>Someone who already has an account is made an ambassador from their user record instead (Users → the person → “Make ambassador”).</value></data>
+  <data name="Admin.Ambassadors.Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Admin.Ambassadors.TaxVATId" xml:space="preserve"><value>Tax / VAT id</value></data>
+  <data name="Admin.Ambassadors.Terms" xml:space="preserve"><value>Terms</value></data>
+  <data name="Admin.Ambassadors.TheBuyerSAccountIsThe" xml:space="preserve"><value>The buyer's account is the ambassador's own</value></data>
+  <data name="Admin.Ambassadors.TheirDashboard" xml:space="preserve"><value>Their dashboard</value></data>
+  <data name="Admin.Ambassadors.TrackedLinkForAChannel" xml:space="preserve"><value>Tracked link for a channel</value></data>
+  <data name="Admin.Ambassadors.TransferReference" xml:space="preserve"><value>Transfer reference</value></data>
+  <data name="Admin.Ambassadors.Version" xml:space="preserve"><value>Version</value></data>
+  <data name="Admin.Ambassadors.VisitPurchase" xml:space="preserve"><value>Visit → purchase</value></data>
+  <data name="Admin.Ambassadors.Visits" xml:space="preserve"><value>Visits</value></data>
+  <data name="Admin.Ambassadors.VisitsBySource" xml:space="preserve"><value>Visits by source</value></data>
+  <data name="Admin.Ambassadors.VisitsInDays" xml:space="preserve"><value>Visits, {0} days</value></data>
+  <data name="Admin.Ambassadors.WhatTheySeeWhenSignedIn" xml:space="preserve"><value>(what they see when signed in)</value></data>
+  <data name="Admin.Ambassadors.WhichLinkIsWorking" xml:space="preserve"><value>Which link is working</value></data>
+  <data name="Admin.Ambassadors.Withdraw" xml:space="preserve"><value>Withdraw</value></data>
+  <data name="Admin.Ambassadors.WithdrawCommission" xml:space="preserve"><value>Withdraw commission…</value></data>
+  <data name="Admin.Ambassadors.WithdrawConfirm" xml:space="preserve"><value>Withdraw the invitation and free the code {0}?</value></data>
+  <data name="Admin.Ambassadors.WithdrawInvitation" xml:space="preserve"><value>Withdraw invitation</value></data>
+  <data name="Admin.Ambassadors.WithdrawnOn" xml:space="preserve"><value>Withdrawn {0}: {1}</value></data>
+  <data name="Admin.Applications.AddTag" xml:space="preserve"><value>Add Tag</value></data>
+  <data name="Admin.Applications.Address" xml:space="preserve"><value>Address</value></data>
+  <data name="Admin.Applications.All" xml:space="preserve"><value>All</value></data>
+  <data name="Admin.Applications.AnnualEarnings" xml:space="preserve"><value>Annual earnings</value></data>
+  <data name="Admin.Applications.Applicant" xml:space="preserve"><value>Applicant</value></data>
+  <data name="Admin.Applications.ApproveSendPaymentLink" xml:space="preserve"><value>Approve &amp; Send Payment Link</value></data>
+  <data name="Admin.Applications.Approved" xml:space="preserve"><value>Approved</value></data>
+  <data name="Admin.Applications.BackToApplications" xml:space="preserve"><value>← Back to Applications</value></data>
+  <data name="Admin.Applications.Card" xml:space="preserve"><value>Card</value></data>
+  <data name="Admin.Applications.ChargeStatus" xml:space="preserve"><value>Charge Status</value></data>
+  <data name="Admin.Applications.CouldnTSyncWithStripeJust" xml:space="preserve"><value>Couldn't sync with Stripe just now — showing the last known status.</value></data>
+  <data name="Admin.Applications.DecidedOn" xml:space="preserve"><value>Decided {0}.</value></data>
+  <data name="Admin.Applications.DecidedOnBy" xml:space="preserve"><value>Decided {0} by {1}.</value></data>
+  <data name="Admin.Applications.DeliveryAttempts" xml:space="preserve"><value>Delivery attempts for this application. The full record is under Emails &amp; SMS.</value></data>
+  <data name="Admin.Applications.DescribeYourselfOrYourBusiness" xml:space="preserve"><value>Describe yourself or your business</value></data>
+  <data name="Admin.Applications.EGInvestorFintechVIP" xml:space="preserve"><value>e.g. Investor, Fintech, VIP</value></data>
+  <data name="Admin.Applications.Experience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Admin.Applications.Expires" xml:space="preserve"><value>Expires</value></data>
+  <data name="Admin.Applications.FinalStatus" xml:space="preserve"><value>This application's status is “{0}”, so no further review actions apply.</value></data>
+  <data name="Admin.Applications.HowMayWeHelpWithYour" xml:space="preserve"><value>How may we help with your goals / what are your expectations?</value></data>
+  <data name="Admin.Applications.InTheirWords" xml:space="preserve"><value>In their words</value></data>
+  <data name="Admin.Applications.InternalNotes" xml:space="preserve"><value>Internal Notes</value></data>
+  <data name="Admin.Applications.Invite.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Admin.Applications.Invite.Expired" xml:space="preserve"><value>Expired</value></data>
+  <data name="Admin.Applications.Invite.Used" xml:space="preserve"><value>Used</value></data>
+  <data name="Admin.Applications.IssueNewLink" xml:space="preserve"><value>Issue a new link and send it</value></data>
+  <data name="Admin.Applications.Msg.Approved" xml:space="preserve"><value>Application approved.</value></data>
+  <data name="Admin.Applications.Msg.NotesSaved" xml:space="preserve"><value>Notes saved.</value></data>
+  <data name="Admin.Applications.NeverShownToTheApplicant" xml:space="preserve"><value>Never shown to the applicant.</value></data>
+  <data name="Admin.Applications.NoApplicationsHereYet" xml:space="preserve"><value>No applications here yet.</value></data>
+  <data name="Admin.Applications.NoSMSGatewayIsConfiguredSo" xml:space="preserve"><value>No SMS gateway is configured, so nothing has been texted. Set</value></data>
+  <data name="Admin.Applications.Payment" xml:space="preserve"><value>Payment</value></data>
+  <data name="Admin.Applications.PaymentLink" xml:space="preserve"><value>Payment Link</value></data>
+  <data name="Admin.Applications.Reason" xml:space="preserve"><value>Reason:</value></data>
+  <data name="Admin.Applications.ReasonOptionalInternal" xml:space="preserve"><value>Reason (optional, internal)</value></data>
+  <data name="Admin.Applications.Receipt" xml:space="preserve"><value>Receipt</value></data>
+  <data name="Admin.Applications.ReferralCode" xml:space="preserve"><value>Referral code</value></data>
+  <data name="Admin.Applications.Refunded" xml:space="preserve"><value>Refunded</value></data>
+  <data name="Admin.Applications.Reject" xml:space="preserve"><value>Reject</value></data>
+  <data name="Admin.Applications.Rejected" xml:space="preserve"><value>Rejected</value></data>
+  <data name="Admin.Applications.Review" xml:space="preserve"><value>Review</value></data>
+  <data name="Admin.Applications.SaveNotes" xml:space="preserve"><value>Save Notes</value></data>
+  <data name="Admin.Applications.SendAgain" xml:space="preserve"><value>Send it again</value></data>
+  <data name="Admin.Applications.SendsEmailAndSms" xml:space="preserve"><value>Goes out by email and text message.</value></data>
+  <data name="Admin.Applications.SendsEmailOnly" xml:space="preserve"><value>Goes out by email only — this application has no phone number.</value></data>
+  <data name="Admin.Applications.SentToThemByEmailAnd" xml:space="preserve"><value>Sent to them by email and text message when you approved. Single use, and it expires.</value></data>
+  <data name="Admin.Applications.Shortlist" xml:space="preserve"><value>Shortlist</value></data>
+  <data name="Admin.Applications.Shortlisted" xml:space="preserve"><value>Shortlisted</value></data>
+  <data name="Admin.Applications.StartReview" xml:space="preserve"><value>Start Review</value></data>
+  <data name="Admin.Applications.Submitted" xml:space="preserve"><value>Submitted</value></data>
+  <data name="Admin.Applications.Tags" xml:space="preserve"><value>Tags</value></data>
+  <data name="Admin.Applications.TitleProfession" xml:space="preserve"><value>Title / profession</value></data>
+  <data name="Admin.Applications.ToSwitchItOn" xml:space="preserve"><value>to switch it on.</value></data>
+  <data name="Admin.Applications.UnderReview" xml:space="preserve"><value>Under Review</value></data>
+  <data name="Admin.Applications.ViewInPayments" xml:space="preserve"><value>View in Payments</value></data>
+  <data name="Admin.Applications.ViewReceipt" xml:space="preserve"><value>View receipt</value></data>
+  <data name="Admin.Applications.Waitlist" xml:space="preserve"><value>Waitlist</value></data>
+  <data name="Admin.Applications.Waitlisted" xml:space="preserve"><value>Waitlisted</value></data>
+  <data name="Admin.Applications.WaitlistedSince" xml:space="preserve"><value>On the waitlist since {0}. Decide again whenever you're ready.</value></data>
+  <data name="Admin.Applications.WhatWeSentThem" xml:space="preserve"><value>What we sent them</value></data>
+  <data name="Admin.Bookings.All" xml:space="preserve"><value>All</value></data>
+  <data name="Admin.Bookings.BackToBookings" xml:space="preserve"><value>← Back to Bookings</value></data>
+  <data name="Admin.Bookings.Booking" xml:space="preserve"><value>Booking</value></data>
+  <data name="Admin.Bookings.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Admin.Bookings.Confirmed" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Admin.Bookings.Customer" xml:space="preserve"><value>Customer</value></data>
+  <data name="Admin.Bookings.Experience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Admin.Bookings.NoBookingsHereYet" xml:space="preserve"><value>No bookings here yet.</value></data>
+  <data name="Admin.Bookings.Payment" xml:space="preserve"><value>Payment</value></data>
+  <data name="Admin.Bookings.Payments" xml:space="preserve"><value>Payments</value></data>
+  <data name="Admin.Bookings.Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Admin.Bookings.Provider" xml:space="preserve"><value>Provider</value></data>
+  <data name="Admin.Bookings.ProviderReference" xml:space="preserve"><value>Provider Reference</value></data>
+  <data name="Admin.Bookings.Quantity" xml:space="preserve"><value>Quantity</value></data>
+  <data name="Admin.Bookings.Reference" xml:space="preserve"><value>Reference</value></data>
+  <data name="Admin.Bookings.RefundStatus" xml:space="preserve"><value>Refund Status</value></data>
+  <data name="Admin.Bookings.Refunded" xml:space="preserve"><value>Refunded</value></data>
+  <data name="Admin.Bookings.RefundsDisputesAreHandledInThe" xml:space="preserve"><value>Refunds/disputes are handled in the Stripe dashboard — this is a read-only mirror.</value></data>
+  <data name="Admin.Bookings.ViewFullPaymentRecord" xml:space="preserve"><value>View full payment record →</value></data>
+  <data name="Admin.Cms.ATranslatedListReplacesTheWhole" xml:space="preserve"><value>. A translated list replaces the whole English list for this language, so later English changes to the list must be made here too. Invalid JSON is refused.</value></data>
+  <data name="Admin.Cms.AddASection" xml:space="preserve"><value>Add a section</value></data>
+  <data name="Admin.Cms.Address" xml:space="preserve"><value>Address</value></data>
+  <data name="Admin.Cms.AllPages" xml:space="preserve"><value>← All pages</value></data>
+  <data name="Admin.Cms.Blocks" xml:space="preserve"><value>Blocks</value></data>
+  <data name="Admin.Cms.Body" xml:space="preserve"><value>Body</value></data>
+  <data name="Admin.Cms.ButtonLabel" xml:space="preserve"><value>Button label</value></data>
+  <data name="Admin.Cms.ButtonLink" xml:space="preserve"><value>Button link</value></data>
+  <data name="Admin.Cms.CheckedBeforeSavingInvalidJSONIs" xml:space="preserve"><value>Checked before saving — invalid JSON is refused rather than blanking the section.</value></data>
+  <data name="Admin.Cms.DefaultIsOnTheBlock" xml:space="preserve"><value>English is edited in the section form above, not as a translation.</value></data>
+  <data name="Admin.Cms.DeleteThisImageAnySectionStill" xml:space="preserve"><value>Delete this image? Any section still using it will show a broken image — this panel cannot tell which sections point at it.</value></data>
+  <data name="Admin.Cms.EditIntro" xml:space="preserve"><value>The words on the homepage. Each section below is the one directly above it on the site, in the same order. Leave a row's first field empty to remove that row; the blank row at the end of each list is how you add one.</value></data>
+  <data name="Admin.Cms.EmptyThisLanguageShowsTheEnglish" xml:space="preserve"><value>Empty: this language shows the English list below, and follows every English change.</value></data>
+  <data name="Admin.Cms.EnglishIsTheSectionFormAbove" xml:space="preserve"><value>English is the section form above — it is the original every other language follows, field by field. Leave a field blank (or identical to the English) and it keeps showing the English, including every later English edit. Fill it in and that one field shows your translation instead.</value></data>
+  <data name="Admin.Cms.EnglishListForCopying" xml:space="preserve"><value>English list, for copying</value></data>
+  <data name="Admin.Cms.ExtraJSON" xml:space="preserve"><value>Extra JSON</value></data>
+  <data name="Admin.Cms.Eyebrow" xml:space="preserve"><value>Eyebrow</value></data>
+  <data name="Admin.Cms.Field.author" xml:space="preserve"><value>Author</value></data>
+  <data name="Admin.Cms.Field.avatarUrl" xml:space="preserve"><value>Photograph</value></data>
+  <data name="Admin.Cms.Field.description" xml:space="preserve"><value>Description</value></data>
+  <data name="Admin.Cms.Field.imageAlt" xml:space="preserve"><value>Image description</value></data>
+  <data name="Admin.Cms.Field.imageUrl" xml:space="preserve"><value>Image</value></data>
+  <data name="Admin.Cms.Field.label" xml:space="preserve"><value>Label</value></data>
+  <data name="Admin.Cms.Field.linkLabel" xml:space="preserve"><value>Link label</value></data>
+  <data name="Admin.Cms.Field.linkUrl" xml:space="preserve"><value>Link</value></data>
+  <data name="Admin.Cms.Field.name" xml:space="preserve"><value>Name</value></data>
+  <data name="Admin.Cms.Field.quote" xml:space="preserve"><value>Quote</value></data>
+  <data name="Admin.Cms.Field.role" xml:space="preserve"><value>Role</value></data>
+  <data name="Admin.Cms.Field.title" xml:space="preserve"><value>Title</value></data>
+  <data name="Admin.Cms.Field.value" xml:space="preserve"><value>Value</value></data>
+  <data name="Admin.Cms.FollowsEnglish" xml:space="preserve"><value>follows English</value></data>
+  <data name="Admin.Cms.Heading" xml:space="preserve"><value>Heading</value></data>
+  <data name="Admin.Cms.HeroSlides" xml:space="preserve"><value>Hero Slides</value></data>
+  <data name="Admin.Cms.HeroSlidesAreActiveSoThis" xml:space="preserve"><value>Hero slides are active, so this fallback is not shown on the site. Edit what visitors see under</value></data>
+  <data name="Admin.Cms.Image" xml:space="preserve"><value>Image</value></data>
+  <data name="Admin.Cms.Images" xml:space="preserve"><value>Images</value></data>
+  <data name="Admin.Cms.InvalidJson" xml:space="preserve"><value>That JSON could not be parsed, so nothing was saved. Check for a stray comma or a missing quote.</value></data>
+  <data name="Admin.Cms.KeepTheKeysAndTheOrder" xml:space="preserve"><value>keep the keys and the order</value></data>
+  <data name="Admin.Cms.LabelOptional" xml:space="preserve"><value>Label (optional)</value></data>
+  <data name="Admin.Cms.LeaveEmptyToKeepTheEnglish" xml:space="preserve"><value>Leave empty to keep the English list. To translate it, copy the English below, paste it here and change only the text to the right of each colon —</value></data>
+  <data name="Admin.Cms.List" xml:space="preserve"><value>List</value></data>
+  <data name="Admin.Cms.ListContentJSON" xml:space="preserve"><value>List content (JSON)</value></data>
+  <data name="Admin.Cms.Msg.ImageDeleted" xml:space="preserve"><value>Image deleted. Any section still pointing at it will show a broken image.</value></data>
+  <data name="Admin.Cms.Msg.ImageGone" xml:space="preserve"><value>That image no longer exists.</value></data>
+  <data name="Admin.Cms.Msg.ImagesOnly" xml:space="preserve"><value>Content images take a photograph or a GIF — JPEG, PNG, WebP, AVIF or GIF.</value></data>
+  <data name="Admin.Cms.Msg.SectionAdded" xml:space="preserve"><value>“{0}” added.</value></data>
+  <data name="Admin.Cms.Msg.SectionRemoved" xml:space="preserve"><value>Section removed.</value></data>
+  <data name="Admin.Cms.Msg.SectionSaved" xml:space="preserve"><value>{0} saved. It is live on the homepage now.</value></data>
+  <data name="Admin.Cms.Msg.TranslationReset" xml:space="preserve"><value>{0} reset — this section now shows the English, including every later English edit.</value></data>
+  <data name="Admin.Cms.Msg.TranslationSaved" xml:space="preserve"><value>{0} saved. Fields left blank or identical to English keep following the English.</value></data>
+  <data name="Admin.Cms.Msg.Uploaded" xml:space="preserve"><value>“{0}” uploaded. Copy its address into a section's image field.</value></data>
+  <data name="Admin.Cms.NoCMSPagesSeededYet" xml:space="preserve"><value>No CMS pages seeded yet.</value></data>
+  <data name="Admin.Cms.Page" xml:space="preserve"><value>Page</value></data>
+  <data name="Admin.Cms.ParseError" xml:space="preserve"><value>The stored content for this section could not be read ({0}). Fix it in the raw JSON below — saving the form above would overwrite it.</value></data>
+  <data name="Admin.Cms.RemoveSection" xml:space="preserve"><value>Remove section</value></data>
+  <data name="Admin.Cms.RemoveSectionConfirm" xml:space="preserve"><value>Remove the {0} section? The homepage will stop showing it.</value></data>
+  <data name="Admin.Cms.Replaces" xml:space="preserve"><value>replaces: {0}</value></data>
+  <data name="Admin.Cms.ResetConfirm" xml:space="preserve"><value>Reset {0} to English? Its translated fields and list are removed and it follows the English again.</value></data>
+  <data name="Admin.Cms.ResetToEnglish" xml:space="preserve"><value>Reset {0} to English</value></data>
+  <data name="Admin.Cms.Row.Card.New" xml:space="preserve"><value>New card…</value></data>
+  <data name="Admin.Cms.Row.Card.Plural" xml:space="preserve"><value>Cards</value></data>
+  <data name="Admin.Cms.Row.Card.RemoveHint" xml:space="preserve"><value>Clear “{0}” from the {1} field to remove this card.</value></data>
+  <data name="Admin.Cms.Row.Company.New" xml:space="preserve"><value>New company…</value></data>
+  <data name="Admin.Cms.Row.Company.Plural" xml:space="preserve"><value>Companies</value></data>
+  <data name="Admin.Cms.Row.Company.RemoveHint" xml:space="preserve"><value>Clear “{0}” from the {1} field to remove this company.</value></data>
+  <data name="Admin.Cms.Row.Feature.New" xml:space="preserve"><value>New feature…</value></data>
+  <data name="Admin.Cms.Row.Feature.Plural" xml:space="preserve"><value>Features</value></data>
+  <data name="Admin.Cms.Row.Feature.RemoveHint" xml:space="preserve"><value>Clear “{0}” from the {1} field to remove this feature.</value></data>
+  <data name="Admin.Cms.Row.Statistic.New" xml:space="preserve"><value>New statistic…</value></data>
+  <data name="Admin.Cms.Row.Statistic.Plural" xml:space="preserve"><value>Statistics</value></data>
+  <data name="Admin.Cms.Row.Statistic.RemoveHint" xml:space="preserve"><value>Clear “{0}” from the {1} field to remove this statistic.</value></data>
+  <data name="Admin.Cms.Row.Testimonial.New" xml:space="preserve"><value>New testimonial…</value></data>
+  <data name="Admin.Cms.Row.Testimonial.Plural" xml:space="preserve"><value>Testimonials</value></data>
+  <data name="Admin.Cms.Row.Testimonial.RemoveHint" xml:space="preserve"><value>Clear “{0}” from the {1} field to remove this testimonial.</value></data>
+  <data name="Admin.Cms.Section.ecosystem.Description" xml:space="preserve"><value>The four cards: what the House is beyond the retreats.</value></data>
+  <data name="Admin.Cms.Section.ecosystem.Title" xml:space="preserve"><value>Ecosystem</value></data>
+  <data name="Admin.Cms.Section.feature-strip.Description" xml:space="preserve"><value>The row of short value statements under the filter bar. Its heading is read by screen readers only; the rows are what visitors see.</value></data>
+  <data name="Admin.Cms.Section.feature-strip.Title" xml:space="preserve"><value>Feature strip</value></data>
+  <data name="Admin.Cms.Section.hero.Description" xml:space="preserve"><value>Only shown when there are no hero slides. Manage the carousel under Hero Slides.</value></data>
+  <data name="Admin.Cms.Section.hero.Title" xml:space="preserve"><value>Hero (fallback)</value></data>
+  <data name="Admin.Cms.Section.stats.Description" xml:space="preserve"><value>The counters. Real numbers only.</value></data>
+  <data name="Admin.Cms.Section.stats.Title" xml:space="preserve"><value>Statistics</value></data>
+  <data name="Admin.Cms.Section.trust-logos.Description" xml:space="preserve"><value>The scrolling strip of company names beside the testimonials.</value></data>
+  <data name="Admin.Cms.Section.trust-logos.Title" xml:space="preserve"><value>Trusted by</value></data>
+  <data name="Admin.Cms.Section.trust.Description" xml:space="preserve"><value>The closing section: what members say.</value></data>
+  <data name="Admin.Cms.Section.trust.Title" xml:space="preserve"><value>Trust</value></data>
+  <data name="Admin.Cms.SectionsTheHomepageCanRenderThat" xml:space="preserve"><value>Sections the homepage can render that this page does not have yet.</value></data>
+  <data name="Admin.Cms.ShowsTheEnglish" xml:space="preserve"><value>Shows the English</value></data>
+  <data name="Admin.Cms.Slug" xml:space="preserve"><value>Slug</value></data>
+  <data name="Admin.Cms.SoItIsEditedAsRaw" xml:space="preserve"><value>, so it is edited as raw JSON below.</value></data>
+  <data name="Admin.Cms.StoredJSON" xml:space="preserve"><value>Stored JSON</value></data>
+  <data name="Admin.Cms.Subheading" xml:space="preserve"><value>Subheading</value></data>
+  <data name="Admin.Cms.TheLinkItselfIsNotTranslated" xml:space="preserve"><value>The link itself is not translated — a URL is a route, not a sentence.</value></data>
+  <data name="Admin.Cms.ThisPanelHasNoFormFor" xml:space="preserve"><value>This panel has no form for</value></data>
+  <data name="Admin.Cms.UnknownCulture" xml:space="preserve"><value>That is not a language this site speaks.</value></data>
+  <data name="Admin.Cms.UploadOnceThenPasteTheAddress" xml:space="preserve"><value>Upload once, then paste the address into any section's image field. Stored outside the site's static files, so an image added here works in production as well as locally.</value></data>
+  <data name="Admin.Cms.ViewThePage" xml:space="preserve"><value>View the page</value></data>
+  <data name="Admin.Common.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Admin.Common.Add" xml:space="preserve"><value>Add</value></data>
+  <data name="Admin.Common.Amount" xml:space="preserve"><value>Amount</value></data>
+  <data name="Admin.Common.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Admin.Common.Country" xml:space="preserve"><value>Country</value></data>
+  <data name="Admin.Common.Created" xml:space="preserve"><value>Created</value></data>
+  <data name="Admin.Common.Currency" xml:space="preserve"><value>Currency</value></data>
+  <data name="Admin.Common.Date" xml:space="preserve"><value>Date</value></data>
+  <data name="Admin.Common.Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Admin.Common.Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Admin.Common.Details" xml:space="preserve"><value>Details</value></data>
+  <data name="Admin.Common.Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Admin.Common.EditTitle" xml:space="preserve"><value>Edit — {0}</value></data>
+  <data name="Admin.Common.Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Admin.Common.Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="Admin.Common.Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Admin.Common.Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Admin.Common.No" xml:space="preserve"><value>No</value></data>
+  <data name="Admin.Common.Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Admin.Common.PageOf" xml:space="preserve"><value>Page {0} of {1}</value></data>
+  <data name="Admin.Common.Phone" xml:space="preserve"><value>Phone</value></data>
+  <data name="Admin.Common.Price" xml:space="preserve"><value>Price</value></data>
+  <data name="Admin.Common.Published" xml:space="preserve"><value>Published</value></data>
+  <data name="Admin.Common.Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="Admin.Common.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Admin.Common.SaveNamed" xml:space="preserve"><value>Save {0}</value></data>
+  <data name="Admin.Common.Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Admin.Common.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Admin.Common.Title" xml:space="preserve"><value>Title</value></data>
+  <data name="Admin.Common.Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Admin.Common.Updated" xml:space="preserve"><value>Updated</value></data>
+  <data name="Admin.Common.Upload" xml:space="preserve"><value>Upload</value></data>
+  <data name="Admin.Common.View" xml:space="preserve"><value>View</value></data>
+  <data name="Admin.Common.Yes" xml:space="preserve"><value>Yes</value></data>
+  <data name="Admin.Community.Any" xml:space="preserve"><value>— any —</value></data>
+  <data name="Admin.Community.DeleteConfirm" xml:space="preserve"><value>Delete “{0}”? Members will lose access to it immediately.</value></data>
+  <data name="Admin.Community.Hidden" xml:space="preserve"><value>Hidden</value></data>
+  <data name="Admin.Community.Kind" xml:space="preserve"><value>Kind</value></data>
+  <data name="Admin.Community.Label" xml:space="preserve"><value>Label</value></data>
+  <data name="Admin.Community.LeaveAllThreeBlankForEvery" xml:space="preserve"><value>Leave all three blank for every member whose plan includes the community. Pick one to attach the link to a plan, an experience (its ticket holders) or a session (its attendees).</value></data>
+  <data name="Admin.Community.Msg.Deleted" xml:space="preserve"><value>Link deleted.</value></data>
+  <data name="Admin.Community.Msg.Gone" xml:space="preserve"><value>That link no longer exists.</value></data>
+  <data name="Admin.Community.NewLink" xml:space="preserve"><value>+ New Link</value></data>
+  <data name="Admin.Community.NoCommunityLinksYetAddThe" xml:space="preserve"><value>No community links yet. Add the Discord invite to get started.</value></data>
+  <data name="Admin.Community.OneLineExplainingWhatThisChannel" xml:space="preserve"><value>One line explaining what this channel is for.</value></data>
+  <data name="Admin.Community.Order" xml:space="preserve"><value>Order</value></data>
+  <data name="Admin.Community.ShownToMembersWithAnActive" xml:space="preserve"><value>Shown to members with an active membership only — ticket holders never see these. Untick "visible" to pull a revoked invite without losing the record of it.</value></data>
+  <data name="Admin.Community.Visible" xml:space="preserve"><value>Visible</value></data>
+  <data name="Admin.Community.VisibleToMembers" xml:space="preserve"><value>Visible to members</value></data>
+  <data name="Admin.Community.WhenTheDiscordBotIsConfigured" xml:space="preserve"><value>When the Discord bot is configured, members get a fresh single-use invite to this channel instead of the URL above (which then only serves as the fallback). Right-click the channel in Discord with developer mode on to copy its id.</value></data>
+  <data name="Admin.Community.WhoSeesIt" xml:space="preserve"><value>Who sees it</value></data>
+  <data name="Admin.Confirm.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Admin.Confirm.Ok" xml:space="preserve"><value>Yes, continue</value></data>
+  <data name="Admin.Confirm.Title" xml:space="preserve"><value>Are you sure?</value></data>
+  <data name="Admin.Dashboard.AcrossEveryExperience" xml:space="preserve"><value>Across every experience.</value></data>
+  <data name="Admin.Dashboard.AmountAcross" xml:space="preserve"><value>{0} across {1} payments</value></data>
+  <data name="Admin.Dashboard.ApplicationFunnel" xml:space="preserve"><value>Application Funnel</value></data>
+  <data name="Admin.Dashboard.ApplicationFunnel79" xml:space="preserve"><value>Application funnel</value></data>
+  <data name="Admin.Dashboard.ApplicationToPaidConversion" xml:space="preserve"><value>Application to paid conversion</value></data>
+  <data name="Admin.Dashboard.ApplicationsAwaitingReview" xml:space="preserve"><value>Applications awaiting review</value></data>
+  <data name="Admin.Dashboard.ApplicationsInMotion" xml:space="preserve"><value>Applications in motion</value></data>
+  <data name="Admin.Dashboard.ApprovedSoFar" xml:space="preserve"><value>{0} approved so far</value></data>
+  <data name="Admin.Dashboard.BookingStatesAreSpacedOutFor" xml:space="preserve"><value>Booking states are spaced out for quick scanning during fulfilment and support.</value></data>
+  <data name="Admin.Dashboard.BookingsByStatus" xml:space="preserve"><value>Bookings by Status</value></data>
+  <data name="Admin.Dashboard.BookingsByStatus74" xml:space="preserve"><value>Bookings by status</value></data>
+  <data name="Admin.Dashboard.CancelledOrExpired" xml:space="preserve"><value>{0} cancelled or expired</value></data>
+  <data name="Admin.Dashboard.Collected" xml:space="preserve"><value>Collected</value></data>
+  <data name="Admin.Dashboard.ColorCodedStagesMakeItEasy" xml:space="preserve"><value>Color-coded stages make it easy to spot where applications are slowing down.</value></data>
+  <data name="Admin.Dashboard.ConfirmedBookings" xml:space="preserve"><value>Confirmed bookings</value></data>
+  <data name="Admin.Dashboard.ConfirmedCount" xml:space="preserve"><value>{0} confirmed</value></data>
+  <data name="Admin.Dashboard.Count" xml:space="preserve"><value>Count</value></data>
+  <data name="Admin.Dashboard.CurrentMembers" xml:space="preserve"><value>Current members</value></data>
+  <data name="Admin.Dashboard.DisputedCount" xml:space="preserve"><value>{0} disputed</value></data>
+  <data name="Admin.Dashboard.EveryKeyWorkflowIsSurfacedAs" xml:space="preserve"><value>Every key workflow is surfaced as a card, chart or status summary so non-technical operators can see what needs attention immediately.</value></data>
+  <data name="Admin.Dashboard.EveryPaymentSInternalState" xml:space="preserve"><value>Every payment's internal state.</value></data>
+  <data name="Admin.Dashboard.ExperienceSessionAndMembershipPaymentsTogether" xml:space="preserve"><value>Experience, session and membership payments together.</value></data>
+  <data name="Admin.Dashboard.ExperienceSessionAndMembershipPaymentsWill" xml:space="preserve"><value>Experience, session and membership payments will be broken down here once money has been collected.</value></data>
+  <data name="Admin.Dashboard.FailedPayments" xml:space="preserve"><value>Failed payments</value></data>
+  <data name="Admin.Dashboard.GiveYourTeamOneClearPlace" xml:space="preserve"><value>Give your team one clear place to track approvals, bookings, revenue and publishing.</value></data>
+  <data name="Admin.Dashboard.InFlightIn" xml:space="preserve"><value>In flight ({0})</value></data>
+  <data name="Admin.Dashboard.InFlightSplit" xml:space="preserve"><value>{0} pending · {1} processing or awaiting action</value></data>
+  <data name="Admin.Dashboard.MembershipSales" xml:space="preserve"><value>Membership sales</value></data>
+  <data name="Admin.Dashboard.MoneyByState" xml:space="preserve"><value>Money by state</value></data>
+  <data name="Admin.Dashboard.MoneyByType" xml:space="preserve"><value>Money by type</value></data>
+  <data name="Admin.Dashboard.NeedsAttentionNow" xml:space="preserve"><value>Needs attention now</value></data>
+  <data name="Admin.Dashboard.Net" xml:space="preserve"><value>Net</value></data>
+  <data name="Admin.Dashboard.NoApplicationsYet" xml:space="preserve"><value>No applications yet.</value></data>
+  <data name="Admin.Dashboard.NoBookingsYet" xml:space="preserve"><value>No bookings yet.</value></data>
+  <data name="Admin.Dashboard.NoBookingsYet47" xml:space="preserve"><value>No bookings yet</value></data>
+  <data name="Admin.Dashboard.NoOpenDisputes" xml:space="preserve"><value>No open disputes</value></data>
+  <data name="Admin.Dashboard.NoPaymentsCollectedYet" xml:space="preserve"><value>No payments collected yet.</value></data>
+  <data name="Admin.Dashboard.NoPaymentsYet" xml:space="preserve"><value>No payments yet.</value></data>
+  <data name="Admin.Dashboard.NoSettledPaymentsYet" xml:space="preserve"><value>No settled payments yet</value></data>
+  <data name="Admin.Dashboard.OfTotal" xml:space="preserve"><value>% of Total</value></data>
+  <data name="Admin.Dashboard.OnceBookingsStartComingInThis" xml:space="preserve"><value>Once bookings start coming in, this panel will summarise how many are pending, confirmed or closed.</value></data>
+  <data name="Admin.Dashboard.OpenTheFullList" xml:space="preserve"><value>Open the full list</value></data>
+  <data name="Admin.Dashboard.OperationsStatus" xml:space="preserve"><value>Operations status</value></data>
+  <data name="Admin.Dashboard.Payments" xml:space="preserve"><value>Payments</value></data>
+  <data name="Admin.Dashboard.PaymentsByStatus" xml:space="preserve"><value>Payments by Status</value></data>
+  <data name="Admin.Dashboard.PaymentsByStatus13" xml:space="preserve"><value>Payments by status</value></data>
+  <data name="Admin.Dashboard.PaymentsByTypeAndCurrency" xml:space="preserve"><value>Payments by type and currency</value></data>
+  <data name="Admin.Dashboard.PaymentsInFlight" xml:space="preserve"><value>Payments in flight</value></data>
+  <data name="Admin.Dashboard.PipelineHealth" xml:space="preserve"><value>Pipeline health</value></data>
+  <data name="Admin.Dashboard.Refunded" xml:space="preserve"><value>Refunded</value></data>
+  <data name="Admin.Dashboard.RefundedAmount" xml:space="preserve"><value>{0} refunded</value></data>
+  <data name="Admin.Dashboard.Refunds" xml:space="preserve"><value>Refunds</value></data>
+  <data name="Admin.Dashboard.RenewalsCollected" xml:space="preserve"><value>Renewals collected: {0}</value></data>
+  <data name="Admin.Dashboard.RevenueCollected" xml:space="preserve"><value>Revenue Collected</value></data>
+  <data name="Admin.Dashboard.RevenueCollectedIn" xml:space="preserve"><value>Revenue collected ({0})</value></data>
+  <data name="Admin.Dashboard.SettledPayments" xml:space="preserve"><value>Settled payments: {0}</value></data>
+  <data name="Admin.Dashboard.SettledPaymentsOnlyNetOfRefunds" xml:space="preserve"><value>Settled payments only, net of refunds. Each currency stands on its own.</value></data>
+  <data name="Admin.Dashboard.ToDrillIntoAnyOfThem" xml:space="preserve"><value>to drill into any of them.</value></data>
+  <data name="Admin.Dashboard.TodayAtAGlance" xml:space="preserve"><value>Today at a glance</value></data>
+  <data name="Admin.Dashboard.TotalApplications" xml:space="preserve"><value>Total applications</value></data>
+  <data name="Admin.Dashboard.TotalBookings" xml:space="preserve"><value>Total bookings</value></data>
+  <data name="Admin.Dashboard.WaitlistedCount" xml:space="preserve"><value>{0} waitlisted</value></data>
+  <data name="Admin.Dashboard.WhereEveryApplicationCurrentlySits" xml:space="preserve"><value>Where every application currently sits.</value></data>
+  <data name="Admin.Editor.Heading" xml:space="preserve"><value>Heading</value></data>
+  <data name="Admin.Editor.MinorHeading" xml:space="preserve"><value>Minor heading</value></data>
+  <data name="Admin.Editor.Paragraph" xml:space="preserve"><value>Paragraph</value></data>
+  <data name="Admin.Editor.Subheading" xml:space="preserve"><value>Subheading</value></data>
+  <data name="Admin.Emails.All" xml:space="preserve"><value>All</value></data>
+  <data name="Admin.Emails.Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Admin.Emails.FailedEmails" xml:space="preserve"><value>Emails that failed to send: {0}.</value></data>
+  <data name="Admin.Emails.FailedSms" xml:space="preserve"><value>Text messages that failed to send: {0}.</value></data>
+  <data name="Admin.Emails.Intro" xml:space="preserve"><value>Every transactional message the system has attempted — approvals, payment links, booking confirmations. Recipient and subject only; the message itself is never shown here. A failed message can be resent: the stored copy is sent again as a new row, and the failure stays on record marked “resent”.</value></data>
+  <data name="Admin.Emails.Message" xml:space="preserve"><value>Message</value></data>
+  <data name="Admin.Emails.Newer" xml:space="preserve"><value>← Newer</value></data>
+  <data name="Admin.Emails.NoEmails" xml:space="preserve"><value>No emails logged.</value></data>
+  <data name="Admin.Emails.NoEmailsWithStatus" xml:space="preserve"><value>No emails logged with status “{0}”.</value></data>
+  <data name="Admin.Emails.NoSms" xml:space="preserve"><value>No text messages logged.</value></data>
+  <data name="Admin.Emails.NoSmsWithStatus" xml:space="preserve"><value>No text messages logged with status “{0}”.</value></data>
+  <data name="Admin.Emails.Older" xml:space="preserve"><value>Older →</value></data>
+  <data name="Admin.Emails.OpenRecord" xml:space="preserve"><value>Open record</value></data>
+  <data name="Admin.Emails.OtherFailedEmail" xml:space="preserve"><value>Failures on the email side: {0}.</value></data>
+  <data name="Admin.Emails.OtherFailedSms" xml:space="preserve"><value>Failures on the text message side: {0}.</value></data>
+  <data name="Admin.Emails.PageOfEmails" xml:space="preserve"><value>Page {0} of {1} · {2} emails</value></data>
+  <data name="Admin.Emails.PageOfSms" xml:space="preserve"><value>Page {0} of {1} · {2} text messages</value></data>
+  <data name="Admin.Emails.Queued" xml:space="preserve"><value>Queued</value></data>
+  <data name="Admin.Emails.Resend" xml:space="preserve"><value>Resend</value></data>
+  <data name="Admin.Emails.Resent" xml:space="preserve"><value>Resent</value></data>
+  <data name="Admin.Emails.Sent" xml:space="preserve"><value>Sent</value></data>
+  <data name="Admin.Emails.ShowThem" xml:space="preserve"><value>Show them</value></data>
+  <data name="Admin.Emails.SmsNotConfigured" xml:space="preserve"><value>No SMS gateway is configured, so nothing is sent by text — payment links go by email only. Switch it on with {0} and an endpoint; credentials belong in user-secrets or the {1} / {2} environment variables.</value></data>
+  <data name="Admin.Emails.Subject" xml:space="preserve"><value>Subject</value></data>
+  <data name="Admin.Emails.Template" xml:space="preserve"><value>Template</value></data>
+  <data name="Admin.Emails.TextMessages" xml:space="preserve"><value>Text messages</value></data>
+  <data name="Admin.Emails.To" xml:space="preserve"><value>To</value></data>
+  <data name="Admin.Emails.When" xml:space="preserve"><value>When</value></data>
+  <data name="Admin.Enum.AmbassadorStatus.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Admin.Enum.AmbassadorStatus.Inactive" xml:space="preserve"><value>Inactive</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Approved" xml:space="preserve"><value>Approved</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Paid" xml:space="preserve"><value>Paid</value></data>
+  <data name="Admin.Enum.ApplicationStatus.PaymentPending" xml:space="preserve"><value>Payment pending</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Rejected" xml:space="preserve"><value>Rejected</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Shortlisted" xml:space="preserve"><value>Shortlisted</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Submitted" xml:space="preserve"><value>Submitted</value></data>
+  <data name="Admin.Enum.ApplicationStatus.UnderReview" xml:space="preserve"><value>Under review</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Waitlisted" xml:space="preserve"><value>Waitlisted</value></data>
+  <data name="Admin.Enum.BookingStatus.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Admin.Enum.BookingStatus.Confirmed" xml:space="preserve"><value>Confirmed</value></data>
+  <data name="Admin.Enum.BookingStatus.Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Admin.Enum.BookingStatus.Refunded" xml:space="preserve"><value>Refunded</value></data>
+  <data name="Admin.Enum.CommunityLinkKind.Broadcast" xml:space="preserve"><value>Broadcast channel</value></data>
+  <data name="Admin.Enum.CommunityLinkKind.Call" xml:space="preserve"><value>Call</value></data>
+  <data name="Admin.Enum.CommunityLinkKind.Discord" xml:space="preserve"><value>Discord</value></data>
+  <data name="Admin.Enum.CommunityLinkKind.Resource" xml:space="preserve"><value>Resource</value></data>
+  <data name="Admin.Enum.EmailStatus.Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Admin.Enum.EmailStatus.Queued" xml:space="preserve"><value>Queued</value></data>
+  <data name="Admin.Enum.EmailStatus.Sent" xml:space="preserve"><value>Sent</value></data>
+  <data name="Admin.Enum.ExperienceAttendanceMode.Both" xml:space="preserve"><value>In person and online</value></data>
+  <data name="Admin.Enum.ExperienceAttendanceMode.InPerson" xml:space="preserve"><value>In person</value></data>
+  <data name="Admin.Enum.ExperienceAttendanceMode.Online" xml:space="preserve"><value>Online</value></data>
+  <data name="Admin.Enum.ExperienceStatus.AlmostFull" xml:space="preserve"><value>Almost full</value></data>
+  <data name="Admin.Enum.ExperienceStatus.ApplicationsClosed" xml:space="preserve"><value>Applications closed</value></data>
+  <data name="Admin.Enum.ExperienceStatus.ApplicationsOpen" xml:space="preserve"><value>Applications open</value></data>
+  <data name="Admin.Enum.ExperienceStatus.ComingSoon" xml:space="preserve"><value>Coming soon</value></data>
+  <data name="Admin.Enum.ExperienceStatus.Completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="Admin.Enum.ExperienceStatus.Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="Admin.Enum.ExperienceStatus.Waitlist" xml:space="preserve"><value>Waitlist</value></data>
+  <data name="Admin.Enum.ExperienceVisibility.InviteOnly" xml:space="preserve"><value>Invite only</value></data>
+  <data name="Admin.Enum.ExperienceVisibility.Members" xml:space="preserve"><value>Members only</value></data>
+  <data name="Admin.Enum.ExperienceVisibility.Public" xml:space="preserve"><value>Public</value></data>
+  <data name="Admin.Enum.ExperienceVisibility.Unlisted" xml:space="preserve"><value>Unlisted</value></data>
+  <data name="Admin.Enum.MembershipBillingPeriod.Annual" xml:space="preserve"><value>Annual</value></data>
+  <data name="Admin.Enum.MembershipBillingPeriod.Monthly" xml:space="preserve"><value>Monthly</value></data>
+  <data name="Admin.Enum.MembershipBillingPeriod.OneTime" xml:space="preserve"><value>One-time</value></data>
+  <data name="Admin.Enum.MembershipPlanStatus.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Admin.Enum.MembershipPlanStatus.Archived" xml:space="preserve"><value>Archived</value></data>
+  <data name="Admin.Enum.MembershipStatus.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Admin.Enum.MembershipStatus.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Admin.Enum.MembershipStatus.Expired" xml:space="preserve"><value>Expired</value></data>
+  <data name="Admin.Enum.MembershipStatus.PastDue" xml:space="preserve"><value>Past due</value></data>
+  <data name="Admin.Enum.MembershipStatus.Trial" xml:space="preserve"><value>Trial</value></data>
+  <data name="Admin.Enum.PaymentProviderType.Stripe" xml:space="preserve"><value>Stripe</value></data>
+  <data name="Admin.Enum.PaymentStatus.Authorized" xml:space="preserve"><value>Authorised</value></data>
+  <data name="Admin.Enum.PaymentStatus.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Admin.Enum.PaymentStatus.Chargeback" xml:space="preserve"><value>Chargeback</value></data>
+  <data name="Admin.Enum.PaymentStatus.Created" xml:space="preserve"><value>Created</value></data>
+  <data name="Admin.Enum.PaymentStatus.Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Admin.Enum.PaymentStatus.Paid" xml:space="preserve"><value>Paid</value></data>
+  <data name="Admin.Enum.PaymentStatus.PartiallyRefunded" xml:space="preserve"><value>Partly refunded</value></data>
+  <data name="Admin.Enum.PaymentStatus.Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Admin.Enum.PaymentStatus.Refunded" xml:space="preserve"><value>Refunded</value></data>
+  <data name="Admin.Enum.PaymentTransactionKind.Experience" xml:space="preserve"><value>Experience ticket</value></data>
+  <data name="Admin.Enum.PaymentTransactionKind.Membership" xml:space="preserve"><value>Membership</value></data>
+  <data name="Admin.Enum.PaymentTransactionKind.MembershipRenewal" xml:space="preserve"><value>Membership renewal</value></data>
+  <data name="Admin.Enum.PaymentTransactionKind.Session" xml:space="preserve"><value>Session seat</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Canceled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Expired" xml:space="preserve"><value>Expired</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.PartiallyRefunded" xml:space="preserve"><value>Partly refunded</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Processing" xml:space="preserve"><value>Processing</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Refunded" xml:space="preserve"><value>Refunded</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.RequiresAction" xml:space="preserve"><value>Awaiting action</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Succeeded" xml:space="preserve"><value>Succeeded</value></data>
+  <data name="Admin.Enum.PendingJoinStatus.Expired" xml:space="preserve"><value>Checkout expired</value></data>
+  <data name="Admin.Enum.PendingJoinStatus.Paid" xml:space="preserve"><value>Paid — member</value></data>
+  <data name="Admin.Enum.PendingJoinStatus.Pending" xml:space="preserve"><value>Not paid yet</value></data>
+  <data name="Admin.Enum.PendingJoinStatus.Superseded" xml:space="preserve"><value>Replaced by a newer form</value></data>
+  <data name="Admin.Enum.PromoCodeType.Fixed" xml:space="preserve"><value>Fixed amount</value></data>
+  <data name="Admin.Enum.PromoCodeType.Percentage" xml:space="preserve"><value>Percentage</value></data>
+  <data name="Admin.Enum.PromoDuration.FirstPayment" xml:space="preserve"><value>First payment only</value></data>
+  <data name="Admin.Enum.PromoDuration.Forever" xml:space="preserve"><value>Every renewal</value></data>
+  <data name="Admin.Enum.PromoScope.Experiences" xml:space="preserve"><value>Experience tickets</value></data>
+  <data name="Admin.Enum.PromoScope.Memberships" xml:space="preserve"><value>Memberships</value></data>
+  <data name="Admin.Enum.ReferralConversionKind.Application" xml:space="preserve"><value>Applied to an experience</value></data>
+  <data name="Admin.Enum.ReferralConversionKind.Approved" xml:space="preserve"><value>Application approved</value></data>
+  <data name="Admin.Enum.ReferralConversionKind.MembershipPurchase" xml:space="preserve"><value>Became a member</value></data>
+  <data name="Admin.Enum.ReferralConversionKind.SessionPurchase" xml:space="preserve"><value>Bought a place on a session</value></data>
+  <data name="Admin.Enum.ReferralConversionKind.TicketPurchase" xml:space="preserve"><value>Bought a ticket</value></data>
+  <data name="Admin.Enum.ReferralTargetKind.Experience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Admin.Enum.ReferralTargetKind.Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Admin.Enum.ReferralTargetKind.Site" xml:space="preserve"><value>Site</value></data>
+  <data name="Admin.Enum.WebhookEventStatus.Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Admin.Enum.WebhookEventStatus.Ignored" xml:space="preserve"><value>Ignored</value></data>
+  <data name="Admin.Enum.WebhookEventStatus.Processed" xml:space="preserve"><value>Processed</value></data>
+  <data name="Admin.Enum.WebhookEventStatus.Received" xml:space="preserve"><value>Received</value></data>
+  <data name="Admin.Experiences.ALongTableSetForA" xml:space="preserve"><value>A long table set for a private dinner</value></data>
+  <data name="Admin.Experiences.AYouTubeLiveOrPremiereEmbedded" xml:space="preserve"><value>A YouTube live or premiere. Embedded on the holder's account page from 15 minutes before the start.</value></data>
+  <data name="Admin.Experiences.AddDay" xml:space="preserve"><value>Add day</value></data>
+  <data name="Admin.Experiences.AddSession" xml:space="preserve"><value>Add session</value></data>
+  <data name="Admin.Experiences.AllExperiences" xml:space="preserve"><value>All experiences</value></data>
+  <data name="Admin.Experiences.Answer" xml:space="preserve"><value>Answer</value></data>
+  <data name="Admin.Experiences.ArrivalAndOpeningDinner" xml:space="preserve"><value>Arrival and opening dinner</value></data>
+  <data name="Admin.Experiences.BackToList" xml:space="preserve"><value>Back to list</value></data>
+  <data name="Admin.Experiences.Body" xml:space="preserve"><value>Body</value></data>
+  <data name="Admin.Experiences.Caption" xml:space="preserve"><value>Caption</value></data>
+  <data name="Admin.Experiences.Copy" xml:space="preserve"><value>Copy</value></data>
+  <data name="Admin.Experiences.CoverImage" xml:space="preserve"><value>Cover image</value></data>
+  <data name="Admin.Experiences.CoverImageDescription" xml:space="preserve"><value>Cover image description</value></data>
+  <data name="Admin.Experiences.CreateExperience" xml:space="preserve"><value>Create Experience</value></data>
+  <data name="Admin.Experiences.CreateOneUnderMembershipPlansFirst" xml:space="preserve"><value>Create one under Membership Plans first.</value></data>
+  <data name="Admin.Experiences.DateLabel" xml:space="preserve"><value>Date label</value></data>
+  <data name="Admin.Experiences.DayN" xml:space="preserve"><value>Day {0}</value></data>
+  <data name="Admin.Experiences.DayNumber" xml:space="preserve"><value>Day number</value></data>
+  <data name="Admin.Experiences.Default" xml:space="preserve"><value>Default</value></data>
+  <data name="Admin.Experiences.DeleteThisExperience" xml:space="preserve"><value>Delete this experience?</value></data>
+  <data name="Admin.Experiences.EventUpdate" xml:space="preserve"><value>Event Update</value></data>
+  <data name="Admin.Experiences.FAQ" xml:space="preserve"><value>FAQ</value></data>
+  <data name="Admin.Experiences.FoundersOperatorsInvestors" xml:space="preserve"><value>Founders, Operators, Investors</value></data>
+  <data name="Admin.Experiences.From" xml:space="preserve"><value>From</value></data>
+  <data name="Admin.Experiences.Gallery" xml:space="preserve"><value>Gallery</value></data>
+  <data name="Admin.Experiences.GalleryHint" xml:space="preserve"><value>The photographs under “Venue” on the experience page. The description is read aloud by screen readers and shown as the caption, so write it as a sentence.</value></data>
+  <data name="Admin.Experiences.Included" xml:space="preserve"><value>Included</value></data>
+  <data name="Admin.Experiences.IncludedNotIncluded" xml:space="preserve"><value>Included / not included</value></data>
+  <data name="Admin.Experiences.Inventory" xml:space="preserve"><value>Inventory</value></data>
+  <data name="Admin.Experiences.Joined" xml:space="preserve"><value>Joined</value></data>
+  <data name="Admin.Experiences.Languages" xml:space="preserve"><value>Languages</value></data>
+  <data name="Admin.Experiences.Location" xml:space="preserve"><value>Location</value></data>
+  <data name="Admin.Experiences.MaxPerOrder" xml:space="preserve"><value>Max per order</value></data>
+  <data name="Admin.Experiences.MemberAccess" xml:space="preserve"><value>Member access</value></data>
+  <data name="Admin.Experiences.MembersOnATickedPlanJoin" xml:space="preserve"><value>Members on a ticked plan join this experience in one click — no application form, no payment, because their membership already paid for it. Everyone else applies as usual. Tick nothing and this experience is application-only, which is how every experience worked before this existed.</value></data>
+  <data name="Admin.Experiences.MembersOnlySignedInMembersWith" xml:space="preserve"><value>Members: only signed-in members with a membership see it. Invite only and Unlisted keep it out of the listings.</value></data>
+  <data name="Admin.Experiences.MoveEarlier" xml:space="preserve"><value>Move earlier</value></data>
+  <data name="Admin.Experiences.MoveLater" xml:space="preserve"><value>Move later</value></data>
+  <data name="Admin.Experiences.Msg.CannotDelete" xml:space="preserve"><value>Can't delete — this experience already has applications or bookings against it.</value></data>
+  <data name="Admin.Experiences.Msg.Deleted" xml:space="preserve"><value>Experience deleted.</value></data>
+  <data name="Admin.Experiences.Msg.NoAttendees" xml:space="preserve"><value>No confirmed attendees to notify yet.</value></data>
+  <data name="Admin.Experiences.Msg.Notified" xml:space="preserve"><value>Attendees notified: {0}.</value></data>
+  <data name="Admin.Experiences.Msg.TicketTypeInUse" xml:space="preserve"><value>Can't remove — this ticket type already has bookings against it.</value></data>
+  <data name="Admin.Experiences.NewExperience" xml:space="preserve"><value>+ New Experience</value></data>
+  <data name="Admin.Experiences.NewSchedule" xml:space="preserve"><value>New Schedule</value></data>
+  <data name="Admin.Experiences.NoCoverYet" xml:space="preserve"><value>No cover yet</value></data>
+  <data name="Admin.Experiences.NoExperiencesYet" xml:space="preserve"><value>No experiences yet.</value></data>
+  <data name="Admin.Experiences.NoMembershipPlansYet" xml:space="preserve"><value>No membership plans yet</value></data>
+  <data name="Admin.Experiences.NoPhotographsYet" xml:space="preserve"><value>No photographs yet</value></data>
+  <data name="Admin.Experiences.NoTicketTypesYet" xml:space="preserve"><value>No ticket types yet</value></data>
+  <data name="Admin.Experiences.NobodyIsWaiting" xml:space="preserve"><value>Nobody is waiting.</value></data>
+  <data name="Admin.Experiences.NotTranslated" xml:space="preserve"><value>Not translated</value></data>
+  <data name="Admin.Experiences.NothingWrittenIn" xml:space="preserve"><value>Nothing written in {0} yet, so this experience reads in English for those visitors. Fill in what you have — anything left empty keeps falling back.</value></data>
+  <data name="Admin.Experiences.NotifyAttendees" xml:space="preserve"><value>Notify attendees</value></data>
+  <data name="Admin.Experiences.OnlineBothOnlyShownToConfirmed" xml:space="preserve"><value>Online / both only. Shown to confirmed ticket holders on their account page — never on the public page.</value></data>
+  <data name="Admin.Experiences.OrAPathAlreadyOnThe" xml:space="preserve"><value>…or a path already on the site</value></data>
+  <data name="Admin.Experiences.Order" xml:space="preserve"><value>Order</value></data>
+  <data name="Admin.Experiences.PeopleWhoSignedUpWhileThis" xml:space="preserve"><value>People who signed up while this experience was at capacity, in the order they arrived. The public sign-up form only appears while the status is</value></data>
+  <data name="Admin.Experiences.PercentageOffEveryTicketForCurrent" xml:space="preserve"><value>Percentage off every ticket for current members. 0 = members pay full price. Who may attend is set by Visibility and the admitted plans, not here.</value></data>
+  <data name="Admin.Experiences.Perks" xml:space="preserve"><value>Perks</value></data>
+  <data name="Admin.Experiences.PlacesLeft" xml:space="preserve"><value>Places left: {0}. Inventory moves only as tickets are sold or released.</value></data>
+  <data name="Admin.Experiences.PositionsAreNotRenumberedWhenYou" xml:space="preserve"><value>. Positions are not renumbered when you remove someone — they record arrival order.</value></data>
+  <data name="Admin.Experiences.PriceMinorUnits" xml:space="preserve"><value>Price (minor units)</value></data>
+  <data name="Admin.Experiences.Programme" xml:space="preserve"><value>Programme</value></data>
+  <data name="Admin.Experiences.ProgrammeHint" xml:space="preserve"><value>The day-by-day agenda in {0}. Times are shown in the experience's own timezone ({1}).</value></data>
+  <data name="Admin.Experiences.Question" xml:space="preserve"><value>Question</value></data>
+  <data name="Admin.Experiences.RemoveCopy" xml:space="preserve"><value>Remove {0} copy</value></data>
+  <data name="Admin.Experiences.RemoveCopyConfirm" xml:space="preserve"><value>Remove the {0} copy? The page falls back to English for those visitors.</value></data>
+  <data name="Admin.Experiences.RemoveDayN" xml:space="preserve"><value>Remove day {0}</value></data>
+  <data name="Admin.Experiences.RemoveTheUploadedCoverTheFile" xml:space="preserve"><value>Remove the uploaded cover? The file is deleted.</value></data>
+  <data name="Admin.Experiences.RemoveThisDayAndAllOf" xml:space="preserve"><value>Remove this day and all of its sessions?</value></data>
+  <data name="Admin.Experiences.RemoveThisPhotograph" xml:space="preserve"><value>Remove this photograph?</value></data>
+  <data name="Admin.Experiences.RemoveThisTicketType" xml:space="preserve"><value>Remove this ticket type?</value></data>
+  <data name="Admin.Experiences.RemoveUploadedCover" xml:space="preserve"><value>Remove uploaded cover</value></data>
+  <data name="Admin.Experiences.RenderedAsTheChipsUnderWho" xml:space="preserve"><value>Rendered as the chips under "Who is in the room?".</value></data>
+  <data name="Admin.Experiences.SEODescription" xml:space="preserve"><value>SEO description</value></data>
+  <data name="Admin.Experiences.SEOTitle" xml:space="preserve"><value>SEO title</value></data>
+  <data name="Admin.Experiences.SaveChanges" xml:space="preserve"><value>Save changes</value></data>
+  <data name="Admin.Experiences.SaveMemberAccess" xml:space="preserve"><value>Save member access</value></data>
+  <data name="Admin.Experiences.SaveTicketType" xml:space="preserve"><value>Save ticket type</value></data>
+  <data name="Admin.Experiences.SendsAnInPortalNotificationTo" xml:space="preserve"><value>Sends an in-portal notification to everyone with a confirmed booking on this experience.</value></data>
+  <data name="Admin.Experiences.Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Admin.Experiences.SetTheStatusToWaitlistAnd" xml:space="preserve"><value>Set the status to Waitlist and the form appears on the public page.</value></data>
+  <data name="Admin.Experiences.ShortSummary" xml:space="preserve"><value>Short summary</value></data>
+  <data name="Admin.Experiences.ShownAtTheTopOfThe" xml:space="preserve"><value>Shown at the top of the experience page and on its card. Landscape, at least 1600px wide.</value></data>
+  <data name="Admin.Experiences.Speaker" xml:space="preserve"><value>Speaker</value></data>
+  <data name="Admin.Experiences.Starts" xml:space="preserve"><value>Starts</value></data>
+  <data name="Admin.Experiences.Text" xml:space="preserve"><value>Text</value></data>
+  <data name="Admin.Experiences.TheEnglishCopyLivesOnThe" xml:space="preserve"><value>The English copy lives on the experience itself and is what every other language falls back to, field by field — a German page with no German summary shows the English one.</value></data>
+  <data name="Admin.Experiences.Thursday17September" xml:space="preserve"><value>Thursday 17 September</value></data>
+  <data name="Admin.Experiences.TicketTypes" xml:space="preserve"><value>Ticket types</value></data>
+  <data name="Admin.Experiences.Tickets" xml:space="preserve"><value>Tickets</value></data>
+  <data name="Admin.Experiences.To" xml:space="preserve"><value>To</value></data>
+  <data name="Admin.Experiences.UploadACover" xml:space="preserve"><value>Upload a cover</value></data>
+  <data name="Admin.Experiences.UploadOneBelowOrTypeA" xml:space="preserve"><value>Upload one below, or type a path in Details.</value></data>
+  <data name="Admin.Experiences.UsedWhenALinkToThis" xml:space="preserve"><value>Used when a link to this experience is pasted into a chat or a social post. Falls back to the cover.</value></data>
+  <data name="Admin.Experiences.UsuallyLeaveThisEmptyTheHeading" xml:space="preserve"><value>Usually leave this empty — the heading below the cover already names the experience.</value></data>
+  <data name="Admin.Experiences.Venue" xml:space="preserve"><value>Venue</value></data>
+  <data name="Admin.Experiences.ViewOnTheSite" xml:space="preserve"><value>View on the site</value></data>
+  <data name="Admin.Experiences.Waitlist" xml:space="preserve"><value>Waitlist</value></data>
+  <data name="Admin.Experiences.WhenBothAreAllowedWhoeverJoins" xml:space="preserve"><value>When both are allowed, whoever joins picks which, and it is recorded on their booking.</value></data>
+  <data name="Admin.Experiences.WhoIsInTheRoomComma" xml:space="preserve"><value>Who is in the room? (comma separated)</value></data>
+  <data name="Admin.Field.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Admin.Field.AllowSearchEnginesToIndexThis" xml:space="preserve"><value>Allow search engines to index this site</value></data>
+  <data name="Admin.Field.ApplicationCloses" xml:space="preserve"><value>Application Closes</value></data>
+  <data name="Admin.Field.ApplicationOpens" xml:space="preserve"><value>Application Opens</value></data>
+  <data name="Admin.Field.AppliesTo" xml:space="preserve"><value>Applies to</value></data>
+  <data name="Admin.Field.BingWebmasterToken" xml:space="preserve"><value>Bing Webmaster token</value></data>
+  <data name="Admin.Field.CanonicalSiteAddress" xml:space="preserve"><value>Canonical site address</value></data>
+  <data name="Admin.Field.City" xml:space="preserve"><value>City</value></data>
+  <data name="Admin.Field.Code" xml:space="preserve"><value>Code</value></data>
+  <data name="Admin.Field.ContactEmail" xml:space="preserve"><value>Contact email</value></data>
+  <data name="Admin.Field.ContactPhone" xml:space="preserve"><value>Contact phone</value></data>
+  <data name="Admin.Field.CountryCode" xml:space="preserve"><value>Country code</value></data>
+  <data name="Admin.Field.CountryOptional" xml:space="preserve"><value>Country (optional)</value></data>
+  <data name="Admin.Field.CoverImageDescription" xml:space="preserve"><value>Cover image description</value></data>
+  <data name="Admin.Field.CoverImageURL" xml:space="preserve"><value>Cover image URL</value></data>
+  <data name="Admin.Field.Currency" xml:space="preserve"><value>Currency</value></data>
+  <data name="Admin.Field.DefaultDescription" xml:space="preserve"><value>Default description</value></data>
+  <data name="Admin.Field.DefaultSocialImageURL" xml:space="preserve"><value>Default social image URL</value></data>
+  <data name="Admin.Field.Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Admin.Field.DiscordChannelId" xml:space="preserve"><value>Discord channel id</value></data>
+  <data name="Admin.Field.EmailAddress" xml:space="preserve"><value>Email address</value></data>
+  <data name="Admin.Field.EndUTC" xml:space="preserve"><value>End (UTC)</value></data>
+  <data name="Admin.Field.Experience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Admin.Field.ExpiresUTC" xml:space="preserve"><value>Expires (UTC)</value></data>
+  <data name="Admin.Field.ExtraRobotsTxtRules" xml:space="preserve"><value>Extra robots.txt rules</value></data>
+  <data name="Admin.Field.Facebook" xml:space="preserve"><value>Facebook</value></data>
+  <data name="Admin.Field.FeaturesOnePerLine" xml:space="preserve"><value>Features (one per line)</value></data>
+  <data name="Admin.Field.FirstName" xml:space="preserve"><value>First name</value></data>
+  <data name="Admin.Field.FoundedYYYYOrYYYYMMDD" xml:space="preserve"><value>Founded (YYYY or YYYY-MM-DD)</value></data>
+  <data name="Admin.Field.GoogleSearchConsoleToken" xml:space="preserve"><value>Google Search Console token</value></data>
+  <data name="Admin.Field.HomepageTitle" xml:space="preserve"><value>Homepage title</value></data>
+  <data name="Admin.Field.HowCanItBeAttended" xml:space="preserve"><value>How can it be attended?</value></data>
+  <data name="Admin.Field.IncludedUncheckedShownUnderNotIncluded" xml:space="preserve"><value>Included (unchecked = shown under Not Included)</value></data>
+  <data name="Admin.Field.Instagram" xml:space="preserve"><value>Instagram</value></data>
+  <data name="Admin.Field.Kind" xml:space="preserve"><value>Kind</value></data>
+  <data name="Admin.Field.Label" xml:space="preserve"><value>Label</value></data>
+  <data name="Admin.Field.LastName" xml:space="preserve"><value>Last name</value></data>
+  <data name="Admin.Field.Lasts" xml:space="preserve"><value>Lasts</value></data>
+  <data name="Admin.Field.LinkedIn" xml:space="preserve"><value>LinkedIn</value></data>
+  <data name="Admin.Field.LiveStreamYouTube" xml:space="preserve"><value>Live stream (YouTube)</value></data>
+  <data name="Admin.Field.LogoURL" xml:space="preserve"><value>Logo URL</value></data>
+  <data name="Admin.Field.MaxQtyPerOrder" xml:space="preserve"><value>Max Qty Per Order</value></data>
+  <data name="Admin.Field.MaximumRedemptions" xml:space="preserve"><value>Maximum redemptions</value></data>
+  <data name="Admin.Field.MeetingLink" xml:space="preserve"><value>Meeting link</value></data>
+  <data name="Admin.Field.MemberDiscount" xml:space="preserve"><value>Member discount (%)</value></data>
+  <data name="Admin.Field.MembershipPlan" xml:space="preserve"><value>Membership plan</value></data>
+  <data name="Admin.Field.NotesForAIAssistants" xml:space="preserve"><value>Notes for AI assistants</value></data>
+  <data name="Admin.Field.OnlyForMembersOfPlan" xml:space="preserve"><value>Only for members of plan</value></data>
+  <data name="Admin.Field.OnlyForPeopleEnrolledOnSession" xml:space="preserve"><value>Only for people enrolled on session</value></data>
+  <data name="Admin.Field.OnlyForTicketHoldersOfExperience" xml:space="preserve"><value>Only for ticket holders of experience</value></data>
+  <data name="Admin.Field.OrganisationType" xml:space="preserve"><value>Organisation type</value></data>
+  <data name="Admin.Field.Perks" xml:space="preserve"><value>Perks</value></data>
+  <data name="Admin.Field.Postcode" xml:space="preserve"><value>Postcode</value></data>
+  <data name="Admin.Field.Price" xml:space="preserve"><value>Price</value></data>
+  <data name="Admin.Field.PriceMinorUnitsEGPence" xml:space="preserve"><value>Price (minor units, e.g. pence)</value></data>
+  <data name="Admin.Field.PublishLlmsTxt" xml:space="preserve"><value>Publish /llms.txt</value></data>
+  <data name="Admin.Field.Region" xml:space="preserve"><value>Region</value></data>
+  <data name="Admin.Field.RegisteredLegalName" xml:space="preserve"><value>Registered legal name</value></data>
+  <data name="Admin.Field.ReservedFor" xml:space="preserve"><value>Reserved for</value></data>
+  <data name="Admin.Field.Roles" xml:space="preserve"><value>Roles</value></data>
+  <data name="Admin.Field.SEODescription" xml:space="preserve"><value>SEO description</value></data>
+  <data name="Admin.Field.SEODescription2" xml:space="preserve"><value>SEO Description</value></data>
+  <data name="Admin.Field.SEOTitle" xml:space="preserve"><value>SEO title</value></data>
+  <data name="Admin.Field.SEOTitle2" xml:space="preserve"><value>SEO Title</value></data>
+  <data name="Admin.Field.SalesClose" xml:space="preserve"><value>Sales Close</value></data>
+  <data name="Admin.Field.SalesOpen" xml:space="preserve"><value>Sales Open</value></data>
+  <data name="Admin.Field.ShortSummary" xml:space="preserve"><value>Short summary</value></data>
+  <data name="Admin.Field.ShowInHomepageSignatureGrid" xml:space="preserve"><value>Show in homepage Signature grid</value></data>
+  <data name="Admin.Field.SiteName" xml:space="preserve"><value>Site name</value></data>
+  <data name="Admin.Field.SocialImageDescription" xml:space="preserve"><value>Social image description</value></data>
+  <data name="Admin.Field.SocialImageURLForThisLanguage" xml:space="preserve"><value>Social image URL for this language</value></data>
+  <data name="Admin.Field.SocialPreviewImageURL" xml:space="preserve"><value>Social preview image URL</value></data>
+  <data name="Admin.Field.SortOrder" xml:space="preserve"><value>Sort order</value></data>
+  <data name="Admin.Field.StartUTC" xml:space="preserve"><value>Start (UTC)</value></data>
+  <data name="Admin.Field.Street" xml:space="preserve"><value>Street</value></data>
+  <data name="Admin.Field.TikTok" xml:space="preserve"><value>TikTok</value></data>
+  <data name="Admin.Field.TitleTemplate" xml:space="preserve"><value>Title template</value></data>
+  <data name="Admin.Field.Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Admin.Field.URL" xml:space="preserve"><value>URL</value></data>
+  <data name="Admin.Field.Value" xml:space="preserve"><value>Value</value></data>
+  <data name="Admin.Field.VisibleToMembers" xml:space="preserve"><value>Visible to members</value></data>
+  <data name="Admin.Field.WhatTheOrganisationIs" xml:space="preserve"><value>What the organisation is</value></data>
+  <data name="Admin.Field.WhoIsInTheRoomComma" xml:space="preserve"><value>Who is in the room? (comma separated)</value></data>
+  <data name="Admin.Field.XHandle" xml:space="preserve"><value>X handle</value></data>
+  <data name="Admin.Field.XTwitter" xml:space="preserve"><value>X (Twitter)</value></data>
+  <data name="Admin.Field.YouTube" xml:space="preserve"><value>YouTube</value></data>
+  <data name="Admin.Form.Counter" xml:space="preserve"><value>{0} / {1}</value></data>
+  <data name="Admin.Form.Optional" xml:space="preserve"><value>(optional)</value></data>
+  <data name="Admin.Form.Unsaved" xml:space="preserve"><value>You have unsaved changes. Leave this page without saving?</value></data>
+  <data name="Admin.Help.AdminCms.Step1" xml:space="preserve"><value>Each card below is one section of the homepage, in the same order as on the site.</value></data>
+  <data name="Admin.Help.AdminCms.Step2" xml:space="preserve"><value>Edit the English in the form, then press Save — it is live straight away.</value></data>
+  <data name="Admin.Help.AdminCms.Step3" xml:space="preserve"><value>Open “Translations” under a section to write the other languages. Empty fields follow the English.</value></data>
+  <data name="Admin.Help.AdminCms.Step4" xml:space="preserve"><value>Upload images at the bottom, then paste their address into a section's image field.</value></data>
+  <data name="Admin.Help.AdminCms.Title" xml:space="preserve"><value>How the homepage content works</value></data>
+  <data name="Admin.Help.AdminEmails.Step1" xml:space="preserve"><value>Every message the site sent is listed here with its recipient, subject and status.</value></data>
+  <data name="Admin.Help.AdminEmails.Step2" xml:space="preserve"><value>“Failed” means it did not go out. Open the row to see why, then press Resend.</value></data>
+  <data name="Admin.Help.AdminEmails.Step3" xml:space="preserve"><value>“Sent” means the mail server accepted it. If someone still can't find it, ask them to check their spam folder.</value></data>
+  <data name="Admin.Help.AdminEmails.Title" xml:space="preserve"><value>How the email log works</value></data>
+  <data name="Admin.Help.AdminExperiences.Step1" xml:space="preserve"><value>Fill in the details: dates, city, status and who can attend.</value></data>
+  <data name="Admin.Help.AdminExperiences.Step2" xml:space="preserve"><value>Add ticket types, the programme and the photos for the gallery.</value></data>
+  <data name="Admin.Help.AdminExperiences.Step3" xml:space="preserve"><value>Write the texts per language with the tabs. Empty fields fall back to English.</value></data>
+  <data name="Admin.Help.AdminExperiences.Step4" xml:space="preserve"><value>The status decides what visitors can do: apply, join the waitlist or just read.</value></data>
+  <data name="Admin.Help.AdminExperiences.Title" xml:space="preserve"><value>How experiences are set up</value></data>
+  <data name="Admin.Help.AdminHeroSlides.Step1" xml:space="preserve"><value>Each slide is one large image with a headline at the top of the homepage.</value></data>
+  <data name="Admin.Help.AdminHeroSlides.Step2" xml:space="preserve"><value>Use a wide, high-resolution image and keep the important part near the centre.</value></data>
+  <data name="Admin.Help.AdminHeroSlides.Step3" xml:space="preserve"><value>Set the order and the active dates; only active slides are shown.</value></data>
+  <data name="Admin.Help.AdminHeroSlides.Step4" xml:space="preserve"><value>Translate the headline and button text for each language on the slide's page.</value></data>
+  <data name="Admin.Help.AdminHeroSlides.Title" xml:space="preserve"><value>How the hero slides work</value></data>
+  <data name="Admin.Help.AdminJournal.Step1" xml:space="preserve"><value>Start with “New article”: a headline and a category are enough. The web address is made from the headline.</value></data>
+  <data name="Admin.Help.AdminJournal.Step2" xml:space="preserve"><value>Write in the editor. Use Heading for sections and drag images straight into the text. Your text is kept on this device while you type.</value></data>
+  <data name="Admin.Help.AdminJournal.Step3" xml:space="preserve"><value>Add a cover image and check the search preview on the right.</value></data>
+  <data name="Admin.Help.AdminJournal.Step4" xml:space="preserve"><value>When the checklist is green, press Publish. Other languages are optional — each tab falls back to English until it is written.</value></data>
+  <data name="Admin.Help.AdminJournal.Title" xml:space="preserve"><value>How writing for the Journal works</value></data>
+  <data name="Admin.Help.AdminSeminars.Step1" xml:space="preserve"><value>Create the session and fill in the English title and description. Saving keeps it as a draft.</value></data>
+  <data name="Admin.Help.AdminSeminars.Step2" xml:space="preserve"><value>Choose who can see it: Public is listed for everyone; Members only and Unlisted are hidden from visitors.</value></data>
+  <data name="Admin.Help.AdminSeminars.Step3" xml:space="preserve"><value>Press Publish in the publishing card. Until then, only staff can open the preview.</value></data>
+  <data name="Admin.Help.AdminSeminars.Step4" xml:space="preserve"><value>Translations are optional: each language shows the English until it has its own text.</value></data>
+  <data name="Admin.Help.AdminSeminars.Title" xml:space="preserve"><value>How sessions go live</value></data>
+  <data name="Admin.Help.AdminSiteSettings.Step1" xml:space="preserve"><value>The top of the page is per language: the site name, titles and descriptions people read.</value></data>
+  <data name="Admin.Help.AdminSiteSettings.Step2" xml:space="preserve"><value>“Pages” sets what each page shows in Google and in link previews.</value></data>
+  <data name="Admin.Help.AdminSiteSettings.Step3" xml:space="preserve"><value>The rest is shared by every language: identity, social accounts, contact details and search visibility.</value></data>
+  <data name="Admin.Help.AdminSiteSettings.Step4" xml:space="preserve"><value>Changes are live on the next page load. Leave “Allow search engines” on for the real site.</value></data>
+  <data name="Admin.Help.AdminSiteSettings.Title" xml:space="preserve"><value>How site &amp; SEO settings work</value></data>
+  <data name="Admin.Help.AdminTranslations.Step1" xml:space="preserve"><value>Search for a word or pick a section to find the text you want to change.</value></data>
+  <data name="Admin.Help.AdminTranslations.Step2" xml:space="preserve"><value>Click a value, edit it and press Enter. It is live on the next page load.</value></data>
+  <data name="Admin.Help.AdminTranslations.Step3" xml:space="preserve"><value>Keep placeholders such as {0} exactly as they are — they are replaced by names, dates or numbers.</value></data>
+  <data name="Admin.Help.AdminTranslations.Step4" xml:space="preserve"><value>“Still reading as English” shows texts that have not been translated yet.</value></data>
+  <data name="Admin.Help.AdminTranslations.Title" xml:space="preserve"><value>How translations work</value></data>
+  <data name="Admin.Journal.Category.Business.Help" xml:space="preserve"><value>Strategy, operations and growth.</value></data>
+  <data name="Admin.Journal.Category.Capital.Help" xml:space="preserve"><value>Fundraising, investing and money.</value></data>
+  <data name="Admin.Journal.Category.Culture.Help" xml:space="preserve"><value>Places, people and the life around the work.</value></data>
+  <data name="Admin.Journal.Category.FounderStories.Help" xml:space="preserve"><value>Interviews and profiles of founders in the House.</value></data>
+  <data name="Admin.Journal.Category.HouseNotes.Help" xml:space="preserve"><value>News from The VI House itself.</value></data>
+  <data name="Admin.Journal.Category.Technology.Help" xml:space="preserve"><value>Products, tools and the ideas behind them.</value></data>
+  <data name="Admin.Journal.Check.CoverAlt" xml:space="preserve"><value>Cover image has a description</value></data>
+  <data name="Admin.Journal.Check.Length" xml:space="preserve"><value>At least {0} words</value></data>
+  <data name="Admin.Journal.Check.Search" xml:space="preserve"><value>Search snippet written (or a standfirst to fall back on)</value></data>
+  <data name="Admin.Journal.Check.Standfirst" xml:space="preserve"><value>Standfirst written</value></data>
+  <data name="Admin.Journal.EmptyBody" xml:space="preserve"><value>Your first article is a headline away. Write it, add a cover, and publish when it's ready.</value></data>
+  <data name="Admin.Journal.EmptyTitle" xml:space="preserve"><value>No articles yet</value></data>
+  <data name="Admin.Journal.ErrorTitle" xml:space="preserve"><value>The article could not be started</value></data>
+  <data name="Admin.Journal.Saved.Draft" xml:space="preserve"><value>Saved. This article is still a draft — only staff can see it.</value></data>
+  <data name="Admin.Journal.Saved.Live" xml:space="preserve"><value>Saved. The changes are live now.</value></data>
+  <data name="Admin.Journal.Saved.Published" xml:space="preserve"><value>Published. The article is live on the Journal.</value></data>
+  <data name="Admin.Journal.Saved.Unpublished" xml:space="preserve"><value>Unpublished. The article is back to draft and hidden from visitors.</value></data>
+  <data name="Admin.Journal.Slug.Hint" xml:space="preserve"><value>Made from the headline when left empty. Letters, numbers and hyphens; changing it later breaks links already shared.</value></data>
+  <data name="Admin.Journal.Started" xml:space="preserve"><value>“{0}” started as a draft. Write it below — nothing is public until you publish.</value></data>
+  <data name="Admin.Journal.Summary" xml:space="preserve"><value>{0} published · {1} drafts</value></data>
+  <data name="Admin.Journal.Untitled" xml:space="preserve"><value>Untitled article</value></data>
+  <data name="Admin.Journal.Validation.TitleRequired" xml:space="preserve"><value>Give the article a headline.</value></data>
+  <data name="Admin.Journal.Write" xml:space="preserve"><value>Write</value></data>
+  <data name="Admin.Journal.Written" xml:space="preserve"><value>written</value></data>
+  <data name="Admin.MembershipPlans.ArchivePlan" xml:space="preserve"><value>Archive plan</value></data>
+  <data name="Admin.MembershipPlans.ArchiveThisPlanItWillStop" xml:space="preserve"><value>Archive this plan? It will stop appearing on the public Membership page and be taken off sale at Stripe. Existing members keep their membership.</value></data>
+  <data name="Admin.MembershipPlans.BackToPlans" xml:space="preserve"><value>Back to Plans</value></data>
+  <data name="Admin.MembershipPlans.Billing" xml:space="preserve"><value>Billing</value></data>
+  <data name="Admin.MembershipPlans.CheckoutUsesAnInlinePriceUntil" xml:space="preserve"><value>Checkout uses an inline price until this plan is mirrored.</value></data>
+  <data name="Admin.MembershipPlans.CommunityChannelsDiscordCalls" xml:space="preserve"><value>Community channels (Discord, calls)</value></data>
+  <data name="Admin.MembershipPlans.CreateAPlanHereForEvery" xml:space="preserve"><value>Create a plan here for every Stripe product that doesn't have one yet</value></data>
+  <data name="Admin.MembershipPlans.CreateSyncToStripe" xml:space="preserve"><value>Create &amp; sync to Stripe</value></data>
+  <data name="Admin.MembershipPlans.DeletePlan" xml:space="preserve"><value>Delete plan</value></data>
+  <data name="Admin.MembershipPlans.DeleteThisPlanPermanentlyTheStripe" xml:space="preserve"><value>Delete this plan permanently? The Stripe product will be archived (Stripe does not allow deleting a product that has had a price).</value></data>
+  <data name="Admin.MembershipPlans.DigitalMemberCard" xml:space="preserve"><value>Digital member card</value></data>
+  <data name="Admin.MembershipPlans.DiscordRoleId" xml:space="preserve"><value>Discord role id</value></data>
+  <data name="Admin.MembershipPlans.ImportFromStripe" xml:space="preserve"><value>Import from Stripe</value></data>
+  <data name="Admin.MembershipPlans.InSyncLive" xml:space="preserve"><value>(live mode) — every plan has a matching product and price.</value></data>
+  <data name="Admin.MembershipPlans.InSyncTest" xml:space="preserve"><value>(test mode) — every plan has a matching product and price.</value></data>
+  <data name="Admin.MembershipPlans.InSyncWithStripe" xml:space="preserve"><value>In sync with Stripe</value></data>
+  <data name="Admin.MembershipPlans.LastPushed" xml:space="preserve"><value>Last pushed {0}.</value></data>
+  <data name="Admin.MembershipPlans.MaxMembersHint" xml:space="preserve"><value>Leave blank for no limit. When the plan is full, visitors are offered the waitlist instead of checkout; change the number at any time.</value></data>
+  <data name="Admin.MembershipPlans.MaximumMembers" xml:space="preserve"><value>Maximum members</value></data>
+  <data name="Admin.MembershipPlans.MemberDirectory" xml:space="preserve"><value>Member directory</value></data>
+  <data name="Admin.MembershipPlans.Memberships" xml:space="preserve"><value>Memberships</value></data>
+  <data name="Admin.MembershipPlans.Msg.AllSynced" xml:space="preserve"><value>All {0} plans are in sync with Stripe.</value></data>
+  <data name="Admin.MembershipPlans.Msg.Archived" xml:space="preserve"><value>Plan archived — and taken off sale at Stripe.</value></data>
+  <data name="Admin.MembershipPlans.Msg.Created" xml:space="preserve"><value>“{0}” created and synced to Stripe.</value></data>
+  <data name="Admin.MembershipPlans.Msg.CreatedNotSynced" xml:space="preserve"><value>“{0}” created, but it could not be synced to Stripe: {1}</value></data>
+  <data name="Admin.MembershipPlans.Msg.ImportFailed" xml:space="preserve"><value>Could not read Stripe's product list: {0}</value></data>
+  <data name="Admin.MembershipPlans.Msg.Imported" xml:space="preserve"><value>Imported {0} plan(s) from Stripe as archived; review and activate the ones you want on sale. {1} already existed.</value></data>
+  <data name="Admin.MembershipPlans.Msg.NothingNew" xml:space="preserve"><value>Nothing new at Stripe — {0} product(s) already have a plan here.</value></data>
+  <data name="Admin.MembershipPlans.Msg.Saved" xml:space="preserve"><value>Changes saved and synced to Stripe.</value></data>
+  <data name="Admin.MembershipPlans.Msg.SavedNotSynced" xml:space="preserve"><value>Changes saved, but Stripe could not be updated: {0}</value></data>
+  <data name="Admin.MembershipPlans.Msg.SyncPartial" xml:space="preserve"><value>{0} synced, {1} failed: {2}</value></data>
+  <data name="Admin.MembershipPlans.NewPlan" xml:space="preserve"><value>+ New Plan</value></data>
+  <data name="Admin.MembershipPlans.NewTitle" xml:space="preserve"><value>New membership plan</value></data>
+  <data name="Admin.MembershipPlans.NoMembershipPlansYetCreateOne" xml:space="preserve"><value>No membership plans yet. Create one here, or import the products you already have in Stripe.</value></data>
+  <data name="Admin.MembershipPlans.NotMirroredCount" xml:space="preserve"><value>Plans not mirrored: {0}.</value></data>
+  <data name="Admin.MembershipPlans.NotMirroredHint" xml:space="preserve"><value>Their checkout still works with an inline price; sync to put them under a named Stripe product.</value></data>
+  <data name="Admin.MembershipPlans.NotSynced" xml:space="preserve"><value>Not synced</value></data>
+  <data name="Admin.MembershipPlans.OneSentenceShownUnderThePlan" xml:space="preserve"><value>One sentence, shown under the plan name on the public page and in Stripe.</value></data>
+  <data name="Admin.MembershipPlans.OnlyUsedWhenTheDiscordBot" xml:space="preserve"><value>Only used when the Discord bot is configured: members of this tier are given this role when they accept a generated invite.</value></data>
+  <data name="Admin.MembershipPlans.Optional" xml:space="preserve"><value>Optional</value></data>
+  <data name="Admin.MembershipPlans.Payments" xml:space="preserve"><value>Payments</value></data>
+  <data name="Admin.MembershipPlans.PriceEG250000" xml:space="preserve"><value>Price (e.g. 2500.00)</value></data>
+  <data name="Admin.MembershipPlans.PriorityBookingFoundingMemberBadgeInvitation" xml:space="preserve"><value>Priority booking Founding Member badge Invitation to House Notes previews</value></data>
+  <data name="Admin.MembershipPlans.Product" xml:space="preserve"><value>Product</value></data>
+  <data name="Admin.MembershipPlans.SalesClosed" xml:space="preserve"><value>Membership sales are currently closed ({0} is off), so none of these plans appear on the public page yet. They can still be prepared and mirrored to Stripe here, ready for the day sales open.</value></data>
+  <data name="Admin.MembershipPlans.SaveLocally" xml:space="preserve"><value>Plans save locally; add {0} to mirror them.</value></data>
+  <data name="Admin.MembershipPlans.SaveSync" xml:space="preserve"><value>Save &amp; sync</value></data>
+  <data name="Admin.MembershipPlans.Seats" xml:space="preserve"><value>Seats</value></data>
+  <data name="Admin.MembershipPlans.SessionsMarkedIncludedWithMembership" xml:space="preserve"><value>Sessions marked "included with membership"</value></data>
+  <data name="Admin.MembershipPlans.SortOrder" xml:space="preserve"><value>Sort order</value></data>
+  <data name="Admin.MembershipPlans.StripeIsNotConfigured" xml:space="preserve"><value>Stripe is not configured.</value></data>
+  <data name="Admin.MembershipPlans.StripePricesAreImmutableChangingThe" xml:space="preserve"><value>Stripe prices are immutable: changing the amount, currency or billing period here creates a new price and archives the old one. Members already subscribed keep the price they signed up at.</value></data>
+  <data name="Admin.MembershipPlans.SyncAllToStripe" xml:space="preserve"><value>Sync all to Stripe</value></data>
+  <data name="Admin.MembershipPlans.SyncFailed" xml:space="preserve"><value>Sync failed</value></data>
+  <data name="Admin.MembershipPlans.SyncNow" xml:space="preserve"><value>Sync now</value></data>
+  <data name="Admin.MembershipPlans.Synced" xml:space="preserve"><value>Synced</value></data>
+  <data name="Admin.MembershipPlans.ThePlanIsSavedHereAnd" xml:space="preserve"><value>The plan is saved here and mirrored to Stripe as a product with one price. Edit it here from then on — a price change issues a new Stripe price automatically and retires the old one.</value></data>
+  <data name="Admin.MembershipPlans.TheseDecideWhatAMemberOn" xml:space="preserve"><value>These decide what a member on this plan sees in their account area — the feature list above is only the words on the card.</value></data>
+  <data name="Admin.MembershipPlans.ThisPlanCanTBeDeleted" xml:space="preserve"><value>This plan can't be deleted while memberships or payments reference it — that is financial history. Archive it instead.</value></data>
+  <data name="Admin.MembershipPlans.Unlimited" xml:space="preserve"><value>Unlimited</value></data>
+  <data name="Admin.MembershipPlans.Usage" xml:space="preserve"><value>Usage</value></data>
+  <data name="Admin.MembershipPlans.WhatThisTierIncludes" xml:space="preserve"><value>What this tier includes</value></data>
+  <data name="Admin.MembershipSignups.About" xml:space="preserve"><value>About</value></data>
+  <data name="Admin.MembershipSignups.Address" xml:space="preserve"><value>Address</value></data>
+  <data name="Admin.MembershipSignups.All" xml:space="preserve"><value>All</value></data>
+  <data name="Admin.MembershipSignups.AnnualEarnings" xml:space="preserve"><value>Annual earnings</value></data>
+  <data name="Admin.MembershipSignups.Applicant" xml:space="preserve"><value>Applicant</value></data>
+  <data name="Admin.MembershipSignups.BackToSignUps" xml:space="preserve"><value>← Back to Sign-ups</value></data>
+  <data name="Admin.MembershipSignups.Empty" xml:space="preserve"><value>No sign-ups yet.</value></data>
+  <data name="Admin.MembershipSignups.EmptyForStatus" xml:space="preserve"><value>No sign-ups with this status yet.</value></data>
+  <data name="Admin.MembershipSignups.Expectations" xml:space="preserve"><value>Expectations</value></data>
+  <data name="Admin.MembershipSignups.Expired" xml:space="preserve"><value>Expired</value></data>
+  <data name="Admin.MembershipSignups.FormSent" xml:space="preserve"><value>Form sent</value></data>
+  <data name="Admin.MembershipSignups.InTheirWords" xml:space="preserve"><value>In their words</value></data>
+  <data name="Admin.MembershipSignups.Intro" xml:space="preserve"><value>Everything people wrote on the membership form, whether or not they went on to pay. Membership is not reviewed — paying is joining — so this is for knowing who is coming in. Paid so far: {0}.</value></data>
+  <data name="Admin.MembershipSignups.Membership" xml:space="preserve"><value>Membership</value></data>
+  <data name="Admin.MembershipSignups.Newer" xml:space="preserve"><value>← Newer</value></data>
+  <data name="Admin.MembershipSignups.NotPaidYet" xml:space="preserve"><value>Not paid yet</value></data>
+  <data name="Admin.MembershipSignups.Older" xml:space="preserve"><value>Older →</value></data>
+  <data name="Admin.MembershipSignups.OpenAccount" xml:space="preserve"><value>Open account →</value></data>
+  <data name="Admin.MembershipSignups.PageOf" xml:space="preserve"><value>Page {0} of {1} · {2} sign-ups</value></data>
+  <data name="Admin.MembershipSignups.Paid" xml:space="preserve"><value>Paid</value></data>
+  <data name="Admin.MembershipSignups.Plan" xml:space="preserve"><value>Plan</value></data>
+  <data name="Admin.MembershipSignups.PromoCode" xml:space="preserve"><value>Promo code</value></data>
+  <data name="Admin.MembershipSignups.Purged" xml:space="preserve"><value>This form was never paid for, so its free text and address were cleared on {0} — only the name, email and plan are kept.</value></data>
+  <data name="Admin.MembershipSignups.ReferralCode" xml:space="preserve"><value>Referral code</value></data>
+  <data name="Admin.MembershipSignups.TheyHavenTSignedInYet" xml:space="preserve"><value>They haven't signed in yet — the account page can re-send the password setup email.</value></data>
+  <data name="Admin.MembershipSignups.TitleProfession" xml:space="preserve"><value>Title / profession</value></data>
+  <data name="Admin.MembershipSignups.ViewForm" xml:space="preserve"><value>View form →</value></data>
+  <data name="Admin.MembershipSignups.When" xml:space="preserve"><value>When</value></data>
+  <data name="Admin.Msg.ChangesSaved" xml:space="preserve"><value>Changes saved.</value></data>
+  <data name="Admin.Msg.CheckFields" xml:space="preserve"><value>Check the highlighted fields.</value></data>
+  <data name="Admin.Nav.AdminAmbassadors" xml:space="preserve"><value>Ambassadors</value></data>
+  <data name="Admin.Nav.AdminApplications" xml:space="preserve"><value>Applications</value></data>
+  <data name="Admin.Nav.AdminBookings" xml:space="preserve"><value>Bookings</value></data>
+  <data name="Admin.Nav.AdminCms" xml:space="preserve"><value>Content</value></data>
+  <data name="Admin.Nav.AdminCommunity" xml:space="preserve"><value>Community</value></data>
+  <data name="Admin.Nav.AdminDashboard" xml:space="preserve"><value>Dashboard</value></data>
+  <data name="Admin.Nav.AdminEmails" xml:space="preserve"><value>Emails &amp; SMS</value></data>
+  <data name="Admin.Nav.AdminExperiences" xml:space="preserve"><value>Experiences</value></data>
+  <data name="Admin.Nav.AdminHeroSlides" xml:space="preserve"><value>Hero slides</value></data>
+  <data name="Admin.Nav.AdminJournal" xml:space="preserve"><value>Journal</value></data>
+  <data name="Admin.Nav.AdminMembershipPlans" xml:space="preserve"><value>Membership plans</value></data>
+  <data name="Admin.Nav.AdminMembershipSignups" xml:space="preserve"><value>Membership sign-ups</value></data>
+  <data name="Admin.Nav.AdminNotifySignups" xml:space="preserve"><value>Launch list</value></data>
+  <data name="Admin.Nav.AdminPayments" xml:space="preserve"><value>Payments</value></data>
+  <data name="Admin.Nav.AdminPromoCodes" xml:space="preserve"><value>Promo codes</value></data>
+  <data name="Admin.Nav.AdminSeminars" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Admin.Nav.AdminSiteSettings" xml:space="preserve"><value>Site &amp; SEO</value></data>
+  <data name="Admin.Nav.AdminTranslations" xml:space="preserve"><value>Translations</value></data>
+  <data name="Admin.Nav.AdminUsers" xml:space="preserve"><value>Users</value></data>
+  <data name="Admin.Nav.AdminWebhooks" xml:space="preserve"><value>Stripe events</value></data>
+  <data name="Admin.NotifySignups.Consent" xml:space="preserve"><value>consent</value></data>
+  <data name="Admin.NotifySignups.HeadlineExample" xml:space="preserve"><value>The doors are open</value></data>
+  <data name="Admin.NotifySignups.NoConsentText" xml:space="preserve"><value>No consent wording stored (signed up before it was recorded)</value></data>
+  <data name="Admin.NotifySignups.SubjectExample" xml:space="preserve"><value>The VI House is open</value></data>
+  <data name="Admin.Payments.All" xml:space="preserve"><value>All</value></data>
+  <data name="Admin.Payments.AllTypes" xml:space="preserve"><value>All types</value></data>
+  <data name="Admin.Payments.AmountCaptured" xml:space="preserve"><value>Amount captured</value></data>
+  <data name="Admin.Payments.Attempts" xml:space="preserve"><value>Attempts</value></data>
+  <data name="Admin.Payments.BackToPayments" xml:space="preserve"><value>← Back to Payments</value></data>
+  <data name="Admin.Payments.Card" xml:space="preserve"><value>Card</value></data>
+  <data name="Admin.Payments.ChargeStatus" xml:space="preserve"><value>Charge status</value></data>
+  <data name="Admin.Payments.CheckoutSession" xml:space="preserve"><value>Checkout session</value></data>
+  <data name="Admin.Payments.Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="Admin.Payments.CouldnTReachStripeJustNow" xml:space="preserve"><value>Couldn't reach Stripe just now — the record above is the last state the provider's events put it in.</value></data>
+  <data name="Admin.Payments.Customer" xml:space="preserve"><value>Customer</value></data>
+  <data name="Admin.Payments.DetailHint" xml:space="preserve"><value>Refunds and disputes are actioned in the Stripe dashboard; this record follows the provider's events.</value></data>
+  <data name="Admin.Payments.DetailTitle" xml:space="preserve"><value>Payment</value></data>
+  <data name="Admin.Payments.Disputed" xml:space="preserve"><value>Disputed</value></data>
+  <data name="Admin.Payments.DisputedStripe" xml:space="preserve"><value>Disputed (Stripe)</value></data>
+  <data name="Admin.Payments.EmailNameBookingRefCsPi" xml:space="preserve"><value>email, name, booking ref, cs_ / pi_ / in_ / sub_ id</value></data>
+  <data name="Admin.Payments.Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Admin.Payments.Event" xml:space="preserve"><value>Event</value></data>
+  <data name="Admin.Payments.EventTimeline" xml:space="preserve"><value>Event timeline</value></data>
+  <data name="Admin.Payments.EveryPaymentAcrossExperiencesSessionsAnd" xml:space="preserve"><value>Every payment across experiences, sessions and memberships, with its internal state — moved only by the provider's events, never by a browser redirect. Refunds and disputes are actioned in the Stripe dashboard and arrive here as events. Amounts are per currency and never combined.</value></data>
+  <data name="Admin.Payments.FailedEventsCanBeReRun" xml:space="preserve"><value>Failed events can be re-run from</value></data>
+  <data name="Admin.Payments.Failure" xml:space="preserve"><value>Failure</value></data>
+  <data name="Admin.Payments.For" xml:space="preserve"><value>For</value></data>
+  <data name="Admin.Payments.IntentStatus" xml:space="preserve"><value>Intent status</value></data>
+  <data name="Admin.Payments.Invoice" xml:space="preserve"><value>Invoice</value></data>
+  <data name="Admin.Payments.LastEvent" xml:space="preserve"><value>Last event</value></data>
+  <data name="Admin.Payments.LiveStripeDetails" xml:space="preserve"><value>Live Stripe details</value></data>
+  <data name="Admin.Payments.Meaning.Canceled" xml:space="preserve"><value>Stopped before any money moved.</value></data>
+  <data name="Admin.Payments.Meaning.Expired" xml:space="preserve"><value>The checkout window closed unpaid; the held place was released.</value></data>
+  <data name="Admin.Payments.Meaning.Failed" xml:space="preserve"><value>The provider could not collect. A retry may still succeed.</value></data>
+  <data name="Admin.Payments.Meaning.PartiallyRefunded" xml:space="preserve"><value>Part of the money went back to the buyer; what was bought stands.</value></data>
+  <data name="Admin.Payments.Meaning.Pending" xml:space="preserve"><value>Checkout opened; nothing paid yet.</value></data>
+  <data name="Admin.Payments.Meaning.Processing" xml:space="preserve"><value>Checkout completed with a delayed payment method; the bank has not confirmed the money. Nothing has been granted.</value></data>
+  <data name="Admin.Payments.Meaning.Refunded" xml:space="preserve"><value>All of the money went back to the buyer.</value></data>
+  <data name="Admin.Payments.Meaning.RequiresAction" xml:space="preserve"><value>The buyer must confirm the payment with their bank before it goes through.</value></data>
+  <data name="Admin.Payments.Meaning.Succeeded" xml:space="preserve"><value>The provider confirmed the money. The booking / seat / membership was granted.</value></data>
+  <data name="Admin.Payments.NoAccountYetAJoinCheckout" xml:space="preserve"><value>(no account yet — a /join checkout)</value></data>
+  <data name="Admin.Payments.NoCheckoutSessionOnThisRecord" xml:space="preserve"><value>No checkout session on this record (a renewal is invoiced by Stripe directly — open the invoice above).</value></data>
+  <data name="Admin.Payments.NoPaymentsMatch" xml:space="preserve"><value>No payments match.</value></data>
+  <data name="Admin.Payments.NoProviderEventsRecordedAgainstThis" xml:space="preserve"><value>No provider events recorded against this payment's Stripe objects yet.</value></data>
+  <data name="Admin.Payments.Object" xml:space="preserve"><value>Object</value></data>
+  <data name="Admin.Payments.Paid" xml:space="preserve"><value>Paid</value></data>
+  <data name="Admin.Payments.PaymentIntent" xml:space="preserve"><value>Payment intent</value></data>
+  <data name="Admin.Payments.PaymentStatus" xml:space="preserve"><value>Payment status</value></data>
+  <data name="Admin.Payments.Receipt" xml:space="preserve"><value>Receipt</value></data>
+  <data name="Admin.Payments.Received" xml:space="preserve"><value>Received</value></data>
+  <data name="Admin.Payments.Refunded" xml:space="preserve"><value>Refunded</value></data>
+  <data name="Admin.Payments.RefundedStripe" xml:space="preserve"><value>Refunded (Stripe)</value></data>
+  <data name="Admin.Payments.SessionStatus" xml:space="preserve"><value>Session status</value></data>
+  <data name="Admin.Payments.ShownOf" xml:space="preserve"><value>{0} of {1} shown, newest first.</value></data>
+  <data name="Admin.Payments.StripeEvents" xml:space="preserve"><value>Stripe Events</value></data>
+  <data name="Admin.Payments.StripeReferences" xml:space="preserve"><value>Stripe references</value></data>
+  <data name="Admin.Payments.Subscription" xml:space="preserve"><value>Subscription</value></data>
+  <data name="Admin.Payments.ViewReceipt" xml:space="preserve"><value>View receipt</value></data>
+  <data name="Admin.PromoCodes.ACodeIsForExperienceTickets" xml:space="preserve"><value>A code is for experience tickets or for membership checkout, not both.</value></data>
+  <data name="Admin.PromoCodes.APercentageTakes1100A" xml:space="preserve"><value>A percentage takes 1–100. A fixed discount takes whole units — 250 means £250, not £2.50.</value></data>
+  <data name="Admin.PromoCodes.AcceptedAtCheckout" xml:space="preserve"><value>Accepted at checkout</value></data>
+  <data name="Admin.PromoCodes.AnyExperience" xml:space="preserve"><value>Any experience</value></data>
+  <data name="Admin.PromoCodes.AnyPlan" xml:space="preserve"><value>Any plan</value></data>
+  <data name="Admin.PromoCodes.AppliedAsACouponOnThe" xml:space="preserve"><value>Applied as a coupon on the Stripe checkout. "Forever" keeps discounting every renewal.</value></data>
+  <data name="Admin.PromoCodes.AppliedAtCheckoutAgainstTheTicket" xml:space="preserve"><value>Applied at checkout against the ticket price. A code that has been redeemed is switched off rather than deleted, so the discount behind an old booking stays explainable.</value></data>
+  <data name="Admin.PromoCodes.AppliesTo" xml:space="preserve"><value>Applies to</value></data>
+  <data name="Admin.PromoCodes.Code" xml:space="preserve"><value>Code</value></data>
+  <data name="Admin.PromoCodes.CodeHint" xml:space="preserve"><value>Stored in capitals; members can type it either way.</value></data>
+  <data name="Admin.PromoCodes.DeleteConfirm" xml:space="preserve"><value>Delete “{0}”? A code that has already been redeemed is switched off instead.</value></data>
+  <data name="Admin.PromoCodes.Discount" xml:space="preserve"><value>Discount</value></data>
+  <data name="Admin.PromoCodes.Expired" xml:space="preserve"><value>Expired</value></data>
+  <data name="Admin.PromoCodes.Expires" xml:space="preserve"><value>Expires</value></data>
+  <data name="Admin.PromoCodes.ForEmail" xml:space="preserve"><value>for {0}</value></data>
+  <data name="Admin.PromoCodes.FullyRedeemed" xml:space="preserve"><value>Fully redeemed</value></data>
+  <data name="Admin.PromoCodes.IgnoredForAPercentage" xml:space="preserve"><value>Ignored for a percentage.</value></data>
+  <data name="Admin.PromoCodes.MembershipScope" xml:space="preserve"><value>{0} (membership)</value></data>
+  <data name="Admin.PromoCodes.Msg.Exists" xml:space="preserve"><value>That code already exists.</value></data>
+  <data name="Admin.PromoCodes.Msg.Gone" xml:space="preserve"><value>That code no longer exists.</value></data>
+  <data name="Admin.PromoCodes.Msg.SwitchedOff" xml:space="preserve"><value>“{0}” has been redeemed {1} time(s), so it was switched off rather than deleted.</value></data>
+  <data name="Admin.PromoCodes.NewCode" xml:space="preserve"><value>+ New Code</value></data>
+  <data name="Admin.PromoCodes.NoPromoCodesYet" xml:space="preserve"><value>No promo codes yet.</value></data>
+  <data name="Admin.PromoCodes.Off" xml:space="preserve"><value>Off</value></data>
+  <data name="Admin.PromoCodes.RedeemedSoFar" xml:space="preserve"><value>Redeemed {0} time(s) so far. That count cannot be edited.</value></data>
+  <data name="Admin.PromoCodes.ReserveTheCodeForOnePerson" xml:space="preserve"><value>Reserve the code for one person. They must check out with this exact address.</value></data>
+  <data name="Admin.PromoCodes.State" xml:space="preserve"><value>State</value></data>
+  <data name="Admin.PromoCodes.Usable" xml:space="preserve"><value>Usable</value></data>
+  <data name="Admin.PromoCodes.Used" xml:space="preserve"><value>Used</value></data>
+  <data name="Admin.Publish.Archive" xml:space="preserve"><value>Archive</value></data>
+  <data name="Admin.Publish.ArchiveConfirm" xml:space="preserve"><value>Archive this? It leaves the public listing; people who signed up keep their access.</value></data>
+  <data name="Admin.Publish.Blocked" xml:space="preserve"><value>Finish the required items above to publish.</value></data>
+  <data name="Admin.Publish.Check.Cover" xml:space="preserve"><value>Cover image</value></data>
+  <data name="Admin.Publish.Check.EnglishBody" xml:space="preserve"><value>English text written</value></data>
+  <data name="Admin.Publish.Check.EnglishTitle" xml:space="preserve"><value>English title</value></data>
+  <data name="Admin.Publish.Check.Languages" xml:space="preserve"><value>Translations: {0} of {1} languages</value></data>
+  <data name="Admin.Publish.Checklist" xml:space="preserve"><value>Before you publish</value></data>
+  <data name="Admin.Publish.Fix" xml:space="preserve"><value>Fix</value></data>
+  <data name="Admin.Publish.Optional" xml:space="preserve"><value>recommended</value></data>
+  <data name="Admin.Publish.Preview" xml:space="preserve"><value>Preview as a visitor</value></data>
+  <data name="Admin.Publish.PublishNow" xml:space="preserve"><value>Publish now</value></data>
+  <data name="Admin.Publish.Republish" xml:space="preserve"><value>Publish again</value></data>
+  <data name="Admin.Publish.Required" xml:space="preserve"><value>required</value></data>
+  <data name="Admin.Publish.SaveDraft" xml:space="preserve"><value>Save draft</value></data>
+  <data name="Admin.Publish.Sentence.Draft" xml:space="preserve"><value>Draft — not visible on the website. Only staff can open the preview.</value></data>
+  <data name="Admin.Publish.Sentence.Live" xml:space="preserve"><value>Live on the website since {0}.</value></data>
+  <data name="Admin.Publish.Status.Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="Admin.Publish.Status.Published" xml:space="preserve"><value>Published</value></data>
+  <data name="Admin.Publish.Title" xml:space="preserve"><value>Publishing</value></data>
+  <data name="Admin.Publish.Unpublish" xml:space="preserve"><value>Unpublish</value></data>
+  <data name="Admin.Publish.UnpublishConfirm" xml:space="preserve"><value>Unpublish? It disappears from the website straight away and goes back to draft.</value></data>
+  <data name="Admin.Publish.Update" xml:space="preserve"><value>Save changes</value></data>
+  <data name="Admin.Publish.ViewLive" xml:space="preserve"><value>View on the website</value></data>
+  <data name="Admin.Quick.AdminApplications.Index" xml:space="preserve"><value>Review queue</value></data>
+  <data name="Admin.Quick.AdminExperiences.Create" xml:space="preserve"><value>New experience</value></data>
+  <data name="Admin.Quick.AdminJournal.Create" xml:space="preserve"><value>New article</value></data>
+  <data name="Admin.Quick.AdminSeminars.Create" xml:space="preserve"><value>New session</value></data>
+  <data name="Admin.Section.AdminAmbassadors.Description" xml:space="preserve"><value>Referral partners, their links and the commission they've earned.</value></data>
+  <data name="Admin.Section.AdminApplications.Description" xml:space="preserve"><value>Review applications to experiences: approve, waitlist or decline.</value></data>
+  <data name="Admin.Section.AdminBookings.Description" xml:space="preserve"><value>Every booking for an experience, with its payment.</value></data>
+  <data name="Admin.Section.AdminCms.Description" xml:space="preserve"><value>The words and images on the homepage, section by section.</value></data>
+  <data name="Admin.Section.AdminCommunity.Description" xml:space="preserve"><value>Discord and other community links that members see.</value></data>
+  <data name="Admin.Section.AdminDashboard.Description" xml:space="preserve"><value>What needs attention today, and how applications, bookings and money are moving.</value></data>
+  <data name="Admin.Section.AdminEmails.Description" xml:space="preserve"><value>Every email and text the site sent, and a resend button for failures.</value></data>
+  <data name="Admin.Section.AdminExperiences.Description" xml:space="preserve"><value>Retreats and events: dates, tickets, programme and photos.</value></data>
+  <data name="Admin.Section.AdminHeroSlides.Description" xml:space="preserve"><value>The large rotating images at the top of the homepage.</value></data>
+  <data name="Admin.Section.AdminJournal.Description" xml:space="preserve"><value>Write, illustrate and publish Journal articles in four languages.</value></data>
+  <data name="Admin.Section.AdminMembershipPlans.Description" xml:space="preserve"><value>Membership tiers and their prices, mirrored to Stripe.</value></data>
+  <data name="Admin.Section.AdminMembershipSignups.Description" xml:space="preserve"><value>Everyone who filled in the membership form, paid or not.</value></data>
+  <data name="Admin.Section.AdminNotifySignups.Description" xml:space="preserve"><value>People waiting for the launch, and the announcement email.</value></data>
+  <data name="Admin.Section.AdminPayments.Description" xml:space="preserve"><value>Every payment and its state, exactly as Stripe reported it.</value></data>
+  <data name="Admin.Section.AdminPromoCodes.Description" xml:space="preserve"><value>Discount codes for tickets and memberships.</value></data>
+  <data name="Admin.Section.AdminSeminars.Description" xml:space="preserve"><value>Online and in-person sessions: write, schedule and publish them.</value></data>
+  <data name="Admin.Section.AdminSiteSettings.Description" xml:space="preserve"><value>How the site appears in Google, link previews and AI assistants.</value></data>
+  <data name="Admin.Section.AdminTranslations.Description" xml:space="preserve"><value>Every text on the site in all four languages, editable in place.</value></data>
+  <data name="Admin.Section.AdminUsers.Description" xml:space="preserve"><value>Accounts, roles, memberships and staff invitations.</value></data>
+  <data name="Admin.Section.AdminWebhooks.Description" xml:space="preserve"><value>The raw events Stripe sent, and whether each one was handled.</value></data>
+  <data name="Admin.Seminar.Audience.Members" xml:space="preserve"><value>Members only — signed-in members see it; everyone else gets a page-not-found.</value></data>
+  <data name="Admin.Seminar.Audience.Public" xml:space="preserve"><value>Everyone — listed on the sessions page for all visitors.</value></data>
+  <data name="Admin.Seminar.Audience.Unlisted" xml:space="preserve"><value>Unlisted — not on the sessions page; only people with the link can open it.</value></data>
+  <data name="Admin.Seminar.Check.Schedule" xml:space="preserve"><value>Date and time set</value></data>
+  <data name="Admin.Seminar.Sentence.Archived" xml:space="preserve"><value>Archived — off the listing. People who signed up keep their access.</value></data>
+  <data name="Admin.Seminar.StillDraft" xml:space="preserve"><value>This session is still a draft, so visitors can't see it. Publish it when you're ready.</value></data>
+  <data name="Admin.Seminar.Visibility.Members.Help" xml:space="preserve"><value>Hidden from visitors. Only signed-in members can see it; anyone else gets a page-not-found.</value></data>
+  <data name="Admin.Seminar.Visibility.Public.Help" xml:space="preserve"><value>Listed on the sessions page for everyone.</value></data>
+  <data name="Admin.Seminar.Visibility.Unlisted.Help" xml:space="preserve"><value>Not listed anywhere. Only people you send the link to can open it.</value></data>
+  <data name="Admin.Settings.TemplateNeedsPlaceholder" xml:space="preserve"><value>The title template must contain {0} — that is where each page's own name goes.</value></data>
+  <data name="Admin.Settings.UnknownCulture" xml:space="preserve"><value>That is not a language this site speaks.</value></data>
+  <data name="Admin.Shell.Admin" xml:space="preserve"><value>Admin</value></data>
+  <data name="Admin.Shell.CloseMenu" xml:space="preserve"><value>Close menu</value></data>
+  <data name="Admin.Shell.CollapseMenu" xml:space="preserve"><value>Collapse menu</value></data>
+  <data name="Admin.Shell.InterfaceLanguage" xml:space="preserve"><value>Interface language</value></data>
+  <data name="Admin.Shell.InterfaceLanguage.Hint" xml:space="preserve"><value>Changes the panel's language only. To write in another language, use the language tabs on the article or page.</value></data>
+  <data name="Admin.Shell.JumpTo" xml:space="preserve"><value>Jump to</value></data>
+  <data name="Admin.Shell.LogOut" xml:space="preserve"><value>Sign out</value></data>
+  <data name="Admin.Shell.NoMatch" xml:space="preserve"><value>No matching admin pages.</value></data>
+  <data name="Admin.Shell.OpenMenu" xml:space="preserve"><value>Open menu</value></data>
+  <data name="Admin.Shell.OpenWebsite" xml:space="preserve"><value>Open website</value></data>
+  <data name="Admin.Shell.QuickActions" xml:space="preserve"><value>Quick actions</value></data>
+  <data name="Admin.Shell.SearchPages" xml:space="preserve"><value>Search admin pages</value></data>
+  <data name="Admin.Shell.SkipToContent" xml:space="preserve"><value>Skip to content</value></data>
+  <data name="Admin.Shell.ViewSite" xml:space="preserve"><value>View site</value></data>
+  <data name="Admin.SiteSettings.APlainLanguageIndexOfThe" xml:space="preserve"><value>A plain-language index of the site for language models. Separate from the switch above, because “search engines yes, models maybe” is a reasonable position to hold.</value></data>
+  <data name="Admin.SiteSettings.AddedToRobotsTxtAsWritten" xml:space="preserve"><value>Added to robots.txt as written. The admin area, the account pages, checkout and the search results are already excluded — you do not need to repeat them here.</value></data>
+  <data name="Admin.SiteSettings.AllowSearchEnginesToIndexThis" xml:space="preserve"><value>Allow search engines to index this site</value></data>
+  <data name="Admin.SiteSettings.ChangesHereOnThePagesList" xml:space="preserve"><value>Changes here, on the Pages list below and in Content are live on the next page load — robots.txt, sitemap.xml and llms.txt included.</value></data>
+  <data name="Admin.SiteSettings.ComingSoonOn" xml:space="preserve"><value>The Coming Soon curtain is on: the live sitemap and llms.txt list only {0} until it is switched off. The counts above are what they will list at launch.</value></data>
+  <data name="Admin.SiteSettings.ContactAndAddress" xml:space="preserve"><value>Contact and address</value></data>
+  <data name="Admin.SiteSettings.DefaultDescription" xml:space="preserve"><value>Default description</value></data>
+  <data name="Admin.SiteSettings.DefaultDescriptionAbove" xml:space="preserve"><value>Default description above</value></data>
+  <data name="Admin.SiteSettings.DefaultImageHint" xml:space="preserve"><value>The picture that appears when a link to this site is pasted anywhere — WhatsApp, Slack, LinkedIn, X. A page with its own image wins; this is the floor, so that no link ever previews as a bare grey box. {0} is the size every network agrees on.</value></data>
+  <data name="Admin.SiteSettings.DefaultSocialImage" xml:space="preserve"><value>Default social image</value></data>
+  <data name="Admin.SiteSettings.EveryAbsoluteAddressTheSitePublishes" xml:space="preserve"><value>Every absolute address the site publishes is built from this, rather than from whatever host the request arrived on. That is what stops the same page reached through a preview domain, a proxy or “www.” from competing with itself.</value></data>
+  <data name="Admin.SiteSettings.EveryPageNowHasOneURL" xml:space="preserve"><value>Every page now has one URL per language.</value></data>
+  <data name="Admin.SiteSettings.HomepageTitle" xml:space="preserve"><value>Homepage title</value></data>
+  <data name="Admin.SiteSettings.Identity" xml:space="preserve"><value>Identity</value></data>
+  <data name="Admin.SiteSettings.IndexingOffHint" xml:space="preserve"><value>Turning it off publishes {0}, hides the sitemap and puts {1} on every page. That is exactly what a staging copy needs — and switching it off on the real site removes you from Google.</value></data>
+  <data name="Admin.SiteSettings.Intro" xml:space="preserve"><value>How the site describes itself to search engines, to link previews in messaging apps, and to language models. Everything a reader sees as words is per language; everything that is the same fact in every language is on this page once.</value></data>
+  <data name="Admin.SiteSettings.LlmsNotesHint" xml:space="preserve"><value>What an assistant like ChatGPT or Claude should know when it answers questions about the house: who it is for, how to join, what it is not. Plain sentences or short Markdown lists. Shown at the top of llms.txt for this language; the list of pages below it keeps updating by itself.</value></data>
+  <data name="Admin.SiteSettings.Logo" xml:space="preserve"><value>Logo</value></data>
+  <data name="Admin.SiteSettings.Msg.ChooseImage" xml:space="preserve"><value>Choose an image first.</value></data>
+  <data name="Admin.SiteSettings.Msg.ImagesOnly" xml:space="preserve"><value>That file could not be used — images only.</value></data>
+  <data name="Admin.SiteSettings.Msg.LanguageSaved" xml:space="preserve"><value>{0} saved.</value></data>
+  <data name="Admin.SiteSettings.Msg.LogoRemoved" xml:space="preserve"><value>Logo removed.</value></data>
+  <data name="Admin.SiteSettings.Msg.LogoUploaded" xml:space="preserve"><value>Logo uploaded.</value></data>
+  <data name="Admin.SiteSettings.Msg.PagesSaved" xml:space="preserve"><value>{0} page titles and descriptions saved. They are live now.</value></data>
+  <data name="Admin.SiteSettings.Msg.Saved" xml:space="preserve"><value>Site settings saved.</value></data>
+  <data name="Admin.SiteSettings.Msg.SocialImageRemoved" xml:space="preserve"><value>Social image removed.</value></data>
+  <data name="Admin.SiteSettings.Msg.SocialImageUploaded" xml:space="preserve"><value>Social image uploaded.</value></data>
+  <data name="Admin.SiteSettings.NotWrittenYetFallsBackTo" xml:space="preserve"><value>Not written yet — falls back to English</value></data>
+  <data name="Admin.SiteSettings.NotesForAIAssistantsLlmsTxt" xml:space="preserve"><value>Notes for AI assistants (llms.txt)</value></data>
+  <data name="Admin.SiteSettings.OgImageHint" xml:space="preserve"><value>Usually empty. Worth setting when the image has words baked into it, because an English card under a {0} headline reads as a mistake.</value></data>
+  <data name="Admin.SiteSettings.OneLineDescribingTheHouseItself" xml:space="preserve"><value>One line describing the house itself, for structured data and llms.txt.</value></data>
+  <data name="Admin.SiteSettings.OnlyChangeThisIfYouKnow" xml:space="preserve"><value>Only change this if you know why. Organization suits most sites.</value></data>
+  <data name="Admin.SiteSettings.OptionalOnlyWhenThisLanguageNeeds" xml:space="preserve"><value>Optional — only when this language needs its own picture</value></data>
+  <data name="Admin.SiteSettings.Page" xml:space="preserve"><value>Page</value></data>
+  <data name="Admin.SiteSettings.PagesFor" xml:space="preserve"><value>Pages — {0}</value></data>
+  <data name="Admin.SiteSettings.PagesHint" xml:space="preserve"><value>What each page shows in Google and in link previews, in {0}. Leave a field empty to use the page's built-in wording (shown greyed in the box). Google shows about 60 characters of a title and 155 of a description. Experiences, sessions and journal posts have their own fields in their editors; the homepage uses the homepage title and default description above.</value></data>
+  <data name="Admin.SiteSettings.PagesInTheSitemap" xml:space="preserve"><value>Pages in the sitemap</value></data>
+  <data name="Admin.SiteSettings.PublishLlmsTxt" xml:space="preserve"><value>Publish /llms.txt</value></data>
+  <data name="Admin.SiteSettings.PublishedAsStructuredDataWorthFilling" xml:space="preserve"><value>Published as structured data. Worth filling in even if the address is not public elsewhere — it is what makes the house eligible for a knowledge panel and for map results.</value></data>
+  <data name="Admin.SiteSettings.SameAsHint" xml:space="preserve"><value>Published as {0} in the site's structured data, which is how a search engine learns that these accounts and this site are the same organisation. Leave blank what does not exist — an empty entry is better than a wrong one.</value></data>
+  <data name="Admin.SiteSettings.SavePages" xml:space="preserve"><value>Save {0} pages</value></data>
+  <data name="Admin.SiteSettings.SaveSettings" xml:space="preserve"><value>Save settings</value></data>
+  <data name="Admin.SiteSettings.SearchVisibility" xml:space="preserve"><value>Search visibility</value></data>
+  <data name="Admin.SiteSettings.SiteName" xml:space="preserve"><value>Site name</value></data>
+  <data name="Admin.SiteSettings.SocialAccounts" xml:space="preserve"><value>Social accounts</value></data>
+  <data name="Admin.SiteSettings.SocialImageDescription" xml:space="preserve"><value>Social image description</value></data>
+  <data name="Admin.SiteSettings.SocialImageFor" xml:space="preserve"><value>Social image for {0}</value></data>
+  <data name="Admin.SiteSettings.SocialImageURLForThisLanguage" xml:space="preserve"><value>Social image URL for this language</value></data>
+  <data name="Admin.SiteSettings.SquareAtLeast112112Published" xml:space="preserve"><value>Square, at least 112×112. Published in the structured data.</value></data>
+  <data name="Admin.SiteSettings.TheMasterSwitch" xml:space="preserve"><value>The master switch.</value></data>
+  <data name="Admin.SiteSettings.TheSentenceUnderTheBlueLink" xml:space="preserve"><value>The sentence under the blue link in Google, and the one in a link preview. Any page that does not write its own uses this. Google shows roughly the first 160 characters — write it for a person, not for a crawler.</value></data>
+  <data name="Admin.SiteSettings.TitleTemplate" xml:space="preserve"><value>Title template</value></data>
+  <data name="Admin.SiteSettings.TitleTemplateHint" xml:space="preserve"><value>{0} is where each page's own name goes. Without it, every page on the site would share one title.</value></data>
+  <data name="Admin.SiteSettings.TwitterHint" xml:space="preserve"><value>Without the @. Credits the account on link cards posted to X.</value></data>
+  <data name="Admin.SiteSettings.URLsOnceLanguagesAreCounted" xml:space="preserve"><value>URLs once languages are counted</value></data>
+  <data name="Admin.SiteSettings.Upload1200630WorksEverywhere" xml:space="preserve"><value>Upload (1200×630 works everywhere)</value></data>
+  <data name="Admin.SiteSettings.UploadDefaultSocialImage" xml:space="preserve"><value>Upload default social image</value></data>
+  <data name="Admin.SiteSettings.UploadLogo" xml:space="preserve"><value>Upload logo</value></data>
+  <data name="Admin.SiteSettings.UrlNotice" xml:space="preserve"><value>English is served at {0} and the others under a prefix — {1}, {2}, {3}. That is what lets Google index all four, and what makes a link you send someone open in the language you were reading, rather than in whatever language they last chose.</value></data>
+  <data name="Admin.SiteSettings.UsedAsIsWithoutTheTemplate" xml:space="preserve"><value>Used as-is, without the template — a homepage titled “Home — The VI House” wastes the most valuable 60 characters on the site. Aim for under 60.</value></data>
+  <data name="Admin.SiteSettings.UsuallyTheSameInEveryLanguage" xml:space="preserve"><value>Usually the same in every language. Occasionally not.</value></data>
+  <data name="Admin.SiteSettings.VerificationHint" xml:space="preserve"><value>Paste either the token or the whole {0} tag — the token is taken out of it either way.</value></data>
+  <data name="Admin.SiteSettings.ViewLlms" xml:space="preserve"><value>View llms.txt ({0})</value></data>
+  <data name="Admin.SiteSettings.ViewRobotsTxt" xml:space="preserve"><value>View robots.txt →</value></data>
+  <data name="Admin.SiteSettings.ViewSitemapXml" xml:space="preserve"><value>View sitemap.xml →</value></data>
+  <data name="Admin.SiteSettings.WhatTheOrganisationIs" xml:space="preserve"><value>What the organisation is</value></data>
+  <data name="Admin.SiteSettings.WhatTheSiteSaysAboutItself" xml:space="preserve"><value>What the site says about itself</value></data>
+  <data name="Admin.Table.Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Admin.Table.Empty" xml:space="preserve"><value>Nothing here yet.</value></data>
+  <data name="Admin.Table.Info" xml:space="preserve"><value>{0}–{1} of {2}</value></data>
+  <data name="Admin.Table.NoResults" xml:space="preserve"><value>Nothing matches that search.</value></data>
+  <data name="Admin.Table.PerPage" xml:space="preserve"><value>per page</value></data>
+  <data name="Admin.Table.Search" xml:space="preserve"><value>Search…</value></data>
+  <data name="Admin.Translations.AllSections" xml:space="preserve"><value>All sections</value></data>
+  <data name="Admin.Translations.Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="Admin.Translations.ClickToEdit" xml:space="preserve"><value>Click a value to edit it</value></data>
+  <data name="Admin.Translations.DownloadResxFiles" xml:space="preserve"><value>Download .resx files</value></data>
+  <data name="Admin.Translations.Err.Conflict" xml:space="preserve"><value>Someone else changed this while you had it open — it now reads “{0}”. Your text was not saved; the cell has been updated, so edit it again to overwrite.</value></data>
+  <data name="Admin.Translations.Err.EnglishEmpty" xml:space="preserve"><value>The English text is the source for every other language and cannot be emptied.</value></data>
+  <data name="Admin.Translations.Err.KeyMissing" xml:space="preserve"><value>That key is not in {0}.</value></data>
+  <data name="Admin.Translations.Err.Malformed" xml:space="preserve"><value>The placeholders are malformed — check for an unclosed or stray curly bracket.</value></data>
+  <data name="Admin.Translations.Err.NoPlaceholders" xml:space="preserve"><value>The English text has no placeholders, so this translation must not add any.</value></data>
+  <data name="Admin.Translations.Err.NotOnDisk" xml:space="preserve"><value>The .resx files are not on disk, so nothing can be saved. See Localization:ResourcesPath.</value></data>
+  <data name="Admin.Translations.Err.Placeholders" xml:space="preserve"><value>This text must use exactly the same placeholders as the English: {0}</value></data>
+  <data name="Admin.Translations.Err.TooLong" xml:space="preserve"><value>That is longer than 8000 characters — check for a paste accident.</value></data>
+  <data name="Admin.Translations.Err.Unknown" xml:space="preserve"><value>Unknown key or language.</value></data>
+  <data name="Admin.Translations.Err.WriteFailed" xml:space="preserve"><value>The file could not be written.</value></data>
+  <data name="Admin.Translations.EveryStringOnTheSiteIn" xml:space="preserve"><value>Every string on the site, in all four languages. Click any value to edit it — changes are written straight to the resource files and are live on the next page load, with no rebuild.</value></data>
+  <data name="Admin.Translations.Key" xml:space="preserve"><value>Key</value></data>
+  <data name="Admin.Translations.KeyCancels" xml:space="preserve"><value>cancels.</value></data>
+  <data name="Admin.Translations.KeyNewLine" xml:space="preserve"><value>starts a new line</value></data>
+  <data name="Admin.Translations.KeyOrTextInEnglishGerman" xml:space="preserve"><value>Key, or text in English, German, Turkish or Estonian…</value></data>
+  <data name="Admin.Translations.KeySaves" xml:space="preserve"><value>saves</value></data>
+  <data name="Admin.Translations.Languages" xml:space="preserve"><value>Languages</value></data>
+  <data name="Admin.Translations.NothingMatchesThat" xml:space="preserve"><value>Nothing matches that.</value></data>
+  <data name="Admin.Translations.ReadOnly" xml:space="preserve"><value>Read-only.</value></data>
+  <data name="Admin.Translations.ReadOnlyHint" xml:space="preserve"><value>No resource files were found at {0}, so the site is reading its strings from the compiled copies inside the application and nothing here can be saved. Set {1} to the folder holding {2}.</value></data>
+  <data name="Admin.Translations.Section" xml:space="preserve"><value>Section</value></data>
+  <data name="Admin.Translations.ShowingOf" xml:space="preserve"><value>Showing {0} of {1} keys.</value></data>
+  <data name="Admin.Translations.StillReadingAsEnglish" xml:space="preserve"><value>Still reading as English</value></data>
+  <data name="Admin.Translations.TranslationKeys" xml:space="preserve"><value>Translation keys</value></data>
+  <data name="Admin.Translations.TryADifferentSectionOrClear" xml:space="preserve"><value>Try a different section, or clear the search.</value></data>
+  <data name="Admin.Translations.Uses0StylePlaceholdersThatEvery" xml:space="preserve"><value>Uses {0}-style placeholders that every language must keep</value></data>
+  <data name="Admin.Users.About" xml:space="preserve"><value>About</value></data>
+  <data name="Admin.Users.Account" xml:space="preserve"><value>Account</value></data>
+  <data name="Admin.Users.AccountCreated" xml:space="preserve"><value>Account created</value></data>
+  <data name="Admin.Users.AccountHealth" xml:space="preserve"><value>Account Health</value></data>
+  <data name="Admin.Users.Address" xml:space="preserve"><value>Address</value></data>
+  <data name="Admin.Users.AfterSettingAPasswordTheyLl" xml:space="preserve"><value>After setting a password they'll be walked through confirming their email and scanning a QR code for two-factor. The admin panel stays closed until both are done.</value></data>
+  <data name="Admin.Users.AnnualEarnings" xml:space="preserve"><value>Annual earnings</value></data>
+  <data name="Admin.Users.Applications" xml:space="preserve"><value>Applications</value></data>
+  <data name="Admin.Users.BackToUsers" xml:space="preserve"><value>← Back to Users</value></data>
+  <data name="Admin.Users.BackToUsers94" xml:space="preserve"><value>Back to Users</value></data>
+  <data name="Admin.Users.BilledByStripe" xml:space="preserve"><value>Billed by Stripe — ending it here is refused; cancel the subscription at Stripe and the webhook ends it.</value></data>
+  <data name="Admin.Users.BlankThePlanSOwnPeriod" xml:space="preserve"><value>Blank = the plan's own period from today (no expiry for a one-time plan).</value></data>
+  <data name="Admin.Users.Bookings" xml:space="preserve"><value>Bookings</value></data>
+  <data name="Admin.Users.Commission" xml:space="preserve"><value>Commission</value></data>
+  <data name="Admin.Users.Commission27" xml:space="preserve"><value>Commission %</value></data>
+  <data name="Admin.Users.Company" xml:space="preserve"><value>Company</value></data>
+  <data name="Admin.Users.Complimentary" xml:space="preserve"><value>Complimentary</value></data>
+  <data name="Admin.Users.CreateAdminSendSetupLink" xml:space="preserve"><value>Create Admin &amp; Send Setup Link</value></data>
+  <data name="Admin.Users.CreateReferralLink" xml:space="preserve"><value>Create referral link</value></data>
+  <data name="Admin.Users.CreatesAStaffAccountAndEmails" xml:space="preserve"><value>Creates a staff account and emails a one-time setup link. You never choose their password — they set their own, then must confirm their email address and switch on two-factor authentication before the panel will open for them.</value></data>
+  <data name="Admin.Users.DisplayName" xml:space="preserve"><value>Display name</value></data>
+  <data name="Admin.Users.EGContentPartner12Month" xml:space="preserve"><value>e.g. Content partner — 12-month collaboration</value></data>
+  <data name="Admin.Users.EmailConfirmed" xml:space="preserve"><value>Email confirmed</value></data>
+  <data name="Admin.Users.EndMembership" xml:space="preserve"><value>End membership</value></data>
+  <data name="Admin.Users.Ends" xml:space="preserve"><value>Ends</value></data>
+  <data name="Admin.Users.Expectations" xml:space="preserve"><value>Expectations</value></data>
+  <data name="Admin.Users.ExperiencePayments" xml:space="preserve"><value>Experience Payments</value></data>
+  <data name="Admin.Users.From" xml:space="preserve"><value>From</value></data>
+  <data name="Admin.Users.GrantEvenIfThePlanIs" xml:space="preserve"><value>Grant even if the plan is at its member limit</value></data>
+  <data name="Admin.Users.GrantMembership" xml:space="preserve"><value>Grant membership</value></data>
+  <data name="Admin.Users.GrantPlan" xml:space="preserve"><value>Grant plan</value></data>
+  <data name="Admin.Users.GrantedBecause" xml:space="preserve"><value>Granted because</value></data>
+  <data name="Admin.Users.History" xml:space="preserve"><value>History</value></data>
+  <data name="Admin.Users.InTheirWords" xml:space="preserve"><value>In their words</value></data>
+  <data name="Admin.Users.InviteAdmin" xml:space="preserve"><value>+ Invite Admin</value></data>
+  <data name="Admin.Users.InviteTitle" xml:space="preserve"><value>Invite an admin</value></data>
+  <data name="Admin.Users.LastSignIn" xml:space="preserve"><value>Last sign-in</value></data>
+  <data name="Admin.Users.Link" xml:space="preserve"><value>Link</value></data>
+  <data name="Admin.Users.LockedOut" xml:space="preserve"><value>Locked out</value></data>
+  <data name="Admin.Users.MemberStatus" xml:space="preserve"><value>Member status</value></data>
+  <data name="Admin.Users.Membership" xml:space="preserve"><value>Membership</value></data>
+  <data name="Admin.Users.MembershipPayments" xml:space="preserve"><value>Membership Payments</value></data>
+  <data name="Admin.Users.Msg.AccountExists" xml:space="preserve"><value>An account already exists for that email address. Grant them admin roles from their customer record instead.</value></data>
+  <data name="Admin.Users.Msg.AdminCreated" xml:space="preserve"><value>Admin account created for {0}. They've been emailed a setup link.</value></data>
+  <data name="Admin.Users.Msg.ChooseRole" xml:space="preserve"><value>Choose at least one admin role.</value></data>
+  <data name="Admin.Users.Msg.HasReferralLink" xml:space="preserve"><value>They already have a referral link.</value></data>
+  <data name="Admin.Users.Msg.LastSuperAdmin" xml:space="preserve"><value>You're the only SuperAdmin — promote someone else before removing your own access.</value></data>
+  <data name="Admin.Users.Msg.NoEmail" xml:space="preserve"><value>This account has no email address to send a link to.</value></data>
+  <data name="Admin.Users.Msg.Protected" xml:space="preserve"><value>{0} is a protected account and cannot be changed from the panel.</value></data>
+  <data name="Admin.Users.Msg.ReferralCreated" xml:space="preserve"><value>Referral link created: /r/{0}. They can copy it from their account page.</value></data>
+  <data name="Admin.Users.Msg.ReferralPaused" xml:space="preserve"><value>Referral link paused — visits to it no longer count.</value></data>
+  <data name="Admin.Users.Msg.ReferralReactivated" xml:space="preserve"><value>Referral link re-activated.</value></data>
+  <data name="Admin.Users.Msg.RolesUpdated" xml:space="preserve"><value>Roles updated.</value></data>
+  <data name="Admin.Users.Msg.SetupLinkFailed" xml:space="preserve"><value>The email to {0} did not go out — Emails &amp; SMS has the reason, and a Resend button.</value></data>
+  <data name="Admin.Users.Msg.SetupLinkSent" xml:space="preserve"><value>A password setup link is on its way to {0}. It works once, for 24 hours.</value></data>
+  <data name="Admin.Users.Msg.TwoFactorReset" xml:space="preserve"><value>Two-factor reset for {0}. The panel is closed to them from their next click, their session ends within five minutes, and they'll pair a new authenticator app when they sign in again.</value></data>
+  <data name="Admin.Users.Never" xml:space="preserve"><value>Never</value></data>
+  <data name="Admin.Users.NeverSignedIn" xml:space="preserve"><value>Never signed in</value></data>
+  <data name="Admin.Users.NoApplicationsFromThisAccount" xml:space="preserve"><value>No applications from this account.</value></data>
+  <data name="Admin.Users.NoBookingsFromThisAccount" xml:space="preserve"><value>No bookings from this account.</value></data>
+  <data name="Admin.Users.NoCurrentMembership" xml:space="preserve"><value>No current membership.</value></data>
+  <data name="Admin.Users.NoExperiencePaymentsFromThisAccount" xml:space="preserve"><value>No experience payments from this account.</value></data>
+  <data name="Admin.Users.NoMembershipPurchasesFromThisAccount" xml:space="preserve"><value>No membership purchases from this account.</value></data>
+  <data name="Admin.Users.NoReferralLink" xml:space="preserve"><value>No referral link. Only admins can assign one; the person then finds it on their account page.</value></data>
+  <data name="Admin.Users.NoRegisteredAccountsYet" xml:space="preserve"><value>No registered accounts yet.</value></data>
+  <data name="Admin.Users.PaidMembership" xml:space="preserve"><value>Paid</value></data>
+  <data name="Admin.Users.PerformanceSettings" xml:space="preserve"><value>Performance &amp; settings</value></data>
+  <data name="Admin.Users.Plan" xml:space="preserve"><value>Plan</value></data>
+  <data name="Admin.Users.Profile" xml:space="preserve"><value>Profile</value></data>
+  <data name="Admin.Users.ProtectedAccount" xml:space="preserve"><value>Protected account.</value></data>
+  <data name="Admin.Users.Provider" xml:space="preserve"><value>Provider</value></data>
+  <data name="Admin.Users.ReasonKeptOnTheRecord" xml:space="preserve"><value>Reason (kept on the record)</value></data>
+  <data name="Admin.Users.Reference" xml:space="preserve"><value>Reference</value></data>
+  <data name="Admin.Users.ReferralLink" xml:space="preserve"><value>Referral link</value></data>
+  <data name="Admin.Users.Renews" xml:space="preserve"><value>Renews</value></data>
+  <data name="Admin.Users.ResetLinkConfirm" xml:space="preserve"><value>Email {0} a one-time link to reset their password?</value></data>
+  <data name="Admin.Users.ResetTwoFactor" xml:space="preserve"><value>Reset two-factor</value></data>
+  <data name="Admin.Users.ResetTwoFactorConfirm" xml:space="preserve"><value>Reset two-factor for {0}? They will be signed out everywhere and must pair a new authenticator app on their next sign-in.</value></data>
+  <data name="Admin.Users.Roles" xml:space="preserve"><value>Roles</value></data>
+  <data name="Admin.Users.RolesTwoFactorMembershipAndReferral" xml:space="preserve"><value>Roles, two-factor, membership and referral status cannot be changed from the panel for this account — by anyone.</value></data>
+  <data name="Admin.Users.SaveRoles" xml:space="preserve"><value>Save Roles</value></data>
+  <data name="Admin.Users.SendResetEmail" xml:space="preserve"><value>Send password reset email</value></data>
+  <data name="Admin.Users.SendSetupEmail" xml:space="preserve"><value>Send password setup email</value></data>
+  <data name="Admin.Users.SetupLinkConfirm" xml:space="preserve"><value>Email {0} a one-time link to set their password?</value></data>
+  <data name="Admin.Users.SetupLinkFor" xml:space="preserve"><value>Setup link for {0}</value></data>
+  <data name="Admin.Users.Since" xml:space="preserve"><value>Since</value></data>
+  <data name="Admin.Users.Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Admin.Users.StripeReference" xml:space="preserve"><value>Stripe reference</value></data>
+  <data name="Admin.Users.Submitted" xml:space="preserve"><value>Submitted</value></data>
+  <data name="Admin.Users.SuperAdminCanManageRolesAndInvite" xml:space="preserve"><value>SuperAdmin can manage roles and invite other admins. Every other role can use the panel but not change who has access.</value></data>
+  <data name="Admin.Users.ThisLinkHasBeenEmailedTo" xml:space="preserve"><value>This link has been emailed to them. It works once and lets them set a password — if the email doesn't arrive, send them this directly over a channel you trust. It won't be shown again.</value></data>
+  <data name="Admin.Users.TitleProfession" xml:space="preserve"><value>Title / profession</value></data>
+  <data name="Admin.Users.To" xml:space="preserve"><value>To</value></data>
+  <data name="Admin.Users.TwoFactor" xml:space="preserve"><value>Two-factor</value></data>
+  <data name="Admin.Users.TwoFactorOff" xml:space="preserve"><value>Not set up</value></data>
+  <data name="Admin.Users.TwoFactorOn" xml:space="preserve"><value>Enabled</value></data>
+  <data name="Admin.Users.ValidUntil" xml:space="preserve"><value>Valid until</value></data>
+  <data name="Admin.Users.YesTooManyFailedAttempts" xml:space="preserve"><value>Yes — too many failed attempts</value></data>
+  <data name="Admin.Validation.EnterAFullURLIncludingHttps" xml:space="preserve"><value>Enter a full URL, including https://</value></data>
+  <data name="Admin.Validation.LettersDigitsAndHyphensOnly" xml:space="preserve"><value>Letters, digits and hyphens only.</value></data>
+  <data name="Admin.Validation.LettersNumbersAndHyphensOnlyThis" xml:space="preserve"><value>Letters, numbers and hyphens only — this becomes part of a public URL.</value></data>
+  <data name="Admin.Validation.LowercaseLettersNumbersAndHyphensOnly" xml:space="preserve"><value>Lowercase letters, numbers and hyphens only.</value></data>
+  <data name="Admin.Validation.ThatDoesNotLookLikeA" xml:space="preserve"><value>That does not look like a full address — include https://</value></data>
+  <data name="Admin.Validation.TwoLettersEGGB" xml:space="preserve"><value>Two letters, e.g. GB</value></data>
+  <data name="Admin.Validation.UseLettersNumbersAndHyphensOnly" xml:space="preserve"><value>Use letters, numbers and hyphens only.</value></data>
+  <data name="Admin.Validation.UseTheTwoLetterCountryCode" xml:space="preserve"><value>Use the two-letter country code, e.g. GB.</value></data>
+  <data name="Admin.Webhooks.All" xml:space="preserve"><value>All</value></data>
+  <data name="Admin.Webhooks.Attempts" xml:space="preserve"><value>Attempts</value></data>
+  <data name="Admin.Webhooks.Empty" xml:space="preserve"><value>No events yet.</value></data>
+  <data name="Admin.Webhooks.EmptyForStatus" xml:space="preserve"><value>No events with status “{0}” yet.</value></data>
+  <data name="Admin.Webhooks.Event" xml:space="preserve"><value>Event</value></data>
+  <data name="Admin.Webhooks.Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Admin.Webhooks.FailedWaiting" xml:space="preserve"><value>Failed events waiting on Stripe's retries: {0}.</value></data>
+  <data name="Admin.Webhooks.FetchThisEventFromStripeAgain" xml:space="preserve"><value>Fetch this event from Stripe again and run every handler on it?</value></data>
+  <data name="Admin.Webhooks.Ignored" xml:space="preserve"><value>Ignored</value></data>
+  <data name="Admin.Webhooks.InProgress" xml:space="preserve"><value>In progress</value></data>
+  <data name="Admin.Webhooks.Intro" xml:space="preserve"><value>Every event Stripe delivered that verified against the webhook secret, newest first. {0} means every handler ran and committed together; {1} means a handler threw, nothing was written, and Stripe was told to retry — the reason is on the row, and {2} fetches the event from Stripe again and pushes it through the same path. {3} events are types nothing acts on yet. Payloads are never stored.</value></data>
+  <data name="Admin.Webhooks.LastError" xml:space="preserve"><value>Last error</value></data>
+  <data name="Admin.Webhooks.Msg.Failed" xml:space="preserve"><value>Event {0} failed again: {1}</value></data>
+  <data name="Admin.Webhooks.Msg.Gone" xml:space="preserve"><value>Stripe no longer has event {0} (events are kept for 30 days), so it cannot be re-run.</value></data>
+  <data name="Admin.Webhooks.Msg.Ignored" xml:space="preserve"><value>Event {0} re-run; no handler acts on {1}.</value></data>
+  <data name="Admin.Webhooks.Msg.InProgress" xml:space="preserve"><value>Event {0} is being processed by another attempt right now.</value></data>
+  <data name="Admin.Webhooks.Msg.Nothing" xml:space="preserve"><value>Event {0}: nothing to do.</value></data>
+  <data name="Admin.Webhooks.Msg.Processed" xml:space="preserve"><value>Event {0} re-run and processed.</value></data>
+  <data name="Admin.Webhooks.Object" xml:space="preserve"><value>Object</value></data>
+  <data name="Admin.Webhooks.Processed" xml:space="preserve"><value>Processed</value></data>
+  <data name="Admin.Webhooks.ReRun" xml:space="preserve"><value>Re-run</value></data>
+  <data name="Admin.Webhooks.Received" xml:space="preserve"><value>Received</value></data>
+  <data name="Admin.Webhooks.ShowThem" xml:space="preserve"><value>Show them</value></data>
+  <data name="Admin.Webhooks.ShowingNewest" xml:space="preserve"><value>Showing the newest {0}. Narrow by status to see older rows.</value></data>
+  <data name="Admin.Webhooks.TestMode" xml:space="preserve"><value>test</value></data>
+  <data name="Admin.Writer.Autosaved" xml:space="preserve"><value>Saved on this device at {0}</value></data>
+  <data name="Admin.Writer.BodyPlaceholder" xml:space="preserve"><value>Start writing… Use Heading for sections; drag images straight in.</value></data>
+  <data name="Admin.Writer.DangerZone" xml:space="preserve"><value>Delete article</value></data>
+  <data name="Admin.Writer.DeleteHint" xml:space="preserve"><value>Deletes the article, its translations and its uploaded images. This cannot be undone.</value></data>
+  <data name="Admin.Writer.FocusOff" xml:space="preserve"><value>Exit focus</value></data>
+  <data name="Admin.Writer.FocusOn" xml:space="preserve"><value>Focus mode</value></data>
+  <data name="Admin.Writer.Minutes" xml:space="preserve"><value>{0} min read</value></data>
+  <data name="Admin.Writer.Restore" xml:space="preserve"><value>Unsaved text from {0} was found on this device.</value></data>
+  <data name="Admin.Writer.RestoreNo" xml:space="preserve"><value>Discard</value></data>
+  <data name="Admin.Writer.RestoreYes" xml:space="preserve"><value>Restore it</value></data>
+  <data name="Admin.Writer.SearchCard" xml:space="preserve"><value>Search &amp; sharing</value></data>
+  <data name="Admin.Writer.SearchIntro" xml:space="preserve"><value>How the article appears in Google and in link previews. Left empty, the headline and standfirst are used.</value></data>
+  <data name="Admin.Writer.Settings" xml:space="preserve"><value>Article settings</value></data>
+  <data name="Admin.Writer.Shortcut" xml:space="preserve"><value>Ctrl + S saves</value></data>
+  <data name="Admin.Writer.StandfirstPlaceholder" xml:space="preserve"><value>One or two sentences that make someone want to read on.</value></data>
+  <data name="Admin.Writer.Start.After" xml:space="preserve"><value>Next you'll write the article itself. Images can be dragged straight into the text.</value></data>
+  <data name="Admin.Writer.Start.AuthorHint" xml:space="preserve"><value>Shown under the headline. Pre-filled with your name.</value></data>
+  <data name="Admin.Writer.Start.Submit" xml:space="preserve"><value>Start writing</value></data>
+  <data name="Admin.Writer.Start.TitleHint" xml:space="preserve"><value>You can change it at any time. The web address is made from it.</value></data>
+  <data name="Admin.Writer.TitlePlaceholder" xml:space="preserve"><value>Headline</value></data>
+  <data name="Admin.Writer.Words" xml:space="preserve"><value>{0} words</value></data>
+  <data name="Preview.Edit" xml:space="preserve"><value>Edit in the admin panel</value></data>
+  <data name="Preview.Journal.Draft" xml:space="preserve"><value>Preview — this article is a draft. Only staff can see this page.</value></data>
+  <data name="Preview.Seminar.Archived" xml:space="preserve"><value>Preview — this session is archived and no longer listed.</value></data>
+  <data name="Preview.Seminar.Draft" xml:space="preserve"><value>Preview — this session is a draft. Only staff can see this page.</value></data>
+  <data name="Preview.Seminar.Members" xml:space="preserve"><value>This session is for members only — visitors who aren't signed in get a page-not-found.</value></data>
+  <data name="Preview.Seminar.Unlisted" xml:space="preserve"><value>This session is unlisted — it's not on the sessions page; only people with the link can open it.</value></data>
+  <data name="Preview.Tag" xml:space="preserve"><value>Staff only</value></data>
+  <data name="Seminars.StaffNotice" xml:space="preserve"><value>Hidden from visitors: {0} draft(s) and {1} members-only or unlisted session(s). Only staff see this note.</value></data>
+  <data name="Seminars.StaffNotice.Manage" xml:space="preserve"><value>Manage sessions</value></data>
+  <data name="Validation.EmailAddress" xml:space="preserve"><value>{0} is not a valid email address.</value></data>
+  <data name="Validation.Phone" xml:space="preserve"><value>{0} is not a valid phone number.</value></data>
+  <data name="Validation.Range" xml:space="preserve"><value>{0} must be between {1} and {2}.</value></data>
+  <data name="Validation.Required" xml:space="preserve"><value>{0} is required.</value></data>
+  <data name="Validation.StringLength" xml:space="preserve"><value>{0} can be at most {1} characters.</value></data>
+  <data name="Validation.StringLengthRange" xml:space="preserve"><value>{0} must be between {2} and {1} characters.</value></data>
+  <data name="Validation.Url" xml:space="preserve"><value>{0} must be a full web address, starting with https://.</value></data>
+  <data name="Admin.Ambassadors.InvitationExpired" xml:space="preserve"><value>Invitation expired</value></data>
+  <data name="Admin.Ambassadors.Invited" xml:space="preserve"><value>Invited</value></data>
+  <data name="Admin.Ambassadors.InvitedWaiting" xml:space="preserve"><value>Invited — waiting for them</value></data>
+  <data name="Admin.Community.AddLink" xml:space="preserve"><value>Add link</value></data>
+  <data name="Admin.Community.EditTitle" xml:space="preserve"><value>Edit community link</value></data>
+  <data name="Admin.Community.NewTitle" xml:space="preserve"><value>New community link</value></data>
+  <data name="Admin.Experiences.CoverPathHint" xml:space="preserve"><value>A path to a file already on the site, e.g. /img/experiences/london-1600.jpg.</value></data>
+  <data name="Admin.Experiences.CoverUploadInUse" xml:space="preserve"><value>An uploaded cover is in use. Remove it above to go back to a path.</value></data>
+  <data name="Admin.PromoCodes.CreateCode" xml:space="preserve"><value>Create code</value></data>
+  <data name="Admin.PromoCodes.EditTitle" xml:space="preserve"><value>Promo code — {0}</value></data>
+  <data name="Admin.PromoCodes.NewTitle" xml:space="preserve"><value>New promo code</value></data>
+  <data name="Admin.Users.PauseLink" xml:space="preserve"><value>Pause link</value></data>
+  <data name="Admin.Users.ProfileComplete" xml:space="preserve"><value>Complete</value></data>
+  <data name="Admin.Users.ProfileIncomplete" xml:space="preserve"><value>Incomplete — the required statements are missing</value></data>
+  <data name="Admin.Users.ReactivateLink" xml:space="preserve"><value>Re-activate link</value></data>
+  <data name="Admin.Field.BillingPeriod" xml:space="preserve"><value>Billing period</value></data>
+  <data name="Admin.Field.Capacity" xml:space="preserve"><value>Capacity</value></data>
+  <data name="Admin.Field.Country" xml:space="preserve"><value>Country</value></data>
+  <data name="Admin.Field.Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Admin.Field.Slug" xml:space="preserve"><value>Web address (slug)</value></data>
+  <data name="Admin.Field.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Admin.Field.TimeZone" xml:space="preserve"><value>Time zone</value></data>
+  <data name="Admin.Field.Title" xml:space="preserve"><value>Title</value></data>
+  <data name="Admin.Field.Venue" xml:space="preserve"><value>Venue</value></data>
+  <data name="Admin.Field.Visibility" xml:space="preserve"><value>Who can see it</value></data>
+  <data name="Admin.Form.Required" xml:space="preserve"><value>(required)</value></data>
+  <data name="Admin.MembershipPlans.OneTime" xml:space="preserve"><value>one-time</value></data>
+  <data name="Admin.MembershipPlans.PerMonth" xml:space="preserve"><value>/ month</value></data>
+  <data name="Admin.MembershipPlans.PerYear" xml:space="preserve"><value>/ year</value></data>
+  <data name="Admin.Role.Ambassador" xml:space="preserve"><value>Ambassador</value></data>
+  <data name="Admin.Role.Concierge" xml:space="preserve"><value>Concierge</value></data>
+  <data name="Admin.Role.Editor" xml:space="preserve"><value>Editor</value></data>
+  <data name="Admin.Role.EventManager" xml:space="preserve"><value>Event manager</value></data>
+  <data name="Admin.Role.Finance" xml:space="preserve"><value>Finance</value></data>
+  <data name="Admin.Role.Marketing" xml:space="preserve"><value>Marketing</value></data>
+  <data name="Admin.Role.Member" xml:space="preserve"><value>Member</value></data>
+  <data name="Admin.Role.SuperAdmin" xml:space="preserve"><value>Super admin</value></data>
+  <data name="Admin.Role.Support" xml:space="preserve"><value>Support</value></data>
+  <data name="Admin.Ambassadors.WholeSite" xml:space="preserve"><value>The general link (any page of the site)</value></data>
+  <data name="Admin.Enum.MemberStatus.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Admin.Enum.MemberStatus.Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Admin.Enum.MemberStatus.PendingApplication" xml:space="preserve"><value>Application pending</value></data>
+  <data name="Admin.Enum.MemberStatus.Suspended" xml:space="preserve"><value>Suspended</value></data>
+  <data name="Admin.Msg.Added" xml:space="preserve"><value>“{0}” added.</value></data>
+  <data name="Admin.Msg.Created" xml:space="preserve"><value>“{0}” created.</value></data>
+  <data name="Admin.Msg.Deleted" xml:space="preserve"><value>“{0}” deleted.</value></data>
+  <data name="Admin.Msg.SavedNamed" xml:space="preserve"><value>“{0}” saved.</value></data>
+  <data name="Admin.Table.Page" xml:space="preserve"><value>Page {0}</value></data>
+  <data name="Admin.Table.SearchLabel" xml:space="preserve"><value>Search</value></data>
+  <data name="Admin.Table.SearchTitle" xml:space="preserve"><value>Search within the table</value></data>
+  <data name="Admin.Table.SortHint" xml:space="preserve"><value>Activate to sort</value></data>
 </root>

@@ -10,6 +10,7 @@ using VIHouse.Business.Abstract;
 using VIHouse.Business.Concrete;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
+using VIHouse.Entities.Seminars;
 using VIHouse.WebUI.Helpers;
 using VIHouse.WebUI.ViewModels.Seminars;
 
@@ -48,6 +49,18 @@ public class SeminarsController(
 
         var culture = CultureInfo.CurrentUICulture.Name;
         ViewData["Title"] = loc["Seminars.Title"].Value;
+
+        // Staff only: say what the listing is not showing visitors, so a draft or a members-only
+        // session is never mistaken for one that "does not appear".
+        if (ViewerIsStaff)
+        {
+            var hidden = await seminarService.CountHiddenFromVisitorsAsync(ct);
+            if (hidden.Total > 0)
+            {
+                ViewData["StaffNotice"] = loc["Seminars.StaffNotice", hidden.Drafts, hidden.Restricted].Value;
+                ViewData["StaffNoticeUrl"] = Url.Action("Index", "AdminSeminars", new { area = "Admin" });
+            }
+        }
         this.SetSeo(loc["Seo.Sessions.Description"].Value, canonicalPath: "/sessions", pageKey: "sessions");
 
         return View(seminars.Select(s => SeminarCardViewModel.FromEntity(s, culture)).ToList());
@@ -64,6 +77,25 @@ public class SeminarsController(
 
         ViewData["Title"] = model.SeoTitle ?? model.Title;
         ViewData["Seo"] = PageSeoBuilder.ForSeminar(seminar, CultureInfo.CurrentUICulture.Name, loc["Seminars.Title"].Value);
+
+        // Staff can open a session in any state; say when visitors cannot.
+        if (ViewerIsStaff)
+        {
+            var banner = seminar.Status switch
+            {
+                SeminarStatus.Draft => loc["Preview.Seminar.Draft"].Value,
+                SeminarStatus.Archived => loc["Preview.Seminar.Archived"].Value,
+                _ when seminar.Visibility == SeminarVisibility.Members => loc["Preview.Seminar.Members"].Value,
+                _ when seminar.Visibility == SeminarVisibility.Unlisted => loc["Preview.Seminar.Unlisted"].Value,
+                _ => null,
+            };
+            if (banner is not null)
+            {
+                ViewData["PreviewBanner"] = banner;
+                ViewData["PreviewBannerEdit"] = Url.Action("Edit", "AdminSeminars", new { area = "Admin", id = seminar.Id });
+            }
+        }
+
         return View(model);
     }
 

@@ -1,7 +1,7 @@
 @using VIHouse.Entities.Commerce
 @model List<AdminBookingListItemViewModel>
 @{
-    ViewData["Title"] = "Bookings";
+    ViewData["Title"] = Loc["Admin.Nav.AdminBookings"].Value;
     var selected = ViewData["SelectedStatus"] as BookingStatus?;
 
     string TabClass(BookingStatus? s) => selected == s ? "admin-tabs__link active" : "admin-tabs__link";
@@ -15,16 +15,16 @@
 }
 
 <nav class="admin-tabs">
-    <a class="@TabClass(null)" asp-action="Index">All</a>
-    <a class="@TabClass(BookingStatus.Pending)" asp-action="Index" asp-route-status="Pending">Pending</a>
-    <a class="@TabClass(BookingStatus.Confirmed)" asp-action="Index" asp-route-status="Confirmed">Confirmed</a>
-    <a class="@TabClass(BookingStatus.Cancelled)" asp-action="Index" asp-route-status="Cancelled">Cancelled</a>
-    <a class="@TabClass(BookingStatus.Refunded)" asp-action="Index" asp-route-status="Refunded">Refunded</a>
+    <a class="@TabClass(null)" asp-action="Index">@Loc["Admin.Bookings.All"]</a>
+    <a class="@TabClass(BookingStatus.Pending)" asp-action="Index" asp-route-status="Pending">@Loc["Admin.Bookings.Pending"]</a>
+    <a class="@TabClass(BookingStatus.Confirmed)" asp-action="Index" asp-route-status="Confirmed">@Loc["Admin.Bookings.Confirmed"]</a>
+    <a class="@TabClass(BookingStatus.Cancelled)" asp-action="Index" asp-route-status="Cancelled">@Loc["Admin.Bookings.Cancelled"]</a>
+    <a class="@TabClass(BookingStatus.Refunded)" asp-action="Index" asp-route-status="Refunded">@Loc["Admin.Bookings.Refunded"]</a>
 </nav>
 
 @if (Model.Count == 0)
 {
-    <p>No bookings here yet.</p>
+    <p>@Loc["Admin.Bookings.NoBookingsHereYet"]</p>
 }
 else
 {
@@ -32,12 +32,12 @@ else
     <table class="admin-table" data-admin-table>
         <thead>
             <tr>
-                <th>Reference</th>
-                <th>Customer</th>
-                <th>Experience</th>
-                <th>Status</th>
-                <th>Amount</th>
-                <th>Created</th>
+                <th>@Loc["Admin.Bookings.Reference"]</th>
+                <th>@Loc["Admin.Bookings.Customer"]</th>
+                <th>@Loc["Admin.Bookings.Experience"]</th>
+                <th>@Loc["Admin.Common.Status"]</th>
+                <th>@Loc["Admin.Common.Amount"]</th>
+                <th>@Loc["Admin.Common.Created"]</th>
                 <th></th>
             </tr>
         </thead>
@@ -48,14 +48,14 @@ else
                     <td><a asp-action="Details" asp-route-id="@b.Id">@b.BookingReference</a></td>
                     <td>@(b.CustomerEmail ?? "—")</td>
                     <td>@b.ExperienceLabel</td>
-                    <td><span class="@BadgeClass(b.Status)">@b.Status</span></td>
+                    <td><span class="@BadgeClass(b.Status)">@Loc.Label(b.Status)</span></td>
                     <td>@MoneyFormatter.Format(b.AmountMinor, b.Currency)</td>
                     <td>@b.CreatedAt.ToString("dd MMM yyyy")</td>
                     @* Reaching the payment behind a booking previously meant opening the booking,
                        reading the reference, then searching Payments for it. *@
                     <td class="admin-table__actions">
-                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@b.Id">Open</a>
-                        <a class="admin-icon-btn" asp-controller="AdminPayments" asp-action="Index">Payments</a>
+                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@b.Id">@Loc["Admin.Common.Open"]</a>
+                        <a class="admin-icon-btn" asp-controller="AdminPayments" asp-action="Index">@Loc["Admin.Bookings.Payments"]</a>
                     </td>
                 </tr>
             }

@@ -44,7 +44,7 @@
     @if (Model.HasUploadedImage || !string.IsNullOrWhiteSpace(Model.Form.ImageUrl))
     {
         <form asp-action="RemoveImage" asp-route-id="@slideId" method="post" class="admin-inline-form"
-              onsubmit="return confirm('@Loc["Admin.HeroSlide.ConfirmRemoveImage"].Value.Replace("'", "\\'")');">
+              data-confirm="@Loc["Admin.HeroSlide.ConfirmRemoveImage"]">
             <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.HeroSlide.RemoveImage"]</button>
         </form>
     }
@@ -189,7 +189,7 @@
 @if (!active.IsDefault && active.IsWritten)
 {
     <form asp-action="DeleteTranslation" asp-route-id="@slideId" method="post" class="admin-form"
-          onsubmit="return confirm('@Loc["Admin.HeroSlide.ConfirmDeleteTranslation"].Value.Replace("'", "\\'")');">
+          data-confirm="@Loc["Admin.HeroSlide.ConfirmDeleteTranslation"]">
         <input type="hidden" name="culture" value="@active.Culture.Name" />
         <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.HeroSlide.DeleteTranslation",
                     active.Culture.NativeLabel]</button>

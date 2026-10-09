@@ -11,6 +11,10 @@ public interface IJournalPostRepository : IRepository<JournalPost>
 {
     Task<JournalPost?> GetBySlugAsync(string slug, CancellationToken ct = default);
 
+    /// <summary>True when another post (not <paramref name="exceptId"/>) already uses the slug. The
+    /// column has a unique index, so this is what turns a clash into a message instead of a 500.</summary>
+    Task<bool> SlugExistsAsync(string slug, Guid? exceptId = null, CancellationToken ct = default);
+
     Task<List<JournalPost>> GetPublicListingAsync(JournalPostFilter filter, CancellationToken ct = default);
 
     /// <summary>Everything the admin index needs, newest first.</summary>

@@ -15,10 +15,11 @@ public class AdminJournalPostFormViewModel
 {
     public Guid? Id { get; set; }
 
-    [Required, StringLength(200)]
-    [RegularExpression("^[a-z0-9]+(-[a-z0-9]+)*$", ErrorMessage = "Journal.Validation.Slug")]
+    // Not validated against a pattern any more: JournalService turns whatever is typed into a clean
+    // slug (Slugs.From) and says so when it is empty or taken, instead of rejecting "My Post".
+    [StringLength(200)]
     [Display(Name = "Admin.Journal.Slug")]
-    public string Slug { get; set; } = default!;
+    public string? Slug { get; set; }
 
     [Required]
     [Display(Name = "Admin.Journal.Category")]
@@ -44,7 +45,7 @@ public class AdminJournalPostFormViewModel
     public JournalPost ToEntity() => new()
     {
         Id = Id ?? Guid.NewGuid(),
-        Slug = Slug.Trim(),
+        Slug = (Slug ?? string.Empty).Trim(),
         Category = Category,
         Status = Status,
         CoverImageUrl = string.IsNullOrWhiteSpace(CoverImageUrl) ? null : CoverImageUrl.Trim(),
@@ -91,9 +92,10 @@ public class AdminJournalTranslationFormViewModel
     [Display(Name = "Admin.Journal.SeoDescription")]
     public string? SeoDescription { get; set; }
 
-    [Required]
+    // Optional while drafting: a writer can save the headline before the article exists. Publishing
+    // still needs the English body; JournalService enforces it and the publish card says so.
     [Display(Name = "Admin.Journal.Body")]
-    public string Body { get; set; } = default!;
+    public string? Body { get; set; }
 
     public JournalPostTranslation ToEntity() => new()
     {
@@ -103,7 +105,7 @@ public class AdminJournalTranslationFormViewModel
         Excerpt = Excerpt,
         SeoTitle = SeoTitle,
         SeoDescription = SeoDescription,
-        Body = Body,
+        Body = Body ?? string.Empty,
     };
 
     public static AdminJournalTranslationFormViewModel FromEntity(Guid postId, JournalPostTranslation t) => new()
@@ -128,14 +130,26 @@ public class AdminJournalTranslationFormViewModel
 }
 
 /// <summary>
-/// The Create screen. A post and its default-language copy are created together, because a post
-/// with no title in any language is not something the site can render — the translation tabs for
-/// the other three appear once it exists, along with the media library.
+/// "New article": the headline and a category, and optionally the author and a standfirst. That is
+/// all it takes to start; the slug comes from the title and the article is written on the next
+/// screen, where images can already be uploaded.
 /// </summary>
-public class AdminJournalCreateViewModel
+public class AdminJournalStartViewModel
 {
-    public AdminJournalPostFormViewModel Post { get; set; } = new();
-    public AdminJournalTranslationFormViewModel DefaultTranslation { get; set; } = new();
+    [Required(ErrorMessage = "Admin.Journal.Validation.TitleRequired"), StringLength(200)]
+    [Display(Name = "Admin.Journal.Title")]
+    public string Title { get; set; } = string.Empty;
+
+    [Display(Name = "Admin.Journal.Category")]
+    public JournalCategory Category { get; set; } = JournalCategory.FounderStories;
+
+    [StringLength(150)]
+    [Display(Name = "Admin.Journal.AuthorName")]
+    public string? AuthorName { get; set; }
+
+    [StringLength(500)]
+    [Display(Name = "Admin.Journal.Excerpt")]
+    public string? Excerpt { get; set; }
 }
 
 /// <summary>Everything the Edit screen shows at once: the post's own fields, one tab per language,
@@ -163,6 +177,16 @@ public class AdminJournalEditViewModel
     public string ActiveCulture { get; set; } = SiteCultures.Default;
 
     public DateTimeOffset? PublishedAt { get; set; }
+
+    /// <summary>Status, audience, checklist and the Publish/Update/Unpublish buttons.</summary>
+    public PublishCardViewModel PublishCard { get; set; } = default!;
+
+    /// <summary>When the post last changed on the server, in Unix milliseconds. The writer compares
+    /// it with its local autosave to decide whether to offer "restore unsaved text".</summary>
+    public long UpdatedAtMs { get; set; }
+
+    /// <summary>The site's address for the post, for the slug preview and the search snippet.</summary>
+    public string PublicUrlBase { get; set; } = default!;
 }
 
 /// <param name="IsWritten">False when no row exists for this culture yet.</param>

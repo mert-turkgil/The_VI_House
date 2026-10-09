@@ -7,12 +7,26 @@
         <span asp-validation-for="Slug" class="field-validation-error"></span>
         <p class="admin-field__hint">@Loc["Admin.Seminar.Slug.Hint"]</p>
     </div>
-    <div class="admin-field">
-        <label asp-for="Visibility"></label>
-        <select asp-for="Visibility" asp-items="Html.GetEnumSelectList<SeminarVisibility>()"></select>
-        <p class="admin-field__hint">@Loc["Admin.Seminar.Visibility.Hint"]</p>
-    </div>
 </div>
+
+@* Who can see the session once it is published, as three explained choices rather than a select of
+   enum names. Members only and Unlisted both hide it from signed-out visitors, which is the most
+   common reason a published session "does not appear". *@
+<fieldset class="admin-field admin-choice-group" id="visibility">
+    <legend>@Loc["Admin.Seminar.Visibility"]</legend>
+    <div class="admin-choice-group__options">
+        @foreach (var option in Enum.GetValues<SeminarVisibility>())
+        {
+            <label class="admin-choice">
+                <input type="radio" asp-for="Visibility" value="@option" />
+                <span class="admin-choice__body">
+                    <strong>@Loc["Admin.Seminar.VisibilityName." + option]</strong>
+                    <span>@Loc["Admin.Seminar.Visibility." + option + ".Help"]</span>
+                </span>
+            </label>
+        }
+    </div>
+</fieldset>
 
 <div class="admin-form__grid">
     <div class="admin-field">

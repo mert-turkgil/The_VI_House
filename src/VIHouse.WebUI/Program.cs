@@ -426,6 +426,10 @@ builder.Services.AddControllersWithViews(options =>
     // Keeps the account area, the funnel and the search results out of the index. Self-scoping on
     // the request path, so the public site is untouched — see NoIndexFilter.
     options.Filters.Add(typeof(NoIndexFilter));
+
+    // A bare [Required] / [StringLength] gets a translated message instead of the framework's
+    // English one. MvcOptions is shared with Razor Pages, so the Identity forms get it too.
+    options.ModelMetadataDetailsProviders.Add(new DefaultValidationMessages());
 })
     // Points [Required]/[StringLength]/[Display] at SharedResource, so a validation message can be
     // a resource key instead of a hard-coded English literal (see TwoFactorSetupViewModel). Keys
@@ -627,6 +631,16 @@ app.UseRouting();
 // not exist until the router has matched the endpoint. With these the other way round the URL
 // prefix is silently ignored and every page falls back to the cookie.
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+
+// In the admin panel the interface language also names the months; numbers stay English. See
+// AdminFormattingCulture.
+app.Use((context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/admin")
+        && CultureInfo.CurrentUICulture.Name != CultureInfo.CurrentCulture.Name)
+        CultureInfo.CurrentCulture = AdminFormattingCulture.For(CultureInfo.CurrentUICulture);
+    return next(context);
+});
 
 app.UseRateLimiter();
 

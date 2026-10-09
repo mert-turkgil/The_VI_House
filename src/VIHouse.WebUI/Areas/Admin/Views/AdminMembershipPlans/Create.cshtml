@@ -1,19 +1,18 @@
 @model AdminMembershipPlanFormViewModel
 @{
-    ViewData["Title"] = "New Membership Plan";
+    ViewData["Title"] = Loc["Admin.MembershipPlans.NewTitle"].Value;
 }
 
 <p class="admin-lede">
-    The plan is saved here and mirrored to Stripe as a product with one price. Edit it here from
-    then on &mdash; a price change issues a new Stripe price automatically and retires the old one.
+    @Loc["Admin.MembershipPlans.ThePlanIsSavedHereAnd"]
 </p>
 
 <form asp-action="Create" method="post" class="admin-form">
     <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
     <partial name="_FormFields" model="Model" />
     <div>
-        <button type="submit" class="admin-btn">Create &amp; sync to Stripe</button>
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
+        <button type="submit" class="admin-btn">@Loc["Admin.MembershipPlans.CreateSyncToStripe"]</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Common.Cancel"]</a>
     </div>
 </form>
 

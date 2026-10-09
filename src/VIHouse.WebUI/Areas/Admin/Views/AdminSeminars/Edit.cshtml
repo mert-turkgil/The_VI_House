@@ -13,53 +13,30 @@
 <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
 
 @* --- Publishing ------------------------------------------------------------------------------ *@
-<div class="admin-panel admin-panel--status">
-    <div>
-        <span class="@(Model.Status == SeminarStatus.Published ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")">
-            @Loc["Admin.Seminar.StatusName." + Model.Status]
-        </span>
-        <span class="admin-panel__note">
-            @if (Model.PublishedAt is not null)
-            {
-                @Loc["Admin.Seminar.PublishedOn", Model.PublishedAt.Value.ToString("d MMM yyyy")]
-            }
-            else
-            {
-                @Loc["Admin.Seminar.NeverPublished"]
-            }
-            &middot; @Loc["Admin.Seminar.EnrolledCount", Model.EnrolmentCount]
-        </span>
-    </div>
+@* Status, audience and what is missing, in words (_PublishCard). Saving the details below does not
+   publish; this card is the only place that does, and it says so. *@
+<partial name="_PublishCard" model="Model.PublishCard" />
 
-    <div class="admin-panel__actions">
-        @if (Model.Status != SeminarStatus.Published)
+<div class="admin-toolbar admin-toolbar--quiet">
+    <span class="admin-panel__note">
+        @if (Model.PublishedAt is not null)
         {
-            <form asp-action="SetStatus" asp-route-id="@seminarId" method="post" class="admin-inline-form">
-                <input type="hidden" name="status" value="@SeminarStatus.Published" />
-                <button type="submit" class="admin-btn">@Loc["Admin.Seminar.Publish"]</button>
-            </form>
+            @Loc["Admin.Seminar.PublishedOn", Model.PublishedAt.Value.ToString("d MMM yyyy")]
         }
         else
         {
-            <form asp-action="SetStatus" asp-route-id="@seminarId" method="post" class="admin-inline-form">
-                <input type="hidden" name="status" value="@SeminarStatus.Draft" />
-                <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Seminar.Unpublish"]</button>
-            </form>
-            <form asp-action="SetStatus" asp-route-id="@seminarId" method="post" class="admin-inline-form">
-                <input type="hidden" name="status" value="@SeminarStatus.Archived" />
-                <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Seminar.Archive"]</button>
-            </form>
+            @Loc["Admin.Seminar.NeverPublished"]
         }
-        <a class="admin-btn admin-btn--ghost" asp-action="Enrolments" asp-route-id="@seminarId">@Loc["Admin.Seminar.Enrolments"]</a>
-        <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Seminars" asp-action="Details" asp-route-slug="@Model.Form.Slug" target="_blank" rel="noopener">@Loc["Admin.Seminar.Preview"]</a>
-    </div>
+        &middot; @Loc["Admin.Seminar.EnrolledCount", Model.EnrolmentCount]
+    </span>
+    <a class="admin-btn admin-btn--ghost admin-btn--sm" asp-action="Enrolments" asp-route-id="@seminarId">@Loc["Admin.Seminar.Enrolments"]</a>
 </div>
 
 @* --- Copy, one language at a time -------------------------------------------------------------- *@
 @*  A page per language rather than tabbed panels on one page: a rich text editor initialised inside
     a hidden container computes a zero height and comes back broken when it is revealed, and the URL
     being ?culture=de-DE means an admin can bookmark or share the German draft.                     *@
-<h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Copy", active.Culture.NativeLabel]</h2>
+<h2 class="admin-section-heading" id="copy">@Loc["Admin.Seminar.Section.Copy", active.Culture.NativeLabel]</h2>
 
 <nav class="admin-lang-tabs" aria-label="@Loc["Admin.Seminar.Languages"]">
     @foreach (var tab in Model.Translations)
@@ -131,14 +108,14 @@
 @if (!active.IsDefault && active.IsWritten)
 {
     <form asp-action="DeleteTranslation" asp-route-id="@seminarId" method="post" class="admin-inline-form" style="margin-top:12px;"
-          onsubmit="return confirm('@Loc["Admin.Seminar.DeleteTranslation.Confirm", active.Culture.NativeLabel].Value.Replace("'", "\\'")');">
+          data-confirm="@Loc["Admin.Seminar.DeleteTranslation.Confirm", active.Culture.NativeLabel]">
         <input type="hidden" name="culture" value="@active.Culture.Name" />
         <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">@Loc["Admin.Seminar.DeleteTranslation"]</button>
     </form>
 }
 
 @* --- Media library ----------------------------------------------------------------------------- *@
-<h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Media"]</h2>
+<h2 class="admin-section-heading" id="media">@Loc["Admin.Seminar.Section.Media"]</h2>
 <p class="admin-lede">@Loc["Admin.Seminar.Media.Lede"]</p>
 
 <form asp-action="UploadMedia" asp-route-id="@seminarId" method="post" enctype="multipart/form-data" class="admin-inline-form">
@@ -206,7 +183,7 @@ else
                         }
 
                         <form asp-action="RemoveMedia" asp-route-id="@seminarId" method="post" class="admin-inline-form"
-                              onsubmit="return confirm('@Loc["Admin.Seminar.Media.Remove.Confirm"].Value.Replace("'", "\\'")');">
+                              data-confirm="@Loc["Admin.Seminar.Media.Remove.Confirm"]">
                             <input type="hidden" name="mediaId" value="@media.Id" />
                             <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">@Loc["Admin.Seminar.Media.Remove"]</button>
                         </form>
@@ -218,7 +195,7 @@ else
 }
 
 @* --- Core fields -------------------------------------------------------------------------------- *@
-<h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Details"]</h2>
+<h2 class="admin-section-heading" id="details">@Loc["Admin.Seminar.Section.Details"]</h2>
 
 <form asp-action="Edit" asp-route-id="@seminarId" method="post" class="admin-form">
     <partial name="_CoreFields" model="Model.Form" />
@@ -232,7 +209,7 @@ else
 <h2 class="admin-section-heading">@Loc["Admin.Seminar.Section.Danger"]</h2>
 <p class="admin-field__hint">@Loc["Admin.Seminar.Delete.Hint"]</p>
 <form asp-action="Delete" asp-route-id="@seminarId" method="post"
-      onsubmit="return confirm('@Loc["Admin.Seminar.Delete.Confirm"].Value.Replace("'", "\\'")');">
+      data-confirm="@Loc["Admin.Seminar.Delete.Confirm"]">
     <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Seminar.Delete"]</button>
 </form>
 

@@ -18,11 +18,11 @@ public class AdminPromoCodeFormViewModel
     /// are obviously the same thing to the person typing and not to a database comparison.
     /// </summary>
     [Required, StringLength(40)]
-    [RegularExpression("^[A-Za-z0-9-]+$", ErrorMessage = "Use letters, numbers and hyphens only.")]
-    [Display(Name = "Code", Description = "What the member types at checkout, e.g. VI250.")]
+    [RegularExpression("^[A-Za-z0-9-]+$", ErrorMessage = "Admin.Validation.UseLettersNumbersAndHyphensOnly")]
+    [Display(Name = "Admin.Field.Code", Description = "What the member types at checkout, e.g. VI250.")]
     public string Code { get; set; } = default!;
 
-    [Display(Name = "Type")]
+    [Display(Name = "Admin.Field.Type")]
     public PromoCodeType Type { get; set; } = PromoCodeType.Fixed;
 
     /// <summary>
@@ -31,38 +31,38 @@ public class AdminPromoCodeFormViewModel
     /// euros, the money layer thinks in cents. A percentage is the number itself.
     /// </summary>
     [Range(0, 100000)]
-    [Display(Name = "Value", Description = "A percentage (0–100), or an amount in whole currency units.")]
+    [Display(Name = "Admin.Field.Value", Description = "A percentage (0–100), or an amount in whole currency units.")]
     public decimal Value { get; set; }
 
     [StringLength(3)]
-    [Display(Name = "Currency", Description = "For a fixed amount. Leave blank for a percentage.")]
+    [Display(Name = "Admin.Field.Currency", Description = "For a fixed amount. Leave blank for a percentage.")]
     public string? Currency { get; set; } = "GBP";
 
-    [Display(Name = "Applies to")]
+    [Display(Name = "Admin.Field.AppliesTo")]
     public PromoScope Scope { get; set; } = PromoScope.Experiences;
 
-    [Display(Name = "Experience", Description = "Restrict the code to one experience, or leave blank for any.")]
+    [Display(Name = "Admin.Field.Experience", Description = "Restrict the code to one experience, or leave blank for any.")]
     public Guid? ExperienceId { get; set; }
 
-    [Display(Name = "Membership plan", Description = "Restrict the code to one plan, or leave blank for any.")]
+    [Display(Name = "Admin.Field.MembershipPlan", Description = "Restrict the code to one plan, or leave blank for any.")]
     public Guid? MembershipPlanId { get; set; }
 
     [EmailAddress, StringLength(320)]
-    [Display(Name = "Reserved for", Description = "An email address only this person can use the code from. Blank for anyone.")]
+    [Display(Name = "Admin.Field.ReservedFor", Description = "An email address only this person can use the code from. Blank for anyone.")]
     public string? RestrictedToEmail { get; set; }
 
-    [Display(Name = "Lasts", Description = "For a recurring plan: the first payment only, or every renewal too.")]
+    [Display(Name = "Admin.Field.Lasts", Description = "For a recurring plan: the first payment only, or every renewal too.")]
     public PromoDuration MembershipDuration { get; set; } = PromoDuration.FirstPayment;
 
-    [Display(Name = "Maximum redemptions", Description = "Blank for unlimited.")]
+    [Display(Name = "Admin.Field.MaximumRedemptions", Description = "Blank for unlimited.")]
     [Range(1, 100000)]
     public int? MaxRedemptions { get; set; }
 
     [DataType(DataType.DateTime)]
-    [Display(Name = "Expires (UTC)", Description = "Blank never expires.")]
+    [Display(Name = "Admin.Field.ExpiresUTC", Description = "Blank never expires.")]
     public DateTime? ExpiresAt { get; set; }
 
-    [Display(Name = "Active", Description = "Untick to stop a code being accepted without deleting its history.")]
+    [Display(Name = "Admin.Field.Active", Description = "Untick to stop a code being accepted without deleting its history.")]
     public bool IsActive { get; set; } = true;
 
     public PromoCode ToEntity() => new()

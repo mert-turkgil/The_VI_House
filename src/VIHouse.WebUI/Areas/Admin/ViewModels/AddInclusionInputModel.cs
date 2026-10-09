@@ -12,6 +12,6 @@ public class AddInclusionInputModel
     [Required, StringLength(500)]
     public string Text { get; set; } = default!;
 
-    [Display(Name = "Included (unchecked = shown under Not Included)")]
+    [Display(Name = "Admin.Field.IncludedUncheckedShownUnderNotIncluded")]
     public bool IsIncluded { get; set; } = true;
 }

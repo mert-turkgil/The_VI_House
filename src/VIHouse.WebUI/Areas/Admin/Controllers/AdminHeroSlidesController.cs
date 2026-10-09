@@ -102,7 +102,7 @@ public class AdminHeroSlidesController(
             before: null, after: new { translation.Heading, slide.SortOrder, slide.IsActive }, ct);
         await slides.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = loc["Admin.HeroSlide.Created", translation.Heading].Value;
+        Status(loc["Admin.HeroSlide.Created", translation.Heading].Value);
         return RedirectToAction(nameof(Edit), new { id = slide.Id });
     }
 
@@ -141,7 +141,7 @@ public class AdminHeroSlidesController(
             new { slide.ImageUrl, slide.SortOrder, slide.IsActive, slide.PrimaryCtaUrl, slide.SecondaryCtaUrl }, ct);
         await slides.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = loc["Admin.HeroSlide.Saved"].Value;
+        Status(loc["Admin.HeroSlide.Saved"].Value);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -159,7 +159,7 @@ public class AdminHeroSlidesController(
         // reader can be served and no tab can edit.
         if (!SiteCultures.IsSupported(form.Culture))
         {
-            TempData["StatusMessage"] = loc["Admin.HeroSlide.UnknownCulture"].Value;
+            Status(loc["Admin.HeroSlide.UnknownCulture"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id });
         }
 
@@ -189,7 +189,7 @@ public class AdminHeroSlidesController(
             before: null, after: new { existing.Culture, existing.Heading }, ct);
         await slides.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = loc["Admin.HeroSlide.TranslationSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value;
+        Status(loc["Admin.HeroSlide.TranslationSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value);
         return RedirectToAction(nameof(Edit), new { id, culture = form.Culture });
     }
 
@@ -204,7 +204,7 @@ public class AdminHeroSlidesController(
         // leave a slide that renders in no language correctly.
         if (string.Equals(culture, SiteCultures.Default, StringComparison.OrdinalIgnoreCase))
         {
-            TempData["StatusMessage"] = loc["Admin.HeroSlide.CannotDeleteDefault"].Value;
+            Status(loc["Admin.HeroSlide.CannotDeleteDefault"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id, culture });
         }
 
@@ -217,7 +217,7 @@ public class AdminHeroSlidesController(
                 before: new { translation.Culture, translation.Heading }, after: null, ct);
             await slides.SaveChangesAsync(ct);
 
-            TempData["StatusMessage"] = loc["Admin.HeroSlide.TranslationDeleted", SiteCultures.Describe(culture).NativeLabel].Value;
+            Status(loc["Admin.HeroSlide.TranslationDeleted", SiteCultures.Describe(culture).NativeLabel].Value);
         }
 
         return RedirectToAction(nameof(Edit), new { id, culture });
@@ -240,7 +240,7 @@ public class AdminHeroSlidesController(
 
         if (file is null || file.Length == 0)
         {
-            TempData["StatusMessage"] = loc["Seminar.Error.MediaEmpty"].Value;
+            Status(loc["Seminar.Error.MediaEmpty"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id });
         }
 
@@ -248,7 +248,7 @@ public class AdminHeroSlidesController(
         // stored happily and then rendered into an <img> that shows nothing.
         if (MediaPolicy.Classify(file.FileName) is not SeminarMediaKind.Image)
         {
-            TempData["StatusMessage"] = loc["Admin.HeroSlide.ImageTypeOnly"].Value;
+            Status(loc["Admin.HeroSlide.ImageTypeOnly"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id });
         }
 
@@ -258,7 +258,7 @@ public class AdminHeroSlidesController(
 
         if (!saved.Success)
         {
-            TempData["StatusMessage"] = loc[saved.Error ?? "Seminar.Error.MediaFailed"].Value;
+            Status(loc[saved.Error ?? "Seminar.Error.MediaFailed"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id });
         }
 
@@ -278,7 +278,7 @@ public class AdminHeroSlidesController(
         // the commit then failed, leaving the slide pointing at nothing.
         if (previous is not null) await mediaStorage.DeleteAsync(previous, ct);
 
-        TempData["StatusMessage"] = loc["Admin.HeroSlide.ImageUploaded"].Value;
+        Status(loc["Admin.HeroSlide.ImageUploaded"].Value);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -301,7 +301,7 @@ public class AdminHeroSlidesController(
 
         if (previous is not null) await mediaStorage.DeleteAsync(previous, ct);
 
-        TempData["StatusMessage"] = loc["Admin.HeroSlide.ImageRemoved"].Value;
+        Status(loc["Admin.HeroSlide.ImageRemoved"].Value);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -343,7 +343,7 @@ public class AdminHeroSlidesController(
         var slide = await slides.GetByIdWithTranslationsAsync(id, ct);
         if (slide is null)
         {
-            TempData["StatusMessage"] = loc["Admin.HeroSlide.AlreadyGone"].Value;
+            Status(loc["Admin.HeroSlide.AlreadyGone"].Value, isError: true);
             return RedirectToAction(nameof(Index));
         }
 
@@ -358,7 +358,7 @@ public class AdminHeroSlidesController(
 
         if (storageKey is not null) await mediaStorage.DeleteAsync(storageKey, ct);
 
-        TempData["StatusMessage"] = loc["Admin.HeroSlide.Deleted", heading].Value;
+        Status(loc["Admin.HeroSlide.Deleted", heading].Value);
         return RedirectToAction(nameof(Index));
     }
 

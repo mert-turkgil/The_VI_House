@@ -25,7 +25,7 @@ public class AdminMakeAmbassadorViewModel
     public string Name { get; set; } = "";
 
     [Required, StringLength(40)]
-    [RegularExpression("^[A-Za-z0-9-]+$", ErrorMessage = "Letters, digits and hyphens only.")]
+    [RegularExpression("^[A-Za-z0-9-]+$", ErrorMessage = "Admin.Validation.LettersDigitsAndHyphensOnly")]
     public string Code { get; set; } = "";
 
     [Range(0, 100)]

@@ -13,7 +13,7 @@ public class AddTicketTypeInputModel
     public string? Description { get; set; }
 
     [Required, Range(0, 10_000_000)]
-    [Display(Name = "Price (minor units, e.g. pence)")]
+    [Display(Name = "Admin.Field.PriceMinorUnitsEGPence")]
     public long PriceMinor { get; set; }
 
     [Required, StringLength(3, MinimumLength = 3)]
@@ -23,10 +23,10 @@ public class AddTicketTypeInputModel
     public int Inventory { get; set; }
 
     [Range(1, 100)]
-    [Display(Name = "Max Qty Per Order")]
+    [Display(Name = "Admin.Field.MaxQtyPerOrder")]
     public int MaxQuantityPerOrder { get; set; } = 1;
 
     [StringLength(500)]
-    [Display(Name = "Perks")]
+    [Display(Name = "Admin.Field.Perks")]
     public string? PerksText { get; set; }
 }

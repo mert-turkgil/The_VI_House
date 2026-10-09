@@ -1,6 +1,6 @@
 @model AdminEmailLogViewModel
 @{
-    ViewData["Title"] = "Emails & SMS";
+    ViewData["Title"] = Loc["Admin.Nav.AdminEmails"].Value;
 
     var channel = Model.ShowSms ? "sms" : null;
 
@@ -48,22 +48,19 @@
 }
 
 <p class="admin-hint">
-    Every transactional message the system has attempted — approvals, payment links, booking
-    confirmations. Recipient and subject only; the message itself is never shown here. A failed
-    message can be <strong>resent</strong>: the stored copy goes out again as a new row, and the
-    failure stays on record marked as resent.
+    @Loc["Admin.Emails.Intro"]
 </p>
 
 <div class="admin-toolbar">
-    <a class="@ChannelClass(false)" asp-action="Index">Email</a>
-    <a class="@ChannelClass(true)" asp-action="Index" asp-route-channel="sms">Text messages</a>
+    <a class="@ChannelClass(false)" asp-action="Index">@Loc["Admin.Common.Email"]</a>
+    <a class="@ChannelClass(true)" asp-action="Index" asp-route-channel="sms">@Loc["Admin.Emails.TextMessages"]</a>
 </div>
 
 @if (Model.FailedCount > 0)
 {
     <div class="admin-status-message">
-        @Model.FailedCount @(Model.ShowSms ? "text message(s)" : "email(s)") failed to send.
-        <a asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Failed">Show them</a>.
+        @Loc[Model.ShowSms ? "Admin.Emails.FailedSms" : "Admin.Emails.FailedEmails", Model.FailedCount]
+        <a asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Failed">@Loc["Admin.Emails.ShowThem"]</a>.
     </div>
 }
 
@@ -71,24 +68,22 @@
 {
     @* A failure on the tab you are not looking at is still a failure — say so from either side. *@
     <div class="admin-status-message">
-        @Model.OtherChannelFailedCount failure(s) on the @(Model.ShowSms ? "email" : "text message") side.
-        <a asp-action="Index" asp-route-channel="@(Model.ShowSms ? null : "sms")" asp-route-status="@EmailStatus.Failed">Show them</a>.
+        @Loc[Model.ShowSms ? "Admin.Emails.OtherFailedEmail" : "Admin.Emails.OtherFailedSms", Model.OtherChannelFailedCount]
+        <a asp-action="Index" asp-route-channel="@(Model.ShowSms ? null : "sms")" asp-route-status="@EmailStatus.Failed">@Loc["Admin.Emails.ShowThem"]</a>.
     </div>
 }
 
 <div class="admin-toolbar">
-    <a class="@FilterClass(null)" asp-action="Index" asp-route-channel="@channel">All</a>
-    <a class="@FilterClass(EmailStatus.Sent)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Sent">Sent</a>
-    <a class="@FilterClass(EmailStatus.Queued)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Queued">Queued</a>
-    <a class="@FilterClass(EmailStatus.Failed)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Failed">Failed</a>
+    <a class="@FilterClass(null)" asp-action="Index" asp-route-channel="@channel">@Loc["Admin.Emails.All"]</a>
+    <a class="@FilterClass(EmailStatus.Sent)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Sent">@Loc["Admin.Emails.Sent"]</a>
+    <a class="@FilterClass(EmailStatus.Queued)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Queued">@Loc["Admin.Emails.Queued"]</a>
+    <a class="@FilterClass(EmailStatus.Failed)" asp-action="Index" asp-route-channel="@channel" asp-route-status="@EmailStatus.Failed">@Loc["Admin.Emails.Failed"]</a>
 </div>
 
 @if (Model.ShowSms && !Model.SmsConfigured)
 {
     <p class="admin-hint">
-        No SMS gateway is configured, so nothing is being texted — payment links go out by email only.
-        Switch it on with <code>Sms:Enabled</code> and an endpoint; credentials belong in user-secrets
-        or the <code>Sms__Username</code> / <code>Sms__Password</code> environment variables.
+        @Loc.Html("Admin.Emails.SmsNotConfigured", LocalizerHtml.Code("Sms:Enabled"), LocalizerHtml.Code("Sms__Username"), LocalizerHtml.Code("Sms__Password"))
     </p>
 }
 
@@ -96,7 +91,7 @@
 {
     @if (Model.SmsRows.Count == 0)
     {
-        <p>No text messages logged@(Model.Status is null ? "" : $" with status {Model.Status}").</p>
+        <p>@(Model.Status is { } smsFilter ? Loc["Admin.Emails.NoSmsWithStatus", Loc.Label(smsFilter)].Value : Loc["Admin.Emails.NoSms"].Value)</p>
     }
     else
     {
@@ -104,10 +99,10 @@
             <table class="admin-table">
             <thead>
                 <tr>
-                    <th>When</th>
-                    <th>To</th>
-                    <th>Message</th>
-                    <th>Status</th>
+                    <th>@Loc["Admin.Emails.When"]</th>
+                    <th>@Loc["Admin.Emails.To"]</th>
+                    <th>@Loc["Admin.Emails.Message"]</th>
+                    <th>@Loc["Admin.Common.Status"]</th>
                     <th></th>
                 </tr>
             </thead>
@@ -127,16 +122,16 @@
                                 <div style="font-size:0.72rem; color:var(--vih-danger); margin-top:2px;">@row.ErrorMessage</div>
                             }
                         </td>
-                        <td><span class="@StatusBadge(row.Status)">@row.Status</span></td>
+                        <td><span class="@StatusBadge(row.Status)">@Loc.Label(row.Status)</span></td>
                         <td class="admin-table__actions">
                             @if (row.ResentAt is { } resent)
                             {
-                                <span class="admin-badge admin-badge--draft" title="Resent @resent.ToString("d MMM yyyy HH:mm")">Resent</span>
+                                <span class="admin-badge admin-badge--draft" title="Resent @resent.ToString("d MMM yyyy HH:mm")">@Loc["Admin.Emails.Resent"]</span>
                             }
                             else if (row.Status == EmailStatus.Failed && !string.IsNullOrEmpty(row.Body) && Model.SmsConfigured)
                             {
                                 <form method="post" asp-action="ResendSms" asp-route-id="@row.Id" asp-route-status="@Model.Status" style="display:inline;">
-                                    <button type="submit" class="admin-btn admin-btn--ghost">Resend</button>
+                                    <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Emails.Resend"]</button>
                                 </form>
                             }
                         </td>
@@ -151,7 +146,7 @@ else
 {
     @if (Model.Rows.Count == 0)
     {
-        <p>No emails logged@(Model.Status is null ? "" : $" with status {Model.Status}").</p>
+        <p>@(Model.Status is { } emailFilter ? Loc["Admin.Emails.NoEmailsWithStatus", Loc.Label(emailFilter)].Value : Loc["Admin.Emails.NoEmails"].Value)</p>
     }
     else
     {
@@ -159,11 +154,11 @@ else
             <table class="admin-table">
             <thead>
                 <tr>
-                    <th>When</th>
-                    <th>To</th>
-                    <th>Subject</th>
-                    <th>Template</th>
-                    <th>Status</th>
+                    <th>@Loc["Admin.Emails.When"]</th>
+                    <th>@Loc["Admin.Emails.To"]</th>
+                    <th>@Loc["Admin.Emails.Subject"]</th>
+                    <th>@Loc["Admin.Emails.Template"]</th>
+                    <th>@Loc["Admin.Common.Status"]</th>
                     <th></th>
                 </tr>
             </thead>
@@ -184,21 +179,21 @@ else
                             }
                         </td>
                         <td style="font-size:0.75rem;"><code>@row.TemplateKey</code></td>
-                        <td><span class="@StatusBadge(row.Status)">@row.Status</span></td>
+                        <td><span class="@StatusBadge(row.Status)">@Loc.Label(row.Status)</span></td>
                         <td class="admin-table__actions">
                             @if (row.ResentAt is { } resent)
                             {
-                                <span class="admin-badge admin-badge--draft" title="Resent @resent.ToString("d MMM yyyy HH:mm")">Resent</span>
+                                <span class="admin-badge admin-badge--draft" title="Resent @resent.ToString("d MMM yyyy HH:mm")">@Loc["Admin.Emails.Resent"]</span>
                             }
                             else if (row.Status == EmailStatus.Failed && !string.IsNullOrEmpty(row.Body))
                             {
                                 <form method="post" asp-action="ResendEmail" asp-route-id="@row.Id" asp-route-status="@Model.Status" style="display:inline;">
-                                    <button type="submit" class="admin-btn admin-btn--ghost">Resend</button>
+                                    <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Emails.Resend"]</button>
                                 </form>
                             }
                             @if (RelatedHref(row.RelatedEntityType, row.RelatedEntityId) is { } href)
                             {
-                                <a class="admin-icon-btn" href="@href">Open @row.RelatedEntityType&rarr;</a>
+                                <a class="admin-icon-btn" href="@href">@Loc["Admin.Emails.OpenRecord"] &rarr;</a>
                             }
                         </td>
                     </tr>
@@ -214,14 +209,14 @@ else
     <div class="admin-toolbar" style="margin-top:16px;">
         @if (Model.HasPrevious)
         {
-            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page - 1)">&larr; Newer</a>
+            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page - 1)">@Loc["Admin.Emails.Newer"]</a>
         }
         <span class="admin-hint" style="margin:0;">
-            Page @Model.Page of @Model.TotalPages · @Model.TotalCount @(Model.ShowSms ? "text message(s)" : "email(s)")
+            @Loc[Model.ShowSms ? "Admin.Emails.PageOfSms" : "Admin.Emails.PageOfEmails", Model.Page, Model.TotalPages, Model.TotalCount]
         </span>
         @if (Model.HasNext)
         {
-            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page + 1)">Older &rarr;</a>
+            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page + 1)">@Loc["Admin.Emails.Older"]</a>
         }
     </div>
 }

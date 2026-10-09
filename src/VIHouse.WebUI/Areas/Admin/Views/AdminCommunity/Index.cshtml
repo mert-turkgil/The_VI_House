@@ -1,7 +1,7 @@
 @using VIHouse.Entities.Community
 @model List<CommunityLink>
 @{
-    ViewData["Title"] = "Community Links";
+    ViewData["Title"] = Loc["Admin.Nav.AdminCommunity"].Value;
 }
 
 @if (TempData["StatusMessage"] is string status)
@@ -10,17 +10,16 @@
 }
 
 <div class="admin-toolbar">
-    <a class="admin-btn" asp-action="Create">+ New Link</a>
+    <a class="admin-btn" asp-action="Create">@Loc["Admin.Community.NewLink"]</a>
 </div>
 
 <p class="admin-hint">
-    Shown to members with an active membership only — ticket holders never see these. Untick
-    "visible" to pull a revoked invite without losing the record of it.
+    @Loc["Admin.Community.ShownToMembersWithAnActive"]
 </p>
 
 @if (Model.Count == 0)
 {
-    <p>No community links yet. Add the Discord invite to get started.</p>
+    <p>@Loc["Admin.Community.NoCommunityLinksYetAddThe"]</p>
 }
 else
 {
@@ -28,11 +27,11 @@ else
     <table class="admin-table" data-admin-table>
         <thead>
             <tr>
-                <th>Label</th>
-                <th>Kind</th>
+                <th>@Loc["Admin.Community.Label"]</th>
+                <th>@Loc["Admin.Community.Kind"]</th>
                 <th>URL</th>
-                <th>Visible</th>
-                <th>Order</th>
+                <th>@Loc["Admin.Community.Visible"]</th>
+                <th>@Loc["Admin.Community.Order"]</th>
                 <th></th>
             </tr>
         </thead>
@@ -41,19 +40,19 @@ else
             {
                 <tr>
                     <td><a asp-action="Edit" asp-route-id="@link.Id">@link.Label</a></td>
-                    <td>@link.Kind</td>
+                    <td>@Loc.Label(link.Kind)</td>
                     <td style="max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                         <code style="font-size:0.75rem;">@link.Url</code>
                     </td>
                     <td>
                         <span class="@(link.IsActive ? "admin-badge admin-badge--open" : "admin-badge admin-badge--closed")">
-                            @(link.IsActive ? "Visible" : "Hidden")
+                            @Loc[link.IsActive ? "Admin.Community.Visible" : "Admin.Community.Hidden"]
                         </span>
                     </td>
                     <td>@link.SortOrder</td>
                     <td>
-                        <form asp-action="Delete" asp-route-id="@link.Id" method="post" onsubmit="return confirm('Delete &quot;@link.Label&quot;? Members will lose access to it immediately.');" style="display:inline;">
-                            <button type="submit" class="admin-btn admin-btn--danger">Delete</button>
+                        <form asp-action="Delete" asp-route-id="@link.Id" method="post" data-confirm="@Loc["Admin.Community.DeleteConfirm", link.Label]" style="display:inline;">
+                            <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Common.Delete"]</button>
                         </form>
                     </td>
                 </tr>

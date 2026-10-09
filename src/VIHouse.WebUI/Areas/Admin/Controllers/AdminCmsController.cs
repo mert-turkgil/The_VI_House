@@ -98,7 +98,7 @@ public class AdminCmsController(
             extraJson = string.IsNullOrWhiteSpace(form.ExtraJson) ? null : form.ExtraJson.Trim();
             if (extraJson is not null && !Text.IsValidJson(extraJson))
             {
-                TempData["StatusMessage"] = "That JSON could not be parsed, so nothing was saved. Check for a stray comma or a missing quote.";
+                Status(loc["Admin.Cms.InvalidJson"].Value, isError: true);
                 return RedirectToAction(nameof(Edit), new { id = form.PageSlug });
             }
         }
@@ -128,7 +128,7 @@ public class AdminCmsController(
             ExtraJson = extraJson,
         }, adminId, ip, ct);
 
-        TempData["StatusMessage"] = $"{schema?.Title ?? form.SectionKey} saved. It is live on the homepage now.";
+        Status(loc["Admin.Cms.Msg.SectionSaved", schema is null ? form.SectionKey : loc[schema.TitleKey].Value].Value);
         return RedirectToAction(nameof(Edit), new { id = form.PageSlug });
     }
 
@@ -154,14 +154,9 @@ public class AdminCmsController(
             ExtraJson = form.ExtraJson,
         }, adminId, ip, ct);
 
-        TempData["StatusMessage"] = error switch
-        {
-            null => $"{SiteCultures.Describe(form.Culture).NativeLabel} saved. Fields left blank or identical to English keep following the English.",
-            "Admin.Cms.InvalidJson" => "That JSON could not be parsed, so nothing was saved. Check for a stray comma or a missing quote.",
-            "Admin.Cms.DefaultIsOnTheBlock" => "English is edited in the section form above, not as a translation.",
-            "Admin.Cms.UnknownCulture" => "That is not a language this site speaks.",
-            _ => "That could not be saved.",
-        };
+        Status(error is null
+            ? loc["Admin.Cms.Msg.TranslationSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value
+            : loc[error].Value, isError: error is not null);
 
         return RedirectToAction(nameof(Edit), new { id = pageSlug });
     }
@@ -175,7 +170,7 @@ public class AdminCmsController(
         var (adminId, ip) = CurrentActor();
         await contentService.DeleteBlockTranslationAsync(blockId, culture, adminId, ip, ct);
 
-        TempData["StatusMessage"] = $"{SiteCultures.Describe(culture).NativeLabel} reset — this section now shows the English, including every later English edit.";
+        Status(loc["Admin.Cms.Msg.TranslationReset", SiteCultures.Describe(culture).NativeLabel].Value);
         return RedirectToAction(nameof(Edit), new { id = pageSlug });
     }
 
@@ -192,7 +187,7 @@ public class AdminCmsController(
                 SortOrder = form.SortOrder,
                 Heading = Text.NullIfBlank(form.Heading),
             }, adminId, ip, ct);
-            TempData["StatusMessage"] = $"\"{form.SectionKey}\" added.";
+            Status(loc["Admin.Cms.Msg.SectionAdded", ContentSectionSchema.For(form.SectionKey) is { } added ? loc[added.TitleKey].Value : form.SectionKey].Value);
         }
 
         return RedirectToAction(nameof(Edit), new { id = form.PageSlug });
@@ -204,7 +199,7 @@ public class AdminCmsController(
     {
         var (adminId, ip) = CurrentActor();
         await contentService.RemoveBlockAsync(pageId, blockId, adminId, ip, ct);
-        TempData["StatusMessage"] = "Section removed.";
+        Status(loc["Admin.Cms.Msg.SectionRemoved"].Value);
         return RedirectToAction(nameof(Edit), new { id = pageSlug });
     }
 
@@ -223,13 +218,13 @@ public class AdminCmsController(
     {
         if (file is null || file.Length == 0)
         {
-            TempData["StatusMessage"] = loc["Seminar.Error.MediaEmpty"].Value;
+            Status(loc["Seminar.Error.MediaEmpty"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id = pageSlug });
         }
 
         if (MediaPolicy.Classify(file.FileName) is not (SeminarMediaKind.Image or SeminarMediaKind.Animation))
         {
-            TempData["StatusMessage"] = "Content images take a photograph or a GIF — JPEG, PNG, WebP, AVIF or GIF.";
+            Status(loc["Admin.Cms.Msg.ImagesOnly"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id = pageSlug });
         }
 
@@ -239,7 +234,7 @@ public class AdminCmsController(
 
         if (!saved.Success)
         {
-            TempData["StatusMessage"] = loc[saved.Error ?? "Seminar.Error.MediaFailed"].Value;
+            Status(loc[saved.Error ?? "Seminar.Error.MediaFailed"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id = pageSlug });
         }
 
@@ -268,7 +263,7 @@ public class AdminCmsController(
             throw;
         }
 
-        TempData["StatusMessage"] = $"\"{file.FileName}\" uploaded. Copy its address into a section's image field.";
+        Status(loc["Admin.Cms.Msg.Uploaded", file.FileName].Value);
         return RedirectToAction(nameof(Edit), new { id = pageSlug });
     }
 
@@ -279,7 +274,7 @@ public class AdminCmsController(
         var asset = await assets.GetByIdAsync(id, ct);
         if (asset is null)
         {
-            TempData["StatusMessage"] = "That image no longer exists.";
+            Status(loc["Admin.Cms.Msg.ImageGone"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id = pageSlug });
         }
 
@@ -296,7 +291,7 @@ public class AdminCmsController(
 
         // No automatic check of whether a section still points at it: a URL inside a JSON blob is not
         // something a query can find, so this one is on the admin. Hence the warning on the button.
-        TempData["StatusMessage"] = "Image deleted. Any section still pointing at it will show a broken image.";
+        Status(loc["Admin.Cms.Msg.ImageDeleted"].Value);
         return RedirectToAction(nameof(Edit), new { id = pageSlug });
     }
 
@@ -357,8 +352,8 @@ public class AdminCmsController(
                             [
                                 .. new (string Label, string? Value)[]
                                 {
-                                    ("Heading", row?.Heading), (block.SectionKey is "trust" or "ecosystem" ? "Eyebrow" : "Subheading", row?.Subheading),
-                                    ("Body", row?.BodyText), ("Button label", row?.CtaLabel), ("List", row?.ExtraJson),
+                                    ("Admin.Cms.Heading", row?.Heading), (block.SectionKey is "trust" or "ecosystem" ? "Admin.Cms.Eyebrow" : "Admin.Cms.Subheading", row?.Subheading),
+                                    ("Admin.Cms.Body", row?.BodyText), ("Admin.Cms.ButtonLabel", row?.CtaLabel), ("Admin.Cms.List", row?.ExtraJson),
                                 }.Where(f => !string.IsNullOrWhiteSpace(f.Value)).Select(f => f.Label),
                             ],
                         };

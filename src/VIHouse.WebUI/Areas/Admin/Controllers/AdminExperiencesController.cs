@@ -60,7 +60,7 @@ public class AdminExperiencesController(
         var (adminId, ip) = CurrentActor();
         await experienceService.CreateAsync(entity, adminId, ip, ct);
 
-        TempData["StatusMessage"] = $"\"{entity.Title}\" created.";
+        Status(loc["Admin.Msg.Created", entity.Title].Value);
         return RedirectToAction(nameof(Edit), new { id = entity.Id });
     }
 
@@ -112,7 +112,7 @@ public class AdminExperiencesController(
 
         var (adminId, ip) = CurrentActor();
         await experienceService.UpdateCoreFieldsAsync(form.ToEntity(), adminId, ip, ct);
-        TempData["StatusMessage"] = "Changes saved.";
+        Status(loc["Admin.Msg.ChangesSaved"].Value);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -122,9 +122,9 @@ public class AdminExperiencesController(
     {
         var (adminId, ip) = CurrentActor();
         var deleted = await experienceService.TryDeleteAsync(id, adminId, ip, ct);
-        TempData["StatusMessage"] = deleted
-            ? "Experience deleted."
-            : "Can't delete — this experience already has applications or bookings against it.";
+        Status(deleted
+            ? loc["Admin.Experiences.Msg.Deleted"].Value
+            : loc["Admin.Experiences.Msg.CannotDelete"].Value, isError: !deleted);
 
         return RedirectToAction(nameof(Index));
     }
@@ -158,7 +158,7 @@ public class AdminExperiencesController(
         var (adminId, ip) = CurrentActor();
         var removed = await experienceService.TryRemoveTicketTypeAsync(experienceId, ticketTypeId, adminId, ip, ct);
         if (!removed)
-            TempData["StatusMessage"] = "Can't remove — this ticket type already has bookings against it.";
+            Status(loc["Admin.Experiences.Msg.TicketTypeInUse"].Value, isError: true);
 
         return RedirectToAction(nameof(Edit), new { id = experienceId });
     }
@@ -236,12 +236,11 @@ public class AdminExperiencesController(
             var count = await notificationService.BroadcastToExperienceAttendeesAsync(
                 input.ExperienceId, input.Type, input.Title, input.Body,
                 link: null, adminId, ip, ct);
-            TempData["StatusMessage"] = count switch
+            Status(count switch
             {
-                0 => "No confirmed attendees to notify yet.",
-                1 => "Notified 1 attendee.",
-                _ => $"Notified {count} attendees.",
-            };
+                0 => loc["Admin.Experiences.Msg.NoAttendees"].Value,
+                _ => loc["Admin.Experiences.Msg.Notified", count].Value,
+            });
         }
 
         return RedirectToAction(nameof(Edit), new { id = input.ExperienceId });
@@ -257,7 +256,7 @@ public class AdminExperiencesController(
     {
         if (file is null || file.Length == 0)
         {
-            TempData["StatusMessage"] = loc["Admin.Experience.NoFile"].Value;
+            Status(loc["Admin.Experience.NoFile"].Value, isError: true);
             return RedirectToAction(nameof(Edit), new { id });
         }
 
@@ -266,7 +265,7 @@ public class AdminExperiencesController(
         var error = await experienceService.UploadCoverAsync(
             id, new MediaUpload(file.FileName, file.ContentType, file.Length, stream), adminId, ip, ct);
 
-        TempData["StatusMessage"] = loc[error ?? "Admin.Experience.CoverUploaded"].Value;
+        Status(loc[error ?? "Admin.Experience.CoverUploaded"].Value, isError: error is not null);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -276,7 +275,7 @@ public class AdminExperiencesController(
     {
         var (adminId, ip) = CurrentActor();
         await experienceService.RemoveCoverAsync(id, adminId, ip, ct);
-        TempData["StatusMessage"] = loc["Admin.Experience.CoverRemoved"].Value;
+        Status(loc["Admin.Experience.CoverRemoved"].Value);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -308,7 +307,7 @@ public class AdminExperiencesController(
             error = "Admin.Experience.NoFile";
         }
 
-        TempData["StatusMessage"] = loc[error ?? "Admin.Experience.GalleryAdded"].Value;
+        Status(loc[error ?? "Admin.Experience.GalleryAdded"].Value, isError: error is not null);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -389,7 +388,7 @@ public class AdminExperiencesController(
                 Description = description,
             }, adminId, ip, ct);
 
-            if (error is not null) TempData["StatusMessage"] = loc[error].Value;
+            if (error is not null) Status(loc[error].Value, isError: true);
         }
 
         return RedirectToAction(nameof(Edit), new { id });
@@ -412,7 +411,7 @@ public class AdminExperiencesController(
     {
         var (adminId, ip) = CurrentActor();
         var error = await experienceService.UpdateTicketTypeAsync(id, input, adminId, ip, ct);
-        if (error is not null) TempData["StatusMessage"] = loc[error].Value;
+        if (error is not null) Status(loc[error].Value, isError: true);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -422,7 +421,7 @@ public class AdminExperiencesController(
     {
         var (adminId, ip) = CurrentActor();
         var error = await experienceService.UpdateInclusionAsync(id, inclusionId, text, isIncluded, sortOrder, adminId, ip, ct);
-        if (error is not null) TempData["StatusMessage"] = loc[error].Value;
+        if (error is not null) Status(loc[error].Value, isError: true);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -432,7 +431,7 @@ public class AdminExperiencesController(
     {
         var (adminId, ip) = CurrentActor();
         var error = await experienceService.UpdateFaqAsync(id, faqId, question, answer, sortOrder, adminId, ip, ct);
-        if (error is not null) TempData["StatusMessage"] = loc[error].Value;
+        if (error is not null) Status(loc[error].Value, isError: true);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -442,7 +441,7 @@ public class AdminExperiencesController(
     {
         var (adminId, ip) = CurrentActor();
         await experienceService.SetMembershipAccessAsync(id, planIds ?? [], adminId, ip, ct);
-        TempData["StatusMessage"] = loc["Admin.Experience.MemberAccessSaved"].Value;
+        Status(loc["Admin.Experience.MemberAccessSaved"].Value);
         return RedirectToAction(nameof(Edit), new { id });
     }
 
@@ -494,14 +493,14 @@ public class AdminExperiencesController(
             updated.CoverImageAlt = form.CoverImageAlt;
 
             await experienceService.UpdateCoreFieldsAsync(updated, adminId, ip, ct);
-            TempData["StatusMessage"] = loc["Admin.Experience.TranslationSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value;
+            Status(loc["Admin.Experience.TranslationSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value);
             return RedirectToAction(nameof(Edit), new { id, culture = form.Culture });
         }
 
         var error = await experienceService.SaveTranslationAsync(id, form.ToEntity(), adminId, ip, ct);
-        TempData["StatusMessage"] = error is null
+        Status(error is null
             ? loc["Admin.Experience.TranslationSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value
-            : loc[error].Value;
+            : loc[error].Value, isError: error is not null);
 
         return RedirectToAction(nameof(Edit), new { id, culture = form.Culture });
     }
@@ -512,9 +511,9 @@ public class AdminExperiencesController(
     {
         var (adminId, ip) = CurrentActor();
         var error = await experienceService.DeleteTranslationAsync(id, culture, adminId, ip, ct);
-        TempData["StatusMessage"] = error is null
+        Status(error is null
             ? loc["Admin.Experience.TranslationDeleted", SiteCultures.Describe(culture).NativeLabel].Value
-            : loc[error].Value;
+            : loc[error].Value, isError: error is not null);
 
         return RedirectToAction(nameof(Edit), new { id, culture = SiteCultures.Default });
     }

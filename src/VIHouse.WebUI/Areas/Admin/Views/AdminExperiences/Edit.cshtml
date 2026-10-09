@@ -1,6 +1,6 @@
 @model AdminExperienceEditViewModel
 @{
-    ViewData["Title"] = $"Edit — {Model.Form.Title}";
+    ViewData["Title"] = Loc["Admin.Common.EditTitle", Model.Form.Title].Value;
     var experienceId = Model.Form.Id!.Value;
     var active = Model.Translations.First(t => t.Culture.Name == Model.ActiveCulture);
 }
@@ -12,8 +12,8 @@
 
 <div class="admin-toolbar">
     <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Experiences" asp-action="Details"
-       asp-route-slug="@Model.Form.Slug" target="_blank" rel="noopener">View on the site</a>
-    <a class="admin-btn admin-btn--ghost" asp-action="Index">All experiences</a>
+       asp-route-slug="@Model.Form.Slug" target="_blank" rel="noopener">@Loc["Admin.Experiences.ViewOnTheSite"]</a>
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Experiences.AllExperiences"]</a>
 </div>
 
 @* --- Cover -------------------------------------------------------------------------------------- *@
@@ -21,9 +21,9 @@
    every save a multipart post, and saving the text fields would then silently re-submit whatever
    file was sitting in the picker. Same arrangement as the hero slide editor. *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2>Cover image</h2>
+    <h2>@Loc["Admin.Experiences.CoverImage"]</h2>
     <p class="admin-hint">
-        Shown at the top of the experience page and on its card. Landscape, at least 1600px wide.
+        @Loc["Admin.Experiences.ShownAtTheTopOfThe"]
     </p>
 
     @if (!string.IsNullOrWhiteSpace(Model.CoverPreviewUrl))
@@ -34,26 +34,26 @@
     else
     {
         <div class="admin-empty" style="margin-bottom:12px;">
-            <p class="admin-empty__title">No cover yet</p>
-            <p>Upload one below, or type a path in Details.</p>
+            <p class="admin-empty__title">@Loc["Admin.Experiences.NoCoverYet"]</p>
+            <p>@Loc["Admin.Experiences.UploadOneBelowOrTypeA"]</p>
         </div>
     }
 
     <form asp-action="UploadCover" asp-route-id="@experienceId" method="post" enctype="multipart/form-data"
           class="admin-inline-form">
         <div class="admin-field">
-            <label for="cover-file">Upload a cover</label>
+            <label for="cover-file">@Loc["Admin.Experiences.UploadACover"]</label>
             <input id="cover-file" type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif"
                    required />
         </div>
-        <button type="submit" class="admin-btn">Upload</button>
+        <button type="submit" class="admin-btn">@Loc["Admin.Common.Upload"]</button>
     </form>
 
     @if (Model.HasUploadedCover)
     {
         <form asp-action="RemoveCover" asp-route-id="@experienceId" method="post" style="margin-top:10px;"
-              onsubmit="return confirm('Remove the uploaded cover? The file is deleted.');">
-            <button type="submit" class="admin-btn admin-btn--danger">Remove uploaded cover</button>
+              data-confirm="@Loc["Admin.Experiences.RemoveTheUploadedCoverTheFile"]">
+            <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Experiences.RemoveUploadedCover"]</button>
         </form>
     }
 </div>
@@ -63,9 +63,9 @@
    URL carries ?culture=de-DE, so a half-written German draft can be bookmarked and handed to
    whoever is actually writing the German. *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2>Copy</h2>
+    <h2>@Loc["Admin.Experiences.Copy"]</h2>
 
-    <nav class="admin-lang-tabs" aria-label="Languages">
+    <nav class="admin-lang-tabs" aria-label="@Loc["Admin.Experiences.Languages"]">
         @foreach (var tab in Model.Translations)
         {
             <a class="@(tab.Culture.Name == Model.ActiveCulture ? "admin-lang-tab active" : "admin-lang-tab")"
@@ -73,11 +73,11 @@
                 @tab.Culture.NativeLabel
                 @if (tab.IsDefault)
                 {
-                    <span class="admin-lang-tab__flag">Default</span>
+                    <span class="admin-lang-tab__flag">@Loc["Admin.Experiences.Default"]</span>
                 }
                 else if (!tab.IsWritten)
                 {
-                    <span class="admin-lang-tab__flag admin-lang-tab__flag--missing">Not translated</span>
+                    <span class="admin-lang-tab__flag admin-lang-tab__flag--missing">@Loc["Admin.Experiences.NotTranslated"]</span>
                 }
             </a>
         }
@@ -86,15 +86,13 @@
     @if (active.IsDefault)
     {
         <p class="admin-hint">
-            The English copy lives on the experience itself and is what every other language falls
-            back to, field by field — a German page with no German summary shows the English one.
+            @Loc["Admin.Experiences.TheEnglishCopyLivesOnThe"]
         </p>
     }
     else if (!active.IsWritten)
     {
         <p class="admin-notice">
-            Nothing written in @active.Culture.NativeLabel yet, so this experience reads in English
-            for those visitors. Fill in what you have — anything left empty keeps falling back.
+            @Loc["Admin.Experiences.NothingWrittenIn", active.Culture.NativeLabel]
         </p>
     }
 
@@ -105,65 +103,65 @@
         <input type="hidden" name="ExperienceId" value="@experienceId" />
 
         <div class="admin-field">
-            <label>Title</label>
+            <label>@Loc["Admin.Common.Title"]</label>
             <input name="Title" value="@active.Form.Title" maxlength="200" required />
         </div>
 
         <div class="admin-field">
-            <label>Short summary</label>
+            <label>@Loc["Admin.Experiences.ShortSummary"]</label>
             <input name="ShortSummary" value="@active.Form.ShortSummary" maxlength="400" />
         </div>
 
         <div class="admin-field">
-            <label>Description</label>
+            <label>@Loc["Admin.Common.Description"]</label>
             <textarea name="Description" rows="10" data-ckeditor>@active.Form.Description</textarea>
         </div>
 
         <div class="admin-form__grid">
             <div class="admin-field">
-                <label>Venue</label>
+                <label>@Loc["Admin.Experiences.Venue"]</label>
                 <input name="Venue" value="@active.Form.Venue" maxlength="200" />
             </div>
             <div class="admin-field">
-                <label>Who is in the room? (comma separated)</label>
+                <label>@Loc["Admin.Experiences.WhoIsInTheRoomComma"]</label>
                 <input name="AudienceTags" value="@active.Form.AudienceTags" maxlength="300" />
             </div>
         </div>
 
         <div class="admin-form__grid">
             <div class="admin-field">
-                <label>SEO title</label>
+                <label>@Loc["Admin.Experiences.SEOTitle"]</label>
                 <input name="SeoTitle" value="@active.Form.SeoTitle" maxlength="200" />
             </div>
             <div class="admin-field">
-                <label>Cover image description</label>
+                <label>@Loc["Admin.Experiences.CoverImageDescription"]</label>
                 <input name="CoverImageAlt" value="@active.Form.CoverImageAlt" maxlength="300" />
             </div>
         </div>
 
         <div class="admin-field">
-            <label>SEO description</label>
+            <label>@Loc["Admin.Experiences.SEODescription"]</label>
             <input name="SeoDescription" value="@active.Form.SeoDescription" maxlength="400" />
         </div>
 
         <div>
-            <button type="submit" class="admin-btn">Save @active.Culture.NativeLabel</button>
+            <button type="submit" class="admin-btn">@Loc["Admin.Common.SaveNamed", active.Culture.NativeLabel]</button>
         </div>
     </form>
 
     @if (!active.IsDefault && active.IsWritten)
     {
         <form asp-action="DeleteTranslation" asp-route-id="@experienceId" method="post" style="margin-top:12px;"
-              onsubmit="return confirm('Remove the @active.Culture.NativeLabel copy? The page falls back to English for those visitors.');">
+              data-confirm="@Loc["Admin.Experiences.RemoveCopyConfirm", active.Culture.NativeLabel]">
             <input type="hidden" name="culture" value="@active.Culture.Name" />
-            <button type="submit" class="admin-btn admin-btn--danger">Remove @active.Culture.NativeLabel copy</button>
+            <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Experiences.RemoveCopy", active.Culture.NativeLabel]</button>
         </form>
     }
 </div>
 
 @* --- Details ------------------------------------------------------------------------------------ *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2>Details</h2>
+    <h2>@Loc["Admin.Common.Details"]</h2>
     <form asp-action="Edit" asp-route-id="@experienceId" method="post" class="admin-form">
         <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
         @{
@@ -171,27 +169,24 @@
         }
         <partial name="_FormFields" model="Model.Form" view-data="ViewData" />
         <div>
-            <button type="submit" class="admin-btn">Save changes</button>
-            <a class="admin-btn admin-btn--ghost" asp-action="Index">Back to list</a>
+            <button type="submit" class="admin-btn">@Loc["Admin.Experiences.SaveChanges"]</button>
+            <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Experiences.BackToList"]</a>
         </div>
     </form>
 </div>
 
 @* --- Member access ------------------------------------------------------------------------------ *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2>Member access</h2>
+    <h2>@Loc["Admin.Experiences.MemberAccess"]</h2>
     <p class="admin-hint">
-        Members on a ticked plan join this experience in one click — no application form, no payment,
-        because their membership already paid for it. Everyone else applies as usual.
-        Tick nothing and this experience is application-only, which is how every experience worked
-        before this existed.
+        @Loc["Admin.Experiences.MembersOnATickedPlanJoin"]
     </p>
 
     @if (Model.MemberAccess.Count == 0)
     {
         <div class="admin-empty">
-            <p class="admin-empty__title">No membership plans yet</p>
-            <p>Create one under Membership Plans first.</p>
+            <p class="admin-empty__title">@Loc["Admin.Experiences.NoMembershipPlansYet"]</p>
+            <p>@Loc["Admin.Experiences.CreateOneUnderMembershipPlansFirst"]</p>
         </div>
     }
     else
@@ -207,7 +202,7 @@
                 }
             </div>
             <div>
-                <button type="submit" class="admin-btn">Save member access</button>
+                <button type="submit" class="admin-btn">@Loc["Admin.Experiences.SaveMemberAccess"]</button>
             </div>
         </form>
     }
@@ -215,16 +210,15 @@
 
 @* --- Gallery ------------------------------------------------------------------------------------ *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2>Gallery</h2>
+    <h2>@Loc["Admin.Experiences.Gallery"]</h2>
     <p class="admin-hint">
-        The photographs under "Venue" on the experience page. The description is read aloud by screen
-        readers <em>and</em> shown as the caption, so write it as a sentence.
+        @Loc["Admin.Experiences.GalleryHint"]
     </p>
 
     @if (Model.Gallery.Count == 0)
     {
         <div class="admin-empty">
-            <p class="admin-empty__title">No photographs yet</p>
+            <p class="admin-empty__title">@Loc["Admin.Experiences.NoPhotographsYet"]</p>
         </div>
     }
     else
@@ -249,11 +243,11 @@
                           style="gap:8px;">
                         <input type="hidden" name="imageId" value="@image.Id" />
                         <div class="admin-field">
-                            <label>Caption</label>
+                            <label>@Loc["Admin.Experiences.Caption"]</label>
                             <input name="altText" value="@image.AltText" maxlength="300" />
                         </div>
                         <div class="admin-media-card__actions">
-                            <button type="submit" class="admin-icon-btn">Save</button>
+                            <button type="submit" class="admin-icon-btn">@Loc["Admin.Common.Save"]</button>
                         </div>
                     </form>
 
@@ -263,17 +257,17 @@
                         <form asp-action="MoveGalleryImage" asp-route-id="@experienceId" method="post">
                             <input type="hidden" name="imageId" value="@image.Id" />
                             <input type="hidden" name="delta" value="-1" />
-                            <button type="submit" class="admin-icon-btn" aria-label="Move earlier">&uarr;</button>
+                            <button type="submit" class="admin-icon-btn" aria-label="@Loc["Admin.Experiences.MoveEarlier"]">&uarr;</button>
                         </form>
                         <form asp-action="MoveGalleryImage" asp-route-id="@experienceId" method="post">
                             <input type="hidden" name="imageId" value="@image.Id" />
                             <input type="hidden" name="delta" value="1" />
-                            <button type="submit" class="admin-icon-btn" aria-label="Move later">&darr;</button>
+                            <button type="submit" class="admin-icon-btn" aria-label="@Loc["Admin.Experiences.MoveLater"]">&darr;</button>
                         </form>
                         <form asp-action="RemoveGalleryImage" asp-route-id="@experienceId" method="post"
-                              onsubmit="return confirm('Remove this photograph?');">
+                              data-confirm="@Loc["Admin.Experiences.RemoveThisPhotograph"]">
                             <input type="hidden" name="imageId" value="@image.Id" />
-                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">@Loc["Admin.Common.Remove"]</button>
                         </form>
                     </div>
                 </figure>
@@ -284,19 +278,19 @@
     <form asp-action="AddGalleryImage" asp-route-id="@experienceId" method="post" enctype="multipart/form-data"
           class="admin-inline-form" style="margin-top:16px;">
         <div class="admin-field">
-            <label for="gallery-file">Upload</label>
+            <label for="gallery-file">@Loc["Admin.Common.Upload"]</label>
             <input id="gallery-file" type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif" />
         </div>
         <div class="admin-field">
-            <label for="gallery-url">…or a path already on the site</label>
+            <label for="gallery-url">@Loc["Admin.Experiences.OrAPathAlreadyOnThe"]</label>
             <input id="gallery-url" name="url" placeholder="/img/gallery/dinner-1600.jpg" />
         </div>
         <div class="admin-field" style="flex:2;">
-            <label for="gallery-alt">Caption</label>
+            <label for="gallery-alt">@Loc["Admin.Experiences.Caption"]</label>
             <input id="gallery-alt" name="altText" maxlength="300"
-                   placeholder="A long table set for a private dinner" />
+                   placeholder="@Loc["Admin.Experiences.ALongTableSetForA"]" />
         </div>
-        <button type="submit" class="admin-btn">Add</button>
+        <button type="submit" class="admin-btn">@Loc["Admin.Common.Add"]</button>
     </form>
 </div>
 
@@ -306,17 +300,16 @@
    row belongs to a language, and the public page shows the set for the reader's, falling back to
    English when a language has none. *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2>Programme <span class="admin-lang-chip admin-lang-chip--on">@active.Culture.ShortLabel</span></h2>
+    <h2>@Loc["Admin.Experiences.Programme"] <span class="admin-lang-chip admin-lang-chip--on">@active.Culture.ShortLabel</span></h2>
     <p class="admin-hint">
-        The day-by-day agenda in @active.Culture.NativeLabel. Times are shown in the experience's own
-        timezone (@Model.Form.TimeZoneId).
+        @Loc["Admin.Experiences.ProgrammeHint", active.Culture.NativeLabel, Model.Form.TimeZoneId]
     </p>
 
     @foreach (var day in Model.ProgramDays.Where(d => d.Culture == Model.ActiveCulture))
     {
         <div class="admin-panel" style="margin-bottom:16px;">
             <div class="admin-panel__note">
-                <strong>Day @day.DayNumber</strong> — @day.Title
+                <strong>@Loc["Admin.Experiences.DayN", day.DayNumber]</strong> — @day.Title
                 @if (!string.IsNullOrWhiteSpace(day.DateLabel))
                 {
                     <span class="admin-table__sub">@day.DateLabel</span>
@@ -337,7 +330,7 @@
                         </span>
                         <form asp-action="RemoveSession" asp-route-id="@experienceId" method="post">
                             <input type="hidden" name="sessionId" value="@session.Id" />
-                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                            <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">@Loc["Admin.Common.Remove"]</button>
                         </form>
                     </div>
                 }
@@ -345,42 +338,41 @@
 
             <form asp-action="AddSession" asp-route-id="@experienceId" method="post" class="admin-inline-form">
                 <input type="hidden" name="dayId" value="@day.Id" />
-                <div class="admin-field"><label>From</label><input type="time" name="startTime" required /></div>
-                <div class="admin-field"><label>To</label><input type="time" name="endTime" required /></div>
-                <div class="admin-field" style="flex:2;"><label>Session</label><input name="title" required /></div>
-                <div class="admin-field"><label>Speaker</label><input name="speakerName" /></div>
-                <button type="submit" class="admin-btn">Add session</button>
+                <div class="admin-field"><label>@Loc["Admin.Experiences.From"]</label><input type="time" name="startTime" required /></div>
+                <div class="admin-field"><label>@Loc["Admin.Experiences.To"]</label><input type="time" name="endTime" required /></div>
+                <div class="admin-field" style="flex:2;"><label>@Loc["Admin.Experiences.Session"]</label><input name="title" required /></div>
+                <div class="admin-field"><label>@Loc["Admin.Experiences.Speaker"]</label><input name="speakerName" /></div>
+                <button type="submit" class="admin-btn">@Loc["Admin.Experiences.AddSession"]</button>
             </form>
 
             <form asp-action="RemoveProgramDay" asp-route-id="@experienceId" method="post" style="margin-top:10px;"
-                  onsubmit="return confirm('Remove this day and all of its sessions?');">
+                  data-confirm="@Loc["Admin.Experiences.RemoveThisDayAndAllOf"]">
                 <input type="hidden" name="dayId" value="@day.Id" />
-                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove day
-                    @day.DayNumber</button>
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">@Loc["Admin.Experiences.RemoveDayN", day.DayNumber]</button>
                 </form>
             </div>
         }
 
         <form asp-action="AddProgramDay" asp-route-id="@experienceId" method="post" class="admin-inline-form">
             <input type="hidden" name="culture" value="@active.Culture.Name" />
-            <div class="admin-field"><label>Day number</label><input type="number" name="dayNumber" min="1"
+            <div class="admin-field"><label>@Loc["Admin.Experiences.DayNumber"]</label><input type="number" name="dayNumber" min="1"
                                                                          value="@(Model.ProgramDays.Count + 1)" required /></div>
-                <div class="admin-field" style="flex:2;"><label>Title</label><input name="title"
-                                                                                        placeholder="Arrival and opening dinner" required /></div>
-                    <div class="admin-field"><label>Date label</label><input name="dateLabel" placeholder="Thursday 17 September" />
+                <div class="admin-field" style="flex:2;"><label>@Loc["Admin.Common.Title"]</label><input name="title"
+                                                                                        placeholder="@Loc["Admin.Experiences.ArrivalAndOpeningDinner"]" required /></div>
+                    <div class="admin-field"><label>@Loc["Admin.Experiences.DateLabel"]</label><input name="dateLabel" placeholder="@Loc["Admin.Experiences.Thursday17September"]" />
                     </div>
-                    <button type="submit" class="admin-btn">Add day</button>
+                    <button type="submit" class="admin-btn">@Loc["Admin.Experiences.AddDay"]</button>
                 </form>
             </div>
 
             @* --- Ticket types ------------------------------------------------------------------------------- *@
             <div class="admin-card" style="margin-bottom:24px;">
-                <h2>Ticket types</h2>
+                <h2>@Loc["Admin.Experiences.TicketTypes"]</h2>
 
                 @if (Model.TicketTypes.Count == 0)
                 {
                     <div class="admin-empty">
-                        <p class="admin-empty__title">No ticket types yet</p>
+                        <p class="admin-empty__title">@Loc["Admin.Experiences.NoTicketTypesYet"]</p>
                     </div>
                 }
 
@@ -390,106 +382,105 @@
                         <form asp-action="UpdateTicketType" asp-route-id="@experienceId" method="post" class="admin-form">
                             <input type="hidden" name="Id" value="@t.Id" />
                             <div class="admin-form__grid">
-                                <div class="admin-field"><label>Title</label><input name="Title" value="@t.Title" required /></div>
-                                <div class="admin-field"><label>Price (minor units)</label><input name="PriceMinor" type="number"
+                                <div class="admin-field"><label>@Loc["Admin.Common.Title"]</label><input name="Title" value="@t.Title" required /></div>
+                                <div class="admin-field"><label>@Loc["Admin.Experiences.PriceMinorUnits"]</label><input name="PriceMinor" type="number"
                                                                                                       min="0" value="@t.PriceMinor" required /></div>
-                                    <div class="admin-field"><label>Currency</label><input name="Currency" value="@t.Currency" maxlength="3"
+                                    <div class="admin-field"><label>@Loc["Admin.Common.Currency"]</label><input name="Currency" value="@t.Currency" maxlength="3"
                                                                                                required /></div>
-                                        <div class="admin-field"><label>Max per order</label><input name="MaxQuantityPerOrder" type="number"
+                                        <div class="admin-field"><label>@Loc["Admin.Experiences.MaxPerOrder"]</label><input name="MaxQuantityPerOrder" type="number"
                                                                                                         min="1" value="@t.MaxQuantityPerOrder" /></div>
-                                            <div class="admin-field"><label>Order</label><input name="SortOrder" type="number"
+                                            <div class="admin-field"><label>@Loc["Admin.Experiences.Order"]</label><input name="SortOrder" type="number"
                                                                                                     value="@t.SortOrder" /></div>
                                             </div>
-                                            <div class="admin-field"><label>Description</label><input name="Description" value="@t.Description" /></div>
-                                            <div class="admin-field"><label>Perks</label><textarea name="PerksText" rows="2">@t.PerksText</textarea>
+                                            <div class="admin-field"><label>@Loc["Admin.Common.Description"]</label><input name="Description" value="@t.Description" /></div>
+                                            <div class="admin-field"><label>@Loc["Admin.Experiences.Perks"]</label><textarea name="PerksText" rows="2">@t.PerksText</textarea>
                                             </div>
 
                                             @* Inventory is shown but not editable: it is the no-oversell counter, moved only by
                    the atomic reservation. A number typed here from a stale page would undo sales. *@
-                                            <p class="admin-field__hint">@t.Inventory place(s) left — inventory moves only as tickets are sold or
-                                                released.</p>
+                                            <p class="admin-field__hint">@Loc["Admin.Experiences.PlacesLeft", t.Inventory]</p>
 
                                                 <div class="admin-panel__actions">
-                                                    <button type="submit" class="admin-btn">Save ticket type</button>
+                                                    <button type="submit" class="admin-btn">@Loc["Admin.Experiences.SaveTicketType"]</button>
                                                 </div>
                                             </form>
 
-                                            <form asp-action="RemoveTicketType" method="post" onsubmit="return confirm('Remove this ticket type?');">
+                                            <form asp-action="RemoveTicketType" method="post" data-confirm="@Loc["Admin.Experiences.RemoveThisTicketType"]">
                                                 <input type="hidden" name="experienceId" value="@experienceId" />
                                                 <input type="hidden" name="ticketTypeId" value="@t.Id" />
-                                                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                                                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">@Loc["Admin.Common.Remove"]</button>
                                             </form>
                                         </div>
                                     }
 
                                     <form asp-action="AddTicketType" method="post" class="admin-inline-form">
                                         <input type="hidden" name="ExperienceId" value="@experienceId" />
-                                        <div class="admin-field"><label>Title</label><input name="Title" placeholder="Standard Experience" required />
+                                        <div class="admin-field"><label>@Loc["Admin.Common.Title"]</label><input name="Title" placeholder="Standard Experience" required />
                                         </div>
-                                        <div class="admin-field"><label>Price (minor units)</label><input name="PriceMinor" type="number" min="0"
+                                        <div class="admin-field"><label>@Loc["Admin.Experiences.PriceMinorUnits"]</label><input name="PriceMinor" type="number" min="0"
                                                                                                               required /></div>
-                                            <div class="admin-field"><label>Currency</label><input name="Currency" value="GBP" maxlength="3" required />
+                                            <div class="admin-field"><label>@Loc["Admin.Common.Currency"]</label><input name="Currency" value="GBP" maxlength="3" required />
                                             </div>
-                                            <div class="admin-field"><label>Inventory</label><input name="Inventory" type="number" min="0" required /></div>
-                                            <button type="submit" class="admin-btn">Add</button>
+                                            <div class="admin-field"><label>@Loc["Admin.Experiences.Inventory"]</label><input name="Inventory" type="number" min="0" required /></div>
+                                            <button type="submit" class="admin-btn">@Loc["Admin.Common.Add"]</button>
                                         </form>
                                     </div>
 
                                     @* --- Included / Not included -------------------------------------------------------------------- *@
                                     <div class="admin-card" style="margin-bottom:24px;">
-                                        <h2>Included / not included <span class="admin-lang-chip admin-lang-chip--on">@active.Culture.ShortLabel</span></h2>
+                                        <h2>@Loc["Admin.Experiences.IncludedNotIncluded"] <span class="admin-lang-chip admin-lang-chip--on">@active.Culture.ShortLabel</span></h2>
 
                                         @foreach (var i in Model.Inclusions.Where(i => i.Culture == Model.ActiveCulture))
                                         {
                                             <form asp-action="UpdateInclusion" asp-route-id="@experienceId" method="post" class="admin-inline-form">
                                                 <input type="hidden" name="inclusionId" value="@i.Id" />
-                                                <div class="admin-field" style="flex:3;"><label>Text</label><input name="text" value="@i.Text" required /></div>
+                                                <div class="admin-field" style="flex:3;"><label>@Loc["Admin.Experiences.Text"]</label><input name="text" value="@i.Text" required /></div>
                                                 <div class="admin-field admin-field--checkbox">
                                                     <input type="checkbox" name="isIncluded" value="true" checked="@i.IsIncluded" />
-                                                    <label>Included</label>
+                                                    <label>@Loc["Admin.Experiences.Included"]</label>
                                                 </div>
-                                                <div class="admin-field"><label>Order</label><input name="sortOrder" type="number" value="@i.SortOrder" /></div>
-                                                <button type="submit" class="admin-icon-btn">Save</button>
+                                                <div class="admin-field"><label>@Loc["Admin.Experiences.Order"]</label><input name="sortOrder" type="number" value="@i.SortOrder" /></div>
+                                                <button type="submit" class="admin-icon-btn">@Loc["Admin.Common.Save"]</button>
                                             </form>
                                             <form asp-action="RemoveInclusion" method="post" style="margin:-8px 0 12px;">
                                                 <input type="hidden" name="experienceId" value="@experienceId" />
                                                 <input type="hidden" name="inclusionId" value="@i.Id" />
-                                                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                                                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">@Loc["Admin.Common.Remove"]</button>
                                             </form>
                                         }
 
                                         <form asp-action="AddInclusion" method="post" class="admin-inline-form">
                                             <input type="hidden" name="ExperienceId" value="@experienceId" />
                                             <input type="hidden" name="Culture" value="@active.Culture.Name" />
-                                            <div class="admin-field" style="flex:3;"><label>Text</label><input name="Text" required /></div>
+                                            <div class="admin-field" style="flex:3;"><label>@Loc["Admin.Experiences.Text"]</label><input name="Text" required /></div>
                                             <div class="admin-field admin-field--checkbox"><input type="checkbox" name="IsIncluded" value="true"
-                                                                                                      checked /><label>Included</label></div>
-                                                <button type="submit" class="admin-btn">Add</button>
+                                                                                                      checked /><label>@Loc["Admin.Experiences.Included"]</label></div>
+                                                <button type="submit" class="admin-btn">@Loc["Admin.Common.Add"]</button>
                                             </form>
                                         </div>
 
                                         @* --- FAQ ---------------------------------------------------------------------------------------- *@
                                         <div class="admin-card" style="margin-bottom:24px;">
-                                            <h2>FAQ <span class="admin-lang-chip admin-lang-chip--on">@active.Culture.ShortLabel</span></h2>
+                                            <h2>@Loc["Admin.Experiences.FAQ"] <span class="admin-lang-chip admin-lang-chip--on">@active.Culture.ShortLabel</span></h2>
 
                                             @foreach (var f in Model.Faqs.Where(f => f.Culture == Model.ActiveCulture))
                                             {
                                                 <div class="admin-panel" style="margin-bottom:12px;">
                                                     <form asp-action="UpdateFaq" asp-route-id="@experienceId" method="post" class="admin-form">
                                                         <input type="hidden" name="faqId" value="@f.Id" />
-                                                        <div class="admin-field"><label>Question</label><input name="question" value="@f.Question" required /></div>
-                                                        <div class="admin-field"><label>Answer</label><textarea name="answer" rows="3" required>@f.Answer</textarea>
+                                                        <div class="admin-field"><label>@Loc["Admin.Experiences.Question"]</label><input name="question" value="@f.Question" required /></div>
+                                                        <div class="admin-field"><label>@Loc["Admin.Experiences.Answer"]</label><textarea name="answer" rows="3" required>@f.Answer</textarea>
                                                         </div>
-                                                        <div class="admin-field"><label>Order</label><input name="sortOrder" type="number" value="@f.SortOrder" />
+                                                        <div class="admin-field"><label>@Loc["Admin.Experiences.Order"]</label><input name="sortOrder" type="number" value="@f.SortOrder" />
                                                         </div>
                                                         <div class="admin-panel__actions">
-                                                            <button type="submit" class="admin-btn">Save</button>
+                                                            <button type="submit" class="admin-btn">@Loc["Admin.Common.Save"]</button>
                                                         </div>
                                                     </form>
                                                     <form asp-action="RemoveFaq" method="post">
                                                         <input type="hidden" name="experienceId" value="@experienceId" />
                                                         <input type="hidden" name="faqId" value="@f.Id" />
-                                                        <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                                                        <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">@Loc["Admin.Common.Remove"]</button>
                                                     </form>
                                                 </div>
                                             }
@@ -497,26 +488,24 @@
                                             <form asp-action="AddFaq" method="post" class="admin-inline-form">
                                                 <input type="hidden" name="ExperienceId" value="@experienceId" />
                                                 <input type="hidden" name="Culture" value="@active.Culture.Name" />
-                                                <div class="admin-field" style="flex:2;"><label>Question</label><input name="Question" required /></div>
-                                                <div class="admin-field" style="flex:3;"><label>Answer</label><input name="Answer" required /></div>
-                                                <button type="submit" class="admin-btn">Add</button>
+                                                <div class="admin-field" style="flex:2;"><label>@Loc["Admin.Experiences.Question"]</label><input name="Question" required /></div>
+                                                <div class="admin-field" style="flex:3;"><label>@Loc["Admin.Experiences.Answer"]</label><input name="Answer" required /></div>
+                                                <button type="submit" class="admin-btn">@Loc["Admin.Common.Add"]</button>
                                             </form>
                                         </div>
 
                                         @* --- Waitlist ----------------------------------------------------------------------------------- *@
                                         <div class="admin-card" style="margin-bottom:24px;">
-                                            <h2>Waitlist <span class="admin-lang-chip">@Model.Waitlist.Count</span></h2>
+                                            <h2>@Loc["Admin.Experiences.Waitlist"] <span class="admin-lang-chip">@Model.Waitlist.Count</span></h2>
                                             <p class="admin-hint">
-                                                People who signed up while this experience was at capacity, in the order they arrived.
-                                                The public sign-up form only appears while the status is <strong>Waitlist</strong>.
-                                                Positions are not renumbered when you remove someone &mdash; they record arrival order.
+                                                @Loc["Admin.Experiences.PeopleWhoSignedUpWhileThis"] <strong>@Loc["Admin.Experiences.Waitlist"]</strong>@Loc["Admin.Experiences.PositionsAreNotRenumberedWhenYou"]
                                             </p>
 
                                             @if (Model.Waitlist.Count == 0)
                                             {
                                                 <div class="admin-empty">
-                                                    <p class="admin-empty__title">Nobody is waiting.</p>
-                                                    <p>Set the status to Waitlist and the form appears on the public page.</p>
+                                                    <p class="admin-empty__title">@Loc["Admin.Experiences.NobodyIsWaiting"]</p>
+                                                    <p>@Loc["Admin.Experiences.SetTheStatusToWaitlistAnd"]</p>
                                                 </div>
                                             }
                                             else
@@ -526,9 +515,9 @@
                                                         <thead>
                                                             <tr>
                                                                 <th scope="col">#</th>
-                                                                <th scope="col">Name</th>
-                                                                <th scope="col">Email</th>
-                                                                <th scope="col">Joined</th>
+                                                                <th scope="col">@Loc["Admin.Common.Name"]</th>
+                                                                <th scope="col">@Loc["Admin.Common.Email"]</th>
+                                                                <th scope="col">@Loc["Admin.Experiences.Joined"]</th>
                                                                 <th scope="col"></th>
                                                             </tr>
                                                         </thead>
@@ -547,7 +536,7 @@
                                                                             <input type="hidden" name="experienceId" value="@experienceId" />
                                                                             <input type="hidden" name="entryId" value="@entry.Id" />
                                                                             <button type="submit" class="admin-icon-btn"
-                                                                                    style="color:var(--vih-danger);">Remove</button>
+                                                                                    style="color:var(--vih-danger);">@Loc["Admin.Common.Remove"]</button>
                                                                         </form>
                                                                     </td>
                                                                 </tr>
@@ -560,28 +549,28 @@
 
                                         @* --- Notify ------------------------------------------------------------------------------------- *@
                                         <div class="admin-card">
-                                            <h2>Notify attendees</h2>
-                                            <p class="admin-hint">Sends an in-portal notification to everyone with a confirmed booking on this experience.</p>
+                                            <h2>@Loc["Admin.Experiences.NotifyAttendees"]</h2>
+                                            <p class="admin-hint">@Loc["Admin.Experiences.SendsAnInPortalNotificationTo"]</p>
                                             <form asp-action="NotifyAttendees" method="post" class="admin-form">
                                                 <input type="hidden" name="ExperienceId" value="@experienceId" />
                                                 <div class="admin-form__grid">
                                                     <div class="admin-field">
-                                                        <label>Type</label>
+                                                        <label>@Loc["Admin.Common.Type"]</label>
                                                         <select name="Type">
-                                                            <option value="EventUpdate">Event Update</option>
-                                                            <option value="NewSchedule">New Schedule</option>
+                                                            <option value="EventUpdate">@Loc["Admin.Experiences.EventUpdate"]</option>
+                                                            <option value="NewSchedule">@Loc["Admin.Experiences.NewSchedule"]</option>
                                                         </select>
                                                     </div>
                                                     <div class="admin-field">
-                                                        <label>Title</label>
+                                                        <label>@Loc["Admin.Common.Title"]</label>
                                                         <input name="Title" maxlength="200" required />
                                                     </div>
                                                 </div>
                                                 <div class="admin-field">
-                                                    <label>Body</label>
+                                                    <label>@Loc["Admin.Experiences.Body"]</label>
                                                     <textarea name="Body" rows="3" maxlength="1000" required></textarea>
                                                 </div>
-                                                <button type="submit" class="admin-btn">Notify attendees</button>
+                                                <button type="submit" class="admin-btn">@Loc["Admin.Experiences.NotifyAttendees"]</button>
                                             </form>
                                         </div>
 

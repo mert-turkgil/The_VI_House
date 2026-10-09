@@ -1,59 +1,60 @@
-@model AdminJournalCreateViewModel
+@model AdminJournalStartViewModel
 @{
     ViewData["Title"] = Loc["Admin.Journal.New"].Value;
 }
 
-<div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+@*
+    "New article": a headline and a category is all it takes to start. The web address is made from
+    the headline, and the article itself is written on the next screen, where images can already be
+    dragged in (a file needs a post to belong to).
+*@
+<div class="writer-start">
+    <partial name="_ErrorSummary" model="@Loc["Admin.Journal.ErrorTitle"].Value" />
 
-<p class="admin-hint">@Loc["Admin.Journal.CreateHint", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</p>
-
-<form asp-action="Create" method="post" class="admin-form">
-    <div class="admin-form__grid">
+    <form asp-action="Create" method="post" class="admin-form writer-start__form" data-guard>
         <div class="admin-field">
-            <label asp-for="DefaultTranslation.Title">@Loc["Admin.Journal.Title.Column"]</label>
-            <input asp-for="DefaultTranslation.Title" maxlength="200" required />
-            <span asp-validation-for="DefaultTranslation.Title" class="field-validation-error"></span>
+            <label asp-for="Title">@Loc["Admin.Journal.Title.Column"]</label>
+            <input asp-for="Title" class="writer__title writer__title--start" maxlength="200" autofocus
+                   placeholder="@Loc["Admin.Writer.TitlePlaceholder"]" autocomplete="off" />
+            <span asp-validation-for="Title" class="field-validation-error"></span>
+            <p class="admin-field__hint">@Loc["Admin.Writer.Start.TitleHint"]</p>
         </div>
-        <div class="admin-field">
-            <label asp-for="Post.Slug">@Loc["Admin.Journal.Slug"]</label>
-            <input asp-for="Post.Slug" placeholder="why-we-built-the-vi-house" />
-            <span asp-validation-for="Post.Slug" class="field-validation-error"></span>
+
+        <fieldset class="admin-field admin-choice-group">
+            <legend>@Loc["Admin.Journal.Category"]</legend>
+            <div class="admin-choice-group__options admin-choice-group__options--grid">
+                @foreach (var category in Enum.GetValues<JournalCategory>())
+                {
+                    <label class="admin-choice">
+                        <input type="radio" asp-for="Category" value="@category" />
+                        <span class="admin-choice__body">
+                            <strong>@Loc["Journal.Category." + category]</strong>
+                            <span>@Loc["Admin.Journal.Category." + category + ".Help"]</span>
+                        </span>
+                    </label>
+                }
+            </div>
+        </fieldset>
+
+        <div class="admin-form__grid">
+            <div class="admin-field">
+                <label asp-for="AuthorName">@Loc["Admin.Journal.AuthorName"]</label>
+                <input asp-for="AuthorName" maxlength="150" />
+                <p class="admin-field__hint">@Loc["Admin.Writer.Start.AuthorHint"]</p>
+            </div>
+            <div class="admin-field">
+                <label asp-for="Excerpt">@Loc["Admin.Journal.Excerpt"] <span class="admin-optional">@Loc["Admin.Form.Optional"]</span></label>
+                <textarea asp-for="Excerpt" rows="3" maxlength="500" placeholder="@Loc["Admin.Writer.StandfirstPlaceholder"]"></textarea>
+            </div>
         </div>
-    </div>
 
-    <div class="admin-form__grid">
-        <div class="admin-field">
-            <label asp-for="Post.Category">@Loc["Admin.Journal.Category"]</label>
-            <select asp-for="Post.Category" asp-items="Html.GetEnumSelectList<JournalCategory>()"></select>
+        <div class="writer-start__actions">
+            <button type="submit" class="admin-btn">@Loc["Admin.Writer.Start.Submit"] &rarr;</button>
+            <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Journal.Cancel"]</a>
         </div>
-        <div class="admin-field">
-            <label asp-for="Post.AuthorName">@Loc["Admin.Journal.AuthorName"]</label>
-            <input asp-for="Post.AuthorName" maxlength="150" />
-        </div>
-    </div>
-
-    <div class="admin-field">
-        <label asp-for="DefaultTranslation.Excerpt">@Loc["Admin.Journal.Excerpt"]</label>
-        <textarea asp-for="DefaultTranslation.Excerpt" rows="2" maxlength="500"></textarea>
-        <span asp-validation-for="DefaultTranslation.Excerpt" class="field-validation-error"></span>
-    </div>
-
-    <div class="admin-field">
-        <label asp-for="DefaultTranslation.Body">@Loc["Admin.Journal.Body"]</label>
-        @* No data-upload-url here, unlike the edit screen: there is no post row yet for an uploaded
-           file to belong to, and a file owned by nothing is the one thing this design does not
-           allow. Images, audio and video are added on the next screen. *@
-        <textarea asp-for="DefaultTranslation.Body" rows="16" data-ckeditor></textarea>
-        <span asp-validation-for="DefaultTranslation.Body" class="field-validation-error"></span>
-    </div>
-
-    <p class="admin-field__hint">@Loc["Admin.Journal.MediaLaterHint"]</p>
-
-    <div>
-        <button type="submit" class="admin-btn">@Loc["Admin.Journal.CreateSubmit"]</button>
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Journal.Cancel"]</a>
-    </div>
-</form>
+        <p class="admin-field__hint">@Loc["Admin.Writer.Start.After"]</p>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

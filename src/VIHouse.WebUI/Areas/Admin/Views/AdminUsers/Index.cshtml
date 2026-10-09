@@ -1,7 +1,7 @@
 @using VIHouse.DataAccess.Identity
 @model List<AdminCustomerListItemViewModel>
 @{
-    ViewData["Title"] = "Users";
+    ViewData["Title"] = Loc["Admin.Nav.AdminUsers"].Value;
 }
 
 @if (TempData["StatusMessage"] is string status)
@@ -14,13 +14,13 @@
 @if (User.IsInRole(Roles.SuperAdmin))
 {
     <div class="admin-toolbar">
-        <a class="admin-btn" asp-action="Invite">+ Invite Admin</a>
+        <a class="admin-btn" asp-action="Invite">@Loc["Admin.Users.InviteAdmin"]</a>
     </div>
 }
 
 @if (Model.Count == 0)
 {
-    <p>No registered accounts yet.</p>
+    <p>@Loc["Admin.Users.NoRegisteredAccountsYet"]</p>
 }
 else
 {
@@ -28,11 +28,11 @@ else
     <table class="admin-table" data-admin-table>
         <thead>
             <tr>
-                <th>Email</th>
-                <th>Title / profession</th>
-                <th>Roles</th>
-                <th>Applications</th>
-                <th>Bookings</th>
+                <th>@Loc["Admin.Common.Email"]</th>
+                <th>@Loc["Admin.Users.TitleProfession"]</th>
+                <th>@Loc["Admin.Users.Roles"]</th>
+                <th>@Loc["Admin.Users.Applications"]</th>
+                <th>@Loc["Admin.Users.Bookings"]</th>
                 <th></th>
             </tr>
         </thead>
@@ -42,12 +42,12 @@ else
                 <tr>
                     <td><a asp-action="Details" asp-route-id="@u.UserId">@u.Email</a></td>
                     <td>@(u.JobTitle ?? "—")</td>
-                    <td>@(u.Roles.Count == 0 ? "—" : string.Join(", ", u.Roles))</td>
+                    <td>@(u.Roles.Count == 0 ? "—" : string.Join(", ", u.Roles.Select(r => Loc["Admin.Role." + r].Value)))</td>
                     <td>@u.ApplicationCount</td>
                     <td>@u.BookingCount</td>
                     <td class="admin-table__actions">
-                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@u.UserId">Open</a>
-                        <a class="admin-icon-btn" href="mailto:@u.Email">Email</a>
+                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@u.UserId">@Loc["Admin.Common.Open"]</a>
+                        <a class="admin-icon-btn" href="mailto:@u.Email">@Loc["Admin.Common.Email"]</a>
                     </td>
                 </tr>
             }

@@ -18,21 +18,21 @@
 }
 
 <div class="admin-toolbar" style="justify-content: space-between; align-items: center;">
-    <span class="@badgeClass" style="font-size:0.75rem;">@a.Status.ToDisplayLabel()</span>
-    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; Back to Applications</a>
+    <span class="@badgeClass" style="font-size:0.75rem;">@Loc.Label(a.Status)</span>
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Applications.BackToApplications"]</a>
 </div>
 
 <div class="admin-review-grid">
     <div class="admin-review-main">
         <div class="admin-card">
-            <h2>Applicant</h2>
+            <h2>@Loc["Admin.Applications.Applicant"]</h2>
             <dl class="admin-detail-list">
-                <div><dt>Name</dt><dd>@a.FirstName @a.LastName</dd></div>
-                <div><dt>Email</dt><dd>@a.Email</dd></div>
-                <div><dt>Title / profession</dt><dd>@(a.JobTitle ?? "—")</dd></div>
-                <div><dt>Phone</dt><dd>@(a.Phone ?? "—")</dd></div>
+                <div><dt>@Loc["Admin.Common.Name"]</dt><dd>@a.FirstName @a.LastName</dd></div>
+                <div><dt>@Loc["Admin.Common.Email"]</dt><dd>@a.Email</dd></div>
+                <div><dt>@Loc["Admin.Applications.TitleProfession"]</dt><dd>@(a.JobTitle ?? "—")</dd></div>
+                <div><dt>@Loc["Admin.Common.Phone"]</dt><dd>@(a.Phone ?? "—")</dd></div>
                 <div>
-                    <dt>Address</dt>
+                    <dt>@Loc["Admin.Applications.Address"]</dt>
                     <dd>
                         @{
                             var addressLines = new[] { a.AddressLine1, a.AddressLine2, string.Join(" ", new[] { a.PostalCode, a.City }.Where(x => !string.IsNullOrWhiteSpace(x))), Countries.NameFor(a.Country) }
@@ -44,35 +44,35 @@
                         }
                     </dd>
                 </div>
-                <div><dt>Annual earnings</dt><dd>@(EarningsBand.LabelFor(a.EarningsBand) ?? "—")</dd></div>
-                <div><dt>Experience</dt><dd>@Model.ExperienceLabel</dd></div>
-                <div><dt>Submitted</dt><dd>@(a.SubmittedAt?.ToString("dd MMM yyyy, HH:mm") ?? "—")</dd></div>
+                <div><dt>@Loc["Admin.Applications.AnnualEarnings"]</dt><dd>@(EarningsBand.LabelFor(a.EarningsBand) ?? "—")</dd></div>
+                <div><dt>@Loc["Admin.Applications.Experience"]</dt><dd>@Model.ExperienceLabel</dd></div>
+                <div><dt>@Loc["Admin.Applications.Submitted"]</dt><dd>@(a.SubmittedAt?.ToString("dd MMM yyyy, HH:mm") ?? "—")</dd></div>
                 @if (!string.IsNullOrWhiteSpace(a.ReferralCode))
                 {
-                    <div><dt>Referral code</dt><dd>@a.ReferralCode</dd></div>
+                    <div><dt>@Loc["Admin.Applications.ReferralCode"]</dt><dd>@a.ReferralCode</dd></div>
                 }
             </dl>
         </div>
 
         <div class="admin-card">
-            <h2>In their words</h2>
-            <p><strong>Describe yourself or your business</strong><br />@(string.IsNullOrWhiteSpace(a.AboutStatement) ? "—" : a.AboutStatement)</p>
-            <p><strong>How may we help with your goals / what are your expectations?</strong><br />@(string.IsNullOrWhiteSpace(a.ExpectationsStatement) ? "—" : a.ExpectationsStatement)</p>
+            <h2>@Loc["Admin.Applications.InTheirWords"]</h2>
+            <p><strong>@Loc["Admin.Applications.DescribeYourselfOrYourBusiness"]</strong><br />@(string.IsNullOrWhiteSpace(a.AboutStatement) ? "—" : a.AboutStatement)</p>
+            <p><strong>@Loc["Admin.Applications.HowMayWeHelpWithYour"]</strong><br />@(string.IsNullOrWhiteSpace(a.ExpectationsStatement) ? "—" : a.ExpectationsStatement)</p>
         </div>
 
         <div class="admin-card">
-            <h2>Internal Notes</h2>
-            <p style="font-size:0.75rem; color:#999; margin-top:-8px;">Never shown to the applicant.</p>
+            <h2>@Loc["Admin.Applications.InternalNotes"]</h2>
+            <p style="font-size:0.75rem; color:#999; margin-top:-8px;">@Loc["Admin.Applications.NeverShownToTheApplicant"]</p>
             <form asp-action="UpdateNotes" asp-route-id="@a.Id" method="post">
                 <textarea name="internalNotes" rows="4" style="width:100%; padding:10px 12px; border:1px solid var(--vih-line-on-light); border-radius:4px; font-family:inherit;">@a.InternalNotes</textarea>
                 <div style="margin-top:12px;">
-                    <button type="submit" class="admin-btn">Save Notes</button>
+                    <button type="submit" class="admin-btn">@Loc["Admin.Applications.SaveNotes"]</button>
                 </div>
             </form>
         </div>
 
         <div class="admin-card">
-            <h2>Tags</h2>
+            <h2>@Loc["Admin.Applications.Tags"]</h2>
             @if (a.Tags.Count > 0)
             {
                 <div class="admin-inline-list">
@@ -81,7 +81,7 @@
                         <div class="admin-inline-list__row">
                             <span>@tag.Label</span>
                             <form asp-action="RemoveTag" asp-route-id="@a.Id" asp-route-tagId="@tag.Id" method="post">
-                                <button type="submit" class="admin-btn admin-btn--danger">Remove</button>
+                                <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Common.Remove"]</button>
                             </form>
                         </div>
                     }
@@ -89,28 +89,28 @@
             }
             <form asp-action="AddTag" asp-route-id="@a.Id" method="post" class="admin-inline-form">
                 <div class="admin-field">
-                    <label for="tag-label">Add Tag</label>
-                    <input id="tag-label" name="label" placeholder="e.g. Investor, Fintech, VIP" required />
+                    <label for="tag-label">@Loc["Admin.Applications.AddTag"]</label>
+                    <input id="tag-label" name="label" placeholder="@Loc["Admin.Applications.EGInvestorFintechVIP"]" required />
                 </div>
-                <button type="submit" class="admin-btn">Add</button>
+                <button type="submit" class="admin-btn">@Loc["Admin.Common.Add"]</button>
             </form>
         </div>
     </div>
 
     <div class="admin-review-side">
         <div class="admin-card">
-            <h2>Review</h2>
+            <h2>@Loc["Admin.Applications.Review"]</h2>
 
             @if (Model.CanMarkUnderReview)
             {
                 <form asp-action="MarkUnderReview" asp-route-id="@a.Id" method="post">
-                    <button type="submit" class="admin-btn" style="width:100%;">Start Review</button>
+                    <button type="submit" class="admin-btn" style="width:100%;">@Loc["Admin.Applications.StartReview"]</button>
                 </form>
             }
             else if (Model.CanShortlist)
             {
                 <form asp-action="Shortlist" asp-route-id="@a.Id" method="post">
-                    <button type="submit" class="admin-btn" style="width:100%;">Shortlist</button>
+                    <button type="submit" class="admin-btn" style="width:100%;">@Loc["Admin.Applications.Shortlist"]</button>
                 </form>
             }
             else if (Model.CanDecide)
@@ -120,39 +120,39 @@
                     @* Waitlisted is a holding pattern, not a verdict: the answer changes when a seat
                        opens or the next cohort is announced, so the decision stays open here. *@
                     <p style="font-size:0.8125rem; color:#666; margin-top:-4px;">
-                        On the waitlist since @(a.DecisionAt?.ToString("dd MMM yyyy") ?? "—"). Decide again whenever you're ready.
+                        @Loc["Admin.Applications.WaitlistedSince", a.DecisionAt?.ToString("dd MMM yyyy") ?? "—"]
                     </p>
                 }
 
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     <form asp-action="Approve" asp-route-id="@a.Id" method="post">
-                        <button type="submit" class="admin-btn" style="width:100%; background: var(--vih-gold); color: var(--vih-green-950);">Approve &amp; Send Payment Link</button>
+                        <button type="submit" class="admin-btn" style="width:100%; background: var(--vih-gold); color: var(--vih-green-950);">@Loc["Admin.Applications.ApproveSendPaymentLink"]</button>
                     </form>
                     @if (!Model.IsWaitlisted)
                     {
                         <form asp-action="Waitlist" asp-route-id="@a.Id" method="post">
-                            <button type="submit" class="admin-btn admin-btn--ghost" style="width:100%;">Waitlist</button>
+                            <button type="submit" class="admin-btn admin-btn--ghost" style="width:100%;">@Loc["Admin.Applications.Waitlist"]</button>
                         </form>
                     }
                     <form asp-action="Reject" asp-route-id="@a.Id" method="post" style="display:flex; flex-direction:column; gap:8px;">
-                        <textarea name="reason" placeholder="Reason (optional, internal)" rows="2" style="padding:8px 10px; border:1px solid var(--vih-line-on-light); border-radius:4px; font-family:inherit; font-size:0.8125rem;"></textarea>
-                        <button type="submit" class="admin-btn admin-btn--danger" style="width:100%;">Reject</button>
+                        <textarea name="reason" placeholder="@Loc["Admin.Applications.ReasonOptionalInternal"]" rows="2" style="padding:8px 10px; border:1px solid var(--vih-line-on-light); border-radius:4px; font-family:inherit; font-size:0.8125rem;"></textarea>
+                        <button type="submit" class="admin-btn admin-btn--danger" style="width:100%;">@Loc["Admin.Applications.Reject"]</button>
                     </form>
                 </div>
             }
             else
             {
                 <p style="font-size:0.875rem; color:#666;">
-                    This application is @a.Status.ToDisplayLabel().ToLowerInvariant() — no further review actions apply.
+                    @Loc["Admin.Applications.FinalStatus", Loc.Label(a.Status)]
                     @if (a.DecisionAt is not null)
                     {
                         <br />
-                        <span>Decided @a.DecisionAt.Value.ToString("dd MMM yyyy")@(Model.ReviewedByEmail is null ? "" : $" by {Model.ReviewedByEmail}").</span>
+                        <span>@(Model.ReviewedByEmail is null ? Loc["Admin.Applications.DecidedOn", a.DecisionAt.Value.ToString("dd MMM yyyy")] : Loc["Admin.Applications.DecidedOnBy", a.DecisionAt.Value.ToString("dd MMM yyyy"), Model.ReviewedByEmail])</span>
                     }
                 </p>
                 @if (!string.IsNullOrWhiteSpace(a.DecisionReason))
                 {
-                    <p style="font-size:0.8125rem; color:#666;"><strong>Reason:</strong> @a.DecisionReason</p>
+                    <p style="font-size:0.8125rem; color:#666;"><strong>@Loc["Admin.Applications.Reason"]</strong> @a.DecisionReason</p>
                 }
             }
         </div>
@@ -164,13 +164,13 @@
             var invitationUrl = Url.Action("Show", "Invitation", new { area = "", code = inv.Code }, Context.Request.Scheme);
 
             <div class="admin-card">
-                <h2>Payment Link</h2>
+                <h2>@Loc["Admin.Applications.PaymentLink"]</h2>
                 <p style="font-size:0.75rem; color:#999; margin-top:-8px;">
-                    Sent to them by email and text message when you approved. Single use, and it expires.
+                    @Loc["Admin.Applications.SentToThemByEmailAnd"]
                 </p>
                 <dl class="admin-detail-list">
-                    <div><dt>Status</dt><dd>@(inv.IsUsed ? "Used" : inv.ExpiresAt < DateTimeOffset.UtcNow ? "Expired" : "Active")</dd></div>
-                    <div><dt>Expires</dt><dd>@inv.ExpiresAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
+                    <div><dt>@Loc["Admin.Common.Status"]</dt><dd>@Loc[inv.IsUsed ? "Admin.Applications.Invite.Used" : inv.ExpiresAt < DateTimeOffset.UtcNow ? "Admin.Applications.Invite.Expired" : "Admin.Applications.Invite.Active"]</dd></div>
+                    <div><dt>@Loc["Admin.Applications.Expires"]</dt><dd>@inv.ExpiresAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
                 </dl>
 
                 @if (isLive)
@@ -185,11 +185,11 @@
                 {
                     <form asp-action="ResendInvitation" asp-route-id="@a.Id" method="post" style="margin-top:12px;">
                         <button type="submit" class="admin-btn admin-btn--ghost" style="width:100%;">
-                            @(isLive ? "Send it again" : "Issue a new link and send it")
+                            @Loc[isLive ? "Admin.Applications.SendAgain" : "Admin.Applications.IssueNewLink"]
                         </button>
                     </form>
                     <p style="font-size:0.72rem; color:#999; margin-top:8px;">
-                        Goes out by email and text message@(string.IsNullOrWhiteSpace(a.Phone) ? " — this application has no phone number, so email only" : "").
+                        @Loc[string.IsNullOrWhiteSpace(a.Phone) ? "Admin.Applications.SendsEmailOnly" : "Admin.Applications.SendsEmailAndSms"]
                     </p>
                 }
             </div>
@@ -198,11 +198,11 @@
         @if (Model.Emails.Count > 0 || Model.TextMessages.Count > 0)
         {
             <div class="admin-card">
-                <h2>What we sent them</h2>
+                <h2>@Loc["Admin.Applications.WhatWeSentThem"]</h2>
                 <p style="font-size:0.75rem; color:#999; margin-top:-8px;">
                     @* The answer to "they say they never got it". A Failed row with a gateway error on
                        it and a Sent row plus their own spam folder are very different conversations. *@
-                    Delivery attempts for this application. The full record is under Emails &amp; SMS.
+                    @Loc["Admin.Applications.DeliveryAttempts"]
                 </p>
 
                 <div class="admin-inline-list" style="margin-top:8px;">
@@ -210,14 +210,14 @@
                     {
                         <div class="admin-inline-list__row" style="align-items:flex-start;">
                             <span style="font-size:0.78rem;">
-                                <strong>Email</strong> · @mail.TemplateKey
+                                <strong>@Loc["Admin.Common.Email"]</strong> · @mail.TemplateKey
                                 <div style="font-size:0.72rem; color:#999;">@mail.CreatedAt.ToString("d MMM yyyy HH:mm") · @mail.RecipientEmail</div>
                                 @if (mail.Status == EmailStatus.Failed && !string.IsNullOrWhiteSpace(mail.ErrorMessage))
                                 {
                                     <div style="font-size:0.72rem; color:var(--vih-danger);">@mail.ErrorMessage</div>
                                 }
                             </span>
-                            <span class="admin-badge @(mail.Status == EmailStatus.Sent ? "admin-badge--open" : mail.Status == EmailStatus.Failed ? "admin-badge--closed" : "admin-badge--draft")">@mail.Status</span>
+                            <span class="admin-badge @(mail.Status == EmailStatus.Sent ? "admin-badge--open" : mail.Status == EmailStatus.Failed ? "admin-badge--closed" : "admin-badge--draft")">@Loc.Label(mail.Status)</span>
                         </div>
                     }
                     @foreach (var text in Model.TextMessages)
@@ -231,7 +231,7 @@
                                     <div style="font-size:0.72rem; color:var(--vih-danger);">@text.ErrorMessage</div>
                                 }
                             </span>
-                            <span class="admin-badge @(text.Status == EmailStatus.Sent ? "admin-badge--open" : text.Status == EmailStatus.Failed ? "admin-badge--closed" : "admin-badge--draft")">@text.Status</span>
+                            <span class="admin-badge @(text.Status == EmailStatus.Sent ? "admin-badge--open" : text.Status == EmailStatus.Failed ? "admin-badge--closed" : "admin-badge--draft")">@Loc.Label(text.Status)</span>
                         </div>
                     }
                 </div>
@@ -239,7 +239,7 @@
                 @if (!Model.SmsConfigured)
                 {
                     <p style="font-size:0.72rem; color:#999; margin-top:10px;">
-                        No SMS gateway is configured, so nothing has been texted. Set <code>Sms:Enabled</code> to switch it on.
+                        @Loc["Admin.Applications.NoSMSGatewayIsConfiguredSo"] <code>Sms:Enabled</code> @Loc["Admin.Applications.ToSwitchItOn"]
                     </p>
                 }
             </div>
@@ -248,29 +248,29 @@
         @if (Model.Payment is { } pay)
         {
             <div class="admin-card">
-                <h2>Payment</h2>
+                <h2>@Loc["Admin.Applications.Payment"]</h2>
                 <dl class="admin-detail-list">
-                    <div><dt>Status</dt><dd>@pay.Status</dd></div>
-                    <div><dt>Amount</dt><dd>@MoneyFormatter.Format(pay.AmountMinor, pay.Currency)</dd></div>
-                    <div><dt>Created</dt><dd>@pay.CreatedAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
+                    <div><dt>@Loc["Admin.Common.Status"]</dt><dd>@Loc.Label(pay.Status)</dd></div>
+                    <div><dt>@Loc["Admin.Common.Amount"]</dt><dd>@MoneyFormatter.Format(pay.AmountMinor, pay.Currency)</dd></div>
+                    <div><dt>@Loc["Admin.Common.Created"]</dt><dd>@pay.CreatedAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
                 </dl>
                 @if (Model.LivePaymentDetails is { } d)
                 {
                     <dl class="admin-detail-list" style="margin-top:8px;">
-                        <div><dt>Card</dt><dd>@(d.CardBrand is null ? "—" : $"{d.CardBrand} •••• {d.CardLast4}")</dd></div>
-                        <div><dt>Charge Status</dt><dd>@(d.ChargeStatus ?? "—")</dd></div>
-                        <div><dt>Refunded</dt><dd>@(d.Refunded == true ? MoneyFormatter.Format(d.AmountRefundedMinor ?? 0, pay.Currency) : "No")</dd></div>
+                        <div><dt>@Loc["Admin.Applications.Card"]</dt><dd>@(d.CardBrand is null ? "—" : $"{d.CardBrand} •••• {d.CardLast4}")</dd></div>
+                        <div><dt>@Loc["Admin.Applications.ChargeStatus"]</dt><dd>@(d.ChargeStatus ?? "—")</dd></div>
+                        <div><dt>@Loc["Admin.Applications.Refunded"]</dt><dd>@(d.Refunded == true ? MoneyFormatter.Format(d.AmountRefundedMinor ?? 0, pay.Currency) : Loc["Admin.Common.No"].Value)</dd></div>
                         @if (!string.IsNullOrWhiteSpace(d.ReceiptUrl))
                         {
-                            <div><dt>Receipt</dt><dd><a href="@d.ReceiptUrl" target="_blank" rel="noopener">View receipt</a></dd></div>
+                            <div><dt>@Loc["Admin.Applications.Receipt"]</dt><dd><a href="@d.ReceiptUrl" target="_blank" rel="noopener">@Loc["Admin.Applications.ViewReceipt"]</a></dd></div>
                         }
                     </dl>
                 }
                 else
                 {
-                    <p style="font-size:0.75rem; color:#999; margin-top:8px;">Couldn't sync with Stripe just now — showing the last known status.</p>
+                    <p style="font-size:0.75rem; color:#999; margin-top:8px;">@Loc["Admin.Applications.CouldnTSyncWithStripeJust"]</p>
                 }
-                <a class="admin-btn admin-btn--ghost" asp-controller="AdminPayments" asp-action="Details" asp-route-id="@pay.Id" style="margin-top:12px; display:inline-block;">View in Payments</a>
+                <a class="admin-btn admin-btn--ghost" asp-controller="AdminPayments" asp-action="Details" asp-route-id="@pay.Id" style="margin-top:12px; display:inline-block;">@Loc["Admin.Applications.ViewInPayments"]</a>
             </div>
         }
     </div>

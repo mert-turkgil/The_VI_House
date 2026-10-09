@@ -1,0 +1,61 @@
+// --- Staff preview strips -----------------------------------------------------------------------------
+// Views/Shared/_PreviewBanner.cshtml (top of a page visitors cannot see in its current state) and the
+// staff notice on /sessions. Staff only; striped gold so it can never be mistaken for site content.
+
+.preview-banner {
+  position: relative;
+  z-index: 2;
+  background:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--vih-gold) 22%, transparent) 0 10px, transparent 10px 20px),
+    var(--vih-warning-bg);
+  border-bottom: 1px solid color-mix(in srgb, var(--vih-gold) 55%, transparent);
+  color: var(--vih-ink);
+}
+
+.preview-banner__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs) var(--vih-space-sm);
+  padding-block: var(--vih-space-xs);
+  font-size: var(--vih-text-sm);
+  line-height: 1.5;
+}
+
+.preview-banner__tag,
+.staff-notice__tag {
+  padding: 3px 10px;
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-green-900);
+  color: var(--vih-gold-light);
+  font-size: var(--vih-text-3xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.preview-banner__text {
+  flex: 1 1 260px;
+  font-weight: 500;
+}
+
+.preview-banner__link,
+.staff-notice a {
+  font-weight: 700;
+  color: var(--vih-green-900);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.staff-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs) var(--vih-space-sm);
+  margin: var(--vih-space-lg) 0 0;
+  padding: var(--vih-space-xs) var(--vih-space-sm);
+  border: 1px dashed color-mix(in srgb, var(--vih-gold) 70%, transparent);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-warning-bg);
+  font-size: var(--vih-text-sm);
+}

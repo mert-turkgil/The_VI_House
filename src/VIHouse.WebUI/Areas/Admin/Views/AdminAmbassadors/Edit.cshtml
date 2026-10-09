@@ -10,14 +10,7 @@
     // Visits are only counted on /r/{code}; a typed code converts without one, so the rate is capped rather than shown above 100.
     var conversionRate = stats is { Visits: > 0 } ? Math.Min(100, (double)purchases / stats.Visits * 100) : 0;
 
-    string KindLabel(ReferralConversionKind kind) => kind switch
-    {
-        ReferralConversionKind.Application => "Applied to an experience",
-        ReferralConversionKind.Approved => "Application approved",
-        ReferralConversionKind.TicketPurchase => "Bought a ticket",
-        ReferralConversionKind.SessionPurchase => "Bought a place on a session",
-        _ => "Became a member",
-    };
+    
 }
 
 @if (TempData["StatusMessage"] is string status)
@@ -29,20 +22,20 @@
     <div style="display:flex; align-items:center; gap:10px;">
         @if (pending)
         {
-            <span class="admin-badge @(inviteExpired ? "admin-badge--danger" : "admin-badge--pending")">@(inviteExpired ? "Invitation expired" : "Invited — waiting for them")</span>
+            <span class="admin-badge @(inviteExpired ? "admin-badge--danger" : "admin-badge--pending")">@Loc[inviteExpired ? "Admin.Ambassadors.InvitationExpired" : "Admin.Ambassadors.InvitedWaiting"]</span>
         }
         else
         {
-            <span class="admin-badge @(Model.Status == AmbassadorStatus.Active ? "admin-badge--open" : "admin-badge--draft")">@Model.Status</span>
+            <span class="admin-badge @(Model.Status == AmbassadorStatus.Active ? "admin-badge--open" : "admin-badge--draft")">@Loc.Label(Model.Status)</span>
         }
-        <span class="admin-table__sub">Ambassador since @Model.CreatedAt.ToString("d MMM yyyy")</span>
+        <span class="admin-table__sub">@Loc["Admin.Ambassadors.Since", Model.CreatedAt.ToString("d MMM yyyy")]</span>
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
         @if (Model.UserId is { } userId)
         {
-            <a class="admin-btn admin-btn--ghost" asp-controller="AdminUsers" asp-action="Details" asp-route-id="@userId">Open user record</a>
+            <a class="admin-btn admin-btn--ghost" asp-controller="AdminUsers" asp-action="Details" asp-route-id="@userId">@Loc["Admin.Ambassadors.OpenUserRecord"]</a>
         }
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; All ambassadors</a>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Ambassadors.AllAmbassadors"]</a>
     </div>
 </div>
 
@@ -51,28 +44,27 @@
         @if (pending)
         {
             <div class="admin-card">
-                <h2>Invitation</h2>
+                <h2>@Loc["Admin.Ambassadors.Invitation"]</h2>
                 <p class="admin-hint" style="margin-top:0;">
-                    @Model.Name has not accepted yet. There is no account behind this code, and the code <code>@Model.Code</code> is reserved.
-                    The referral link and QR codes do not work until they choose a password, give their details and accept the terms.
+                    @Loc.Html("Admin.Ambassadors.NotAcceptedYet", Model.Name, LocalizerHtml.Code(Model.Code))
                 </p>
                 <dl class="admin-detail-list">
-                    <div><dt>Sent to</dt><dd>@amb.InviteEmail</dd></div>
-                    <div><dt>Language</dt><dd>@SiteCultures.Describe(amb.PreferredCulture).NativeLabel</dd></div>
-                    <div><dt>Last sent</dt><dd>@amb.InviteSentAt?.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
-                    <div><dt>@(inviteExpired ? "Expired" : "Expires")</dt><dd>@amb.InviteExpiresAt?.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
+                    <div><dt>@Loc["Admin.Ambassadors.SentTo"]</dt><dd>@amb.InviteEmail</dd></div>
+                    <div><dt>@Loc["Admin.Common.Language"]</dt><dd>@SiteCultures.Describe(amb.PreferredCulture).NativeLabel</dd></div>
+                    <div><dt>@Loc["Admin.Ambassadors.LastSent"]</dt><dd>@amb.InviteSentAt?.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
+                    <div><dt>@Loc[inviteExpired ? "Admin.Ambassadors.InviteExpired" : "Admin.Ambassadors.InviteExpires"]</dt><dd>@amb.InviteExpiresAt?.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
                 </dl>
                 @if (User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin) || User.IsInRole(VIHouse.DataAccess.Identity.Roles.Marketing))
                 {
                     <form asp-action="ResendInvite" asp-route-id="@Model.Id" method="post" class="admin-form" style="margin-top:12px;">
                         <div class="admin-form__grid">
                             <div class="admin-field">
-                                <label for="resend-email">Email</label>
+                                <label for="resend-email">@Loc["Admin.Common.Email"]</label>
                                 <input id="resend-email" name="email" type="email" value="@amb.InviteEmail" maxlength="256" />
-                                <p class="admin-field__hint">Correct it here if it was mistyped.</p>
+                                <p class="admin-field__hint">@Loc["Admin.Ambassadors.CorrectItHereIfItWas"]</p>
                             </div>
                             <div class="admin-field">
-                                <label for="resend-culture">Language</label>
+                                <label for="resend-culture">@Loc["Admin.Common.Language"]</label>
                                 <select id="resend-culture" name="culture">
                                     @foreach (var c in SiteCultures.All)
                                     {
@@ -81,12 +73,12 @@
                                 </select>
                             </div>
                         </div>
-                        <button type="submit" class="admin-btn">Re-send invitation</button>
-                        <span class="admin-table__sub">A new link, valid for @((int)VIHouse.Business.Abstract.IAmbassadorService.InviteLifetime.TotalDays) days. The previous one stops working.</span>
+                        <button type="submit" class="admin-btn">@Loc["Admin.Ambassadors.ReSendInvitation"]</button>
+                        <span class="admin-table__sub">@Loc["Admin.Ambassadors.NewLinkValidFor", (int)VIHouse.Business.Abstract.IAmbassadorService.InviteLifetime.TotalDays]</span>
                     </form>
                     <form asp-action="WithdrawInvite" asp-route-id="@Model.Id" method="post" style="margin-top:12px;"
-                          onsubmit="return confirm('Withdraw the invitation and free the code @Model.Code?');">
-                        <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Withdraw invitation</button>
+                          data-confirm="@Loc["Admin.Ambassadors.WithdrawConfirm", Model.Code]">
+                        <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">@Loc["Admin.Ambassadors.WithdrawInvitation"]</button>
                     </form>
                 }
             </div>
@@ -97,17 +89,17 @@
         @* --- The link ------------------------------------------------------------------------ *@
         <div class="admin-card referral-card">
             <div class="referral-card__main">
-                <h2>Referral link</h2>
-                <p class="admin-hint" style="margin-top:0;">Absolute, ready to paste. Anyone who lands on it is cookied for 30 days and credited to @Model.Name when they apply, join or pay.</p>
+                <h2>@Loc["Admin.Ambassadors.ReferralLink"]</h2>
+                <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.LinkHint", Model.Name]</p>
 
                 <div class="referral-card__link">
                     <code data-referral-url="@Model.ReferralUrl">@Model.ReferralUrl</code>
-                    <button type="button" class="admin-btn admin-btn--sm" data-copy="@Model.ReferralUrl" data-copied-label="Copied">Copy link</button>
+                    <button type="button" class="admin-btn admin-btn--sm" data-copy="@Model.ReferralUrl" data-copied-label="@Loc["Admin.Ambassadors.Copied"]">@Loc["Admin.Ambassadors.CopyLink"]</button>
                 </div>
 
                 <div class="referral-card__row">
-                    <span class="referral-card__code">Code <strong data-copy="@Model.Code" data-copied-label="Copied" role="button" tabindex="0" title="Click to copy">@Model.Code</strong></span>
-                    <a class="admin-btn admin-btn--ghost admin-btn--sm" href="@Model.ReferralUrl" target="_blank" rel="noopener">Open in new tab</a>
+                    <span class="referral-card__code">@Loc["Admin.Ambassadors.Code"] <strong data-copy="@Model.Code" data-copied-label="@Loc["Admin.Ambassadors.Copied"]" role="button" tabindex="0" title="@Loc["Admin.Ambassadors.ClickToCopy"]">@Model.Code</strong></span>
+                    <a class="admin-btn admin-btn--ghost admin-btn--sm" href="@Model.ReferralUrl" target="_blank" rel="noopener">@Loc["Admin.Ambassadors.OpenInNewTab"]</a>
                 </div>
 
                 @if (Model.Email is not null)
@@ -115,20 +107,20 @@
                     @* One click, from the House, with the absolute URL and the code — instead of an
                        admin pasting "/r/CODE" into a mail by hand. *@
                     <details class="referral-card__send">
-                        <summary class="admin-btn admin-btn--sm">Email the link to @Model.Email</summary>
+                        <summary class="admin-btn admin-btn--sm">@Loc["Admin.Ambassadors.EmailLinkTo", Model.Email]</summary>
                         <form asp-action="SendLink" asp-route-id="@Model.Id" method="post" class="admin-form" style="margin-top:12px;">
                             <div class="admin-field">
-                                <label for="send-note">Personal note (optional)</label>
-                                <textarea id="send-note" name="note" rows="3" maxlength="600" placeholder="e.g. Lovely to have you on board — here is your link for the launch post."></textarea>
+                                <label for="send-note">@Loc["Admin.Ambassadors.PersonalNoteOptional"]</label>
+                                <textarea id="send-note" name="note" rows="3" maxlength="600" placeholder="@Loc["Admin.Ambassadors.EGLovelyToHaveYou"]"></textarea>
                             </div>
-                            <button type="submit" class="admin-btn admin-btn--sm">Send email</button>
+                            <button type="submit" class="admin-btn admin-btn--sm">@Loc["Admin.Ambassadors.SendEmail"]</button>
                         </form>
                     </details>
                 }
             </div>
-            <figure class="referral-card__qr" aria-label="QR code for the referral link">
+            <figure class="referral-card__qr" aria-label="@Loc["Admin.Ambassadors.QRCodeForTheReferralLink"]">
                 @Html.Raw(Model.QrSvg)
-                <figcaption>Scan or drop on a slide</figcaption>
+                <figcaption>@Loc["Admin.Ambassadors.ScanOrDropOnASlide"]</figcaption>
             </figure>
         </div>
 
@@ -136,32 +128,32 @@
         @if (Model.Links is not null)
         {
             <div class="admin-card">
-                <h2>Links per experience and session</h2>
-                <p class="admin-hint" style="margin-top:0;">Each published experience and session has its own link and QR code. A visitor lands straight on that page, the visit is counted against it, and whatever they do next — apply, buy a ticket, enrol — is credited to @Model.Name under that link. These are the same links and downloads @Model.Name sees on their own dashboard.</p>
+                <h2>@Loc["Admin.Ambassadors.LinksPerExperienceAndSession"]</h2>
+                <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.PerPageLinksHint", Model.Name]</p>
                 <partial name="/Views/Shared/_ReferralLinks.cshtml" model="Model.Links" />
             </div>
         }
 
         @* --- Tracked links -------------------------------------------------------------------- *@
         <div class="admin-card" data-utm-builder data-utm-base="@Model.ReferralUrl">
-            <h2>Tracked link for a channel</h2>
-            <p class="admin-hint" style="margin-top:0;">Give each channel its own link so "Visits by source" below shows where the traffic comes from. Tags are appended as UTM parameters and recorded on every visit.</p>
+            <h2>@Loc["Admin.Ambassadors.TrackedLinkForAChannel"]</h2>
+            <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.GiveEachChannelItsOwnLink"]</p>
             <div class="admin-form__grid">
                 @if (Model.Links is not null && Model.Links.Targets.Count > 0)
                 {
                     <div class="admin-field">
-                        <label for="utm-target">Link</label>
+                        <label for="utm-target">@Loc["Admin.Ambassadors.Link"]</label>
                         <select id="utm-target" data-utm-target>
-                            <option value="@Model.ReferralUrl">Site link</option>
+                            <option value="@Model.ReferralUrl">@Loc["Admin.Ambassadors.SiteLink"]</option>
                             @foreach (var t in Model.Links.Targets)
                             {
-                                <option value="@Model.Links.LinkFor(t)">@(t.Kind == ReferralTargetKind.Experience ? "Experience" : "Session"): @t.Title</option>
+                                <option value="@Model.Links.LinkFor(t)">@Loc.Label(t.Kind): @t.Title</option>
                             }
                         </select>
                     </div>
                 }
                 <div class="admin-field">
-                    <label for="utm-source">Source</label>
+                    <label for="utm-source">@Loc["Admin.Ambassadors.Source"]</label>
                     <input id="utm-source" data-utm="source" list="utm-sources" placeholder="instagram" autocomplete="off" />
                     <datalist id="utm-sources">
                         <option value="instagram"></option><option value="linkedin"></option><option value="youtube"></option>
@@ -169,62 +161,62 @@
                     </datalist>
                 </div>
                 <div class="admin-field">
-                    <label for="utm-medium">Medium</label>
+                    <label for="utm-medium">@Loc["Admin.Ambassadors.Medium"]</label>
                     <input id="utm-medium" data-utm="medium" list="utm-mediums" placeholder="story" autocomplete="off" />
                     <datalist id="utm-mediums">
                         <option value="post"></option><option value="story"></option><option value="bio"></option><option value="video"></option><option value="email"></option>
                     </datalist>
                 </div>
                 <div class="admin-field">
-                    <label for="utm-campaign">Campaign</label>
+                    <label for="utm-campaign">@Loc["Admin.Ambassadors.Campaign"]</label>
                     <input id="utm-campaign" data-utm="campaign" placeholder="lisbon-2026" autocomplete="off" />
                 </div>
             </div>
             <div class="referral-card__link">
                 <code data-utm-preview>@Model.ReferralUrl</code>
-                <button type="button" class="admin-btn admin-btn--sm" data-copy="@Model.ReferralUrl" data-utm-copy data-copied-label="Copied">Copy tracked link</button>
+                <button type="button" class="admin-btn admin-btn--sm" data-copy="@Model.ReferralUrl" data-utm-copy data-copied-label="@Loc["Admin.Ambassadors.Copied"]">@Loc["Admin.Ambassadors.CopyTrackedLink"]</button>
             </div>
         </div>
 
         @* --- Performance ---------------------------------------------------------------------- *@
         <div class="admin-card">
-            <h2>Performance</h2>
-            <p class="admin-hint" style="margin-top:0;">Counts and revenue only — no names or contact details of referred people are shown (brief §49).</p>
+            <h2>@Loc["Admin.Ambassadors.Performance"]</h2>
+            <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.CountsAndRevenueOnlyNoNames"]</p>
             @if (stats is not null)
             {
                 <div class="admin-kpi-grid">
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-card__value">@stats.Visits</div>
-                        <div class="admin-kpi-card__label">Visits</div>
+                        <div class="admin-kpi-card__label">@Loc["Admin.Ambassadors.Visits"]</div>
                     </div>
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-card__value">@stats.Applications</div>
-                        <div class="admin-kpi-card__label">Applications</div>
+                        <div class="admin-kpi-card__label">@Loc["Admin.Ambassadors.Applications"]</div>
                     </div>
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-card__value">@stats.ApprovedApplications</div>
-                        <div class="admin-kpi-card__label">Approved</div>
+                        <div class="admin-kpi-card__label">@Loc["Admin.Ambassadors.Approved"]</div>
                     </div>
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-card__value">@purchases</div>
-                        <div class="admin-kpi-card__label">Purchases <span class="admin-table__sub">(@stats.TicketPurchases tickets · @stats.MembershipPurchases memberships · @stats.SessionPurchases sessions)</span></div>
+                        <div class="admin-kpi-card__label">@Loc["Admin.Ambassadors.Purchases"] <span class="admin-table__sub">@Loc["Admin.Ambassadors.PurchaseSplit", stats.TicketPurchases, stats.MembershipPurchases, stats.SessionPurchases]</span></div>
                     </div>
                     <div class="admin-kpi-card">
                         <div class="admin-kpi-card__value">@conversionRate.ToString("0.#")%</div>
-                        <div class="admin-kpi-card__label">Visit → purchase</div>
+                        <div class="admin-kpi-card__label">@Loc["Admin.Ambassadors.VisitPurchase"]</div>
                     </div>
                     @foreach (var (currency, amountMinor) in stats.RevenueByCurrency)
                     {
                         <div class="admin-kpi-card">
                             <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
-                            <div class="admin-kpi-card__label">Revenue (@currency)</div>
+                            <div class="admin-kpi-card__label">@Loc["Admin.Ambassadors.RevenueIn", currency]</div>
                         </div>
                     }
                     @foreach (var (currency, amountMinor) in stats.CommissionByCurrency)
                     {
                         <div class="admin-kpi-card admin-kpi-card--accent">
                             <div class="admin-kpi-card__value">@MoneyFormatter.Format(amountMinor, currency)</div>
-                            <div class="admin-kpi-card__label">Commission earned (@currency) <span class="admin-table__sub">net of refunds</span></div>
+                            <div class="admin-kpi-card__label">@Loc["Admin.Ambassadors.CommissionEarnedIn", currency] <span class="admin-table__sub">@Loc["Admin.Ambassadors.NetOfRefunds"]</span></div>
                         </div>
                     }
                 </div>
@@ -232,14 +224,14 @@
 
             @if (stats is { Targets.Count: > 0 })
             {
-                <h3>Which link is working</h3>
+                <h3>@Loc["Admin.Ambassadors.WhichLinkIsWorking"]</h3>
                 <table class="admin-table admin-table--compact">
-                    <thead><tr><th>Link</th><th style="text-align:right;">Visits</th><th style="text-align:right;">Applications</th><th style="text-align:right;">Purchases</th></tr></thead>
+                    <thead><tr><th>@Loc["Admin.Ambassadors.Link"]</th><th style="text-align:right;">@Loc["Admin.Ambassadors.Visits"]</th><th style="text-align:right;">@Loc["Admin.Ambassadors.Applications"]</th><th style="text-align:right;">@Loc["Admin.Ambassadors.Purchases"]</th></tr></thead>
                     <tbody>
                         @foreach (var t in stats.Targets)
                         {
                             <tr>
-                                <td><span class="admin-badge admin-badge--draft">@t.Kind</span> @t.Title</td>
+                                <td><span class="admin-badge admin-badge--draft">@Loc.Label(t.Kind)</span> @(t.Kind == ReferralTargetKind.Site ? Loc["Admin.Ambassadors.WholeSite"].Value : t.Title)</td>
                                 <td style="text-align:right;">@t.Visits</td>
                                 <td style="text-align:right;">@t.Applications</td>
                                 <td style="text-align:right;">@t.Purchases</td>
@@ -251,15 +243,15 @@
 
             <div class="referral-split">
                 <section>
-                    <h3>Visits by source</h3>
+                    <h3>@Loc["Admin.Ambassadors.VisitsBySource"]</h3>
                     @if (Model.VisitSources.Count == 0)
                     {
-                        <p class="admin-hint" style="margin-top:0;">No visits yet.</p>
+                        <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.NoVisitsYet"]</p>
                     }
                     else
                     {
                         <table class="admin-table admin-table--compact">
-                            <thead><tr><th>Source</th><th>Medium</th><th style="text-align:right;">Visits</th></tr></thead>
+                            <thead><tr><th>@Loc["Admin.Ambassadors.Source"]</th><th>@Loc["Admin.Ambassadors.Medium"]</th><th style="text-align:right;">@Loc["Admin.Ambassadors.Visits"]</th></tr></thead>
                             <tbody>
                                 @foreach (var s in Model.VisitSources)
                                 {
@@ -274,10 +266,10 @@
                     }
                 </section>
                 <section>
-                    <h3>Recent activity</h3>
+                    <h3>@Loc["Admin.Ambassadors.RecentActivity"]</h3>
                     @if (Model.Conversions.Count == 0)
                     {
-                        <p class="admin-hint" style="margin-top:0;">Nothing yet. Each application, approval and purchase through the link will appear here as it happens.</p>
+                        <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.NothingYetEachApplicationApprovalAnd"]</p>
                     }
                     else
                     {
@@ -287,7 +279,7 @@
                                 <li class="ambassador-timeline__item">
                                     <time datetime="@c.OccurredAt.ToString("o")">@c.OccurredAt.ToString("d MMM yyyy, HH:mm")</time>
                                     <span class="ambassador-timeline__what">
-                                        @KindLabel(c.Kind)
+                                        @Loc.Label(c.Kind)
                                         @if (c.TargetKind != ReferralTargetKind.Site && titleByTarget.TryGetValue((c.TargetKind, c.TargetId), out var about))
                                         {
                                             <em class="ambassador-timeline__about">&middot; @about</em>
@@ -305,40 +297,40 @@
                                         <span class="ambassador-timeline__flags" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
                                             @if (c.IsSelfReferral)
                                             {
-                                                <span class="admin-badge admin-badge--danger" title="The buyer's account is the ambassador's own">Self-referral</span>
+                                                <span class="admin-badge admin-badge--danger" title="@Loc["Admin.Ambassadors.TheBuyerSAccountIsThe"]">@Loc["Admin.Ambassadors.SelfReferral"]</span>
                                             }
                                             @if (c.ReversedAt is not null)
                                             {
-                                                <span class="admin-badge admin-badge--draft">Refunded</span>
+                                                <span class="admin-badge admin-badge--draft">@Loc["Admin.Ambassadors.Refunded"]</span>
                                             }
                                             else if (c.RefundedMinor > 0)
                                             {
-                                                <span class="admin-badge admin-badge--draft">Partly refunded (@MoneyFormatter.Format(c.RefundedMinor, c.Currency))</span>
+                                                <span class="admin-badge admin-badge--draft">@Loc["Admin.Ambassadors.PartlyRefunded", MoneyFormatter.Format(c.RefundedMinor, c.Currency)]</span>
                                             }
                                             @if (c.VoidedAt is not null)
                                             {
-                                                <span class="admin-badge admin-badge--draft" title="@c.VoidReason">Commission withdrawn</span>
+                                                <span class="admin-badge admin-badge--draft" title="@c.VoidReason">@Loc["Admin.Ambassadors.CommissionWithdrawn"]</span>
                                             }
                                             @if (c.PayoutId is not null)
                                             {
-                                                <span class="admin-badge admin-badge--paid">Paid out</span>
+                                                <span class="admin-badge admin-badge--paid">@Loc["Admin.Ambassadors.PaidOut"]</span>
                                             }
                                             else if (c.NetCommissionMinor > 0)
                                             {
-                                                <span class="admin-badge admin-badge--pending">Owed</span>
+                                                <span class="admin-badge admin-badge--pending">@Loc["Admin.Ambassadors.Owed"]</span>
                                             }
                                         </span>
                                         @if (c.VoidedAt is not null && c.VoidReason is not null)
                                         {
-                                            <span class="admin-table__sub">Withdrawn @c.VoidedAt.Value.ToString("d MMM yyyy"): @c.VoidReason</span>
+                                            <span class="admin-table__sub">@Loc["Admin.Ambassadors.WithdrawnOn", c.VoidedAt.Value.ToString("d MMM yyyy"), c.VoidReason ?? ""]</span>
                                         }
                                         @if (Model.CanSettle && c.VoidedAt is null && c.NetCommissionMinor > 0)
                                         {
                                             <details style="margin-top:4px;">
-                                                <summary class="admin-table__sub" style="cursor:pointer;">Withdraw commission…</summary>
+                                                <summary class="admin-table__sub" style="cursor:pointer;">@Loc["Admin.Ambassadors.WithdrawCommission"]</summary>
                                                 <form asp-action="VoidConversion" asp-route-id="@Model.Id" asp-route-conversionId="@c.Id" method="post" class="admin-form" style="margin-top:6px;">
-                                                    <input name="reason" maxlength="300" required placeholder="Reason, e.g. self-referral" />
-                                                    <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">Withdraw</button>
+                                                    <input name="reason" maxlength="300" required placeholder="@Loc["Admin.Ambassadors.ReasonEGSelfReferral"]" />
+                                                    <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">@Loc["Admin.Ambassadors.Withdraw"]</button>
                                                 </form>
                                             </details>
                                         }
@@ -356,26 +348,26 @@
     <div class="admin-review-side">
         @* --- Commission: earned, paid, owed ------------------------------------------------------ *@
         <div class="admin-card">
-            <h2>Commission</h2>
+            <h2>@Loc["Admin.Ambassadors.Commission92"]</h2>
             @if (stats is null || stats.Balances.Count == 0)
             {
-                <p class="admin-hint" style="margin-top:0;">Nothing earned yet.</p>
+                <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.NothingEarnedYet"]</p>
             }
             else
             {
                 foreach (var b in stats.Balances)
                 {
                     <dl class="admin-detail-list">
-                        <div><dt>Earned (@b.Currency)</dt><dd>@MoneyFormatter.Format(b.EarnedMinor, b.Currency)</dd></div>
-                        <div><dt>Paid</dt><dd>@MoneyFormatter.Format(b.PaidMinor, b.Currency)</dd></div>
+                        <div><dt>@Loc["Admin.Ambassadors.EarnedIn", b.Currency]</dt><dd>@MoneyFormatter.Format(b.EarnedMinor, b.Currency)</dd></div>
+                        <div><dt>@Loc["Admin.Ambassadors.Paid"]</dt><dd>@MoneyFormatter.Format(b.PaidMinor, b.Currency)</dd></div>
                         <div>
-                            <dt>@(b.OwedMinor < 0 ? "Overpaid" : "Owed")</dt>
+                            <dt>@Loc[b.OwedMinor < 0 ? "Admin.Ambassadors.Overpaid" : "Admin.Ambassadors.Owed"]</dt>
                             <dd><strong>@MoneyFormatter.Format(Math.Abs(b.OwedMinor), b.Currency)</strong></dd>
                         </div>
                     </dl>
                     @if (b.OwedMinor < 0)
                     {
-                        <p class="admin-hint">A refund landed after this was paid out. Recover it, or it nets off the next payout automatically.</p>
+                        <p class="admin-hint">@Loc["Admin.Ambassadors.ARefundLandedAfterThisWas"]</p>
                     }
                     else if (b.OwedMinor > 0 && Model.CanSettle)
                     {
@@ -383,29 +375,29 @@
                             <input type="hidden" name="currency" value="@b.Currency" />
                             <input type="hidden" name="expectedOwedMinor" value="@b.OwedMinor" />
                             <div class="admin-field">
-                                <label for="payout-ref-@b.Currency">Transfer reference</label>
-                                <input id="payout-ref-@b.Currency" name="reference" maxlength="100" placeholder="e.g. bank transfer ref." />
+                                <label for="payout-ref-@b.Currency">@Loc["Admin.Ambassadors.TransferReference"]</label>
+                                <input id="payout-ref-@b.Currency" name="reference" maxlength="100" placeholder="@Loc["Admin.Ambassadors.EGBankTransferRef"]" />
                             </div>
                             <div class="admin-field">
-                                <label for="payout-note-@b.Currency">Note (optional)</label>
+                                <label for="payout-note-@b.Currency">@Loc["Admin.Ambassadors.NoteOptional"]</label>
                                 <input id="payout-note-@b.Currency" name="note" maxlength="500" />
                             </div>
                             <label class="admin-checkbox" style="display:flex; gap:8px; align-items:flex-start; margin-bottom:10px;">
                                 <input type="checkbox" name="confirmed" value="true" required />
-                                <span>I have sent @MoneyFormatter.Format(b.OwedMinor, b.Currency) to @Model.Name.</span>
+                                <span>@Loc["Admin.Ambassadors.IHaveSent", MoneyFormatter.Format(b.OwedMinor, b.Currency), Model.Name]</span>
                             </label>
-                            <button type="submit" class="admin-btn" style="width:100%;">Mark @MoneyFormatter.Format(b.OwedMinor, b.Currency) as paid</button>
+                            <button type="submit" class="admin-btn" style="width:100%;">@Loc["Admin.Ambassadors.MarkAsPaid", MoneyFormatter.Format(b.OwedMinor, b.Currency)]</button>
                         </form>
                     }
                 }
-                <p class="admin-hint" style="margin-top:0;">Commission is taken at the rate in force when each sale happened. Refunds take it back pro rata; withdrawn lines earn nothing.@(Model.CanSettle ? "" : " Finance records payouts.")</p>
+                <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.CommissionRule"]@(Model.CanSettle ? "" : " " + Loc["Admin.Ambassadors.FinanceRecordsPayouts"].Value)</p>
             }
 
             @if (Model.Payouts.Count > 0)
             {
-                <h3>Payouts</h3>
+                <h3>@Loc["Admin.Ambassadors.Payouts"]</h3>
                 <table class="admin-table admin-table--compact">
-                    <thead><tr><th>Date</th><th>Reference</th><th style="text-align:right;">Amount</th></tr></thead>
+                    <thead><tr><th>@Loc["Admin.Common.Date"]</th><th>@Loc["Admin.Ambassadors.Reference"]</th><th style="text-align:right;">@Loc["Admin.Common.Amount"]</th></tr></thead>
                     <tbody>
                         @foreach (var p in Model.Payouts)
                         {
@@ -424,10 +416,10 @@
         @if (Model.Signals is { } sig)
         {
             <div class="admin-card">
-                <h2>Signals</h2>
+                <h2>@Loc["Admin.Ambassadors.Signals"]</h2>
                 @if (sig.Warnings.Count == 0)
                 {
-                    <p class="admin-hint" style="margin-top:0;">Nothing unusual in the last @sig.WindowDays days.</p>
+                    <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.NothingUnusual", sig.WindowDays]</p>
                 }
                 else
                 {
@@ -439,30 +431,30 @@
                     </ul>
                 }
                 <dl class="admin-detail-list">
-                    <div><dt>Visits, @sig.WindowDays days</dt><dd>@sig.Visits</dd></div>
-                    <div><dt>Distinct networks</dt><dd>@sig.DistinctNetworks</dd></div>
-                    <div><dt>Busiest network</dt><dd>@sig.TopNetworkVisits (@sig.TopNetworkShare.ToString("P0"))</dd></div>
-                    <div><dt>Automated-looking</dt><dd>@sig.AutomatedVisits</dd></div>
-                    <div><dt>Own clicks</dt><dd>@sig.OwnVisits</dd></div>
-                    <div><dt>Self-referrals</dt><dd>@sig.SelfReferrals</dd></div>
+                    <div><dt>@Loc["Admin.Ambassadors.VisitsInDays", sig.WindowDays]</dt><dd>@sig.Visits</dd></div>
+                    <div><dt>@Loc["Admin.Ambassadors.DistinctNetworks"]</dt><dd>@sig.DistinctNetworks</dd></div>
+                    <div><dt>@Loc["Admin.Ambassadors.BusiestNetwork"]</dt><dd>@sig.TopNetworkVisits (@sig.TopNetworkShare.ToString("P0"))</dd></div>
+                    <div><dt>@Loc["Admin.Ambassadors.AutomatedLooking"]</dt><dd>@sig.AutomatedVisits</dd></div>
+                    <div><dt>@Loc["Admin.Ambassadors.OwnClicks"]</dt><dd>@sig.OwnVisits</dd></div>
+                    <div><dt>@Loc["Admin.Ambassadors.SelfReferrals"]</dt><dd>@sig.SelfReferrals</dd></div>
                 </dl>
-                <p class="admin-hint">IP addresses are stored only as a keyed hash. Repeat landings from one network on one link within 30 minutes count once.</p>
+                <p class="admin-hint">@Loc["Admin.Ambassadors.IPAddressesAreStoredOnlyAs"]</p>
             </div>
         }
 
         <div class="admin-card">
-            <h2>Settings</h2>
+            <h2>@Loc["Admin.Ambassadors.Settings"]</h2>
             <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="admin-form">
                 <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
                 <div class="admin-field">
-                    <label asp-for="Name">Display name</label>
+                    <label asp-for="Name">@Loc["Admin.Ambassadors.DisplayName"]</label>
                     <input asp-for="Name" />
                     <span asp-validation-for="Name" class="field-validation-error"></span>
                 </div>
                 <div class="admin-field">
-                    <label asp-for="CommissionPercent">Commission %</label>
+                    <label asp-for="CommissionPercent">@Loc["Admin.Ambassadors.Commission"]</label>
                     <input asp-for="CommissionPercent" type="number" step="0.01" min="0" max="100" />
-                    <p class="admin-field__hint">Applied to every purchase attributed to the link, at the rate in force when it happens.@(pending ? " The invitation page shows the rate as it is when they accept." : "")</p>
+                    <p class="admin-field__hint">@Loc["Admin.Ambassadors.RateHint"]@(pending ? " " + Loc["Admin.Ambassadors.RateHintPending"].Value : "")</p>
                     <span asp-validation-for="CommissionPercent" class="field-validation-error"></span>
                 </div>
                 <div class="admin-field">
@@ -470,85 +462,85 @@
                     @if (pending)
                     {
                         <input type="hidden" asp-for="Status" />
-                        <p style="margin:0;">Pending — becomes Active when they accept the invitation.</p>
+                        <p style="margin:0;">@Loc["Admin.Ambassadors.PendingBecomesActiveWhenTheyAccept"]</p>
                     }
                     else
                     {
                         <select asp-for="Status">
-                            <option value="@AmbassadorStatus.Active">Active</option>
-                            <option value="@AmbassadorStatus.Inactive">Inactive</option>
+                            <option value="@AmbassadorStatus.Active">@Loc["Admin.Common.Active"]</option>
+                            <option value="@AmbassadorStatus.Inactive">@Loc["Admin.Ambassadors.Inactive"]</option>
                         </select>
-                        <p class="admin-field__hint">Inactive: visits to the link stop being recorded; the account and history stay.</p>
+                        <p class="admin-field__hint">@Loc["Admin.Ambassadors.InactiveHint"]</p>
                     }
                 </div>
                 @if (User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin) || User.IsInRole(VIHouse.DataAccess.Identity.Roles.Marketing))
                 {
-                    <button type="submit" class="admin-btn" style="width:100%;">Save changes</button>
+                    <button type="submit" class="admin-btn" style="width:100%;">@Loc["Admin.Ambassadors.SaveChanges"]</button>
                 }
             </form>
         </div>
 
         <div class="admin-card">
-            <h2>Account</h2>
+            <h2>@Loc["Admin.Ambassadors.Account"]</h2>
             <dl class="admin-detail-list">
-                <div><dt>Email</dt><dd>@(Model.Email ?? "—")@if (Model.UserId is null) { <span class="admin-table__sub"> (invited — no account yet)</span> }</dd></div>
+                <div><dt>@Loc["Admin.Common.Email"]</dt><dd>@(Model.Email ?? "—")@if (Model.UserId is null) { <span class="admin-table__sub"> @Loc["Admin.Ambassadors.InvitedNoAccountYet"]</span> }</dd></div>
                 @if (Model.AccountName is { Length: > 0 } realName)
                 {
-                    <div><dt>Name on account</dt><dd>@realName</dd></div>
+                    <div><dt>@Loc["Admin.Ambassadors.NameOnAccount"]</dt><dd>@realName</dd></div>
                 }
-                <div><dt>Code</dt><dd><code>@Model.Code</code> <span class="admin-table__sub">(fixed — links already shared depend on it)</span></dd></div>
-                <div><dt>Their dashboard</dt><dd><a asp-area="" asp-controller="Ambassador" asp-action="Index" target="_blank" rel="noopener">/ambassador</a> <span class="admin-table__sub">(what they see when signed in)</span></dd></div>
+                <div><dt>@Loc["Admin.Ambassadors.Code"]</dt><dd><code>@Model.Code</code> <span class="admin-table__sub">@Loc["Admin.Ambassadors.FixedLinksAlreadySharedDependOn"]</span></dd></div>
+                <div><dt>@Loc["Admin.Ambassadors.TheirDashboard"]</dt><dd><a asp-area="" asp-controller="Ambassador" asp-action="Index" target="_blank" rel="noopener">/ambassador</a> <span class="admin-table__sub">@Loc["Admin.Ambassadors.WhatTheySeeWhenSignedIn"]</span></dd></div>
             </dl>
         </div>
 
         @if (!pending)
         {
             <div class="admin-card">
-                <h2>Terms</h2>
+                <h2>@Loc["Admin.Ambassadors.Terms"]</h2>
                 @if (amb.TermsAcceptedAt is { } accepted)
                 {
                     <dl class="admin-detail-list">
-                        <div><dt>Accepted</dt><dd>@accepted.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
-                        <div><dt>Version</dt><dd>@amb.TermsVersion</dd></div>
-                        <div><dt>Rate in the terms</dt><dd>@amb.TermsCommissionPercent?.ToString("0.##")%</dd></div>
+                        <div><dt>@Loc["Admin.Ambassadors.Accepted"]</dt><dd>@accepted.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
+                        <div><dt>@Loc["Admin.Ambassadors.Version"]</dt><dd>@amb.TermsVersion</dd></div>
+                        <div><dt>@Loc["Admin.Ambassadors.RateInTheTerms"]</dt><dd>@amb.TermsCommissionPercent?.ToString("0.##")%</dd></div>
                     </dl>
                     @if (amb.TermsCommissionPercent is { } agreed && agreed != amb.CommissionPercent)
                     {
-                        <p class="admin-hint" style="color:var(--vih-danger);">The rate is now @amb.CommissionPercent.ToString("0.##")%, not the @agreed.ToString("0.##")% they accepted. Agree the change with them in writing.</p>
+                        <p class="admin-hint" style="color:var(--vih-danger);">@Loc["Admin.Ambassadors.RateChanged", amb.CommissionPercent.ToString("0.##"), agreed.ToString("0.##")]</p>
                     }
                 }
                 else
                 {
-                    <p class="admin-hint" style="margin-top:0;">No ambassador terms on record — this ambassador was set up from an existing account, before terms were collected, or by hand.</p>
+                    <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.NoAmbassadorTermsOnRecordThis"]</p>
                 }
             </div>
 
             <div class="admin-card">
-                <h2>Billing &amp; payout</h2>
+                <h2>@Loc["Admin.Ambassadors.BillingPayout"]</h2>
                 @if (amb.HasPayoutDetails)
                 {
                     <dl class="admin-detail-list">
-                        <div><dt>Account holder</dt><dd>@amb.PayoutAccountHolder</dd></div>
+                        <div><dt>@Loc["Admin.Ambassadors.AccountHolder"]</dt><dd>@amb.PayoutAccountHolder</dd></div>
                         <div><dt>IBAN</dt><dd><code>@(Model.CanSettle ? VIHouse.Business.Concrete.Iban.Format(amb.PayoutIban) : VIHouse.Business.Concrete.Iban.Mask(amb.PayoutIban))</code></dd></div>
                         @if (Model.CanSettle && amb.PayoutBic is not null)
                         {
                             <div><dt>BIC</dt><dd><code>@amb.PayoutBic</code></dd></div>
                         }
-                        <div><dt>Billing address</dt><dd>@amb.BillingAddressLine1@if (amb.BillingAddressLine2 is not null) { <br />@amb.BillingAddressLine2 }<br />@amb.BillingPostalCode @amb.BillingCity<br />@Countries.NameFor(amb.BillingCountry)</dd></div>
+                        <div><dt>@Loc["Admin.Ambassadors.BillingAddress"]</dt><dd>@amb.BillingAddressLine1@if (amb.BillingAddressLine2 is not null) { <br />@amb.BillingAddressLine2 }<br />@amb.BillingPostalCode @amb.BillingCity<br />@Countries.NameFor(amb.BillingCountry)</dd></div>
                         @if (amb.TaxId is not null)
                         {
-                            <div><dt>Tax / VAT id</dt><dd>@amb.TaxId</dd></div>
+                            <div><dt>@Loc["Admin.Ambassadors.TaxVATId"]</dt><dd>@amb.TaxId</dd></div>
                         }
-                        <div><dt>Given</dt><dd>@amb.PayoutDetailsUpdatedAt?.ToLocalTime().ToString("d MMM yyyy")</dd></div>
+                        <div><dt>@Loc["Admin.Ambassadors.Given"]</dt><dd>@amb.PayoutDetailsUpdatedAt?.ToLocalTime().ToString("d MMM yyyy")</dd></div>
                     </dl>
                     @if (!Model.CanSettle)
                     {
-                        <p class="admin-hint">Full bank details are shown to Finance.</p>
+                        <p class="admin-hint">@Loc["Admin.Ambassadors.FullBankDetailsAreShownTo"]</p>
                     }
                 }
                 else
                 {
-                    <p class="admin-hint" style="margin-top:0;">No payout details on record. Ask for them before recording a payout.</p>
+                    <p class="admin-hint" style="margin-top:0;">@Loc["Admin.Ambassadors.NoPayoutDetailsOnRecordAsk"]</p>
                 }
             </div>
         }

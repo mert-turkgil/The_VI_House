@@ -26,4 +26,15 @@ public abstract class AdminControllerBase : Controller
     protected string? Ip() => HttpContext.Connection.RemoteIpAddress?.ToString();
 
     protected (Guid AdminId, string? IpAddress) CurrentActor() => (CurrentAdminId(), Ip());
+
+    /// <summary>
+    /// The one-line message the next page shows after a redirect. A refusal is flagged so the panel
+    /// presents it as an error that waits to be dismissed — telling the two apart from the wording
+    /// only ever worked in English.
+    /// </summary>
+    protected void Status(string? message, bool isError = false)
+    {
+        TempData["StatusMessage"] = message;
+        if (isError) TempData["StatusIsError"] = true;
+    }
 }

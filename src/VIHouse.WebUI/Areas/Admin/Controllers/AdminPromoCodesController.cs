@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
@@ -27,7 +28,8 @@ public class AdminPromoCodesController(
     IPromoCodeRepository promoCodes,
     IExperienceService experienceService,
     IMembershipService membershipService,
-    IAuditLogRepository auditLogs) : AdminControllerBase
+    IAuditLogRepository auditLogs,
+    IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -47,8 +49,8 @@ public class AdminPromoCodesController(
                 Currency = c.Currency,
                 ExperienceTitle = experiences.FirstOrDefault(e => e.Id == c.ExperienceId)?.Title,
                 AppliesTo = c.Scope == PromoScope.Memberships
-                    ? (plans.FirstOrDefault(p => p.Id == c.MembershipPlanId)?.Name ?? "Any plan") + " (membership)"
-                    : experiences.FirstOrDefault(e => e.Id == c.ExperienceId)?.Title ?? "Any experience",
+                    ? loc["Admin.PromoCodes.MembershipScope", plans.FirstOrDefault(p => p.Id == c.MembershipPlanId)?.Name ?? loc["Admin.PromoCodes.AnyPlan"].Value].Value
+                    : experiences.FirstOrDefault(e => e.Id == c.ExperienceId)?.Title ?? loc["Admin.PromoCodes.AnyExperience"].Value,
                 RestrictedToEmail = c.RestrictedToEmail?.ToLowerInvariant(),
                 RedemptionCount = c.RedemptionCount,
                 MaxRedemptions = c.MaxRedemptions,
@@ -89,7 +91,7 @@ public class AdminPromoCodesController(
         // whichever the query happened to return, and the other one never runs out.
         var clash = await promoCodes.GetByCodeAsync(form.Code.Trim().ToUpperInvariant(), ct);
         if (clash is not null && clash.Id != form.Id)
-            ModelState.AddModelError(nameof(form.Code), "That code already exists.");
+            ModelState.AddModelError(nameof(form.Code), loc["Admin.PromoCodes.Msg.Exists"].Value);
 
         if (!ModelState.IsValid)
         {
@@ -130,7 +132,7 @@ public class AdminPromoCodesController(
             await LogAsync("PromoCodeUpdated", existing.Id, adminId, ip, before,
                 new { existing.Code, existing.Type, existing.Value, existing.IsActive, existing.MaxRedemptions }, ct);
             await promoCodes.SaveChangesAsync(ct);
-            TempData["StatusMessage"] = $"\"{existing.Code}\" saved.";
+            Status(loc["Admin.Msg.SavedNamed", existing.Code].Value);
         }
         else
         {
@@ -139,7 +141,7 @@ public class AdminPromoCodesController(
             await LogAsync("PromoCodeCreated", created.Id, adminId, ip, before: null,
                 after: new { created.Code, created.Type, created.Value, created.MaxRedemptions, created.ExpiresAt }, ct);
             await promoCodes.SaveChangesAsync(ct);
-            TempData["StatusMessage"] = $"\"{created.Code}\" created.";
+            Status(loc["Admin.Msg.Created", created.Code].Value);
         }
 
         return RedirectToAction(nameof(Index));
@@ -157,7 +159,7 @@ public class AdminPromoCodesController(
         var code = await promoCodes.GetByIdAsync(id, ct);
         if (code is null)
         {
-            TempData["StatusMessage"] = "That code no longer exists.";
+            Status(loc["Admin.PromoCodes.Msg.Gone"].Value, isError: true);
             return RedirectToAction(nameof(Index));
         }
 
@@ -171,7 +173,7 @@ public class AdminPromoCodesController(
                 before: new { code.Code, code.IsActive }, after: new { code.Code, IsActive = false }, ct);
             await promoCodes.SaveChangesAsync(ct);
 
-            TempData["StatusMessage"] = $"\"{code.Code}\" has been redeemed {code.RedemptionCount} time(s), so it was switched off rather than deleted.";
+            Status(loc["Admin.PromoCodes.Msg.SwitchedOff", code.Code, code.RedemptionCount].Value);
             return RedirectToAction(nameof(Index));
         }
 
@@ -180,7 +182,7 @@ public class AdminPromoCodesController(
             before: new { code.Code, code.Type, code.Value }, after: null, ct);
         await promoCodes.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = $"\"{code.Code}\" deleted.";
+        Status(loc["Admin.Msg.Deleted", code.Code].Value);
         return RedirectToAction(nameof(Index));
     }
 

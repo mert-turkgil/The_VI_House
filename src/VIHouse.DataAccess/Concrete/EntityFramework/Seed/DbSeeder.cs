@@ -439,6 +439,20 @@ public static class DbSeeder
             await userManager.AddToRolesAsync(admin, account.EffectiveRoles);
     }
 
+    /// <summary>The demo rows whose photographs ship in wwwroot/img under their slug.</summary>
+    private static readonly string[] DemoExperienceSlugs =
+    [
+        "izmir-founder-experience-2026", "london-growth-mastermind-2026", "zurich-founder-dinner-2026",
+        "lisbon-founder-retreat-2026", "singapore-growth-summit-2026", "miami-founder-weekend-2025",
+        "berlin-founder-summit-2026",
+    ];
+
+    private static readonly string[] DemoJournalSlugs =
+    [
+        "why-we-built-the-vi-house", "the-quiet-signal-reading-capital-before-it-moves",
+        "inside-the-room-what-makes-a-founder-session-work", "building-in-public-without-burning-out",
+    ];
+
     /// <summary>
     /// Fills in demo cover images and audience tags on rows that already exist.
     ///
@@ -453,10 +467,14 @@ public static class DbSeeder
     /// </summary>
     private static async Task BackfillDemoContentAsync(VIHouseDbContext db)
     {
-        foreach (var experience in await db.Experiences.Where(e => e.CoverImageUrl == null).ToListAsync())
+        // Only the demo rows have a photograph on disk under their slug. Anything written in the
+        // panel used to be given the same made-up path on the next start, which showed as a broken
+        // cover in the writer, ticked "Cover image" on the publish checklist and replaced the crest
+        // fallback on the public page with a broken image.
+        foreach (var experience in await db.Experiences.Where(e => e.CoverImageUrl == null && DemoExperienceSlugs.Contains(e.Slug)).ToListAsync())
             experience.CoverImageUrl = $"/img/experiences/{experience.Slug}-1600.jpg";
 
-        foreach (var post in await db.JournalPosts.Where(p => p.CoverImageUrl == null).ToListAsync())
+        foreach (var post in await db.JournalPosts.Where(p => p.CoverImageUrl == null && DemoJournalSlugs.Contains(p.Slug)).ToListAsync())
             post.CoverImageUrl = $"/img/journal/{post.Slug}-1600.jpg";
 
         // Who each room is actually for. Deliberately different per city — the point of the section

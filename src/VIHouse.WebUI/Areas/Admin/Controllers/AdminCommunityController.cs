@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Audit;
@@ -30,7 +31,8 @@ public class AdminCommunityController(
     IAuditLogRepository auditLogs,
     IMembershipService membershipService,
     IRepository<Experience> experiences,
-    IRepository<Seminar> seminars) : AdminControllerBase
+    IRepository<Seminar> seminars,
+    IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     /// <summary>The three "only for…" selects on the form. Loaded on every render of it so a
     /// validation round-trip does not come back with empty dropdowns.</summary>
@@ -102,7 +104,7 @@ public class AdminCommunityController(
                 before, new { existing.Label, existing.Url, existing.Kind, existing.IsActive }, ct);
 
             await links.SaveChangesAsync(ct);
-            TempData["StatusMessage"] = "Changes saved.";
+            Status(loc["Admin.Msg.ChangesSaved"].Value);
         }
         else
         {
@@ -112,7 +114,7 @@ public class AdminCommunityController(
                 before: null, after: new { created.Label, created.Url, created.Kind, created.IsActive }, ct);
 
             await links.SaveChangesAsync(ct);
-            TempData["StatusMessage"] = $"\"{created.Label}\" added.";
+            Status(loc["Admin.Msg.Added", created.Label].Value);
         }
 
         return RedirectToAction(nameof(Index));
@@ -125,7 +127,7 @@ public class AdminCommunityController(
         var link = await links.GetByIdAsync(id, ct);
         if (link is null)
         {
-            TempData["StatusMessage"] = "That link no longer exists.";
+            Status(loc["Admin.Community.Msg.Gone"].Value, isError: true);
             return RedirectToAction(nameof(Index));
         }
 
@@ -135,7 +137,7 @@ public class AdminCommunityController(
             before: new { link.Label, link.Url, link.Kind }, after: null, ct);
         await links.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = "Link deleted.";
+        Status(loc["Admin.Community.Msg.Deleted"].Value);
         return RedirectToAction(nameof(Index));
     }
 

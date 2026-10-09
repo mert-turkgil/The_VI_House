@@ -15,13 +15,24 @@ namespace VIHouse.WebUI.Areas.Admin;
 /// </summary>
 public static class AdminSections
 {
+    /// <param name="Label">English name, kept for logs and as the fallback. The panel shows
+    /// <see cref="LabelKey"/> through the localiser, in the admin's interface language.</param>
     public sealed record Section(string Controller, string Action, string Label, string Icon, string[] Roles)
     {
         public string RolesCsv => string.Join(',', Roles);
         public bool IsVisibleTo(ClaimsPrincipal user) => Roles.Any(user.IsInRole);
+
+        /// <summary>SharedResource key for the sidebar label, e.g. "Admin.Nav.AdminJournal".</summary>
+        public string LabelKey => $"Admin.Nav.{Controller}";
+
+        /// <summary>One sentence on what the section is for, shown under the page title.</summary>
+        public string DescriptionKey => $"Admin.Section.{Controller}.Description";
     }
 
-    public sealed record QuickAction(string Controller, string Action, string Label);
+    public sealed record QuickAction(string Controller, string Action, string Label)
+    {
+        public string LabelKey => $"Admin.Quick.{Controller}.{Action}";
+    }
 
     // --- Role groups ------------------------------------------------------------------------------
     // Declared as constants so [Authorize(Roles = ...)] can use them; attributes need compile-time

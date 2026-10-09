@@ -16,62 +16,73 @@ public class AdminExperienceFormViewModel
     public Guid? Id { get; set; }
 
     [Required, StringLength(200)]
+    [Display(Name = "Admin.Field.Title")]
     public string Title { get; set; } = default!;
 
     [Required, StringLength(200)]
-    [RegularExpression("^[a-z0-9]+(-[a-z0-9]+)*$", ErrorMessage = "Lowercase letters, numbers and hyphens only.")]
+    [RegularExpression("^[a-z0-9]+(-[a-z0-9]+)*$", ErrorMessage = "Admin.Validation.LowercaseLettersNumbersAndHyphensOnly")]
+    [Display(Name = "Admin.Field.Slug")]
     public string Slug { get; set; } = default!;
 
     [StringLength(400)]
+    [Display(Name = "Admin.Field.ShortSummary")]
     public string? ShortSummary { get; set; }
 
     [Required]
+    [Display(Name = "Admin.Field.Description")]
     public string Description { get; set; } = default!;
 
     [Required, StringLength(100)]
+    [Display(Name = "Admin.Field.City")]
     public string City { get; set; } = default!;
 
     [Required, StringLength(2)]
+    [Display(Name = "Admin.Field.Country")]
     public string Country { get; set; } = default!;
 
     [StringLength(200)]
+    [Display(Name = "Admin.Field.Venue")]
     public string? Venue { get; set; }
 
     [Required, StringLength(100)]
+    [Display(Name = "Admin.Field.TimeZone")]
     public string TimeZoneId { get; set; } = "Europe/London";
 
     [Required]
-    [Display(Name = "Start (UTC)")]
+    [Display(Name = "Admin.Field.StartUTC")]
     [DataType(DataType.DateTime)]
     public DateTime StartAtUtc { get; set; }
 
     [Required]
-    [Display(Name = "End (UTC)")]
+    [Display(Name = "Admin.Field.EndUTC")]
     [DataType(DataType.DateTime)]
     public DateTime EndAtUtc { get; set; }
 
     [Range(1, 1000)]
+    [Display(Name = "Admin.Field.Capacity")]
     public int Capacity { get; set; } = 20;
 
+    [Display(Name = "Admin.Field.Status")]
     public ExperienceStatus Status { get; set; } = ExperienceStatus.Draft;
+    [Display(Name = "Admin.Field.Visibility")]
     public ExperienceVisibility Visibility { get; set; } = ExperienceVisibility.Public;
 
-    [Display(Name = "How can it be attended?")]
+    [Display(Name = "Admin.Field.HowCanItBeAttended")]
     public ExperienceAttendanceMode AttendanceMode { get; set; } = ExperienceAttendanceMode.InPerson;
 
     /// <summary>Online / Both only: the room ticket holders join, shown on their account hub.</summary>
     [Url, StringLength(500)]
-    [Display(Name = "Meeting link")]
+    [Display(Name = "Admin.Field.MeetingLink")]
     public string? MeetingUrl { get; set; }
 
     /// <summary>Online / Both only: a YouTube live URL embedded on the holder's hub near start time.</summary>
     [Url, StringLength(500)]
-    [Display(Name = "Live stream (YouTube)")]
+    [Display(Name = "Admin.Field.LiveStreamYouTube")]
     public string? LiveStreamUrl { get; set; }
 
     [StringLength(1000)]
     [SiteImageUrl]
-    [Display(Name = "Cover image URL")]
+    [Display(Name = "Admin.Field.CoverImageURL")]
     public string? CoverImageUrl { get; set; }
 
     /// <summary>
@@ -80,48 +91,49 @@ public class AdminExperienceFormViewModel
     /// photograph carries something the surrounding copy does not.
     /// </summary>
     [StringLength(300)]
-    [Display(Name = "Cover image description")]
+    [Display(Name = "Admin.Field.CoverImageDescription")]
     public string? CoverImageAlt { get; set; }
 
     /// <summary>Comma-separated, rendered as the chips under "Who is in the room?".</summary>
     [StringLength(300)]
-    [Display(Name = "Who is in the room? (comma separated)")]
+    [Display(Name = "Admin.Field.WhoIsInTheRoomComma")]
     public string? AudienceTags { get; set; }
 
-    [Display(Name = "Application Opens")]
+    [Display(Name = "Admin.Field.ApplicationOpens")]
     public DateTime? ApplicationOpenAt { get; set; }
 
-    [Display(Name = "Application Closes")]
+    [Display(Name = "Admin.Field.ApplicationCloses")]
     public DateTime? ApplicationCloseAt { get; set; }
 
-    [Display(Name = "Sales Open")]
+    [Display(Name = "Admin.Field.SalesOpen")]
     public DateTime? SalesOpenAt { get; set; }
 
-    [Display(Name = "Sales Close")]
+    [Display(Name = "Admin.Field.SalesClose")]
     public DateTime? SalesCloseAt { get; set; }
 
     [StringLength(200)]
-    [Display(Name = "SEO Title")]
+    [Display(Name = "Admin.Field.SEOTitle2")]
     public string? SeoTitle { get; set; }
 
     [StringLength(400)]
-    [Display(Name = "SEO Description")]
+    [Display(Name = "Admin.Field.SEODescription2")]
     public string? SeoDescription { get; set; }
 
     /// <summary>The image a link to this experience shows when pasted into a chat or a social post.
     /// Falls back to the cover when empty.</summary>
     [StringLength(1000)]
     [SiteImageUrl]
-    [Display(Name = "Social preview image URL")]
+    [Display(Name = "Admin.Field.SocialPreviewImageURL")]
     public string? SeoOgImageUrl { get; set; }
 
-    [Display(Name = "Show in homepage Signature grid")]
+    [Display(Name = "Admin.Field.ShowInHomepageSignatureGrid")]
     public bool IsSignature { get; set; }
 
     [Range(0, 100)]
-    [Display(Name = "Member discount (%)", Description = "Percentage off every ticket for current members. 0 means members pay full price. Who may attend is set by Visibility and the admitted plans, not here.")]
+    [Display(Name = "Admin.Field.MemberDiscount", Description = "Percentage off every ticket for current members. 0 means members pay full price. Who may attend is set by Visibility and the admitted plans, not here.")]
     public int MemberDiscountPercent { get; set; }
 
+    [Display(Name = "Admin.Field.SortOrder")]
     public int SortOrder { get; set; }
 
     public Experience ToEntity() => new()

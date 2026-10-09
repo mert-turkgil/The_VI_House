@@ -9,9 +9,11 @@ public class AdminMembershipPlanFormViewModel
     public Guid? Id { get; set; }
 
     [Required, StringLength(150)]
+    [Display(Name = "Admin.Field.Name")]
     public string Name { get; set; } = default!;
 
     [StringLength(1000)]
+    [Display(Name = "Admin.Field.Description")]
     public string? Description { get; set; }
 
     /// <summary>
@@ -20,22 +22,26 @@ public class AdminMembershipPlanFormViewModel
     /// a hundredth of its price.
     /// </summary>
     [Required, Range(0, 10_000_000)]
-    [Display(Name = "Price")]
+    [Display(Name = "Admin.Field.Price")]
     public decimal Price { get; set; }
 
     [Required, StringLength(3, MinimumLength = 3)]
+    [Display(Name = "Admin.Field.Currency")]
     public string Currency { get; set; } = "GBP";
 
     [Required]
+    [Display(Name = "Admin.Field.BillingPeriod")]
     public MembershipBillingPeriod BillingPeriod { get; set; } = MembershipBillingPeriod.Annual;
 
-    [Display(Name = "Features (one per line)")]
+    [Display(Name = "Admin.Field.FeaturesOnePerLine")]
     [StringLength(2000)]
     public string? Features { get; set; }
 
     [Required]
+    [Display(Name = "Admin.Field.Status")]
     public MembershipPlanStatus Status { get; set; } = MembershipPlanStatus.Active;
 
+    [Display(Name = "Admin.Field.SortOrder")]
     public int SortOrder { get; set; }
 
     /// <summary>Seat limit; blank means unlimited. Adjustable at any time — raising it reopens

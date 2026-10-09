@@ -3,7 +3,7 @@
 @using System.Text.Json
 @model AdminDashboardViewModel
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = Loc["Admin.Nav.AdminDashboard"].Value;
 
     // Charts read their data from a data-chart-payload attribute rather than an inline <script>,
     // which keeps the page free of injected script and lets the module stay data-agnostic.
@@ -25,16 +25,16 @@
     };
 
     var funnelPayload = Payload(
-        funnelStatuses.Select(s => s.ToDisplayLabel()),
+        funnelStatuses.Select(s => Loc.Label(s)),
         funnelStatuses.Select(s => (decimal)Model.ApplicationsByStatus.GetValueOrDefault(s)));
 
     var bookingsPayload = Payload(
-        Model.BookingsByStatus.Keys.Select(s => s.ToString()),
+        Model.BookingsByStatus.Keys.Select(s => Loc.Label(s)),
         Model.BookingsByStatus.Values.Select(v => (decimal)v));
 
     var paymentStatuses = Enum.GetValues<PaymentTransactionStatus>();
     var paymentsPayload = money is null ? "" : Payload(
-        paymentStatuses.Select(s => s.ToString()),
+        paymentStatuses.Select(s => Loc.Label(s)),
         paymentStatuses.Select(s => (decimal)money.CountsByStatus.GetValueOrDefault(s)));
 
     var approvedApplications = Model.ApplicationsByStatus.GetValueOrDefault(ApplicationStatus.Approved);
@@ -71,36 +71,29 @@
         _ => "admin-badge admin-badge--draft",
     };
 
-    string KindLabel(PaymentTransactionKind kind) => kind switch
-    {
-        PaymentTransactionKind.Experience => "Experience tickets",
-        PaymentTransactionKind.Session => "Session seats",
-        PaymentTransactionKind.Membership => "Membership sales",
-        PaymentTransactionKind.MembershipRenewal => "Membership renewals",
-        _ => kind.ToString(),
-    };
+    
 }
 
 <section class="admin-dashboard-hero" data-reveal>
     <div class="admin-dashboard-hero__content">
-        <span class="admin-eyebrow">Today at a glance</span>
-        <h2>Give your team one clear place to track approvals, bookings, revenue and publishing.</h2>
-        <p>Every key workflow is surfaced as a card, chart or status summary so non-technical operators can see what needs attention immediately.</p>
+        <span class="admin-eyebrow">@Loc["Admin.Dashboard.TodayAtAGlance"]</span>
+        <h2>@Loc["Admin.Dashboard.GiveYourTeamOneClearPlace"]</h2>
+        <p>@Loc["Admin.Dashboard.EveryKeyWorkflowIsSurfacedAs"]</p>
     </div>
     <div class="admin-dashboard-hero__summary">
         <div class="admin-dashboard-hero__pill">
             <strong>@Model.TotalApplications</strong>
-            <span>Total applications</span>
+            <span>@Loc["Admin.Dashboard.TotalApplications"]</span>
         </div>
         <div class="admin-dashboard-hero__pill">
             <strong>@confirmedBookings</strong>
-            <span>Confirmed bookings</span>
+            <span>@Loc["Admin.Dashboard.ConfirmedBookings"]</span>
         </div>
         @if (money is not null)
         {
             <div class="admin-dashboard-hero__pill">
                 <strong>@money.CurrentMembers</strong>
-                <span>Current members</span>
+                <span>@Loc["Admin.Dashboard.CurrentMembers"]</span>
             </div>
         }
     </div>
@@ -110,26 +103,26 @@
     <article class="admin-kpi-card" data-reveal data-reveal-delay="40">
         <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("file-text")' /></div>
         <div class="admin-kpi-card__value">@Model.PendingApplications</div>
-        <div class="admin-kpi-card__label">Applications awaiting review</div>
-        <div class="admin-kpi-card__meta">Needs attention now</div>
+        <div class="admin-kpi-card__label">@Loc["Admin.Dashboard.ApplicationsAwaitingReview"]</div>
+        <div class="admin-kpi-card__meta">@Loc["Admin.Dashboard.NeedsAttentionNow"]</div>
     </article>
     <article class="admin-kpi-card" data-reveal data-reveal-delay="80">
         <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("calendar")' /></div>
         <div class="admin-kpi-card__value">@Model.TotalBookings</div>
-        <div class="admin-kpi-card__label">Total bookings</div>
-        <div class="admin-kpi-card__meta">@confirmedBookings confirmed</div>
+        <div class="admin-kpi-card__label">@Loc["Admin.Dashboard.TotalBookings"]</div>
+        <div class="admin-kpi-card__meta">@Loc["Admin.Dashboard.ConfirmedCount", confirmedBookings]</div>
     </article>
     <article class="admin-kpi-card" data-reveal data-reveal-delay="120">
         <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("check")' /></div>
         <div class="admin-kpi-card__value">@Model.ConversionToPaidPercent%</div>
-        <div class="admin-kpi-card__label">Application to paid conversion</div>
-        <div class="admin-kpi-card__meta">@approvedApplications approved so far</div>
+        <div class="admin-kpi-card__label">@Loc["Admin.Dashboard.ApplicationToPaidConversion"]</div>
+        <div class="admin-kpi-card__meta">@Loc["Admin.Dashboard.ApprovedSoFar", approvedApplications]</div>
     </article>
     <article class="admin-kpi-card" data-reveal data-reveal-delay="160">
         <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("messages-square")' /></div>
         <div class="admin-kpi-card__value">@underReviewApplications</div>
-        <div class="admin-kpi-card__label">Applications in motion</div>
-        <div class="admin-kpi-card__meta">@waitlistedApplications waitlisted</div>
+        <div class="admin-kpi-card__label">@Loc["Admin.Dashboard.ApplicationsInMotion"]</div>
+        <div class="admin-kpi-card__meta">@Loc["Admin.Dashboard.WaitlistedCount", waitlistedApplications]</div>
     </article>
     @if (money is not null)
     {
@@ -138,35 +131,35 @@
             <article class="admin-kpi-card" data-reveal data-reveal-delay="200">
                 <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("credit-card")' /></div>
                 <div class="admin-kpi-card__value">@MoneyFormatter.Format(c.NetMinor, c.Currency)</div>
-                <div class="admin-kpi-card__label">Revenue collected (@c.Currency)</div>
+                <div class="admin-kpi-card__label">@Loc["Admin.Dashboard.RevenueCollectedIn", c.Currency]</div>
                 <div class="admin-kpi-card__meta">
-                    @c.Count settled payment@(c.Count == 1 ? "" : "s")@(c.RefundedMinor > 0 ? $" · {MoneyFormatter.Format(c.RefundedMinor, c.Currency)} refunded" : "")
+                    @Loc["Admin.Dashboard.SettledPayments", c.Count]@(c.RefundedMinor > 0 ? " · " + Loc["Admin.Dashboard.RefundedAmount", MoneyFormatter.Format(c.RefundedMinor, c.Currency)].Value : "")
                 </div>
             </article>
         }
         <article class="admin-kpi-card" data-reveal data-reveal-delay="240">
             <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("layers")' /></div>
             <div class="admin-kpi-card__value">@money.MembershipSales</div>
-            <div class="admin-kpi-card__label">Membership sales</div>
-            <div class="admin-kpi-card__meta">@money.MembershipRenewals renewal@(money.MembershipRenewals == 1 ? "" : "s") collected</div>
+            <div class="admin-kpi-card__label">@Loc["Admin.Dashboard.MembershipSales"]</div>
+            <div class="admin-kpi-card__meta">@Loc["Admin.Dashboard.RenewalsCollected", money.MembershipRenewals]</div>
         </article>
         <article class="admin-kpi-card" data-reveal data-reveal-delay="280">
             <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("activity")' /></div>
             <div class="admin-kpi-card__value">@(money.PendingCount + money.ProcessingCount)</div>
-            <div class="admin-kpi-card__label">Payments in flight</div>
-            <div class="admin-kpi-card__meta">@money.PendingCount pending · @money.ProcessingCount processing / awaiting action</div>
+            <div class="admin-kpi-card__label">@Loc["Admin.Dashboard.PaymentsInFlight"]</div>
+            <div class="admin-kpi-card__meta">@Loc["Admin.Dashboard.InFlightSplit", money.PendingCount, money.ProcessingCount]</div>
         </article>
         <article class="admin-kpi-card" data-reveal data-reveal-delay="320">
             <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("credit-card")' /></div>
             <div class="admin-kpi-card__value">@money.FailedCount</div>
-            <div class="admin-kpi-card__label">Failed payments</div>
-            <div class="admin-kpi-card__meta">@money.CanceledCount cancelled or expired</div>
+            <div class="admin-kpi-card__label">@Loc["Admin.Dashboard.FailedPayments"]</div>
+            <div class="admin-kpi-card__meta">@Loc["Admin.Dashboard.CancelledOrExpired", money.CanceledCount]</div>
         </article>
         <article class="admin-kpi-card" data-reveal data-reveal-delay="360">
             <div class="admin-kpi-card__icon"><partial name="_Icon" model='@("tag")' /></div>
             <div class="admin-kpi-card__value">@money.RefundedCount</div>
-            <div class="admin-kpi-card__label">Refunds</div>
-            <div class="admin-kpi-card__meta">@(money.DisputedCount > 0 ? $"{money.DisputedCount} disputed" : "No open disputes")</div>
+            <div class="admin-kpi-card__label">@Loc["Admin.Dashboard.Refunds"]</div>
+            <div class="admin-kpi-card__meta">@(money.DisputedCount > 0 ? Loc["Admin.Dashboard.DisputedCount", money.DisputedCount].Value : Loc["Admin.Dashboard.NoOpenDisputes"].Value)</div>
         </article>
     }
 </section>
@@ -175,7 +168,7 @@
     @if (money is not null)
     {
         <article class="admin-chart-card admin-chart-card--wide" data-reveal>
-            <h2>Revenue Collected</h2>
+            <h2>@Loc["Admin.Dashboard.RevenueCollected"]</h2>
             <span class="admin-chart-card__hint">
                 @if (primaryCurrency is not null)
                 {
@@ -194,14 +187,14 @@
             }
             else
             {
-                <div class="admin-chart-empty">No payments collected yet.</div>
+                <div class="admin-chart-empty">@Loc["Admin.Dashboard.NoPaymentsCollectedYet"]</div>
             }
         </article>
     }
 
     <article class="admin-chart-card" data-reveal data-reveal-delay="60">
-        <h2>Application Funnel</h2>
-        <span class="admin-chart-card__hint">Where every application currently sits.</span>
+        <h2>@Loc["Admin.Dashboard.ApplicationFunnel"]</h2>
+        <span class="admin-chart-card__hint">@Loc["Admin.Dashboard.WhereEveryApplicationCurrentlySits"]</span>
         @if (Model.TotalApplications > 0)
         {
             <div class="admin-chart-card__canvas">
@@ -210,13 +203,13 @@
         }
         else
         {
-            <div class="admin-chart-empty">No applications yet.</div>
+            <div class="admin-chart-empty">@Loc["Admin.Dashboard.NoApplicationsYet"]</div>
         }
     </article>
 
     <article class="admin-chart-card" data-reveal data-reveal-delay="120">
-        <h2>Bookings by Status</h2>
-        <span class="admin-chart-card__hint">Across every experience.</span>
+        <h2>@Loc["Admin.Dashboard.BookingsByStatus"]</h2>
+        <span class="admin-chart-card__hint">@Loc["Admin.Dashboard.AcrossEveryExperience"]</span>
         @if (Model.BookingsByStatus.Count > 0)
         {
             <div class="admin-chart-card__canvas">
@@ -225,15 +218,15 @@
         }
         else
         {
-            <div class="admin-chart-empty">No bookings yet.</div>
+            <div class="admin-chart-empty">@Loc["Admin.Dashboard.NoBookingsYet"]</div>
         }
     </article>
 
     @if (money is not null)
     {
         <article class="admin-chart-card" data-reveal data-reveal-delay="180">
-            <h2>Payments by Status</h2>
-            <span class="admin-chart-card__hint">Experience, session and membership payments together.</span>
+            <h2>@Loc["Admin.Dashboard.PaymentsByStatus"]</h2>
+            <span class="admin-chart-card__hint">@Loc["Admin.Dashboard.ExperienceSessionAndMembershipPaymentsTogether"]</span>
             @if (money.CountsByStatus.Count > 0)
             {
                 <div class="admin-chart-card__canvas">
@@ -242,7 +235,7 @@
             }
             else
             {
-                <div class="admin-chart-empty">No payments yet.</div>
+                <div class="admin-chart-empty">@Loc["Admin.Dashboard.NoPaymentsYet"]</div>
             }
         </article>
     }
@@ -252,14 +245,14 @@
     <article class="admin-card admin-card--elevated" data-reveal>
         <div class="admin-section-heading-wrap">
             <div>
-                <span class="admin-eyebrow">Pipeline health</span>
-                <h2>Application funnel</h2>
+                <span class="admin-eyebrow">@Loc["Admin.Dashboard.PipelineHealth"]</span>
+                <h2>@Loc["Admin.Dashboard.ApplicationFunnel79"]</h2>
             </div>
-            <p>Color-coded stages make it easy to spot where applications are slowing down.</p>
+            <p>@Loc["Admin.Dashboard.ColorCodedStagesMakeItEasy"]</p>
         </div>
         <div class="admin-table-scroll">
             <table class="admin-table" data-admin-table data-admin-table-per-page="8">
-                <thead><tr><th>Status</th><th>Count</th><th>% of Total</th></tr></thead>
+                <thead><tr><th>@Loc["Admin.Common.Status"]</th><th>@Loc["Admin.Dashboard.Count"]</th><th>@Loc["Admin.Dashboard.OfTotal"]</th></tr></thead>
                 <tbody>
                     @foreach (var status in funnelStatuses)
                     {
@@ -267,7 +260,7 @@
                         var pct = Model.TotalApplications == 0 ? 0 : Math.Round(count * 100.0 / Model.TotalApplications, 1);
                         <tr>
                             <td>
-                                <span class="@ApplicationBadgeClass(status)">@status.ToDisplayLabel()</span>
+                                <span class="@ApplicationBadgeClass(status)">@Loc.Label(status)</span>
                             </td>
                             <td>@count</td>
                             <td>@pct%</td>
@@ -281,28 +274,28 @@
     <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="80">
         <div class="admin-section-heading-wrap">
             <div>
-                <span class="admin-eyebrow">Operations status</span>
-                <h2>Bookings by status</h2>
+                <span class="admin-eyebrow">@Loc["Admin.Dashboard.OperationsStatus"]</span>
+                <h2>@Loc["Admin.Dashboard.BookingsByStatus74"]</h2>
             </div>
-            <p>Booking states are spaced out for quick scanning during fulfilment and support.</p>
+            <p>@Loc["Admin.Dashboard.BookingStatesAreSpacedOutFor"]</p>
         </div>
         @if (Model.BookingsByStatus.Count == 0)
         {
             <div class="admin-empty">
-                <h3 class="admin-empty__title">No bookings yet</h3>
-                <p>Once bookings start coming in, this panel will summarise how many are pending, confirmed or closed.</p>
+                <h3 class="admin-empty__title">@Loc["Admin.Dashboard.NoBookingsYet47"]</h3>
+                <p>@Loc["Admin.Dashboard.OnceBookingsStartComingInThis"]</p>
             </div>
         }
         else
         {
             <div class="admin-table-scroll">
                 <table class="admin-table" data-admin-table data-admin-table-per-page="8">
-                    <thead><tr><th>Status</th><th>Count</th></tr></thead>
+                    <thead><tr><th>@Loc["Admin.Common.Status"]</th><th>@Loc["Admin.Dashboard.Count"]</th></tr></thead>
                     <tbody>
                         @foreach (var (status, count) in Model.BookingsByStatus.OrderBy(row => row.Key.ToString()))
                         {
                             <tr>
-                                <td><span class="@BookingBadgeClass(status)">@status</span></td>
+                                <td><span class="@BookingBadgeClass(status)">@Loc.Label(status)</span></td>
                                 <td>@count</td>
                             </tr>
                         }
@@ -317,28 +310,28 @@
         <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="120">
             <div class="admin-section-heading-wrap">
                 <div>
-                    <span class="admin-eyebrow">Money by type</span>
-                    <h2>Payments by type and currency</h2>
+                    <span class="admin-eyebrow">@Loc["Admin.Dashboard.MoneyByType"]</span>
+                    <h2>@Loc["Admin.Dashboard.PaymentsByTypeAndCurrency"]</h2>
                 </div>
-                <p>Settled payments only, net of refunds. Each currency stands on its own.</p>
+                <p>@Loc["Admin.Dashboard.SettledPaymentsOnlyNetOfRefunds"]</p>
             </div>
             @if (money.CollectedByKindAndCurrency.Count == 0)
             {
                 <div class="admin-empty">
-                    <h3 class="admin-empty__title">No settled payments yet</h3>
-                    <p>Experience, session and membership payments will be broken down here once money has been collected.</p>
+                    <h3 class="admin-empty__title">@Loc["Admin.Dashboard.NoSettledPaymentsYet"]</h3>
+                    <p>@Loc["Admin.Dashboard.ExperienceSessionAndMembershipPaymentsWill"]</p>
                 </div>
             }
             else
             {
                 <div class="admin-table-scroll">
                     <table class="admin-table" data-admin-table data-admin-table-per-page="12">
-                        <thead><tr><th>Type</th><th>Currency</th><th>Payments</th><th>Collected</th><th>Refunded</th><th>Net</th></tr></thead>
+                        <thead><tr><th>@Loc["Admin.Common.Type"]</th><th>@Loc["Admin.Common.Currency"]</th><th>@Loc["Admin.Dashboard.Payments"]</th><th>@Loc["Admin.Dashboard.Collected"]</th><th>@Loc["Admin.Dashboard.Refunded"]</th><th>@Loc["Admin.Dashboard.Net"]</th></tr></thead>
                         <tbody>
                             @foreach (var row in money.CollectedByKindAndCurrency)
                             {
                                 <tr>
-                                    <td>@KindLabel(row.Kind)</td>
+                                    <td>@Loc.Label(row.Kind)</td>
                                     <td>@row.Currency</td>
                                     <td>@row.Count</td>
                                     <td>@MoneyFormatter.Format(row.GrossMinor, row.Currency)</td>
@@ -355,27 +348,27 @@
         <article class="admin-card admin-card--elevated" data-reveal data-reveal-delay="160">
             <div class="admin-section-heading-wrap">
                 <div>
-                    <span class="admin-eyebrow">Money by state</span>
-                    <h2>Payments by status</h2>
+                    <span class="admin-eyebrow">@Loc["Admin.Dashboard.MoneyByState"]</span>
+                    <h2>@Loc["Admin.Dashboard.PaymentsByStatus13"]</h2>
                 </div>
-                <p>Every payment's internal state. <a asp-controller="AdminPayments" asp-action="Index">Open the full list</a> to drill into any of them.</p>
+                <p>@Loc["Admin.Dashboard.EveryPaymentSInternalState"] <a asp-controller="AdminPayments" asp-action="Index">@Loc["Admin.Dashboard.OpenTheFullList"]</a> @Loc["Admin.Dashboard.ToDrillIntoAnyOfThem"]</p>
             </div>
             <div class="admin-table-scroll">
                 <table class="admin-table" data-admin-table data-admin-table-per-page="12">
-                    <thead><tr><th>Status</th><th>Count</th></tr></thead>
+                    <thead><tr><th>@Loc["Admin.Common.Status"]</th><th>@Loc["Admin.Dashboard.Count"]</th></tr></thead>
                     <tbody>
                         @foreach (var status in paymentStatuses)
                         {
                             <tr>
-                                <td><a asp-controller="AdminPayments" asp-action="Index" asp-route-status="@status"><span class="@PaymentBadgeClass(status)">@status</span></a></td>
+                                <td><a asp-controller="AdminPayments" asp-action="Index" asp-route-status="@status"><span class="@PaymentBadgeClass(status)">@Loc.Label(status)</span></a></td>
                                 <td>@money.CountsByStatus.GetValueOrDefault(status)</td>
                             </tr>
                         }
                         @foreach (var open in money.OpenByCurrency)
                         {
                             <tr>
-                                <td><span class="admin-badge admin-badge--pending">In flight (@open.Currency)</span></td>
-                                <td>@MoneyFormatter.Format(open.GrossMinor, open.Currency) across @open.Count</td>
+                                <td><span class="admin-badge admin-badge--pending">@Loc["Admin.Dashboard.InFlightIn", open.Currency]</span></td>
+                                <td>@Loc["Admin.Dashboard.AmountAcross", MoneyFormatter.Format(open.GrossMinor, open.Currency), open.Count]</td>
                             </tr>
                         }
                     </tbody>

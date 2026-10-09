@@ -1,0 +1,1075 @@
+// --- Admin: guidance, publishing, the writer, phones ---------------------------------------------------
+// Everything the panel added so that people other than its builder can use it on their own:
+//
+//   .publish-card         where an item stands, in words (_PublishCard.cshtml)
+//   .admin-choice         radio choices as explained cards (session visibility, journal category)
+//   .admin-help           "How this works" (_AdminHelp.cshtml)
+//   .admin-confirm        the confirmation dialog (modules/adminConfirm.ts)
+//   .admin-counter        character counters (modules/adminForms.ts)
+//   .admin-empty          a list with nothing in it yet
+//   .writer*              the journal writer (AdminJournal/Edit, Create; modules/journalWriter.ts)
+//   phones                tables as stacked cards, a lighter top bar, quick actions in the menu
+//
+// Tokens only, and every motion is switched off under prefers-reduced-motion at the end.
+
+// --- Publish card ----------------------------------------------------------------------------------------
+
+.publish-card {
+  --publish-accent: var(--vih-gold);
+
+  position: relative;
+  margin: 0 0 var(--vih-space-md);
+  padding: var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-top: 3px solid var(--publish-accent);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+  box-shadow: var(--vih-shadow-sm);
+
+  &--live { --publish-accent: var(--vih-success); }
+  &--archived { --publish-accent: var(--vih-text-faint); }
+}
+
+.publish-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vih-space-xs);
+  margin-bottom: var(--vih-space-2xs);
+}
+
+.publish-card__title {
+  margin: 0;
+  font-family: var(--vih-font-sans);
+  font-size: var(--vih-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+}
+
+.publish-card__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--vih-radius-pill);
+  background: color-mix(in srgb, var(--publish-accent) 14%, transparent);
+  color: var(--vih-ink);
+  font-size: var(--vih-text-sm);
+  font-weight: 700;
+
+  i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--publish-accent);
+  }
+
+  .publish-card--live & i {
+    animation: admin-live-dot 2.2s var(--vih-ease-out) infinite;
+  }
+}
+
+@keyframes admin-live-dot {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--vih-success) 55%, transparent); }
+  70%,
+  100% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--vih-success) 0%, transparent); }
+}
+
+.publish-card__sentence {
+  margin: 0 0 var(--vih-space-xs);
+  font-size: var(--vih-text-md);
+  line-height: 1.5;
+  color: var(--vih-ink);
+}
+
+.publish-card__audience {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--vih-space-2xs);
+  margin: 0 0 var(--vih-space-sm);
+  padding: var(--vih-space-2xs) var(--vih-space-xs);
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-surface-tinted);
+  font-size: var(--vih-text-sm);
+  line-height: 1.5;
+  color: var(--vih-text-secondary);
+
+  svg {
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+  }
+
+  &.is-warning {
+    background: var(--vih-warning-bg);
+    color: var(--vih-ink);
+    box-shadow: inset 3px 0 0 var(--vih-gold);
+  }
+}
+
+.publish-card__checks {
+  margin-bottom: var(--vih-space-sm);
+
+  ul {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--vih-space-2xs);
+    min-height: 32px;
+    font-size: var(--vih-text-sm);
+    color: var(--vih-text-secondary);
+
+    &.is-done { color: var(--vih-ink); }
+    &.is-missing { color: var(--vih-danger-strong); font-weight: 600; }
+    &.is-optional { color: var(--vih-text-muted); }
+  }
+}
+
+.publish-card__checks-title {
+  margin: 0 0 var(--vih-space-3xs);
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+}
+
+.publish-card__check-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--vih-line-on-light);
+  border-radius: 50%;
+
+  svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .is-done & {
+    border-color: var(--vih-success);
+    background: var(--vih-success);
+    color: var(--vih-white);
+  }
+
+  .is-missing & {
+    border-color: var(--vih-danger);
+    color: var(--vih-danger);
+  }
+
+  .is-optional & {
+    border-style: dashed;
+  }
+}
+
+.publish-card__check-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.publish-card__fix {
+  flex: 0 0 auto;
+  font-size: var(--vih-text-xs);
+  font-weight: 700;
+  color: var(--vih-green-900);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.publish-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+
+  .admin-btn {
+    min-height: 44px;
+  }
+
+  .admin-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.publish-card__blocked {
+  margin: var(--vih-space-2xs) 0 0;
+  font-size: var(--vih-text-xs);
+  color: var(--vih-danger-strong);
+}
+
+.admin-toolbar--quiet {
+  justify-content: space-between;
+  margin-bottom: var(--vih-space-lg);
+}
+
+.admin-toolbar__note {
+  margin-left: auto;
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+// --- Choices as explained cards ---------------------------------------------------------------------------
+
+.admin-choice-group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  legend {
+    margin-bottom: var(--vih-space-2xs);
+    padding: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--vih-text-secondary);
+  }
+}
+
+.admin-choice-group__options {
+  display: grid;
+  gap: var(--vih-space-2xs);
+
+  @media (min-width: 720px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  &--grid {
+    @media (min-width: 720px) {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+  }
+
+  .admin-choice-group--compact & {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-choice {
+  position: relative;
+  display: flex;
+  gap: var(--vih-space-2xs);
+  padding: var(--vih-space-xs);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-lg);
+  background: var(--vih-surface);
+  cursor: pointer;
+  transition: border-color var(--vih-dur-base) var(--vih-ease), box-shadow var(--vih-dur-base) var(--vih-ease), background-color var(--vih-dur-base) var(--vih-ease);
+
+  input {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: var(--vih-green-900);
+  }
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--vih-gold) 55%, var(--vih-line-on-light));
+  }
+
+  &:has(input:checked) {
+    border-color: var(--vih-green-900);
+    background: color-mix(in srgb, var(--vih-green-900) 4%, var(--vih-surface));
+    box-shadow: 0 0 0 1px var(--vih-green-900);
+  }
+
+  &:has(input:focus-visible) {
+    box-shadow: var(--vih-shadow-focus);
+  }
+
+  .admin-choice-group--compact & {
+    padding: var(--vih-space-2xs) var(--vih-space-xs);
+  }
+}
+
+.admin-choice__body {
+  display: grid;
+  gap: 2px;
+
+  strong {
+    font-size: var(--vih-text-base);
+    color: var(--vih-ink);
+  }
+
+  span {
+    font-size: var(--vih-text-xs);
+    line-height: 1.45;
+    color: var(--vih-text-muted);
+  }
+}
+
+.admin-optional {
+  margin-left: 4px;
+  font-weight: 400;
+  color: var(--vih-text-faint);
+}
+
+// --- "How this works" ----------------------------------------------------------------------------------------
+
+.admin-help {
+  margin: 0 0 var(--vih-space-md);
+  border: 1px solid color-mix(in srgb, var(--vih-gold) 40%, var(--vih-line-on-light));
+  border-left: 4px solid var(--vih-gold);
+  border-radius: var(--vih-radius-lg);
+  background: color-mix(in srgb, var(--vih-gold) 7%, var(--vih-surface));
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: var(--vih-space-2xs);
+    min-height: 48px;
+    padding: var(--vih-space-2xs) var(--vih-space-sm);
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    color: var(--vih-green-900);
+
+    &::-webkit-details-marker { display: none; }
+  }
+
+  &[open] .admin-help__toggle svg {
+    transform: rotate(180deg);
+  }
+}
+
+.admin-help__icon {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: var(--vih-gold);
+
+  svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+}
+
+.admin-help__title {
+  flex: 1;
+}
+
+.admin-help__toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--vih-dur-base) var(--vih-ease);
+}
+
+.admin-help__steps {
+  display: grid;
+  gap: var(--vih-space-2xs);
+  margin: 0;
+  padding: 0 var(--vih-space-sm) var(--vih-space-sm) calc(var(--vih-space-sm) + 1.6em);
+  counter-reset: step;
+  list-style: none;
+
+  li {
+    position: relative;
+    font-size: var(--vih-text-sm);
+    line-height: 1.55;
+    color: var(--vih-text-secondary);
+    counter-increment: step;
+
+    &::before {
+      content: counter(step);
+      position: absolute;
+      left: -1.9em;
+      top: 0;
+      display: grid;
+      place-items: center;
+      width: 1.5em;
+      height: 1.5em;
+      border-radius: 50%;
+      background: var(--vih-green-900);
+      color: var(--vih-cream);
+      font-size: var(--vih-text-2xs);
+      font-weight: 700;
+    }
+  }
+}
+
+// --- Confirmation dialog ----------------------------------------------------------------------------------------
+
+.admin-confirm {
+  width: min(440px, calc(100vw - 32px));
+  padding: 0;
+  border: 0;
+  border-radius: var(--vih-radius-2xl);
+  background: var(--vih-surface);
+  color: var(--vih-ink);
+  box-shadow: var(--vih-shadow-lg);
+
+  &::backdrop {
+    background: rgba(0, 18, 2, 0.55);
+    backdrop-filter: blur(3px);
+  }
+
+  &[open] {
+    animation: admin-dialog-in var(--vih-dur-slow) var(--vih-ease-out);
+  }
+}
+
+.admin-confirm__box {
+  display: grid;
+  gap: var(--vih-space-xs);
+  margin: 0;
+  padding: var(--vih-space-lg) var(--vih-space-md) var(--vih-space-md);
+  text-align: center;
+}
+
+.admin-confirm__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: var(--vih-warning-bg);
+  color: var(--vih-gold);
+
+  svg {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .is-danger & {
+    background: var(--vih-danger-bg);
+    color: var(--vih-danger);
+  }
+}
+
+.admin-confirm__title {
+  margin: 0;
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-xl);
+  color: var(--vih-green-900);
+}
+
+.admin-confirm__message {
+  margin: 0;
+  font-size: var(--vih-text-base);
+  line-height: 1.6;
+  color: var(--vih-text-secondary);
+}
+
+.admin-confirm__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--vih-space-2xs);
+  margin-top: var(--vih-space-2xs);
+
+  .admin-btn {
+    min-width: 140px;
+    min-height: 44px;
+    justify-content: center;
+  }
+}
+
+@keyframes admin-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+
+// --- Counters, empty states, tables ------------------------------------------------------------------------------
+
+.admin-counter {
+  align-self: flex-end;
+  margin-top: -2px;
+  font-size: var(--vih-text-2xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--vih-text-faint);
+
+  &.is-near { color: var(--vih-gold); font-weight: 600; }
+  &.is-full { color: var(--vih-danger); font-weight: 700; }
+}
+
+.admin-empty {
+  display: grid;
+  justify-items: center;
+  gap: var(--vih-space-2xs);
+  padding: var(--vih-space-2xl) var(--vih-space-md);
+  border: 1px dashed color-mix(in srgb, var(--vih-gold) 55%, var(--vih-line-on-light));
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface-tinted);
+  text-align: center;
+}
+
+.admin-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--vih-surface);
+  color: var(--vih-gold);
+  box-shadow: var(--vih-shadow-sm);
+
+  svg { width: 26px; height: 26px; }
+}
+
+.admin-empty__title {
+  margin: var(--vih-space-2xs) 0 0;
+  font-family: var(--vih-font-serif);
+  font-size: var(--vih-text-xl);
+  color: var(--vih-green-900);
+}
+
+.admin-empty__body {
+  max-width: 48ch;
+  margin: 0 0 var(--vih-space-xs);
+  font-size: var(--vih-text-base);
+  line-height: 1.6;
+  color: var(--vih-text-secondary);
+}
+
+.admin-table__primary {
+  font-weight: 600;
+  color: var(--vih-green-900);
+}
+
+.admin-table__sub,
+.admin-table__muted {
+  font-size: var(--vih-text-xs);
+  color: var(--vih-text-muted);
+}
+
+.admin-table__actions {
+  white-space: nowrap;
+
+  .admin-inline-form {
+    display: inline-block;
+  }
+}
+
+// --- Language tabs: a dot for "written", sideways scroll on a phone --------------------------------------------------
+
+.admin-lang-tab__dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border: 1.5px solid var(--vih-text-faint);
+  border-radius: 50%;
+  vertical-align: middle;
+
+  &.is-written {
+    border-color: var(--vih-success);
+    background: var(--vih-success);
+  }
+}
+
+@media (max-width: 719px) {
+  .admin-lang-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .admin-lang-tab {
+    flex: 0 0 auto;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+// --- User menu: interface language ------------------------------------------------------------------------------------
+
+.admin-user-menu__label {
+  margin: 4px 12px 6px;
+  font-size: var(--vih-text-2xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--vih-text-muted);
+}
+
+.admin-user-menu__langs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 4px;
+
+  .admin-user-menu__panel & a {
+    justify-content: center;
+    padding: 8px;
+    border: 1px solid var(--vih-line-on-light);
+  }
+
+  .admin-user-menu__panel & a.is-active {
+    border-color: var(--vih-green-900);
+    background: var(--vih-green-900);
+    color: var(--vih-cream);
+  }
+}
+
+.admin-user-menu__hint {
+  margin: 0 12px 8px;
+  font-size: var(--vih-text-2xs);
+  line-height: 1.45;
+  color: var(--vih-text-muted);
+}
+
+.admin-sidebar__quick {
+  display: none;
+}
+
+// --- The writer -----------------------------------------------------------------------------------------------------------
+
+.writer {
+  display: grid;
+  gap: var(--vih-space-lg);
+  align-items: start;
+
+  @media (min-width: 1100px) {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: var(--vih-space-xl);
+  }
+}
+
+.writer__main {
+  min-width: 0;
+}
+
+.writer__form {
+  display: grid;
+  // One column that may shrink: an implicit track sizes itself to the editor toolbar's full width,
+  // which pushed the text under the sidebar instead of letting CKEditor fold its overflow buttons.
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--vih-space-xs);
+}
+
+.writer__title {
+  width: 100%;
+  padding: var(--vih-space-2xs) 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  font-family: var(--vih-font-serif);
+  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--vih-green-900);
+
+  &::placeholder { color: color-mix(in srgb, var(--vih-text-faint) 70%, transparent); }
+
+  &:focus {
+    outline: none;
+    border-bottom-color: var(--vih-gold);
+  }
+
+  &--start {
+    padding: var(--vih-space-2xs) var(--vih-space-xs);
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: var(--vih-radius-md);
+    background: var(--vih-surface);
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+  }
+}
+
+.writer__standfirst {
+  width: 100%;
+  padding: var(--vih-space-2xs) 0;
+  border: 0;
+  border-bottom: 1px dashed var(--vih-line-on-light);
+  background: transparent;
+  resize: vertical;
+  font: inherit;
+  font-size: var(--vih-text-lg);
+  line-height: 1.6;
+  color: var(--vih-text-secondary);
+
+  &:focus {
+    outline: none;
+    border-bottom-color: var(--vih-gold);
+  }
+}
+
+.writer__editor {
+  margin-top: var(--vih-space-2xs);
+
+  .ck.ck-editor__editable_inline {
+    min-height: 460px;
+    font-size: 1.0625rem;
+  }
+}
+
+.writer__status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs) var(--vih-space-sm);
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+.writer__autosave {
+  flex: 1;
+  font-size: var(--vih-text-xs);
+}
+
+.writer__focus {
+  min-height: 36px;
+  padding: 0 var(--vih-space-xs);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-pill);
+  background: var(--vih-surface);
+  font: inherit;
+  font-size: var(--vih-text-xs);
+  font-weight: 600;
+  color: var(--vih-green-900);
+  cursor: pointer;
+
+  &:hover { border-color: var(--vih-green-900); }
+}
+
+// The save bar sticks to the bottom of the screen while the article is long, so Save is never a
+// scroll away.
+.writer__actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs);
+  padding: var(--vih-space-xs) 0 calc(var(--vih-space-xs) + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, var(--vih-surface-tinted) 75%, transparent);
+
+  .admin-btn { min-height: 44px; }
+  .admin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.writer__shortcut {
+  margin-left: auto;
+  font-size: var(--vih-text-2xs);
+  color: var(--vih-text-faint);
+
+  @media (hover: none) { display: none; }
+}
+
+.writer__delete-translation {
+  margin-top: var(--vih-space-sm);
+}
+
+.writer__side {
+  display: grid;
+  gap: var(--vih-space-sm);
+  min-width: 0;
+
+  @media (min-width: 1100px) {
+    position: sticky;
+    top: calc(var(--vih-space-md) + 88px);
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+  }
+
+  .publish-card { margin: 0; }
+}
+
+.writer-card {
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-surface);
+
+  > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: var(--vih-space-2xs) var(--vih-space-sm);
+    cursor: pointer;
+    list-style: none;
+    font-size: var(--vih-text-sm);
+    font-weight: 700;
+    color: var(--vih-green-900);
+
+    &::-webkit-details-marker { display: none; }
+
+    &::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid var(--vih-gold);
+      border-bottom: 2px solid var(--vih-gold);
+      transform: rotate(45deg);
+      transition: transform var(--vih-dur-base) var(--vih-ease);
+    }
+  }
+
+  &[open] > summary::after {
+    transform: rotate(-135deg);
+  }
+
+  &--danger > summary { color: var(--vih-danger-strong); }
+}
+
+.writer-card__body {
+  display: grid;
+  gap: var(--vih-space-xs);
+  padding: 0 var(--vih-space-sm) var(--vih-space-sm);
+}
+
+.writer-card__cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--vih-radius-md);
+}
+
+.writer-card__empty {
+  margin: 0;
+  padding: var(--vih-space-sm);
+  border: 1px dashed var(--vih-line-on-light);
+  border-radius: var(--vih-radius-md);
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+  text-align: center;
+}
+
+.writer-card__upload {
+  display: grid;
+  gap: var(--vih-space-2xs);
+
+  input[type='file'] { max-width: 100%; font-size: var(--vih-text-sm); }
+}
+
+.writer-card__url {
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--vih-green-900);
+}
+
+.writer-card__advanced {
+  summary {
+    cursor: pointer;
+    font-size: var(--vih-text-xs);
+    color: var(--vih-text-muted);
+  }
+
+  input { width: 100%; margin-top: var(--vih-space-2xs); }
+}
+
+// How the post will look as a search result.
+.serp-preview {
+  display: grid;
+  gap: 2px;
+  padding: var(--vih-space-xs);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-white);
+  font-family: Arial, sans-serif;
+}
+
+.serp-preview__url {
+  overflow: hidden;
+  font-size: 12px;
+  color: #4d5156;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.serp-preview__title {
+  font-size: 18px;
+  line-height: 1.3;
+  color: #1a0dab;
+}
+
+.serp-preview__desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #4d5156;
+}
+
+.writer-restore {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vih-space-2xs) var(--vih-space-xs);
+  padding: var(--vih-space-xs) var(--vih-space-sm);
+  border: 1px solid color-mix(in srgb, var(--vih-gold) 60%, transparent);
+  border-radius: var(--vih-radius-md);
+  background: var(--vih-warning-bg);
+  font-size: var(--vih-text-sm);
+
+  span { flex: 1 1 260px; }
+}
+
+// Focus mode: the article fills the screen; everything else waits.
+.writer--focus {
+  .writer__main {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    overflow-y: auto;
+    padding: var(--vih-space-lg) max(var(--vih-space-md), calc((100vw - 820px) / 2)) 0;
+    background: var(--vih-surface-tinted);
+  }
+
+  .writer__langs,
+  .admin-notice,
+  .writer__delete-translation {
+    display: none;
+  }
+}
+
+body.writer-focus-open {
+  overflow: hidden;
+}
+
+// "New article"
+.writer-start {
+  max-width: 880px;
+}
+
+.writer-start__form {
+  display: grid;
+  gap: var(--vih-space-md);
+}
+
+.writer-start__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vih-space-2xs);
+
+  .admin-btn { min-height: 48px; }
+}
+
+// --- Phones ------------------------------------------------------------------------------------------------------------------
+
+@media (max-width: 959px) {
+  // The top bar keeps the title and the menus; search and quick actions live in the slide-out menu.
+  .admin-topbar__actions .admin-searchbar,
+  .admin-topbar__actions .admin-quick-actions {
+    display: none;
+  }
+
+  .admin-sidebar__quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 var(--vih-space-sm) var(--vih-space-xs);
+  }
+
+  .admin-btn,
+  .admin-field input,
+  .admin-field select {
+    min-height: 44px;
+  }
+}
+
+// Tables become a card per row: each cell on its own line, labelled with its column (adminTable.ts
+// copies the header into data-label).
+@media (max-width: 719px) {
+  .admin-table {
+    min-width: 0 !important;
+    border: 0;
+
+    thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+
+    tbody,
+    tr,
+    td {
+      display: block;
+      width: 100%;
+    }
+
+    tr {
+      margin-bottom: var(--vih-space-xs);
+      padding: var(--vih-space-2xs) var(--vih-space-sm);
+      border: 1px solid var(--vih-line-on-light);
+      border-radius: var(--vih-radius-lg);
+      background: var(--vih-surface);
+    }
+
+    td {
+      display: grid;
+      grid-template-columns: minmax(96px, 36%) minmax(0, 1fr);
+      gap: var(--vih-space-2xs);
+      padding: 6px 0;
+      border: 0;
+      overflow-wrap: anywhere;
+
+      &::before {
+        content: attr(data-label);
+        font-size: var(--vih-text-2xs);
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--vih-text-muted);
+      }
+
+      &:not([data-label])::before,
+      &[data-label='']::before {
+        display: none;
+      }
+
+      &:not([data-label]),
+      &[data-label=''] {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  .admin-table-scroll,
+  .admin-dt {
+    overflow-x: visible;
+  }
+
+  .admin-form__grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+// --- Reduced motion ------------------------------------------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  .publish-card--live .publish-card__pill i,
+  .admin-confirm[open] {
+    animation: none;
+  }
+
+  .admin-choice,
+  .admin-help__toggle svg,
+  .writer-card > summary::after {
+    transition: none;
+  }
+}

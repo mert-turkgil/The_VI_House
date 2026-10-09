@@ -8,19 +8,19 @@
     </div>
     <div class="admin-field">
         <label asp-for="Status"></label>
-        <select asp-for="Status" asp-items="Html.GetEnumSelectList<VIHouse.Entities.Membership.MembershipPlanStatus>()"></select>
+        <select asp-for="Status" asp-items="Loc.Options<VIHouse.Entities.Membership.MembershipPlanStatus>()"></select>
     </div>
 </div>
 
 <div class="admin-field">
     <label asp-for="Description"></label>
-    <textarea asp-for="Description" rows="2" placeholder="One sentence, shown under the plan name on the public page and in Stripe."></textarea>
+    <textarea asp-for="Description" rows="2" placeholder="@Loc["Admin.MembershipPlans.OneSentenceShownUnderThePlan"]"></textarea>
     <span asp-validation-for="Description" class="field-validation-error"></span>
 </div>
 
 <div class="admin-form__grid admin-form__grid--3">
     <div class="admin-field">
-        <label asp-for="Price">Price (e.g. 2500.00)</label>
+        <label asp-for="Price">@Loc["Admin.MembershipPlans.PriceEG250000"]</label>
         <input asp-for="Price" type="number" step="0.01" min="0" inputmode="decimal" />
         <span asp-validation-for="Price" class="field-validation-error"></span>
     </div>
@@ -31,42 +31,42 @@
     </div>
     <div class="admin-field">
         <label asp-for="BillingPeriod"></label>
-        <select asp-for="BillingPeriod" asp-items="Html.GetEnumSelectList<VIHouse.Entities.Membership.MembershipBillingPeriod>()"></select>
+        <select asp-for="BillingPeriod" asp-items="Loc.Options<VIHouse.Entities.Membership.MembershipBillingPeriod>()"></select>
     </div>
 </div>
 
 <div class="admin-field">
     <label asp-for="Features"></label>
-    <textarea asp-for="Features" rows="5" placeholder="Priority booking&#10;Founding Member badge&#10;Invitation to House Notes previews"></textarea>
+    <textarea asp-for="Features" rows="5" placeholder="@Loc["Admin.MembershipPlans.PriorityBookingFoundingMemberBadgeInvitation"]"></textarea>
     <span asp-validation-for="Features" class="field-validation-error"></span>
 </div>
 
 <div class="admin-field" style="max-width:200px;">
-    <label asp-for="SortOrder">Sort order</label>
+    <label asp-for="SortOrder">@Loc["Admin.MembershipPlans.SortOrder"]</label>
     <input asp-for="SortOrder" type="number" />
 </div>
 
 <div class="admin-field" style="max-width:260px;">
-    <label asp-for="MaxMembers">Maximum members</label>
-    <input asp-for="MaxMembers" type="number" min="1" placeholder="Unlimited" />
-    <p class="admin-field__hint">Leave blank for no limit. When the plan is full, visitors are offered the waitlist instead of checkout; change the number at any time.</p>
+    <label asp-for="MaxMembers">@Loc["Admin.MembershipPlans.MaximumMembers"]</label>
+    <input asp-for="MaxMembers" type="number" min="1" placeholder="@Loc["Admin.MembershipPlans.Unlimited"]" />
+    <p class="admin-field__hint">@Loc["Admin.MembershipPlans.MaxMembersHint"]</p>
     <span asp-validation-for="MaxMembers" class="field-validation-error"></span>
 </div>
 
 <fieldset class="admin-field" style="border:none; padding:0; margin:0 0 16px;">
-    <legend style="font-weight:600; font-size:0.875rem; margin-bottom:8px;">What this tier includes</legend>
-    <p class="admin-field__hint" style="margin-top:0;">These decide what a member on this plan sees in their account area — the feature list above is only the words on the card.</p>
+    <legend style="font-weight:600; font-size:0.875rem; margin-bottom:8px;">@Loc["Admin.MembershipPlans.WhatThisTierIncludes"]</legend>
+    <p class="admin-field__hint" style="margin-top:0;">@Loc["Admin.MembershipPlans.TheseDecideWhatAMemberOn"]</p>
     <div style="display:grid; gap:8px; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));">
-        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesSessions" /> Sessions marked "included with membership"</label>
-        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesCommunity" /> Community channels (Discord, calls)</label>
-        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesDirectory" /> Member directory</label>
-        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesMemberCard" /> Digital member card</label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesSessions" /> @Loc["Admin.MembershipPlans.SessionsMarkedIncludedWithMembership"]</label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesCommunity" /> @Loc["Admin.MembershipPlans.CommunityChannelsDiscordCalls"]</label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesDirectory" /> @Loc["Admin.MembershipPlans.MemberDirectory"]</label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.875rem;"><input asp-for="IncludesMemberCard" /> @Loc["Admin.MembershipPlans.DigitalMemberCard"]</label>
     </div>
 </fieldset>
 
 <div class="admin-field" style="max-width:320px;">
-    <label asp-for="DiscordRoleId">Discord role id</label>
-    <input asp-for="DiscordRoleId" placeholder="Optional" />
-    <p class="admin-field__hint">Only used when the Discord bot is configured: members of this tier are given this role when they accept a generated invite.</p>
+    <label asp-for="DiscordRoleId">@Loc["Admin.MembershipPlans.DiscordRoleId"]</label>
+    <input asp-for="DiscordRoleId" placeholder="@Loc["Admin.MembershipPlans.Optional"]" />
+    <p class="admin-field__hint">@Loc["Admin.MembershipPlans.OnlyUsedWhenTheDiscordBot"]</p>
     <span asp-validation-for="DiscordRoleId" class="field-validation-error"></span>
 </div>

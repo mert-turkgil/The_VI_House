@@ -17,6 +17,28 @@ import autoAnimate from '@formkit/auto-animate';
 /** Below this a table is short enough that search and paging are just clutter. */
 const MIN_ROWS_FOR_FEATURES = 8;
 
+/**
+ * Gives every body cell the text of its column header as data-label. Below 720px the stylesheet
+ * turns each row into a card of "label: value" lines (_admin-ux.scss), which reads far better on a
+ * phone than a table scrolled sideways. Re-run whenever the table library re-renders its rows
+ * (sorting, paging, searching), since those rows are new elements.
+ */
+function labelCells(table: HTMLTableElement): void {
+  const headers = Array.from(table.tHead?.rows[0]?.cells ?? []).map((cell) => cell.textContent?.trim() ?? '');
+  Array.from(table.tBodies).forEach((body) => {
+    Array.from(body.rows).forEach((row) => {
+      Array.from(row.cells).forEach((cell, i) => {
+        if (headers[i] && cell.dataset.label !== headers[i]) cell.dataset.label = headers[i];
+      });
+    });
+  });
+}
+
+/** The table library's own labels, in the panel's language (set on <body> by _AdminLayout). */
+function label(name: string, fallback: string): string {
+  return document.body.dataset[name] || fallback;
+}
+
 export function initAdminTables(): void {
   const tables = document.querySelectorAll<HTMLTableElement>('table[data-admin-table]');
   if (tables.length === 0) return;
@@ -24,6 +46,13 @@ export function initAdminTables(): void {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   tables.forEach((table) => {
+    labelCells(table);
+    let pending = 0;
+    new MutationObserver(() => {
+      cancelAnimationFrame(pending);
+      pending = requestAnimationFrame(() => labelCells(table));
+    }).observe(table, { childList: true, subtree: true });
+
     const rows = table.tBodies[0]?.rows.length ?? 0;
     const sortable = table.dataset.adminTableSort !== 'false';
     const perPage = Number(table.dataset.adminTablePerPage ?? '25');
@@ -37,11 +66,18 @@ export function initAdminTables(): void {
       perPage,
       perPageSelect: small ? false : [25, 50, 100, 250],
       labels: {
-        placeholder: 'Search…',
-        perPage: 'per page',
-        noRows: 'Nothing here yet.',
-        noResults: 'Nothing matches that search.',
-        info: '{start}–{end} of {rows}',
+        placeholder: label('tableSearch', 'Search…'),
+        searchLabel: label('tableSearchLabel', 'Search'),
+        searchTitle: label('tableSearchTitle', 'Search within the table'),
+        pageTitle: label('tablePage', 'Page {0}').replace('{0}', '{page}'),
+        sortHint: label('tableSortHint', 'Activate to sort'),
+        perPage: label('tablePerPage', 'per page'),
+        noRows: label('tableEmpty', 'Nothing here yet.'),
+        noResults: label('tableNoResults', 'Nothing matches that search.'),
+        // The resource uses numbered holes like every other translated string (the Translations
+        // screen rejects anything else); simple-datatables wants its own names.
+        info: label('tableInfo', '{0}–{1} of {2}')
+          .replace('{0}', '{start}').replace('{1}', '{end}').replace('{2}', '{rows}'),
       },
       classes: {
         wrapper: 'admin-dt',

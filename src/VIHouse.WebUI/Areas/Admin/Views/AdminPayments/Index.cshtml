@@ -2,7 +2,7 @@
 @using VIHouse.Entities.Commerce
 @model AdminPaymentsIndexViewModel
 @{
-    ViewData["Title"] = "Payments";
+    ViewData["Title"] = Loc["Admin.Nav.AdminPayments"].Value;
     var list = Model.Page;
     var query = Model.Query;
     var statuses = Enum.GetValues<PaymentTransactionStatus>();
@@ -20,14 +20,7 @@
         _ => "admin-badge admin-badge--draft",
     };
 
-    string KindLabel(PaymentTransactionKind k) => k switch
-    {
-        PaymentTransactionKind.Experience => "Experience",
-        PaymentTransactionKind.Session => "Session",
-        PaymentTransactionKind.Membership => "Membership",
-        PaymentTransactionKind.MembershipRenewal => "Renewal",
-        _ => k.ToString(),
-    };
+    
 
     // The provider's own id for the row, for the "Stripe" column: the payment intent when the
     // money moved, the invoice for a renewal, otherwise the checkout session.
@@ -35,35 +28,33 @@
 }
 
 <p class="admin-hint">
-    Every payment across experiences, sessions and memberships, with its internal state — moved only by the
-    provider's events, never by a browser redirect. Refunds and disputes are actioned in the Stripe dashboard and
-    arrive here as events. Amounts are per currency and never combined.
+    @Loc["Admin.Payments.EveryPaymentAcrossExperiencesSessionsAnd"]
 </p>
 
 <nav class="admin-tabs">
-    <a class="@TabClass(null)" asp-action="Index" asp-route-kind="@query.Kind" asp-route-currency="@query.Currency" asp-route-q="@query.Search">All <span class="admin-table__sub">@list.CountsByStatus.Values.Sum()</span></a>
+    <a class="@TabClass(null)" asp-action="Index" asp-route-kind="@query.Kind" asp-route-currency="@query.Currency" asp-route-q="@query.Search">@Loc["Admin.Payments.All"] <span class="admin-table__sub">@list.CountsByStatus.Values.Sum()</span></a>
     @foreach (var s in statuses)
     {
-        <a class="@TabClass(s)" asp-action="Index" asp-route-status="@s" asp-route-kind="@query.Kind" asp-route-currency="@query.Currency" asp-route-q="@query.Search">@s <span class="admin-table__sub">@list.CountsByStatus.GetValueOrDefault(s)</span></a>
+        <a class="@TabClass(s)" asp-action="Index" asp-route-status="@s" asp-route-kind="@query.Kind" asp-route-currency="@query.Currency" asp-route-q="@query.Search">@Loc.Label(s) <span class="admin-table__sub">@list.CountsByStatus.GetValueOrDefault(s)</span></a>
     }
 </nav>
 
 <form method="get" asp-action="Index" class="admin-toolbar" style="gap:12px; align-items:flex-end; flex-wrap:wrap;">
     <input type="hidden" name="status" value="@query.Status" />
     <div class="admin-field" style="margin:0; min-width:160px;">
-        <label for="kind">Type</label>
+        <label for="kind">@Loc["Admin.Common.Type"]</label>
         <select id="kind" name="kind">
-            <option value="">All types</option>
+            <option value="">@Loc["Admin.Payments.AllTypes"]</option>
             @foreach (var k in kinds)
             {
-                <option value="@k" selected="@(query.Kind == k)">@KindLabel(k)</option>
+                <option value="@k" selected="@(query.Kind == k)">@Loc.Label(k)</option>
             }
         </select>
     </div>
     <div class="admin-field" style="margin:0; min-width:120px;">
-        <label for="currency">Currency</label>
+        <label for="currency">@Loc["Admin.Common.Currency"]</label>
         <select id="currency" name="currency">
-            <option value="">All</option>
+            <option value="">@Loc["Admin.Payments.All"]</option>
             @foreach (var c in list.Currencies)
             {
                 <option value="@c" selected="@(string.Equals(query.Currency, c, StringComparison.OrdinalIgnoreCase))">@c</option>
@@ -71,35 +62,35 @@
         </select>
     </div>
     <div class="admin-field" style="margin:0; min-width:260px;">
-        <label for="q">Search</label>
-        <input id="q" name="q" value="@query.Search" placeholder="email, name, booking ref, cs_ / pi_ / in_ / sub_ id" />
+        <label for="q">@Loc["Admin.Common.Search"]</label>
+        <input id="q" name="q" value="@query.Search" placeholder="@Loc["Admin.Payments.EmailNameBookingRefCsPi"]" />
     </div>
-    <button type="submit" class="admin-btn">Filter</button>
+    <button type="submit" class="admin-btn">@Loc["Admin.Common.Filter"]</button>
     @if (query.Kind is not null || query.Currency is not null || !string.IsNullOrWhiteSpace(query.Search))
     {
-        <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-status="@query.Status">Clear</a>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index" asp-route-status="@query.Status">@Loc["Admin.Payments.Clear"]</a>
     }
 </form>
 
 @if (list.Rows.Count == 0)
 {
-    <p class="admin-hint">No payments match.</p>
+    <p class="admin-hint">@Loc["Admin.Payments.NoPaymentsMatch"]</p>
 }
 else
 {
-    <p class="admin-hint">@list.Rows.Count of @list.Total shown, newest first.</p>
+    <p class="admin-hint">@Loc["Admin.Payments.ShownOf", list.Rows.Count, list.Total]</p>
     <div class="admin-table-scroll">
     <table class="admin-table" data-admin-table data-admin-table-per-page="25">
         <thead>
             <tr>
-                <th>Created</th>
-                <th>Customer</th>
-                <th>Type</th>
-                <th>For</th>
-                <th>Amount</th>
-                <th>Status</th>
+                <th>@Loc["Admin.Common.Created"]</th>
+                <th>@Loc["Admin.Payments.Customer"]</th>
+                <th>@Loc["Admin.Common.Type"]</th>
+                <th>@Loc["Admin.Payments.For"]</th>
+                <th>@Loc["Admin.Common.Amount"]</th>
+                <th>@Loc["Admin.Common.Status"]</th>
                 <th>Stripe</th>
-                <th>Updated</th>
+                <th>@Loc["Admin.Common.Updated"]</th>
                 <th></th>
             </tr>
         </thead>
@@ -122,7 +113,7 @@ else
                             <div class="admin-table__sub">@t.UserName</div>
                         }
                     </td>
-                    <td>@KindLabel(t.Kind)</td>
+                    <td>@Loc.Label(t.Kind)</td>
                     <td>
                         @if (t.RelatedAdminPath is not null)
                         {
@@ -137,14 +128,14 @@ else
                         @MoneyFormatter.Format(t.AmountMinor, t.Currency)
                         @if (t.HasRefund)
                         {
-                            <div class="admin-table__sub">@MoneyFormatter.Format(t.AmountRefundedMinor, t.Currency) refunded</div>
+                            <div class="admin-table__sub">@Loc["Admin.Dashboard.RefundedAmount", MoneyFormatter.Format(t.AmountRefundedMinor, t.Currency)]</div>
                         }
                     </td>
                     <td>
-                        <span class="@BadgeClass(t.Status)">@t.Status</span>
+                        <span class="@BadgeClass(t.Status)">@Loc.Label(t.Status)</span>
                         @if (t.Disputed)
                         {
-                            <span class="admin-badge admin-badge--danger">Disputed</span>
+                            <span class="admin-badge admin-badge--danger">@Loc["Admin.Payments.Disputed"]</span>
                         }
                         @if (t.Status == PaymentTransactionStatus.Failed && !string.IsNullOrWhiteSpace(t.FailureMessage))
                         {
@@ -154,7 +145,7 @@ else
                     <td style="font-family:monospace; font-size:0.75rem; word-break:break-all;">@(StripeRef(t) ?? "—")</td>
                     <td>@((t.UpdatedAt ?? t.CreatedAt).ToString("dd MMM HH:mm"))</td>
                     <td class="admin-table__actions">
-                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@t.Id">Open</a>
+                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@t.Id">@Loc["Admin.Common.Open"]</a>
                     </td>
                 </tr>
             }

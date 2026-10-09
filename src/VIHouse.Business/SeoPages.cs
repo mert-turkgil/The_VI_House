@@ -7,23 +7,24 @@ namespace VIHouse.Business;
 /// </summary>
 public static class SeoPages
 {
-    /// <param name="TitleKey">Resource key of the built-in title — shown as the placeholder.</param>
+    /// <param name="TitleKey">Resource key of the built-in title — shown as the placeholder, and (in the
+    /// admin's own language) as the page's name in the list.</param>
     /// <param name="DescriptionKey">Resource key of the built-in description, when the page has one.</param>
-    public record Page(string Key, string Path, string Label, string TitleKey, string? DescriptionKey);
+    public record Page(string Key, string Path, string TitleKey, string? DescriptionKey);
 
     public static readonly IReadOnlyList<Page> All =
     [
-        new("experiences", "/experiences", "Experiences", "Experiences.Title", "Seo.Experiences.Description"),
-        new("membership", "/membership", "Membership", "Membership.Title", "Seo.Membership.Description"),
-        new("sessions", "/sessions", "Sessions", "Seminars.Title", "Seo.Sessions.Description"),
-        new("journal", "/journal", "Journal", "Nav.Journal", "Seo.Journal.Description"),
-        new("about", "/about", "About", "About.Title", "Seo.About.Description"),
-        new("faq", "/faq", "FAQ", "Faq.Title", null),
-        new("contact", "/contact", "Contact", "Contact.Title", "Seo.Contact.Description"),
-        new("terms", "/legal/terms", "Terms", "Footer.Terms", null),
-        new("privacy", "/legal/privacy", "Privacy", "Footer.Privacy", null),
-        new("cookies", "/legal/cookies", "Cookies", "Footer.Cookies", null),
-        new("refund", "/legal/refund", "Refund policy", "Footer.RefundPolicy", null),
+        new("experiences", "/experiences", "Experiences.Title", "Seo.Experiences.Description"),
+        new("membership", "/membership", "Membership.Title", "Seo.Membership.Description"),
+        new("sessions", "/sessions", "Seminars.Title", "Seo.Sessions.Description"),
+        new("journal", "/journal", "Nav.Journal", "Seo.Journal.Description"),
+        new("about", "/about", "About.Title", "Seo.About.Description"),
+        new("faq", "/faq", "Faq.Title", null),
+        new("contact", "/contact", "Contact.Title", "Seo.Contact.Description"),
+        new("terms", "/legal/terms", "Footer.Terms", null),
+        new("privacy", "/legal/privacy", "Footer.Privacy", null),
+        new("cookies", "/legal/cookies", "Footer.Cookies", null),
+        new("refund", "/legal/refund", "Footer.RefundPolicy", null),
     ];
 
     public static bool IsKnown(string? key) => All.Any(p => p.Key == key);

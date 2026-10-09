@@ -1,7 +1,7 @@
 @using VIHouse.Entities.Commerce
 @model AdminWebhookEventsViewModel
 @{
-    ViewData["Title"] = "Stripe Events";
+    ViewData["Title"] = Loc["Admin.Nav.AdminWebhooks"].Value;
 
     string FilterClass(WebhookEventStatus? status) =>
         Model.Status == status ? "admin-btn" : "admin-btn admin-btn--ghost";
@@ -40,32 +40,28 @@
 }
 
 <p class="admin-hint">
-    Every event Stripe delivered that verified against the webhook secret, newest first. <strong>Processed</strong>
-    means every handler ran and committed together; <strong>Failed</strong> means a handler threw, nothing was
-    written, and Stripe was told to retry — the reason is on the row, and <em>Re-run</em> fetches the event from
-    Stripe again and pushes it through the same path. <strong>Ignored</strong> events are types nothing acts on
-    yet. Payloads are never stored.
+    @Loc.Html("Admin.Webhooks.Intro", LocalizerHtml.Strong(Loc["Admin.Webhooks.Processed"].Value), LocalizerHtml.Strong(Loc["Admin.Webhooks.Failed"].Value), LocalizerHtml.Strong(Loc["Admin.Webhooks.ReRun"].Value), LocalizerHtml.Strong(Loc["Admin.Webhooks.Ignored"].Value))
 </p>
 
 <div class="admin-toolbar">
-    <a class="@FilterClass(null)" asp-action="Index">All <span class="admin-table__sub">@Model.Total</span></a>
-    <a class="@FilterClass(WebhookEventStatus.Failed)" asp-action="Index" asp-route-status="Failed">Failed <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Failed)</span></a>
-    <a class="@FilterClass(WebhookEventStatus.Received)" asp-action="Index" asp-route-status="Received">In progress <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Received)</span></a>
-    <a class="@FilterClass(WebhookEventStatus.Processed)" asp-action="Index" asp-route-status="Processed">Processed <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Processed)</span></a>
-    <a class="@FilterClass(WebhookEventStatus.Ignored)" asp-action="Index" asp-route-status="Ignored">Ignored <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Ignored)</span></a>
+    <a class="@FilterClass(null)" asp-action="Index">@Loc["Admin.Webhooks.All"] <span class="admin-table__sub">@Model.Total</span></a>
+    <a class="@FilterClass(WebhookEventStatus.Failed)" asp-action="Index" asp-route-status="Failed">@Loc["Admin.Webhooks.Failed"] <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Failed)</span></a>
+    <a class="@FilterClass(WebhookEventStatus.Received)" asp-action="Index" asp-route-status="Received">@Loc["Admin.Webhooks.InProgress"] <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Received)</span></a>
+    <a class="@FilterClass(WebhookEventStatus.Processed)" asp-action="Index" asp-route-status="Processed">@Loc["Admin.Webhooks.Processed"] <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Processed)</span></a>
+    <a class="@FilterClass(WebhookEventStatus.Ignored)" asp-action="Index" asp-route-status="Ignored">@Loc["Admin.Webhooks.Ignored"] <span class="admin-table__sub">@Model.Count(WebhookEventStatus.Ignored)</span></a>
 </div>
 
 @if (Model.Count(WebhookEventStatus.Failed) > 0 && Model.Status != WebhookEventStatus.Failed)
 {
     <div class="admin-status-message">
-        @Model.Count(WebhookEventStatus.Failed) event(s) failed and are waiting on Stripe's retries.
-        <a asp-action="Index" asp-route-status="Failed">Show them</a>.
+        @Loc["Admin.Webhooks.FailedWaiting", Model.Count(WebhookEventStatus.Failed)]
+        <a asp-action="Index" asp-route-status="Failed">@Loc["Admin.Webhooks.ShowThem"]</a>.
     </div>
 }
 
 @if (Model.Rows.Count == 0)
 {
-    <p class="admin-hint">No events@(Model.Status is { } s ? $" with status {s}" : "") yet.</p>
+    <p class="admin-hint">@(Model.Status is { } s ? Loc["Admin.Webhooks.EmptyForStatus", Loc.Label(s)].Value : Loc["Admin.Webhooks.Empty"].Value)</p>
 }
 else
 {
@@ -73,12 +69,12 @@ else
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th>Received</th>
-                    <th>Event</th>
-                    <th>Object</th>
-                    <th>Status</th>
-                    <th>Attempts</th>
-                    <th>Last error</th>
+                    <th>@Loc["Admin.Webhooks.Received"]</th>
+                    <th>@Loc["Admin.Webhooks.Event"]</th>
+                    <th>@Loc["Admin.Webhooks.Object"]</th>
+                    <th>@Loc["Admin.Common.Status"]</th>
+                    <th>@Loc["Admin.Webhooks.Attempts"]</th>
+                    <th>@Loc["Admin.Webhooks.LastError"]</th>
                     <th></th>
                 </tr>
             </thead>
@@ -90,7 +86,7 @@ else
                             <time datetime="@e.ReceivedAt.ToString("o")">@e.ReceivedAt.ToString("d MMM yyyy, HH:mm:ss")</time>
                             @if (!e.LiveMode)
                             {
-                                <span class="admin-table__sub">test</span>
+                                <span class="admin-table__sub">@Loc["Admin.Webhooks.TestMode"]</span>
                             }
                         </td>
                         <td>
@@ -107,14 +103,14 @@ else
                                 <span style="font-family:ui-monospace,monospace; font-size:0.8125rem;">@(e.ObjectId ?? "—")</span>
                             }
                         </td>
-                        <td><span class="@StatusBadge(e.Status)">@e.Status</span></td>
+                        <td><span class="@StatusBadge(e.Status)">@Loc.Label(e.Status)</span></td>
                         <td>@e.Attempts</td>
                         <td class="admin-table__sub" style="max-width:360px; word-break:break-word;">@(e.LastError ?? "—")</td>
                         <td>
                             @if (e.Status is WebhookEventStatus.Failed or WebhookEventStatus.Received)
                             {
-                                <form asp-action="Rerun" asp-route-eventId="@e.EventId" method="post" onsubmit="return confirm('Fetch this event from Stripe again and run every handler on it?');">
-                                    <button type="submit" class="admin-btn admin-btn--sm">Re-run</button>
+                                <form asp-action="Rerun" asp-route-eventId="@e.EventId" method="post" data-confirm="@Loc["Admin.Webhooks.FetchThisEventFromStripeAgain"]">
+                                    <button type="submit" class="admin-btn admin-btn--sm">@Loc["Admin.Webhooks.ReRun"]</button>
                                 </form>
                             }
                         </td>
@@ -125,6 +121,6 @@ else
     </div>
     @if (Model.Rows.Count == Model.Take)
     {
-        <p class="admin-hint">Showing the newest @Model.Take. Narrow by status to see older rows.</p>
+        <p class="admin-hint">@Loc["Admin.Webhooks.ShowingNewest", Model.Take]</p>
     }
 }

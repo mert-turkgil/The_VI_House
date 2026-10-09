@@ -2,7 +2,8 @@
 @{
     var active = Model.Translations.First(t => t.Culture.Name == Model.ActiveCulture);
     var postId = Model.Form.Id!.Value;
-    ViewData["Title"] = Model.Translations.First(t => t.IsDefault).Form.Title;
+    var englishTitle = Model.Translations.First(t => t.IsDefault).Form.Title;
+    ViewData["Title"] = string.IsNullOrWhiteSpace(englishTitle) ? Loc["Admin.Journal.Untitled"].Value : englishTitle;
 
     // The id of the body textarea for the language on screen. The media library's Insert buttons
     // address the editor through it (see ClientApp modules/editor.ts), and it has to be per-culture
@@ -10,186 +11,238 @@
     var bodyFieldId = $"journal-body-{active.Culture.Name}";
 }
 
+@*
+    The writer. One form (#journal-writer) holds the article and every setting; the sidebar's fields
+    sit outside it in the markup and join it with form="journal-writer". Only the cover upload and
+    the delete have forms of their own, because a file upload cannot ride along with the article.
+
+    Every button saves: "Save draft" / "Update" keep the status, "Publish" and "Unpublish" change it
+    (AdminJournalController.Save). modules/journalWriter.ts adds the word count, the local autosave
+    with "restore", focus mode, the slug and search previews; modules/adminForms.ts adds the
+    character counters, Ctrl/Cmd+S and the unsaved-changes guard.
+*@
 @if (TempData["StatusMessage"] is string status)
 {
     <div class="admin-status-message">@status</div>
 }
 
-<div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+<partial name="_ErrorSummary" model="@Loc["Admin.Journal.ErrorTitle"].Value" />
 
-<div class="admin-toolbar">
-    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; @Loc["Admin.Journal.BackToList"]</a>
-    <a class="admin-btn admin-btn--ghost" asp-area="" asp-controller="Journal" asp-action="Details" asp-route-slug="@Model.Form.Slug" target="_blank" rel="noopener">@Loc["Admin.Journal.Preview"]</a>
-</div>
+<div class="writer" data-writer
+     data-post-id="@postId" data-culture="@active.Culture.Name" data-updated-at="@Model.UpdatedAtMs"
+     data-url-base="@Model.PublicUrlBase"
+     data-words-label="@Loc["Admin.Writer.Words"]" data-minutes-label="@Loc["Admin.Writer.Minutes"]"
+     data-autosaved-label="@Loc["Admin.Writer.Autosaved"]" data-restore-label="@Loc["Admin.Writer.Restore"]"
+     data-restore-yes="@Loc["Admin.Writer.RestoreYes"]" data-restore-no="@Loc["Admin.Writer.RestoreNo"]">
 
-@* --- Cover ------------------------------------------------------------------------------------- *@
-<h2 class="admin-section-heading">@Loc["Admin.Journal.Section.Cover"]</h2>
+    <div class="writer__main">
+        @* Which language is being written. Each tab is a page of its own (a hidden editor computes a
+           zero height and comes back broken), and the URL (?culture=de-DE) can be shared. *@
+        <nav class="admin-lang-tabs writer__langs" aria-label="@Loc["Admin.Journal.Languages"]" id="writer">
+            @foreach (var tab in Model.Translations)
+            {
+                <a class="@(tab.Culture.Name == Model.ActiveCulture ? "admin-lang-tab active" : "admin-lang-tab")"
+                   asp-action="Edit" asp-route-id="@postId" asp-route-culture="@tab.Culture.Name"
+                   aria-current="@(tab.Culture.Name == Model.ActiveCulture ? "page" : null)">
+                    <span class="admin-lang-tab__dot @(tab.IsWritten ? "is-written" : null)" aria-hidden="true"></span>
+                    @tab.Culture.NativeLabel
+                    @if (tab.IsDefault)
+                    {
+                        <span class="admin-lang-tab__flag">@Loc["Admin.Journal.DefaultLanguage"]</span>
+                    }
+                    else if (!tab.IsWritten)
+                    {
+                        <span class="admin-lang-tab__flag admin-lang-tab__flag--missing">@Loc["Admin.Journal.NotTranslated"]</span>
+                    }
+                </a>
+            }
+        </nav>
 
-<div class="admin-panel">
-    @if (!string.IsNullOrWhiteSpace(Model.CoverPreviewUrl))
-    {
-        @* Decorative: the article's headline names it, and this sits under a heading that says what it is. *@
-        <img src="@Model.CoverPreviewUrl" alt="" style="max-width:420px; width:100%; border-radius:8px; display:block; margin-bottom:16px;" />
-    }
-    else
-    {
-        <p class="admin-panel__note">@Loc["Admin.Journal.NoCoverYet"]</p>
-    }
+        @if (!active.IsDefault && !active.IsWritten)
+        {
+            <p class="admin-notice">@Loc["Admin.Journal.FallbackNotice", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</p>
+        }
 
-    @* Uploading a cover replaces the previous one outright — the file it replaces is deleted rather
-       than left in the library as a copy of a picture nothing shows. *@
-    <form asp-action="UploadCover" asp-route-id="@postId" method="post" enctype="multipart/form-data" class="admin-inline-form">
-        <input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif" required />
-        <button type="submit" class="admin-btn">@Loc["Admin.Journal.UploadCover"]</button>
-    </form>
+        <form id="journal-writer" asp-action="Save" asp-route-id="@postId" method="post" class="writer__form" data-guard data-save-shortcut>
+            @* Which language this form is editing. Posted, not taken from the query string, so a stale
+               tab cannot save English words into the German row. *@
+            <input type="hidden" name="Copy.Culture" value="@active.Culture.Name" />
+            <input type="hidden" name="Post.Status" value="@Model.Form.Status" />
 
-    @if (Model.CoverMediaId is not null || !string.IsNullOrWhiteSpace(Model.Form.CoverImageUrl))
-    {
-        <form asp-action="RemoveCover" asp-route-id="@postId" method="post" class="admin-inline-form"
-              onsubmit="return confirm('@Loc["Admin.Journal.ConfirmRemoveCover"].Value.Replace("'", "\\'")');">
-            <button type="submit" class="admin-btn admin-btn--ghost">@Loc["Admin.Journal.RemoveCover"]</button>
+            <label class="visually-hidden" for="writer-title">@Loc["Admin.Journal.Title.Column"]</label>
+            <input id="writer-title" class="writer__title" name="Copy.Title" value="@active.Form.Title" maxlength="200" required
+                   placeholder="@Loc["Admin.Writer.TitlePlaceholder"]" autocomplete="off" data-writer-title />
+            <span class="field-validation-error" data-valmsg-for="Copy.Title">@Html.ValidationMessage("Copy.Title")</span>
+
+            <label class="visually-hidden" for="writer-standfirst">@Loc["Admin.Journal.Excerpt"]</label>
+            <textarea id="writer-standfirst" class="writer__standfirst" name="Copy.Excerpt" rows="2" maxlength="500"
+                      placeholder="@Loc["Admin.Writer.StandfirstPlaceholder"]" data-writer-excerpt>@active.Form.Excerpt</textarea>
+
+            <div class="writer__editor">
+                @* data-upload-url: images and GIFs dropped into the editor are uploaded straight away
+                   (UploadInline) and inserted as /media/journal/{id}. The antiforgery token travels as
+                   a header because the editor posts its own request. *@
+                <textarea id="@bodyFieldId" name="Copy.Body" rows="20" data-ckeditor data-writer-body
+                          data-placeholder="@Loc["Admin.Writer.BodyPlaceholder"]"
+                          data-upload-url="@Url.Action("UploadInline", new { id = postId })"
+                          data-upload-token-field="__RequestVerificationToken">@active.Form.Body</textarea>
+            </div>
+
+            <div class="writer__status" aria-live="polite">
+                <span data-writer-count>&nbsp;</span>
+                <span class="writer__autosave" data-writer-autosave></span>
+                <button type="button" class="writer__focus" data-writer-focus aria-pressed="false"
+                        data-label-on="@Loc["Admin.Writer.FocusOn"]" data-label-off="@Loc["Admin.Writer.FocusOff"]">@Loc["Admin.Writer.FocusOn"]</button>
+            </div>
+
+            @* The same buttons as the publish card, at the bottom of the article where the writer is. *@
+            <div class="writer__actions">
+                @if (Model.PublishCard.IsPublished)
+                {
+                    <button type="submit" class="admin-btn" name="intent" value="save" data-default-save>@Loc["Admin.Publish.Update"]</button>
+                }
+                else
+                {
+                    <button type="submit" class="admin-btn admin-btn--ghost" name="intent" value="save" data-default-save>@Loc["Admin.Publish.SaveDraft"]</button>
+                    <button type="submit" class="admin-btn" name="intent" value="publish" disabled="@(!Model.PublishCard.CanPublish)">@Loc["Admin.Publish.PublishNow"]</button>
+                }
+                <span class="writer__shortcut">@Loc["Admin.Writer.Shortcut"]</span>
+            </div>
         </form>
-    }
 
-    <p class="admin-field__hint">@Loc["Admin.Journal.CoverHint"]</p>
+        @if (!active.IsDefault && active.IsWritten)
+        {
+            <form asp-action="DeleteTranslation" asp-route-id="@postId" method="post" class="admin-inline-form writer__delete-translation"
+                  data-confirm="@Loc["Admin.Journal.ConfirmDeleteTranslation"]" data-confirm-danger>
+                <input type="hidden" name="culture" value="@active.Culture.Name" />
+                <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">@Loc["Admin.Journal.DeleteTranslation", active.Culture.NativeLabel]</button>
+            </form>
+        }
+    </div>
+
+    <aside class="writer__side" aria-label="@Loc["Admin.Writer.Settings"]">
+        <partial name="_PublishCard" model="Model.PublishCard" />
+
+        @* --- Cover -------------------------------------------------------------------------- *@
+        <details class="writer-card" id="cover" open>
+            <summary>@Loc["Admin.Journal.Section.Cover"]</summary>
+            <div class="writer-card__body">
+                @if (!string.IsNullOrWhiteSpace(Model.CoverPreviewUrl))
+                {
+                    @* Decorative: the headline names it, and this sits under a heading that says what it is. *@
+                    <img class="writer-card__cover" src="@Model.CoverPreviewUrl" alt="" />
+                }
+                else
+                {
+                    <p class="writer-card__empty">@Loc["Admin.Journal.NoCoverYet"]</p>
+                }
+
+                @* Uploading a cover replaces the previous one outright; the file it replaces is deleted
+                   rather than left in the library as a copy of a picture nothing shows. *@
+                <form asp-action="UploadCover" asp-route-id="@postId" method="post" enctype="multipart/form-data" class="writer-card__upload">
+                    <input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/avif" required id="cover-file" />
+                    <button type="submit" class="admin-btn admin-btn--sm">@Loc["Admin.Journal.UploadCover"]</button>
+                </form>
+
+                @if (Model.CoverMediaId is not null || !string.IsNullOrWhiteSpace(Model.Form.CoverImageUrl))
+                {
+                    <form asp-action="RemoveCover" asp-route-id="@postId" method="post" class="admin-inline-form"
+                          data-confirm="@Loc["Admin.Journal.ConfirmRemoveCover"]">
+                        <button type="submit" class="admin-btn admin-btn--ghost admin-btn--sm">@Loc["Admin.Journal.RemoveCover"]</button>
+                    </form>
+                }
+                <p class="admin-field__hint">@Loc["Admin.Journal.CoverHint"]</p>
+
+                <div class="admin-field">
+                    <label for="cover-alt">@Loc["Admin.Journal.CoverImageAlt"]</label>
+                    <input id="cover-alt" form="journal-writer" name="Post.CoverImageAlt" value="@Model.Form.CoverImageAlt" maxlength="300" />
+                    <p class="admin-field__hint">@Loc["Admin.Journal.CoverImageAlt.Hint"]</p>
+                </div>
+
+                @if (Model.CoverMediaId is null)
+                {
+                    <details class="writer-card__advanced">
+                        <summary>@Loc["Admin.Journal.CoverImageUrl"]</summary>
+                        <input form="journal-writer" name="Post.CoverImageUrl" value="@Model.Form.CoverImageUrl"
+                               placeholder="/img/journal/why-we-built-the-vi-house-1600.jpg" maxlength="1000" data-no-counter />
+                        <span class="field-validation-error">@Html.ValidationMessage("Post.CoverImageUrl")</span>
+                        <p class="admin-field__hint">@Loc["Admin.Journal.CoverUrlHint"]</p>
+                    </details>
+                }
+            </div>
+        </details>
+
+        @* --- Details: category, author, address ------------------------------------------------ *@
+        <details class="writer-card" open>
+            <summary>@Loc["Admin.Journal.Section.Settings"]</summary>
+            <div class="writer-card__body">
+                <fieldset class="admin-field admin-choice-group admin-choice-group--compact">
+                    <legend>@Loc["Admin.Journal.Category"]</legend>
+                    <div class="admin-choice-group__options">
+                        @foreach (var category in Enum.GetValues<JournalCategory>())
+                        {
+                            <label class="admin-choice">
+                                <input type="radio" form="journal-writer" name="Post.Category" value="@category" checked="@(Model.Form.Category == category)" />
+                                <span class="admin-choice__body">
+                                    <strong>@Loc["Journal.Category." + category]</strong>
+                                    <span>@Loc["Admin.Journal.Category." + category + ".Help"]</span>
+                                </span>
+                            </label>
+                        }
+                    </div>
+                </fieldset>
+
+                <div class="admin-field">
+                    <label for="post-author">@Loc["Admin.Journal.AuthorName"]</label>
+                    <input id="post-author" form="journal-writer" name="Post.AuthorName" value="@Model.Form.AuthorName" maxlength="150" />
+                </div>
+
+                <div class="admin-field">
+                    <label for="post-slug">@Loc["Admin.Journal.Slug"]</label>
+                    <input id="post-slug" form="journal-writer" name="Post.Slug" value="@Model.Form.Slug" maxlength="200" data-writer-slug data-no-counter />
+                    <span class="field-validation-error">@Html.ValidationMessage("Post.Slug")</span>
+                    <p class="admin-field__hint writer-card__url" data-writer-url>@Model.PublicUrlBase@Model.Form.Slug</p>
+                    <p class="admin-field__hint">@Loc["Admin.Journal.Slug.Hint"]</p>
+                </div>
+            </div>
+        </details>
+
+        @* --- Search ------------------------------------------------------------------------------ *@
+        <details class="writer-card" id="seo">
+            <summary>@Loc["Admin.Writer.SearchCard"]</summary>
+            <div class="writer-card__body">
+                <p class="admin-field__hint">@Loc["Admin.Writer.SearchIntro"]</p>
+                @* How the post will look in a search result, as the fields are typed. *@
+                <div class="serp-preview" aria-hidden="true">
+                    <span class="serp-preview__url" data-serp-url>@Model.PublicUrlBase@Model.Form.Slug</span>
+                    <span class="serp-preview__title" data-serp-title></span>
+                    <span class="serp-preview__desc" data-serp-desc></span>
+                </div>
+                <div class="admin-field">
+                    <label for="seo-title">@Loc["Admin.Journal.SeoTitle"]</label>
+                    <input id="seo-title" form="journal-writer" name="Copy.SeoTitle" value="@active.Form.SeoTitle" maxlength="70" data-writer-seo-title />
+                    <p class="admin-field__hint">@Loc["Admin.Journal.SeoTitle.Hint"]</p>
+                </div>
+                <div class="admin-field">
+                    <label for="seo-description">@Loc["Admin.Journal.SeoDescription"]</label>
+                    <textarea id="seo-description" form="journal-writer" name="Copy.SeoDescription" rows="3" maxlength="160" data-writer-seo-desc>@active.Form.SeoDescription</textarea>
+                    <p class="admin-field__hint">@Loc["Admin.Journal.SeoDescription.Hint"]</p>
+                </div>
+            </div>
+        </details>
+
+        @* --- Delete ------------------------------------------------------------------------------ *@
+        <details class="writer-card writer-card--danger">
+            <summary>@Loc["Admin.Writer.DangerZone"]</summary>
+            <div class="writer-card__body">
+                <p class="admin-field__hint">@Loc["Admin.Writer.DeleteHint"]</p>
+                <form asp-action="Delete" asp-route-id="@postId" method="post" data-confirm="@Loc["Admin.Journal.ConfirmDelete"]" data-confirm-danger>
+                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--sm">@Loc["Admin.Journal.Delete"]</button>
+                </form>
+            </div>
+        </details>
+    </aside>
 </div>
-
-@* --- Post settings ------------------------------------------------------------------------------ *@
-<h2 class="admin-section-heading">@Loc["Admin.Journal.Section.Settings"]</h2>
-
-<form asp-action="Edit" asp-route-id="@postId" method="post" class="admin-form">
-    <input type="hidden" asp-for="Form.Id" />
-
-    <div class="admin-form__grid">
-        <div class="admin-field">
-            <label asp-for="Form.Slug">@Loc["Admin.Journal.Slug"]</label>
-            <input asp-for="Form.Slug" />
-            <span asp-validation-for="Form.Slug" class="field-validation-error"></span>
-        </div>
-        <div class="admin-field">
-            <label asp-for="Form.Category">@Loc["Admin.Journal.Category"]</label>
-            <select asp-for="Form.Category" asp-items="Html.GetEnumSelectList<JournalCategory>()"></select>
-        </div>
-    </div>
-
-    <div class="admin-form__grid">
-        <div class="admin-field">
-            <label asp-for="Form.Status">@Loc["Admin.Journal.Status"]</label>
-            <select asp-for="Form.Status" asp-items="Html.GetEnumSelectList<JournalPostStatus>()"></select>
-            <p class="admin-field__hint">@Loc["Admin.Journal.PublishHint", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</p>
-        </div>
-        <div class="admin-field">
-            <label asp-for="Form.AuthorName">@Loc["Admin.Journal.AuthorName"]</label>
-            <input asp-for="Form.AuthorName" />
-        </div>
-    </div>
-
-    <div class="admin-form__grid">
-        <div class="admin-field">
-            <label asp-for="Form.CoverImageUrl">@Loc["Admin.Journal.CoverImageUrl"]</label>
-            <input asp-for="Form.CoverImageUrl" placeholder="/img/journal/why-we-built-the-vi-house-1600.jpg"
-                   disabled="@(Model.CoverMediaId is not null)" />
-            <span asp-validation-for="Form.CoverImageUrl" class="field-validation-error"></span>
-            <p class="admin-field__hint">
-                @(Model.CoverMediaId is not null ? Loc["Admin.Journal.CoverUrlDisabled"] : Loc["Admin.Journal.CoverUrlHint"])
-            </p>
-        </div>
-        <div class="admin-field">
-            <label asp-for="Form.CoverImageAlt">@Loc["Admin.Journal.CoverImageAlt"]</label>
-            <input asp-for="Form.CoverImageAlt" />
-            <p class="admin-field__hint">@Loc["Admin.Journal.CoverImageAlt.Hint"]</p>
-        </div>
-    </div>
-
-    <div>
-        <button type="submit" class="admin-btn">@Loc["Admin.Journal.SaveSettings"]</button>
-    </div>
-</form>
-
-@* --- Copy, one language at a time ---------------------------------------------------------------- *@
-@*  A page per language rather than tabbed panels on one page: a rich text editor initialised inside
-    a hidden container computes a zero height and comes back broken when it is revealed, and the URL
-    being ?culture=de-DE means an admin can bookmark or share the German draft.                      *@
-<h2 class="admin-section-heading">@Loc["Admin.Journal.Section.Copy", active.Culture.NativeLabel]</h2>
-
-<nav class="admin-lang-tabs" aria-label="@Loc["Admin.Journal.Languages"]">
-    @foreach (var tab in Model.Translations)
-    {
-        <a class="@(tab.Culture.Name == Model.ActiveCulture ? "admin-lang-tab active" : "admin-lang-tab")"
-           asp-action="Edit" asp-route-id="@postId" asp-route-culture="@tab.Culture.Name">
-            @tab.Culture.NativeLabel
-            @if (tab.IsDefault)
-            {
-                <span class="admin-lang-tab__flag">@Loc["Admin.Journal.DefaultLanguage"]</span>
-            }
-            else if (!tab.IsWritten)
-            {
-                <span class="admin-lang-tab__flag admin-lang-tab__flag--missing">@Loc["Admin.Journal.NotTranslated"]</span>
-            }
-        </a>
-    }
-</nav>
-
-@if (!active.IsDefault && !active.IsWritten)
-{
-    <p class="admin-notice">@Loc["Admin.Journal.FallbackNotice", SiteCultures.Describe(SiteCultures.Default).NativeLabel]</p>
-}
-
-<form asp-action="SaveTranslation" asp-route-id="@postId" method="post" class="admin-form">
-    @* Which language this form is editing. Posted rather than taken from the query string so a
-       stale tab cannot save English copy over the German row. *@
-    <input type="hidden" name="Culture" value="@active.Culture.Name" />
-
-    <div class="admin-field">
-        <label>@Loc["Admin.Journal.Title.Column"]</label>
-        <input name="Title" value="@active.Form.Title" maxlength="200" required />
-    </div>
-
-    <div class="admin-field">
-        <label>@Loc["Admin.Journal.Excerpt"]</label>
-        <textarea name="Excerpt" rows="2" maxlength="500">@active.Form.Excerpt</textarea>
-        <p class="admin-field__hint">@Loc["Admin.Journal.Excerpt.Hint"]</p>
-    </div>
-
-    @* Per-language search copy. Optional — empty falls back to the headline and the standfirst
-       above, which is exactly what happened before these existed. *@
-    <div class="admin-field">
-        <label>@Loc["Admin.Journal.SeoTitle"]</label>
-        <input name="SeoTitle" maxlength="200" value="@active.Form.SeoTitle" />
-        <p class="admin-field__hint">@Loc["Admin.Journal.SeoTitle.Hint"]</p>
-    </div>
-
-    <div class="admin-field">
-        <label>@Loc["Admin.Journal.SeoDescription"]</label>
-        <textarea name="SeoDescription" rows="2" maxlength="400">@active.Form.SeoDescription</textarea>
-        <p class="admin-field__hint">@Loc["Admin.Journal.SeoDescription.Hint"]</p>
-    </div>
-
-    <div class="admin-field">
-        <label>@Loc["Admin.Journal.Body"]</label>
-        @* data-upload-url turns on drag-and-drop image/GIF upload inside the editor: files go
-           straight to UploadInline, which stores them like any other asset and hands back the
-           /media/journal/{id} URL to insert. The antiforgery token travels as a header because the
-           editor posts its own request, outside any <form>. *@
-        <textarea id="@bodyFieldId" name="Body" rows="20" data-ckeditor
-                  data-upload-url="@Url.Action("UploadInline", new { id = postId })"
-                  data-upload-token-field="__RequestVerificationToken">@active.Form.Body</textarea>
-        <p class="admin-field__hint">@Loc["Admin.Journal.Body.Hint"]</p>
-    </div>
-
-    <div>
-        <button type="submit" class="admin-btn">@Loc["Admin.Journal.SaveCopy", active.Culture.NativeLabel]</button>
-    </div>
-</form>
-
-@if (!active.IsDefault && active.IsWritten)
-{
-    <form asp-action="DeleteTranslation" asp-route-id="@postId" method="post" class="admin-form"
-          onsubmit="return confirm('@Loc["Admin.Journal.ConfirmDeleteTranslation"].Value.Replace("'", "\\'")');">
-        <input type="hidden" name="culture" value="@active.Culture.Name" />
-        <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.Journal.DeleteTranslation", active.Culture.NativeLabel]</button>
-    </form>
-}
 
 @* --- Media library -------------------------------------------------------------------------------- *@
 <h2 class="admin-section-heading" id="media-library">@Loc["Admin.Journal.Section.Media"]</h2>
@@ -326,7 +379,7 @@
                             }
                             <button type="submit" class="admin-btn admin-btn--danger" formnovalidate
                                     asp-action="RemoveMedia" asp-route-id="@postId" name="mediaId" value="@media.Id"
-                                    onclick="return confirm('@Loc["Admin.Journal.ConfirmRemoveMedia"].Value.Replace("'", "\\'")');">@Loc["Admin.Journal.Delete"]</button>
+                                    data-confirm="@Loc["Admin.Journal.ConfirmRemoveMedia"]">@Loc["Admin.Journal.Delete"]</button>
                         </div>
                     </div>
 

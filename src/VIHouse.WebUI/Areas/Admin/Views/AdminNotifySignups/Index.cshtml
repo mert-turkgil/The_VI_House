@@ -24,12 +24,12 @@
                 <div class="admin-field">
                     <label for="ann-subject">@Loc["Admin.NotifySignups.Subject"]</label>
                     <input id="ann-subject" name="Subject" value="@d.Subject" maxlength="200" required
-                           placeholder="The VI House is open" />
+                           placeholder="@Loc["Admin.NotifySignups.SubjectExample"]" />
                 </div>
                 <div class="admin-field">
                     <label for="ann-headline">@Loc["Admin.NotifySignups.Headline"]</label>
                     <input id="ann-headline" name="Headline" value="@d.Headline" maxlength="200" required
-                           placeholder="The doors are open" />
+                           placeholder="@Loc["Admin.NotifySignups.HeadlineExample"]" />
                 </div>
             </div>
             <div class="admin-field">
@@ -94,7 +94,7 @@ else
                            likely thing anyone does from this screen. *@
                         <td><a href="mailto:@row.Email">@row.Email</a></td>
                         <td>@(SiteCultures.Describe(row.Culture).NativeLabel)</td>
-                        <td title="@(row.ConsentText ?? "No consent wording stored (signed up before it was recorded)")">@(row.Source ?? "—")@if (row.ConsentText is not null) { <span class="admin-table__sub"> &middot; consent &#10003;</span> }</td>
+                        <td title="@(row.ConsentText ?? Loc["Admin.NotifySignups.NoConsentText"].Value)">@(row.Source ?? "—")@if (row.ConsentText is not null) { <span class="admin-table__sub"> &middot; @Loc["Admin.NotifySignups.Consent"] &#10003;</span> }</td>
                         <td>
                             @if (row.NotifiedAt is { } notified)
                             {
@@ -114,14 +114,14 @@ else
     <div class="admin-toolbar" style="margin-top:16px;">
         @if (Model.HasPrevious)
         {
-            <a class="admin-btn admin-btn--ghost" href="@(Url.Action("Index") + "?page=" + (Model.Page - 1))">&larr; Newer</a>
+            <a class="admin-btn admin-btn--ghost" href="@(Url.Action("Index") + "?page=" + (Model.Page - 1))">@Loc["Admin.Emails.Newer"]</a>
         }
         <span class="admin-hint" style="margin:0;">
-            Page @Model.Page of @Model.TotalPages · @Loc["Admin.NotifySignups.Total", Model.TotalCount]
+            @Loc["Admin.Common.PageOf", Model.Page, Model.TotalPages] · @Loc["Admin.NotifySignups.Total", Model.TotalCount]
         </span>
         @if (Model.HasNext)
         {
-            <a class="admin-btn admin-btn--ghost" href="@(Url.Action("Index") + "?page=" + (Model.Page + 1))">Older &rarr;</a>
+            <a class="admin-btn admin-btn--ghost" href="@(Url.Action("Index") + "?page=" + (Model.Page + 1))">@Loc["Admin.Emails.Older"]</a>
         }
     </div>
 }

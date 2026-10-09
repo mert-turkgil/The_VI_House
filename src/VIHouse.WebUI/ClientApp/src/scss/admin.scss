@@ -3,6 +3,7 @@
 // editor chrome and the dashboard charts.
 
 @use 'components/admin-media';
+@use 'components/admin-ux';
 
 // --- CKEditor -----------------------------------------------------------------------------------
 // CKEditor ships its own theme; these overrides bring it in line with the admin panel's borders,

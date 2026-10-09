@@ -11,6 +11,9 @@ import { initCopyButtons } from './modules/copy';
 import { initUtmBuilder } from './modules/utmBuilder';
 import { initReferralLinks } from './modules/referralLinks';
 import { initMediaLibrary } from './modules/mediaLibrary';
+import { initAdminConfirm } from './modules/adminConfirm';
+import { initAdminForms } from './modules/adminForms';
+import { initJournalWriter } from './modules/journalWriter';
 
 // Every init is called unconditionally and guards itself on the data attribute or element it needs,
 // which is the convention both entry points already follow — there is no page router.
@@ -31,4 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initUtmBuilder();
   initReferralLinks();
   initMediaLibrary();
+  initAdminConfirm();
+  initAdminForms();
+  initJournalWriter();
 });

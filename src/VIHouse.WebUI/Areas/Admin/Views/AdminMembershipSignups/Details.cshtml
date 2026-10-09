@@ -9,60 +9,59 @@
 
 <div class="admin-toolbar" style="justify-content: space-between; align-items: center;">
     <span class="@(j.Status == PendingJoinStatus.Paid ? "admin-badge admin-badge--open" : "admin-badge admin-badge--draft")" style="font-size:0.75rem;">
-        @(j.Status == PendingJoinStatus.Paid ? "Paid — member" : j.Status == PendingJoinStatus.Pending ? "Not paid yet" : j.Status.ToString())
+        @Loc.Label(j.Status)
     </span>
-    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; Back to Sign-ups</a>
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.MembershipSignups.BackToSignUps"]</a>
 </div>
 
 @if (j.PurgedAt is { } purged)
 {
     <div class="admin-status-message">
-        This form was never paid for, so its free text and address were cleared on @purged.ToLocalTime().ToString("d MMM yyyy")
-        — only the name, email and plan are kept.
+        @Loc["Admin.MembershipSignups.Purged", purged.ToLocalTime().ToString("d MMM yyyy")]
     </div>
 }
 
 <div class="admin-review-grid">
     <div class="admin-review-main">
         <div class="admin-card">
-            <h2>Applicant</h2>
+            <h2>@Loc["Admin.MembershipSignups.Applicant"]</h2>
             <dl class="admin-detail-list">
-                <div><dt>Name</dt><dd>@j.FirstName @j.LastName</dd></div>
-                <div><dt>Email</dt><dd><a href="mailto:@j.Email">@j.Email</a></dd></div>
-                <div><dt>Phone</dt><dd>@Or(j.Phone)</dd></div>
-                <div><dt>Title / profession</dt><dd>@Or(j.JobTitle)</dd></div>
-                <div><dt>Address</dt><dd>@if (address.Count == 0) { <text>—</text> } else { foreach (var line in address) { @line<br /> } }</dd></div>
-                <div><dt>Annual earnings</dt><dd>@(VIHouse.Entities.Users.EarningsBand.LabelFor(j.EarningsBand) ?? "—")</dd></div>
-                <div><dt>Language</dt><dd>@SiteCultures.Describe(j.PreferredCulture).NativeLabel</dd></div>
+                <div><dt>@Loc["Admin.Common.Name"]</dt><dd>@j.FirstName @j.LastName</dd></div>
+                <div><dt>@Loc["Admin.Common.Email"]</dt><dd><a href="mailto:@j.Email">@j.Email</a></dd></div>
+                <div><dt>@Loc["Admin.Common.Phone"]</dt><dd>@Or(j.Phone)</dd></div>
+                <div><dt>@Loc["Admin.MembershipSignups.TitleProfession"]</dt><dd>@Or(j.JobTitle)</dd></div>
+                <div><dt>@Loc["Admin.MembershipSignups.Address"]</dt><dd>@if (address.Count == 0) { <text>—</text> } else { foreach (var line in address) { @line<br /> } }</dd></div>
+                <div><dt>@Loc["Admin.MembershipSignups.AnnualEarnings"]</dt><dd>@(VIHouse.Entities.Users.EarningsBand.LabelFor(j.EarningsBand) ?? "—")</dd></div>
+                <div><dt>@Loc["Admin.Common.Language"]</dt><dd>@SiteCultures.Describe(j.PreferredCulture).NativeLabel</dd></div>
             </dl>
         </div>
 
         <div class="admin-card">
-            <h2>In their words</h2>
-            <p><strong>About</strong><br /><span style="white-space:pre-line;">@Or(j.About)</span></p>
-            <p><strong>Expectations</strong><br /><span style="white-space:pre-line;">@Or(j.Expectations)</span></p>
+            <h2>@Loc["Admin.MembershipSignups.InTheirWords"]</h2>
+            <p><strong>@Loc["Admin.MembershipSignups.About"]</strong><br /><span style="white-space:pre-line;">@Or(j.About)</span></p>
+            <p><strong>@Loc["Admin.MembershipSignups.Expectations"]</strong><br /><span style="white-space:pre-line;">@Or(j.Expectations)</span></p>
         </div>
     </div>
 
     <div class="admin-review-side">
         <div class="admin-card">
-            <h2>Membership</h2>
+            <h2>@Loc["Admin.MembershipSignups.Membership"]</h2>
             <dl class="admin-detail-list">
-                <div><dt>Plan</dt><dd>@Model.PlanName</dd></div>
-                <div><dt>Promo code</dt><dd>@Or(Model.PromoCode)</dd></div>
-                <div><dt>Referral code</dt><dd>@Or(j.ReferralCode)</dd></div>
-                <div><dt>Form sent</dt><dd>@j.CreatedAt.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
-                <div><dt>Paid</dt><dd>@(j.PaidAt?.ToLocalTime().ToString("d MMM yyyy, HH:mm") ?? "—")</dd></div>
+                <div><dt>@Loc["Admin.MembershipSignups.Plan"]</dt><dd>@Model.PlanName</dd></div>
+                <div><dt>@Loc["Admin.MembershipSignups.PromoCode"]</dt><dd>@Or(Model.PromoCode)</dd></div>
+                <div><dt>@Loc["Admin.MembershipSignups.ReferralCode"]</dt><dd>@Or(j.ReferralCode)</dd></div>
+                <div><dt>@Loc["Admin.MembershipSignups.FormSent"]</dt><dd>@j.CreatedAt.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd></div>
+                <div><dt>@Loc["Admin.MembershipSignups.Paid"]</dt><dd>@(j.PaidAt?.ToLocalTime().ToString("d MMM yyyy, HH:mm") ?? "—")</dd></div>
             </dl>
             @* Only offered to roles that can open the Users section, so the link never ends in "access denied". *@
             @if (Model.AccountId is { } accountId && AdminSections.Find("AdminUsers")?.IsVisibleTo(User) == true)
             {
                 <p style="margin-top:12px;">
-                    <a class="admin-btn admin-btn--ghost admin-btn--sm" asp-controller="AdminUsers" asp-action="Details" asp-route-id="@accountId">Open account &rarr;</a>
+                    <a class="admin-btn admin-btn--ghost admin-btn--sm" asp-controller="AdminUsers" asp-action="Details" asp-route-id="@accountId">@Loc["Admin.MembershipSignups.OpenAccount"]</a>
                 </p>
                 @if (!Model.AccountEverSignedIn)
                 {
-                    <p class="admin-hint" style="margin:8px 0 0;">They haven't signed in yet — the account page can re-send the password setup email.</p>
+                    <p class="admin-hint" style="margin:8px 0 0;">@Loc["Admin.MembershipSignups.TheyHavenTSignedInYet"]</p>
                 }
             }
         </div>

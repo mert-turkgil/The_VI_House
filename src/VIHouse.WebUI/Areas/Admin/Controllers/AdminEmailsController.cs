@@ -79,7 +79,7 @@ public class AdminEmailsController(
     public async Task<IActionResult> ResendEmail(Guid id, string? status, CancellationToken ct)
     {
         var result = await emailService.ResendAsync(id, ct);
-        TempData["StatusMessage"] = result.Message;
+        Status(result.Message, isError: !result.Sent);
         return RedirectToAction(nameof(Index), new { status });
     }
 
@@ -88,7 +88,7 @@ public class AdminEmailsController(
     public async Task<IActionResult> ResendSms(Guid id, string? status, CancellationToken ct)
     {
         var result = await smsService.ResendAsync(id, ct);
-        TempData["StatusMessage"] = result.Message;
+        Status(result.Message, isError: !result.Sent);
         return RedirectToAction(nameof(Index), new { channel = "sms", status });
     }
 }

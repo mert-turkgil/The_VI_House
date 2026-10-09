@@ -1,6 +1,6 @@
 @model List<AdminApplicationListItemViewModel>
 @{
-    ViewData["Title"] = "Applications";
+    ViewData["Title"] = Loc["Admin.Nav.AdminApplications"].Value;
     var selected = ViewData["SelectedStatus"] as ApplicationStatus?;
 
     string TabClass(ApplicationStatus? s) =>
@@ -13,18 +13,18 @@
 }
 
 <nav class="admin-tabs">
-    <a class="@TabClass(null)" asp-action="Index">All</a>
-    <a class="@TabClass(ApplicationStatus.Submitted)" asp-action="Index" asp-route-status="Submitted">Submitted</a>
-    <a class="@TabClass(ApplicationStatus.UnderReview)" asp-action="Index" asp-route-status="UnderReview">Under Review</a>
-    <a class="@TabClass(ApplicationStatus.Shortlisted)" asp-action="Index" asp-route-status="Shortlisted">Shortlisted</a>
-    <a class="@TabClass(ApplicationStatus.Approved)" asp-action="Index" asp-route-status="Approved">Approved</a>
-    <a class="@TabClass(ApplicationStatus.Rejected)" asp-action="Index" asp-route-status="Rejected">Rejected</a>
-    <a class="@TabClass(ApplicationStatus.Waitlisted)" asp-action="Index" asp-route-status="Waitlisted">Waitlisted</a>
+    <a class="@TabClass(null)" asp-action="Index">@Loc["Admin.Applications.All"]</a>
+    <a class="@TabClass(ApplicationStatus.Submitted)" asp-action="Index" asp-route-status="Submitted">@Loc["Admin.Applications.Submitted"]</a>
+    <a class="@TabClass(ApplicationStatus.UnderReview)" asp-action="Index" asp-route-status="UnderReview">@Loc["Admin.Applications.UnderReview"]</a>
+    <a class="@TabClass(ApplicationStatus.Shortlisted)" asp-action="Index" asp-route-status="Shortlisted">@Loc["Admin.Applications.Shortlisted"]</a>
+    <a class="@TabClass(ApplicationStatus.Approved)" asp-action="Index" asp-route-status="Approved">@Loc["Admin.Applications.Approved"]</a>
+    <a class="@TabClass(ApplicationStatus.Rejected)" asp-action="Index" asp-route-status="Rejected">@Loc["Admin.Applications.Rejected"]</a>
+    <a class="@TabClass(ApplicationStatus.Waitlisted)" asp-action="Index" asp-route-status="Waitlisted">@Loc["Admin.Applications.Waitlisted"]</a>
 </nav>
 
 @if (Model.Count == 0)
 {
-    <p>No applications here yet.</p>
+    <p>@Loc["Admin.Applications.NoApplicationsHereYet"]</p>
 }
 else
 {
@@ -32,11 +32,11 @@ else
     <table class="admin-table" data-admin-table>
         <thead>
             <tr>
-                <th>Applicant</th>
-                <th>Email</th>
-                <th>Experience</th>
-                <th>Status</th>
-                <th>Submitted</th>
+                <th>@Loc["Admin.Applications.Applicant"]</th>
+                <th>@Loc["Admin.Common.Email"]</th>
+                <th>@Loc["Admin.Applications.Experience"]</th>
+                <th>@Loc["Admin.Common.Status"]</th>
+                <th>@Loc["Admin.Applications.Submitted"]</th>
                 <th></th>
             </tr>
         </thead>
@@ -57,13 +57,13 @@ else
                     <td><a asp-action="Details" asp-route-id="@a.Id">@a.FirstName @a.LastName</a></td>
                     <td>@a.Email</td>
                     <td>@a.ExperienceLabel</td>
-                    <td><span class="@badgeClass">@a.Status.ToDisplayLabel()</span></td>
+                    <td><span class="@badgeClass">@Loc.Label(a.Status)</span></td>
                     <td>@(a.SubmittedAt?.ToString("dd MMM yyyy") ?? "—")</td>
                     @* The row itself opens the review page; these are the destinations that
                        otherwise need opening it first. *@
                     <td class="admin-table__actions">
-                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@a.Id">Review</a>
-                        <a class="admin-icon-btn" href="mailto:@a.Email">Email</a>
+                        <a class="admin-icon-btn" asp-action="Details" asp-route-id="@a.Id">@Loc["Admin.Applications.Review"]</a>
+                        <a class="admin-icon-btn" href="mailto:@a.Email">@Loc["Admin.Common.Email"]</a>
                     </td>
                 </tr>
             }

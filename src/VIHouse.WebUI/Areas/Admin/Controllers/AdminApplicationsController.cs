@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using VIHouse.Business.Abstract;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
@@ -23,7 +24,8 @@ public class AdminApplicationsController(
     IEmailLogRepository emailLogs,
     ISmsLogRepository smsLogs,
     ISmsService smsService,
-    UserManager<ApplicationUser> userManager) : AdminControllerBase
+    UserManager<ApplicationUser> userManager,
+    IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     [HttpGet("")]
     public async Task<IActionResult> Index(ApplicationStatus? status, CancellationToken ct)
@@ -116,11 +118,11 @@ public class AdminApplicationsController(
             // Reported rather than assumed: an approval whose payment link silently failed to send
             // looks identical to one that worked, right up until the seat goes unsold.
             var result = await applicationService.ApproveAsync(id, adminId, ip, ct);
-            TempData["StatusMessage"] = "Application approved. " + result.Message;
+            Status(loc["Admin.Applications.Msg.Approved"].Value + " " + result.Message);
         }
         catch (InvalidOperationException ex)
         {
-            TempData["StatusMessage"] = ex.Message;
+            Status(ex.Message, isError: true);
         }
 
         return RedirectToAction(nameof(Details), new { id });
@@ -135,11 +137,11 @@ public class AdminApplicationsController(
         try
         {
             var result = await applicationService.ResendInvitationAsync(id, adminId, ip, ct);
-            TempData["StatusMessage"] = result.Message;
+            Status(result.Message, isError: !result.Sent);
         }
         catch (InvalidOperationException ex)
         {
-            TempData["StatusMessage"] = ex.Message;
+            Status(ex.Message, isError: true);
         }
 
         return RedirectToAction(nameof(Details), new { id });
@@ -167,7 +169,7 @@ public class AdminApplicationsController(
     {
         var (adminId, ip) = CurrentActor();
         await applicationService.UpdateInternalNotesAsync(id, internalNotes, adminId, ip, ct);
-        TempData["StatusMessage"] = "Notes saved.";
+        Status(loc["Admin.Applications.Msg.NotesSaved"].Value);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -203,7 +205,7 @@ public class AdminApplicationsController(
         }
         catch (InvalidOperationException ex)
         {
-            TempData["StatusMessage"] = ex.Message;
+            Status(ex.Message, isError: true);
         }
     }
 }

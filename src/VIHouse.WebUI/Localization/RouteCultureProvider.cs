@@ -19,6 +19,11 @@ namespace VIHouse.WebUI.Localization;
 /// The cookie is still written by the language switcher — see CultureController, which uses it to
 /// send a returning visitor to their language from the site root. It just no longer overrides an
 /// explicit instruction.
+///
+/// One exception: the admin panel (/admin). It has no language in its URLs and is never indexed, so
+/// none of the reasons above apply. There the cookie is the whole answer: the panel speaks the language
+/// the person last chose (the switch in the admin user menu writes the same cookie). Without this,
+/// the admin was English for everyone and its translated texts were never shown.
 /// </summary>
 public class RouteCultureProvider : RequestCultureProvider
 {
@@ -29,6 +34,17 @@ public class RouteCultureProvider : RequestCultureProvider
         // mean two places disagreeing about what counts as a language segment.
         var code = httpContext.GetRouteValue("culture") as string;
         var culture = SiteCultures.FromUrlCode(code) ?? SiteCultures.Default;
+
+        if (code is null && httpContext.Request.Path.StartsWithSegments("/admin"))
+        {
+            var cookie = httpContext.Request.Cookies[CookieRequestCultureProvider.DefaultCookieName];
+            var chosen = cookie is null ? null : CookieRequestCultureProvider.ParseCookieValue(cookie)?.UICultures.FirstOrDefault().Value;
+            // The interface language only. Formatting stays English so a price typed as 12.50 is
+            // still twelve fifty (Turkish reads the dot as a thousands separator), and the Turkish
+            // dotless-i rules never touch a slug or an email comparison in the panel.
+            if (SiteCultures.IsSupported(chosen))
+                return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(SiteCultures.Default, SiteCultures.Normalise(chosen)));
+        }
 
         return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(culture, culture));
     }

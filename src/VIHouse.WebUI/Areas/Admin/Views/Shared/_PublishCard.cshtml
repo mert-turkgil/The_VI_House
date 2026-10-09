@@ -1,0 +1,116 @@
+@model PublishCardViewModel
+@*
+    Where an item stands, in words: status, who can see it, what is still missing, and the buttons.
+    See PublishCardViewModel for the two button modes. Styles: _admin.scss, "Publish card".
+*@
+@{
+    var modifier = Model.IsPublished ? "live" : Model.IsArchived ? "archived" : "draft";
+}
+<section class="publish-card publish-card--@modifier" aria-labelledby="publish-card-title">
+    <header class="publish-card__head">
+        <h2 class="publish-card__title" id="publish-card-title">@Loc["Admin.Publish.Title"]</h2>
+        <span class="publish-card__pill"><i aria-hidden="true"></i>@Model.StatusLabel</span>
+    </header>
+
+    <p class="publish-card__sentence">@Model.StatusSentence</p>
+
+    @if (Model.AudienceSentence is not null)
+    {
+        <p class="publish-card__audience @(Model.AudienceWarning ? "is-warning" : null)">
+            <partial name="_Icon" model="@("users")" />
+            <span>@Model.AudienceSentence</span>
+        </p>
+    }
+
+    @if (Model.Checks.Count > 0)
+    {
+        <div class="publish-card__checks">
+            <p class="publish-card__checks-title">@Loc["Admin.Publish.Checklist"]</p>
+            <ul>
+                @foreach (var check in Model.Checks)
+                {
+                    <li class="@(check.Done ? "is-done" : check.Required ? "is-missing" : "is-optional")">
+                        <span class="publish-card__check-mark" aria-hidden="true">
+                            @if (check.Done)
+                            {
+                                <svg viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" /></svg>
+                            }
+                            else if (check.Required)
+                            {
+                                <svg viewBox="0 0 16 16"><path d="M8 4.5v4.5M8 11.5v.01" /></svg>
+                            }
+                        </span>
+                        <span class="publish-card__check-label">
+                            @check.Label
+                            @if (!check.Done)
+                            {
+                                <span class="visually-hidden">: @(check.Required ? Loc["Admin.Publish.Required"] : Loc["Admin.Publish.Optional"])</span>
+                            }
+                        </span>
+                        @if (!check.Done && check.FixHref is not null)
+                        {
+                            <a class="publish-card__fix" href="@check.FixHref">@Loc["Admin.Publish.Fix"]</a>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+
+    <div class="publish-card__actions">
+        @if (Model.WriterFormId is not null)
+        {
+            @if (Model.IsPublished)
+            {
+                <button type="submit" class="admin-btn" form="@Model.WriterFormId" name="intent" value="save">@Loc["Admin.Publish.Update"]</button>
+                <button type="submit" class="admin-btn admin-btn--ghost" form="@Model.WriterFormId" name="intent" value="unpublish"
+                        data-confirm="@Loc["Admin.Publish.UnpublishConfirm"]">@Loc["Admin.Publish.Unpublish"]</button>
+            }
+            else
+            {
+                <button type="submit" class="admin-btn" form="@Model.WriterFormId" name="intent" value="publish"
+                        disabled="@(!Model.CanPublish)">@Loc["Admin.Publish.PublishNow"]</button>
+                <button type="submit" class="admin-btn admin-btn--ghost" form="@Model.WriterFormId" name="intent" value="save">@Loc["Admin.Publish.SaveDraft"]</button>
+            }
+        }
+        else if (Model.StatusAction is not null)
+        {
+            @if (!Model.IsPublished)
+            {
+                <form action="@Model.StatusAction" method="post" class="admin-inline-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="status" value="Published" />
+                    <button type="submit" class="admin-btn" disabled="@(!Model.CanPublish)">@Loc[Model.IsArchived ? "Admin.Publish.Republish" : "Admin.Publish.PublishNow"]</button>
+                </form>
+            }
+            else
+            {
+                <form action="@Model.StatusAction" method="post" class="admin-inline-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="status" value="Draft" />
+                    <button type="submit" class="admin-btn admin-btn--ghost" data-confirm="@Loc["Admin.Publish.UnpublishConfirm"]">@Loc["Admin.Publish.Unpublish"]</button>
+                </form>
+                @if (Model.AllowArchive)
+                {
+                    <form action="@Model.StatusAction" method="post" class="admin-inline-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="status" value="Archived" />
+                        <button type="submit" class="admin-btn admin-btn--ghost" data-confirm="@Loc["Admin.Publish.ArchiveConfirm"]">@Loc["Admin.Publish.Archive"]</button>
+                    </form>
+                }
+            }
+        }
+
+        @if (Model.PreviewUrl is not null)
+        {
+            <a class="admin-btn admin-btn--ghost" href="@Model.PreviewUrl" target="_blank" rel="noopener">
+                @(Model.IsPublished ? Loc["Admin.Publish.ViewLive"] : Loc["Admin.Publish.Preview"])
+            </a>
+        }
+    </div>
+
+    @if (!Model.IsPublished && !Model.CanPublish)
+    {
+        <p class="publish-card__blocked">@Loc["Admin.Publish.Blocked"]</p>
+    }
+</section>

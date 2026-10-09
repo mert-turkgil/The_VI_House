@@ -71,6 +71,10 @@ public interface ISeminarService
     // --- Admin --- (every mutation is audit-logged) ----------------------------------------------
 
     Task<List<Seminar>> GetAllForAdminAsync(CancellationToken ct = default);
+
+    /// <summary>How many sessions a visitor cannot see on /sessions, for the staff-only note there:
+    /// drafts, and published sessions that are members-only or unlisted.</summary>
+    Task<SeminarHiddenCounts> CountHiddenFromVisitorsAsync(CancellationToken ct = default);
     Task<Seminar?> GetForAdminEditAsync(Guid id, CancellationToken ct = default);
 
     /// <summary>Creates the seminar together with its default-culture copy — a seminar with no
@@ -247,4 +251,11 @@ public record SeminarConfirmationInfo(
 
     /// <summary>The provider needs the buyer to act (a bank confirmation) before the money moves.</summary>
     public bool RequiresAction { get; init; }
+}
+
+/// <param name="Drafts">Not published yet.</param>
+/// <param name="Restricted">Published, but members-only or unlisted, so not on the public listing.</param>
+public record SeminarHiddenCounts(int Drafts, int Restricted)
+{
+    public int Total => Drafts + Restricted;
 }

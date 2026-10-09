@@ -6,6 +6,9 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework;
 
 public class EfJournalPostRepository(VIHouseDbContext db) : EfRepository<JournalPost>(db), IJournalPostRepository
 {
+    public Task<bool> SlugExistsAsync(string slug, Guid? exceptId = null, CancellationToken ct = default) =>
+        Set.AnyAsync(p => p.Slug == slug && (exceptId == null || p.Id != exceptId), ct);
+
     public Task<JournalPost?> GetBySlugAsync(string slug, CancellationToken ct = default) =>
         // Media for the gallery under the article; the cover needs only its id, which is on the post.
         Set.Include(p => p.Translations).Include(p => p.Media).FirstOrDefaultAsync(p => p.Slug == slug, ct);

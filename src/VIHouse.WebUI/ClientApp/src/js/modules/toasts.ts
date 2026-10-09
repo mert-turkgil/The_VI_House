@@ -52,6 +52,9 @@ export function initToasts(): void {
   // ("2 emails failed to send. Show them."), and a toast that disappears takes the link with it.
   if (banner.querySelector('a')) return;
 
-  toast(message, /fail|error|could not|cannot|refus/i.test(message) ? 'error' : 'success');
+  // The server says which messages are refusals (AdminControllerBase.Status) — the wording cannot,
+  // now that the panel speaks four languages.
+  const isError = document.body.dataset.statusError === 'true' || banner.classList.contains('admin-status-message--error');
+  toast(message, isError ? 'error' : 'success');
   banner.remove();
 }

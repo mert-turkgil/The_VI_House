@@ -48,7 +48,7 @@ public class AdminNotifySignupsController(
             CurrentAdminId(), Ip(), ct);
         if (!result.Ok) return await RefuseAsync(form, result.Message, ct);
 
-        TempData["StatusMessage"] = result.Message;
+        Status(result.Message);
         return RedirectToAction(nameof(Index));
     }
 

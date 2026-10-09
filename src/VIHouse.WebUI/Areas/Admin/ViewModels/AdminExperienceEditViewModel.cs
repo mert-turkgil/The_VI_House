@@ -68,7 +68,7 @@ public class AdminExperienceTranslationForm
     public string Title { get; set; } = default!;
 
     [StringLength(400)]
-    [Display(Name = "Short summary")]
+    [Display(Name = "Admin.Field.ShortSummary")]
     public string? ShortSummary { get; set; }
 
     public string? Description { get; set; }
@@ -77,19 +77,19 @@ public class AdminExperienceTranslationForm
     public string? Venue { get; set; }
 
     [StringLength(300)]
-    [Display(Name = "Who is in the room? (comma separated)")]
+    [Display(Name = "Admin.Field.WhoIsInTheRoomComma")]
     public string? AudienceTags { get; set; }
 
     [StringLength(200)]
-    [Display(Name = "SEO title")]
+    [Display(Name = "Admin.Field.SEOTitle")]
     public string? SeoTitle { get; set; }
 
     [StringLength(400)]
-    [Display(Name = "SEO description")]
+    [Display(Name = "Admin.Field.SEODescription")]
     public string? SeoDescription { get; set; }
 
     [StringLength(300)]
-    [Display(Name = "Cover image description")]
+    [Display(Name = "Admin.Field.CoverImageDescription")]
     public string? CoverImageAlt { get; set; }
 
     /// <summary>

@@ -854,12 +854,12 @@ Sorular. Bu koşulların dışında bir iadeye hak kazandığınızı düşünü
   <data name="Journal.Error.MediaNotFound" xml:space="preserve"><value>Bu dosya artık bu yazıya ekli değil.</value></data>
   <data name="Journal.Error.CoverMustBeImage" xml:space="preserve"><value>Kapak görseli bir resim olmalı — JPEG, PNG, WebP veya AVIF.</value></data>
   <data name="Journal.Validation.Slug" xml:space="preserve"><value>Slug yalnızca küçük harf, rakam ve tire içerebilir.</value></data>
-  <data name="Admin.Journal.Title" xml:space="preserve"><value>Journal</value></data>
+  <data name="Admin.Journal.Title" xml:space="preserve"><value>Günlük</value></data>
   <data name="Admin.Journal.New" xml:space="preserve"><value>Yeni Yazı</value></data>
-  <data name="Admin.Journal.ViewJournal" xml:space="preserve"><value>Journal'ı gör</value></data>
+  <data name="Admin.Journal.ViewJournal" xml:space="preserve"><value>Günlüğü gör</value></data>
   <data name="Admin.Journal.Empty" xml:space="preserve"><value>Henüz yazı yok.</value></data>
   <data name="Admin.Journal.Title.Column" xml:space="preserve"><value>Başlık</value></data>
-  <data name="Admin.Journal.Slug" xml:space="preserve"><value>Slug</value></data>
+  <data name="Admin.Journal.Slug" xml:space="preserve"><value>Web adresi (kısa ad)</value></data>
   <data name="Admin.Journal.Category" xml:space="preserve"><value>Kategori</value></data>
   <data name="Admin.Journal.Status" xml:space="preserve"><value>Durum</value></data>
   <data name="Admin.Journal.Published" xml:space="preserve"><value>Yayımlandı</value></data>
@@ -1982,4 +1982,1410 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Experiences.Facts.Status" xml:space="preserve"><value>Durum</value></data>
   <data name="Card.Error.NoMembership" xml:space="preserve"><value>Henüz aktif bir üyeliğiniz yok.</value></data>
   <data name="Card.Error.NotInPlan" xml:space="preserve"><value>Dijital kart {0} kapsamında değil.</value></data>
+  <data name="Admin.Ambassadors.ARefundLandedAfterThisWas" xml:space="preserve"><value>Bu ödendikten sonra bir iade geldi. Geri alın ya da bir sonraki ödemeden otomatik olarak düşülür.</value></data>
+  <data name="Admin.Ambassadors.Accepted" xml:space="preserve"><value>Kabul edildi</value></data>
+  <data name="Admin.Ambassadors.Account" xml:space="preserve"><value>Hesap</value></data>
+  <data name="Admin.Ambassadors.AccountHolder" xml:space="preserve"><value>Hesap sahibi</value></data>
+  <data name="Admin.Ambassadors.AllAmbassadors" xml:space="preserve"><value>← Tüm elçiler</value></data>
+  <data name="Admin.Ambassadors.Applications" xml:space="preserve"><value>Başvurular</value></data>
+  <data name="Admin.Ambassadors.Approved" xml:space="preserve"><value>Onaylandı</value></data>
+  <data name="Admin.Ambassadors.AutomatedLooking" xml:space="preserve"><value>Otomatik görünen</value></data>
+  <data name="Admin.Ambassadors.BillingAddress" xml:space="preserve"><value>Fatura adresi</value></data>
+  <data name="Admin.Ambassadors.BillingPayout" xml:space="preserve"><value>Fatura ve ödeme</value></data>
+  <data name="Admin.Ambassadors.BusiestNetwork" xml:space="preserve"><value>En yoğun ağ</value></data>
+  <data name="Admin.Ambassadors.Campaign" xml:space="preserve"><value>Kampanya</value></data>
+  <data name="Admin.Ambassadors.ClickToCopy" xml:space="preserve"><value>Kopyalamak için tıklayın</value></data>
+  <data name="Admin.Ambassadors.Code" xml:space="preserve"><value>Kod</value></data>
+  <data name="Admin.Ambassadors.CodeLabel" xml:space="preserve"><value>Kod (bağlantıda /r/KOD olarak)</value></data>
+  <data name="Admin.Ambassadors.Commission" xml:space="preserve"><value>Komisyon %</value></data>
+  <data name="Admin.Ambassadors.Commission92" xml:space="preserve"><value>Komisyon</value></data>
+  <data name="Admin.Ambassadors.CommissionEarnedIn" xml:space="preserve"><value>Kazanılan komisyon ({0})</value></data>
+  <data name="Admin.Ambassadors.CommissionRule" xml:space="preserve"><value>Komisyon, her satışın yapıldığı andaki oranla hesaplanır. İadeler komisyonu orantılı olarak geri alır; geri çekilen satırlar kazanç getirmez.</value></data>
+  <data name="Admin.Ambassadors.CommissionWithdrawn" xml:space="preserve"><value>Komisyon geri alındı</value></data>
+  <data name="Admin.Ambassadors.Copied" xml:space="preserve"><value>Kopyalandı</value></data>
+  <data name="Admin.Ambassadors.CopyLink" xml:space="preserve"><value>Bağlantıyı kopyala</value></data>
+  <data name="Admin.Ambassadors.CopyTrackedLink" xml:space="preserve"><value>İzlenen bağlantıyı kopyala</value></data>
+  <data name="Admin.Ambassadors.CorrectItHereIfItWas" xml:space="preserve"><value>Yanlış yazıldıysa burada düzeltin.</value></data>
+  <data name="Admin.Ambassadors.CountsAndRevenueOnlyNoNames" xml:space="preserve"><value>Yalnızca sayılar ve gelir — yönlendirilen kişilerin adları veya iletişim bilgileri gösterilmez (brif §49).</value></data>
+  <data name="Admin.Ambassadors.DisplayName" xml:space="preserve"><value>Görünen ad</value></data>
+  <data name="Admin.Ambassadors.DistinctNetworks" xml:space="preserve"><value>Farklı ağlar</value></data>
+  <data name="Admin.Ambassadors.EGBankTransferRef" xml:space="preserve"><value>örn. havale referansı</value></data>
+  <data name="Admin.Ambassadors.EGLovelyToHaveYou" xml:space="preserve"><value>örn. Aramızda olmanız harika — lansman paylaşımı için bağlantınız burada.</value></data>
+  <data name="Admin.Ambassadors.EarnedIn" xml:space="preserve"><value>Kazanılan ({0})</value></data>
+  <data name="Admin.Ambassadors.EmailLinkTo" xml:space="preserve"><value>Bağlantıyı {0} adresine e-postayla gönder</value></data>
+  <data name="Admin.Ambassadors.FinanceRecordsPayouts" xml:space="preserve"><value>Ödemeleri finans ekibi kaydeder.</value></data>
+  <data name="Admin.Ambassadors.FixedLinksAlreadySharedDependOn" xml:space="preserve"><value>(sabit — paylaşılmış bağlantılar buna bağlı)</value></data>
+  <data name="Admin.Ambassadors.FullBankDetailsAreShownTo" xml:space="preserve"><value>Tam banka bilgileri Finans ekibine gösterilir.</value></data>
+  <data name="Admin.Ambassadors.GiveEachChannelItsOwnLink" xml:space="preserve"><value>Her kanala kendi bağlantısını verin; böylece aşağıdaki “Kaynağa göre ziyaretler” trafiğin nereden geldiğini gösterir. Etiketler UTM parametreleri olarak eklenir ve her ziyarette kaydedilir.</value></data>
+  <data name="Admin.Ambassadors.Given" xml:space="preserve"><value>Verildi</value></data>
+  <data name="Admin.Ambassadors.IHaveSent" xml:space="preserve"><value>{1} kişisine {0} gönderdim.</value></data>
+  <data name="Admin.Ambassadors.IPAddressesAreStoredOnlyAs" xml:space="preserve"><value>IP adresleri yalnızca anahtarlı bir özet olarak saklanır. Aynı ağdan aynı bağlantıya 30 dakika içindeki tekrar gelişler bir kez sayılır.</value></data>
+  <data name="Admin.Ambassadors.Inactive" xml:space="preserve"><value>Pasif</value></data>
+  <data name="Admin.Ambassadors.InactiveHint" xml:space="preserve"><value>Etkin değil: bağlantı ziyaretleri artık kaydedilmez; hesap ve geçmiş kalır.</value></data>
+  <data name="Admin.Ambassadors.Invitation" xml:space="preserve"><value>Davet</value></data>
+  <data name="Admin.Ambassadors.InviteAnAmbassador" xml:space="preserve"><value>+ Elçi davet et</value></data>
+  <data name="Admin.Ambassadors.InviteExpired" xml:space="preserve"><value>Süresi doldu</value></data>
+  <data name="Admin.Ambassadors.InviteExpires" xml:space="preserve"><value>Son geçerlilik</value></data>
+  <data name="Admin.Ambassadors.InviteIntro" xml:space="preserve"><value>VI House hesabı olmayan biri için. Kişi {0} gün geçerli kişisel bir bağlantı içeren bir e-posta alır. Bağlantıyla parola belirler, gerçek adını, fatura adresini ve banka bilgilerini girer ve elçilik koşullarını (oran, ödemeler, iadeler) kabul eder. Bağlantıları ve QR kodları ancak bundan sonra çalışır. Bağlantıyı siz hiç görmezsiniz; süresi dolarsa kişinin sayfasından yeniden gönderin.</value></data>
+  <data name="Admin.Ambassadors.InviteTitle" xml:space="preserve"><value>Elçi davet et</value></data>
+  <data name="Admin.Ambassadors.InvitedNoAccountYet" xml:space="preserve"><value>(davet edildi — henüz hesap yok)</value></data>
+  <data name="Admin.Ambassadors.LanguageOfTheInvitation" xml:space="preserve"><value>Davetin dili</value></data>
+  <data name="Admin.Ambassadors.LastSent" xml:space="preserve"><value>Son gönderim</value></data>
+  <data name="Admin.Ambassadors.Link" xml:space="preserve"><value>Bağlantı</value></data>
+  <data name="Admin.Ambassadors.LinkHint" xml:space="preserve"><value>Tam adres, yapıştırmaya hazır. Bu bağlantıyla gelen herkes 30 gün boyunca çerezle işaretlenir ve başvurduğunda, katıldığında ya da ödediğinde {0} adına sayılır.</value></data>
+  <data name="Admin.Ambassadors.LinksPerExperienceAndSession" xml:space="preserve"><value>Deneyim ve oturum başına bağlantılar</value></data>
+  <data name="Admin.Ambassadors.MarkAsPaid" xml:space="preserve"><value>{0} ödendi olarak işaretle</value></data>
+  <data name="Admin.Ambassadors.Medium" xml:space="preserve"><value>Ortam</value></data>
+  <data name="Admin.Ambassadors.Msg.CommissionWithdrawn" xml:space="preserve"><value>Bu satırın komisyonu geri çekildi.</value></data>
+  <data name="Admin.Ambassadors.Msg.ConfirmTransfer" xml:space="preserve"><value>Havalenin gerçekten yapıldığını onaylamak için kutuyu işaretleyin.</value></data>
+  <data name="Admin.Ambassadors.Msg.InviteResent" xml:space="preserve"><value>{0} adresine yeni bir davet gönderiliyor. Önceki bağlantı artık çalışmaz.</value></data>
+  <data name="Admin.Ambassadors.Msg.InviteSent" xml:space="preserve"><value>Davet {0} adresine gönderildi. {1} kodu ayrıldı; bağlantılar kişi kabul edince etkinleşir.</value></data>
+  <data name="Admin.Ambassadors.Msg.LinkNotSent" xml:space="preserve"><value>{0} adresine e-posta gönderilemedi — hata için E-postalar ve SMS bölümüne bakın. Bağlantı hâlâ {1}.</value></data>
+  <data name="Admin.Ambassadors.Msg.LinkSent" xml:space="preserve"><value>Bağlantı {0} adresine gönderildi.</value></data>
+  <data name="Admin.Ambassadors.Msg.NoEmail" xml:space="preserve"><value>Bu elçinin hesabında e-posta adresi yok.</value></data>
+  <data name="Admin.Ambassadors.Msg.NotAcceptedYet" xml:space="preserve"><value>Referans bağlantısı, kişi daveti kabul edene kadar çalışmaz.</value></data>
+  <data name="Admin.Ambassadors.Msg.NotAnEmail" xml:space="preserve"><value>“{0}” bir e-posta adresi değil.</value></data>
+  <data name="Admin.Ambassadors.Msg.NothingToWithdraw" xml:space="preserve"><value>Bu satırda geri çekilecek komisyon yok (zaten geri çekildi ya da satın alma değil).</value></data>
+  <data name="Admin.Ambassadors.Msg.OnlyPendingWithdrawn" xml:space="preserve"><value>Yalnızca bekleyen bir davet geri çekilebilir.</value></data>
+  <data name="Admin.Ambassadors.Msg.PayoutRecorded" xml:space="preserve"><value>Kaydedildi: {0} ödendi. Elçiye bildirildi.</value></data>
+  <data name="Admin.Ambassadors.Msg.PayoutRecordedRef" xml:space="preserve"><value>Kaydedildi: {0} ödendi (ref. {1}). Elçiye bildirildi.</value></data>
+  <data name="Admin.Ambassadors.Msg.ReasonNeeded" xml:space="preserve"><value>Komisyonu geri çekme nedenini yazın — kayıtta saklanır.</value></data>
+  <data name="Admin.Ambassadors.Msg.Withdrawn" xml:space="preserve"><value>Davet geri çekildi; kod yeniden kullanılabilir.</value></data>
+  <data name="Admin.Ambassadors.NameOnAccount" xml:space="preserve"><value>Hesaptaki ad</value></data>
+  <data name="Admin.Ambassadors.NetOfRefunds" xml:space="preserve"><value>iadeler düşüldükten sonra</value></data>
+  <data name="Admin.Ambassadors.NewLinkValidFor" xml:space="preserve"><value>{0} gün geçerli yeni bir bağlantı. Öncekisi çalışmayı bırakır.</value></data>
+  <data name="Admin.Ambassadors.NoAmbassadorTermsOnRecordThis" xml:space="preserve"><value>Kayıtlı elçi koşulu yok — bu elçi mevcut bir hesaptan, koşullar toplanmadan önce ya da elle oluşturuldu.</value></data>
+  <data name="Admin.Ambassadors.NoAmbassadorsYet" xml:space="preserve"><value>Henüz elçi yok.</value></data>
+  <data name="Admin.Ambassadors.NoPayoutDetailsOnRecordAsk" xml:space="preserve"><value>Kayıtlı ödeme bilgisi yok. Bir ödeme kaydetmeden önce isteyin.</value></data>
+  <data name="Admin.Ambassadors.NoVisitsYet" xml:space="preserve"><value>Henüz ziyaret yok.</value></data>
+  <data name="Admin.Ambassadors.NotAcceptedYet" xml:space="preserve"><value>{0} henüz kabul etmedi. Bu kodun arkasında bir hesap yok ve {1} kodu ayrılmış durumda. Referans bağlantısı ve QR kodları, kişi parola belirleyip bilgilerini girene ve koşulları kabul edene kadar çalışmaz.</value></data>
+  <data name="Admin.Ambassadors.NoteOptional" xml:space="preserve"><value>Not (isteğe bağlı)</value></data>
+  <data name="Admin.Ambassadors.NothingEarnedYet" xml:space="preserve"><value>Henüz kazanç yok.</value></data>
+  <data name="Admin.Ambassadors.NothingUnusual" xml:space="preserve"><value>Son {0} günde olağandışı bir şey yok.</value></data>
+  <data name="Admin.Ambassadors.NothingYetEachApplicationApprovalAnd" xml:space="preserve"><value>Henüz bir şey yok. Bağlantı üzerinden gelen her başvuru, onay ve satın alma gerçekleştiği anda burada görünür.</value></data>
+  <data name="Admin.Ambassadors.OpenInNewTab" xml:space="preserve"><value>Yeni sekmede aç</value></data>
+  <data name="Admin.Ambassadors.OpenTheirUserRecord" xml:space="preserve"><value>Kullanıcı kaydını aç →</value></data>
+  <data name="Admin.Ambassadors.OpenUserRecord" xml:space="preserve"><value>Kullanıcı kaydını aç</value></data>
+  <data name="Admin.Ambassadors.Overpaid" xml:space="preserve"><value>Fazla ödendi</value></data>
+  <data name="Admin.Ambassadors.Owed" xml:space="preserve"><value>Borç</value></data>
+  <data name="Admin.Ambassadors.OwnClicks" xml:space="preserve"><value>Kendi tıklamaları</value></data>
+  <data name="Admin.Ambassadors.Paid" xml:space="preserve"><value>Ödendi</value></data>
+  <data name="Admin.Ambassadors.PaidOut" xml:space="preserve"><value>Ödendi</value></data>
+  <data name="Admin.Ambassadors.PartlyRefunded" xml:space="preserve"><value>Kısmen iade edildi ({0})</value></data>
+  <data name="Admin.Ambassadors.Payouts" xml:space="preserve"><value>Ödemeler</value></data>
+  <data name="Admin.Ambassadors.PendingBecomesActiveWhenTheyAccept" xml:space="preserve"><value>Beklemede — daveti kabul ettiğinde Aktif olur.</value></data>
+  <data name="Admin.Ambassadors.PerPageLinksHint" xml:space="preserve"><value>Yayındaki her deneyimin ve oturumun kendi bağlantısı ve QR kodu vardır. Ziyaretçi doğrudan o sayfaya gelir, ziyaret o bağlantıya sayılır ve sonra ne yaparsa — başvuru, bilet alma, kayıt — o bağlantı altında {0} adına yazılır. Bunlar {0} kişisinin kendi panelinde gördüğü bağlantı ve indirmelerin aynısıdır.</value></data>
+  <data name="Admin.Ambassadors.Performance" xml:space="preserve"><value>Performans</value></data>
+  <data name="Admin.Ambassadors.PersonalNoteOptional" xml:space="preserve"><value>Kişisel not (isteğe bağlı)</value></data>
+  <data name="Admin.Ambassadors.PurchaseSplit" xml:space="preserve"><value>({0} bilet · {1} üyelik · {2} oturum)</value></data>
+  <data name="Admin.Ambassadors.Purchases" xml:space="preserve"><value>Satın almalar</value></data>
+  <data name="Admin.Ambassadors.QRCodeForTheReferralLink" xml:space="preserve"><value>Yönlendirme bağlantısı için QR kodu</value></data>
+  <data name="Admin.Ambassadors.RateChanged" xml:space="preserve"><value>Oran artık %{0}; kabul ettikleri %{1} değil. Değişikliği onlarla yazılı olarak kararlaştırın.</value></data>
+  <data name="Admin.Ambassadors.RateHint" xml:space="preserve"><value>Bağlantıya atfedilen her satın almaya, gerçekleştiği andaki oranla uygulanır.</value></data>
+  <data name="Admin.Ambassadors.RateHintPending" xml:space="preserve"><value>Davet sayfası, kişinin kabul ettiği andaki oranı gösterir.</value></data>
+  <data name="Admin.Ambassadors.RateInTheTerms" xml:space="preserve"><value>Koşullardaki oran</value></data>
+  <data name="Admin.Ambassadors.ReSendInvitation" xml:space="preserve"><value>Daveti yeniden gönder</value></data>
+  <data name="Admin.Ambassadors.ReasonEGSelfReferral" xml:space="preserve"><value>Neden, örn. kendi kendine yönlendirme</value></data>
+  <data name="Admin.Ambassadors.RecentActivity" xml:space="preserve"><value>Son etkinlik</value></data>
+  <data name="Admin.Ambassadors.Reference" xml:space="preserve"><value>Referans</value></data>
+  <data name="Admin.Ambassadors.ReferralLink" xml:space="preserve"><value>Yönlendirme bağlantısı</value></data>
+  <data name="Admin.Ambassadors.ReferralLink84" xml:space="preserve"><value>Yönlendirme bağlantısı</value></data>
+  <data name="Admin.Ambassadors.Refunded" xml:space="preserve"><value>İade edildi</value></data>
+  <data name="Admin.Ambassadors.RevenueIn" xml:space="preserve"><value>Gelir ({0})</value></data>
+  <data name="Admin.Ambassadors.SaveChanges" xml:space="preserve"><value>Değişiklikleri kaydet</value></data>
+  <data name="Admin.Ambassadors.ScanOrDropOnASlide" xml:space="preserve"><value>Tarayın ya da bir slayta bırakın</value></data>
+  <data name="Admin.Ambassadors.SelfReferral" xml:space="preserve"><value>Kendi kendine yönlendirme</value></data>
+  <data name="Admin.Ambassadors.SelfReferrals" xml:space="preserve"><value>Kendi kendine yönlendirmeler</value></data>
+  <data name="Admin.Ambassadors.SendEmail" xml:space="preserve"><value>E-posta gönder</value></data>
+  <data name="Admin.Ambassadors.SendInvitation" xml:space="preserve"><value>Davet gönder</value></data>
+  <data name="Admin.Ambassadors.SentTo" xml:space="preserve"><value>Gönderildiği adres</value></data>
+  <data name="Admin.Ambassadors.Settings" xml:space="preserve"><value>Ayarlar</value></data>
+  <data name="Admin.Ambassadors.Signals" xml:space="preserve"><value>Sinyaller</value></data>
+  <data name="Admin.Ambassadors.Since" xml:space="preserve"><value>{0} tarihinden beri elçi</value></data>
+  <data name="Admin.Ambassadors.SiteLink" xml:space="preserve"><value>Site bağlantısı</value></data>
+  <data name="Admin.Ambassadors.SomeoneWhoAlreadyHasAnAccount" xml:space="preserve"><value>Zaten hesabı olan biri bunun yerine kullanıcı kaydından elçi yapılır (Kullanıcılar → kişi → “Elçi yap”).</value></data>
+  <data name="Admin.Ambassadors.Source" xml:space="preserve"><value>Kaynak</value></data>
+  <data name="Admin.Ambassadors.TaxVATId" xml:space="preserve"><value>Vergi / KDV no.</value></data>
+  <data name="Admin.Ambassadors.Terms" xml:space="preserve"><value>Koşullar</value></data>
+  <data name="Admin.Ambassadors.TheBuyerSAccountIsThe" xml:space="preserve"><value>Alıcının hesabı elçinin kendi hesabı</value></data>
+  <data name="Admin.Ambassadors.TheirDashboard" xml:space="preserve"><value>Kendi paneli</value></data>
+  <data name="Admin.Ambassadors.TrackedLinkForAChannel" xml:space="preserve"><value>Bir kanal için izlenen bağlantı</value></data>
+  <data name="Admin.Ambassadors.TransferReference" xml:space="preserve"><value>Havale referansı</value></data>
+  <data name="Admin.Ambassadors.Version" xml:space="preserve"><value>Sürüm</value></data>
+  <data name="Admin.Ambassadors.VisitPurchase" xml:space="preserve"><value>Ziyaret → satın alma</value></data>
+  <data name="Admin.Ambassadors.Visits" xml:space="preserve"><value>Ziyaretler</value></data>
+  <data name="Admin.Ambassadors.VisitsBySource" xml:space="preserve"><value>Kaynağa göre ziyaretler</value></data>
+  <data name="Admin.Ambassadors.VisitsInDays" xml:space="preserve"><value>Ziyaretler, {0} gün</value></data>
+  <data name="Admin.Ambassadors.WhatTheySeeWhenSignedIn" xml:space="preserve"><value>(giriş yaptığında gördükleri)</value></data>
+  <data name="Admin.Ambassadors.WhichLinkIsWorking" xml:space="preserve"><value>Hangi bağlantı işe yarıyor</value></data>
+  <data name="Admin.Ambassadors.Withdraw" xml:space="preserve"><value>Geri al</value></data>
+  <data name="Admin.Ambassadors.WithdrawCommission" xml:space="preserve"><value>Komisyonu geri al…</value></data>
+  <data name="Admin.Ambassadors.WithdrawConfirm" xml:space="preserve"><value>Davet geri çekilsin ve {0} kodu serbest bırakılsın mı?</value></data>
+  <data name="Admin.Ambassadors.WithdrawInvitation" xml:space="preserve"><value>Daveti geri çek</value></data>
+  <data name="Admin.Ambassadors.WithdrawnOn" xml:space="preserve"><value>{0} tarihinde geri çekildi: {1}</value></data>
+  <data name="Admin.Applications.AddTag" xml:space="preserve"><value>Etiket ekle</value></data>
+  <data name="Admin.Applications.Address" xml:space="preserve"><value>Adres</value></data>
+  <data name="Admin.Applications.All" xml:space="preserve"><value>Tümü</value></data>
+  <data name="Admin.Applications.AnnualEarnings" xml:space="preserve"><value>Yıllık kazanç</value></data>
+  <data name="Admin.Applications.Applicant" xml:space="preserve"><value>Başvuran</value></data>
+  <data name="Admin.Applications.ApproveSendPaymentLink" xml:space="preserve"><value>Onayla ve ödeme bağlantısı gönder</value></data>
+  <data name="Admin.Applications.Approved" xml:space="preserve"><value>Onaylandı</value></data>
+  <data name="Admin.Applications.BackToApplications" xml:space="preserve"><value>← Başvurulara dön</value></data>
+  <data name="Admin.Applications.Card" xml:space="preserve"><value>Kart</value></data>
+  <data name="Admin.Applications.ChargeStatus" xml:space="preserve"><value>Tahsilat durumu</value></data>
+  <data name="Admin.Applications.CouldnTSyncWithStripeJust" xml:space="preserve"><value>Şu anda Stripe ile eşitlenemedi — bilinen son durum gösteriliyor.</value></data>
+  <data name="Admin.Applications.DecidedOn" xml:space="preserve"><value>{0} tarihinde karar verildi.</value></data>
+  <data name="Admin.Applications.DecidedOnBy" xml:space="preserve"><value>{0} tarihinde {1} tarafından karar verildi.</value></data>
+  <data name="Admin.Applications.DeliveryAttempts" xml:space="preserve"><value>Bu başvuru için gönderim denemeleri. Tam kayıt E-postalar ve SMS altında.</value></data>
+  <data name="Admin.Applications.DescribeYourselfOrYourBusiness" xml:space="preserve"><value>Kendinizi veya işinizi tanımlayın</value></data>
+  <data name="Admin.Applications.EGInvestorFintechVIP" xml:space="preserve"><value>örn. Yatırımcı, Fintech, VIP</value></data>
+  <data name="Admin.Applications.Experience" xml:space="preserve"><value>Deneyim</value></data>
+  <data name="Admin.Applications.Expires" xml:space="preserve"><value>Son geçerlilik</value></data>
+  <data name="Admin.Applications.FinalStatus" xml:space="preserve"><value>Bu başvurunun durumu “{0}”; bu yüzden başka inceleme işlemi yok.</value></data>
+  <data name="Admin.Applications.HowMayWeHelpWithYour" xml:space="preserve"><value>Hedeflerinizde nasıl yardımcı olabiliriz / beklentileriniz neler?</value></data>
+  <data name="Admin.Applications.InTheirWords" xml:space="preserve"><value>Kendi sözleriyle</value></data>
+  <data name="Admin.Applications.InternalNotes" xml:space="preserve"><value>İç notlar</value></data>
+  <data name="Admin.Applications.Invite.Active" xml:space="preserve"><value>Etkin</value></data>
+  <data name="Admin.Applications.Invite.Expired" xml:space="preserve"><value>Süresi doldu</value></data>
+  <data name="Admin.Applications.Invite.Used" xml:space="preserve"><value>Kullanıldı</value></data>
+  <data name="Admin.Applications.IssueNewLink" xml:space="preserve"><value>Yeni bağlantı oluştur ve gönder</value></data>
+  <data name="Admin.Applications.Msg.Approved" xml:space="preserve"><value>Başvuru onaylandı.</value></data>
+  <data name="Admin.Applications.Msg.NotesSaved" xml:space="preserve"><value>Notlar kaydedildi.</value></data>
+  <data name="Admin.Applications.NeverShownToTheApplicant" xml:space="preserve"><value>Başvurana asla gösterilmez.</value></data>
+  <data name="Admin.Applications.NoApplicationsHereYet" xml:space="preserve"><value>Burada henüz başvuru yok.</value></data>
+  <data name="Admin.Applications.NoSMSGatewayIsConfiguredSo" xml:space="preserve"><value>SMS ağ geçidi yapılandırılmadığı için kısa mesaj gönderilmedi. Açmak için</value></data>
+  <data name="Admin.Applications.Payment" xml:space="preserve"><value>Ödeme</value></data>
+  <data name="Admin.Applications.PaymentLink" xml:space="preserve"><value>Ödeme bağlantısı</value></data>
+  <data name="Admin.Applications.Reason" xml:space="preserve"><value>Neden:</value></data>
+  <data name="Admin.Applications.ReasonOptionalInternal" xml:space="preserve"><value>Neden (isteğe bağlı, dahili)</value></data>
+  <data name="Admin.Applications.Receipt" xml:space="preserve"><value>Makbuz</value></data>
+  <data name="Admin.Applications.ReferralCode" xml:space="preserve"><value>Yönlendirme kodu</value></data>
+  <data name="Admin.Applications.Refunded" xml:space="preserve"><value>İade edildi</value></data>
+  <data name="Admin.Applications.Reject" xml:space="preserve"><value>Reddet</value></data>
+  <data name="Admin.Applications.Rejected" xml:space="preserve"><value>Reddedildi</value></data>
+  <data name="Admin.Applications.Review" xml:space="preserve"><value>İnceleme</value></data>
+  <data name="Admin.Applications.SaveNotes" xml:space="preserve"><value>Notları kaydet</value></data>
+  <data name="Admin.Applications.SendAgain" xml:space="preserve"><value>Yeniden gönder</value></data>
+  <data name="Admin.Applications.SendsEmailAndSms" xml:space="preserve"><value>E-posta ve kısa mesajla gider.</value></data>
+  <data name="Admin.Applications.SendsEmailOnly" xml:space="preserve"><value>Yalnızca e-postayla gider — bu başvuruda telefon numarası yok.</value></data>
+  <data name="Admin.Applications.SentToThemByEmailAnd" xml:space="preserve"><value>Onayladığınızda e-posta ve kısa mesajla gönderildi. Tek kullanımlıktır ve süresi dolar.</value></data>
+  <data name="Admin.Applications.Shortlist" xml:space="preserve"><value>Kısa listeye al</value></data>
+  <data name="Admin.Applications.Shortlisted" xml:space="preserve"><value>Kısa listede</value></data>
+  <data name="Admin.Applications.StartReview" xml:space="preserve"><value>İncelemeyi başlat</value></data>
+  <data name="Admin.Applications.Submitted" xml:space="preserve"><value>Gönderildi</value></data>
+  <data name="Admin.Applications.Tags" xml:space="preserve"><value>Etiketler</value></data>
+  <data name="Admin.Applications.TitleProfession" xml:space="preserve"><value>Unvan / meslek</value></data>
+  <data name="Admin.Applications.ToSwitchItOn" xml:space="preserve"><value>ayarını etkinleştirin.</value></data>
+  <data name="Admin.Applications.UnderReview" xml:space="preserve"><value>İncelemede</value></data>
+  <data name="Admin.Applications.ViewInPayments" xml:space="preserve"><value>Ödemelerde görüntüle</value></data>
+  <data name="Admin.Applications.ViewReceipt" xml:space="preserve"><value>Makbuzu görüntüle</value></data>
+  <data name="Admin.Applications.Waitlist" xml:space="preserve"><value>Bekleme listesi</value></data>
+  <data name="Admin.Applications.Waitlisted" xml:space="preserve"><value>Bekleme listesinde</value></data>
+  <data name="Admin.Applications.WaitlistedSince" xml:space="preserve"><value>{0} tarihinden beri bekleme listesinde. Hazır olduğunuzda yeniden karar verin.</value></data>
+  <data name="Admin.Applications.WhatWeSentThem" xml:space="preserve"><value>Onlara ne gönderdik</value></data>
+  <data name="Admin.Bookings.All" xml:space="preserve"><value>Tümü</value></data>
+  <data name="Admin.Bookings.BackToBookings" xml:space="preserve"><value>← Rezervasyonlara dön</value></data>
+  <data name="Admin.Bookings.Booking" xml:space="preserve"><value>Rezervasyon</value></data>
+  <data name="Admin.Bookings.Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Admin.Bookings.Confirmed" xml:space="preserve"><value>Onaylandı</value></data>
+  <data name="Admin.Bookings.Customer" xml:space="preserve"><value>Müşteri</value></data>
+  <data name="Admin.Bookings.Experience" xml:space="preserve"><value>Deneyim</value></data>
+  <data name="Admin.Bookings.NoBookingsHereYet" xml:space="preserve"><value>Burada henüz rezervasyon yok.</value></data>
+  <data name="Admin.Bookings.Payment" xml:space="preserve"><value>Ödeme</value></data>
+  <data name="Admin.Bookings.Payments" xml:space="preserve"><value>Ödemeler</value></data>
+  <data name="Admin.Bookings.Pending" xml:space="preserve"><value>Beklemede</value></data>
+  <data name="Admin.Bookings.Provider" xml:space="preserve"><value>Sağlayıcı</value></data>
+  <data name="Admin.Bookings.ProviderReference" xml:space="preserve"><value>Sağlayıcı referansı</value></data>
+  <data name="Admin.Bookings.Quantity" xml:space="preserve"><value>Adet</value></data>
+  <data name="Admin.Bookings.Reference" xml:space="preserve"><value>Referans</value></data>
+  <data name="Admin.Bookings.RefundStatus" xml:space="preserve"><value>İade durumu</value></data>
+  <data name="Admin.Bookings.Refunded" xml:space="preserve"><value>İade edildi</value></data>
+  <data name="Admin.Bookings.RefundsDisputesAreHandledInThe" xml:space="preserve"><value>İadeler ve itirazlar Stripe panelinde yönetilir — bu yalnızca okunur bir yansıma.</value></data>
+  <data name="Admin.Bookings.ViewFullPaymentRecord" xml:space="preserve"><value>Tam ödeme kaydını görüntüle →</value></data>
+  <data name="Admin.Cms.ATranslatedListReplacesTheWhole" xml:space="preserve"><value>. Çevrilmiş bir liste bu dil için İngilizce listenin tamamının yerine geçer; bu yüzden listedeki sonraki İngilizce değişiklikler burada da yapılmalıdır. Geçersiz JSON reddedilir.</value></data>
+  <data name="Admin.Cms.AddASection" xml:space="preserve"><value>Bölüm ekle</value></data>
+  <data name="Admin.Cms.Address" xml:space="preserve"><value>Adres</value></data>
+  <data name="Admin.Cms.AllPages" xml:space="preserve"><value>← Tüm sayfalar</value></data>
+  <data name="Admin.Cms.Blocks" xml:space="preserve"><value>Bloklar</value></data>
+  <data name="Admin.Cms.Body" xml:space="preserve"><value>Metin</value></data>
+  <data name="Admin.Cms.ButtonLabel" xml:space="preserve"><value>Düğme metni</value></data>
+  <data name="Admin.Cms.ButtonLink" xml:space="preserve"><value>Düğme bağlantısı</value></data>
+  <data name="Admin.Cms.CheckedBeforeSavingInvalidJSONIs" xml:space="preserve"><value>Kaydetmeden önce denetlenir — geçersiz JSON, bölümü boşaltmak yerine reddedilir.</value></data>
+  <data name="Admin.Cms.DefaultIsOnTheBlock" xml:space="preserve"><value>İngilizce, çeviri olarak değil yukarıdaki bölüm formunda düzenlenir.</value></data>
+  <data name="Admin.Cms.DeleteThisImageAnySectionStill" xml:space="preserve"><value>Bu görsel silinsin mi? Onu hâlâ kullanan bölümler bozuk görsel gösterir — bu panel hangi bölümlerin ona bağlandığını bilemez.</value></data>
+  <data name="Admin.Cms.EditIntro" xml:space="preserve"><value>Ana sayfadaki metinler. Aşağıdaki her bölüm sitede aynı sırayla yer alan bölümdür. Bir satırı kaldırmak için ilk alanını boş bırakın; her listenin sonundaki boş satır yeni satır eklemenin yoludur.</value></data>
+  <data name="Admin.Cms.EmptyThisLanguageShowsTheEnglish" xml:space="preserve"><value>Boş: bu dil aşağıdaki İngilizce listeyi gösterir ve her İngilizce değişikliği izler.</value></data>
+  <data name="Admin.Cms.EnglishIsTheSectionFormAbove" xml:space="preserve"><value>İngilizce yukarıdaki bölüm formudur — diğer her dilin alan alan izlediği asıl metin. Bir alanı boş bırakırsanız (ya da İngilizceyle aynı yazarsanız) İngilizcesini ve sonraki her İngilizce düzenlemeyi göstermeye devam eder. Doldurursanız o alan sizin çevirinizi gösterir.</value></data>
+  <data name="Admin.Cms.EnglishListForCopying" xml:space="preserve"><value>Kopyalamak için İngilizce liste</value></data>
+  <data name="Admin.Cms.ExtraJSON" xml:space="preserve"><value>Ek JSON</value></data>
+  <data name="Admin.Cms.Eyebrow" xml:space="preserve"><value>Üst başlık</value></data>
+  <data name="Admin.Cms.Field.author" xml:space="preserve"><value>Yazar</value></data>
+  <data name="Admin.Cms.Field.avatarUrl" xml:space="preserve"><value>Fotoğraf</value></data>
+  <data name="Admin.Cms.Field.description" xml:space="preserve"><value>Açıklama</value></data>
+  <data name="Admin.Cms.Field.imageAlt" xml:space="preserve"><value>Görsel açıklaması</value></data>
+  <data name="Admin.Cms.Field.imageUrl" xml:space="preserve"><value>Görsel</value></data>
+  <data name="Admin.Cms.Field.label" xml:space="preserve"><value>Etiket</value></data>
+  <data name="Admin.Cms.Field.linkLabel" xml:space="preserve"><value>Bağlantı metni</value></data>
+  <data name="Admin.Cms.Field.linkUrl" xml:space="preserve"><value>Bağlantı</value></data>
+  <data name="Admin.Cms.Field.name" xml:space="preserve"><value>Ad</value></data>
+  <data name="Admin.Cms.Field.quote" xml:space="preserve"><value>Alıntı</value></data>
+  <data name="Admin.Cms.Field.role" xml:space="preserve"><value>Unvan</value></data>
+  <data name="Admin.Cms.Field.title" xml:space="preserve"><value>Başlık</value></data>
+  <data name="Admin.Cms.Field.value" xml:space="preserve"><value>Değer</value></data>
+  <data name="Admin.Cms.FollowsEnglish" xml:space="preserve"><value>İngilizceyi izler</value></data>
+  <data name="Admin.Cms.Heading" xml:space="preserve"><value>Başlık</value></data>
+  <data name="Admin.Cms.HeroSlides" xml:space="preserve"><value>Hero slaytları</value></data>
+  <data name="Admin.Cms.HeroSlidesAreActiveSoThis" xml:space="preserve"><value>Hero slaytları etkin olduğundan bu yedek sitede gösterilmiyor. Ziyaretçilerin gördüğünü şuradan düzenleyin:</value></data>
+  <data name="Admin.Cms.Image" xml:space="preserve"><value>Görsel</value></data>
+  <data name="Admin.Cms.Images" xml:space="preserve"><value>Görseller</value></data>
+  <data name="Admin.Cms.InvalidJson" xml:space="preserve"><value>Bu JSON okunamadı, bu yüzden hiçbir şey kaydedilmedi. Fazladan bir virgül ya da eksik bir tırnak olup olmadığını kontrol edin.</value></data>
+  <data name="Admin.Cms.KeepTheKeysAndTheOrder" xml:space="preserve"><value>anahtarları ve sırayı koruyun</value></data>
+  <data name="Admin.Cms.LabelOptional" xml:space="preserve"><value>Etiket (isteğe bağlı)</value></data>
+  <data name="Admin.Cms.LeaveEmptyToKeepTheEnglish" xml:space="preserve"><value>İngilizce listeyi korumak için boş bırakın. Çevirmek için aşağıdaki İngilizceyi kopyalayıp buraya yapıştırın ve yalnızca her iki noktanın sağındaki metni değiştirin —</value></data>
+  <data name="Admin.Cms.List" xml:space="preserve"><value>Liste</value></data>
+  <data name="Admin.Cms.ListContentJSON" xml:space="preserve"><value>Liste içeriği (JSON)</value></data>
+  <data name="Admin.Cms.Msg.ImageDeleted" xml:space="preserve"><value>Görsel silindi. Hâlâ ona bağlanan her bölüm bozuk görsel gösterir.</value></data>
+  <data name="Admin.Cms.Msg.ImageGone" xml:space="preserve"><value>Bu görsel artık yok.</value></data>
+  <data name="Admin.Cms.Msg.ImagesOnly" xml:space="preserve"><value>İçerik görselleri fotoğraf ya da GIF olmalıdır — JPEG, PNG, WebP, AVIF veya GIF.</value></data>
+  <data name="Admin.Cms.Msg.SectionAdded" xml:space="preserve"><value>“{0}” eklendi.</value></data>
+  <data name="Admin.Cms.Msg.SectionRemoved" xml:space="preserve"><value>Bölüm kaldırıldı.</value></data>
+  <data name="Admin.Cms.Msg.SectionSaved" xml:space="preserve"><value>{0} kaydedildi. Şu anda ana sayfada yayında.</value></data>
+  <data name="Admin.Cms.Msg.TranslationReset" xml:space="preserve"><value>{0} sıfırlandı — bu bölüm artık sonraki her İngilizce düzenleme dahil İngilizceyi gösteriyor.</value></data>
+  <data name="Admin.Cms.Msg.TranslationSaved" xml:space="preserve"><value>{0} kaydedildi. Boş bırakılan ya da İngilizceyle aynı olan alanlar İngilizceyi izlemeye devam eder.</value></data>
+  <data name="Admin.Cms.Msg.Uploaded" xml:space="preserve"><value>“{0}” yüklendi. Adresini bir bölümün görsel alanına kopyalayın.</value></data>
+  <data name="Admin.Cms.NoCMSPagesSeededYet" xml:space="preserve"><value>Henüz CMS sayfası oluşturulmadı.</value></data>
+  <data name="Admin.Cms.Page" xml:space="preserve"><value>Sayfa</value></data>
+  <data name="Admin.Cms.ParseError" xml:space="preserve"><value>Bu bölümün kayıtlı içeriği okunamadı ({0}). Aşağıdaki ham JSON'da düzeltin — yukarıdaki formu kaydetmek onun üzerine yazar.</value></data>
+  <data name="Admin.Cms.RemoveSection" xml:space="preserve"><value>Bölümü kaldır</value></data>
+  <data name="Admin.Cms.RemoveSectionConfirm" xml:space="preserve"><value>{0} bölümü kaldırılsın mı? Ana sayfa onu artık göstermez.</value></data>
+  <data name="Admin.Cms.Replaces" xml:space="preserve"><value>değiştirir: {0}</value></data>
+  <data name="Admin.Cms.ResetConfirm" xml:space="preserve"><value>{0} İngilizceye sıfırlansın mı? Çevrilmiş alanları ve listesi kaldırılır, yeniden İngilizceyi izler.</value></data>
+  <data name="Admin.Cms.ResetToEnglish" xml:space="preserve"><value>{0} İngilizceye sıfırla</value></data>
+  <data name="Admin.Cms.Row.Card.New" xml:space="preserve"><value>Yeni kart…</value></data>
+  <data name="Admin.Cms.Row.Card.Plural" xml:space="preserve"><value>Kartlar</value></data>
+  <data name="Admin.Cms.Row.Card.RemoveHint" xml:space="preserve"><value>Bu kartı kaldırmak için {1} alanındaki “{0}” metnini silin.</value></data>
+  <data name="Admin.Cms.Row.Company.New" xml:space="preserve"><value>Yeni şirket…</value></data>
+  <data name="Admin.Cms.Row.Company.Plural" xml:space="preserve"><value>Şirketler</value></data>
+  <data name="Admin.Cms.Row.Company.RemoveHint" xml:space="preserve"><value>Bu şirketi kaldırmak için {1} alanındaki “{0}” metnini silin.</value></data>
+  <data name="Admin.Cms.Row.Feature.New" xml:space="preserve"><value>Yeni özellik…</value></data>
+  <data name="Admin.Cms.Row.Feature.Plural" xml:space="preserve"><value>Özellikler</value></data>
+  <data name="Admin.Cms.Row.Feature.RemoveHint" xml:space="preserve"><value>Bu özelliği kaldırmak için {1} alanındaki “{0}” metnini silin.</value></data>
+  <data name="Admin.Cms.Row.Statistic.New" xml:space="preserve"><value>Yeni istatistik…</value></data>
+  <data name="Admin.Cms.Row.Statistic.Plural" xml:space="preserve"><value>İstatistikler</value></data>
+  <data name="Admin.Cms.Row.Statistic.RemoveHint" xml:space="preserve"><value>Bu istatistiği kaldırmak için {1} alanındaki “{0}” metnini silin.</value></data>
+  <data name="Admin.Cms.Row.Testimonial.New" xml:space="preserve"><value>Yeni yorum…</value></data>
+  <data name="Admin.Cms.Row.Testimonial.Plural" xml:space="preserve"><value>Yorumlar</value></data>
+  <data name="Admin.Cms.Row.Testimonial.RemoveHint" xml:space="preserve"><value>Bu yorumu kaldırmak için {1} alanındaki “{0}” metnini silin.</value></data>
+  <data name="Admin.Cms.Section.ecosystem.Description" xml:space="preserve"><value>Dört kart: House'un inzivaların ötesinde ne olduğu.</value></data>
+  <data name="Admin.Cms.Section.ecosystem.Title" xml:space="preserve"><value>Ekosistem</value></data>
+  <data name="Admin.Cms.Section.feature-strip.Description" xml:space="preserve"><value>Filtre çubuğunun altındaki kısa değer cümleleri sırası. Başlığı yalnızca ekran okuyucular okur; ziyaretçilerin gördüğü satırlardır.</value></data>
+  <data name="Admin.Cms.Section.feature-strip.Title" xml:space="preserve"><value>Özellik şeridi</value></data>
+  <data name="Admin.Cms.Section.hero.Description" xml:space="preserve"><value>Yalnızca hero slaytı olmadığında gösterilir. Karuseli Hero slaytları bölümünden yönetin.</value></data>
+  <data name="Admin.Cms.Section.hero.Title" xml:space="preserve"><value>Hero (yedek)</value></data>
+  <data name="Admin.Cms.Section.stats.Description" xml:space="preserve"><value>Sayaçlar. Yalnızca gerçek sayılar.</value></data>
+  <data name="Admin.Cms.Section.stats.Title" xml:space="preserve"><value>İstatistikler</value></data>
+  <data name="Admin.Cms.Section.trust-logos.Description" xml:space="preserve"><value>Yorumların yanında kayan şirket adları şeridi.</value></data>
+  <data name="Admin.Cms.Section.trust-logos.Title" xml:space="preserve"><value>Güvenenler</value></data>
+  <data name="Admin.Cms.Section.trust.Description" xml:space="preserve"><value>Kapanış bölümü: üyelerin söyledikleri.</value></data>
+  <data name="Admin.Cms.Section.trust.Title" xml:space="preserve"><value>Güven</value></data>
+  <data name="Admin.Cms.SectionsTheHomepageCanRenderThat" xml:space="preserve"><value>Ana sayfanın gösterebildiği ama bu sayfada henüz olmayan bölümler.</value></data>
+  <data name="Admin.Cms.ShowsTheEnglish" xml:space="preserve"><value>İngilizcesini gösterir</value></data>
+  <data name="Admin.Cms.Slug" xml:space="preserve"><value>Kısa ad</value></data>
+  <data name="Admin.Cms.SoItIsEditedAsRaw" xml:space="preserve"><value>, bu yüzden aşağıda ham JSON olarak düzenlenir.</value></data>
+  <data name="Admin.Cms.StoredJSON" xml:space="preserve"><value>Kayıtlı JSON</value></data>
+  <data name="Admin.Cms.Subheading" xml:space="preserve"><value>Alt başlık</value></data>
+  <data name="Admin.Cms.TheLinkItselfIsNotTranslated" xml:space="preserve"><value>Bağlantının kendisi çevrilmez — URL bir yoldur, cümle değil.</value></data>
+  <data name="Admin.Cms.ThisPanelHasNoFormFor" xml:space="preserve"><value>Bu panelde şunun için form yok:</value></data>
+  <data name="Admin.Cms.UnknownCulture" xml:space="preserve"><value>Bu site o dili desteklemiyor.</value></data>
+  <data name="Admin.Cms.UploadOnceThenPasteTheAddress" xml:space="preserve"><value>Bir kez yükleyin, sonra adresi herhangi bir bölümün görsel alanına yapıştırın. Sitenin statik dosyaları dışında saklanır; bu yüzden buraya eklenen görsel hem canlıda hem yerelde çalışır.</value></data>
+  <data name="Admin.Cms.ViewThePage" xml:space="preserve"><value>Sayfayı görüntüle</value></data>
+  <data name="Admin.Common.Active" xml:space="preserve"><value>Aktif</value></data>
+  <data name="Admin.Common.Add" xml:space="preserve"><value>Ekle</value></data>
+  <data name="Admin.Common.Amount" xml:space="preserve"><value>Tutar</value></data>
+  <data name="Admin.Common.Cancel" xml:space="preserve"><value>İptal</value></data>
+  <data name="Admin.Common.Country" xml:space="preserve"><value>Ülke</value></data>
+  <data name="Admin.Common.Created" xml:space="preserve"><value>Oluşturuldu</value></data>
+  <data name="Admin.Common.Currency" xml:space="preserve"><value>Para birimi</value></data>
+  <data name="Admin.Common.Date" xml:space="preserve"><value>Tarih</value></data>
+  <data name="Admin.Common.Delete" xml:space="preserve"><value>Sil</value></data>
+  <data name="Admin.Common.Description" xml:space="preserve"><value>Açıklama</value></data>
+  <data name="Admin.Common.Details" xml:space="preserve"><value>Ayrıntılar</value></data>
+  <data name="Admin.Common.Edit" xml:space="preserve"><value>Düzenle</value></data>
+  <data name="Admin.Common.EditTitle" xml:space="preserve"><value>Düzenle — {0}</value></data>
+  <data name="Admin.Common.Email" xml:space="preserve"><value>E-posta</value></data>
+  <data name="Admin.Common.Filter" xml:space="preserve"><value>Filtrele</value></data>
+  <data name="Admin.Common.Language" xml:space="preserve"><value>Dil</value></data>
+  <data name="Admin.Common.Name" xml:space="preserve"><value>Ad</value></data>
+  <data name="Admin.Common.No" xml:space="preserve"><value>Hayır</value></data>
+  <data name="Admin.Common.Open" xml:space="preserve"><value>Aç</value></data>
+  <data name="Admin.Common.PageOf" xml:space="preserve"><value>Sayfa {0} / {1}</value></data>
+  <data name="Admin.Common.Phone" xml:space="preserve"><value>Telefon</value></data>
+  <data name="Admin.Common.Price" xml:space="preserve"><value>Fiyat</value></data>
+  <data name="Admin.Common.Published" xml:space="preserve"><value>Yayında</value></data>
+  <data name="Admin.Common.Remove" xml:space="preserve"><value>Kaldır</value></data>
+  <data name="Admin.Common.Save" xml:space="preserve"><value>Kaydet</value></data>
+  <data name="Admin.Common.SaveNamed" xml:space="preserve"><value>{0} kaydet</value></data>
+  <data name="Admin.Common.Search" xml:space="preserve"><value>Ara</value></data>
+  <data name="Admin.Common.Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Admin.Common.Title" xml:space="preserve"><value>Başlık</value></data>
+  <data name="Admin.Common.Type" xml:space="preserve"><value>Tür</value></data>
+  <data name="Admin.Common.Updated" xml:space="preserve"><value>Güncellendi</value></data>
+  <data name="Admin.Common.Upload" xml:space="preserve"><value>Yükle</value></data>
+  <data name="Admin.Common.View" xml:space="preserve"><value>Görüntüle</value></data>
+  <data name="Admin.Common.Yes" xml:space="preserve"><value>Evet</value></data>
+  <data name="Admin.Community.Any" xml:space="preserve"><value>— herhangi —</value></data>
+  <data name="Admin.Community.DeleteConfirm" xml:space="preserve"><value>“{0}” silinsin mi? Üyeler erişimini hemen kaybeder.</value></data>
+  <data name="Admin.Community.Hidden" xml:space="preserve"><value>Gizli</value></data>
+  <data name="Admin.Community.Kind" xml:space="preserve"><value>Tür</value></data>
+  <data name="Admin.Community.Label" xml:space="preserve"><value>Etiket</value></data>
+  <data name="Admin.Community.LeaveAllThreeBlankForEvery" xml:space="preserve"><value>Planı topluluğu içeren her üye için üçünü de boş bırakın. Bağlantıyı bir plana, bir deneyime (bilet sahipleri) ya da bir oturuma (katılımcılar) bağlamak için birini seçin.</value></data>
+  <data name="Admin.Community.Msg.Deleted" xml:space="preserve"><value>Bağlantı silindi.</value></data>
+  <data name="Admin.Community.Msg.Gone" xml:space="preserve"><value>Bu bağlantı artık yok.</value></data>
+  <data name="Admin.Community.NewLink" xml:space="preserve"><value>+ Yeni bağlantı</value></data>
+  <data name="Admin.Community.NoCommunityLinksYetAddThe" xml:space="preserve"><value>Henüz topluluk bağlantısı yok. Başlamak için Discord davetini ekleyin.</value></data>
+  <data name="Admin.Community.OneLineExplainingWhatThisChannel" xml:space="preserve"><value>Bu kanalın ne için olduğunu anlatan tek satır.</value></data>
+  <data name="Admin.Community.Order" xml:space="preserve"><value>Sıra</value></data>
+  <data name="Admin.Community.ShownToMembersWithAnActive" xml:space="preserve"><value>Yalnızca aktif üyeliği olan üyelere gösterilir — bilet sahipleri bunları asla görmez. İptal edilmiş bir daveti kaydını kaybetmeden kaldırmak için “görünür” işaretini kaldırın.</value></data>
+  <data name="Admin.Community.Visible" xml:space="preserve"><value>Görünür</value></data>
+  <data name="Admin.Community.VisibleToMembers" xml:space="preserve"><value>Üyelere görünür</value></data>
+  <data name="Admin.Community.WhenTheDiscordBotIsConfigured" xml:space="preserve"><value>Discord botu yapılandırıldığında üyeler yukarıdaki URL yerine bu kanala tek kullanımlık yeni bir davet alır (URL o zaman yalnızca yedek olur). Kimliğini kopyalamak için geliştirici modu açıkken Discord'da kanala sağ tıklayın.</value></data>
+  <data name="Admin.Community.WhoSeesIt" xml:space="preserve"><value>Kimler görür</value></data>
+  <data name="Admin.Confirm.Cancel" xml:space="preserve"><value>Vazgeç</value></data>
+  <data name="Admin.Confirm.Ok" xml:space="preserve"><value>Evet, devam et</value></data>
+  <data name="Admin.Confirm.Title" xml:space="preserve"><value>Emin misiniz?</value></data>
+  <data name="Admin.Dashboard.AcrossEveryExperience" xml:space="preserve"><value>Tüm deneyimler genelinde.</value></data>
+  <data name="Admin.Dashboard.AmountAcross" xml:space="preserve"><value>{1} ödemede toplam {0}</value></data>
+  <data name="Admin.Dashboard.ApplicationFunnel" xml:space="preserve"><value>Başvuru hunisi</value></data>
+  <data name="Admin.Dashboard.ApplicationFunnel79" xml:space="preserve"><value>Başvuru hunisi</value></data>
+  <data name="Admin.Dashboard.ApplicationToPaidConversion" xml:space="preserve"><value>Başvurudan ödemeye dönüşüm</value></data>
+  <data name="Admin.Dashboard.ApplicationsAwaitingReview" xml:space="preserve"><value>İnceleme bekleyen başvurular</value></data>
+  <data name="Admin.Dashboard.ApplicationsInMotion" xml:space="preserve"><value>Süreçteki başvurular</value></data>
+  <data name="Admin.Dashboard.ApprovedSoFar" xml:space="preserve"><value>Şimdiye kadar {0} onaylandı</value></data>
+  <data name="Admin.Dashboard.BookingStatesAreSpacedOutFor" xml:space="preserve"><value>Rezervasyon durumları operasyon ve destek sırasında hızlı tarama için ayrı gösterilir.</value></data>
+  <data name="Admin.Dashboard.BookingsByStatus" xml:space="preserve"><value>Duruma göre rezervasyonlar</value></data>
+  <data name="Admin.Dashboard.BookingsByStatus74" xml:space="preserve"><value>Duruma göre rezervasyonlar</value></data>
+  <data name="Admin.Dashboard.CancelledOrExpired" xml:space="preserve"><value>{0} iptal edildi ya da süresi doldu</value></data>
+  <data name="Admin.Dashboard.Collected" xml:space="preserve"><value>Tahsil edilen</value></data>
+  <data name="Admin.Dashboard.ColorCodedStagesMakeItEasy" xml:space="preserve"><value>Renk kodlu aşamalar başvuruların nerede yavaşladığını kolayca gösterir.</value></data>
+  <data name="Admin.Dashboard.ConfirmedBookings" xml:space="preserve"><value>Onaylı rezervasyonlar</value></data>
+  <data name="Admin.Dashboard.ConfirmedCount" xml:space="preserve"><value>{0} onaylı</value></data>
+  <data name="Admin.Dashboard.Count" xml:space="preserve"><value>Sayı</value></data>
+  <data name="Admin.Dashboard.CurrentMembers" xml:space="preserve"><value>Mevcut üyeler</value></data>
+  <data name="Admin.Dashboard.DisputedCount" xml:space="preserve"><value>{0} itirazlı</value></data>
+  <data name="Admin.Dashboard.EveryKeyWorkflowIsSurfacedAs" xml:space="preserve"><value>Her önemli iş akışı bir kart, grafik veya durum özeti olarak gösterilir; böylece teknik olmayan kişiler de neyin ilgi beklediğini hemen görür.</value></data>
+  <data name="Admin.Dashboard.EveryPaymentSInternalState" xml:space="preserve"><value>Her ödemenin iç durumu.</value></data>
+  <data name="Admin.Dashboard.ExperienceSessionAndMembershipPaymentsTogether" xml:space="preserve"><value>Deneyim, oturum ve üyelik ödemeleri bir arada.</value></data>
+  <data name="Admin.Dashboard.ExperienceSessionAndMembershipPaymentsWill" xml:space="preserve"><value>Para tahsil edildiğinde deneyim, oturum ve üyelik ödemeleri burada ayrıntılı gösterilir.</value></data>
+  <data name="Admin.Dashboard.FailedPayments" xml:space="preserve"><value>Başarısız ödemeler</value></data>
+  <data name="Admin.Dashboard.GiveYourTeamOneClearPlace" xml:space="preserve"><value>Ekibinize onayları, rezervasyonları, geliri ve yayınları izleyebileceği tek ve net bir yer.</value></data>
+  <data name="Admin.Dashboard.InFlightIn" xml:space="preserve"><value>Süreçte ({0})</value></data>
+  <data name="Admin.Dashboard.InFlightSplit" xml:space="preserve"><value>{0} beklemede · {1} işleniyor ya da işlem bekliyor</value></data>
+  <data name="Admin.Dashboard.MembershipSales" xml:space="preserve"><value>Üyelik satışları</value></data>
+  <data name="Admin.Dashboard.MoneyByState" xml:space="preserve"><value>Duruma göre para</value></data>
+  <data name="Admin.Dashboard.MoneyByType" xml:space="preserve"><value>Türe göre para</value></data>
+  <data name="Admin.Dashboard.NeedsAttentionNow" xml:space="preserve"><value>Şimdi ilgi bekliyor</value></data>
+  <data name="Admin.Dashboard.Net" xml:space="preserve"><value>Net</value></data>
+  <data name="Admin.Dashboard.NoApplicationsYet" xml:space="preserve"><value>Henüz başvuru yok.</value></data>
+  <data name="Admin.Dashboard.NoBookingsYet" xml:space="preserve"><value>Henüz rezervasyon yok.</value></data>
+  <data name="Admin.Dashboard.NoBookingsYet47" xml:space="preserve"><value>Henüz rezervasyon yok</value></data>
+  <data name="Admin.Dashboard.NoOpenDisputes" xml:space="preserve"><value>Açık itiraz yok</value></data>
+  <data name="Admin.Dashboard.NoPaymentsCollectedYet" xml:space="preserve"><value>Henüz tahsil edilen ödeme yok.</value></data>
+  <data name="Admin.Dashboard.NoPaymentsYet" xml:space="preserve"><value>Henüz ödeme yok.</value></data>
+  <data name="Admin.Dashboard.NoSettledPaymentsYet" xml:space="preserve"><value>Henüz tamamlanmış ödeme yok</value></data>
+  <data name="Admin.Dashboard.OfTotal" xml:space="preserve"><value>Toplamın %'si</value></data>
+  <data name="Admin.Dashboard.OnceBookingsStartComingInThis" xml:space="preserve"><value>Rezervasyonlar gelmeye başladığında bu panel kaçının beklemede, onaylı ya da kapalı olduğunu özetler.</value></data>
+  <data name="Admin.Dashboard.OpenTheFullList" xml:space="preserve"><value>Tam listeyi açın</value></data>
+  <data name="Admin.Dashboard.OperationsStatus" xml:space="preserve"><value>Operasyon durumu</value></data>
+  <data name="Admin.Dashboard.Payments" xml:space="preserve"><value>Ödemeler</value></data>
+  <data name="Admin.Dashboard.PaymentsByStatus" xml:space="preserve"><value>Duruma göre ödemeler</value></data>
+  <data name="Admin.Dashboard.PaymentsByStatus13" xml:space="preserve"><value>Duruma göre ödemeler</value></data>
+  <data name="Admin.Dashboard.PaymentsByTypeAndCurrency" xml:space="preserve"><value>Tür ve para birimine göre ödemeler</value></data>
+  <data name="Admin.Dashboard.PaymentsInFlight" xml:space="preserve"><value>Süren ödemeler</value></data>
+  <data name="Admin.Dashboard.PipelineHealth" xml:space="preserve"><value>Süreç sağlığı</value></data>
+  <data name="Admin.Dashboard.Refunded" xml:space="preserve"><value>İade edildi</value></data>
+  <data name="Admin.Dashboard.RefundedAmount" xml:space="preserve"><value>{0} iade edildi</value></data>
+  <data name="Admin.Dashboard.Refunds" xml:space="preserve"><value>İadeler</value></data>
+  <data name="Admin.Dashboard.RenewalsCollected" xml:space="preserve"><value>Tahsil edilen yenilemeler: {0}</value></data>
+  <data name="Admin.Dashboard.RevenueCollected" xml:space="preserve"><value>Tahsil edilen gelir</value></data>
+  <data name="Admin.Dashboard.RevenueCollectedIn" xml:space="preserve"><value>Tahsil edilen gelir ({0})</value></data>
+  <data name="Admin.Dashboard.SettledPayments" xml:space="preserve"><value>Tamamlanan ödemeler: {0}</value></data>
+  <data name="Admin.Dashboard.SettledPaymentsOnlyNetOfRefunds" xml:space="preserve"><value>Yalnızca tamamlanmış ödemeler, iadeler düşülmüş. Her para birimi ayrı gösterilir.</value></data>
+  <data name="Admin.Dashboard.ToDrillIntoAnyOfThem" xml:space="preserve"><value>ve herhangi birinin ayrıntısına inin.</value></data>
+  <data name="Admin.Dashboard.TodayAtAGlance" xml:space="preserve"><value>Bugün bir bakışta</value></data>
+  <data name="Admin.Dashboard.TotalApplications" xml:space="preserve"><value>Toplam başvuru</value></data>
+  <data name="Admin.Dashboard.TotalBookings" xml:space="preserve"><value>Toplam rezervasyon</value></data>
+  <data name="Admin.Dashboard.WaitlistedCount" xml:space="preserve"><value>{0} bekleme listesinde</value></data>
+  <data name="Admin.Dashboard.WhereEveryApplicationCurrentlySits" xml:space="preserve"><value>Her başvurunun şu an bulunduğu yer.</value></data>
+  <data name="Admin.Editor.Heading" xml:space="preserve"><value>Başlık</value></data>
+  <data name="Admin.Editor.MinorHeading" xml:space="preserve"><value>Küçük başlık</value></data>
+  <data name="Admin.Editor.Paragraph" xml:space="preserve"><value>Paragraf</value></data>
+  <data name="Admin.Editor.Subheading" xml:space="preserve"><value>Alt başlık</value></data>
+  <data name="Admin.Emails.All" xml:space="preserve"><value>Tümü</value></data>
+  <data name="Admin.Emails.Failed" xml:space="preserve"><value>Başarısız</value></data>
+  <data name="Admin.Emails.FailedEmails" xml:space="preserve"><value>Gönderilemeyen e-postalar: {0}.</value></data>
+  <data name="Admin.Emails.FailedSms" xml:space="preserve"><value>Gönderilemeyen kısa mesajlar: {0}.</value></data>
+  <data name="Admin.Emails.Intro" xml:space="preserve"><value>Sistemin göndermeye çalıştığı her işlem mesajı — onaylar, ödeme bağlantıları, rezervasyon onayları. Yalnızca alıcı ve konu; mesajın kendisi burada asla gösterilmez. Başarısız bir mesaj yeniden gönderilebilir: kayıtlı kopya yeni bir satır olarak tekrar gider ve hata “yeniden gönderildi” olarak kayıtta kalır.</value></data>
+  <data name="Admin.Emails.Message" xml:space="preserve"><value>Mesaj</value></data>
+  <data name="Admin.Emails.Newer" xml:space="preserve"><value>← Daha yeni</value></data>
+  <data name="Admin.Emails.NoEmails" xml:space="preserve"><value>Kayıtlı e-posta yok.</value></data>
+  <data name="Admin.Emails.NoEmailsWithStatus" xml:space="preserve"><value>“{0}” durumunda kayıtlı e-posta yok.</value></data>
+  <data name="Admin.Emails.NoSms" xml:space="preserve"><value>Kayıtlı kısa mesaj yok.</value></data>
+  <data name="Admin.Emails.NoSmsWithStatus" xml:space="preserve"><value>“{0}” durumunda kayıtlı kısa mesaj yok.</value></data>
+  <data name="Admin.Emails.Older" xml:space="preserve"><value>Daha eski →</value></data>
+  <data name="Admin.Emails.OpenRecord" xml:space="preserve"><value>Kaydı aç</value></data>
+  <data name="Admin.Emails.OtherFailedEmail" xml:space="preserve"><value>E-posta tarafında hatalar: {0}.</value></data>
+  <data name="Admin.Emails.OtherFailedSms" xml:space="preserve"><value>Kısa mesaj tarafında hatalar: {0}.</value></data>
+  <data name="Admin.Emails.PageOfEmails" xml:space="preserve"><value>Sayfa {0} / {1} · {2} e-posta</value></data>
+  <data name="Admin.Emails.PageOfSms" xml:space="preserve"><value>Sayfa {0} / {1} · {2} kısa mesaj</value></data>
+  <data name="Admin.Emails.Queued" xml:space="preserve"><value>Kuyrukta</value></data>
+  <data name="Admin.Emails.Resend" xml:space="preserve"><value>Yeniden gönder</value></data>
+  <data name="Admin.Emails.Resent" xml:space="preserve"><value>Yeniden gönderildi</value></data>
+  <data name="Admin.Emails.Sent" xml:space="preserve"><value>Gönderildi</value></data>
+  <data name="Admin.Emails.ShowThem" xml:space="preserve"><value>Göster</value></data>
+  <data name="Admin.Emails.SmsNotConfigured" xml:space="preserve"><value>SMS ağ geçidi yapılandırılmadığı için kısa mesaj gönderilmiyor — ödeme bağlantıları yalnızca e-postayla gider. {0} ve bir uç nokta ile açın; kimlik bilgileri user-secrets'a ya da {1} / {2} ortam değişkenlerine konur.</value></data>
+  <data name="Admin.Emails.Subject" xml:space="preserve"><value>Konu</value></data>
+  <data name="Admin.Emails.Template" xml:space="preserve"><value>Şablon</value></data>
+  <data name="Admin.Emails.TextMessages" xml:space="preserve"><value>Kısa mesajlar</value></data>
+  <data name="Admin.Emails.To" xml:space="preserve"><value>Alıcı</value></data>
+  <data name="Admin.Emails.When" xml:space="preserve"><value>Ne zaman</value></data>
+  <data name="Admin.Enum.AmbassadorStatus.Active" xml:space="preserve"><value>Etkin</value></data>
+  <data name="Admin.Enum.AmbassadorStatus.Inactive" xml:space="preserve"><value>Etkin değil</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Approved" xml:space="preserve"><value>Onaylandı</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Draft" xml:space="preserve"><value>Taslak</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Paid" xml:space="preserve"><value>Ödendi</value></data>
+  <data name="Admin.Enum.ApplicationStatus.PaymentPending" xml:space="preserve"><value>Ödeme bekleniyor</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Rejected" xml:space="preserve"><value>Reddedildi</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Shortlisted" xml:space="preserve"><value>Kısa listede</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Submitted" xml:space="preserve"><value>Gönderildi</value></data>
+  <data name="Admin.Enum.ApplicationStatus.UnderReview" xml:space="preserve"><value>İncelemede</value></data>
+  <data name="Admin.Enum.ApplicationStatus.Waitlisted" xml:space="preserve"><value>Bekleme listesinde</value></data>
+  <data name="Admin.Enum.BookingStatus.Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Admin.Enum.BookingStatus.Confirmed" xml:space="preserve"><value>Onaylandı</value></data>
+  <data name="Admin.Enum.BookingStatus.Pending" xml:space="preserve"><value>Beklemede</value></data>
+  <data name="Admin.Enum.BookingStatus.Refunded" xml:space="preserve"><value>İade edildi</value></data>
+  <data name="Admin.Enum.CommunityLinkKind.Broadcast" xml:space="preserve"><value>Duyuru kanalı</value></data>
+  <data name="Admin.Enum.CommunityLinkKind.Call" xml:space="preserve"><value>Görüşme</value></data>
+  <data name="Admin.Enum.CommunityLinkKind.Discord" xml:space="preserve"><value>Discord</value></data>
+  <data name="Admin.Enum.CommunityLinkKind.Resource" xml:space="preserve"><value>Kaynak</value></data>
+  <data name="Admin.Enum.EmailStatus.Failed" xml:space="preserve"><value>Başarısız</value></data>
+  <data name="Admin.Enum.EmailStatus.Queued" xml:space="preserve"><value>Kuyrukta</value></data>
+  <data name="Admin.Enum.EmailStatus.Sent" xml:space="preserve"><value>Gönderildi</value></data>
+  <data name="Admin.Enum.ExperienceAttendanceMode.Both" xml:space="preserve"><value>Yüz yüze ve çevrimiçi</value></data>
+  <data name="Admin.Enum.ExperienceAttendanceMode.InPerson" xml:space="preserve"><value>Yüz yüze</value></data>
+  <data name="Admin.Enum.ExperienceAttendanceMode.Online" xml:space="preserve"><value>Çevrimiçi</value></data>
+  <data name="Admin.Enum.ExperienceStatus.AlmostFull" xml:space="preserve"><value>Neredeyse dolu</value></data>
+  <data name="Admin.Enum.ExperienceStatus.ApplicationsClosed" xml:space="preserve"><value>Başvurular kapandı</value></data>
+  <data name="Admin.Enum.ExperienceStatus.ApplicationsOpen" xml:space="preserve"><value>Başvurular açık</value></data>
+  <data name="Admin.Enum.ExperienceStatus.ComingSoon" xml:space="preserve"><value>Yakında</value></data>
+  <data name="Admin.Enum.ExperienceStatus.Completed" xml:space="preserve"><value>Tamamlandı</value></data>
+  <data name="Admin.Enum.ExperienceStatus.Draft" xml:space="preserve"><value>Taslak</value></data>
+  <data name="Admin.Enum.ExperienceStatus.Waitlist" xml:space="preserve"><value>Bekleme listesi</value></data>
+  <data name="Admin.Enum.ExperienceVisibility.InviteOnly" xml:space="preserve"><value>Yalnızca davetle</value></data>
+  <data name="Admin.Enum.ExperienceVisibility.Members" xml:space="preserve"><value>Yalnızca üyeler</value></data>
+  <data name="Admin.Enum.ExperienceVisibility.Public" xml:space="preserve"><value>Herkese açık</value></data>
+  <data name="Admin.Enum.ExperienceVisibility.Unlisted" xml:space="preserve"><value>Listelenmemiş</value></data>
+  <data name="Admin.Enum.MembershipBillingPeriod.Annual" xml:space="preserve"><value>Yıllık</value></data>
+  <data name="Admin.Enum.MembershipBillingPeriod.Monthly" xml:space="preserve"><value>Aylık</value></data>
+  <data name="Admin.Enum.MembershipBillingPeriod.OneTime" xml:space="preserve"><value>Tek seferlik</value></data>
+  <data name="Admin.Enum.MembershipPlanStatus.Active" xml:space="preserve"><value>Etkin</value></data>
+  <data name="Admin.Enum.MembershipPlanStatus.Archived" xml:space="preserve"><value>Arşivlendi</value></data>
+  <data name="Admin.Enum.MembershipStatus.Active" xml:space="preserve"><value>Etkin</value></data>
+  <data name="Admin.Enum.MembershipStatus.Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Admin.Enum.MembershipStatus.Expired" xml:space="preserve"><value>Süresi doldu</value></data>
+  <data name="Admin.Enum.MembershipStatus.PastDue" xml:space="preserve"><value>Gecikmiş</value></data>
+  <data name="Admin.Enum.MembershipStatus.Trial" xml:space="preserve"><value>Deneme</value></data>
+  <data name="Admin.Enum.PaymentProviderType.Stripe" xml:space="preserve"><value>Stripe</value></data>
+  <data name="Admin.Enum.PaymentStatus.Authorized" xml:space="preserve"><value>Onay alındı</value></data>
+  <data name="Admin.Enum.PaymentStatus.Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Admin.Enum.PaymentStatus.Chargeback" xml:space="preserve"><value>Ters ibraz</value></data>
+  <data name="Admin.Enum.PaymentStatus.Created" xml:space="preserve"><value>Oluşturuldu</value></data>
+  <data name="Admin.Enum.PaymentStatus.Failed" xml:space="preserve"><value>Başarısız</value></data>
+  <data name="Admin.Enum.PaymentStatus.Paid" xml:space="preserve"><value>Ödendi</value></data>
+  <data name="Admin.Enum.PaymentStatus.PartiallyRefunded" xml:space="preserve"><value>Kısmen iade edildi</value></data>
+  <data name="Admin.Enum.PaymentStatus.Pending" xml:space="preserve"><value>Beklemede</value></data>
+  <data name="Admin.Enum.PaymentStatus.Refunded" xml:space="preserve"><value>İade edildi</value></data>
+  <data name="Admin.Enum.PaymentTransactionKind.Experience" xml:space="preserve"><value>Deneyim bileti</value></data>
+  <data name="Admin.Enum.PaymentTransactionKind.Membership" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Admin.Enum.PaymentTransactionKind.MembershipRenewal" xml:space="preserve"><value>Üyelik yenileme</value></data>
+  <data name="Admin.Enum.PaymentTransactionKind.Session" xml:space="preserve"><value>Oturum yeri</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Canceled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Expired" xml:space="preserve"><value>Süresi doldu</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Failed" xml:space="preserve"><value>Başarısız</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.PartiallyRefunded" xml:space="preserve"><value>Kısmen iade edildi</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Pending" xml:space="preserve"><value>Beklemede</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Processing" xml:space="preserve"><value>İşleniyor</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Refunded" xml:space="preserve"><value>İade edildi</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.RequiresAction" xml:space="preserve"><value>İşlem bekleniyor</value></data>
+  <data name="Admin.Enum.PaymentTransactionStatus.Succeeded" xml:space="preserve"><value>Başarılı</value></data>
+  <data name="Admin.Enum.PendingJoinStatus.Expired" xml:space="preserve"><value>Ödeme süresi doldu</value></data>
+  <data name="Admin.Enum.PendingJoinStatus.Paid" xml:space="preserve"><value>Ödendi — üye</value></data>
+  <data name="Admin.Enum.PendingJoinStatus.Pending" xml:space="preserve"><value>Henüz ödenmedi</value></data>
+  <data name="Admin.Enum.PendingJoinStatus.Superseded" xml:space="preserve"><value>Daha yeni bir formla değiştirildi</value></data>
+  <data name="Admin.Enum.PromoCodeType.Fixed" xml:space="preserve"><value>Sabit tutar</value></data>
+  <data name="Admin.Enum.PromoCodeType.Percentage" xml:space="preserve"><value>Yüzde</value></data>
+  <data name="Admin.Enum.PromoDuration.FirstPayment" xml:space="preserve"><value>Yalnızca ilk ödeme</value></data>
+  <data name="Admin.Enum.PromoDuration.Forever" xml:space="preserve"><value>Her yenileme</value></data>
+  <data name="Admin.Enum.PromoScope.Experiences" xml:space="preserve"><value>Deneyim biletleri</value></data>
+  <data name="Admin.Enum.PromoScope.Memberships" xml:space="preserve"><value>Üyelikler</value></data>
+  <data name="Admin.Enum.ReferralConversionKind.Application" xml:space="preserve"><value>Bir deneyime başvurdu</value></data>
+  <data name="Admin.Enum.ReferralConversionKind.Approved" xml:space="preserve"><value>Başvuru onaylandı</value></data>
+  <data name="Admin.Enum.ReferralConversionKind.MembershipPurchase" xml:space="preserve"><value>Üye oldu</value></data>
+  <data name="Admin.Enum.ReferralConversionKind.SessionPurchase" xml:space="preserve"><value>Bir oturumda yer aldı</value></data>
+  <data name="Admin.Enum.ReferralConversionKind.TicketPurchase" xml:space="preserve"><value>Bilet aldı</value></data>
+  <data name="Admin.Enum.ReferralTargetKind.Experience" xml:space="preserve"><value>Deneyim</value></data>
+  <data name="Admin.Enum.ReferralTargetKind.Session" xml:space="preserve"><value>Oturum</value></data>
+  <data name="Admin.Enum.ReferralTargetKind.Site" xml:space="preserve"><value>Site</value></data>
+  <data name="Admin.Enum.WebhookEventStatus.Failed" xml:space="preserve"><value>Başarısız</value></data>
+  <data name="Admin.Enum.WebhookEventStatus.Ignored" xml:space="preserve"><value>Yok sayıldı</value></data>
+  <data name="Admin.Enum.WebhookEventStatus.Processed" xml:space="preserve"><value>İşlendi</value></data>
+  <data name="Admin.Enum.WebhookEventStatus.Received" xml:space="preserve"><value>Alındı</value></data>
+  <data name="Admin.Experiences.ALongTableSetForA" xml:space="preserve"><value>Özel bir akşam yemeği için kurulmuş uzun bir masa</value></data>
+  <data name="Admin.Experiences.AYouTubeLiveOrPremiereEmbedded" xml:space="preserve"><value>Bir YouTube canlı yayını ya da galası. Başlangıçtan 15 dakika önce bilet sahibinin hesap sayfasına yerleştirilir.</value></data>
+  <data name="Admin.Experiences.AddDay" xml:space="preserve"><value>Gün ekle</value></data>
+  <data name="Admin.Experiences.AddSession" xml:space="preserve"><value>Oturum ekle</value></data>
+  <data name="Admin.Experiences.AllExperiences" xml:space="preserve"><value>Tüm deneyimler</value></data>
+  <data name="Admin.Experiences.Answer" xml:space="preserve"><value>Yanıt</value></data>
+  <data name="Admin.Experiences.ArrivalAndOpeningDinner" xml:space="preserve"><value>Varış ve açılış yemeği</value></data>
+  <data name="Admin.Experiences.BackToList" xml:space="preserve"><value>Listeye dön</value></data>
+  <data name="Admin.Experiences.Body" xml:space="preserve"><value>Metin</value></data>
+  <data name="Admin.Experiences.Caption" xml:space="preserve"><value>Altyazı</value></data>
+  <data name="Admin.Experiences.Copy" xml:space="preserve"><value>Metin</value></data>
+  <data name="Admin.Experiences.CoverImage" xml:space="preserve"><value>Kapak görseli</value></data>
+  <data name="Admin.Experiences.CoverImageDescription" xml:space="preserve"><value>Kapak görseli açıklaması</value></data>
+  <data name="Admin.Experiences.CreateExperience" xml:space="preserve"><value>Deneyim oluştur</value></data>
+  <data name="Admin.Experiences.CreateOneUnderMembershipPlansFirst" xml:space="preserve"><value>Önce Üyelik Planları altında bir tane oluşturun.</value></data>
+  <data name="Admin.Experiences.DateLabel" xml:space="preserve"><value>Tarih etiketi</value></data>
+  <data name="Admin.Experiences.DayN" xml:space="preserve"><value>{0}. gün</value></data>
+  <data name="Admin.Experiences.DayNumber" xml:space="preserve"><value>Gün numarası</value></data>
+  <data name="Admin.Experiences.Default" xml:space="preserve"><value>Varsayılan</value></data>
+  <data name="Admin.Experiences.DeleteThisExperience" xml:space="preserve"><value>Bu deneyim silinsin mi?</value></data>
+  <data name="Admin.Experiences.EventUpdate" xml:space="preserve"><value>Etkinlik güncellemesi</value></data>
+  <data name="Admin.Experiences.FAQ" xml:space="preserve"><value>SSS</value></data>
+  <data name="Admin.Experiences.FoundersOperatorsInvestors" xml:space="preserve"><value>Kurucular, Yöneticiler, Yatırımcılar</value></data>
+  <data name="Admin.Experiences.From" xml:space="preserve"><value>Başlangıç</value></data>
+  <data name="Admin.Experiences.Gallery" xml:space="preserve"><value>Galeri</value></data>
+  <data name="Admin.Experiences.GalleryHint" xml:space="preserve"><value>Deneyim sayfasında “Mekân” altındaki fotoğraflar. Açıklama ekran okuyucular tarafından okunur ve altyazı olarak gösterilir; bu yüzden bir cümle olarak yazın.</value></data>
+  <data name="Admin.Experiences.Included" xml:space="preserve"><value>Dahil</value></data>
+  <data name="Admin.Experiences.IncludedNotIncluded" xml:space="preserve"><value>Dahil / dahil değil</value></data>
+  <data name="Admin.Experiences.Inventory" xml:space="preserve"><value>Stok</value></data>
+  <data name="Admin.Experiences.Joined" xml:space="preserve"><value>Katıldı</value></data>
+  <data name="Admin.Experiences.Languages" xml:space="preserve"><value>Diller</value></data>
+  <data name="Admin.Experiences.Location" xml:space="preserve"><value>Konum</value></data>
+  <data name="Admin.Experiences.MaxPerOrder" xml:space="preserve"><value>Sipariş başına en fazla</value></data>
+  <data name="Admin.Experiences.MemberAccess" xml:space="preserve"><value>Üye erişimi</value></data>
+  <data name="Admin.Experiences.MembersOnATickedPlanJoin" xml:space="preserve"><value>İşaretli bir plandaki üyeler bu deneyime tek tıkla katılır — başvuru formu ve ödeme yok, çünkü üyelikleri bunu zaten karşılıyor. Diğer herkes her zamanki gibi başvurur. Hiçbir şey işaretlenmezse bu deneyim yalnızca başvuruyla olur; bu özellik gelmeden önce her deneyim böyle çalışıyordu.</value></data>
+  <data name="Admin.Experiences.MembersOnlySignedInMembersWith" xml:space="preserve"><value>Üyeler: yalnızca üyeliği olan oturum açmış üyeler görür. Yalnızca davetle ve Listelenmemiş, onu listelerden uzak tutar.</value></data>
+  <data name="Admin.Experiences.MoveEarlier" xml:space="preserve"><value>Öne al</value></data>
+  <data name="Admin.Experiences.MoveLater" xml:space="preserve"><value>Geriye al</value></data>
+  <data name="Admin.Experiences.Msg.CannotDelete" xml:space="preserve"><value>Silinemiyor — bu deneyimin zaten başvuruları ya da rezervasyonları var.</value></data>
+  <data name="Admin.Experiences.Msg.Deleted" xml:space="preserve"><value>Deneyim silindi.</value></data>
+  <data name="Admin.Experiences.Msg.NoAttendees" xml:space="preserve"><value>Henüz bilgilendirilecek onaylı katılımcı yok.</value></data>
+  <data name="Admin.Experiences.Msg.Notified" xml:space="preserve"><value>Bilgilendirilen katılımcı: {0}.</value></data>
+  <data name="Admin.Experiences.Msg.TicketTypeInUse" xml:space="preserve"><value>Kaldırılamıyor — bu bilet türünün zaten rezervasyonları var.</value></data>
+  <data name="Admin.Experiences.NewExperience" xml:space="preserve"><value>+ Yeni deneyim</value></data>
+  <data name="Admin.Experiences.NewSchedule" xml:space="preserve"><value>Yeni program</value></data>
+  <data name="Admin.Experiences.NoCoverYet" xml:space="preserve"><value>Henüz kapak yok</value></data>
+  <data name="Admin.Experiences.NoExperiencesYet" xml:space="preserve"><value>Henüz deneyim yok.</value></data>
+  <data name="Admin.Experiences.NoMembershipPlansYet" xml:space="preserve"><value>Henüz üyelik planı yok</value></data>
+  <data name="Admin.Experiences.NoPhotographsYet" xml:space="preserve"><value>Henüz fotoğraf yok</value></data>
+  <data name="Admin.Experiences.NoTicketTypesYet" xml:space="preserve"><value>Henüz bilet türü yok</value></data>
+  <data name="Admin.Experiences.NobodyIsWaiting" xml:space="preserve"><value>Bekleyen kimse yok.</value></data>
+  <data name="Admin.Experiences.NotTranslated" xml:space="preserve"><value>Çevrilmedi</value></data>
+  <data name="Admin.Experiences.NothingWrittenIn" xml:space="preserve"><value>Henüz {0} dilinde bir şey yazılmadı; bu yüzden bu ziyaretçiler deneyimi İngilizce okur. Elinizde olanı doldurun — boş kalan her şey İngilizceye dönmeye devam eder.</value></data>
+  <data name="Admin.Experiences.NotifyAttendees" xml:space="preserve"><value>Katılımcıları bilgilendir</value></data>
+  <data name="Admin.Experiences.OnlineBothOnlyShownToConfirmed" xml:space="preserve"><value>Yalnızca çevrimiçi / ikisi de. Onaylı bilet sahiplerine hesap sayfalarında gösterilir — herkese açık sayfada asla.</value></data>
+  <data name="Admin.Experiences.OrAPathAlreadyOnThe" xml:space="preserve"><value>…ya da sitede zaten bulunan bir yol</value></data>
+  <data name="Admin.Experiences.Order" xml:space="preserve"><value>Sıra</value></data>
+  <data name="Admin.Experiences.PeopleWhoSignedUpWhileThis" xml:space="preserve"><value>Bu deneyim doluyken kayıt olan kişiler, geliş sırasına göre. Herkese açık kayıt formu yalnızca durum şu iken görünür:</value></data>
+  <data name="Admin.Experiences.PercentageOffEveryTicketForCurrent" xml:space="preserve"><value>Mevcut üyeler için her bilette yüzde indirim. 0 = üyeler tam fiyat öder. Kimin katılabileceğini burası değil, Görünürlük ve kabul edilen planlar belirler.</value></data>
+  <data name="Admin.Experiences.Perks" xml:space="preserve"><value>Ayrıcalıklar</value></data>
+  <data name="Admin.Experiences.PlacesLeft" xml:space="preserve"><value>Kalan yer: {0}. Stok yalnızca biletler satıldıkça ya da serbest bırakıldıkça değişir.</value></data>
+  <data name="Admin.Experiences.PositionsAreNotRenumberedWhenYou" xml:space="preserve"><value>. Birini çıkardığınızda sıralar yeniden numaralanmaz — geliş sırasını kaydederler.</value></data>
+  <data name="Admin.Experiences.PriceMinorUnits" xml:space="preserve"><value>Fiyat (en küçük birim)</value></data>
+  <data name="Admin.Experiences.Programme" xml:space="preserve"><value>Program</value></data>
+  <data name="Admin.Experiences.ProgrammeHint" xml:space="preserve"><value>{0} dilinde gün gün program. Saatler deneyimin kendi saat diliminde gösterilir ({1}).</value></data>
+  <data name="Admin.Experiences.Question" xml:space="preserve"><value>Soru</value></data>
+  <data name="Admin.Experiences.RemoveCopy" xml:space="preserve"><value>{0} metnini kaldır</value></data>
+  <data name="Admin.Experiences.RemoveCopyConfirm" xml:space="preserve"><value>{0} metni kaldırılsın mı? Sayfa bu ziyaretçiler için İngilizceye döner.</value></data>
+  <data name="Admin.Experiences.RemoveDayN" xml:space="preserve"><value>{0}. günü kaldır</value></data>
+  <data name="Admin.Experiences.RemoveTheUploadedCoverTheFile" xml:space="preserve"><value>Yüklenen kapak kaldırılsın mı? Dosya silinir.</value></data>
+  <data name="Admin.Experiences.RemoveThisDayAndAllOf" xml:space="preserve"><value>Bu gün ve tüm oturumları kaldırılsın mı?</value></data>
+  <data name="Admin.Experiences.RemoveThisPhotograph" xml:space="preserve"><value>Bu fotoğraf kaldırılsın mı?</value></data>
+  <data name="Admin.Experiences.RemoveThisTicketType" xml:space="preserve"><value>Bu bilet türü kaldırılsın mı?</value></data>
+  <data name="Admin.Experiences.RemoveUploadedCover" xml:space="preserve"><value>Yüklenen kapağı kaldır</value></data>
+  <data name="Admin.Experiences.RenderedAsTheChipsUnderWho" xml:space="preserve"><value>“Odada kimler var?” altındaki etiketler olarak gösterilir.</value></data>
+  <data name="Admin.Experiences.SEODescription" xml:space="preserve"><value>SEO açıklaması</value></data>
+  <data name="Admin.Experiences.SEOTitle" xml:space="preserve"><value>SEO başlığı</value></data>
+  <data name="Admin.Experiences.SaveChanges" xml:space="preserve"><value>Değişiklikleri kaydet</value></data>
+  <data name="Admin.Experiences.SaveMemberAccess" xml:space="preserve"><value>Üye erişimini kaydet</value></data>
+  <data name="Admin.Experiences.SaveTicketType" xml:space="preserve"><value>Bilet türünü kaydet</value></data>
+  <data name="Admin.Experiences.SendsAnInPortalNotificationTo" xml:space="preserve"><value>Bu deneyimde onaylı rezervasyonu olan herkese portal içi bildirim gönderir.</value></data>
+  <data name="Admin.Experiences.Session" xml:space="preserve"><value>Oturum</value></data>
+  <data name="Admin.Experiences.SetTheStatusToWaitlistAnd" xml:space="preserve"><value>Durumu Bekleme Listesi yapın, form herkese açık sayfada görünür.</value></data>
+  <data name="Admin.Experiences.ShortSummary" xml:space="preserve"><value>Kısa özet</value></data>
+  <data name="Admin.Experiences.ShownAtTheTopOfThe" xml:space="preserve"><value>Deneyim sayfasının üstünde ve kartında gösterilir. Yatay, en az 1600 px genişlikte.</value></data>
+  <data name="Admin.Experiences.Speaker" xml:space="preserve"><value>Konuşmacı</value></data>
+  <data name="Admin.Experiences.Starts" xml:space="preserve"><value>Başlangıç</value></data>
+  <data name="Admin.Experiences.Text" xml:space="preserve"><value>Metin</value></data>
+  <data name="Admin.Experiences.TheEnglishCopyLivesOnThe" xml:space="preserve"><value>İngilizce metin deneyimin kendisinde durur ve diğer her dil alan alan ona geri döner — Almanca özeti olmayan bir Almanca sayfa İngilizcesini gösterir.</value></data>
+  <data name="Admin.Experiences.Thursday17September" xml:space="preserve"><value>17 Eylül Perşembe</value></data>
+  <data name="Admin.Experiences.TicketTypes" xml:space="preserve"><value>Bilet türleri</value></data>
+  <data name="Admin.Experiences.Tickets" xml:space="preserve"><value>Biletler</value></data>
+  <data name="Admin.Experiences.To" xml:space="preserve"><value>Alıcı</value></data>
+  <data name="Admin.Experiences.UploadACover" xml:space="preserve"><value>Kapak yükle</value></data>
+  <data name="Admin.Experiences.UploadOneBelowOrTypeA" xml:space="preserve"><value>Aşağıdan bir tane yükleyin ya da Ayrıntılar'a bir yol yazın.</value></data>
+  <data name="Admin.Experiences.UsedWhenALinkToThis" xml:space="preserve"><value>Bu deneyimin bağlantısı bir sohbete ya da sosyal medya paylaşımına yapıştırıldığında kullanılır. Yoksa kapak kullanılır.</value></data>
+  <data name="Admin.Experiences.UsuallyLeaveThisEmptyTheHeading" xml:space="preserve"><value>Genellikle boş bırakın — kapağın altındaki başlık deneyimin adını zaten veriyor.</value></data>
+  <data name="Admin.Experiences.Venue" xml:space="preserve"><value>Mekân</value></data>
+  <data name="Admin.Experiences.ViewOnTheSite" xml:space="preserve"><value>Sitede görüntüle</value></data>
+  <data name="Admin.Experiences.Waitlist" xml:space="preserve"><value>Bekleme listesi</value></data>
+  <data name="Admin.Experiences.WhenBothAreAllowedWhoeverJoins" xml:space="preserve"><value>İkisine de izin verildiğinde katılan kişi seçer ve bu, rezervasyonuna kaydedilir.</value></data>
+  <data name="Admin.Experiences.WhoIsInTheRoomComma" xml:space="preserve"><value>Odada kimler var? (virgülle ayırın)</value></data>
+  <data name="Admin.Field.Active" xml:space="preserve"><value>Etkin</value></data>
+  <data name="Admin.Field.AllowSearchEnginesToIndexThis" xml:space="preserve"><value>Arama motorlarının bu siteyi dizine eklemesine izin ver</value></data>
+  <data name="Admin.Field.ApplicationCloses" xml:space="preserve"><value>Başvuru kapanışı</value></data>
+  <data name="Admin.Field.ApplicationOpens" xml:space="preserve"><value>Başvuru açılışı</value></data>
+  <data name="Admin.Field.AppliesTo" xml:space="preserve"><value>Geçerli olduğu yer</value></data>
+  <data name="Admin.Field.BingWebmasterToken" xml:space="preserve"><value>Bing Webmaster belirteci</value></data>
+  <data name="Admin.Field.CanonicalSiteAddress" xml:space="preserve"><value>Kanonik site adresi</value></data>
+  <data name="Admin.Field.City" xml:space="preserve"><value>Şehir</value></data>
+  <data name="Admin.Field.Code" xml:space="preserve"><value>Kod</value></data>
+  <data name="Admin.Field.ContactEmail" xml:space="preserve"><value>İletişim e-postası</value></data>
+  <data name="Admin.Field.ContactPhone" xml:space="preserve"><value>İletişim telefonu</value></data>
+  <data name="Admin.Field.CountryCode" xml:space="preserve"><value>Ülke kodu</value></data>
+  <data name="Admin.Field.CountryOptional" xml:space="preserve"><value>Ülke (isteğe bağlı)</value></data>
+  <data name="Admin.Field.CoverImageDescription" xml:space="preserve"><value>Kapak görseli açıklaması</value></data>
+  <data name="Admin.Field.CoverImageURL" xml:space="preserve"><value>Kapak görseli URL'si</value></data>
+  <data name="Admin.Field.Currency" xml:space="preserve"><value>Para birimi</value></data>
+  <data name="Admin.Field.DefaultDescription" xml:space="preserve"><value>Varsayılan açıklama</value></data>
+  <data name="Admin.Field.DefaultSocialImageURL" xml:space="preserve"><value>Varsayılan sosyal medya görseli URL'si</value></data>
+  <data name="Admin.Field.Description" xml:space="preserve"><value>Açıklama</value></data>
+  <data name="Admin.Field.DiscordChannelId" xml:space="preserve"><value>Discord kanal kimliği</value></data>
+  <data name="Admin.Field.EmailAddress" xml:space="preserve"><value>E-posta adresi</value></data>
+  <data name="Admin.Field.EndUTC" xml:space="preserve"><value>Bitiş (UTC)</value></data>
+  <data name="Admin.Field.Experience" xml:space="preserve"><value>Deneyim</value></data>
+  <data name="Admin.Field.ExpiresUTC" xml:space="preserve"><value>Bitiş (UTC)</value></data>
+  <data name="Admin.Field.ExtraRobotsTxtRules" xml:space="preserve"><value>Ek robots.txt kuralları</value></data>
+  <data name="Admin.Field.Facebook" xml:space="preserve"><value>Facebook</value></data>
+  <data name="Admin.Field.FeaturesOnePerLine" xml:space="preserve"><value>Özellikler (her satıra bir tane)</value></data>
+  <data name="Admin.Field.FirstName" xml:space="preserve"><value>Ad</value></data>
+  <data name="Admin.Field.FoundedYYYYOrYYYYMMDD" xml:space="preserve"><value>Kuruluş (YYYY ya da YYYY-AA-GG)</value></data>
+  <data name="Admin.Field.GoogleSearchConsoleToken" xml:space="preserve"><value>Google Search Console belirteci</value></data>
+  <data name="Admin.Field.HomepageTitle" xml:space="preserve"><value>Ana sayfa başlığı</value></data>
+  <data name="Admin.Field.HowCanItBeAttended" xml:space="preserve"><value>Nasıl katılınabilir?</value></data>
+  <data name="Admin.Field.IncludedUncheckedShownUnderNotIncluded" xml:space="preserve"><value>Dahil (işaretsiz = “Dahil değil” altında gösterilir)</value></data>
+  <data name="Admin.Field.Instagram" xml:space="preserve"><value>Instagram</value></data>
+  <data name="Admin.Field.Kind" xml:space="preserve"><value>Tür</value></data>
+  <data name="Admin.Field.Label" xml:space="preserve"><value>Etiket</value></data>
+  <data name="Admin.Field.LastName" xml:space="preserve"><value>Soyad</value></data>
+  <data name="Admin.Field.Lasts" xml:space="preserve"><value>Süre</value></data>
+  <data name="Admin.Field.LinkedIn" xml:space="preserve"><value>LinkedIn</value></data>
+  <data name="Admin.Field.LiveStreamYouTube" xml:space="preserve"><value>Canlı yayın (YouTube)</value></data>
+  <data name="Admin.Field.LogoURL" xml:space="preserve"><value>Logo URL'si</value></data>
+  <data name="Admin.Field.MaxQtyPerOrder" xml:space="preserve"><value>Sipariş başına en fazla adet</value></data>
+  <data name="Admin.Field.MaximumRedemptions" xml:space="preserve"><value>En fazla kullanım</value></data>
+  <data name="Admin.Field.MeetingLink" xml:space="preserve"><value>Toplantı bağlantısı</value></data>
+  <data name="Admin.Field.MemberDiscount" xml:space="preserve"><value>Üye indirimi (%)</value></data>
+  <data name="Admin.Field.MembershipPlan" xml:space="preserve"><value>Üyelik planı</value></data>
+  <data name="Admin.Field.NotesForAIAssistants" xml:space="preserve"><value>Yapay zekâ asistanları için notlar</value></data>
+  <data name="Admin.Field.OnlyForMembersOfPlan" xml:space="preserve"><value>Yalnızca bu planın üyeleri için</value></data>
+  <data name="Admin.Field.OnlyForPeopleEnrolledOnSession" xml:space="preserve"><value>Yalnızca bu oturuma kayıtlı kişiler için</value></data>
+  <data name="Admin.Field.OnlyForTicketHoldersOfExperience" xml:space="preserve"><value>Yalnızca bu deneyimin bilet sahipleri için</value></data>
+  <data name="Admin.Field.OrganisationType" xml:space="preserve"><value>Kuruluş türü</value></data>
+  <data name="Admin.Field.Perks" xml:space="preserve"><value>Ayrıcalıklar</value></data>
+  <data name="Admin.Field.Postcode" xml:space="preserve"><value>Posta kodu</value></data>
+  <data name="Admin.Field.Price" xml:space="preserve"><value>Fiyat</value></data>
+  <data name="Admin.Field.PriceMinorUnitsEGPence" xml:space="preserve"><value>Fiyat (en küçük birim, ör. peni)</value></data>
+  <data name="Admin.Field.PublishLlmsTxt" xml:space="preserve"><value>/llms.txt yayımla</value></data>
+  <data name="Admin.Field.Region" xml:space="preserve"><value>Bölge</value></data>
+  <data name="Admin.Field.RegisteredLegalName" xml:space="preserve"><value>Tescilli yasal ad</value></data>
+  <data name="Admin.Field.ReservedFor" xml:space="preserve"><value>Şu kişiye ayrıldı</value></data>
+  <data name="Admin.Field.Roles" xml:space="preserve"><value>Roller</value></data>
+  <data name="Admin.Field.SEODescription" xml:space="preserve"><value>SEO açıklaması</value></data>
+  <data name="Admin.Field.SEODescription2" xml:space="preserve"><value>SEO açıklaması</value></data>
+  <data name="Admin.Field.SEOTitle" xml:space="preserve"><value>SEO başlığı</value></data>
+  <data name="Admin.Field.SEOTitle2" xml:space="preserve"><value>SEO başlığı</value></data>
+  <data name="Admin.Field.SalesClose" xml:space="preserve"><value>Satış bitişi</value></data>
+  <data name="Admin.Field.SalesOpen" xml:space="preserve"><value>Satış başlangıcı</value></data>
+  <data name="Admin.Field.ShortSummary" xml:space="preserve"><value>Kısa özet</value></data>
+  <data name="Admin.Field.ShowInHomepageSignatureGrid" xml:space="preserve"><value>Ana sayfadaki Signature ızgarasında göster</value></data>
+  <data name="Admin.Field.SiteName" xml:space="preserve"><value>Site adı</value></data>
+  <data name="Admin.Field.SocialImageDescription" xml:space="preserve"><value>Sosyal medya görseli açıklaması</value></data>
+  <data name="Admin.Field.SocialImageURLForThisLanguage" xml:space="preserve"><value>Bu dil için sosyal medya görseli URL'si</value></data>
+  <data name="Admin.Field.SocialPreviewImageURL" xml:space="preserve"><value>Sosyal medya önizleme görseli URL'si</value></data>
+  <data name="Admin.Field.SortOrder" xml:space="preserve"><value>Sıra</value></data>
+  <data name="Admin.Field.StartUTC" xml:space="preserve"><value>Başlangıç (UTC)</value></data>
+  <data name="Admin.Field.Street" xml:space="preserve"><value>Sokak</value></data>
+  <data name="Admin.Field.TikTok" xml:space="preserve"><value>TikTok</value></data>
+  <data name="Admin.Field.TitleTemplate" xml:space="preserve"><value>Başlık şablonu</value></data>
+  <data name="Admin.Field.Type" xml:space="preserve"><value>Tür</value></data>
+  <data name="Admin.Field.URL" xml:space="preserve"><value>URL</value></data>
+  <data name="Admin.Field.Value" xml:space="preserve"><value>Değer</value></data>
+  <data name="Admin.Field.VisibleToMembers" xml:space="preserve"><value>Üyelere görünür</value></data>
+  <data name="Admin.Field.WhatTheOrganisationIs" xml:space="preserve"><value>Kuruluşun ne olduğu</value></data>
+  <data name="Admin.Field.WhoIsInTheRoomComma" xml:space="preserve"><value>Odada kimler var? (virgülle ayırın)</value></data>
+  <data name="Admin.Field.XHandle" xml:space="preserve"><value>X kullanıcı adı</value></data>
+  <data name="Admin.Field.XTwitter" xml:space="preserve"><value>X (Twitter)</value></data>
+  <data name="Admin.Field.YouTube" xml:space="preserve"><value>YouTube</value></data>
+  <data name="Admin.Form.Counter" xml:space="preserve"><value>{0} / {1}</value></data>
+  <data name="Admin.Form.Optional" xml:space="preserve"><value>(isteğe bağlı)</value></data>
+  <data name="Admin.Form.Unsaved" xml:space="preserve"><value>Kaydedilmemiş değişiklikleriniz var. Kaydetmeden bu sayfadan çıkılsın mı?</value></data>
+  <data name="Admin.Help.AdminCms.Step1" xml:space="preserve"><value>Aşağıdaki her kart, sitede aynı sırada yer alan bir ana sayfa bölümüdür.</value></data>
+  <data name="Admin.Help.AdminCms.Step2" xml:space="preserve"><value>Formdaki İngilizceyi düzenleyin ve Kaydet'e basın — hemen yayına girer.</value></data>
+  <data name="Admin.Help.AdminCms.Step3" xml:space="preserve"><value>Diğer dilleri yazmak için bir bölümün altındaki “Çeviriler”i açın. Boş alanlar İngilizceyi izler.</value></data>
+  <data name="Admin.Help.AdminCms.Step4" xml:space="preserve"><value>Görselleri en altta yükleyin, sonra adreslerini bir bölümün görsel alanına yapıştırın.</value></data>
+  <data name="Admin.Help.AdminCms.Title" xml:space="preserve"><value>Ana sayfa içeriği nasıl işler</value></data>
+  <data name="Admin.Help.AdminEmails.Step1" xml:space="preserve"><value>Sitenin gönderdiği her mesaj alıcısı, konusu ve durumuyla burada listelenir.</value></data>
+  <data name="Admin.Help.AdminEmails.Step2" xml:space="preserve"><value>“Başarısız”, gönderilmediği anlamına gelir. Nedenini görmek için satırı açın, sonra Yeniden gönder'e basın.</value></data>
+  <data name="Admin.Help.AdminEmails.Step3" xml:space="preserve"><value>“Gönderildi”, posta sunucusunun kabul ettiği anlamına gelir. Biri yine de bulamıyorsa spam klasörüne bakmasını isteyin.</value></data>
+  <data name="Admin.Help.AdminEmails.Title" xml:space="preserve"><value>E-posta kaydı nasıl işler</value></data>
+  <data name="Admin.Help.AdminExperiences.Step1" xml:space="preserve"><value>Ayrıntıları doldurun: tarihler, şehir, durum ve kimlerin katılabileceği.</value></data>
+  <data name="Admin.Help.AdminExperiences.Step2" xml:space="preserve"><value>Bilet türlerini, programı ve galeri fotoğraflarını ekleyin.</value></data>
+  <data name="Admin.Help.AdminExperiences.Step3" xml:space="preserve"><value>Metinleri sekmelerle dil dil yazın. Boş alanlar İngilizceye döner.</value></data>
+  <data name="Admin.Help.AdminExperiences.Step4" xml:space="preserve"><value>Durum, ziyaretçilerin ne yapabileceğini belirler: başvurmak, bekleme listesine katılmak ya da yalnızca okumak.</value></data>
+  <data name="Admin.Help.AdminExperiences.Title" xml:space="preserve"><value>Deneyimler nasıl hazırlanır</value></data>
+  <data name="Admin.Help.AdminHeroSlides.Step1" xml:space="preserve"><value>Her slayt, ana sayfanın en üstünde başlıklı büyük bir görseldir.</value></data>
+  <data name="Admin.Help.AdminHeroSlides.Step2" xml:space="preserve"><value>Geniş, yüksek çözünürlüklü bir görsel kullanın ve önemli kısmı merkeze yakın tutun.</value></data>
+  <data name="Admin.Help.AdminHeroSlides.Step3" xml:space="preserve"><value>Sırayı ve etkin tarihleri ayarlayın; yalnızca etkin slaytlar gösterilir.</value></data>
+  <data name="Admin.Help.AdminHeroSlides.Step4" xml:space="preserve"><value>Başlığı ve düğme metnini slaydın sayfasında her dil için çevirin.</value></data>
+  <data name="Admin.Help.AdminHeroSlides.Title" xml:space="preserve"><value>Hero slaytları nasıl işler</value></data>
+  <data name="Admin.Help.AdminJournal.Step1" xml:space="preserve"><value>“Yeni yazı” ile başlayın: bir başlık ve kategori yeterli. Web adresi başlıktan oluşturulur.</value></data>
+  <data name="Admin.Help.AdminJournal.Step2" xml:space="preserve"><value>Düzenleyicide yazın. Bölümler için Başlık'ı kullanın ve görselleri doğrudan metne sürükleyin. Siz yazarken metniniz bu cihazda saklanır.</value></data>
+  <data name="Admin.Help.AdminJournal.Step3" xml:space="preserve"><value>Bir kapak görseli ekleyin ve sağdaki arama önizlemesini kontrol edin.</value></data>
+  <data name="Admin.Help.AdminJournal.Step4" xml:space="preserve"><value>Kontrol listesi yeşil olduğunda Yayımla'ya basın. Diğer diller isteğe bağlıdır — her sekme yazılana kadar İngilizceye döner.</value></data>
+  <data name="Admin.Help.AdminJournal.Title" xml:space="preserve"><value>Günlük için yazmak nasıl işler</value></data>
+  <data name="Admin.Help.AdminSeminars.Step1" xml:space="preserve"><value>Oturumu oluşturun ve İngilizce başlığı ve açıklamayı doldurun. Kaydetmek onu taslak olarak tutar.</value></data>
+  <data name="Admin.Help.AdminSeminars.Step2" xml:space="preserve"><value>Kimlerin görebileceğini seçin: Herkese açık herkes için listelenir; Yalnızca üyeler ve Listelenmemiş ziyaretçilerden gizlenir.</value></data>
+  <data name="Admin.Help.AdminSeminars.Step3" xml:space="preserve"><value>Yayın kartında Yayımla'ya basın. O zamana kadar önizlemeyi yalnızca ekip açabilir.</value></data>
+  <data name="Admin.Help.AdminSeminars.Step4" xml:space="preserve"><value>Çeviriler isteğe bağlıdır: her dil kendi metni olana kadar İngilizceyi gösterir.</value></data>
+  <data name="Admin.Help.AdminSeminars.Title" xml:space="preserve"><value>Oturumlar nasıl yayına girer</value></data>
+  <data name="Admin.Help.AdminSiteSettings.Step1" xml:space="preserve"><value>Sayfanın üst kısmı dile göredir: kişilerin okuduğu site adı, başlıklar ve açıklamalar.</value></data>
+  <data name="Admin.Help.AdminSiteSettings.Step2" xml:space="preserve"><value>“Sayfalar”, her sayfanın Google'da ve bağlantı önizlemelerinde ne göstereceğini belirler.</value></data>
+  <data name="Admin.Help.AdminSiteSettings.Step3" xml:space="preserve"><value>Geri kalanı tüm dillerde ortaktır: kimlik, sosyal medya hesapları, iletişim bilgileri ve arama görünürlüğü.</value></data>
+  <data name="Admin.Help.AdminSiteSettings.Step4" xml:space="preserve"><value>Değişiklikler bir sonraki sayfa yüklemesinde yayına girer. Gerçek sitede “Arama motorlarına izin ver” açık kalsın.</value></data>
+  <data name="Admin.Help.AdminSiteSettings.Title" xml:space="preserve"><value>Site ve SEO ayarları nasıl işler</value></data>
+  <data name="Admin.Help.AdminTranslations.Step1" xml:space="preserve"><value>Değiştirmek istediğiniz metni bulmak için bir kelime arayın ya da bir bölüm seçin.</value></data>
+  <data name="Admin.Help.AdminTranslations.Step2" xml:space="preserve"><value>Bir değere tıklayın, düzenleyin ve Enter'a basın. Bir sonraki sayfa yüklemesinde yayına girer.</value></data>
+  <data name="Admin.Help.AdminTranslations.Step3" xml:space="preserve"><value>{0} gibi yer tutucuları olduğu gibi bırakın — yerlerine ad, tarih ya da sayı gelir.</value></data>
+  <data name="Admin.Help.AdminTranslations.Step4" xml:space="preserve"><value>“Hâlâ İngilizce”, henüz çevrilmemiş metinleri gösterir.</value></data>
+  <data name="Admin.Help.AdminTranslations.Title" xml:space="preserve"><value>Çeviriler nasıl işler</value></data>
+  <data name="Admin.Journal.Category.Business.Help" xml:space="preserve"><value>Strateji, operasyon ve büyüme.</value></data>
+  <data name="Admin.Journal.Category.Capital.Help" xml:space="preserve"><value>Yatırım toplama, yatırım ve para.</value></data>
+  <data name="Admin.Journal.Category.Culture.Help" xml:space="preserve"><value>Yerler, insanlar ve işin etrafındaki hayat.</value></data>
+  <data name="Admin.Journal.Category.FounderStories.Help" xml:space="preserve"><value>House'taki kurucularla röportajlar ve portreler.</value></data>
+  <data name="Admin.Journal.Category.HouseNotes.Help" xml:space="preserve"><value>The VI House'un kendisinden haberler.</value></data>
+  <data name="Admin.Journal.Category.Technology.Help" xml:space="preserve"><value>Ürünler, araçlar ve arkalarındaki fikirler.</value></data>
+  <data name="Admin.Journal.Check.CoverAlt" xml:space="preserve"><value>Kapak görselinin açıklaması var</value></data>
+  <data name="Admin.Journal.Check.Length" xml:space="preserve"><value>En az {0} kelime</value></data>
+  <data name="Admin.Journal.Check.Search" xml:space="preserve"><value>Arama metni yazıldı (ya da yedek olarak bir giriş)</value></data>
+  <data name="Admin.Journal.Check.Standfirst" xml:space="preserve"><value>Giriş yazıldı</value></data>
+  <data name="Admin.Journal.EmptyBody" xml:space="preserve"><value>İlk yazınız bir başlık uzağınızda. Yazın, bir kapak ekleyin ve hazır olduğunda yayımlayın.</value></data>
+  <data name="Admin.Journal.EmptyTitle" xml:space="preserve"><value>Henüz yazı yok</value></data>
+  <data name="Admin.Journal.ErrorTitle" xml:space="preserve"><value>Yazı başlatılamadı</value></data>
+  <data name="Admin.Journal.Saved.Draft" xml:space="preserve"><value>Kaydedildi. Bu yazı hâlâ taslak — yalnızca ekip görebilir.</value></data>
+  <data name="Admin.Journal.Saved.Live" xml:space="preserve"><value>Kaydedildi. Değişiklikler şu anda yayında.</value></data>
+  <data name="Admin.Journal.Saved.Published" xml:space="preserve"><value>Yayımlandı. Yazı şu anda Günlük'te yayında.</value></data>
+  <data name="Admin.Journal.Saved.Unpublished" xml:space="preserve"><value>Yayından kaldırıldı. Yazı taslağa döndü ve ziyaretçilerden gizlendi.</value></data>
+  <data name="Admin.Journal.Slug.Hint" xml:space="preserve"><value>Boş bırakılırsa başlıktan oluşturulur. Harf, rakam ve tire; sonradan değiştirmek paylaşılmış bağlantıları bozar.</value></data>
+  <data name="Admin.Journal.Started" xml:space="preserve"><value>“{0}” taslak olarak başlatıldı. Aşağıda yazın — yayımlayana kadar hiçbir şey herkese açık değildir.</value></data>
+  <data name="Admin.Journal.Summary" xml:space="preserve"><value>{0} yayında · {1} taslak</value></data>
+  <data name="Admin.Journal.Untitled" xml:space="preserve"><value>Başlıksız yazı</value></data>
+  <data name="Admin.Journal.Validation.TitleRequired" xml:space="preserve"><value>Yazıya bir başlık verin.</value></data>
+  <data name="Admin.Journal.Write" xml:space="preserve"><value>Yaz</value></data>
+  <data name="Admin.Journal.Written" xml:space="preserve"><value>yazıldı</value></data>
+  <data name="Admin.MembershipPlans.ArchivePlan" xml:space="preserve"><value>Planı arşivle</value></data>
+  <data name="Admin.MembershipPlans.ArchiveThisPlanItWillStop" xml:space="preserve"><value>Bu plan arşivlensin mi? Herkese açık Üyelik sayfasında görünmez olur ve Stripe'ta satıştan kaldırılır. Mevcut üyeler üyeliklerini korur.</value></data>
+  <data name="Admin.MembershipPlans.BackToPlans" xml:space="preserve"><value>Planlara dön</value></data>
+  <data name="Admin.MembershipPlans.Billing" xml:space="preserve"><value>Faturalama</value></data>
+  <data name="Admin.MembershipPlans.CheckoutUsesAnInlinePriceUntil" xml:space="preserve"><value>Bu plan yansıtılana kadar ödeme sayfası satır içi bir fiyat kullanır.</value></data>
+  <data name="Admin.MembershipPlans.CommunityChannelsDiscordCalls" xml:space="preserve"><value>Topluluk kanalları (Discord, görüşmeler)</value></data>
+  <data name="Admin.MembershipPlans.CreateAPlanHereForEvery" xml:space="preserve"><value>Henüz planı olmayan her Stripe ürünü için burada plan oluştur</value></data>
+  <data name="Admin.MembershipPlans.CreateSyncToStripe" xml:space="preserve"><value>Oluştur ve Stripe ile eşitle</value></data>
+  <data name="Admin.MembershipPlans.DeletePlan" xml:space="preserve"><value>Planı sil</value></data>
+  <data name="Admin.MembershipPlans.DeleteThisPlanPermanentlyTheStripe" xml:space="preserve"><value>Bu plan kalıcı olarak silinsin mi? Stripe ürünü arşivlenir (Stripe, fiyatı olmuş bir ürünün silinmesine izin vermez).</value></data>
+  <data name="Admin.MembershipPlans.DigitalMemberCard" xml:space="preserve"><value>Dijital üye kartı</value></data>
+  <data name="Admin.MembershipPlans.DiscordRoleId" xml:space="preserve"><value>Discord rol kimliği</value></data>
+  <data name="Admin.MembershipPlans.ImportFromStripe" xml:space="preserve"><value>Stripe'tan içe aktar</value></data>
+  <data name="Admin.MembershipPlans.InSyncLive" xml:space="preserve"><value>(canlı mod) — her planın eşleşen bir ürünü ve fiyatı var.</value></data>
+  <data name="Admin.MembershipPlans.InSyncTest" xml:space="preserve"><value>(test modu) — her planın eşleşen bir ürünü ve fiyatı var.</value></data>
+  <data name="Admin.MembershipPlans.InSyncWithStripe" xml:space="preserve"><value>Stripe ile eşit</value></data>
+  <data name="Admin.MembershipPlans.LastPushed" xml:space="preserve"><value>Son gönderim: {0}.</value></data>
+  <data name="Admin.MembershipPlans.MaxMembersHint" xml:space="preserve"><value>Sınır olmaması için boş bırakın. Plan dolduğunda ziyaretçilere ödeme yerine bekleme listesi sunulur; sayıyı istediğiniz zaman değiştirebilirsiniz.</value></data>
+  <data name="Admin.MembershipPlans.MaximumMembers" xml:space="preserve"><value>En fazla üye</value></data>
+  <data name="Admin.MembershipPlans.MemberDirectory" xml:space="preserve"><value>Üye rehberi</value></data>
+  <data name="Admin.MembershipPlans.Memberships" xml:space="preserve"><value>Üyelikler</value></data>
+  <data name="Admin.MembershipPlans.Msg.AllSynced" xml:space="preserve"><value>{0} planın tümü Stripe ile eşit.</value></data>
+  <data name="Admin.MembershipPlans.Msg.Archived" xml:space="preserve"><value>Plan arşivlendi — ve Stripe'ta satıştan kaldırıldı.</value></data>
+  <data name="Admin.MembershipPlans.Msg.Created" xml:space="preserve"><value>“{0}” oluşturuldu ve Stripe ile eşitlendi.</value></data>
+  <data name="Admin.MembershipPlans.Msg.CreatedNotSynced" xml:space="preserve"><value>“{0}” oluşturuldu ama Stripe ile eşitlenemedi: {1}</value></data>
+  <data name="Admin.MembershipPlans.Msg.ImportFailed" xml:space="preserve"><value>Stripe ürün listesi okunamadı: {0}</value></data>
+  <data name="Admin.MembershipPlans.Msg.Imported" xml:space="preserve"><value>Stripe'tan {0} plan arşivlenmiş olarak içe aktarıldı; satışa sunmak istediklerinizi inceleyip etkinleştirin. {1} tanesi zaten vardı.</value></data>
+  <data name="Admin.MembershipPlans.Msg.NothingNew" xml:space="preserve"><value>Stripe'ta yeni bir şey yok — {0} ürünün burada zaten planı var.</value></data>
+  <data name="Admin.MembershipPlans.Msg.Saved" xml:space="preserve"><value>Değişiklikler kaydedildi ve Stripe ile eşitlendi.</value></data>
+  <data name="Admin.MembershipPlans.Msg.SavedNotSynced" xml:space="preserve"><value>Değişiklikler kaydedildi ama Stripe güncellenemedi: {0}</value></data>
+  <data name="Admin.MembershipPlans.Msg.SyncPartial" xml:space="preserve"><value>{0} eşitlendi, {1} başarısız: {2}</value></data>
+  <data name="Admin.MembershipPlans.NewPlan" xml:space="preserve"><value>+ Yeni plan</value></data>
+  <data name="Admin.MembershipPlans.NewTitle" xml:space="preserve"><value>Yeni üyelik planı</value></data>
+  <data name="Admin.MembershipPlans.NoMembershipPlansYetCreateOne" xml:space="preserve"><value>Henüz üyelik planı yok. Burada bir tane oluşturun ya da Stripe'ta zaten olan ürünleri içe aktarın.</value></data>
+  <data name="Admin.MembershipPlans.NotMirroredCount" xml:space="preserve"><value>Yansıtılmamış planlar: {0}.</value></data>
+  <data name="Admin.MembershipPlans.NotMirroredHint" xml:space="preserve"><value>Ödeme sayfaları satır içi fiyatla çalışmaya devam eder; adlandırılmış bir Stripe ürününe bağlamak için eşitleyin.</value></data>
+  <data name="Admin.MembershipPlans.NotSynced" xml:space="preserve"><value>Eşitlenmedi</value></data>
+  <data name="Admin.MembershipPlans.OneSentenceShownUnderThePlan" xml:space="preserve"><value>Herkese açık sayfada ve Stripe'ta plan adının altında gösterilen tek cümle.</value></data>
+  <data name="Admin.MembershipPlans.OnlyUsedWhenTheDiscordBot" xml:space="preserve"><value>Yalnızca Discord botu yapılandırıldığında kullanılır: bu seviyedeki üyeler oluşturulan bir daveti kabul ettiklerinde bu rolü alır.</value></data>
+  <data name="Admin.MembershipPlans.Optional" xml:space="preserve"><value>İsteğe bağlı</value></data>
+  <data name="Admin.MembershipPlans.Payments" xml:space="preserve"><value>Ödemeler</value></data>
+  <data name="Admin.MembershipPlans.PriceEG250000" xml:space="preserve"><value>Fiyat (ör. 2500.00)</value></data>
+  <data name="Admin.MembershipPlans.PriorityBookingFoundingMemberBadgeInvitation" xml:space="preserve"><value>Öncelikli rezervasyon Kurucu Üye rozeti House Notes önizlemelerine davet</value></data>
+  <data name="Admin.MembershipPlans.Product" xml:space="preserve"><value>Ürün</value></data>
+  <data name="Admin.MembershipPlans.SalesClosed" xml:space="preserve"><value>Üyelik satışları şu anda kapalı ({0} kapalı), bu yüzden bu planların hiçbiri henüz herkese açık sayfada görünmüyor. Yine de burada hazırlanıp Stripe'a yansıtılabilir, satışların açılacağı güne hazır olur.</value></data>
+  <data name="Admin.MembershipPlans.SaveLocally" xml:space="preserve"><value>Planlar yerel olarak kaydedilir; yansıtmak için {0} ekleyin.</value></data>
+  <data name="Admin.MembershipPlans.SaveSync" xml:space="preserve"><value>Kaydet ve eşitle</value></data>
+  <data name="Admin.MembershipPlans.Seats" xml:space="preserve"><value>Kontenjan</value></data>
+  <data name="Admin.MembershipPlans.SessionsMarkedIncludedWithMembership" xml:space="preserve"><value>“Üyeliğe dahil” olarak işaretlenen oturumlar</value></data>
+  <data name="Admin.MembershipPlans.SortOrder" xml:space="preserve"><value>Sıralama</value></data>
+  <data name="Admin.MembershipPlans.StripeIsNotConfigured" xml:space="preserve"><value>Stripe yapılandırılmamış.</value></data>
+  <data name="Admin.MembershipPlans.StripePricesAreImmutableChangingThe" xml:space="preserve"><value>Stripe fiyatları değiştirilemez: buradan tutarı, para birimini ya da fatura dönemini değiştirmek yeni bir fiyat oluşturur ve eskisini arşivler. Zaten abone olan üyeler kaydoldukları fiyatı korur.</value></data>
+  <data name="Admin.MembershipPlans.SyncAllToStripe" xml:space="preserve"><value>Tümünü Stripe ile eşitle</value></data>
+  <data name="Admin.MembershipPlans.SyncFailed" xml:space="preserve"><value>Eşitleme başarısız</value></data>
+  <data name="Admin.MembershipPlans.SyncNow" xml:space="preserve"><value>Şimdi eşitle</value></data>
+  <data name="Admin.MembershipPlans.Synced" xml:space="preserve"><value>Eşitlendi</value></data>
+  <data name="Admin.MembershipPlans.ThePlanIsSavedHereAnd" xml:space="preserve"><value>Plan burada kaydedilir ve tek fiyatlı bir ürün olarak Stripe'a yansıtılır. Bundan sonra burada düzenleyin — fiyat değişikliği otomatik olarak yeni bir Stripe fiyatı oluşturur ve eskisini kaldırır.</value></data>
+  <data name="Admin.MembershipPlans.TheseDecideWhatAMemberOn" xml:space="preserve"><value>Bunlar bu plandaki bir üyenin hesap alanında ne gördüğünü belirler — yukarıdaki özellik listesi yalnızca karttaki metindir.</value></data>
+  <data name="Admin.MembershipPlans.ThisPlanCanTBeDeleted" xml:space="preserve"><value>Üyelikler veya ödemeler bu plana bağlıyken silinemez — bu finansal geçmiştir. Bunun yerine arşivleyin.</value></data>
+  <data name="Admin.MembershipPlans.Unlimited" xml:space="preserve"><value>Sınırsız</value></data>
+  <data name="Admin.MembershipPlans.Usage" xml:space="preserve"><value>Kullanım</value></data>
+  <data name="Admin.MembershipPlans.WhatThisTierIncludes" xml:space="preserve"><value>Bu seviyenin içerdikleri</value></data>
+  <data name="Admin.MembershipSignups.About" xml:space="preserve"><value>Hakkında</value></data>
+  <data name="Admin.MembershipSignups.Address" xml:space="preserve"><value>Adres</value></data>
+  <data name="Admin.MembershipSignups.All" xml:space="preserve"><value>Tümü</value></data>
+  <data name="Admin.MembershipSignups.AnnualEarnings" xml:space="preserve"><value>Yıllık kazanç</value></data>
+  <data name="Admin.MembershipSignups.Applicant" xml:space="preserve"><value>Başvuran</value></data>
+  <data name="Admin.MembershipSignups.BackToSignUps" xml:space="preserve"><value>← Kayıtlara dön</value></data>
+  <data name="Admin.MembershipSignups.Empty" xml:space="preserve"><value>Henüz kayıt yok.</value></data>
+  <data name="Admin.MembershipSignups.EmptyForStatus" xml:space="preserve"><value>Bu durumda henüz kayıt yok.</value></data>
+  <data name="Admin.MembershipSignups.Expectations" xml:space="preserve"><value>Beklentiler</value></data>
+  <data name="Admin.MembershipSignups.Expired" xml:space="preserve"><value>Süresi doldu</value></data>
+  <data name="Admin.MembershipSignups.FormSent" xml:space="preserve"><value>Form gönderildi</value></data>
+  <data name="Admin.MembershipSignups.InTheirWords" xml:space="preserve"><value>Kendi sözleriyle</value></data>
+  <data name="Admin.MembershipSignups.Intro" xml:space="preserve"><value>Ödemeye devam etsinler ya da etmesinler, kişilerin üyelik formuna yazdığı her şey. Üyelik incelenmez — ödemek katılmaktır — bu yüzden bu liste kimin geldiğini bilmek içindir. Şimdiye kadar ödeyen: {0}.</value></data>
+  <data name="Admin.MembershipSignups.Membership" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Admin.MembershipSignups.Newer" xml:space="preserve"><value>← Daha yeni</value></data>
+  <data name="Admin.MembershipSignups.NotPaidYet" xml:space="preserve"><value>Henüz ödenmedi</value></data>
+  <data name="Admin.MembershipSignups.Older" xml:space="preserve"><value>Daha eski →</value></data>
+  <data name="Admin.MembershipSignups.OpenAccount" xml:space="preserve"><value>Hesabı aç →</value></data>
+  <data name="Admin.MembershipSignups.PageOf" xml:space="preserve"><value>Sayfa {0} / {1} · {2} kayıt</value></data>
+  <data name="Admin.MembershipSignups.Paid" xml:space="preserve"><value>Ödendi</value></data>
+  <data name="Admin.MembershipSignups.Plan" xml:space="preserve"><value>Plan</value></data>
+  <data name="Admin.MembershipSignups.PromoCode" xml:space="preserve"><value>Promosyon kodu</value></data>
+  <data name="Admin.MembershipSignups.Purged" xml:space="preserve"><value>Bu form hiç ödenmediği için serbest metni ve adresi {0} tarihinde silindi — yalnızca ad, e-posta ve plan saklanır.</value></data>
+  <data name="Admin.MembershipSignups.ReferralCode" xml:space="preserve"><value>Yönlendirme kodu</value></data>
+  <data name="Admin.MembershipSignups.TheyHavenTSignedInYet" xml:space="preserve"><value>Henüz oturum açmadı — hesap sayfasından parola oluşturma e-postası yeniden gönderilebilir.</value></data>
+  <data name="Admin.MembershipSignups.TitleProfession" xml:space="preserve"><value>Unvan / meslek</value></data>
+  <data name="Admin.MembershipSignups.ViewForm" xml:space="preserve"><value>Formu görüntüle →</value></data>
+  <data name="Admin.MembershipSignups.When" xml:space="preserve"><value>Ne zaman</value></data>
+  <data name="Admin.Msg.ChangesSaved" xml:space="preserve"><value>Değişiklikler kaydedildi.</value></data>
+  <data name="Admin.Msg.CheckFields" xml:space="preserve"><value>İşaretli alanları kontrol edin.</value></data>
+  <data name="Admin.Nav.AdminAmbassadors" xml:space="preserve"><value>Elçiler</value></data>
+  <data name="Admin.Nav.AdminApplications" xml:space="preserve"><value>Başvurular</value></data>
+  <data name="Admin.Nav.AdminBookings" xml:space="preserve"><value>Rezervasyonlar</value></data>
+  <data name="Admin.Nav.AdminCms" xml:space="preserve"><value>İçerik</value></data>
+  <data name="Admin.Nav.AdminCommunity" xml:space="preserve"><value>Topluluk</value></data>
+  <data name="Admin.Nav.AdminDashboard" xml:space="preserve"><value>Genel bakış</value></data>
+  <data name="Admin.Nav.AdminEmails" xml:space="preserve"><value>E-postalar ve SMS</value></data>
+  <data name="Admin.Nav.AdminExperiences" xml:space="preserve"><value>Deneyimler</value></data>
+  <data name="Admin.Nav.AdminHeroSlides" xml:space="preserve"><value>Hero slaytları</value></data>
+  <data name="Admin.Nav.AdminJournal" xml:space="preserve"><value>Günlük</value></data>
+  <data name="Admin.Nav.AdminMembershipPlans" xml:space="preserve"><value>Üyelik planları</value></data>
+  <data name="Admin.Nav.AdminMembershipSignups" xml:space="preserve"><value>Üyelik kayıtları</value></data>
+  <data name="Admin.Nav.AdminNotifySignups" xml:space="preserve"><value>Açılış listesi</value></data>
+  <data name="Admin.Nav.AdminPayments" xml:space="preserve"><value>Ödemeler</value></data>
+  <data name="Admin.Nav.AdminPromoCodes" xml:space="preserve"><value>Promosyon kodları</value></data>
+  <data name="Admin.Nav.AdminSeminars" xml:space="preserve"><value>Oturumlar</value></data>
+  <data name="Admin.Nav.AdminSiteSettings" xml:space="preserve"><value>Site ve SEO</value></data>
+  <data name="Admin.Nav.AdminTranslations" xml:space="preserve"><value>Çeviriler</value></data>
+  <data name="Admin.Nav.AdminUsers" xml:space="preserve"><value>Kullanıcılar</value></data>
+  <data name="Admin.Nav.AdminWebhooks" xml:space="preserve"><value>Stripe olayları</value></data>
+  <data name="Admin.NotifySignups.Consent" xml:space="preserve"><value>onay</value></data>
+  <data name="Admin.NotifySignups.HeadlineExample" xml:space="preserve"><value>Kapılar açık</value></data>
+  <data name="Admin.NotifySignups.NoConsentText" xml:space="preserve"><value>Onay metni saklanmadı (kayıt, metin kaydedilmeye başlamadan önce yapıldı)</value></data>
+  <data name="Admin.NotifySignups.SubjectExample" xml:space="preserve"><value>The VI House açıldı</value></data>
+  <data name="Admin.Payments.All" xml:space="preserve"><value>Tümü</value></data>
+  <data name="Admin.Payments.AllTypes" xml:space="preserve"><value>Tüm türler</value></data>
+  <data name="Admin.Payments.AmountCaptured" xml:space="preserve"><value>Tahsil edilen tutar</value></data>
+  <data name="Admin.Payments.Attempts" xml:space="preserve"><value>Denemeler</value></data>
+  <data name="Admin.Payments.BackToPayments" xml:space="preserve"><value>← Ödemelere dön</value></data>
+  <data name="Admin.Payments.Card" xml:space="preserve"><value>Kart</value></data>
+  <data name="Admin.Payments.ChargeStatus" xml:space="preserve"><value>Tahsilat durumu</value></data>
+  <data name="Admin.Payments.CheckoutSession" xml:space="preserve"><value>Ödeme oturumu</value></data>
+  <data name="Admin.Payments.Clear" xml:space="preserve"><value>Temizle</value></data>
+  <data name="Admin.Payments.CouldnTReachStripeJustNow" xml:space="preserve"><value>Şu anda Stripe'a ulaşılamadı — yukarıdaki kayıt, sağlayıcının olaylarının bıraktığı son durumdur.</value></data>
+  <data name="Admin.Payments.Customer" xml:space="preserve"><value>Müşteri</value></data>
+  <data name="Admin.Payments.DetailHint" xml:space="preserve"><value>İadeler ve itirazlar Stripe panelinde yönetilir; bu kayıt sağlayıcının olaylarını izler.</value></data>
+  <data name="Admin.Payments.DetailTitle" xml:space="preserve"><value>Ödeme</value></data>
+  <data name="Admin.Payments.Disputed" xml:space="preserve"><value>İtiraz edildi</value></data>
+  <data name="Admin.Payments.DisputedStripe" xml:space="preserve"><value>İtiraz edildi (Stripe)</value></data>
+  <data name="Admin.Payments.EmailNameBookingRefCsPi" xml:space="preserve"><value>e-posta, ad, rezervasyon ref., cs_ / pi_ / in_ / sub_ kimliği</value></data>
+  <data name="Admin.Payments.Error" xml:space="preserve"><value>Hata</value></data>
+  <data name="Admin.Payments.Event" xml:space="preserve"><value>Olay</value></data>
+  <data name="Admin.Payments.EventTimeline" xml:space="preserve"><value>Olay zaman çizelgesi</value></data>
+  <data name="Admin.Payments.EveryPaymentAcrossExperiencesSessionsAnd" xml:space="preserve"><value>Deneyimler, oturumlar ve üyelikler genelindeki her ödeme ve iç durumu — yalnızca sağlayıcının olaylarıyla değişir, asla bir tarayıcı yönlendirmesiyle değil. İadeler ve itirazlar Stripe panelinde yapılır ve buraya olay olarak gelir. Tutarlar para birimine göredir ve asla toplanmaz.</value></data>
+  <data name="Admin.Payments.FailedEventsCanBeReRun" xml:space="preserve"><value>Başarısız olaylar şuradan yeniden çalıştırılabilir:</value></data>
+  <data name="Admin.Payments.Failure" xml:space="preserve"><value>Hata</value></data>
+  <data name="Admin.Payments.For" xml:space="preserve"><value>Kimin için</value></data>
+  <data name="Admin.Payments.IntentStatus" xml:space="preserve"><value>Niyet durumu</value></data>
+  <data name="Admin.Payments.Invoice" xml:space="preserve"><value>Fatura</value></data>
+  <data name="Admin.Payments.LastEvent" xml:space="preserve"><value>Son olay</value></data>
+  <data name="Admin.Payments.LiveStripeDetails" xml:space="preserve"><value>Stripe'tan canlı ayrıntılar</value></data>
+  <data name="Admin.Payments.Meaning.Canceled" xml:space="preserve"><value>Para hareket etmeden durduruldu.</value></data>
+  <data name="Admin.Payments.Meaning.Expired" xml:space="preserve"><value>Ödeme süresi ödenmeden kapandı; ayrılan yer serbest bırakıldı.</value></data>
+  <data name="Admin.Payments.Meaning.Failed" xml:space="preserve"><value>Sağlayıcı tahsil edemedi. Yeniden deneme yine de başarılı olabilir.</value></data>
+  <data name="Admin.Payments.Meaning.PartiallyRefunded" xml:space="preserve"><value>Paranın bir kısmı alıcıya iade edildi; satın alınan geçerli kalır.</value></data>
+  <data name="Admin.Payments.Meaning.Pending" xml:space="preserve"><value>Ödeme sayfası açıldı; henüz ödeme yok.</value></data>
+  <data name="Admin.Payments.Meaning.Processing" xml:space="preserve"><value>Ödeme gecikmeli bir yöntemle tamamlandı; banka parayı henüz onaylamadı. Hiçbir şey verilmedi.</value></data>
+  <data name="Admin.Payments.Meaning.Refunded" xml:space="preserve"><value>Paranın tamamı alıcıya iade edildi.</value></data>
+  <data name="Admin.Payments.Meaning.RequiresAction" xml:space="preserve"><value>Ödemenin gerçekleşmesi için alıcının bankasıyla onaylaması gerekiyor.</value></data>
+  <data name="Admin.Payments.Meaning.Succeeded" xml:space="preserve"><value>Sağlayıcı parayı onayladı. Rezervasyon / yer / üyelik verildi.</value></data>
+  <data name="Admin.Payments.NoAccountYetAJoinCheckout" xml:space="preserve"><value>(henüz hesap yok — bir /join ödemesi)</value></data>
+  <data name="Admin.Payments.NoCheckoutSessionOnThisRecord" xml:space="preserve"><value>Bu kayıtta ödeme oturumu yok (yenileme doğrudan Stripe tarafından faturalanır — yukarıdaki faturayı açın).</value></data>
+  <data name="Admin.Payments.NoPaymentsMatch" xml:space="preserve"><value>Eşleşen ödeme yok.</value></data>
+  <data name="Admin.Payments.NoProviderEventsRecordedAgainstThis" xml:space="preserve"><value>Bu ödemenin Stripe nesneleri için henüz sağlayıcı olayı kaydedilmedi.</value></data>
+  <data name="Admin.Payments.Object" xml:space="preserve"><value>Nesne</value></data>
+  <data name="Admin.Payments.Paid" xml:space="preserve"><value>Ödendi</value></data>
+  <data name="Admin.Payments.PaymentIntent" xml:space="preserve"><value>Ödeme niyeti (Payment intent)</value></data>
+  <data name="Admin.Payments.PaymentStatus" xml:space="preserve"><value>Ödeme durumu</value></data>
+  <data name="Admin.Payments.Receipt" xml:space="preserve"><value>Makbuz</value></data>
+  <data name="Admin.Payments.Received" xml:space="preserve"><value>Alındı</value></data>
+  <data name="Admin.Payments.Refunded" xml:space="preserve"><value>İade edildi</value></data>
+  <data name="Admin.Payments.RefundedStripe" xml:space="preserve"><value>İade edildi (Stripe)</value></data>
+  <data name="Admin.Payments.SessionStatus" xml:space="preserve"><value>Oturum durumu</value></data>
+  <data name="Admin.Payments.ShownOf" xml:space="preserve"><value>{1} kayıttan {0} tanesi gösteriliyor, en yeni önce.</value></data>
+  <data name="Admin.Payments.StripeEvents" xml:space="preserve"><value>Stripe olayları</value></data>
+  <data name="Admin.Payments.StripeReferences" xml:space="preserve"><value>Stripe referansları</value></data>
+  <data name="Admin.Payments.Subscription" xml:space="preserve"><value>Abonelik</value></data>
+  <data name="Admin.Payments.ViewReceipt" xml:space="preserve"><value>Makbuzu görüntüle</value></data>
+  <data name="Admin.PromoCodes.ACodeIsForExperienceTickets" xml:space="preserve"><value>Bir kod ya deneyim biletleri ya da üyelik ödemesi içindir, ikisi birden değil.</value></data>
+  <data name="Admin.PromoCodes.APercentageTakes1100A" xml:space="preserve"><value>Yüzde 1–100 arası alır. Sabit indirim tam birim alır — 250, 2,50 £ değil 250 £ demektir.</value></data>
+  <data name="Admin.PromoCodes.AcceptedAtCheckout" xml:space="preserve"><value>Ödemede kabul edilir</value></data>
+  <data name="Admin.PromoCodes.AnyExperience" xml:space="preserve"><value>Herhangi bir deneyim</value></data>
+  <data name="Admin.PromoCodes.AnyPlan" xml:space="preserve"><value>Herhangi bir plan</value></data>
+  <data name="Admin.PromoCodes.AppliedAsACouponOnThe" xml:space="preserve"><value>Stripe ödemesinde kupon olarak uygulanır. “Her yenileme” her yenilemede indirim yapar.</value></data>
+  <data name="Admin.PromoCodes.AppliedAtCheckoutAgainstTheTicket" xml:space="preserve"><value>Ödemede bilet fiyatına uygulanır. Kullanılmış bir kod silinmek yerine kapatılır; böylece eski bir rezervasyonun arkasındaki indirim açıklanabilir kalır.</value></data>
+  <data name="Admin.PromoCodes.AppliesTo" xml:space="preserve"><value>Geçerli olduğu yer</value></data>
+  <data name="Admin.PromoCodes.Code" xml:space="preserve"><value>Kod</value></data>
+  <data name="Admin.PromoCodes.CodeHint" xml:space="preserve"><value>Büyük harfle saklanır; üyeler her iki şekilde de yazabilir.</value></data>
+  <data name="Admin.PromoCodes.DeleteConfirm" xml:space="preserve"><value>“{0}” silinsin mi? Daha önce kullanılmış bir kod bunun yerine kapatılır.</value></data>
+  <data name="Admin.PromoCodes.Discount" xml:space="preserve"><value>İndirim</value></data>
+  <data name="Admin.PromoCodes.Expired" xml:space="preserve"><value>Süresi doldu</value></data>
+  <data name="Admin.PromoCodes.Expires" xml:space="preserve"><value>Son geçerlilik</value></data>
+  <data name="Admin.PromoCodes.ForEmail" xml:space="preserve"><value>{0} için</value></data>
+  <data name="Admin.PromoCodes.FullyRedeemed" xml:space="preserve"><value>Tamamen kullanıldı</value></data>
+  <data name="Admin.PromoCodes.IgnoredForAPercentage" xml:space="preserve"><value>Yüzde için yok sayılır.</value></data>
+  <data name="Admin.PromoCodes.MembershipScope" xml:space="preserve"><value>{0} (üyelik)</value></data>
+  <data name="Admin.PromoCodes.Msg.Exists" xml:space="preserve"><value>Bu kod zaten var.</value></data>
+  <data name="Admin.PromoCodes.Msg.Gone" xml:space="preserve"><value>Bu kod artık yok.</value></data>
+  <data name="Admin.PromoCodes.Msg.SwitchedOff" xml:space="preserve"><value>“{0}” {1} kez kullanıldığı için silinmek yerine kapatıldı.</value></data>
+  <data name="Admin.PromoCodes.NewCode" xml:space="preserve"><value>+ Yeni kod</value></data>
+  <data name="Admin.PromoCodes.NoPromoCodesYet" xml:space="preserve"><value>Henüz promosyon kodu yok.</value></data>
+  <data name="Admin.PromoCodes.Off" xml:space="preserve"><value>Kapalı</value></data>
+  <data name="Admin.PromoCodes.RedeemedSoFar" xml:space="preserve"><value>Şimdiye kadar {0} kez kullanıldı. Bu sayı düzenlenemez.</value></data>
+  <data name="Admin.PromoCodes.ReserveTheCodeForOnePerson" xml:space="preserve"><value>Kodu tek bir kişiye ayırın. Kişi tam olarak bu adresle ödeme yapmalıdır.</value></data>
+  <data name="Admin.PromoCodes.State" xml:space="preserve"><value>Durum</value></data>
+  <data name="Admin.PromoCodes.Usable" xml:space="preserve"><value>Kullanılabilir</value></data>
+  <data name="Admin.PromoCodes.Used" xml:space="preserve"><value>Kullanıldı</value></data>
+  <data name="Admin.Publish.Archive" xml:space="preserve"><value>Arşivle</value></data>
+  <data name="Admin.Publish.ArchiveConfirm" xml:space="preserve"><value>Arşivlensin mi? Herkese açık listeden çıkar; kayıt olanlar erişimlerini korur.</value></data>
+  <data name="Admin.Publish.Blocked" xml:space="preserve"><value>Yayımlamak için yukarıdaki zorunlu maddeleri tamamlayın.</value></data>
+  <data name="Admin.Publish.Check.Cover" xml:space="preserve"><value>Kapak görseli</value></data>
+  <data name="Admin.Publish.Check.EnglishBody" xml:space="preserve"><value>İngilizce metin yazıldı</value></data>
+  <data name="Admin.Publish.Check.EnglishTitle" xml:space="preserve"><value>İngilizce başlık</value></data>
+  <data name="Admin.Publish.Check.Languages" xml:space="preserve"><value>Çeviriler: {1} dilden {0}</value></data>
+  <data name="Admin.Publish.Checklist" xml:space="preserve"><value>Yayımlamadan önce</value></data>
+  <data name="Admin.Publish.Fix" xml:space="preserve"><value>Düzelt</value></data>
+  <data name="Admin.Publish.Optional" xml:space="preserve"><value>önerilir</value></data>
+  <data name="Admin.Publish.Preview" xml:space="preserve"><value>Ziyaretçi gibi önizle</value></data>
+  <data name="Admin.Publish.PublishNow" xml:space="preserve"><value>Şimdi yayımla</value></data>
+  <data name="Admin.Publish.Republish" xml:space="preserve"><value>Yeniden yayımla</value></data>
+  <data name="Admin.Publish.Required" xml:space="preserve"><value>zorunlu</value></data>
+  <data name="Admin.Publish.SaveDraft" xml:space="preserve"><value>Taslağı kaydet</value></data>
+  <data name="Admin.Publish.Sentence.Draft" xml:space="preserve"><value>Taslak — sitede görünmüyor. Önizlemeyi yalnızca ekip açabilir.</value></data>
+  <data name="Admin.Publish.Sentence.Live" xml:space="preserve"><value>{0} tarihinden beri sitede yayında.</value></data>
+  <data name="Admin.Publish.Status.Draft" xml:space="preserve"><value>Taslak</value></data>
+  <data name="Admin.Publish.Status.Published" xml:space="preserve"><value>Yayında</value></data>
+  <data name="Admin.Publish.Title" xml:space="preserve"><value>Yayın</value></data>
+  <data name="Admin.Publish.Unpublish" xml:space="preserve"><value>Yayından kaldır</value></data>
+  <data name="Admin.Publish.UnpublishConfirm" xml:space="preserve"><value>Yayından kaldırılsın mı? Hemen siteden kaybolur ve taslağa döner.</value></data>
+  <data name="Admin.Publish.Update" xml:space="preserve"><value>Değişiklikleri kaydet</value></data>
+  <data name="Admin.Publish.ViewLive" xml:space="preserve"><value>Sitede görüntüle</value></data>
+  <data name="Admin.Quick.AdminApplications.Index" xml:space="preserve"><value>İnceleme kuyruğu</value></data>
+  <data name="Admin.Quick.AdminExperiences.Create" xml:space="preserve"><value>Yeni deneyim</value></data>
+  <data name="Admin.Quick.AdminJournal.Create" xml:space="preserve"><value>Yeni yazı</value></data>
+  <data name="Admin.Quick.AdminSeminars.Create" xml:space="preserve"><value>Yeni oturum</value></data>
+  <data name="Admin.Section.AdminAmbassadors.Description" xml:space="preserve"><value>Referans ortakları, bağlantıları ve kazandıkları komisyon.</value></data>
+  <data name="Admin.Section.AdminApplications.Description" xml:space="preserve"><value>Deneyim başvurularını inceleyin: onaylayın, bekleme listesine alın ya da reddedin.</value></data>
+  <data name="Admin.Section.AdminBookings.Description" xml:space="preserve"><value>Bir deneyim için yapılan her rezervasyon ve ödemesi.</value></data>
+  <data name="Admin.Section.AdminCms.Description" xml:space="preserve"><value>Ana sayfadaki metin ve görseller, bölüm bölüm.</value></data>
+  <data name="Admin.Section.AdminCommunity.Description" xml:space="preserve"><value>Üyelerin gördüğü Discord ve diğer topluluk bağlantıları.</value></data>
+  <data name="Admin.Section.AdminDashboard.Description" xml:space="preserve"><value>Bugün neyin ilgi beklediği ve başvuruların, rezervasyonların ve paranın nasıl ilerlediği.</value></data>
+  <data name="Admin.Section.AdminEmails.Description" xml:space="preserve"><value>Sitenin gönderdiği her e-posta ve kısa mesaj; başarısızlar için yeniden gönder düğmesi.</value></data>
+  <data name="Admin.Section.AdminExperiences.Description" xml:space="preserve"><value>İnzivalar ve etkinlikler: tarihler, biletler, program ve fotoğraflar.</value></data>
+  <data name="Admin.Section.AdminHeroSlides.Description" xml:space="preserve"><value>Ana sayfanın en üstündeki büyük, dönen görseller.</value></data>
+  <data name="Admin.Section.AdminJournal.Description" xml:space="preserve"><value>Günlük yazılarını dört dilde yazın, görsellerle zenginleştirin ve yayımlayın.</value></data>
+  <data name="Admin.Section.AdminMembershipPlans.Description" xml:space="preserve"><value>Üyelik seviyeleri ve fiyatları, Stripe'a yansıtılmış olarak.</value></data>
+  <data name="Admin.Section.AdminMembershipSignups.Description" xml:space="preserve"><value>Üyelik formunu dolduran herkes, ödeme yapmış olsun ya da olmasın.</value></data>
+  <data name="Admin.Section.AdminNotifySignups.Description" xml:space="preserve"><value>Açılışı bekleyen kişiler ve duyuru e-postası.</value></data>
+  <data name="Admin.Section.AdminPayments.Description" xml:space="preserve"><value>Her ödeme ve durumu, tam olarak Stripe'ın bildirdiği şekilde.</value></data>
+  <data name="Admin.Section.AdminPromoCodes.Description" xml:space="preserve"><value>Biletler ve üyelikler için indirim kodları.</value></data>
+  <data name="Admin.Section.AdminSeminars.Description" xml:space="preserve"><value>Çevrimiçi ve yüz yüze oturumlar: yazın, planlayın ve yayımlayın.</value></data>
+  <data name="Admin.Section.AdminSiteSettings.Description" xml:space="preserve"><value>Sitenin Google'da, bağlantı önizlemelerinde ve yapay zekâ asistanlarında nasıl göründüğü.</value></data>
+  <data name="Admin.Section.AdminTranslations.Description" xml:space="preserve"><value>Sitedeki her metin dört dilde, yerinde düzenlenebilir.</value></data>
+  <data name="Admin.Section.AdminUsers.Description" xml:space="preserve"><value>Hesaplar, roller, üyelikler ve personel davetleri.</value></data>
+  <data name="Admin.Section.AdminWebhooks.Description" xml:space="preserve"><value>Stripe'ın gönderdiği olaylar ve her birinin işlenip işlenmediği.</value></data>
+  <data name="Admin.Seminar.Audience.Members" xml:space="preserve"><value>Yalnızca üyeler — oturum açmış üyeler görür; diğer herkes “sayfa bulunamadı” görür.</value></data>
+  <data name="Admin.Seminar.Audience.Public" xml:space="preserve"><value>Herkes — oturumlar sayfasında tüm ziyaretçiler için listelenir.</value></data>
+  <data name="Admin.Seminar.Audience.Unlisted" xml:space="preserve"><value>Listelenmemiş — oturumlar sayfasında yok; yalnızca bağlantısı olanlar açabilir.</value></data>
+  <data name="Admin.Seminar.Check.Schedule" xml:space="preserve"><value>Tarih ve saat belirlendi</value></data>
+  <data name="Admin.Seminar.Sentence.Archived" xml:space="preserve"><value>Arşivlendi — listede değil. Kayıt olanlar erişimlerini korur.</value></data>
+  <data name="Admin.Seminar.StillDraft" xml:space="preserve"><value>Bu oturum hâlâ taslak, bu yüzden ziyaretçiler göremez. Hazır olduğunuzda yayımlayın.</value></data>
+  <data name="Admin.Seminar.Visibility.Members.Help" xml:space="preserve"><value>Ziyaretçilerden gizli. Yalnızca oturum açmış üyeler görebilir; diğer herkes “sayfa bulunamadı” görür.</value></data>
+  <data name="Admin.Seminar.Visibility.Public.Help" xml:space="preserve"><value>Oturumlar sayfasında herkes için listelenir.</value></data>
+  <data name="Admin.Seminar.Visibility.Unlisted.Help" xml:space="preserve"><value>Hiçbir yerde listelenmez. Yalnızca bağlantıyı gönderdiğiniz kişiler açabilir.</value></data>
+  <data name="Admin.Settings.TemplateNeedsPlaceholder" xml:space="preserve"><value>Başlık şablonu {0} içermelidir — her sayfanın kendi adı oraya gelir.</value></data>
+  <data name="Admin.Settings.UnknownCulture" xml:space="preserve"><value>Bu site o dili desteklemiyor.</value></data>
+  <data name="Admin.Shell.Admin" xml:space="preserve"><value>Yönetim</value></data>
+  <data name="Admin.Shell.CloseMenu" xml:space="preserve"><value>Menüyü kapat</value></data>
+  <data name="Admin.Shell.CollapseMenu" xml:space="preserve"><value>Menüyü daralt</value></data>
+  <data name="Admin.Shell.InterfaceLanguage" xml:space="preserve"><value>Arayüz dili</value></data>
+  <data name="Admin.Shell.InterfaceLanguage.Hint" xml:space="preserve"><value>Yalnızca panelin dilini değiştirir. Başka bir dilde yazmak için yazının ya da sayfanın dil sekmelerini kullanın.</value></data>
+  <data name="Admin.Shell.JumpTo" xml:space="preserve"><value>Şuraya git</value></data>
+  <data name="Admin.Shell.LogOut" xml:space="preserve"><value>Çıkış yap</value></data>
+  <data name="Admin.Shell.NoMatch" xml:space="preserve"><value>Eşleşen yönetim sayfası yok.</value></data>
+  <data name="Admin.Shell.OpenMenu" xml:space="preserve"><value>Menüyü aç</value></data>
+  <data name="Admin.Shell.OpenWebsite" xml:space="preserve"><value>Siteyi aç</value></data>
+  <data name="Admin.Shell.QuickActions" xml:space="preserve"><value>Hızlı işlemler</value></data>
+  <data name="Admin.Shell.SearchPages" xml:space="preserve"><value>Yönetim sayfalarında ara</value></data>
+  <data name="Admin.Shell.SkipToContent" xml:space="preserve"><value>İçeriğe geç</value></data>
+  <data name="Admin.Shell.ViewSite" xml:space="preserve"><value>Siteyi görüntüle</value></data>
+  <data name="Admin.SiteSettings.APlainLanguageIndexOfThe" xml:space="preserve"><value>Dil modelleri için sitenin sade dilde bir dizini. Yukarıdaki anahtardan ayrıdır; çünkü “arama motorları evet, modeller belki” makul bir tutumdur.</value></data>
+  <data name="Admin.SiteSettings.AddedToRobotsTxtAsWritten" xml:space="preserve"><value>robots.txt'ye yazıldığı gibi eklenir. Yönetim alanı, hesap sayfaları, ödeme ve arama sonuçları zaten hariç tutulur — burada tekrarlamanız gerekmez.</value></data>
+  <data name="Admin.SiteSettings.AllowSearchEnginesToIndexThis" xml:space="preserve"><value>Arama motorlarının bu siteyi dizine eklemesine izin ver</value></data>
+  <data name="Admin.SiteSettings.ChangesHereOnThePagesList" xml:space="preserve"><value>Burada, aşağıdaki Sayfalar listesinde ve İçerik bölümünde yapılan değişiklikler bir sonraki sayfa yüklemesinde yayına girer — robots.txt, sitemap.xml ve llms.txt dahil.</value></data>
+  <data name="Admin.SiteSettings.ComingSoonOn" xml:space="preserve"><value>“Yakında” perdesi açık: kapatılana kadar canlı site haritası ve llms.txt yalnızca {0} adresini listeler. Yukarıdaki sayılar açılışta listelenecekleri gösterir.</value></data>
+  <data name="Admin.SiteSettings.ContactAndAddress" xml:space="preserve"><value>İletişim ve adres</value></data>
+  <data name="Admin.SiteSettings.DefaultDescription" xml:space="preserve"><value>Varsayılan açıklama</value></data>
+  <data name="Admin.SiteSettings.DefaultDescriptionAbove" xml:space="preserve"><value>Yukarıdaki varsayılan açıklama</value></data>
+  <data name="Admin.SiteSettings.DefaultImageHint" xml:space="preserve"><value>Bu siteye ait bir bağlantı herhangi bir yere yapıştırıldığında görünen görsel — WhatsApp, Slack, LinkedIn, X. Kendi görseli olan bir sayfa önceliklidir; bu taban görseldir, böylece hiçbir bağlantı boş gri bir kutu olarak görünmez. {0} her ağın üzerinde anlaştığı boyuttur.</value></data>
+  <data name="Admin.SiteSettings.DefaultSocialImage" xml:space="preserve"><value>Varsayılan sosyal medya görseli</value></data>
+  <data name="Admin.SiteSettings.EveryAbsoluteAddressTheSitePublishes" xml:space="preserve"><value>Sitenin yayımladığı her mutlak adres, isteğin geldiği sunucudan değil buradan oluşturulur. Böylece bir önizleme alan adı, proxy ya da “www.” üzerinden ulaşılan aynı sayfa kendisiyle rekabet etmez.</value></data>
+  <data name="Admin.SiteSettings.EveryPageNowHasOneURL" xml:space="preserve"><value>Her sayfanın artık dil başına bir URL'si var.</value></data>
+  <data name="Admin.SiteSettings.HomepageTitle" xml:space="preserve"><value>Ana sayfa başlığı</value></data>
+  <data name="Admin.SiteSettings.Identity" xml:space="preserve"><value>Kimlik</value></data>
+  <data name="Admin.SiteSettings.IndexingOffHint" xml:space="preserve"><value>Kapatmak {0} yayımlar, site haritasını gizler ve her sayfaya {1} ekler. Bir test kopyasının tam olarak ihtiyacı budur — gerçek sitede kapatmak sizi Google'dan çıkarır.</value></data>
+  <data name="Admin.SiteSettings.Intro" xml:space="preserve"><value>Sitenin kendini arama motorlarına, mesajlaşma uygulamalarındaki bağlantı önizlemelerine ve dil modellerine nasıl tanıttığı. Okuyucunun kelime olarak gördüğü her şey dile göredir; her dilde aynı olan bilgiler bu sayfada bir kez yer alır.</value></data>
+  <data name="Admin.SiteSettings.LlmsNotesHint" xml:space="preserve"><value>ChatGPT veya Claude gibi bir asistanın House hakkındaki soruları yanıtlarken bilmesi gerekenler: kimin için olduğu, nasıl katılınacağı, ne olmadığı. Düz cümleler ya da kısa Markdown listeleri. Bu dilin llms.txt dosyasının en üstünde gösterilir; altındaki sayfa listesi kendiliğinden güncellenir.</value></data>
+  <data name="Admin.SiteSettings.Logo" xml:space="preserve"><value>Logo</value></data>
+  <data name="Admin.SiteSettings.Msg.ChooseImage" xml:space="preserve"><value>Önce bir görsel seçin.</value></data>
+  <data name="Admin.SiteSettings.Msg.ImagesOnly" xml:space="preserve"><value>Bu dosya kullanılamadı — yalnızca görseller.</value></data>
+  <data name="Admin.SiteSettings.Msg.LanguageSaved" xml:space="preserve"><value>{0} kaydedildi.</value></data>
+  <data name="Admin.SiteSettings.Msg.LogoRemoved" xml:space="preserve"><value>Logo kaldırıldı.</value></data>
+  <data name="Admin.SiteSettings.Msg.LogoUploaded" xml:space="preserve"><value>Logo yüklendi.</value></data>
+  <data name="Admin.SiteSettings.Msg.PagesSaved" xml:space="preserve"><value>{0} sayfa başlıkları ve açıklamaları kaydedildi. Şu anda yayında.</value></data>
+  <data name="Admin.SiteSettings.Msg.Saved" xml:space="preserve"><value>Site ayarları kaydedildi.</value></data>
+  <data name="Admin.SiteSettings.Msg.SocialImageRemoved" xml:space="preserve"><value>Sosyal medya görseli kaldırıldı.</value></data>
+  <data name="Admin.SiteSettings.Msg.SocialImageUploaded" xml:space="preserve"><value>Sosyal medya görseli yüklendi.</value></data>
+  <data name="Admin.SiteSettings.NotWrittenYetFallsBackTo" xml:space="preserve"><value>Henüz yazılmadı — İngilizceye döner</value></data>
+  <data name="Admin.SiteSettings.NotesForAIAssistantsLlmsTxt" xml:space="preserve"><value>Yapay zekâ asistanları için notlar (llms.txt)</value></data>
+  <data name="Admin.SiteSettings.OgImageHint" xml:space="preserve"><value>Genellikle boş. Görselin üzerinde yazı varsa ayarlamaya değer; çünkü {0} bir başlığın altında İngilizce bir kart hata gibi görünür.</value></data>
+  <data name="Admin.SiteSettings.OneLineDescribingTheHouseItself" xml:space="preserve"><value>House'u anlatan tek satır; yapılandırılmış veriler ve llms.txt için.</value></data>
+  <data name="Admin.SiteSettings.OnlyChangeThisIfYouKnow" xml:space="preserve"><value>Yalnızca nedenini biliyorsanız değiştirin. Çoğu site için Organization uygundur.</value></data>
+  <data name="Admin.SiteSettings.OptionalOnlyWhenThisLanguageNeeds" xml:space="preserve"><value>İsteğe bağlı — yalnızca bu dilin kendi görseli gerekiyorsa</value></data>
+  <data name="Admin.SiteSettings.Page" xml:space="preserve"><value>Sayfa</value></data>
+  <data name="Admin.SiteSettings.PagesFor" xml:space="preserve"><value>Sayfalar — {0}</value></data>
+  <data name="Admin.SiteSettings.PagesHint" xml:space="preserve"><value>Her sayfanın Google'da ve bağlantı önizlemelerinde {0} dilinde ne gösterdiği. Sayfanın yerleşik metnini kullanmak için alanı boş bırakın (kutuda gri gösterilir). Google bir başlığın yaklaşık 60, bir açıklamanın 155 karakterini gösterir. Deneyimler, oturumlar ve günlük yazılarının kendi düzenleyicilerinde alanları vardır; ana sayfa yukarıdaki ana sayfa başlığını ve varsayılan açıklamayı kullanır.</value></data>
+  <data name="Admin.SiteSettings.PagesInTheSitemap" xml:space="preserve"><value>Site haritasındaki sayfalar</value></data>
+  <data name="Admin.SiteSettings.PublishLlmsTxt" xml:space="preserve"><value>/llms.txt yayımla</value></data>
+  <data name="Admin.SiteSettings.PublishedAsStructuredDataWorthFilling" xml:space="preserve"><value>Yapılandırılmış veri olarak yayımlanır. Adres başka yerde herkese açık olmasa bile doldurmaya değer — House'u bilgi paneli ve harita sonuçları için uygun kılan budur.</value></data>
+  <data name="Admin.SiteSettings.SameAsHint" xml:space="preserve"><value>Sitenin yapılandırılmış verilerinde {0} olarak yayımlanır; arama motoru bu hesapların ve bu sitenin aynı kuruluş olduğunu böyle öğrenir. Var olmayanı boş bırakın — boş bir giriş yanlış bir girişten iyidir.</value></data>
+  <data name="Admin.SiteSettings.SavePages" xml:space="preserve"><value>{0} sayfalarını kaydet</value></data>
+  <data name="Admin.SiteSettings.SaveSettings" xml:space="preserve"><value>Ayarları kaydet</value></data>
+  <data name="Admin.SiteSettings.SearchVisibility" xml:space="preserve"><value>Arama görünürlüğü</value></data>
+  <data name="Admin.SiteSettings.SiteName" xml:space="preserve"><value>Site adı</value></data>
+  <data name="Admin.SiteSettings.SocialAccounts" xml:space="preserve"><value>Sosyal medya hesapları</value></data>
+  <data name="Admin.SiteSettings.SocialImageDescription" xml:space="preserve"><value>Sosyal medya görseli açıklaması</value></data>
+  <data name="Admin.SiteSettings.SocialImageFor" xml:space="preserve"><value>{0} sosyal medya görseli</value></data>
+  <data name="Admin.SiteSettings.SocialImageURLForThisLanguage" xml:space="preserve"><value>Bu dil için sosyal medya görseli URL'si</value></data>
+  <data name="Admin.SiteSettings.SquareAtLeast112112Published" xml:space="preserve"><value>Kare, en az 112×112. Yapılandırılmış verilerde yayımlanır.</value></data>
+  <data name="Admin.SiteSettings.TheMasterSwitch" xml:space="preserve"><value>Ana anahtar.</value></data>
+  <data name="Admin.SiteSettings.TheSentenceUnderTheBlueLink" xml:space="preserve"><value>Google'da mavi bağlantının altındaki ve bağlantı önizlemesindeki cümle. Kendi açıklamasını yazmayan her sayfa bunu kullanır. Google yaklaşık ilk 160 karakteri gösterir — tarayıcı için değil, insan için yazın.</value></data>
+  <data name="Admin.SiteSettings.TitleTemplate" xml:space="preserve"><value>Başlık şablonu</value></data>
+  <data name="Admin.SiteSettings.TitleTemplateHint" xml:space="preserve"><value>{0}, her sayfanın kendi adının geleceği yerdir. O olmadan sitedeki tüm sayfalar aynı başlığı paylaşır.</value></data>
+  <data name="Admin.SiteSettings.TwitterHint" xml:space="preserve"><value>@ olmadan. X'te paylaşılan bağlantı kartlarında hesabı belirtir.</value></data>
+  <data name="Admin.SiteSettings.URLsOnceLanguagesAreCounted" xml:space="preserve"><value>Diller sayıldığında URL'ler</value></data>
+  <data name="Admin.SiteSettings.Upload1200630WorksEverywhere" xml:space="preserve"><value>Yükle (1200×630 her yerde çalışır)</value></data>
+  <data name="Admin.SiteSettings.UploadDefaultSocialImage" xml:space="preserve"><value>Varsayılan sosyal medya görselini yükle</value></data>
+  <data name="Admin.SiteSettings.UploadLogo" xml:space="preserve"><value>Logo yükle</value></data>
+  <data name="Admin.SiteSettings.UrlNotice" xml:space="preserve"><value>İngilizce {0} adresinde, diğerleri bir önekle sunulur — {1}, {2}, {3}. Google'ın dördünü de dizine eklemesini ve gönderdiğiniz bir bağlantının, karşı tarafın en son seçtiği dilde değil sizin okuduğunuz dilde açılmasını sağlayan budur.</value></data>
+  <data name="Admin.SiteSettings.UsedAsIsWithoutTheTemplate" xml:space="preserve"><value>Şablon olmadan olduğu gibi kullanılır — “Ana sayfa — The VI House” başlıklı bir ana sayfa sitenin en değerli 60 karakterini boşa harcar. 60'ın altında tutun.</value></data>
+  <data name="Admin.SiteSettings.UsuallyTheSameInEveryLanguage" xml:space="preserve"><value>Genellikle her dilde aynıdır. Bazen değil.</value></data>
+  <data name="Admin.SiteSettings.VerificationHint" xml:space="preserve"><value>Ya yalnızca belirteci ya da {0} etiketinin tamamını yapıştırın — belirteç her iki durumda da ayıklanır.</value></data>
+  <data name="Admin.SiteSettings.ViewLlms" xml:space="preserve"><value>llms.txt'yi görüntüle ({0})</value></data>
+  <data name="Admin.SiteSettings.ViewRobotsTxt" xml:space="preserve"><value>robots.txt'yi görüntüle →</value></data>
+  <data name="Admin.SiteSettings.ViewSitemapXml" xml:space="preserve"><value>sitemap.xml'i görüntüle →</value></data>
+  <data name="Admin.SiteSettings.WhatTheOrganisationIs" xml:space="preserve"><value>Kuruluşun ne olduğu</value></data>
+  <data name="Admin.SiteSettings.WhatTheSiteSaysAboutItself" xml:space="preserve"><value>Sitenin kendisi hakkında söyledikleri</value></data>
+  <data name="Admin.Table.Actions" xml:space="preserve"><value>İşlemler</value></data>
+  <data name="Admin.Table.Empty" xml:space="preserve"><value>Burada henüz bir şey yok.</value></data>
+  <data name="Admin.Table.Info" xml:space="preserve"><value>{2} kayıttan {0}–{1}</value></data>
+  <data name="Admin.Table.NoResults" xml:space="preserve"><value>Bu aramayla eşleşen bir şey yok.</value></data>
+  <data name="Admin.Table.PerPage" xml:space="preserve"><value>sayfa başına</value></data>
+  <data name="Admin.Table.Search" xml:space="preserve"><value>Ara…</value></data>
+  <data name="Admin.Translations.AllSections" xml:space="preserve"><value>Tüm bölümler</value></data>
+  <data name="Admin.Translations.Clear" xml:space="preserve"><value>Temizle</value></data>
+  <data name="Admin.Translations.ClickToEdit" xml:space="preserve"><value>Düzenlemek için bir değere tıklayın</value></data>
+  <data name="Admin.Translations.DownloadResxFiles" xml:space="preserve"><value>.resx dosyalarını indir</value></data>
+  <data name="Admin.Translations.Err.Conflict" xml:space="preserve"><value>Siz açıkken başka biri bunu değiştirdi — şimdi “{0}” yazıyor. Metniniz kaydedilmedi; hücre güncellendi, üzerine yazmak için yeniden düzenleyin.</value></data>
+  <data name="Admin.Translations.Err.EnglishEmpty" xml:space="preserve"><value>İngilizce metin diğer tüm dillerin kaynağıdır ve boşaltılamaz.</value></data>
+  <data name="Admin.Translations.Err.KeyMissing" xml:space="preserve"><value>Bu anahtar {0} içinde yok.</value></data>
+  <data name="Admin.Translations.Err.Malformed" xml:space="preserve"><value>Yer tutucular hatalı — kapanmamış ya da fazladan bir süslü parantez olup olmadığını kontrol edin.</value></data>
+  <data name="Admin.Translations.Err.NoPlaceholders" xml:space="preserve"><value>İngilizce metinde yer tutucu yok, bu yüzden bu çeviri yer tutucu eklememelidir.</value></data>
+  <data name="Admin.Translations.Err.NotOnDisk" xml:space="preserve"><value>.resx dosyaları diskte değil, bu yüzden hiçbir şey kaydedilemez. Localization:ResourcesPath ayarına bakın.</value></data>
+  <data name="Admin.Translations.Err.Placeholders" xml:space="preserve"><value>Bu metin İngilizcedeki yer tutucuların aynısını kullanmalıdır: {0}</value></data>
+  <data name="Admin.Translations.Err.TooLong" xml:space="preserve"><value>Bu 8000 karakterden uzun — yanlışlıkla yapıştırma olup olmadığını kontrol edin.</value></data>
+  <data name="Admin.Translations.Err.Unknown" xml:space="preserve"><value>Bilinmeyen anahtar ya da dil.</value></data>
+  <data name="Admin.Translations.Err.WriteFailed" xml:space="preserve"><value>Dosya yazılamadı.</value></data>
+  <data name="Admin.Translations.EveryStringOnTheSiteIn" xml:space="preserve"><value>Sitedeki her metin, dört dilde. Düzenlemek için bir değere tıklayın — değişiklikler doğrudan kaynak dosyalarına yazılır ve yeniden derleme olmadan bir sonraki sayfa yüklemesinde yayına girer.</value></data>
+  <data name="Admin.Translations.Key" xml:space="preserve"><value>Anahtar</value></data>
+  <data name="Admin.Translations.KeyCancels" xml:space="preserve"><value>iptal eder.</value></data>
+  <data name="Admin.Translations.KeyNewLine" xml:space="preserve"><value>yeni satıra geçer</value></data>
+  <data name="Admin.Translations.KeyOrTextInEnglishGerman" xml:space="preserve"><value>Anahtar ya da İngilizce, Almanca, Türkçe veya Estonca metin…</value></data>
+  <data name="Admin.Translations.KeySaves" xml:space="preserve"><value>kaydeder</value></data>
+  <data name="Admin.Translations.Languages" xml:space="preserve"><value>Diller</value></data>
+  <data name="Admin.Translations.NothingMatchesThat" xml:space="preserve"><value>Eşleşen bir şey yok.</value></data>
+  <data name="Admin.Translations.ReadOnly" xml:space="preserve"><value>Salt okunur.</value></data>
+  <data name="Admin.Translations.ReadOnlyHint" xml:space="preserve"><value>{0} konumunda kaynak dosyası bulunamadı; bu yüzden site metinlerini uygulamanın içindeki derlenmiş kopyalardan okuyor ve burada hiçbir şey kaydedilemez. {1} ayarını {2} dosyasının bulunduğu klasöre yönlendirin.</value></data>
+  <data name="Admin.Translations.Section" xml:space="preserve"><value>Bölüm</value></data>
+  <data name="Admin.Translations.ShowingOf" xml:space="preserve"><value>{1} anahtardan {0} tanesi gösteriliyor.</value></data>
+  <data name="Admin.Translations.StillReadingAsEnglish" xml:space="preserve"><value>Hâlâ İngilizce</value></data>
+  <data name="Admin.Translations.TranslationKeys" xml:space="preserve"><value>Çeviri anahtarları</value></data>
+  <data name="Admin.Translations.TryADifferentSectionOrClear" xml:space="preserve"><value>Başka bir bölüm deneyin ya da aramayı temizleyin.</value></data>
+  <data name="Admin.Translations.Uses0StylePlaceholdersThatEvery" xml:space="preserve"><value>Her dilin koruması gereken {0} tarzı yer tutucular kullanır</value></data>
+  <data name="Admin.Users.About" xml:space="preserve"><value>Hakkında</value></data>
+  <data name="Admin.Users.Account" xml:space="preserve"><value>Hesap</value></data>
+  <data name="Admin.Users.AccountCreated" xml:space="preserve"><value>Hesap oluşturuldu</value></data>
+  <data name="Admin.Users.AccountHealth" xml:space="preserve"><value>Hesap durumu</value></data>
+  <data name="Admin.Users.Address" xml:space="preserve"><value>Adres</value></data>
+  <data name="Admin.Users.AfterSettingAPasswordTheyLl" xml:space="preserve"><value>Parolayı belirledikten sonra e-postalarını doğrulama ve iki adımlı doğrulama için bir QR kodu tarama adımlarından geçirilirler. İkisi de tamamlanana kadar yönetim paneli kapalı kalır.</value></data>
+  <data name="Admin.Users.AnnualEarnings" xml:space="preserve"><value>Yıllık kazanç</value></data>
+  <data name="Admin.Users.Applications" xml:space="preserve"><value>Başvurular</value></data>
+  <data name="Admin.Users.BackToUsers" xml:space="preserve"><value>← Kullanıcılara dön</value></data>
+  <data name="Admin.Users.BackToUsers94" xml:space="preserve"><value>Kullanıcılara dön</value></data>
+  <data name="Admin.Users.BilledByStripe" xml:space="preserve"><value>Stripe üzerinden faturalanır — burada sonlandırma reddedilir; aboneliği Stripe'ta iptal edin, webhook üyeliği sonlandırır.</value></data>
+  <data name="Admin.Users.BlankThePlanSOwnPeriod" xml:space="preserve"><value>Boş = planın bugünden itibaren kendi süresi (tek seferlik planda bitiş yok).</value></data>
+  <data name="Admin.Users.Bookings" xml:space="preserve"><value>Rezervasyonlar</value></data>
+  <data name="Admin.Users.Commission" xml:space="preserve"><value>Komisyon</value></data>
+  <data name="Admin.Users.Commission27" xml:space="preserve"><value>Komisyon %</value></data>
+  <data name="Admin.Users.Company" xml:space="preserve"><value>Şirket</value></data>
+  <data name="Admin.Users.Complimentary" xml:space="preserve"><value>Ücretsiz</value></data>
+  <data name="Admin.Users.CreateAdminSendSetupLink" xml:space="preserve"><value>Yönetici oluştur ve kurulum bağlantısı gönder</value></data>
+  <data name="Admin.Users.CreateReferralLink" xml:space="preserve"><value>Referans bağlantısı oluştur</value></data>
+  <data name="Admin.Users.CreatesAStaffAccountAndEmails" xml:space="preserve"><value>Bir personel hesabı oluşturur ve tek kullanımlık bir kurulum bağlantısı e-postalar. Parolayı asla siz seçmezsiniz — kişi kendisi belirler, ardından panel açılmadan önce e-posta adresini doğrulamalı ve iki adımlı doğrulamayı açmalıdır.</value></data>
+  <data name="Admin.Users.DisplayName" xml:space="preserve"><value>Görünen ad</value></data>
+  <data name="Admin.Users.EGContentPartner12Month" xml:space="preserve"><value>ör. İçerik ortağı — 12 aylık iş birliği</value></data>
+  <data name="Admin.Users.EmailConfirmed" xml:space="preserve"><value>E-posta doğrulandı</value></data>
+  <data name="Admin.Users.EndMembership" xml:space="preserve"><value>Üyeliği sonlandır</value></data>
+  <data name="Admin.Users.Ends" xml:space="preserve"><value>Biter</value></data>
+  <data name="Admin.Users.Expectations" xml:space="preserve"><value>Beklentiler</value></data>
+  <data name="Admin.Users.ExperiencePayments" xml:space="preserve"><value>Deneyim ödemeleri</value></data>
+  <data name="Admin.Users.From" xml:space="preserve"><value>Başlangıç</value></data>
+  <data name="Admin.Users.GrantEvenIfThePlanIs" xml:space="preserve"><value>Plan üye sınırına ulaşmış olsa bile ver</value></data>
+  <data name="Admin.Users.GrantMembership" xml:space="preserve"><value>Üyelik ver</value></data>
+  <data name="Admin.Users.GrantPlan" xml:space="preserve"><value>Plan ver</value></data>
+  <data name="Admin.Users.GrantedBecause" xml:space="preserve"><value>Verilme nedeni</value></data>
+  <data name="Admin.Users.History" xml:space="preserve"><value>Geçmiş</value></data>
+  <data name="Admin.Users.InTheirWords" xml:space="preserve"><value>Kendi sözleriyle</value></data>
+  <data name="Admin.Users.InviteAdmin" xml:space="preserve"><value>+ Yönetici davet et</value></data>
+  <data name="Admin.Users.InviteTitle" xml:space="preserve"><value>Yönetici davet et</value></data>
+  <data name="Admin.Users.LastSignIn" xml:space="preserve"><value>Son giriş</value></data>
+  <data name="Admin.Users.Link" xml:space="preserve"><value>Bağlantı</value></data>
+  <data name="Admin.Users.LockedOut" xml:space="preserve"><value>Kilitli</value></data>
+  <data name="Admin.Users.MemberStatus" xml:space="preserve"><value>Üyelik durumu</value></data>
+  <data name="Admin.Users.Membership" xml:space="preserve"><value>Üyelik</value></data>
+  <data name="Admin.Users.MembershipPayments" xml:space="preserve"><value>Üyelik ödemeleri</value></data>
+  <data name="Admin.Users.Msg.AccountExists" xml:space="preserve"><value>Bu e-posta adresi için zaten bir hesap var. Yönetici rollerini bunun yerine müşteri kaydından verin.</value></data>
+  <data name="Admin.Users.Msg.AdminCreated" xml:space="preserve"><value>{0} için yönetici hesabı oluşturuldu. Kurulum bağlantısı e-postayla gönderildi.</value></data>
+  <data name="Admin.Users.Msg.ChooseRole" xml:space="preserve"><value>En az bir yönetici rolü seçin.</value></data>
+  <data name="Admin.Users.Msg.HasReferralLink" xml:space="preserve"><value>Kişinin zaten bir referans bağlantısı var.</value></data>
+  <data name="Admin.Users.Msg.LastSuperAdmin" xml:space="preserve"><value>Tek SuperAdmin sizsiniz — kendi erişiminizi kaldırmadan önce başka birini yetkilendirin.</value></data>
+  <data name="Admin.Users.Msg.NoEmail" xml:space="preserve"><value>Bu hesabın bağlantı gönderilecek e-posta adresi yok.</value></data>
+  <data name="Admin.Users.Msg.Protected" xml:space="preserve"><value>{0} korumalı bir hesaptır ve panelden değiştirilemez.</value></data>
+  <data name="Admin.Users.Msg.ReferralCreated" xml:space="preserve"><value>Referans bağlantısı oluşturuldu: /r/{0}. Kişi hesap sayfasından kopyalayabilir.</value></data>
+  <data name="Admin.Users.Msg.ReferralPaused" xml:space="preserve"><value>Referans bağlantısı duraklatıldı — ziyaretleri artık sayılmıyor.</value></data>
+  <data name="Admin.Users.Msg.ReferralReactivated" xml:space="preserve"><value>Referans bağlantısı yeniden etkinleştirildi.</value></data>
+  <data name="Admin.Users.Msg.RolesUpdated" xml:space="preserve"><value>Roller güncellendi.</value></data>
+  <data name="Admin.Users.Msg.SetupLinkFailed" xml:space="preserve"><value>{0} adresine e-posta gönderilmedi — nedeni ve Yeniden gönder düğmesi E-postalar ve SMS bölümünde.</value></data>
+  <data name="Admin.Users.Msg.SetupLinkSent" xml:space="preserve"><value>{0} adresine parola oluşturma bağlantısı gönderiliyor. 24 saat içinde bir kez çalışır.</value></data>
+  <data name="Admin.Users.Msg.TwoFactorReset" xml:space="preserve"><value>{0} için iki adımlı doğrulama sıfırlandı. Panel bir sonraki tıklamadan itibaren kapalı, oturumu beş dakika içinde biter ve yeniden giriş yaptığında yeni bir doğrulama uygulaması eşleştirir.</value></data>
+  <data name="Admin.Users.Never" xml:space="preserve"><value>Asla</value></data>
+  <data name="Admin.Users.NeverSignedIn" xml:space="preserve"><value>Hiç oturum açmadı</value></data>
+  <data name="Admin.Users.NoApplicationsFromThisAccount" xml:space="preserve"><value>Bu hesaptan başvuru yok.</value></data>
+  <data name="Admin.Users.NoBookingsFromThisAccount" xml:space="preserve"><value>Bu hesaptan rezervasyon yok.</value></data>
+  <data name="Admin.Users.NoCurrentMembership" xml:space="preserve"><value>Mevcut üyelik yok.</value></data>
+  <data name="Admin.Users.NoExperiencePaymentsFromThisAccount" xml:space="preserve"><value>Bu hesaptan deneyim ödemesi yok.</value></data>
+  <data name="Admin.Users.NoMembershipPurchasesFromThisAccount" xml:space="preserve"><value>Bu hesaptan üyelik satın alımı yok.</value></data>
+  <data name="Admin.Users.NoReferralLink" xml:space="preserve"><value>Referans bağlantısı yok. Yalnızca yöneticiler atayabilir; kişi daha sonra hesap sayfasında bulur.</value></data>
+  <data name="Admin.Users.NoRegisteredAccountsYet" xml:space="preserve"><value>Henüz kayıtlı hesap yok.</value></data>
+  <data name="Admin.Users.PaidMembership" xml:space="preserve"><value>Ücretli</value></data>
+  <data name="Admin.Users.PerformanceSettings" xml:space="preserve"><value>Performans ve ayarlar</value></data>
+  <data name="Admin.Users.Plan" xml:space="preserve"><value>Plan</value></data>
+  <data name="Admin.Users.Profile" xml:space="preserve"><value>Profil</value></data>
+  <data name="Admin.Users.ProtectedAccount" xml:space="preserve"><value>Korumalı hesap.</value></data>
+  <data name="Admin.Users.Provider" xml:space="preserve"><value>Sağlayıcı</value></data>
+  <data name="Admin.Users.ReasonKeptOnTheRecord" xml:space="preserve"><value>Neden (kayıtta saklanır)</value></data>
+  <data name="Admin.Users.Reference" xml:space="preserve"><value>Referans</value></data>
+  <data name="Admin.Users.ReferralLink" xml:space="preserve"><value>Yönlendirme bağlantısı</value></data>
+  <data name="Admin.Users.Renews" xml:space="preserve"><value>Yenilenir</value></data>
+  <data name="Admin.Users.ResetLinkConfirm" xml:space="preserve"><value>{0} adresine parolasını sıfırlaması için tek kullanımlık bağlantı gönderilsin mi?</value></data>
+  <data name="Admin.Users.ResetTwoFactor" xml:space="preserve"><value>İki adımlı doğrulamayı sıfırla</value></data>
+  <data name="Admin.Users.ResetTwoFactorConfirm" xml:space="preserve"><value>{0} için iki adımlı doğrulama sıfırlansın mı? Kişinin tüm oturumları kapanır ve bir sonraki girişte yeni bir doğrulama uygulaması eşleştirmesi gerekir.</value></data>
+  <data name="Admin.Users.Roles" xml:space="preserve"><value>Roller</value></data>
+  <data name="Admin.Users.RolesTwoFactorMembershipAndReferral" xml:space="preserve"><value>Bu hesabın rolleri, iki adımlı doğrulaması, üyeliği ve referans durumu panelden kimse tarafından değiştirilemez.</value></data>
+  <data name="Admin.Users.SaveRoles" xml:space="preserve"><value>Rolleri kaydet</value></data>
+  <data name="Admin.Users.SendResetEmail" xml:space="preserve"><value>Parola sıfırlama e-postası gönder</value></data>
+  <data name="Admin.Users.SendSetupEmail" xml:space="preserve"><value>Parola oluşturma e-postası gönder</value></data>
+  <data name="Admin.Users.SetupLinkConfirm" xml:space="preserve"><value>{0} adresine parola belirlemesi için tek kullanımlık bağlantı gönderilsin mi?</value></data>
+  <data name="Admin.Users.SetupLinkFor" xml:space="preserve"><value>{0} için kurulum bağlantısı</value></data>
+  <data name="Admin.Users.Since" xml:space="preserve"><value>Başlangıç</value></data>
+  <data name="Admin.Users.Source" xml:space="preserve"><value>Kaynak</value></data>
+  <data name="Admin.Users.StripeReference" xml:space="preserve"><value>Stripe referansı</value></data>
+  <data name="Admin.Users.Submitted" xml:space="preserve"><value>Gönderildi</value></data>
+  <data name="Admin.Users.SuperAdminCanManageRolesAndInvite" xml:space="preserve"><value>SuperAdmin rolleri yönetebilir ve başka yöneticileri davet edebilir. Diğer her rol paneli kullanabilir ama kimin erişimi olduğunu değiştiremez.</value></data>
+  <data name="Admin.Users.ThisLinkHasBeenEmailedTo" xml:space="preserve"><value>Bu bağlantı kişiye e-postayla gönderildi. Bir kez çalışır ve parola belirlemeyi sağlar — e-posta ulaşmazsa güvendiğiniz bir kanaldan doğrudan gönderin. Bir daha gösterilmeyecek.</value></data>
+  <data name="Admin.Users.TitleProfession" xml:space="preserve"><value>Unvan / meslek</value></data>
+  <data name="Admin.Users.To" xml:space="preserve"><value>Alıcı</value></data>
+  <data name="Admin.Users.TwoFactor" xml:space="preserve"><value>İki adımlı doğrulama</value></data>
+  <data name="Admin.Users.TwoFactorOff" xml:space="preserve"><value>Kurulmadı</value></data>
+  <data name="Admin.Users.TwoFactorOn" xml:space="preserve"><value>Etkin</value></data>
+  <data name="Admin.Users.ValidUntil" xml:space="preserve"><value>Geçerlilik sonu</value></data>
+  <data name="Admin.Users.YesTooManyFailedAttempts" xml:space="preserve"><value>Evet — çok fazla başarısız deneme</value></data>
+  <data name="Admin.Validation.EnterAFullURLIncludingHttps" xml:space="preserve"><value>https:// dahil tam bir URL girin</value></data>
+  <data name="Admin.Validation.LettersDigitsAndHyphensOnly" xml:space="preserve"><value>Yalnızca harf, rakam ve tire.</value></data>
+  <data name="Admin.Validation.LettersNumbersAndHyphensOnlyThis" xml:space="preserve"><value>Yalnızca harf, rakam ve tire — bu, herkese açık bir URL'nin parçası olur.</value></data>
+  <data name="Admin.Validation.LowercaseLettersNumbersAndHyphensOnly" xml:space="preserve"><value>Yalnızca küçük harf, rakam ve tire.</value></data>
+  <data name="Admin.Validation.ThatDoesNotLookLikeA" xml:space="preserve"><value>Bu tam bir adres gibi görünmüyor — https:// ekleyin.</value></data>
+  <data name="Admin.Validation.TwoLettersEGGB" xml:space="preserve"><value>İki harf, ör. GB</value></data>
+  <data name="Admin.Validation.UseLettersNumbersAndHyphensOnly" xml:space="preserve"><value>Yalnızca harf, rakam ve tire kullanın.</value></data>
+  <data name="Admin.Validation.UseTheTwoLetterCountryCode" xml:space="preserve"><value>İki harfli ülke kodunu kullanın, ör. GB.</value></data>
+  <data name="Admin.Webhooks.All" xml:space="preserve"><value>Tümü</value></data>
+  <data name="Admin.Webhooks.Attempts" xml:space="preserve"><value>Denemeler</value></data>
+  <data name="Admin.Webhooks.Empty" xml:space="preserve"><value>Henüz olay yok.</value></data>
+  <data name="Admin.Webhooks.EmptyForStatus" xml:space="preserve"><value>Henüz “{0}” durumunda olay yok.</value></data>
+  <data name="Admin.Webhooks.Event" xml:space="preserve"><value>Olay</value></data>
+  <data name="Admin.Webhooks.Failed" xml:space="preserve"><value>Başarısız</value></data>
+  <data name="Admin.Webhooks.FailedWaiting" xml:space="preserve"><value>Stripe'ın yeniden denemesini bekleyen başarısız olaylar: {0}.</value></data>
+  <data name="Admin.Webhooks.FetchThisEventFromStripeAgain" xml:space="preserve"><value>Bu olay Stripe'tan yeniden alınıp tüm işleyicilerden geçirilsin mi?</value></data>
+  <data name="Admin.Webhooks.Ignored" xml:space="preserve"><value>Yok sayıldı</value></data>
+  <data name="Admin.Webhooks.InProgress" xml:space="preserve"><value>İşleniyor</value></data>
+  <data name="Admin.Webhooks.Intro" xml:space="preserve"><value>Stripe'ın gönderdiği ve webhook gizli anahtarıyla doğrulanan her olay, en yeni önce. {0}, tüm işleyicilerin çalışıp birlikte kaydedildiği anlamına gelir; {1}, bir işleyicinin hata verdiği, hiçbir şeyin yazılmadığı ve Stripe'a yeniden denemesinin söylendiği anlamına gelir — neden satırda yazar ve {2} olayı Stripe'tan yeniden alıp aynı yoldan geçirir. {3} olaylar, henüz hiçbir şeyin işlem yapmadığı türlerdir. İçerikler asla saklanmaz.</value></data>
+  <data name="Admin.Webhooks.LastError" xml:space="preserve"><value>Son hata</value></data>
+  <data name="Admin.Webhooks.Msg.Failed" xml:space="preserve"><value>{0} olayı yine başarısız oldu: {1}</value></data>
+  <data name="Admin.Webhooks.Msg.Gone" xml:space="preserve"><value>Stripe'ta artık {0} olayı yok (olaylar 30 gün saklanır), bu yüzden yeniden çalıştırılamaz.</value></data>
+  <data name="Admin.Webhooks.Msg.Ignored" xml:space="preserve"><value>{0} olayı yeniden çalıştırıldı; {1} türüne işlem yapan bir işleyici yok.</value></data>
+  <data name="Admin.Webhooks.Msg.InProgress" xml:space="preserve"><value>{0} olayı şu anda başka bir deneme tarafından işleniyor.</value></data>
+  <data name="Admin.Webhooks.Msg.Nothing" xml:space="preserve"><value>{0} olayı: yapılacak bir şey yok.</value></data>
+  <data name="Admin.Webhooks.Msg.Processed" xml:space="preserve"><value>{0} olayı yeniden çalıştırıldı ve işlendi.</value></data>
+  <data name="Admin.Webhooks.Object" xml:space="preserve"><value>Nesne</value></data>
+  <data name="Admin.Webhooks.Processed" xml:space="preserve"><value>İşlendi</value></data>
+  <data name="Admin.Webhooks.ReRun" xml:space="preserve"><value>Yeniden çalıştır</value></data>
+  <data name="Admin.Webhooks.Received" xml:space="preserve"><value>Alındı</value></data>
+  <data name="Admin.Webhooks.ShowThem" xml:space="preserve"><value>Göster</value></data>
+  <data name="Admin.Webhooks.ShowingNewest" xml:space="preserve"><value>En yeni {0} kayıt gösteriliyor. Daha eskileri görmek için duruma göre daraltın.</value></data>
+  <data name="Admin.Webhooks.TestMode" xml:space="preserve"><value>test</value></data>
+  <data name="Admin.Writer.Autosaved" xml:space="preserve"><value>Bu cihaza {0} saatinde kaydedildi</value></data>
+  <data name="Admin.Writer.BodyPlaceholder" xml:space="preserve"><value>Yazmaya başlayın… Bölümler için Başlık'ı kullanın; görselleri doğrudan sürükleyin.</value></data>
+  <data name="Admin.Writer.DangerZone" xml:space="preserve"><value>Yazıyı sil</value></data>
+  <data name="Admin.Writer.DeleteHint" xml:space="preserve"><value>Yazıyı, çevirilerini ve yüklenen görsellerini siler. Bu işlem geri alınamaz.</value></data>
+  <data name="Admin.Writer.FocusOff" xml:space="preserve"><value>Odaktan çık</value></data>
+  <data name="Admin.Writer.FocusOn" xml:space="preserve"><value>Odak modu</value></data>
+  <data name="Admin.Writer.Minutes" xml:space="preserve"><value>{0} dk okuma</value></data>
+  <data name="Admin.Writer.Restore" xml:space="preserve"><value>Bu cihazda kaydedilmemiş bir metin bulundu (saat {0}).</value></data>
+  <data name="Admin.Writer.RestoreNo" xml:space="preserve"><value>Yok say</value></data>
+  <data name="Admin.Writer.RestoreYes" xml:space="preserve"><value>Geri yükle</value></data>
+  <data name="Admin.Writer.SearchCard" xml:space="preserve"><value>Arama ve paylaşım</value></data>
+  <data name="Admin.Writer.SearchIntro" xml:space="preserve"><value>Yazının Google'da ve bağlantı önizlemelerinde nasıl göründüğü. Boş bırakılırsa başlık ve giriş kullanılır.</value></data>
+  <data name="Admin.Writer.Settings" xml:space="preserve"><value>Yazı ayarları</value></data>
+  <data name="Admin.Writer.Shortcut" xml:space="preserve"><value>Ctrl + S kaydeder</value></data>
+  <data name="Admin.Writer.StandfirstPlaceholder" xml:space="preserve"><value>Okuru devam etmeye isteklendiren bir iki cümle.</value></data>
+  <data name="Admin.Writer.Start.After" xml:space="preserve"><value>Sırada yazının kendisini yazmak var. Görseller doğrudan metne sürüklenebilir.</value></data>
+  <data name="Admin.Writer.Start.AuthorHint" xml:space="preserve"><value>Başlığın altında gösterilir. Adınızla önceden doldurulur.</value></data>
+  <data name="Admin.Writer.Start.Submit" xml:space="preserve"><value>Yazmaya başla</value></data>
+  <data name="Admin.Writer.Start.TitleHint" xml:space="preserve"><value>İstediğiniz zaman değiştirebilirsiniz. Web adresi bundan oluşturulur.</value></data>
+  <data name="Admin.Writer.TitlePlaceholder" xml:space="preserve"><value>Başlık</value></data>
+  <data name="Admin.Writer.Words" xml:space="preserve"><value>{0} kelime</value></data>
+  <data name="Preview.Edit" xml:space="preserve"><value>Yönetim panelinde düzenle</value></data>
+  <data name="Preview.Journal.Draft" xml:space="preserve"><value>Önizleme — bu yazı bir taslak. Bu sayfayı yalnızca ekip görebilir.</value></data>
+  <data name="Preview.Seminar.Archived" xml:space="preserve"><value>Önizleme — bu oturum arşivlendi ve artık listelenmiyor.</value></data>
+  <data name="Preview.Seminar.Draft" xml:space="preserve"><value>Önizleme — bu oturum bir taslak. Bu sayfayı yalnızca ekip görebilir.</value></data>
+  <data name="Preview.Seminar.Members" xml:space="preserve"><value>Bu oturum yalnızca üyeler için — oturum açmamış ziyaretçiler “sayfa bulunamadı” görür.</value></data>
+  <data name="Preview.Seminar.Unlisted" xml:space="preserve"><value>Bu oturum listelenmemiş — oturumlar sayfasında yok; yalnızca bağlantısı olanlar açabilir.</value></data>
+  <data name="Preview.Tag" xml:space="preserve"><value>Yalnızca ekip</value></data>
+  <data name="Seminars.StaffNotice" xml:space="preserve"><value>Ziyaretçilerden gizli: {0} taslak ve {1} yalnızca üyelere açık ya da listelenmemiş oturum. Bu notu yalnızca ekip görür.</value></data>
+  <data name="Seminars.StaffNotice.Manage" xml:space="preserve"><value>Oturumları yönet</value></data>
+  <data name="Validation.EmailAddress" xml:space="preserve"><value>{0} geçerli bir e-posta adresi değil.</value></data>
+  <data name="Validation.Phone" xml:space="preserve"><value>{0} geçerli bir telefon numarası değil.</value></data>
+  <data name="Validation.Range" xml:space="preserve"><value>{0} {1} ile {2} arasında olmalıdır.</value></data>
+  <data name="Validation.Required" xml:space="preserve"><value>{0} zorunludur.</value></data>
+  <data name="Validation.StringLength" xml:space="preserve"><value>{0} en fazla {1} karakter olabilir.</value></data>
+  <data name="Validation.StringLengthRange" xml:space="preserve"><value>{0} {2} ile {1} karakter arasında olmalıdır.</value></data>
+  <data name="Validation.Url" xml:space="preserve"><value>{0}, https:// ile başlayan tam bir web adresi olmalıdır.</value></data>
+  <data name="Admin.Ambassadors.InvitationExpired" xml:space="preserve"><value>Davetin süresi doldu</value></data>
+  <data name="Admin.Ambassadors.Invited" xml:space="preserve"><value>Davet edildi</value></data>
+  <data name="Admin.Ambassadors.InvitedWaiting" xml:space="preserve"><value>Davet edildi — yanıt bekleniyor</value></data>
+  <data name="Admin.Community.AddLink" xml:space="preserve"><value>Bağlantı ekle</value></data>
+  <data name="Admin.Community.EditTitle" xml:space="preserve"><value>Topluluk bağlantısını düzenle</value></data>
+  <data name="Admin.Community.NewTitle" xml:space="preserve"><value>Yeni topluluk bağlantısı</value></data>
+  <data name="Admin.Experiences.CoverPathHint" xml:space="preserve"><value>Sitede zaten bulunan bir dosyanın yolu, ör. /img/experiences/london-1600.jpg.</value></data>
+  <data name="Admin.Experiences.CoverUploadInUse" xml:space="preserve"><value>Yüklenmiş bir kapak kullanılıyor. Yola geri dönmek için yukarıdan kaldırın.</value></data>
+  <data name="Admin.PromoCodes.CreateCode" xml:space="preserve"><value>Kod oluştur</value></data>
+  <data name="Admin.PromoCodes.EditTitle" xml:space="preserve"><value>Promosyon kodu — {0}</value></data>
+  <data name="Admin.PromoCodes.NewTitle" xml:space="preserve"><value>Yeni promosyon kodu</value></data>
+  <data name="Admin.Users.PauseLink" xml:space="preserve"><value>Bağlantıyı duraklat</value></data>
+  <data name="Admin.Users.ProfileComplete" xml:space="preserve"><value>Tamamlandı</value></data>
+  <data name="Admin.Users.ProfileIncomplete" xml:space="preserve"><value>Eksik — zorunlu açıklamalar yok</value></data>
+  <data name="Admin.Users.ReactivateLink" xml:space="preserve"><value>Bağlantıyı yeniden etkinleştir</value></data>
+  <data name="Admin.Field.BillingPeriod" xml:space="preserve"><value>Fatura dönemi</value></data>
+  <data name="Admin.Field.Capacity" xml:space="preserve"><value>Kapasite</value></data>
+  <data name="Admin.Field.Country" xml:space="preserve"><value>Ülke</value></data>
+  <data name="Admin.Field.Name" xml:space="preserve"><value>Ad</value></data>
+  <data name="Admin.Field.Slug" xml:space="preserve"><value>Web adresi (kısa ad)</value></data>
+  <data name="Admin.Field.Status" xml:space="preserve"><value>Durum</value></data>
+  <data name="Admin.Field.TimeZone" xml:space="preserve"><value>Saat dilimi</value></data>
+  <data name="Admin.Field.Title" xml:space="preserve"><value>Başlık</value></data>
+  <data name="Admin.Field.Venue" xml:space="preserve"><value>Mekân</value></data>
+  <data name="Admin.Field.Visibility" xml:space="preserve"><value>Kimler görebilir</value></data>
+  <data name="Admin.Form.Required" xml:space="preserve"><value>(zorunlu)</value></data>
+  <data name="Admin.MembershipPlans.OneTime" xml:space="preserve"><value>tek seferlik</value></data>
+  <data name="Admin.MembershipPlans.PerMonth" xml:space="preserve"><value>/ ay</value></data>
+  <data name="Admin.MembershipPlans.PerYear" xml:space="preserve"><value>/ yıl</value></data>
+  <data name="Admin.Role.Ambassador" xml:space="preserve"><value>Elçi</value></data>
+  <data name="Admin.Role.Concierge" xml:space="preserve"><value>Konsiyerj</value></data>
+  <data name="Admin.Role.Editor" xml:space="preserve"><value>Editör</value></data>
+  <data name="Admin.Role.EventManager" xml:space="preserve"><value>Etkinlik yöneticisi</value></data>
+  <data name="Admin.Role.Finance" xml:space="preserve"><value>Finans</value></data>
+  <data name="Admin.Role.Marketing" xml:space="preserve"><value>Pazarlama</value></data>
+  <data name="Admin.Role.Member" xml:space="preserve"><value>Üye</value></data>
+  <data name="Admin.Role.SuperAdmin" xml:space="preserve"><value>Süper yönetici</value></data>
+  <data name="Admin.Role.Support" xml:space="preserve"><value>Destek</value></data>
+  <data name="Admin.Ambassadors.WholeSite" xml:space="preserve"><value>Genel bağlantı (sitenin herhangi bir sayfası)</value></data>
+  <data name="Admin.Enum.MemberStatus.Active" xml:space="preserve"><value>Etkin</value></data>
+  <data name="Admin.Enum.MemberStatus.Cancelled" xml:space="preserve"><value>İptal edildi</value></data>
+  <data name="Admin.Enum.MemberStatus.PendingApplication" xml:space="preserve"><value>Başvuru bekleniyor</value></data>
+  <data name="Admin.Enum.MemberStatus.Suspended" xml:space="preserve"><value>Askıya alındı</value></data>
+  <data name="Admin.Msg.Added" xml:space="preserve"><value>“{0}” eklendi.</value></data>
+  <data name="Admin.Msg.Created" xml:space="preserve"><value>“{0}” oluşturuldu.</value></data>
+  <data name="Admin.Msg.Deleted" xml:space="preserve"><value>“{0}” silindi.</value></data>
+  <data name="Admin.Msg.SavedNamed" xml:space="preserve"><value>“{0}” kaydedildi.</value></data>
+  <data name="Admin.Table.Page" xml:space="preserve"><value>Sayfa {0}</value></data>
+  <data name="Admin.Table.SearchLabel" xml:space="preserve"><value>Ara</value></data>
+  <data name="Admin.Table.SearchTitle" xml:space="preserve"><value>Tabloda ara</value></data>
+  <data name="Admin.Table.SortHint" xml:space="preserve"><value>Sıralamak için etkinleştirin</value></data>
 </root>

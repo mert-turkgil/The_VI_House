@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using VIHouse.Business.Options;
 using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
@@ -31,7 +32,8 @@ namespace VIHouse.WebUI.Areas.Admin.Controllers;
 [Route("admin/translations")]
 public class AdminTranslationsController(
     ResxCatalog catalog,
-    IAuditLogRepository auditLogs) : AdminControllerBase
+    IAuditLogRepository auditLogs,
+    IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     [HttpGet("")]
     public IActionResult Index(string? section, string? q, bool untranslated)
@@ -105,10 +107,10 @@ public class AdminTranslationsController(
     public async Task<IActionResult> Save(string key, string culture, string value, string? original, CancellationToken ct)
     {
         if (!catalog.IsAvailable)
-            return Json(new { ok = false, error = "The .resx files are not on disk, so nothing can be saved. See Localization:ResourcesPath." });
+            return Json(new { ok = false, error = loc["Admin.Translations.Err.NotOnDisk"].Value });
 
         if (string.IsNullOrWhiteSpace(key) || !SiteCultures.IsSupported(culture))
-            return Json(new { ok = false, error = "Unknown key or language." });
+            return Json(new { ok = false, error = loc["Admin.Translations.Err.Unknown"].Value });
 
         // A trailing line break is never meaningful in a UI string, and it is easy to add one by
         // accident. Trailing spaces are left alone — those are occasionally deliberate.
@@ -117,7 +119,7 @@ public class AdminTranslationsController(
         var suffix = ResxCatalog.SuffixFor(culture);
 
         if (!catalog.GetAll(suffix).TryGetValue(key, out var onDisk))
-            return Json(new { ok = false, error = $"That key is not in {catalog.FileNameFor(suffix)}." });
+            return Json(new { ok = false, error = loc["Admin.Translations.Err.KeyMissing", catalog.FileNameFor(suffix)].Value });
 
         // Someone else saved this cell since the page was loaded. Refusing beats silently discarding
         // their work — both values are shown so whoever is second can merge by hand.
@@ -129,21 +131,20 @@ public class AdminTranslationsController(
                 // baseline it was rendered with, so the second attempt is refused for the same
                 // reason as the first and the cell can never be edited again.
                 current = onDisk,
-                error = "Someone else changed this while you had it open — it now reads “" + onDisk
-                        + "”. Your text was not saved; the cell has been updated, so edit it again to overwrite.",
+                error = loc["Admin.Translations.Err.Conflict", onDisk].Value,
             });
 
         if (onDisk == value)
             return Json(new { ok = true, unchanged = true });
 
         if (IsEnglish(culture) && string.IsNullOrWhiteSpace(value))
-            return Json(new { ok = false, error = "The English text is the source for every other language and cannot be emptied." });
+            return Json(new { ok = false, error = loc["Admin.Translations.Err.EnglishEmpty"].Value });
 
         if (Validate(key, culture, value) is { } problem)
             return Json(new { ok = false, error = problem });
 
         if (!await catalog.SaveAsync(suffix, key, value, ct))
-            return Json(new { ok = false, error = "The file could not be written." });
+            return Json(new { ok = false, error = loc["Admin.Translations.Err.WriteFailed"].Value });
 
         await auditLogs.AddAsync(new AuditLogEntry
         {
@@ -199,7 +200,7 @@ public class AdminTranslationsController(
     private string? Validate(string key, string culture, string value)
     {
         if (value.Length > 8000)
-            return "That is longer than 8000 characters — check for a paste accident.";
+            return loc["Admin.Translations.Err.TooLong"].Value;
 
         var english = catalog.GetAll(ResxCatalog.NeutralSuffix).GetValueOrDefault(key, "");
         var expected = ResxCatalog.PlaceholderSlots(IsEnglish(culture) ? value : english);
@@ -207,9 +208,8 @@ public class AdminTranslationsController(
 
         if (!IsEnglish(culture) && !expected.SetEquals(actual))
             return expected.Count == 0
-                ? "The English text has no placeholders, so this translation must not add any."
-                : "This text must use exactly the same placeholders as the English: "
-                    + string.Join(" ", expected.Select(i => "{" + i + "}"));
+                ? loc["Admin.Translations.Err.NoPlaceholders"].Value
+                : loc["Admin.Translations.Err.Placeholders", string.Join(" ", expected.Select(i => "{" + i + "}"))].Value;
 
         // The definitive check — catches "{0", "{a}" and a stray "}" that slot-matching misses.
         try
@@ -222,7 +222,7 @@ public class AdminTranslationsController(
         }
         catch (FormatException)
         {
-            return "The placeholders are malformed — check for an unclosed { or a stray }.";
+            return loc["Admin.Translations.Err.Malformed"].Value;
         }
 
         return null;

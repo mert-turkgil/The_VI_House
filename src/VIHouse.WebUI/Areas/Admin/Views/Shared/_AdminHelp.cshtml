@@ -1,0 +1,40 @@
+@model string?
+@*
+    "How this works" for an admin section: a collapsible info card with up to five numbered steps,
+    shown at the top of every page of the section that has text for it (Admin.Help.<Controller>.Title
+    and .Step1 … .Step5 in SharedResource). A section without those keys shows nothing.
+
+    Closed in the markup; modules/adminForms.ts opens it on someone's first visit to the section and
+    remembers whenever they close it, so it guides newcomers without nagging regulars.
+*@
+@{
+    var title = Model is null ? null : Loc[$"Admin.Help.{Model}.Title"];
+    var steps = new List<string>();
+    if (title is { ResourceNotFound: false })
+    {
+        for (var i = 1; i <= 5; i++)
+        {
+            var step = Loc[$"Admin.Help.{Model}.Step{i}"];
+            if (step.ResourceNotFound) break;
+            steps.Add(step.Value);
+        }
+    }
+}
+@if (steps.Count > 0)
+{
+    <details class="admin-help" data-admin-help="@Model">
+        <summary>
+            <span class="admin-help__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" /><path d="M12 11v5.5M12 7.5v.01" /></svg>
+            </span>
+            <span class="admin-help__title">@title!.Value</span>
+            <span class="admin-help__toggle" aria-hidden="true"><partial name="_Icon" model="@("chevron-down")" /></span>
+        </summary>
+        <ol class="admin-help__steps">
+            @foreach (var step in steps)
+            {
+                <li>@step</li>
+            }
+        </ol>
+    </details>
+}

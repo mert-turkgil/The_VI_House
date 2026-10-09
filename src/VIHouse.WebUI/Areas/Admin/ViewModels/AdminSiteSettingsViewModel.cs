@@ -42,67 +42,67 @@ public record AdminSiteSettingsTranslationTab(
 public class AdminSiteSettingsForm
 {
     [StringLength(300)]
-    [Display(Name = "Canonical site address")]
-    [Url(ErrorMessage = "That does not look like a full address — include https://")]
+    [Display(Name = "Admin.Field.CanonicalSiteAddress")]
+    [Url(ErrorMessage = "Admin.Validation.ThatDoesNotLookLikeA")]
     public string? CanonicalBaseUrl { get; set; }
 
     [Required, StringLength(50)]
-    [Display(Name = "Organisation type")]
+    [Display(Name = "Admin.Field.OrganisationType")]
     public string OrganizationType { get; set; } = "Organization";
 
     [StringLength(200)]
-    [Display(Name = "Registered legal name")]
+    [Display(Name = "Admin.Field.RegisteredLegalName")]
     public string? LegalName { get; set; }
 
     [StringLength(20)]
-    [Display(Name = "Founded (YYYY or YYYY-MM-DD)")]
+    [Display(Name = "Admin.Field.FoundedYYYYOrYYYYMMDD")]
     public string? FoundingDate { get; set; }
 
     [StringLength(500)]
-    [Display(Name = "Logo URL")]
+    [Display(Name = "Admin.Field.LogoURL")]
     public string? LogoUrl { get; set; }
 
     [StringLength(500)]
-    [Display(Name = "Default social image URL")]
+    [Display(Name = "Admin.Field.DefaultSocialImageURL")]
     public string? DefaultOgImageUrl { get; set; }
 
-    [StringLength(500), Display(Name = "Instagram")] public string? InstagramUrl { get; set; }
-    [StringLength(500), Display(Name = "LinkedIn")] public string? LinkedInUrl { get; set; }
-    [StringLength(500), Display(Name = "X (Twitter)")] public string? XUrl { get; set; }
-    [StringLength(500), Display(Name = "Facebook")] public string? FacebookUrl { get; set; }
-    [StringLength(500), Display(Name = "YouTube")] public string? YouTubeUrl { get; set; }
-    [StringLength(500), Display(Name = "TikTok")] public string? TikTokUrl { get; set; }
+    [StringLength(500), Display(Name = "Admin.Field.Instagram")] public string? InstagramUrl { get; set; }
+    [StringLength(500), Display(Name = "Admin.Field.LinkedIn")] public string? LinkedInUrl { get; set; }
+    [StringLength(500), Display(Name = "Admin.Field.XTwitter")] public string? XUrl { get; set; }
+    [StringLength(500), Display(Name = "Admin.Field.Facebook")] public string? FacebookUrl { get; set; }
+    [StringLength(500), Display(Name = "Admin.Field.YouTube")] public string? YouTubeUrl { get; set; }
+    [StringLength(500), Display(Name = "Admin.Field.TikTok")] public string? TikTokUrl { get; set; }
 
     [StringLength(50)]
-    [Display(Name = "X handle")]
+    [Display(Name = "Admin.Field.XHandle")]
     public string? TwitterHandle { get; set; }
 
-    [StringLength(320), EmailAddress, Display(Name = "Contact email")] public string? ContactEmail { get; set; }
-    [StringLength(40), Display(Name = "Contact phone")] public string? ContactPhone { get; set; }
-    [StringLength(300), Display(Name = "Street")] public string? StreetAddress { get; set; }
-    [StringLength(120), Display(Name = "City")] public string? AddressLocality { get; set; }
-    [StringLength(120), Display(Name = "Region")] public string? AddressRegion { get; set; }
-    [StringLength(20), Display(Name = "Postcode")] public string? PostalCode { get; set; }
+    [StringLength(320), EmailAddress, Display(Name = "Admin.Field.ContactEmail")] public string? ContactEmail { get; set; }
+    [StringLength(40), Display(Name = "Admin.Field.ContactPhone")] public string? ContactPhone { get; set; }
+    [StringLength(300), Display(Name = "Admin.Field.Street")] public string? StreetAddress { get; set; }
+    [StringLength(120), Display(Name = "Admin.Field.City")] public string? AddressLocality { get; set; }
+    [StringLength(120), Display(Name = "Admin.Field.Region")] public string? AddressRegion { get; set; }
+    [StringLength(20), Display(Name = "Admin.Field.Postcode")] public string? PostalCode { get; set; }
 
-    [StringLength(2, MinimumLength = 2, ErrorMessage = "Two letters, e.g. GB")]
-    [Display(Name = "Country code")]
+    [StringLength(2, MinimumLength = 2, ErrorMessage = "Admin.Validation.TwoLettersEGGB")]
+    [Display(Name = "Admin.Field.CountryCode")]
     public string? AddressCountry { get; set; }
 
     [StringLength(200)]
-    [Display(Name = "Google Search Console token")]
+    [Display(Name = "Admin.Field.GoogleSearchConsoleToken")]
     public string? GoogleSiteVerification { get; set; }
 
     [StringLength(200)]
-    [Display(Name = "Bing Webmaster token")]
+    [Display(Name = "Admin.Field.BingWebmasterToken")]
     public string? BingSiteVerification { get; set; }
 
-    [Display(Name = "Allow search engines to index this site")]
+    [Display(Name = "Admin.Field.AllowSearchEnginesToIndexThis")]
     public bool AllowIndexing { get; set; } = true;
 
-    [Display(Name = "Extra robots.txt rules")]
+    [Display(Name = "Admin.Field.ExtraRobotsTxtRules")]
     public string? RobotsExtra { get; set; }
 
-    [Display(Name = "Publish /llms.txt")]
+    [Display(Name = "Admin.Field.PublishLlmsTxt")]
     public bool PublishLlmsTxt { get; set; } = true;
 
     public static AdminSiteSettingsForm FromEntity(SiteSetting s) => new()
@@ -178,35 +178,35 @@ public class AdminSiteSettingsTranslationForm
     public string Culture { get; set; } = default!;
 
     [Required, StringLength(120)]
-    [Display(Name = "Site name")]
+    [Display(Name = "Admin.Field.SiteName")]
     public string SiteName { get; set; } = default!;
 
     [Required, StringLength(120)]
-    [Display(Name = "Title template")]
+    [Display(Name = "Admin.Field.TitleTemplate")]
     public string TitleTemplate { get; set; } = "{0} — The VI House";
 
     [StringLength(200)]
-    [Display(Name = "Homepage title")]
+    [Display(Name = "Admin.Field.HomepageTitle")]
     public string? HomeTitle { get; set; }
 
     [StringLength(320)]
-    [Display(Name = "Default description")]
+    [Display(Name = "Admin.Field.DefaultDescription")]
     public string? DefaultMetaDescription { get; set; }
 
     [StringLength(500)]
-    [Display(Name = "What the organisation is")]
+    [Display(Name = "Admin.Field.WhatTheOrganisationIs")]
     public string? OrganizationDescription { get; set; }
 
     [StringLength(4000)]
-    [Display(Name = "Notes for AI assistants")]
+    [Display(Name = "Admin.Field.NotesForAIAssistants")]
     public string? LlmsNotes { get; set; }
 
     [StringLength(300)]
-    [Display(Name = "Social image description")]
+    [Display(Name = "Admin.Field.SocialImageDescription")]
     public string? OgImageAlt { get; set; }
 
     [StringLength(500)]
-    [Display(Name = "Social image URL for this language")]
+    [Display(Name = "Admin.Field.SocialImageURLForThisLanguage")]
     public string? OgImageUrl { get; set; }
 
     public static AdminSiteSettingsTranslationForm FromEntity(SiteSettingTranslation t) => new()

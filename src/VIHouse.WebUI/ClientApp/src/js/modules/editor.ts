@@ -23,8 +23,9 @@
 
 /** Only the members used below — the CDN bundle is untyped, and a hand-written mirror of CKEditor's
  *  full API would be a maintenance burden with no payoff. */
-interface CKEditorInstance {
+export interface CKEditorInstance {
   getData(): string;
+  setData(html: string): void;
   isReadOnly: boolean;
   destroy(): Promise<void>;
   model: {
@@ -48,6 +49,8 @@ interface CKEditorNamespace {
 declare global {
   interface Window {
     CKEDITOR?: CKEditorNamespace;
+    /** Set by the CDN translation file (_AdminLayout loads the panel language's one). */
+    CKEDITOR_TRANSLATIONS?: unknown;
   }
 }
 
@@ -57,6 +60,11 @@ declare global {
  * instance once create() has resolved.
  */
 const editors = new Map<HTMLTextAreaElement, CKEditorInstance>();
+
+/** The live editor for a textarea once CKEditor has replaced it; null before that, or without it. */
+export function editorFor(textarea: HTMLTextAreaElement): CKEditorInstance | null {
+  return editors.get(textarea) ?? null;
+}
 
 export function initRichTextEditors(): void {
   const textareas = Array.from(document.querySelectorAll<HTMLTextAreaElement>('textarea[data-ckeditor]'));
@@ -80,6 +88,17 @@ export function initRichTextEditors(): void {
   // configured falls back to 'GPL', which is the correct value for a GPL deployment.
   const licenseKey = document.body.dataset.ckeditorLicense || 'GPL';
 
+  // Plugins that make writing easier but are not essential. Taken only when the CDN build has them,
+  // so a different bundle never breaks the editor: it just has fewer buttons.
+  const optional = (name: string): unknown[] => (ckeditor[name] ? [ckeditor[name]] : []);
+  const extras = [...optional('WordCount'), ...optional('FindAndReplace'), ...optional('RemoveFormat'), ...optional('Strikethrough')];
+  const has = (name: string): boolean => !!ckeditor[name];
+
+  // The editor's own buttons and tooltips in the panel's language, from CKEditor's translations;
+  // the heading names are ours, so they come from <body> like every other panel text.
+  const labels = document.body.dataset;
+  const language = labels.uiLanguage || 'en';
+
   textareas.forEach((textarea) => {
     const uploadUrl = textarea.dataset.uploadUrl;
 
@@ -96,22 +115,38 @@ export function initRichTextEditors(): void {
         // media library survive a round trip through the editor's model — without it the model has
         // no rule for <audio> and silently drops it on the next save.
         MediaEmbed, GeneralHtmlSupport,
+        ...extras,
       ],
+      language,
+      ...(window.CKEDITOR_TRANSLATIONS ? { translations: [window.CKEDITOR_TRANSLATIONS] } : {}),
+      // What an empty editor says, set per field (data-placeholder) so a session and a journal post
+      // can each explain themselves.
+      ...(textarea.dataset.placeholder ? { placeholder: textarea.dataset.placeholder } : {}),
+      // Live counts for the writer's status bar (journalWriter.ts listens for this event).
+      ...(has('WordCount') ? {
+        wordCount: {
+          onUpdate: (stats: { words: number; characters: number }) =>
+            textarea.dispatchEvent(new CustomEvent('editor:wordcount', { detail: stats, bubbles: true })),
+        },
+      } : {}),
       toolbar: [
         'undo', 'redo', '|',
         'heading', '|',
-        'bold', 'italic', 'underline', 'link', '|',
+        'bold', 'italic', 'underline', ...(has('Strikethrough') ? ['strikethrough'] : []), 'link', '|',
         'bulletedList', 'numberedList', 'blockQuote', '|',
         ...(uploadUrl ? ['uploadImage', '|'] : []),
         'mediaEmbed', '|',
         'alignment', 'insertTable', 'horizontalLine', '|',
+        ...(has('RemoveFormat') ? ['removeFormat'] : []),
+        ...(has('FindAndReplace') ? ['findAndReplace'] : []),
         'sourceEditing',
       ],
       heading: {
         options: [
-          { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-          { model: 'heading2', view: 'h2', title: 'Heading', class: 'ck-heading_heading2' },
-          { model: 'heading3', view: 'h3', title: 'Subheading', class: 'ck-heading_heading3' },
+          { model: 'paragraph', title: labels.editorParagraph || 'Paragraph', class: 'ck-heading_paragraph' },
+          { model: 'heading2', view: 'h2', title: labels.editorHeading || 'Heading', class: 'ck-heading_heading2' },
+          { model: 'heading3', view: 'h3', title: labels.editorSubheading || 'Subheading', class: 'ck-heading_heading3' },
+          { model: 'heading4', view: 'h4', title: labels.editorMinor || 'Minor heading', class: 'ck-heading_heading4' },
         ],
       },
       image: {
@@ -197,7 +232,13 @@ export function initRichTextEditors(): void {
         // empty) textarea and blocks a perfectly valid post.
         editor.model.document.on('change:data', () => {
           textarea.value = editor.getData();
+          // As a normal input event too, so the unsaved-changes guard and the writer's autosave
+          // treat typing in the editor like typing in any other field.
+          textarea.dispatchEvent(new Event('input', { bubbles: true }));
         });
+
+        // The writer (journalWriter.ts) needs the instance for autosave restore and focus mode.
+        textarea.dispatchEvent(new CustomEvent('editor:ready', { detail: editor, bubbles: true }));
       })
       .catch((error: unknown) => {
         // Leaving the plain textarea in place is a working fallback, so this must never take the

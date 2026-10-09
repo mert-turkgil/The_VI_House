@@ -90,14 +90,14 @@ public class AdminSiteSettingsController(
     {
         if (!ModelState.IsValid)
         {
-            TempData["StatusMessage"] = "Check the highlighted fields.";
+            Status(loc["Admin.Msg.CheckFields"].Value, isError: true);
             return RedirectToAction(nameof(Index), new { culture });
         }
 
         var (adminId, ip) = CurrentActor();
         await settingsService.UpdateAsync(form.ToEntity(), adminId, ip, ct);
 
-        TempData["StatusMessage"] = "Site settings saved.";
+        Status(loc["Admin.SiteSettings.Msg.Saved"].Value);
         return RedirectToAction(nameof(Index), new { culture });
     }
 
@@ -113,9 +113,9 @@ public class AdminSiteSettingsController(
 
         var (adminId, ip) = CurrentActor();
         var error = await settingsService.SavePageSeoAsync(culture, values, adminId, ip, ct);
-        TempData["StatusMessage"] = error is null
-            ? $"{SiteCultures.Describe(culture).NativeLabel} page titles and descriptions saved. They are live now."
-            : "That is not a language this site speaks.";
+        Status(error is null
+            ? loc["Admin.SiteSettings.Msg.PagesSaved", SiteCultures.Describe(culture).NativeLabel].Value
+            : loc["Admin.Settings.UnknownCulture"].Value, isError: error is not null);
         return Redirect(Url.Action(nameof(Index), new { culture }) + "#pages");
     }
 
@@ -126,6 +126,9 @@ public class AdminSiteSettingsController(
     /// </summary>
     private List<AdminPageSeoRow> PageRows(VIHouse.Entities.Settings.SiteSetting settings, string culture)
     {
+        // The page names are read first, in the admin's own language; the placeholders below are in
+        // the language being edited.
+        var names = VIHouse.Business.SeoPages.All.ToDictionary(p => p.Key, p => loc[p.TitleKey].Value);
         var previous = (System.Globalization.CultureInfo.CurrentCulture, System.Globalization.CultureInfo.CurrentUICulture);
         try
         {
@@ -138,7 +141,7 @@ public class AdminSiteSettingsController(
                 .. VIHouse.Business.SeoPages.All.Select(p =>
                 {
                     var row = settings.PageSeoOverrides.FirstOrDefault(o => o.PageKey == p.Key && o.Culture == culture);
-                    return new AdminPageSeoRow(p.Key, p.Label, p.Path, row?.Title, row?.Description,
+                    return new AdminPageSeoRow(p.Key, names[p.Key], p.Path, row?.Title, row?.Description,
                         loc[p.TitleKey].Value, p.DescriptionKey is null ? null : loc[p.DescriptionKey].Value);
                 }),
             ];
@@ -157,14 +160,9 @@ public class AdminSiteSettingsController(
         var (adminId, ip) = CurrentActor();
         var error = await settingsService.SaveTranslationAsync(form.ToEntity(), adminId, ip, ct);
 
-        TempData["StatusMessage"] = error switch
-        {
-            null => $"{SiteCultures.Describe(form.Culture).NativeLabel} saved.",
-            "Admin.Settings.TemplateNeedsPlaceholder" =>
-                "The title template must contain {0} — that is where each page's own name goes.",
-            "Admin.Settings.UnknownCulture" => "That is not a language this site speaks.",
-            _ => "That could not be saved.",
-        };
+        Status(error is null
+            ? loc["Admin.SiteSettings.Msg.LanguageSaved", SiteCultures.Describe(form.Culture).NativeLabel].Value
+            : loc[error].Value, isError: error is not null);
 
         return RedirectToAction(nameof(Index), new { culture = form.Culture });
     }
@@ -181,7 +179,7 @@ public class AdminSiteSettingsController(
     {
         if (file is null || file.Length == 0)
         {
-            TempData["StatusMessage"] = "Choose an image first.";
+            Status(loc["Admin.SiteSettings.Msg.ChooseImage"].Value, isError: true);
             return RedirectToAction(nameof(Index), new { culture });
         }
 
@@ -192,9 +190,9 @@ public class AdminSiteSettingsController(
             new MediaUpload(file.FileName, file.ContentType, file.Length, stream),
             string.IsNullOrWhiteSpace(culture) ? null : culture, adminId, ip, ct);
 
-        TempData["StatusMessage"] = error is null
-            ? "Social image uploaded."
-            : "That file could not be used — images only.";
+        Status(error is null
+            ? loc["Admin.SiteSettings.Msg.SocialImageUploaded"].Value
+            : loc["Admin.SiteSettings.Msg.ImagesOnly"].Value, isError: error is not null);
 
         return RedirectToAction(nameof(Index), new { culture });
     }
@@ -206,7 +204,7 @@ public class AdminSiteSettingsController(
         var (adminId, ip) = CurrentActor();
         await settingsService.RemoveOgImageAsync(string.IsNullOrWhiteSpace(culture) ? null : culture, adminId, ip, ct);
 
-        TempData["StatusMessage"] = "Social image removed.";
+        Status(loc["Admin.SiteSettings.Msg.SocialImageRemoved"].Value);
         return RedirectToAction(nameof(Index), new { culture });
     }
 
@@ -218,7 +216,7 @@ public class AdminSiteSettingsController(
     {
         if (file is null || file.Length == 0)
         {
-            TempData["StatusMessage"] = "Choose an image first.";
+            Status(loc["Admin.SiteSettings.Msg.ChooseImage"].Value, isError: true);
             return RedirectToAction(nameof(Index));
         }
 
@@ -228,7 +226,7 @@ public class AdminSiteSettingsController(
         var error = await settingsService.UploadLogoAsync(
             new MediaUpload(file.FileName, file.ContentType, file.Length, stream), adminId, ip, ct);
 
-        TempData["StatusMessage"] = error is null ? "Logo uploaded." : "That file could not be used — images only.";
+        Status(loc[error is null ? "Admin.SiteSettings.Msg.LogoUploaded" : "Admin.SiteSettings.Msg.ImagesOnly"].Value, isError: error is not null);
         return RedirectToAction(nameof(Index));
     }
 
@@ -239,7 +237,7 @@ public class AdminSiteSettingsController(
         var (adminId, ip) = CurrentActor();
         await settingsService.RemoveLogoAsync(adminId, ip, ct);
 
-        TempData["StatusMessage"] = "Logo removed.";
+        Status(loc["Admin.SiteSettings.Msg.LogoRemoved"].Value);
         return RedirectToAction(nameof(Index));
     }
 

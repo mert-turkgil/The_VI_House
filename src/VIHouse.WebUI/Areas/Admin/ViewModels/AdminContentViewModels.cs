@@ -9,11 +9,12 @@ namespace VIHouse.WebUI.Areas.Admin.ViewModels;
 /// The shapes are declared here rather than inferred from the JSON, because "what fields does the
 /// ecosystem section have" has an answer — Views/Home/_Ecosystem.cshtml renders exactly six per
 /// card — and an editor that guesses is how a section ends up with a key the view never reads.
+///
+/// The words an editor reads (the section's name, what it is for, the row and field labels) live in
+/// SharedResource under Admin.Cms.*, so the panel speaks the editor's interface language.
 /// </summary>
 public record ContentSectionSchema(
     string SectionKey,
-    string Title,
-    string Description,
     bool UsesHeading,
     bool UsesSubheading,
     bool UsesBody,
@@ -27,44 +28,47 @@ public record ContentSectionSchema(
     /// </summary>
     public static readonly IReadOnlyList<ContentSectionSchema> All =
     [
-        new("hero", "Hero (fallback)",
-            "Only shown when there are no hero slides. Manage the carousel under Hero Slides.",
-            UsesHeading: true, UsesSubheading: true, UsesBody: false, UsesCta: true, Rows: null),
+        new("hero", UsesHeading: true, UsesSubheading: true, UsesBody: false, UsesCta: true, Rows: null),
 
-        new("feature-strip", "Feature strip",
-            "The row of short value statements under the filter bar. Its heading is read by screen readers only; the rows are what visitors see.",
-            UsesHeading: true, UsesSubheading: false, UsesBody: false, UsesCta: false,
+        new("feature-strip", UsesHeading: true, UsesSubheading: false, UsesBody: false, UsesCta: false,
             new ContentRowSchema("Feature", ["label", "description"])),
 
-        new("ecosystem", "Ecosystem",
-            "The four cards: what the House is beyond the retreats.",
-            UsesHeading: true, UsesSubheading: true, UsesBody: true, UsesCta: true,
+        new("ecosystem", UsesHeading: true, UsesSubheading: true, UsesBody: true, UsesCta: true,
             new ContentRowSchema("Card", ["title", "description", "imageUrl", "imageAlt", "linkLabel", "linkUrl"])),
 
-        new("stats", "Statistics",
-            "The counters. Real numbers only — the brief is explicit about this (§15).",
-            UsesHeading: false, UsesSubheading: false, UsesBody: false, UsesCta: false,
+        new("stats", UsesHeading: false, UsesSubheading: false, UsesBody: false, UsesCta: false,
             new ContentRowSchema("Statistic", ["value", "label"])),
 
-        new("trust", "Trust",
-            "The closing section: what members say.",
-            UsesHeading: true, UsesSubheading: true, UsesBody: true, UsesCta: true,
+        new("trust", UsesHeading: true, UsesSubheading: true, UsesBody: true, UsesCta: true,
             new ContentRowSchema("Testimonial", ["quote", "author", "role", "avatarUrl"])),
 
-        new("trust-logos", "Trusted by",
-            "The scrolling strip of company names beside the testimonials.",
-            UsesHeading: true, UsesSubheading: false, UsesBody: false, UsesCta: false,
+        new("trust-logos", UsesHeading: true, UsesSubheading: false, UsesBody: false, UsesCta: false,
             new ContentRowSchema("Company", ["name", "imageUrl"])),
     ];
 
+    public string TitleKey => $"Admin.Cms.Section.{SectionKey}.Title";
+
+    public string DescriptionKey => $"Admin.Cms.Section.{SectionKey}.Description";
+
     public static ContentSectionSchema? For(string? sectionKey) =>
         All.FirstOrDefault(s => string.Equals(s.SectionKey, sectionKey, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>The label of one row field (the JSON property name) in the editor's language.</summary>
+    public static string FieldKey(string field) => $"Admin.Cms.Field.{field}";
 }
 
-/// <param name="RowLabel">Singular noun for one row, e.g. "Card" — used for headings and buttons.</param>
+/// <param name="Row">What one row is, e.g. "Card". Its heading, blank-row placeholder and removal
+/// hint are resource keys built from it.</param>
 /// <param name="Fields">JSON property names, in display order. These are the names the homepage's
 /// view models bind, so they are also the contract with Views/Home.</param>
-public record ContentRowSchema(string RowLabel, string[] Fields);
+public record ContentRowSchema(string Row, string[] Fields)
+{
+    public string PluralKey => $"Admin.Cms.Row.{Row}.Plural";
+
+    public string NewKey => $"Admin.Cms.Row.{Row}.New";
+
+    public string RemoveHintKey => $"Admin.Cms.Row.{Row}.RemoveHint";
+}
 
 /// <summary>
 /// One row of a section, bound from the form.

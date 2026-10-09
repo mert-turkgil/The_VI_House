@@ -1,6 +1,6 @@
 @model AdminMembershipSignupsViewModel
 @{
-    ViewData["Title"] = "Membership Sign-ups";
+    ViewData["Title"] = Loc["Admin.Nav.AdminMembershipSignups"].Value;
 
     string FilterClass(PendingJoinStatus? s) => Model.Status == s ? "admin-btn" : "admin-btn admin-btn--ghost";
     string Badge(PendingJoinStatus s) => s switch
@@ -9,33 +9,25 @@
         PendingJoinStatus.Pending => "admin-badge admin-badge--draft",
         _ => "admin-badge",
     };
-    string Label(PendingJoinStatus s) => s switch
-    {
-        PendingJoinStatus.Paid => "Paid — member",
-        PendingJoinStatus.Pending => "Not paid yet",
-        PendingJoinStatus.Expired => "Checkout expired",
-        PendingJoinStatus.Superseded => "Replaced by a newer form",
-        _ => s.ToString(),
-    };
+    
     // Built by hand: "page" is a reserved route value, so asp-route-page gives an empty href.
     string PageHref(int n) => Url.Action("Index") + "?" + (Model.Status is { } st ? $"status={st}&" : "") + $"page={n}";
 }
 
 <p class="admin-hint">
-    Everything people wrote on the membership form, whether or not they went on to pay. Membership is
-    not reviewed — paying is joining — so this is for knowing who is coming in. @Model.PaidCount paid so far.
+    @Loc["Admin.MembershipSignups.Intro", Model.PaidCount]
 </p>
 
 <div class="admin-toolbar">
-    <a class="@FilterClass(null)" asp-action="Index">All</a>
-    <a class="@FilterClass(PendingJoinStatus.Paid)" asp-action="Index" asp-route-status="@PendingJoinStatus.Paid">Paid</a>
-    <a class="@FilterClass(PendingJoinStatus.Pending)" asp-action="Index" asp-route-status="@PendingJoinStatus.Pending">Not paid yet</a>
-    <a class="@FilterClass(PendingJoinStatus.Expired)" asp-action="Index" asp-route-status="@PendingJoinStatus.Expired">Expired</a>
+    <a class="@FilterClass(null)" asp-action="Index">@Loc["Admin.MembershipSignups.All"]</a>
+    <a class="@FilterClass(PendingJoinStatus.Paid)" asp-action="Index" asp-route-status="@PendingJoinStatus.Paid">@Loc["Admin.MembershipSignups.Paid"]</a>
+    <a class="@FilterClass(PendingJoinStatus.Pending)" asp-action="Index" asp-route-status="@PendingJoinStatus.Pending">@Loc["Admin.MembershipSignups.NotPaidYet"]</a>
+    <a class="@FilterClass(PendingJoinStatus.Expired)" asp-action="Index" asp-route-status="@PendingJoinStatus.Expired">@Loc["Admin.MembershipSignups.Expired"]</a>
 </div>
 
 @if (Model.Rows.Count == 0)
 {
-    <p class="admin-empty">No sign-ups@(Model.Status is null ? "" : " with this status") yet.</p>
+    <p class="admin-empty">@Loc[Model.Status is null ? "Admin.MembershipSignups.Empty" : "Admin.MembershipSignups.EmptyForStatus"]</p>
 }
 else
 {
@@ -43,12 +35,12 @@ else
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th>When</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Plan</th>
-                    <th>Country</th>
-                    <th>Status</th>
+                    <th>@Loc["Admin.MembershipSignups.When"]</th>
+                    <th>@Loc["Admin.Common.Name"]</th>
+                    <th>@Loc["Admin.Common.Email"]</th>
+                    <th>@Loc["Admin.MembershipSignups.Plan"]</th>
+                    <th>@Loc["Admin.Common.Country"]</th>
+                    <th>@Loc["Admin.Common.Status"]</th>
                     <th></th>
                 </tr>
             </thead>
@@ -61,8 +53,8 @@ else
                         <td><a href="mailto:@row.Email">@row.Email</a></td>
                         <td>@(Model.PlanNames.TryGetValue(row.PlanId, out var plan) ? plan : "—")</td>
                         <td>@Countries.NameFor(row.Country)</td>
-                        <td><span class="@Badge(row.Status)">@Label(row.Status)</span></td>
-                        <td class="admin-table__actions"><a class="admin-icon-btn" asp-action="Details" asp-route-id="@row.Id">View form &rarr;</a></td>
+                        <td><span class="@Badge(row.Status)">@Loc.Label(row.Status)</span></td>
+                        <td class="admin-table__actions"><a class="admin-icon-btn" asp-action="Details" asp-route-id="@row.Id">@Loc["Admin.MembershipSignups.ViewForm"]</a></td>
                     </tr>
                 }
             </tbody>
@@ -72,12 +64,12 @@ else
     <div class="admin-toolbar" style="margin-top:16px;">
         @if (Model.HasPrevious)
         {
-            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page - 1)">&larr; Newer</a>
+            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page - 1)">@Loc["Admin.MembershipSignups.Newer"]</a>
         }
-        <span class="admin-hint" style="margin:0;">Page @Model.Page of @Model.TotalPages · @Model.TotalCount sign-up(s)</span>
+        <span class="admin-hint" style="margin:0;">@Loc["Admin.MembershipSignups.PageOf", Model.Page, Model.TotalPages, Model.TotalCount]</span>
         @if (Model.HasNext)
         {
-            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page + 1)">Older &rarr;</a>
+            <a class="admin-btn admin-btn--ghost" href="@PageHref(Model.Page + 1)">@Loc["Admin.MembershipSignups.Older"]</a>
         }
     </div>
 }

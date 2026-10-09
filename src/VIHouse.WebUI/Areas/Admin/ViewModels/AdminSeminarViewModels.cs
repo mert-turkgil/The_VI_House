@@ -24,7 +24,9 @@ public class AdminSeminarFormViewModel
     public string Slug { get; set; } = default!;
 
     [Display(Name = "Admin.Seminar.Visibility")]
-    public SeminarVisibility Visibility { get; set; } = SeminarVisibility.Members;
+    // Public by default. It was Members, which made a newly published session invisible to every
+    // signed-out visitor while the admin who published it (staff see everything) saw it fine.
+    public SeminarVisibility Visibility { get; set; } = SeminarVisibility.Public;
 
     [StringLength(150)]
     [Display(Name = "Admin.Seminar.HostName")]
@@ -218,6 +220,9 @@ public class AdminSeminarEditViewModel
     public SeminarStatus Status { get; set; }
     public DateTimeOffset? PublishedAt { get; set; }
     public Guid? CoverMediaId { get; set; }
+
+    /// <summary>The "Publishing" card: status in words, audience, checklist, buttons.</summary>
+    public PublishCardViewModel PublishCard { get; set; } = default!;
 
     /// <summary>One entry per supported language, in SiteCultures order, whether or not it has been
     /// written yet — the point of the screen is to show what is still missing.</summary>

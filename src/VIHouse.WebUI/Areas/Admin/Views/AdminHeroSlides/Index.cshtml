@@ -103,7 +103,7 @@ else
                     </td>
                     <td>
                         <form asp-action="Delete" asp-route-id="@slide.Id" method="post"
-                              onsubmit="return confirm('@Loc["Admin.HeroSlide.ConfirmDelete"].Value.Replace("'", "\\'")');"
+                              data-confirm="@Loc["Admin.HeroSlide.ConfirmDelete"]"
                               style="display:inline;">
                             <button type="submit" class="admin-btn admin-btn--danger">@Loc["Admin.HeroSlide.Delete"]</button>
                         </form>

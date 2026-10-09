@@ -17,6 +17,7 @@ public class AdminAmbassadorEditViewModel
     public decimal CommissionPercent { get; set; }
 
     [Required]
+    [Display(Name = "Admin.Field.Status")]
     public AmbassadorStatus Status { get; set; }
 
     public AmbassadorStats? Stats { get; set; }

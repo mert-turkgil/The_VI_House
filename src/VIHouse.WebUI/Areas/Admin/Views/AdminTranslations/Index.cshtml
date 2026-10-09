@@ -1,37 +1,33 @@
 @model AdminTranslationsViewModel
 @{
-    ViewData["Title"] = "Translations";
+    ViewData["Title"] = Loc["Admin.Nav.AdminTranslations"].Value;
 }
 
 <p class="admin-hint">
-    Every string on the site, in all four languages. Click any value to edit it — changes are written
-    straight to the resource files and are live on the next page load, with no rebuild.
+    @Loc["Admin.Translations.EveryStringOnTheSiteIn"]
 </p>
 
 @if (!Model.IsEditable)
 {
     <div class="admin-notice">
-        <strong>Read-only.</strong> No resource files were found at <code>@Model.ResourcesPath</code>,
-        so the site is reading its strings from the compiled copies inside the application and nothing
-        here can be saved. Set <code>Localization:ResourcesPath</code> to the folder holding
-        <code>SharedResource.resx</code>.
+        <strong>@Loc["Admin.Translations.ReadOnly"]</strong> @Loc.Html("Admin.Translations.ReadOnlyHint", LocalizerHtml.Code(Model.ResourcesPath), LocalizerHtml.Code("Localization:ResourcesPath"), LocalizerHtml.Code("SharedResource.resx"))
     </div>
 }
 
 <div class="admin-stat-row">
     <div class="admin-stat">
         <span class="admin-stat__value">@Model.TotalKeys</span>
-        <span class="admin-stat__label">Translation keys</span>
+        <span class="admin-stat__label">@Loc["Admin.Translations.TranslationKeys"]</span>
     </div>
     <div class="admin-stat">
         <span class="admin-stat__value">@Model.Cultures.Count</span>
-        <span class="admin-stat__label">Languages</span>
+        <span class="admin-stat__label">@Loc["Admin.Translations.Languages"]</span>
     </div>
     <a class="admin-stat @(Model.UntranslatedOnly ? "admin-stat--active" : "")"
        asp-action="Index" asp-route-section="@Model.Section" asp-route-q="@Model.Query"
        asp-route-untranslated="@(!Model.UntranslatedOnly)">
         <span class="admin-stat__value">@Model.NeedsAttention</span>
-        <span class="admin-stat__label">Still reading as English</span>
+        <span class="admin-stat__label">@Loc["Admin.Translations.StillReadingAsEnglish"]</span>
     </a>
 </div>
 
@@ -40,9 +36,9 @@
    finds "şehir" and "uber" finds "über", which matters when nobody is on that language's keyboard. *@
 <form class="admin-filter-bar" method="get" asp-action="Index">
     <div class="admin-field">
-        <label for="section">Section</label>
+        <label for="section">@Loc["Admin.Translations.Section"]</label>
         <select id="section" name="section" onchange="this.form.submit()">
-            <option value="">All sections</option>
+            <option value="">@Loc["Admin.Translations.AllSections"]</option>
             @foreach (var s in Model.Sections)
             {
                 <option value="@s" selected="@(string.Equals(s, Model.Section, StringComparison.OrdinalIgnoreCase))">@s</option>
@@ -51,9 +47,9 @@
     </div>
 
     <div class="admin-field admin-field--grow">
-        <label for="q">Search</label>
+        <label for="q">@Loc["Admin.Common.Search"]</label>
         <input id="q" name="q" value="@Model.Query"
-               placeholder="Key, or text in English, German, Turkish or Estonian…" />
+               placeholder="@Loc["Admin.Translations.KeyOrTextInEnglishGerman"]" />
     </div>
 
     @if (Model.UntranslatedOnly)
@@ -61,31 +57,31 @@
         <input type="hidden" name="untranslated" value="true" />
     }
 
-    <button type="submit" class="admin-btn">Search</button>
+    <button type="submit" class="admin-btn">@Loc["Admin.Common.Search"]</button>
 
     @if (!string.IsNullOrWhiteSpace(Model.Query) || !string.IsNullOrWhiteSpace(Model.Section) || Model.UntranslatedOnly)
     {
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">Clear</a>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Translations.Clear"]</a>
     }
 
     @if (User.IsInRole(VIHouse.DataAccess.Identity.Roles.SuperAdmin))
     {
         @* The way an edit made here gets back into git — see the controller's Export summary. *@
-        <a class="admin-btn admin-btn--ghost" asp-action="Export" download>Download .resx files</a>
+        <a class="admin-btn admin-btn--ghost" asp-action="Export" download>@Loc["Admin.Translations.DownloadResxFiles"]</a>
     }
 </form>
 
 <p class="admin-hint">
-    Showing @Model.MatchedKeys of @Model.TotalKeys keys.
-    Click a value to edit it &middot; <kbd>Enter</kbd> saves &middot; <kbd>Shift</kbd>+<kbd>Enter</kbd>
-    starts a new line &middot; <kbd>Esc</kbd> cancels.
+    @Loc["Admin.Translations.ShowingOf", Model.MatchedKeys, Model.TotalKeys]
+    @Loc["Admin.Translations.ClickToEdit"] &middot; <kbd>Enter</kbd> @Loc["Admin.Translations.KeySaves"] &middot; <kbd>Shift</kbd>+<kbd>Enter</kbd>
+    @Loc["Admin.Translations.KeyNewLine"] &middot; <kbd>Esc</kbd> @Loc["Admin.Translations.KeyCancels"]
 </p>
 
 @if (Model.Rows.Count == 0)
 {
     <div class="admin-empty">
-        <p class="admin-empty__title">Nothing matches that.</p>
-        <p>Try a different section, or clear the search.</p>
+        <p class="admin-empty__title">@Loc["Admin.Translations.NothingMatchesThat"]</p>
+        <p>@Loc["Admin.Translations.TryADifferentSectionOrClear"]</p>
     </div>
 }
 else
@@ -96,7 +92,7 @@ else
                data-save-url="@Url.Action("Save")">
             <thead>
                 <tr>
-                    <th scope="col">Key</th>
+                    <th scope="col">@Loc["Admin.Translations.Key"]</th>
                     @foreach (var culture in Model.Cultures)
                     {
                         <th scope="col">
@@ -116,7 +112,7 @@ else
                             {
                                 @* A translator needs to know before they start typing, not after
                                    the save is refused. *@
-                                <span class="admin-table__flag" title="Uses {0}-style placeholders that every language must keep">{ }</span>
+                                <span class="admin-table__flag" title="@Loc["Admin.Translations.Uses0StylePlaceholdersThatEvery"]">{ }</span>
                             }
                         </th>
 

@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using VIHouse.Business.Abstract;
@@ -37,7 +38,8 @@ public class AdminUsersController(
     IMembershipService membershipService,
     IAmbassadorService ambassadorService,
     IOptions<SecurityOptions> security,
-    IOptions<SiteOptions> siteOptions) : AdminControllerBase
+    IOptions<SiteOptions> siteOptions,
+    IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     /// <summary>
     /// The owner lock. Every action that changes an account goes through here first; a protected
@@ -48,7 +50,7 @@ public class AdminUsersController(
     private IActionResult? RefuseIfProtected(ApplicationUser user)
     {
         if (!security.Value.IsProtected(user.Email)) return null;
-        TempData["StatusMessage"] = $"{user.Email} is a protected account and cannot be changed from the panel.";
+        Status(loc["Admin.Users.Msg.Protected", user.Email ?? ""].Value, isError: true);
         Response.Headers["X-Protected-Account"] = "1";
         return RedirectToAction(nameof(Details), new { id = user.Id });
     }
@@ -146,7 +148,7 @@ public class AdminUsersController(
             var superAdmins = await userManager.GetUsersInRoleAsync(Roles.SuperAdmin);
             if (superAdmins.Count <= 1)
             {
-                TempData["StatusMessage"] = "You're the only SuperAdmin — promote someone else before removing your own access.";
+                Status(loc["Admin.Users.Msg.LastSuperAdmin"].Value, isError: true);
                 return RedirectToAction(nameof(Details), new { id });
             }
         }
@@ -163,7 +165,7 @@ public class AdminUsersController(
             await auditLogs.SaveChangesAsync(ct);
         }
 
-        TempData["StatusMessage"] = "Roles updated.";
+        Status(loc["Admin.Users.Msg.RolesUpdated"].Value);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -209,9 +211,7 @@ public class AdminUsersController(
             new { user.Email, TwoFactorEnabled = false, ResetBy = User.Identity?.Name }, ct);
         await auditLogs.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] =
-            $"Two-factor reset for {user.Email}. The panel is closed to them from their next click, their session ends within " +
-            "five minutes, and they'll pair a new authenticator app when they sign in again.";
+        Status(loc["Admin.Users.Msg.TwoFactorReset", user.Email ?? ""].Value);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -230,7 +230,7 @@ public class AdminUsersController(
         if (RefuseIfProtected(user) is { } refused) return refused;
         if (string.IsNullOrWhiteSpace(user.Email))
         {
-            TempData["StatusMessage"] = "This account has no email address to send a link to.";
+            Status(loc["Admin.Users.Msg.NoEmail"].Value, isError: true);
             return RedirectToAction(nameof(Details), new { id });
         }
 
@@ -249,9 +249,9 @@ public class AdminUsersController(
         await LogAsync("UserSetupLinkSent", id, null, new { user.Email, Sent = sent, SentBy = User.Identity?.Name }, ct);
         await auditLogs.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = sent
-            ? $"A password setup link is on its way to {user.Email}. It works once, for 24 hours."
-            : $"The email to {user.Email} did not go out — Emails & SMS has the reason, and a Resend button.";
+        Status(sent
+            ? loc["Admin.Users.Msg.SetupLinkSent", user.Email].Value
+            : loc["Admin.Users.Msg.SetupLinkFailed", user.Email].Value, isError: !sent);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -275,7 +275,7 @@ public class AdminUsersController(
 
         var result = await membershipService.GrantComplimentaryAsync(
             id, form.PlanId, expiresAt, form.OverrideCap, form.Note, CurrentAdminId(), Ip(), ct);
-        TempData["StatusMessage"] = result.Message;
+        Status(result.Message, isError: !result.Success);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -289,7 +289,7 @@ public class AdminUsersController(
         if (RefuseIfProtected(user) is { } refused) return refused;
 
         var result = await membershipService.RevokeMembershipAsync(id, CurrentAdminId(), Ip(), ct);
-        TempData["StatusMessage"] = result.Message;
+        Status(result.Message, isError: !result.Success);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -308,15 +308,15 @@ public class AdminUsersController(
 
         if (await ambassadorService.GetByUserIdAsync(id, ct) is not null)
         {
-            TempData["StatusMessage"] = "They already have a referral link.";
+            Status(loc["Admin.Users.Msg.HasReferralLink"].Value, isError: true);
             return RedirectToAction(nameof(Details), new { id });
         }
 
         var result = await ambassadorService.CreateForUserAsync(
             user.Id, form.Name.Trim(), form.Code.Trim().ToUpperInvariant(), form.CommissionPercent, CurrentAdminId(), Ip(), ct);
-        TempData["StatusMessage"] = result.Success
-            ? $"Referral link created: /r/{result.Ambassador!.Code}. They can copy it from their account page."
-            : result.Error;
+        Status(result.Success
+            ? loc["Admin.Users.Msg.ReferralCreated", result.Ambassador!.Code].Value
+            : result.Error, isError: !result.Success);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -334,7 +334,7 @@ public class AdminUsersController(
 
         ambassador.Status = status;
         await ambassadorService.UpdateAsync(ambassador, CurrentAdminId(), Ip(), ct);
-        TempData["StatusMessage"] = status == AmbassadorStatus.Active ? "Referral link re-activated." : "Referral link paused — visits to it no longer count.";
+        Status(loc[status == AmbassadorStatus.Active ? "Admin.Users.Msg.ReferralReactivated" : "Admin.Users.Msg.ReferralPaused"].Value);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -362,12 +362,11 @@ public class AdminUsersController(
         // applied — this screen creates staff, and a customer-facing role would be a surprise.
         var requestedRoles = (form.Roles ?? []).Intersect(Roles.AdminRoles).ToList();
         if (requestedRoles.Count == 0)
-            ModelState.AddModelError(nameof(form.Roles), "Choose at least one admin role.");
+            ModelState.AddModelError(nameof(form.Roles), loc["Admin.Users.Msg.ChooseRole"].Value);
 
         var email = (form.Email ?? "").Trim();
         if (!string.IsNullOrEmpty(email) && await userManager.FindByEmailAsync(email) is not null)
-            ModelState.AddModelError(nameof(form.Email),
-                "An account already exists for that email address. Grant them admin roles from their customer record instead.");
+            ModelState.AddModelError(nameof(form.Email), loc["Admin.Users.Msg.AccountExists"].Value);
 
         if (!ModelState.IsValid) return View(form);
 
@@ -415,7 +414,7 @@ public class AdminUsersController(
             new { user.Email, Roles = requestedRoles, InvitedBy = invitedBy }, ct);
         await auditLogs.SaveChangesAsync(ct);
 
-        TempData["StatusMessage"] = $"Admin account created for {user.Email}. They've been emailed a setup link.";
+        Status(loc["Admin.Users.Msg.AdminCreated", user.Email ?? ""].Value);
 
         // The link is shown once on the confirmation screen as well: transactional email is the
         // weakest step in this flow, and a SuperAdmin who can already mint admins learns nothing

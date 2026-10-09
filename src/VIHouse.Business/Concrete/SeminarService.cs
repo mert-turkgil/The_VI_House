@@ -539,13 +539,21 @@ public class SeminarService(
     public Task<List<Seminar>> GetAllForAdminAsync(CancellationToken ct = default) =>
         seminars.GetAllForAdminAsync(ct);
 
+    public async Task<SeminarHiddenCounts> CountHiddenFromVisitorsAsync(CancellationToken ct = default)
+    {
+        var all = await seminars.GetAllForAdminAsync(ct);
+        return new SeminarHiddenCounts(
+            Drafts: all.Count(s => s.Status == SeminarStatus.Draft),
+            Restricted: all.Count(s => s.Status == SeminarStatus.Published && s.Visibility != SeminarVisibility.Public));
+    }
+
     public Task<Seminar?> GetForAdminEditAsync(Guid id, CancellationToken ct = default) =>
         seminars.GetWithDetailAsync(id, ct);
 
     public async Task<SeminarSaveResult> CreateAsync(
         Seminar seminar, SeminarTranslation defaultTranslation, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {
-        seminar.Slug = Slugify(seminar.Slug);
+        seminar.Slug = Slugs.From(seminar.Slug);
         if (await seminars.SlugExistsAsync(seminar.Slug, null, ct))
             return SeminarSaveResult.Fail("Seminar.Error.SlugTaken");
 
@@ -571,7 +579,7 @@ public class SeminarService(
         var existing = await seminars.GetWithDetailAsync(updated.Id, ct);
         if (existing is null) return SeminarSaveResult.Fail("Seminar.Error.NotFound");
 
-        var slug = Slugify(updated.Slug);
+        var slug = Slugs.From(updated.Slug);
         if (await seminars.SlugExistsAsync(slug, existing.Id, ct))
             return SeminarSaveResult.Fail("Seminar.Error.SlugTaken");
 
@@ -945,31 +953,6 @@ public class SeminarService(
             },
             culture,
             nameof(Seminar), seminar.Id, ct);
-    }
-
-    /// <summary>
-    /// Normalises whatever the admin typed into a URL-safe slug. Deliberately conservative — ASCII
-    /// letters, digits and single hyphens — because this ends up in a route, in emails and in links
-    /// people paste, and a Turkish "ı" or a German "ß" surviving into a URL is a support ticket
-    /// waiting to happen. The title keeps the real characters; only the slug is flattened.
-    /// </summary>
-    private static string Slugify(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value)) return string.Empty;
-
-        var normalized = value.Trim().ToLowerInvariant()
-            .Replace("ı", "i").Replace("ş", "s").Replace("ğ", "g").Replace("ü", "u")
-            .Replace("ö", "o").Replace("ç", "c").Replace("ä", "ae").Replace("ß", "ss")
-            .Replace("õ", "o");
-
-        var builder = new System.Text.StringBuilder(normalized.Length);
-        foreach (var ch in normalized)
-        {
-            if (char.IsAsciiLetterOrDigit(ch)) builder.Append(ch);
-            else if (builder.Length > 0 && builder[^1] != '-') builder.Append('-');
-        }
-
-        return builder.ToString().Trim('-');
     }
 
     private Task LogAsync(string action, Guid entityId, Guid adminUserId, string? ipAddress, object? before, object? after, CancellationToken ct) =>

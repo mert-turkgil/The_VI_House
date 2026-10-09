@@ -1215,9 +1215,9 @@ tr.is-untranslated .admin-table__key {
   top: 12px;
   left: 12px;
   z-index: calc(var(--vih-z-sticky) + 2);
-  width: 40px;
-  height: 40px;
-  padding: 10px;
+  width: 44px;
+  height: 44px;
+  padding: 12px;
   border: 1px solid var(--vih-line-on-dark);
   border-radius: var(--vih-radius-md);
   background: var(--vih-green-950);
@@ -1785,6 +1785,7 @@ kbd {
   a,
   button {
     width: 100%;
+    min-height: 44px; // a comfortable tap target on a phone
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -2011,7 +2012,12 @@ kbd {
     width: min(86vw, 320px);
   }
 
+  // Title above the menus, both full width (side by side, the user menu squeezed the page title
+  // into a one-word column on a phone), and scrolling with the page: stuck to the top it covered
+  // a third of a phone screen while writing.
   .admin-topbar {
+    position: relative;
+    flex-direction: column;
     padding: 72px var(--vih-space-sm) var(--vih-space-sm);
     align-items: stretch;
   }

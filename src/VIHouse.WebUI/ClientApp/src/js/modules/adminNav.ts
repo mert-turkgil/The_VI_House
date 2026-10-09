@@ -22,7 +22,7 @@ export function initAdminNav(): void {
     toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'admin-burger';
-    toggle.setAttribute('aria-label', 'Menu');
+    toggle.setAttribute('aria-label', document.body.dataset.navOpen || 'Menu');
     toggle.setAttribute('aria-expanded', 'false');
     toggle.setAttribute('aria-controls', 'admin-sidebar');
     toggle.innerHTML = '<span></span><span></span><span></span>';
@@ -48,6 +48,7 @@ export function initAdminNav(): void {
   function setOpen(open: boolean): void {
     adminShell.classList.toggle('admin-shell--nav-open', open);
     toggle!.setAttribute('aria-expanded', String(open));
+    toggle!.setAttribute('aria-label', (open ? document.body.dataset.navClose : document.body.dataset.navOpen) || 'Menu');
     scrim!.hidden = !open;
     document.body.style.overflow = open ? 'hidden' : '';
   }

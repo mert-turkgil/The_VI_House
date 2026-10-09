@@ -9,6 +9,16 @@
 </div>
 
 <div class="container">
+    @* Staff only (SeminarsController.Index): what this listing is hiding from visitors. *@
+    @if (ViewData["StaffNotice"] is string staffNotice)
+    {
+        <div class="staff-notice" role="note">
+            <span class="staff-notice__tag">@Loc["Preview.Tag"]</span>
+            <span>@staffNotice</span>
+            <a href="@ViewData["StaffNoticeUrl"]">@Loc["Seminars.StaffNotice.Manage"] &rarr;</a>
+        </div>
+    }
+
     @if (Model.Count == 0)
     {
         <partial name="_EmptyStage" model="@(new VIHouse.WebUI.ViewModels.Shared.EmptyStageViewModel("sessions"))" />

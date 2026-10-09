@@ -1,7 +1,7 @@
 @using VIHouse.Entities.Community
 @model AdminCommunityLinkFormViewModel
 @{
-    ViewData["Title"] = Model.Id is null ? "New Community Link" : "Edit Community Link";
+    ViewData["Title"] = Loc[Model.Id is null ? "Admin.Community.NewTitle" : "Admin.Community.EditTitle"].Value;
 }
 
 <form asp-action="Save" method="post" class="admin-form">
@@ -16,7 +16,7 @@
         </div>
         <div class="admin-field">
             <label asp-for="Kind"></label>
-            <select asp-for="Kind" asp-items="Html.GetEnumSelectList<CommunityLinkKind>()"></select>
+            <select asp-for="Kind" asp-items="Loc.Options<CommunityLinkKind>()"></select>
         </div>
     </div>
 
@@ -28,38 +28,38 @@
 
     <div class="admin-field">
         <label asp-for="Description"></label>
-        <textarea asp-for="Description" rows="3" placeholder="One line explaining what this channel is for."></textarea>
+        <textarea asp-for="Description" rows="3" placeholder="@Loc["Admin.Community.OneLineExplainingWhatThisChannel"]"></textarea>
         <span asp-validation-for="Description" class="field-validation-error"></span>
     </div>
 
     <div class="admin-field">
         <label asp-for="DiscordChannelId"></label>
         <input asp-for="DiscordChannelId" placeholder="Optional — e.g. 1234567890123456789" />
-        <p class="admin-field__hint">When the Discord bot is configured, members get a fresh single-use invite to this channel instead of the URL above (which then only serves as the fallback). Right-click the channel in Discord with developer mode on to copy its id.</p>
+        <p class="admin-field__hint">@Loc["Admin.Community.WhenTheDiscordBotIsConfigured"]</p>
         <span asp-validation-for="DiscordChannelId" class="field-validation-error"></span>
     </div>
 
     <fieldset class="admin-field" style="border:none; padding:0; margin:0 0 16px;">
-        <legend style="font-weight:600; font-size:0.875rem; margin-bottom:8px;">Who sees it</legend>
-        <p class="admin-field__hint" style="margin-top:0;">Leave all three blank for every member whose plan includes the community. Pick one to attach the link to a plan, an experience (its ticket holders) or a session (its attendees).</p>
+        <legend style="font-weight:600; font-size:0.875rem; margin-bottom:8px;">@Loc["Admin.Community.WhoSeesIt"]</legend>
+        <p class="admin-field__hint" style="margin-top:0;">@Loc["Admin.Community.LeaveAllThreeBlankForEvery"]</p>
         <span asp-validation-for="MembershipPlanId" class="field-validation-error"></span>
         <div class="admin-form__grid">
             <div class="admin-field">
                 <label asp-for="MembershipPlanId"></label>
                 <select asp-for="MembershipPlanId" asp-items="@((List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Plans)">
-                    <option value="">— any —</option>
+                    <option value="">@Loc["Admin.Community.Any"]</option>
                 </select>
             </div>
             <div class="admin-field">
                 <label asp-for="ExperienceId"></label>
                 <select asp-for="ExperienceId" asp-items="@((List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Experiences)">
-                    <option value="">— any —</option>
+                    <option value="">@Loc["Admin.Community.Any"]</option>
                 </select>
             </div>
             <div class="admin-field">
                 <label asp-for="SeminarId"></label>
                 <select asp-for="SeminarId" asp-items="@((List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.Seminars)">
-                    <option value="">— any —</option>
+                    <option value="">@Loc["Admin.Community.Any"]</option>
                 </select>
             </div>
         </div>
@@ -73,14 +73,14 @@
         <div class="admin-field">
             <label style="display:flex; align-items:center; gap:8px;">
                 <input asp-for="IsActive" type="checkbox" />
-                Visible to members
+                @Loc["Admin.Community.VisibleToMembers"]
             </label>
         </div>
     </div>
 
     <div>
-        <button type="submit" class="admin-btn">@(Model.Id is null ? "Add Link" : "Save Changes")</button>
-        <a class="admin-btn admin-btn--ghost" asp-action="Index">Cancel</a>
+        <button type="submit" class="admin-btn">@Loc[Model.Id is null ? "Admin.Community.AddLink" : "Admin.Publish.Update"]</button>
+        <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Common.Cancel"]</a>
     </div>
 </form>
 

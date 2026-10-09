@@ -31,17 +31,4 @@ public static class ExperienceStatusFormatter
         ExperienceStatus.ComingSoon => "soon",
         _ => "closed",
     };
-
-    /// <summary>
-    /// English fallback, kept only for the admin panel, which is not localised and reads these
-    /// straight. Public views must use <see cref="ToResourceKey"/>.
-    /// </summary>
-    public static string ToDisplayLabel(this ExperienceStatus status) => status switch
-    {
-        ExperienceStatus.ApplicationsOpen => "Applications Open",
-        ExperienceStatus.AlmostFull => "Almost Full",
-        ExperienceStatus.ApplicationsClosed => "Applications Closed",
-        ExperienceStatus.ComingSoon => "Coming Soon",
-        _ => status.ToString(),
-    };
 }

@@ -3,7 +3,7 @@
 @model PaymentTransactionDetail
 @{
     var t = Model.Transaction;
-    ViewData["Title"] = "Payment";
+    ViewData["Title"] = Loc["Admin.Payments.DetailTitle"].Value;
 
     string BadgeClass(PaymentTransactionStatus s) => s switch
     {
@@ -23,19 +23,7 @@
         _ => "admin-badge admin-badge--draft",
     };
 
-    string StatusMeaning(PaymentTransactionStatus s) => s switch
-    {
-        PaymentTransactionStatus.Pending => "Checkout opened; nothing paid yet.",
-        PaymentTransactionStatus.Processing => "Checkout completed with a delayed payment method; the bank has not confirmed the money. Nothing has been granted.",
-        PaymentTransactionStatus.RequiresAction => "The buyer must confirm the payment with their bank before it goes through.",
-        PaymentTransactionStatus.Succeeded => "The provider confirmed the money. The booking / seat / membership was granted.",
-        PaymentTransactionStatus.Failed => "The provider could not collect. A retry may still succeed.",
-        PaymentTransactionStatus.Canceled => "Stopped before any money moved.",
-        PaymentTransactionStatus.Expired => "The checkout window closed unpaid; the held place was released.",
-        PaymentTransactionStatus.PartiallyRefunded => "Part of the money went back to the buyer; what was bought stands.",
-        PaymentTransactionStatus.Refunded => "All of the money went back to the buyer.",
-        _ => "",
-    };
+        string StatusMeaning(PaymentTransactionStatus s) => Loc[$"Admin.Payments.Meaning.{s}"].Value;
 
     // Stripe dashboard deep links. Test-mode objects live under /test/ there.
     var live = Model.Events.FirstOrDefault()?.LiveMode ?? (t.ProviderSessionId?.StartsWith("cs_live") ?? false);
@@ -45,21 +33,21 @@
 
 <div class="admin-toolbar" style="justify-content: space-between; align-items: center;">
     <div>
-        <span class="@BadgeClass(t.Status)">@t.Status</span>
+        <span class="@BadgeClass(t.Status)">@Loc.Label(t.Status)</span>
         @if (t.Disputed)
         {
-            <span class="admin-badge admin-badge--danger">Disputed</span>
+            <span class="admin-badge admin-badge--danger">@Loc["Admin.Payments.Disputed"]</span>
         }
         <span class="admin-table__sub" style="margin-left:8px;">@StatusMeaning(t.Status)</span>
     </div>
-    <a class="admin-btn admin-btn--ghost" asp-action="Index">&larr; Back to Payments</a>
+    <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Payments.BackToPayments"]</a>
 </div>
 
 <div class="admin-card">
-    <h2>@MoneyFormatter.Format(t.AmountMinor, t.Currency) · @t.Kind</h2>
-    <p style="font-size:0.75rem; color:#999; margin-top:-8px;">Refunds and disputes are actioned in the Stripe dashboard; this record follows the provider's events.</p>
+    <h2>@MoneyFormatter.Format(t.AmountMinor, t.Currency) · @Loc.Label(t.Kind)</h2>
+    <p style="font-size:0.75rem; color:#999; margin-top:-8px;">@Loc["Admin.Payments.DetailHint"]</p>
     <dl class="admin-detail-list">
-        <div><dt>Customer</dt><dd>
+        <div><dt>@Loc["Admin.Payments.Customer"]</dt><dd>
             @if (t.UserId is { } uid)
             {
                 <a asp-controller="AdminUsers" asp-action="Details" asp-route-id="@uid">@(t.UserEmail ?? "—")</a>
@@ -67,89 +55,89 @@
             else
             {
                 @(t.UserEmail ?? "—")
-                <span class="admin-table__sub">(no account yet — a /join checkout)</span>
+                <span class="admin-table__sub">@Loc["Admin.Payments.NoAccountYetAJoinCheckout"]</span>
             }
             @if (!string.IsNullOrWhiteSpace(t.UserName)) { <span class="admin-table__sub"> · @t.UserName</span> }
         </dd></div>
-        <div><dt>For</dt><dd>
+        <div><dt>@Loc["Admin.Payments.For"]</dt><dd>
             @if (t.RelatedAdminPath is not null) { <a href="@t.RelatedAdminPath">@t.RelatedLabel</a> } else { @t.RelatedLabel }
             <span class="admin-table__sub"> · @t.RelatedEntityType</span>
         </dd></div>
-        <div><dt>Amount</dt><dd>@MoneyFormatter.Format(t.AmountMinor, t.Currency)</dd></div>
-        <div><dt>Refunded</dt><dd>@(t.HasRefund ? $"{MoneyFormatter.Format(t.AmountRefundedMinor, t.Currency)}{(t.RefundedAt is { } ra ? $" on {ra:dd MMM yyyy, HH:mm}" : "")}" : "—")</dd></div>
-        <div><dt>Created</dt><dd>@t.CreatedAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
-        <div><dt>Updated</dt><dd>@((t.UpdatedAt ?? t.CreatedAt).ToString("dd MMM yyyy, HH:mm"))</dd></div>
-        <div><dt>Paid</dt><dd>@(t.PaidAt?.ToString("dd MMM yyyy, HH:mm") ?? "—")</dd></div>
+        <div><dt>@Loc["Admin.Common.Amount"]</dt><dd>@MoneyFormatter.Format(t.AmountMinor, t.Currency)</dd></div>
+        <div><dt>@Loc["Admin.Payments.Refunded"]</dt><dd>@(t.HasRefund ? $"{MoneyFormatter.Format(t.AmountRefundedMinor, t.Currency)}{(t.RefundedAt is { } ra ? $" on {ra:dd MMM yyyy, HH:mm}" : "")}" : "—")</dd></div>
+        <div><dt>@Loc["Admin.Common.Created"]</dt><dd>@t.CreatedAt.ToString("dd MMM yyyy, HH:mm")</dd></div>
+        <div><dt>@Loc["Admin.Common.Updated"]</dt><dd>@((t.UpdatedAt ?? t.CreatedAt).ToString("dd MMM yyyy, HH:mm"))</dd></div>
+        <div><dt>@Loc["Admin.Payments.Paid"]</dt><dd>@(t.PaidAt?.ToString("dd MMM yyyy, HH:mm") ?? "—")</dd></div>
         @if (!string.IsNullOrWhiteSpace(t.FailureMessage) || !string.IsNullOrWhiteSpace(t.FailureCode))
         {
-            <div><dt>Failure</dt><dd>@t.FailureMessage <span class="admin-table__sub">@t.FailureCode</span></dd></div>
+            <div><dt>@Loc["Admin.Payments.Failure"]</dt><dd>@t.FailureMessage <span class="admin-table__sub">@t.FailureCode</span></dd></div>
         }
-        <div><dt>Last event</dt><dd style="font-family:monospace; font-size:0.75rem;">@(t.LastEventId ?? "—")</dd></div>
+        <div><dt>@Loc["Admin.Payments.LastEvent"]</dt><dd style="font-family:monospace; font-size:0.75rem;">@(t.LastEventId ?? "—")</dd></div>
     </dl>
 </div>
 
 <div class="admin-card">
-    <h2>Stripe references</h2>
+    <h2>@Loc["Admin.Payments.StripeReferences"]</h2>
     <dl class="admin-detail-list">
-        <div><dt>Checkout session</dt><dd style="font-family:monospace; font-size:0.75rem; word-break:break-all;">@(t.ProviderSessionId ?? "—")</dd></div>
-        <div><dt>Payment intent</dt><dd style="font-family:monospace; font-size:0.75rem;">
+        <div><dt>@Loc["Admin.Payments.CheckoutSession"]</dt><dd style="font-family:monospace; font-size:0.75rem; word-break:break-all;">@(t.ProviderSessionId ?? "—")</dd></div>
+        <div><dt>@Loc["Admin.Payments.PaymentIntent"]</dt><dd style="font-family:monospace; font-size:0.75rem;">
             @if (Link(t.ProviderPaymentIntentId, "payments") is { } piHref) { <a href="@piHref" target="_blank" rel="noopener">@t.ProviderPaymentIntentId</a> } else { @("—") }
         </dd></div>
-        <div><dt>Subscription</dt><dd style="font-family:monospace; font-size:0.75rem;">
+        <div><dt>@Loc["Admin.Payments.Subscription"]</dt><dd style="font-family:monospace; font-size:0.75rem;">
             @if (Link(t.ProviderSubscriptionId, "subscriptions") is { } subHref) { <a href="@subHref" target="_blank" rel="noopener">@t.ProviderSubscriptionId</a> } else { @("—") }
         </dd></div>
-        <div><dt>Invoice</dt><dd style="font-family:monospace; font-size:0.75rem;">
+        <div><dt>@Loc["Admin.Payments.Invoice"]</dt><dd style="font-family:monospace; font-size:0.75rem;">
             @if (Link(t.ProviderInvoiceId, "invoices") is { } invHref) { <a href="@invHref" target="_blank" rel="noopener">@t.ProviderInvoiceId</a> } else { @("—") }
         </dd></div>
-        <div><dt>Customer</dt><dd style="font-family:monospace; font-size:0.75rem;">
+        <div><dt>@Loc["Admin.Payments.Customer"]</dt><dd style="font-family:monospace; font-size:0.75rem;">
             @if (Link(t.ProviderCustomerId, "customers") is { } cusHref) { <a href="@cusHref" target="_blank" rel="noopener">@t.ProviderCustomerId</a> } else { @("—") }
         </dd></div>
     </dl>
 </div>
 
 <div class="admin-card">
-    <h2>Live Stripe details</h2>
+    <h2>@Loc["Admin.Payments.LiveStripeDetails"]</h2>
     @if (Model.LiveDetails is { } d)
     {
         <dl class="admin-detail-list">
-            <div><dt>Session status</dt><dd>@(d.SessionStatus ?? "—")</dd></div>
-            <div><dt>Payment status</dt><dd>@(d.PaymentStatus ?? "—")</dd></div>
-            <div><dt>Intent status</dt><dd>@(d.PaymentIntentStatus ?? "—")</dd></div>
-            <div><dt>Charge status</dt><dd>@(d.ChargeStatus ?? "—")</dd></div>
-            <div><dt>Card</dt><dd>@(d.CardBrand is null ? "—" : $"{d.CardBrand} •••• {d.CardLast4}")</dd></div>
+            <div><dt>@Loc["Admin.Payments.SessionStatus"]</dt><dd>@(d.SessionStatus ?? "—")</dd></div>
+            <div><dt>@Loc["Admin.Payments.PaymentStatus"]</dt><dd>@(d.PaymentStatus ?? "—")</dd></div>
+            <div><dt>@Loc["Admin.Payments.IntentStatus"]</dt><dd>@(d.PaymentIntentStatus ?? "—")</dd></div>
+            <div><dt>@Loc["Admin.Payments.ChargeStatus"]</dt><dd>@(d.ChargeStatus ?? "—")</dd></div>
+            <div><dt>@Loc["Admin.Payments.Card"]</dt><dd>@(d.CardBrand is null ? "—" : $"{d.CardBrand} •••• {d.CardLast4}")</dd></div>
             @if (d.AmountCapturedMinor is { } captured)
             {
-                <div><dt>Amount captured</dt><dd>@MoneyFormatter.Format(captured, t.Currency)</dd></div>
+                <div><dt>@Loc["Admin.Payments.AmountCaptured"]</dt><dd>@MoneyFormatter.Format(captured, t.Currency)</dd></div>
             }
-            <div><dt>Refunded (Stripe)</dt><dd>@(d.Refunded == true ? MoneyFormatter.Format(d.AmountRefundedMinor ?? 0, t.Currency) : "No")</dd></div>
-            <div><dt>Disputed (Stripe)</dt><dd>@(d.Disputed == true ? "Yes" : "No")</dd></div>
+            <div><dt>@Loc["Admin.Payments.RefundedStripe"]</dt><dd>@(d.Refunded == true ? MoneyFormatter.Format(d.AmountRefundedMinor ?? 0, t.Currency) : Loc["Admin.Common.No"].Value)</dd></div>
+            <div><dt>@Loc["Admin.Payments.DisputedStripe"]</dt><dd>@Loc[d.Disputed == true ? "Admin.Common.Yes" : "Admin.Common.No"]</dd></div>
             @if (!string.IsNullOrWhiteSpace(d.ReceiptUrl))
             {
-                <div><dt>Receipt</dt><dd><a href="@d.ReceiptUrl" target="_blank" rel="noopener">View receipt</a></dd></div>
+                <div><dt>@Loc["Admin.Payments.Receipt"]</dt><dd><a href="@d.ReceiptUrl" target="_blank" rel="noopener">@Loc["Admin.Payments.ViewReceipt"]</a></dd></div>
             }
         </dl>
     }
     else if (t.ProviderSessionId is null)
     {
-        <p style="font-size:0.8125rem; color:#999;">No checkout session on this record (a renewal is invoiced by Stripe directly — open the invoice above).</p>
+        <p style="font-size:0.8125rem; color:#999;">@Loc["Admin.Payments.NoCheckoutSessionOnThisRecord"]</p>
     }
     else
     {
-        <p style="font-size:0.8125rem; color:#999;">Couldn't reach Stripe just now — the record above is the last state the provider's events put it in.</p>
+        <p style="font-size:0.8125rem; color:#999;">@Loc["Admin.Payments.CouldnTReachStripeJustNow"]</p>
     }
 </div>
 
 <div class="admin-card">
-    <h2>Event timeline</h2>
+    <h2>@Loc["Admin.Payments.EventTimeline"]</h2>
     @if (Model.Events.Count == 0)
     {
-        <p style="font-size:0.8125rem; color:#999;">No provider events recorded against this payment's Stripe objects yet.</p>
+        <p style="font-size:0.8125rem; color:#999;">@Loc["Admin.Payments.NoProviderEventsRecordedAgainstThis"]</p>
     }
     else
     {
         <div class="admin-table-scroll">
             <table class="admin-table">
-                <thead><tr><th>Received</th><th>Event</th><th>Object</th><th>Status</th><th>Attempts</th><th>Error</th></tr></thead>
+                <thead><tr><th>@Loc["Admin.Payments.Received"]</th><th>@Loc["Admin.Payments.Event"]</th><th>@Loc["Admin.Payments.Object"]</th><th>@Loc["Admin.Common.Status"]</th><th>@Loc["Admin.Payments.Attempts"]</th><th>@Loc["Admin.Payments.Error"]</th></tr></thead>
                 <tbody>
                     @foreach (var e in Model.Events)
                     {
@@ -157,7 +145,7 @@
                             <td>@e.ReceivedAt.ToString("dd MMM yyyy HH:mm:ss")</td>
                             <td>@e.Type<div class="admin-table__sub" style="font-family:monospace;">@e.EventId</div></td>
                             <td style="font-family:monospace; font-size:0.75rem; word-break:break-all;">@e.ObjectId</td>
-                            <td><span class="@EventBadge(e.Status)">@e.Status</span></td>
+                            <td><span class="@EventBadge(e.Status)">@Loc.Label(e.Status)</span></td>
                             <td>@e.Attempts</td>
                             <td class="admin-table__sub">@(e.LastError ?? "")</td>
                         </tr>
@@ -165,6 +153,6 @@
                 </tbody>
             </table>
         </div>
-        <p class="admin-hint">Failed events can be re-run from <a asp-controller="AdminWebhooks" asp-action="Index" asp-route-status="Failed">Stripe Events</a>.</p>
+        <p class="admin-hint">@Loc["Admin.Payments.FailedEventsCanBeReRun"] <a asp-controller="AdminWebhooks" asp-action="Index" asp-route-status="Failed">@Loc["Admin.Payments.StripeEvents"]</a>.</p>
     }
 </div>

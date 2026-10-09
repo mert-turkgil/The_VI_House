@@ -1,0 +1,21 @@
+@*
+    The staff-only strip at the top of a public page that visitors cannot see in its current state:
+    a draft, a members-only or an unlisted session, a draft journal post. Set by the controller in
+    ViewData["PreviewBanner"] (the sentence) and ViewData["PreviewBannerEdit"] (the admin URL).
+
+    It exists because the admin's Preview link showed drafts exactly as if they were live, so a page
+    nobody else could open looked published to the person who had just "published" it.
+*@
+@if (ViewData["PreviewBanner"] is string message)
+{
+    <div class="preview-banner" role="status">
+        <div class="container preview-banner__inner">
+            <span class="preview-banner__tag">@Loc["Preview.Tag"]</span>
+            <span class="preview-banner__text">@message</span>
+            @if (ViewData["PreviewBannerEdit"] is string editUrl)
+            {
+                <a class="preview-banner__link" href="@editUrl">@Loc["Preview.Edit"] &rarr;</a>
+            }
+        </div>
+    </div>
+}

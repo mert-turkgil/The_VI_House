@@ -1,6 +1,6 @@
 @model AdminSiteSettingsViewModel
 @{
-    ViewData["Title"] = "Site settings";
+    ViewData["Title"] = Loc["Admin.Nav.AdminSiteSettings"].Value;
     var active = Model.Translations.First(t => t.Culture.Name == Model.ActiveCulture);
     Model.CultureOgImageUrls.TryGetValue(active.Culture.Name, out var activeOgImage);
 }
@@ -11,56 +11,50 @@
 }
 
 <p class="admin-hint">
-    How the site describes itself to search engines, to link previews in messaging apps, and to
-    language models. Everything a reader sees as <strong>words</strong> is per language; everything
-    that is the same fact in every language is on this page once.
+    @Loc["Admin.SiteSettings.Intro"]
 </p>
 
 @* --- The thing that makes all of this work ---------------------------------------------------- *@
 <div class="admin-notice">
-    <strong>Every page now has one URL per language.</strong>
-    English is served at <code>/experiences</code> and the others under a prefix &mdash;
-    <code>/de/experiences</code>, <code>/tr/experiences</code>, <code>/et/experiences</code>.
-    That is what lets Google index all four, and what makes a link you send someone open in the
-    language <em>you</em> were reading, rather than in whatever language <em>they</em> last chose.
+    <strong>@Loc["Admin.SiteSettings.EveryPageNowHasOneURL"]</strong>
+    @Loc.Html("Admin.SiteSettings.UrlNotice", LocalizerHtml.Code("/experiences"), LocalizerHtml.Code("/de/experiences"), LocalizerHtml.Code("/tr/experiences"), LocalizerHtml.Code("/et/experiences"))
 </div>
 
 <div class="admin-stat-row">
     <div class="admin-stat">
         <span class="admin-stat__value">@Model.SitemapPageCount</span>
-        <span class="admin-stat__label">Pages in the sitemap</span>
+        <span class="admin-stat__label">@Loc["Admin.SiteSettings.PagesInTheSitemap"]</span>
     </div>
     <div class="admin-stat">
         <span class="admin-stat__value">@Model.SitemapUrlCount</span>
-        <span class="admin-stat__label">URLs once languages are counted</span>
+        <span class="admin-stat__label">@Loc["Admin.SiteSettings.URLsOnceLanguagesAreCounted"]</span>
     </div>
     <a class="admin-stat" href="/sitemap.xml" target="_blank" rel="noopener">
         <span class="admin-stat__value">XML</span>
-        <span class="admin-stat__label">View sitemap.xml &rarr;</span>
+        <span class="admin-stat__label">@Loc["Admin.SiteSettings.ViewSitemapXml"]</span>
     </a>
     <a class="admin-stat" href="/robots.txt" target="_blank" rel="noopener">
         <span class="admin-stat__value">TXT</span>
-        <span class="admin-stat__label">View robots.txt &rarr;</span>
+        <span class="admin-stat__label">@Loc["Admin.SiteSettings.ViewRobotsTxt"]</span>
     </a>
     <a class="admin-stat" href="/llms.txt@(Model.ActiveCulture == SiteCultures.Default ? "" : "?lang=" + SiteCultures.Describe(Model.ActiveCulture).UrlCode)" target="_blank" rel="noopener">
         <span class="admin-stat__value">LLM</span>
-        <span class="admin-stat__label">View llms.txt (@SiteCultures.Describe(Model.ActiveCulture).NativeLabel) &rarr;</span>
+        <span class="admin-stat__label">@Loc["Admin.SiteSettings.ViewLlms", SiteCultures.Describe(Model.ActiveCulture).NativeLabel] &rarr;</span>
     </a>
 </div>
 @if (Model.ComingSoonOn)
 {
     <div class="admin-notice">
-        The Coming Soon curtain is on: the live sitemap and llms.txt list only <code>/coming-soon</code> until it is switched off.
-        The counts above are what they will list at launch.
+        @Loc.Html("Admin.SiteSettings.ComingSoonOn", LocalizerHtml.Code("/coming-soon"))
     </div>
 }
-<p class="admin-hint">Changes here, on the Pages list below and in Content are live on the next page load &mdash; robots.txt, sitemap.xml and llms.txt included.</p>
+<p class="admin-hint">@Loc["Admin.SiteSettings.ChangesHereOnThePagesList"]</p>
 
 @* --- Per-language copy -------------------------------------------------------------------------
    Page-per-language rather than tab panels, following the experience and seminar editors: the URL
    is shareable, so a half-written German draft can be handed to whoever writes the German. *@
 <div class="admin-card" style="margin-bottom:24px;">
-    <h2>What the site says about itself</h2>
+    <h2>@Loc["Admin.SiteSettings.WhatTheSiteSaysAboutItself"]</h2>
 
     <div class="admin-lang-tabs">
         @foreach (var tab in Model.Translations)
@@ -70,7 +64,7 @@
                 @tab.Culture.NativeLabel
                 @if (!tab.IsWritten)
                 {
-                    <span title="Not written yet — falls back to English">&bull;</span>
+                    <span title="@Loc["Admin.SiteSettings.NotWrittenYetFallsBackTo"]">&bull;</span>
                 }
             </a>
         }
@@ -86,111 +80,101 @@
 
         <div class="admin-form__grid">
             <div class="admin-field">
-                <label for="SiteName">Site name</label>
+                <label for="SiteName">@Loc["Admin.SiteSettings.SiteName"]</label>
                 <input id="SiteName" name="SiteName" value="@active.Form.SiteName" maxlength="120" required />
-                <span class="admin-hint">Usually the same in every language. Occasionally not.</span>
+                <span class="admin-hint">@Loc["Admin.SiteSettings.UsuallyTheSameInEveryLanguage"]</span>
             </div>
 
             <div class="admin-field">
-                <label for="TitleTemplate">Title template</label>
+                <label for="TitleTemplate">@Loc["Admin.SiteSettings.TitleTemplate"]</label>
                 <input id="TitleTemplate" name="TitleTemplate" value="@active.Form.TitleTemplate" maxlength="120" required />
                 <span class="admin-hint">
-                    <code>{0}</code> is where each page's own name goes. Without it, every page on the
-                    site would share one title.
+                    @Loc.Html("Admin.SiteSettings.TitleTemplateHint", LocalizerHtml.Code("{0}"))
                 </span>
             </div>
         </div>
 
         <div class="admin-field">
-            <label for="HomeTitle">Homepage title</label>
+            <label for="HomeTitle">@Loc["Admin.SiteSettings.HomepageTitle"]</label>
             <input id="HomeTitle" name="HomeTitle" value="@active.Form.HomeTitle" maxlength="200" />
             <span class="admin-hint">
-                Used as-is, without the template &mdash; a homepage titled &ldquo;Home &mdash; The VI
-                House&rdquo; wastes the most valuable 60 characters on the site. Aim for under 60.
+                @Loc["Admin.SiteSettings.UsedAsIsWithoutTheTemplate"]
             </span>
         </div>
 
         <div class="admin-field">
-            <label for="DefaultMetaDescription">Default description</label>
+            <label for="DefaultMetaDescription">@Loc["Admin.SiteSettings.DefaultDescription"]</label>
             <textarea id="DefaultMetaDescription" name="DefaultMetaDescription" rows="2" maxlength="320">@active.Form.DefaultMetaDescription</textarea>
             <span class="admin-hint">
-                The sentence under the blue link in Google, and the one in a link preview. Any page
-                that does not write its own uses this. Google shows roughly the first 160 characters
-                &mdash; write it for a person, not for a crawler.
+                @Loc["Admin.SiteSettings.TheSentenceUnderTheBlueLink"]
             </span>
         </div>
 
         <div class="admin-field">
-            <label for="OrganizationDescription">What the organisation is</label>
+            <label for="OrganizationDescription">@Loc["Admin.SiteSettings.WhatTheOrganisationIs"]</label>
             <textarea id="OrganizationDescription" name="OrganizationDescription" rows="2" maxlength="500">@active.Form.OrganizationDescription</textarea>
-            <span class="admin-hint">One line describing the house itself, for structured data and llms.txt.</span>
+            <span class="admin-hint">@Loc["Admin.SiteSettings.OneLineDescribingTheHouseItself"]</span>
         </div>
 
         <div class="admin-field">
-            <label for="LlmsNotes">Notes for AI assistants (llms.txt)</label>
+            <label for="LlmsNotes">@Loc["Admin.SiteSettings.NotesForAIAssistantsLlmsTxt"]</label>
             <textarea id="LlmsNotes" name="LlmsNotes" rows="6" maxlength="4000">@active.Form.LlmsNotes</textarea>
             <span class="admin-hint">
-                What an assistant like ChatGPT or Claude should know when it answers questions about the house:
-                who it is for, how to join, what it is not. Plain sentences or short Markdown lists. Shown at the
-                top of llms.txt for this language; the list of pages below it keeps updating by itself.
+                @Loc["Admin.SiteSettings.LlmsNotesHint"]
             </span>
         </div>
 
         <div class="admin-field">
-            <label for="OgImageAlt">Social image description</label>
+            <label for="OgImageAlt">@Loc["Admin.SiteSettings.SocialImageDescription"]</label>
             <input id="OgImageAlt" name="OgImageAlt" value="@active.Form.OgImageAlt" maxlength="300" />
         </div>
 
         <div class="admin-field">
-            <label for="OgImageUrl">Social image URL for this language</label>
+            <label for="OgImageUrl">@Loc["Admin.SiteSettings.SocialImageURLForThisLanguage"]</label>
             <input id="OgImageUrl" name="OgImageUrl" value="@active.Form.OgImageUrl" maxlength="500"
-                   placeholder="Optional — only when this language needs its own picture" />
+                   placeholder="@Loc["Admin.SiteSettings.OptionalOnlyWhenThisLanguageNeeds"]" />
             <span class="admin-hint">
-                Usually empty. Worth setting when the image has words baked into it, because an
-                English card under a @active.Culture.NativeLabel headline reads as a mistake.
+                @Loc["Admin.SiteSettings.OgImageHint", active.Culture.NativeLabel]
             </span>
         </div>
 
-        <button type="submit" class="admin-btn">Save @active.Culture.NativeLabel</button>
+        <button type="submit" class="admin-btn">@Loc["Admin.Common.SaveNamed", active.Culture.NativeLabel]</button>
     </form>
 
     @* Per-language social image upload, its own form so it cannot clobber the copy above. *@
     <div class="admin-panel" style="margin-top:16px;">
-        <h3>@active.Culture.NativeLabel social image</h3>
+        <h3>@Loc["Admin.SiteSettings.SocialImageFor", active.Culture.NativeLabel]</h3>
 
         @if (!string.IsNullOrWhiteSpace(activeOgImage))
         {
             <img src="@activeOgImage" alt="" style="max-width:320px;display:block;margin-bottom:8px;border-radius:8px;" />
             <form asp-action="RemoveOgImage" method="post" style="display:inline;">
                 <input type="hidden" name="culture" value="@active.Culture.Name" />
-                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">@Loc["Admin.Common.Remove"]</button>
             </form>
         }
 
         <form asp-action="UploadOgImage" method="post" enctype="multipart/form-data" class="admin-inline-form">
             <input type="hidden" name="culture" value="@active.Culture.Name" />
             <div class="admin-field" style="flex:2;">
-                <label>Upload (1200&times;630 works everywhere)</label>
+                <label>@Loc["Admin.SiteSettings.Upload1200630WorksEverywhere"]</label>
                 <input type="file" name="file" accept="image/*" required />
             </div>
-            <button type="submit" class="admin-btn">Upload</button>
+            <button type="submit" class="admin-btn">@Loc["Admin.Common.Upload"]</button>
         </form>
     </div>
 </div>
 
 @* --- Per-page search titles and descriptions ------------------------------------------------------ *@
 <div class="admin-card" id="pages" style="margin-bottom:24px;">
-    <h2>Pages &mdash; @active.Culture.NativeLabel</h2>
+    <h2>@Loc["Admin.SiteSettings.PagesFor", active.Culture.NativeLabel]</h2>
     <p class="admin-hint" style="margin-top:0;">
-        What each page shows in Google and in link previews, in @active.Culture.NativeLabel. Leave a field empty to use
-        the page's built-in wording (shown greyed in the box). Google shows about 60 characters of a title and
-        155 of a description. Experiences, sessions and journal posts have their own fields in their editors;
-        the homepage uses the homepage title and default description above.
+        @Loc["Admin.SiteSettings.PagesHint", active.Culture.NativeLabel]
     </p>
     <form asp-action="SavePages" method="post" class="admin-form">
         <input type="hidden" name="culture" value="@active.Culture.Name" />
         <table class="admin-table admin-table--compact">
-            <thead><tr><th style="width:130px;">Page</th><th>Title</th><th>Description</th></tr></thead>
+            <thead><tr><th style="width:130px;">@Loc["Admin.SiteSettings.Page"]</th><th>@Loc["Admin.Common.Title"]</th><th>@Loc["Admin.Common.Description"]</th></tr></thead>
             <tbody>
                 @foreach (var p in Model.Pages)
                 {
@@ -200,13 +184,13 @@
                             <input name="Pages[@p.Key].Title" value="@p.Title" maxlength="120" placeholder="@p.DefaultTitle" data-count="60" style="width:100%;" />
                         </td>
                         <td>
-                            <textarea name="Pages[@p.Key].Description" rows="2" maxlength="320" placeholder="@(p.DefaultDescription ?? "Default description above")" data-count="155" style="width:100%;">@p.Description</textarea>
+                            <textarea name="Pages[@p.Key].Description" rows="2" maxlength="320" placeholder="@(p.DefaultDescription ?? Loc["Admin.SiteSettings.DefaultDescriptionAbove"].Value)" data-count="155" style="width:100%;">@p.Description</textarea>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-        <button type="submit" class="admin-btn" style="margin-top:12px;">Save @active.Culture.NativeLabel pages</button>
+        <button type="submit" class="admin-btn" style="margin-top:12px;">@Loc["Admin.SiteSettings.SavePages", active.Culture.NativeLabel]</button>
     </form>
 </div>
 
@@ -233,7 +217,7 @@
     <input type="hidden" name="culture" value="@Model.ActiveCulture" />
 
     <div class="admin-card" style="margin-bottom:24px;">
-        <h2>Identity</h2>
+        <h2>@Loc["Admin.SiteSettings.Identity"]</h2>
 
         <div class="admin-form__grid">
             <div class="admin-field">
@@ -241,9 +225,7 @@
                 <input asp-for="Form.CanonicalBaseUrl" placeholder="https://thevihouse.com" />
                 <span asp-validation-for="Form.CanonicalBaseUrl" class="admin-error"></span>
                 <span class="admin-hint">
-                    Every absolute address the site publishes is built from this, rather than from
-                    whatever host the request arrived on. That is what stops the same page reached
-                    through a preview domain, a proxy or &ldquo;www.&rdquo; from competing with itself.
+                    @Loc["Admin.SiteSettings.EveryAbsoluteAddressTheSitePublishes"]
                 </span>
             </div>
 
@@ -255,7 +237,7 @@
                     <option value="EventVenue">EventVenue</option>
                     <option value="Corporation">Corporation</option>
                 </select>
-                <span class="admin-hint">Only change this if you know why. Organization suits most sites.</span>
+                <span class="admin-hint">@Loc["Admin.SiteSettings.OnlyChangeThisIfYouKnow"]</span>
             </div>
 
             <div class="admin-field">
@@ -271,11 +253,9 @@
     </div>
 
     <div class="admin-card" style="margin-bottom:24px;">
-        <h2>Social accounts</h2>
+        <h2>@Loc["Admin.SiteSettings.SocialAccounts"]</h2>
         <p class="admin-hint">
-            Published as <code>sameAs</code> in the site's structured data, which is how a search
-            engine learns that these accounts and this site are the same organisation. Leave blank
-            what does not exist &mdash; an empty entry is better than a wrong one.
+            @Loc.Html("Admin.SiteSettings.SameAsHint", LocalizerHtml.Code("sameAs"))
         </p>
 
         <div class="admin-form__grid">
@@ -289,17 +269,15 @@
             <div class="admin-field">
                 <label asp-for="Form.TwitterHandle"></label>
                 <input asp-for="Form.TwitterHandle" placeholder="thevihouse" />
-                <span class="admin-hint">Without the @@. Credits the account on link cards posted to X.</span>
+                <span class="admin-hint">@Loc["Admin.SiteSettings.TwitterHint"]</span>
             </div>
         </div>
     </div>
 
     <div class="admin-card" style="margin-bottom:24px;">
-        <h2>Contact and address</h2>
+        <h2>@Loc["Admin.SiteSettings.ContactAndAddress"]</h2>
         <p class="admin-hint">
-            Published as structured data. Worth filling in even if the address is not public
-            elsewhere &mdash; it is what makes the house eligible for a knowledge panel and for map
-            results.
+            @Loc["Admin.SiteSettings.PublishedAsStructuredDataWorthFilling"]
         </p>
 
         <div class="admin-form__grid">
@@ -318,30 +296,25 @@
     </div>
 
     <div class="admin-card" style="margin-bottom:24px;">
-        <h2>Search visibility</h2>
+        <h2>@Loc["Admin.SiteSettings.SearchVisibility"]</h2>
 
         <div class="admin-field admin-field--check">
             <label>
                 <input asp-for="Form.AllowIndexing" type="checkbox" />
-                Allow search engines to index this site
+                @Loc["Admin.SiteSettings.AllowSearchEnginesToIndexThis"]
             </label>
             <span class="admin-hint">
-                <strong>The master switch.</strong> Turning it off publishes
-                <code>Disallow: /</code>, hides the sitemap and puts <code>noindex</code> on every
-                page. That is exactly what a staging copy needs &mdash; and switching it off on the
-                real site removes you from Google.
+                <strong>@Loc["Admin.SiteSettings.TheMasterSwitch"]</strong> @Loc.Html("Admin.SiteSettings.IndexingOffHint", LocalizerHtml.Code("Disallow: /"), LocalizerHtml.Code("noindex"))
             </span>
         </div>
 
         <div class="admin-field admin-field--check">
             <label>
                 <input asp-for="Form.PublishLlmsTxt" type="checkbox" />
-                Publish /llms.txt
+                @Loc["Admin.SiteSettings.PublishLlmsTxt"]
             </label>
             <span class="admin-hint">
-                A plain-language index of the site for language models. Separate from the switch
-                above, because &ldquo;search engines yes, models maybe&rdquo; is a reasonable
-                position to hold.
+                @Loc["Admin.SiteSettings.APlainLanguageIndexOfThe"]
             </span>
         </div>
 
@@ -350,8 +323,7 @@
                 <label asp-for="Form.GoogleSiteVerification"></label>
                 <input asp-for="Form.GoogleSiteVerification" />
                 <span class="admin-hint">
-                    Paste either the token or the whole <code>&lt;meta&gt;</code> tag &mdash; the
-                    token is taken out of it either way.
+                    @Loc.Html("Admin.SiteSettings.VerificationHint", LocalizerHtml.Code("<meta>"))
                 </span>
             </div>
 
@@ -366,22 +338,19 @@
             <textarea asp-for="Form.RobotsExtra" rows="4"
                       placeholder="Disallow: /some-path&#10;Crawl-delay: 5"></textarea>
             <span class="admin-hint">
-                Added to robots.txt as written. The admin area, the account pages, checkout and the
-                search results are already excluded &mdash; you do not need to repeat them here.
+                @Loc["Admin.SiteSettings.AddedToRobotsTxtAsWritten"]
             </span>
         </div>
     </div>
 
-    <button type="submit" class="admin-btn">Save settings</button>
+    <button type="submit" class="admin-btn">@Loc["Admin.SiteSettings.SaveSettings"]</button>
 </form>
 
 @* --- Images that are the same in every language ------------------------------------------------ *@
 <div class="admin-card" style="margin-top:24px;">
-    <h2>Default social image</h2>
+    <h2>@Loc["Admin.SiteSettings.DefaultSocialImage"]</h2>
     <p class="admin-hint">
-        The picture that appears when a link to this site is pasted anywhere &mdash; WhatsApp, Slack,
-        LinkedIn, X. A page with its own image wins; this is the floor, so that no link ever previews
-        as a bare grey box. <strong>1200&times;630</strong> is the size every network agrees on.
+        @Loc.Html("Admin.SiteSettings.DefaultImageHint", LocalizerHtml.Strong("1200×630"))
     </p>
 
     @if (!string.IsNullOrWhiteSpace(Model.OgImagePreviewUrl))
@@ -390,23 +359,23 @@
         @if (Model.HasUploadedOgImage)
         {
             <form asp-action="RemoveOgImage" method="post" style="display:inline;">
-                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">@Loc["Admin.Common.Remove"]</button>
             </form>
         }
     }
 
     <form asp-action="UploadOgImage" method="post" enctype="multipart/form-data" class="admin-inline-form">
         <div class="admin-field" style="flex:2;">
-            <label>Upload default social image</label>
+            <label>@Loc["Admin.SiteSettings.UploadDefaultSocialImage"]</label>
             <input type="file" name="file" accept="image/*" required />
         </div>
-        <button type="submit" class="admin-btn">Upload</button>
+        <button type="submit" class="admin-btn">@Loc["Admin.Common.Upload"]</button>
     </form>
 </div>
 
 <div class="admin-card" style="margin-top:24px;">
-    <h2>Logo</h2>
-    <p class="admin-hint">Square, at least 112&times;112. Published in the structured data.</p>
+    <h2>@Loc["Admin.SiteSettings.Logo"]</h2>
+    <p class="admin-hint">@Loc["Admin.SiteSettings.SquareAtLeast112112Published"]</p>
 
     @if (!string.IsNullOrWhiteSpace(Model.LogoPreviewUrl))
     {
@@ -414,17 +383,17 @@
         @if (Model.HasUploadedLogo)
         {
             <form asp-action="RemoveLogo" method="post" style="display:inline;">
-                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">Remove</button>
+                <button type="submit" class="admin-icon-btn" style="color:var(--vih-danger);">@Loc["Admin.Common.Remove"]</button>
             </form>
         }
     }
 
     <form asp-action="UploadLogo" method="post" enctype="multipart/form-data" class="admin-inline-form">
         <div class="admin-field" style="flex:2;">
-            <label>Upload logo</label>
+            <label>@Loc["Admin.SiteSettings.UploadLogo"]</label>
             <input type="file" name="file" accept="image/*" required />
         </div>
-        <button type="submit" class="admin-btn">Upload</button>
+        <button type="submit" class="admin-btn">@Loc["Admin.Common.Upload"]</button>
     </form>
 </div>
 

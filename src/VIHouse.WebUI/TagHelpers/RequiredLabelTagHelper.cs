@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.Extensions.Localization;
 
 namespace VIHouse.WebUI.TagHelpers;
 
@@ -12,7 +13,7 @@ namespace VIHouse.WebUI.TagHelpers;
 /// Checkboxes are skipped: a bool always has a value, so a required marker on it is meaningless.
 /// </summary>
 [HtmlTargetElement("label", Attributes = ForAttributeName)]
-public class RequiredLabelTagHelper : TagHelper
+public class RequiredLabelTagHelper(IStringLocalizer<SharedResource> loc) : TagHelper
 {
     private const string ForAttributeName = "asp-for";
 
@@ -39,8 +40,9 @@ public class RequiredLabelTagHelper : TagHelper
             return;
         }
 
-        output.PostContent.AppendHtml(
-            "<span class=\"admin-required\" aria-hidden=\"true\">*</span>" +
-            "<span class=\"visually-hidden\"> (required)</span>");
+        output.PostContent
+            .AppendHtml("<span class=\"admin-required\" aria-hidden=\"true\">*</span><span class=\"visually-hidden\"> ")
+            .Append(loc["Admin.Form.Required"].Value)
+            .AppendHtml("</span>");
     }
 }
