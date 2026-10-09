@@ -1,0 +1,42 @@
+@using VIHouse.Business.Abstract
+@model List<MemberStream>
+@* The streams this person may watch on the site. A live one plays right here (the URL is only on
+   the model while it is open — MemberStreamService); an upcoming one says when and links to its page. *@
+@if (Model.Count > 0)
+{
+    <section class="membership-section member-streams" id="watch" aria-labelledby="streams-heading">
+        <div class="container">
+            <h2 id="streams-heading" class="membership-section__heading">@Loc["Streams.Heading"]</h2>
+            <p class="account-lede">@Loc["Streams.Lede"]</p>
+            <div class="member-streams__list">
+                @foreach (var s in Model)
+                {
+                    <article class="member-stream @(s.IsLive ? "member-stream--live" : "")">
+                        <header class="member-stream__head">
+                            @if (s.IsLive)
+                            {
+                                <span class="session-row__live">@Loc["Sessions.LiveNow"]</span>
+                            }
+                            <a class="member-stream__title" href="@VIHouse.Business.SiteUrls.InCulture(s.PagePath, System.Globalization.CultureInfo.CurrentUICulture.Name)">@s.Title</a>
+                            <span class="member-stream__meta">
+                                @(s.Kind == "experience" ? Loc["Streams.Kind.Experience"].Value : Loc["Streams.Kind.Session"].Value)
+                                @if (s.StartAtUtc is { } start)
+                                {
+                                    @: &middot; @start.ToString("dddd d MMMM, HH:mm") UTC
+                                }
+                            </span>
+                        </header>
+                        @if (s.StreamUrl is { } url)
+                        {
+                            <partial name="_LiveStream" model="@((url, Loc["Sessions.WatchLive"].Value))" />
+                        }
+                        else if (s.StartAtUtc is { } opens)
+                        {
+                            <p class="member-stream__later">@Loc["Streams.OpensAt", (opens - VIHouse.Business.Concrete.SessionTiming.OpensBefore).ToString("dddd d MMMM, HH:mm")]</p>
+                        }
+                    </article>
+                }
+            </div>
+        </div>
+    </section>
+}

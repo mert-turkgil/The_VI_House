@@ -150,4 +150,14 @@ public record ExperienceAccessInfo(
 {
     /// <summary>Whether to render a join button at all.</summary>
     public bool CanJoinNow => Outcome == ExperienceAccessOutcome.IncludedInMembership;
+
+    /// <summary>On AlreadyBooked: the booking is paid/confirmed, not just started. Only a confirmed
+    /// booking unlocks the live stream.</summary>
+    public bool BookingConfirmed { get; init; }
+
+    /// <summary>On NotOpen: when this member may join (members-open date, early for a Founder).</summary>
+    public DateTimeOffset? OpensAtUtc { get; init; }
+
+    /// <summary>On NotOpen for a non-Founder: when Founders get in.</summary>
+    public DateTimeOffset? FounderOpensAtUtc { get; init; }
 }

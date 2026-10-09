@@ -68,6 +68,7 @@ public static class AdminSections
         new("AdminCommunity", "Index", "Community", "messages-square", Split(RolesFor.Marketing)),
         new("AdminEmails", "Index", "Emails & SMS", "mail", Split(RolesFor.Communications)),
         new("AdminNotifySignups", "Index", "Launch List", "bell", Split(RolesFor.Marketing)),
+        new("AdminFounders", "Index", "Founders", "award", Split(RolesFor.Marketing)),
         new("AdminTranslations", "Index", "Translations", "languages", Split(RolesFor.Marketing)),
         new("AdminSiteSettings", "Index", "Site & SEO", "settings", Split(RolesFor.Marketing)),
     ];

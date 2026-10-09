@@ -10,9 +10,10 @@ namespace VIHouse.Business.Concrete;
 /// <summary>
 /// Turns outbox rows back into the calls the handler would have made. Each row is attempted on
 /// its own; a failure records the error and pushes the next attempt out (1, 2, 4 … minutes, up
-/// to <see cref="MaxAttempts"/>), never blocking the rows behind it. Email and SMS services
-/// already swallow transport failures into their own logs, so "failed" here means the effect
-/// could not even be handed over — a broken payload, a template that no longer exists.
+/// to <see cref="MaxAttempts"/>), never blocking the rows behind it. The email service swallows
+/// transport failures into its own log and returns false; that false is treated as a failure here
+/// too, so an SMTP outage (a wrong password, a server down for an hour) is retried on the backoff
+/// instead of the message being marked delivered and quietly lost.
 /// </summary>
 public class OutboxProcessor(
     IOutboxRepository messages,
@@ -52,7 +53,10 @@ public class OutboxProcessor(
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 message.LastError = Text.Clip($"{ex.GetType().Name}: {ex.Message}", 2000);
-                logger.LogError(ex, "Outbox {Kind} {Key} failed (attempt {Attempt}/{Max}).", message.Kind, message.DedupeKey, message.Attempts, MaxAttempts);
+                if (message.Attempts >= MaxAttempts)
+                    logger.LogCritical(ex, "Outbox {Kind} {Key} gave up after {Max} attempts.", message.Kind, message.DedupeKey, MaxAttempts);
+                else
+                    logger.LogError(ex, "Outbox {Kind} {Key} failed (attempt {Attempt}/{Max}).", message.Kind, message.DedupeKey, message.Attempts, MaxAttempts);
             }
 
             await messages.SaveChangesAsync(ct);
@@ -76,7 +80,8 @@ public class OutboxProcessor(
 
                 var task = (Task<bool>)SendEmail.MakeGenericMethod(modelType).Invoke(emailService,
                     [payload.TemplateKey, payload.RecipientEmail, payload.Subject, model, payload.Culture, message.RelatedEntityType, message.RelatedEntityId, ct])!;
-                await task;
+                if (!await task)
+                    throw new EmailNotSentException($"{payload.TemplateKey} to {payload.RecipientEmail} was not sent — see Admin › Emails for the server's reason. Will retry.");
                 break;
             }
             case OutboxMessageKind.Sms:
@@ -98,3 +103,6 @@ public class OutboxProcessor(
         }
     }
 }
+
+/// <summary>The email service reported a send failure (already logged in EmailLogs with the reason).</summary>
+public sealed class EmailNotSentException(string message) : Exception(message);

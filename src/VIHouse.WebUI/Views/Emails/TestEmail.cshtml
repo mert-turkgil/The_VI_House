@@ -1,0 +1,15 @@
+@model TestEmailModel
+@{
+    // Staff-only and never translated: it exists to prove the mail server works, nothing more.
+    ViewData["Subject"] = "The VI House — test email";
+    ViewData["Preheader"] = "If you can read this, outgoing email works.";
+    var rows = new List<(string, string)>
+    {
+        ("Sent by", Model.SentBy),
+        ("Sent at", $"{Model.SentAtUtc:d MMMM yyyy, HH:mm:ss} UTC"),
+        ("SMTP host", Model.Host),
+    };
+}
+<partial name="/Views/Emails/_EmailHeading.cshtml" model="@(new Heading("Test", "Outgoing email works"))" />
+<p style="margin:0 0 20px;">This message was sent from Admin › Emails &amp; SMS to check the mail server settings. Nothing needs doing.</p>
+<partial name="/Views/Emails/_EmailDetails.cshtml" model="rows" />

@@ -131,6 +131,7 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           CKEDITOR_LICENSE_KEY: ${{ secrets.CKEDITOR_LICENSE_KEY }}
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
         run: |
           missing=0
           for name in FTP_SERVER FTP_USERNAME FTP_PASSWORD PROD_CONNECTION_STRING; do
@@ -145,7 +146,21 @@ jobs:
           [ -n "$STRIPE_SECRET_KEY" ]    || echo "::warning::STRIPE_TEST_SECRET_KEY is empty — payments are off."
           [ -n "$GOOGLE_CLIENT_ID" ]     || echo "::warning::GOOGLE_CLIENT_ID is empty — Google sign-in is off."
           [ -n "$CKEDITOR_LICENSE_KEY" ] || echo "::warning::CKEDITOR_LICENSE_KEY is empty — the admin rich-text editor will not load."
-          [ -n "$SMTP_USERNAME" ]        || echo "::warning::SMTP_USERNAME is empty — outbound email (2FA/receipt/contact mail) is off."
+          # Email is how accounts are set up, confirmed and recovered — without it nobody new can get
+          # in. Missing SMTP credentials fail the deploy instead of shipping a site that silently
+          # loses every confirmation and password-reset mail.
+          for name in SMTP_USERNAME SMTP_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository secret $name is not set — outbound email would be off. Set it to the $SMTP_FROM_EMAIL mailbox's login (hPanel → Emails)."
+              missing=1
+            fi
+          done
+          [ "$missing" -eq 0 ] || exit 1
+          # Hostinger only lets a mailbox send as itself: a From address that is not the signed-in
+          # mailbox (or one of its aliases) is rejected with "553 sender address rejected".
+          if [ "${SMTP_USERNAME,,}" != "${SMTP_FROM_EMAIL,,}" ]; then
+            echo "::warning::SMTP_USERNAME differs from SMTP_FROM_EMAIL ($SMTP_FROM_EMAIL). Unless $SMTP_FROM_EMAIL is an alias of that mailbox, every email will be rejected. Admin → Emails → Send test confirms either way."
+          fi
 
       # --- Build -----------------------------------------------------------------------------------
       - name: Setup Node
@@ -257,7 +272,10 @@ jobs:
                 MemberDirectory: $memberDirectory,
                 Community: $community
               },
-              Logging: { LogLevel: { Default: "Warning", "Microsoft.AspNetCore": "Warning" } },
+              Logging: {
+                LogLevel: { Default: "Warning", "Microsoft.AspNetCore": "Warning", VIHouse: "Information" },
+                File: { Enabled: true, RetainDays: 14, MinimumLevel: "Information" }
+              },
               ConnectionStrings: { DefaultConnection: $connectionString },
               Stripe: {
                 SecretKey: $stripeSecret,
@@ -469,14 +487,32 @@ jobs:
           --output /dev/null
 
       # First request after a deploy is what makes IIS start the app, so this doubles as warm-up.
-      # Non-fatal: the deploy already happened, and the domain may not be pointed at the host yet.
+      # /health answers {"status":"Healthy|Degraded|Unhealthy"} without redirects or the launch
+      # curtain. Unreachable is only a warning (the domain may not be pointed at the host yet); a
+      # reachable app that reports Unhealthy (database down) fails the run; Degraded (implausible
+      # email settings) is flagged.
       - name: Smoke check
-        continue-on-error: true
-        run: >
-          curl --silent --show-error --fail --location
-          --retry 8 --retry-delay 15 --retry-all-errors
-          --output /dev/null --write-out "HTTP %{http_code} from %{url_effective}\n"
-          "$SITE_BASE_URL/"
+        run: |
+          # A cold IIS app pool can answer 502/503 for a few seconds while it starts, so retry
+          # until it says 200 or we run out of attempts.
+          code=000; json=""
+          for attempt in 1 2 3 4 5 6 7 8; do
+            body=$(curl --silent --show-error --location --max-time 60 \
+              --write-out "\n%{http_code}" "$SITE_BASE_URL/health" || true)
+            code=$(echo "$body" | tail -n1)
+            json=$(echo "$body" | sed '$d')
+            [ "$code" = "200" ] && break
+            sleep 15
+          done
+          echo "HTTP $code: $json"
+          case "$code" in
+            200)
+              if echo "$json" | grep -q '"Degraded"'; then
+                echo "::warning::The site is up but degraded: $json — open Admin → Emails for what to fix."
+              fi ;;
+            503) echo "::error::The site reports Unhealthy: $json"; exit 1 ;;
+            *)   echo "::warning::Could not reach $SITE_BASE_URL/health (HTTP $code). The deploy finished; check the site by hand." ;;
+          esac
 
 # ---------------------------------------------------------------------------------------------------
 # Repository secrets this workflow reads (Settings → Secrets and variables → Actions → New secret):

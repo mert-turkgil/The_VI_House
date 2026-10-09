@@ -92,6 +92,19 @@ public class ExperiencesController(
         model.Access = await experienceService.GetAccessAsync(experience, userId, ct);
         model.AttendanceMode = experience.AttendanceMode;
 
+        // The YouTube broadcast, for confirmed attendees only. Open from an hour before the start to
+        // the end — the same window as a session (SessionTiming), so a multi-day experience streams
+        // on every day of it.
+        model.IsStreamed = !string.IsNullOrWhiteSpace(experience.LiveStreamUrl);
+        if (model.IsStreamed && model.Access is { Outcome: ExperienceAccessOutcome.AlreadyBooked, BookingConfirmed: true })
+        {
+            var now = DateTimeOffset.UtcNow;
+            if (SessionTiming.IsLive(experience.StartAtUtc, experience.EndAtUtc, now))
+                model.StreamUrl = experience.LiveStreamUrl;
+            else if (!SessionTiming.HasEnded(experience.StartAtUtc, experience.EndAtUtc, now))
+                model.StreamOpensAtUtc = experience.StartAtUtc - SessionTiming.OpensBefore;
+        }
+
         // Only for a waitlisted experience, and only when there is someone to look up — one indexed
         // read, so that a person already in the queue is told their number instead of being offered
         // the form they already filled in.

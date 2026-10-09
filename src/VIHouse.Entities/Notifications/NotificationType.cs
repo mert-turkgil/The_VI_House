@@ -15,5 +15,9 @@ public enum NotificationType
 
     /// <summary>To an ambassador: someone who came through their link applied, was approved, or
     /// paid. Appended for the same reason as the one above.</summary>
-    ReferralConverted
+    ReferralConverted,
+
+    /// <summary>Something an admin changed on the account itself — roles, a lock, Founder status.
+    /// Appended for the same reason as the two above.</summary>
+    AccountUpdate
 }

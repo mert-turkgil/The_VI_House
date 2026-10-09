@@ -114,10 +114,29 @@
         </div>
     </div>
 
+    <partial name="_MemberStreams" model="Model.Streams" />
+
     <section class="membership-doors" aria-labelledby="doors-heading">
         <div class="container">
             <h2 id="doors-heading" class="membership-section__heading">@Loc["Membership.Member.Doors.Heading"]</h2>
             <div class="membership-doors__grid">
+                <a class="membership-door membership-door--benefits" asp-area="" asp-controller="Account" asp-action="Benefits">
+                    <strong>@Loc["Benefits.Nav"]</strong>
+                    <span>
+                        @if (Model.Benefits is { } benefits)
+                        {
+                            @Loc["Benefits.Teaser", benefits.IncludedCount, benefits.DiscountedCount]
+                            @if (benefits.Founder is { IsFounder: true, ShowBadge: true })
+                            {
+                                <partial name="_FounderBadge" />
+                            }
+                        }
+                        else
+                        {
+                            @Loc["Benefits.Door.Body"]
+                        }
+                    </span>
+                </a>
                 <a class="membership-door" asp-area="" asp-controller="Seminars" asp-action="Index">
                     <strong>@Loc["Membership.Member.Doors.Sessions"]</strong>
                     <span>@Loc["Membership.Member.Doors.Sessions.Body"]</span>
@@ -180,6 +199,9 @@ else
             </div>
         </div>
     </div>
+
+    @* A ticket holder or session attendee without a membership still watches what they booked. *@
+    <partial name="_MemberStreams" model="Model.Streams" />
 }
 
 @if (TempData["MembershipError"] is string error)

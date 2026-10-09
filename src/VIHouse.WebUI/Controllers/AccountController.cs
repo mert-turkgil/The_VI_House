@@ -51,6 +51,8 @@ public class AccountController(
     IOptions<SmsOptions> smsOptions,
     IOptions<FeatureOptions> features,
     IApplicationService applicationService,
+    IMemberBenefitsService memberBenefits,
+    IFounderService founders,
     IStringLocalizer<SharedResource> loc) : Controller
 {
     // --- Dashboard -----------------------------------------------------------------------------
@@ -118,6 +120,12 @@ public class AccountController(
             model.Plans = await MembershipPlanCardViewModel.LoadAsync(membershipService, ct);
 
         model.Entitlements = membership?.Entitlements;
+        model.Founder = await founders.GetPerksAsync(userId, ct);
+        if (membership is not null && await memberBenefits.GetAsync(userId, ct) is { } benefits)
+        {
+            model.BenefitsIncluded = benefits.IncludedCount;
+            model.BenefitsDiscounted = benefits.DiscountedCount;
+        }
         model.Hubs = await BuildHubsAsync(myBookings, enrolments, culture, now, ct);
         model.ReferralCode = (await ambassadorService.GetByUserIdAsync(userId, ct))?.Code;
 
@@ -339,6 +347,7 @@ public class AccountController(
             MemberNumber = MemberNumbers.For(membership.Id),
             MemberSince = membership.StartAt,
             ExpiresAt = membership.ExpiresAt,
+            ShowFounderBadge = (await founders.GetPerksAsync(userId, ct)).ShowBadge,
         });
     }
 
@@ -629,6 +638,29 @@ public class AccountController(
 
         ViewData["Title"] = "My Sessions";
         return View(SessionPortalViewModel.Build(enrolments, culture, DateTimeOffset.UtcNow));
+    }
+
+    /// <summary>
+    /// "Included with your plan": every upcoming session and experience the member's plan makes
+    /// free or cheaper (plus any Founder extra), with where they stand on each. Someone without a
+    /// current membership is shown the plans instead — the page is the answer to "what would I get?".
+    /// </summary>
+    [HttpGet("benefits")]
+    public async Task<IActionResult> Benefits(CancellationToken ct)
+    {
+        var userId = User.RequiredUserId();
+        var benefits = await memberBenefits.GetAsync(userId, ct);
+        var model = new BenefitsPageViewModel
+        {
+            Benefits = benefits,
+            Membership = await membershipService.GetMembershipSummaryAsync(userId, ct),
+            Culture = CultureInfo.CurrentUICulture.Name,
+            Founder = benefits?.Founder ?? await founders.GetPerksAsync(userId, ct),
+        };
+        model.MembershipSales = features.Value.MembershipSales;
+
+        ViewData["Title"] = loc["Benefits.Title"].Value;
+        return View(model);
     }
 
     // --- Helpers ------------------------------------------------------------------------------

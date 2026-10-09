@@ -114,6 +114,28 @@ public class SiteSettingsService(
         Invalidate();
     }
 
+    public async Task UpdateFounderProgrammeAsync(DateTimeOffset? windowEndsAtUtc, int extraDiscountPercent,
+        int earlyAccessDays, bool badgeEnabled, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
+    {
+        var current = await GetAsync(ct);
+        var before = FounderSnapshot(current);
+
+        current.FounderWindowEndsAtUtc = windowEndsAtUtc;
+        current.FounderExtraDiscountPercent = Math.Clamp(extraDiscountPercent, 0, 100);
+        current.FounderEarlyAccessDays = Math.Clamp(earlyAccessDays, 0, 365);
+        current.FounderBadgeEnabled = badgeEnabled;
+        current.UpdatedAt = DateTimeOffset.UtcNow;
+
+        await LogAsync("FounderProgrammeUpdated", current.Id, adminUserId, ipAddress, before, FounderSnapshot(current), ct);
+        await repository.SaveChangesAsync(ct);
+        Invalidate();
+    }
+
+    private static object FounderSnapshot(SiteSetting s) => new
+    {
+        s.FounderWindowEndsAtUtc, s.FounderExtraDiscountPercent, s.FounderEarlyAccessDays, s.FounderBadgeEnabled,
+    };
+
     public async Task<string?> SaveTranslationAsync(
         SiteSettingTranslation form, Guid adminUserId, string? ipAddress, CancellationToken ct = default)
     {

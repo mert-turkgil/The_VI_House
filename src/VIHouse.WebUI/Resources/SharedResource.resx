@@ -1982,4 +1982,79 @@ What would you like to know?</value></data>
   <data name="Experiences.Facts.Status" xml:space="preserve"><value>Status</value></data>
   <data name="Card.Error.NoMembership" xml:space="preserve"><value>You don't have an active membership yet.</value></data>
   <data name="Card.Error.NotInPlan" xml:space="preserve"><value>The digital card isn't part of {0}.</value></data>
+  <data name="Email.RoleChanged.Subject" xml:space="preserve"><value>Your VI House account access has changed</value></data>
+  <data name="Email.RoleChanged.Preheader" xml:space="preserve"><value>An administrator updated the roles on your account.</value></data>
+  <data name="Email.RoleChanged.Eyebrow" xml:space="preserve"><value>Account update</value></data>
+  <data name="Email.RoleChanged.Heading" xml:space="preserve"><value>Your access has changed</value></data>
+  <data name="Email.RoleChanged.Body" xml:space="preserve"><value>An administrator at The VI House has changed what your account can do. The change takes effect within a few minutes; signing out and back in applies it straight away.</value></data>
+  <data name="Email.RoleChanged.AddedLabel" xml:space="preserve"><value>Added</value></data>
+  <data name="Email.RoleChanged.RemovedLabel" xml:space="preserve"><value>Removed</value></data>
+  <data name="Email.RoleChanged.IfUnexpected" xml:space="preserve"><value>If you weren't expecting this, reply to this email and a person will look into it.</value></data>
+  <data name="Email.RoleChanged.Button" xml:space="preserve"><value>Open my account</value></data>
+  <data name="Email.FounderWelcome.Subject" xml:space="preserve"><value>Welcome, Founder</value></data>
+  <data name="Email.FounderWelcome.Preheader" xml:space="preserve"><value>You joined The VI House at the very beginning — thank you.</value></data>
+  <data name="Email.FounderWelcome.Heading" xml:space="preserve"><value>You're a Founder</value></data>
+  <data name="Email.FounderWelcome.Body" xml:space="preserve"><value>You joined The VI House during its launch, so your account now carries Founder status — permanently. It's our way of recognising the people who were with us from the very beginning.</value></data>
+  <data name="Email.FounderWelcome.Body2" xml:space="preserve"><value>Founders receive extra benefits as the House grows. Everything your membership includes — and every Founder extra — is listed on your benefits page.</value></data>
+  <data name="Email.FounderWelcome.Button" xml:space="preserve"><value>See my benefits</value></data>
+  <data name="Email.FounderWelcome.Signoff" xml:space="preserve"><value>Thank you for believing in us early.</value></data>
+  <data name="Roles.SuperAdmin" xml:space="preserve"><value>Super admin</value></data>
+  <data name="Roles.Editor" xml:space="preserve"><value>Editor</value></data>
+  <data name="Roles.EventManager" xml:space="preserve"><value>Event manager</value></data>
+  <data name="Roles.Finance" xml:space="preserve"><value>Finance</value></data>
+  <data name="Roles.Marketing" xml:space="preserve"><value>Marketing</value></data>
+  <data name="Roles.Concierge" xml:space="preserve"><value>Concierge</value></data>
+  <data name="Roles.Support" xml:space="preserve"><value>Support</value></data>
+  <data name="Roles.Member" xml:space="preserve"><value>Member</value></data>
+  <data name="Roles.Ambassador" xml:space="preserve"><value>Ambassador</value></data>
+  <data name="Roles.Founder" xml:space="preserve"><value>Founder</value></data>
+  <data name="Admin.Seminar.MembersOpenAt" xml:space="preserve"><value>Members can enrol from (UTC)</value></data>
+  <data name="Admin.Seminar.MembersOpenAt.Hint" xml:space="preserve"><value>Empty = straight away. Founders get in earlier by the early-access days set under Founders.</value></data>
+  <data name="Benefits.Nav" xml:space="preserve"><value>My benefits</value></data>
+  <data name="Benefits.Title" xml:space="preserve"><value>Your membership benefits</value></data>
+  <data name="Benefits.Lede" xml:space="preserve"><value>Everything coming up that {0} makes free or cheaper for you — and where you stand on each.</value></data>
+  <data name="Benefits.LedeNoMembership" xml:space="preserve"><value>A membership makes sessions free and experiences cheaper. Here is what one would include.</value></data>
+  <data name="Benefits.Stat.Included" xml:space="preserve"><value>Included</value></data>
+  <data name="Benefits.Stat.Discounted" xml:space="preserve"><value>Member price</value></data>
+  <data name="Benefits.NoMembership.Heading" xml:space="preserve"><value>No current membership</value></data>
+  <data name="Benefits.NoMembership.Body" xml:space="preserve"><value>Members join included sessions and experiences in one click and pay member prices on the rest.</value></data>
+  <data name="Benefits.Founder.Heading" xml:space="preserve"><value>Founder extras:</value></data>
+  <data name="Benefits.Founder.Discount" xml:space="preserve"><value>an extra {0}% off paid sessions and tickets</value></data>
+  <data name="Benefits.Founder.EarlyAccess" xml:space="preserve"><value>join {0} days before other members</value></data>
+  <data name="Benefits.Sessions" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Benefits.Sessions.Empty" xml:space="preserve"><value>No upcoming sessions are free or discounted for your plan right now.</value></data>
+  <data name="Benefits.Experiences" xml:space="preserve"><value>Experiences</value></data>
+  <data name="Benefits.Experiences.Empty" xml:space="preserve"><value>No upcoming experiences are included or discounted for your plan right now.</value></data>
+  <data name="Benefits.OnDemand" xml:space="preserve"><value>On demand</value></data>
+  <data name="Benefits.Streamed" xml:space="preserve"><value>Streamed live</value></data>
+  <data name="Benefits.Badge.Free" xml:space="preserve"><value>Free with membership</value></data>
+  <data name="Benefits.Badge.Included" xml:space="preserve"><value>Included — join free</value></data>
+  <data name="Benefits.Badge.Discount" xml:space="preserve"><value>{0}% off · {1}</value></data>
+  <data name="Benefits.Badge.DiscountFrom" xml:space="preserve"><value>{0}% off · from {1}</value></data>
+  <data name="Benefits.State.In" xml:space="preserve"><value>You're in</value></data>
+  <data name="Benefits.State.Pending" xml:space="preserve"><value>Payment being confirmed</value></data>
+  <data name="Benefits.State.Full" xml:space="preserve"><value>Fully booked</value></data>
+  <data name="Benefits.State.OpensOn" xml:space="preserve"><value>Opens to you on {0} UTC</value></data>
+  <data name="Benefits.State.NotOpen" xml:space="preserve"><value>Not open yet</value></data>
+  <data name="Benefits.State.Available" xml:space="preserve"><value>Open — take your place</value></data>
+  <data name="Benefits.State.JoinFree" xml:space="preserve"><value>Open — join in one click</value></data>
+  <data name="Benefits.State.Apply" xml:space="preserve"><value>Apply to attend</value></data>
+  <data name="Benefits.Teaser" xml:space="preserve"><value>{0} included and {1} at member price coming up — see your benefits</value></data>
+  <data name="Benefits.Door.Body" xml:space="preserve"><value>Everything your plan makes free or cheaper.</value></data>
+  <data name="Founder.Badge.Title" xml:space="preserve"><value>Joined The VI House at launch</value></data>
+  <data name="Experiences.Stream.Heading" xml:space="preserve"><value>Watch the live stream</value></data>
+  <data name="Experiences.Stream.Private" xml:space="preserve"><value>This stream is for confirmed attendees — please don't share the link.</value></data>
+  <data name="Experiences.Stream.OpensAt" xml:space="preserve"><value>The live stream opens here on {0} UTC, an hour before the start.</value></data>
+  <data name="Experiences.Stream.AfterConfirm" xml:space="preserve"><value>The live stream unlocks here once your booking is confirmed.</value></data>
+  <data name="Experiences.Stream.ForAttendees" xml:space="preserve"><value>Streamed live on this page for confirmed attendees.</value></data>
+  <data name="Experiences.Join.OpensAt" xml:space="preserve"><value>Members can join from {0} UTC.</value></data>
+  <data name="Experiences.Join.FoundersFrom" xml:space="preserve"><value>Founders get in early, from {0} UTC.</value></data>
+  <data name="Seminars.Access.OpensAt.Heading" xml:space="preserve"><value>Opens to members on {0} UTC</value></data>
+  <data name="Seminars.Access.OpensAt.Body" xml:space="preserve"><value>Come back then to take your place.</value></data>
+  <data name="Seminars.Access.FounderExtra" xml:space="preserve"><value>Includes your Founder extra of {0}%.</value></data>
+  <data name="Streams.Heading" xml:space="preserve"><value>Your live streams</value></data>
+  <data name="Streams.Lede" xml:space="preserve"><value>Experiences and sessions you hold a place on, streamed here while they are live.</value></data>
+  <data name="Streams.Kind.Experience" xml:space="preserve"><value>Experience</value></data>
+  <data name="Streams.Kind.Session" xml:space="preserve"><value>Session</value></data>
+  <data name="Streams.OpensAt" xml:space="preserve"><value>Stream opens {0} UTC.</value></data>
 </root>

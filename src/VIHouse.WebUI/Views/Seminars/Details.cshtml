@@ -264,6 +264,10 @@
                     @if (access.MemberDiscountPercent > 0 && access.FullPriceMinor is { } fullPrice)
                     {
                         <p class="seminar-access__member-price">@Loc["Seminars.Access.MemberPrice", access.MemberDiscountPercent, MoneyFormatter.Format(fullPrice, access.Currency)]</p>
+                        @if (access.FounderExtraPercent > 0)
+                        {
+                            <p class="seminar-access__member-price">@Loc["Seminars.Access.FounderExtra", access.FounderExtraPercent]</p>
+                        }
                     }
                     <p>
                         @Loc["Seminars.Access.Pay.Body"]
@@ -299,6 +303,16 @@
                 case SeminarAccessOutcome.SoldOut:
                     <h2>@Loc["Seminars.Access.SoldOut.Heading"]</h2>
                     <p>@Loc["Seminars.Access.SoldOut.Body"]</p>
+                    break;
+
+                case SeminarAccessOutcome.NotOpen when access.OpensAtUtc is { } opensAt:
+                    @* Published, but members are let in from a date — Founders earlier. *@
+                    <h2>@Loc["Seminars.Access.OpensAt.Heading", opensAt.ToString("d MMMM yyyy, HH:mm")]</h2>
+                    <p>@Loc["Seminars.Access.OpensAt.Body"]</p>
+                    @if (access.FounderOpensAtUtc is { } founderOpens)
+                    {
+                        <p>@Loc["Experiences.Join.FoundersFrom", founderOpens.ToString("d MMMM yyyy, HH:mm")]</p>
+                    }
                     break;
 
                 default:

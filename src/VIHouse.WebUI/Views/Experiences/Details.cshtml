@@ -167,6 +167,24 @@
 <div class="container">
     <div class="experience-body">
         <div>
+            @* The broadcast, for confirmed attendees only — the controller sets StreamUrl for nobody
+               else, so the link never reaches anyone else's page source. *@
+            @if (Model.StreamUrl is { } streamUrl)
+            {
+                <section class="experience-section experience-stream" id="watch">
+                    <h2><span class="session-row__live">@Loc["Sessions.LiveNow"]</span> @Loc["Experiences.Stream.Heading"]</h2>
+                    <partial name="_LiveStream" model="@((streamUrl, Loc["Sessions.WatchLive"].Value))" />
+                    <p class="experience-ticket-panel__note">@Loc["Experiences.Stream.Private"]</p>
+                </section>
+            }
+            else if (Model.StreamOpensAtUtc is { } streamOpens)
+            {
+                <section class="experience-section experience-stream" id="watch">
+                    <h2>@Loc["Experiences.Stream.Heading"]</h2>
+                    <p class="account-note">@Loc["Experiences.Stream.OpensAt", streamOpens.ToString("dddd d MMMM yyyy, HH:mm")]</p>
+                </section>
+            }
+
             <section class="experience-section" id="about" data-subnav-section="about">
                 <h2>@Loc["Experiences.Section.About"]</h2>
                 @if (!string.IsNullOrWhiteSpace(Model.ShortSummary))
@@ -409,6 +427,14 @@
                             <p class="experience-ticket-panel__note">
                                 <strong>@Loc["Experiences.Join.Booked", Model.Access.BookingReference ?? ""]</strong>
                             </p>
+                            @if (Model.StreamUrl is not null)
+                            {
+                                <a class="btn btn--primary experience-ticket-panel__cta" href="#watch">@Loc["Sessions.WatchLive"]</a>
+                            }
+                            else if (Model.IsStreamed && !Model.Access.BookingConfirmed)
+                            {
+                                <p class="experience-ticket-panel__note">@Loc["Experiences.Stream.AfterConfirm"]</p>
+                            }
                             <a class="btn btn--ghost experience-ticket-panel__cta" asp-controller="Account"
                                asp-action="Bookings">@Loc["Account.NavBookings"]</a>
                             break;
@@ -446,6 +472,17 @@
                             </a>
                             break;
 
+                        case ExperienceAccessOutcome.NotOpen when Model.Access?.OpensAtUtc is { } opensAt:
+                            @* Admitted on their plan, but members are let in from a date (Founders earlier). *@
+                            <p class="experience-ticket-panel__note">
+                                <strong>@Loc["Experiences.Join.OpensAt", opensAt.ToString("d MMMM yyyy, HH:mm")]</strong>
+                                @if (Model.Access.FounderOpensAtUtc is { } founderOpens)
+                                {
+                                    <br />@Loc["Experiences.Join.FoundersFrom", founderOpens.ToString("d MMMM yyyy, HH:mm")]
+                                }
+                            </p>
+                            break;
+
                         default:
                             @* The route every experience took before memberships could join one. *@
                             if (Model.CanApply)
@@ -463,6 +500,10 @@
                             break;
                     }
 
+                    @if (Model.IsStreamed && Model.Access?.Outcome != ExperienceAccessOutcome.AlreadyBooked)
+                    {
+                        <p class="experience-ticket-panel__note">@Loc["Experiences.Stream.ForAttendees"]</p>
+                    }
                     <p class="experience-ticket-panel__note">@Loc["Experiences.Tickets.Note"]</p>
                 </aside>
             </div>

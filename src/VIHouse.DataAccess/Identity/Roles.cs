@@ -20,6 +20,16 @@ public static class Roles
     /// <summary>Brief §47-49: a referral partner with their own login and dashboard — not an admin-side role, not a Member either.</summary>
     public const string Ambassador = "Ambassador";
 
+    /// <summary>Someone whose first membership began inside the founder window (Admin › Founders).
+    /// A member-side badge with its own perks — never an admin-side role. Granted automatically by
+    /// FounderService, or by hand from the user record.</summary>
+    public const string Founder = "Founder";
+
+    /// <summary>Roles that follow from a record elsewhere (a membership, an ambassador profile)
+    /// rather than from a decision on the user screen — ticking them by hand would leave the role
+    /// and the record disagreeing, so the roles form shows them read-only.</summary>
+    public static readonly string[] Derived = [Member, Ambassador];
+
     public static readonly string[] AdminRoles =
     [
         SuperAdmin, Editor, EventManager, Finance, Marketing, Concierge, Support
@@ -27,6 +37,6 @@ public static class Roles
 
     public static readonly string[] All =
     [
-        SuperAdmin, Editor, EventManager, Finance, Marketing, Concierge, Support, Member, Ambassador
+        SuperAdmin, Editor, EventManager, Finance, Marketing, Concierge, Support, Member, Ambassador, Founder
     ];
 }

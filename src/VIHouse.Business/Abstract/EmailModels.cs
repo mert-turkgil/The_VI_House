@@ -157,3 +157,13 @@ public record PaymentRefundedEmailModel(string FirstName, string What, long Amou
 /// link — follows each recipient's language. There is no name to greet: the list holds an address and
 /// nothing more, by design.</summary>
 public record LaunchAnnouncementEmailModel(string Headline, string Message, string? ButtonLabel, string ButtonUrl, string LeaveUrl);
+
+/// <summary>An admin changed which roles this account holds. Lists what was added and removed in
+/// plain words, so a sudden new menu (or a missing one) is never a surprise.</summary>
+public record RoleChangedEmailModel(string FirstName, IReadOnlyList<string> Added, IReadOnlyList<string> Removed, string AccountUrl);
+
+/// <summary>Welcome to the founders: sent once, the moment the Founder role is granted.</summary>
+public record FounderWelcomeEmailModel(string FirstName, string AccountUrl, string BenefitsUrl);
+
+/// <summary>A plain test message from Admin › Emails, proving the SMTP settings deliver.</summary>
+public record TestEmailModel(string SentBy, DateTimeOffset SentAtUtc, string Host);

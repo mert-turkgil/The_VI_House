@@ -50,4 +50,11 @@ public class AdminCustomerDetailViewModel
     public bool IsLockedOut { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? LastLoginAt { get; set; }
+
+    public DateTimeOffset? LockoutEnd { get; set; }
+
+    /// <summary>When they became a Founder; null when they are not one.</summary>
+    public DateTimeOffset? FounderSince { get; set; }
+
+    public AdminEditUserViewModel EditForm { get; set; } = new();
 }

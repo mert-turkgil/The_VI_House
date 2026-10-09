@@ -55,6 +55,10 @@ public static class SiteUrls
     public const string AccountBookings = "/account/bookings";
     public const string AccountSessions = "/account/sessions";
 
+    /// <summary>What the member's plan includes — free and member-priced sessions and experiences.</summary>
+    public const string AccountBenefits = "/account/benefits";
+    public const string AccountCard = "/account/card";
+
     /// <summary>The member's own record of every payment they have made.</summary>
     public const string AccountPayments = "/account/payments";
     public const string AccountNotifications = "/account/notifications";

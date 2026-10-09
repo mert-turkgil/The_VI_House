@@ -86,6 +86,9 @@ public class AdminSeminarFormViewModel
     [Display(Name = "Admin.Seminar.MemberDiscount")]
     public int MemberDiscountPercent { get; set; }
 
+    [Display(Name = "Admin.Seminar.MembersOpenAt")]
+    public DateTime? MembersOpenAtUtc { get; set; }
+
     [Display(Name = "Admin.Seminar.SortOrder")]
     public int SortOrder { get; set; }
 
@@ -108,6 +111,7 @@ public class AdminSeminarFormViewModel
         Currency = Currency.ToUpperInvariant(),
         IncludedWithMembership = IncludedWithMembership,
         MemberDiscountPercent = MemberDiscountPercent,
+        MembersOpenAtUtc = UtcDates.ToOffset(MembersOpenAtUtc),
         SortOrder = SortOrder,
     };
 
@@ -130,6 +134,7 @@ public class AdminSeminarFormViewModel
         Currency = s.Currency,
         IncludedWithMembership = s.IncludedWithMembership,
         MemberDiscountPercent = s.MemberDiscountPercent,
+        MembersOpenAtUtc = s.MembersOpenAtUtc?.UtcDateTime,
         SortOrder = s.SortOrder,
     };
 }

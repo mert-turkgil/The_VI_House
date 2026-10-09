@@ -194,6 +194,15 @@ public record SeminarAccessInfo(
     public int MemberDiscountPercent { get; init; }
     public long? FullPriceMinor { get; init; }
 
+    /// <summary>The part of <see cref="MemberDiscountPercent"/> that is the Founder extra.</summary>
+    public int FounderExtraPercent { get; init; }
+
+    /// <summary>Set on NotOpen when the session simply has not opened to this viewer yet.</summary>
+    public DateTimeOffset? OpensAtUtc { get; init; }
+
+    /// <summary>Set for a non-Founder when Founders get in earlier than <see cref="OpensAtUtc"/>.</summary>
+    public DateTimeOffset? FounderOpensAtUtc { get; init; }
+
     /// <summary>The viewer's confirmed enrolment, when <see cref="HasAccess"/> — what the page
     /// reads to tell a paying attendee's interface from a member's or a free one's.</summary>
     public SeminarEnrollment? Enrollment { get; init; }

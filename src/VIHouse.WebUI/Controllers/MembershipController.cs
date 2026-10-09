@@ -26,6 +26,8 @@ public class MembershipController(
     ICheckoutReconciliationService reconciliation,
     ISeminarService seminarService,
     IBookingRepository bookings,
+    IMemberStreamService streams,
+    IMemberBenefitsService memberBenefits,
     UserManager<ApplicationUser> userManager,
     IOptions<FeatureOptions> features,
     IStringLocalizer<SharedResource> loc) : Controller
@@ -70,6 +72,13 @@ public class MembershipController(
                 model.BookingCount = (await bookings.GetByUserAsync(userId, ct)).Count;
                 model.SessionCount = (await seminarService.GetEnrolledSeminarsAsync(userId, ct)).Count;
             }
+            else
+            {
+                model.Benefits = await memberBenefits.GetAsync(userId, ct);
+            }
+
+            // Anyone with a confirmed place watches from here too — members and ticket holders alike.
+            model.Streams = await streams.GetAsync(userId, CultureInfo.CurrentUICulture.Name, TimeSpan.FromDays(7), ct);
         }
 
         return View(model);

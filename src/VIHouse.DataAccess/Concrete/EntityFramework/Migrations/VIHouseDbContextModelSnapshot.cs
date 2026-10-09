@@ -189,6 +189,9 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTimeOffset?>("FounderSince")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset?>("LastLoginAt")
                         .HasColumnType("datetimeoffset");
 
@@ -1620,6 +1623,9 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<int>("MemberDiscountPercent")
                         .HasColumnType("int");
 
+                    b.Property<DateTimeOffset?>("MembersOpenAtUtc")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset?>("SalesCloseAt")
                         .HasColumnType("datetimeoffset");
 
@@ -2998,6 +3004,9 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<int>("MemberDiscountPercent")
                         .HasColumnType("int");
 
+                    b.Property<DateTimeOffset?>("MembersOpenAtUtc")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<long>("PriceMinor")
                         .HasColumnType("bigint");
 
@@ -3294,6 +3303,18 @@ namespace VIHouse.DataAccess.Concrete.EntityFramework.Migrations
                     b.Property<string>("FacebookUrl")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("FounderBadgeEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("FounderEarlyAccessDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FounderExtraDiscountPercent")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("FounderWindowEndsAtUtc")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("FoundingDate")
                         .HasMaxLength(20)

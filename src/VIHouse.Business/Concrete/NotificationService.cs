@@ -25,13 +25,18 @@ public class NotificationService(
 {
     public async Task CreateForUserAsync(Guid userId, NotificationType type, string title, string body, string? link = null, CancellationToken ct = default)
     {
+        var notification = new Notification { UserId = userId, Type = type, Title = title, Body = body, Link = link };
         try
         {
-            await notifications.AddAsync(new Notification { UserId = userId, Type = type, Title = title, Body = body, Link = link }, ct);
+            await notifications.AddAsync(notification, ct);
             await notifications.SaveChangesAsync(ct);
         }
         catch (Exception ex)
         {
+            // Untrack the row that failed: the DbContext is shared with the caller, and a pending
+            // insert left behind would fail every later SaveChanges in the same request or batch.
+            try { notifications.Remove(notification); } catch { /* already detached */ }
+
             // Never let a failed notification insert fail the payment/approval that triggered it —
             // same contract as IEmailService.SendAsync.
             logger.LogError(ex, "Failed to create notification {Type} for user {UserId}", type, userId);

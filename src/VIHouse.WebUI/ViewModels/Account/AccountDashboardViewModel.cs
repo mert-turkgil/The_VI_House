@@ -55,6 +55,14 @@ public class AccountDashboardViewModel
     public int TotalBookingCount { get; set; }
 
     /// <summary>The plans on offer, for a guest or prospect while membership is on sale.</summary>
+    /// <summary>Founder status and perks; the header shows the badge when ShowBadge is on.</summary>
+    public FounderPerks Founder { get; set; } = FounderPerks.None;
+
+    /// <summary>How many upcoming sessions/experiences the plan makes free or cheaper — the
+    /// teaser for the benefits page. Null for a non-member.</summary>
+    public int? BenefitsIncluded { get; set; }
+    public int? BenefitsDiscounted { get; set; }
+
     public List<Membership.MembershipPlanCardViewModel> Plans { get; set; } = [];
 
     public bool CommunityEnabled { get; set; }

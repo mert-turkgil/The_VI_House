@@ -43,6 +43,28 @@ var supportedCultures = SiteCultures.Names;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// --- Logging -----------------------------------------------------------------------------------
+// Shared IIS hosting has no log collector and console output goes nowhere, so a failure that is
+// only logged (an SMTP rejection, a webhook error) would be invisible. Logging:File:Enabled turns on
+// a daily rolling file under App_Data/logs (or Logging:File:Path); the deploy switches it on.
+{
+    var fileLogging = builder.Configuration.GetSection("Logging:File").Get<FileLoggerOptions>() ?? new FileLoggerOptions();
+    if (fileLogging.Enabled)
+    {
+        if (string.IsNullOrWhiteSpace(fileLogging.Path))
+            fileLogging.Path = Path.Combine(builder.Environment.ContentRootPath, "App_Data", "logs");
+        try
+        {
+            builder.Logging.AddProvider(new FileLoggerProvider(fileLogging));
+        }
+        catch (Exception ex)
+        {
+            // An unwritable folder must not stop the site from starting.
+            Console.Error.WriteLine($"File logging disabled: {ex.Message}");
+        }
+    }
+}
+
 // --- Data access -----------------------------------------------------------------------------
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -220,6 +242,7 @@ builder.Services.AddScoped<IWaitlistRepository, EfWaitlistRepository>();
 builder.Services.AddScoped<IContentPageRepository, EfContentPageRepository>();
 builder.Services.AddScoped<IHeroSlideRepository, EfHeroSlideRepository>();
 builder.Services.AddScoped<IEmailLogRepository, EfEmailLogRepository>();
+builder.Services.AddScoped<IUserDirectory, EfUserDirectory>();
 builder.Services.AddScoped<ISmsLogRepository, EfSmsLogRepository>();
 builder.Services.AddScoped<IAuditLogRepository, EfAuditLogRepository>();
 builder.Services.AddScoped<IProfileRepository, EfProfileRepository>();
@@ -253,6 +276,9 @@ builder.Services.AddScoped<IOutbox, Outbox>();
 builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor>();
 builder.Services.AddScoped<IContentService, ContentService>();
 builder.Services.AddScoped<IMembershipService, MembershipService>();
+builder.Services.AddScoped<IFounderService, FounderService>();
+builder.Services.AddScoped<IMemberBenefitsService, MemberBenefitsService>();
+builder.Services.AddScoped<IMemberStreamService, MemberStreamService>();
 builder.Services.AddScoped<IAmbassadorService, AmbassadorService>();
 builder.Services.AddScoped<ISecurityAlertService, SecurityAlertService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
@@ -479,7 +505,36 @@ builder.Services.AddRateLimiter(options =>
         new FixedWindowRateLimiterOptions { PermitLimit = 600, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
 });
 
+// --- Health -----------------------------------------------------------------------------------
+// /health for uptime monitors and the deploy's smoke check. Database down = Unhealthy (503);
+// email settings implausible = Degraded (200, but says so). Details stay out of the response.
+builder.Services.AddHealthChecks()
+    .AddCheck<VIHouse.WebUI.Services.Health.DatabaseHealthCheck>("database", tags: ["ready"])
+    .AddCheck<VIHouse.WebUI.Services.Health.EmailHealthCheck>("email");
+
+// --- Reverse proxy -----------------------------------------------------------------------------
+// Off by default: in-process IIS already sees the real client and scheme. Behind a CDN or proxy
+// (Cloudflare, a load balancer) turn on ForwardedHeaders:Enabled, so Request.Scheme is https in
+// generated links and the rate limiter keys on the visitor's address rather than the proxy's.
+var forwardedHeadersEnabled = builder.Configuration.GetValue<bool>("ForwardedHeaders:Enabled");
+if (forwardedHeadersEnabled)
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor
+            | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto;
+        options.ForwardLimit = builder.Configuration.GetValue<int?>("ForwardedHeaders:ForwardLimit") ?? 1;
+        // The proxy's addresses are not known ahead of time on shared hosting; ForwardLimit = 1
+        // takes only the hop the proxy itself added.
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
+    });
+}
+
 var app = builder.Build();
+
+if (forwardedHeadersEnabled)
+    app.UseForwardedHeaders();
 
 // Last resort for Site:BaseUrl: nothing configured it and no listen URLs were given, so Kestrel chose
 // its own (http://localhost:5000). Read what it actually bound once it has. IOptions<SiteOptions> is a
@@ -505,6 +560,18 @@ if (app.Environment.IsProduction())
             "Stripe:SecretKey / Stripe:WebhookSecret are not configured. Set them in the server's " +
             "appsettings.Production.json (gitignored — populated on the server, never committed) or " +
             "via environment variables (Stripe__SecretKey, Stripe__WebhookSecret).");
+    }
+}
+
+// Email is how every account is set up, confirmed and recovered. A misconfigured mailer does not
+// fail anything visibly — each message just lands in the log as Failed — so say so loudly at boot.
+{
+    var smtpProblems = app.Services.GetRequiredService<IOptions<SmtpOptions>>().Value.Problems();
+    if (smtpProblems.Count > 0)
+    {
+        var startupLogger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
+        foreach (var problem in smtpProblems)
+            startupLogger.Log(app.Environment.IsProduction() ? LogLevel.Critical : LogLevel.Warning, "Email: {Problem}", problem);
     }
 }
 
@@ -610,6 +677,22 @@ if (!app.Environment.IsDevelopment())
 // URL gets the House's own page rather than an empty response. Responses that already carry a body
 // — an MVC NotFound() with a view, an API result — are left alone. See ErrorController.
 app.UseStatusCodePagesWithReExecute("/error/{0}");
+
+// Ahead of HTTPS redirection, localisation and the launch curtain: a monitor asking whether the
+// app is up needs a plain answer, not a redirect to the coming-soon page.
+app.UseHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.Headers.CacheControl = "no-store";
+        await context.Response.WriteAsJsonAsync(new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.ToDictionary(e => e.Key, e => e.Value.Status.ToString()),
+        });
+    },
+});
 
 app.UseHttpsRedirection();
 

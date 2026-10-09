@@ -1,0 +1,101 @@
+@using VIHouse.WebUI.Areas.Admin.Controllers
+@model AdminFoundersViewModel
+@{
+    ViewData["Title"] = "Founders";
+}
+
+@if (TempData["StatusMessage"] is string status)
+{
+    <div class="admin-status-message">@status</div>
+}
+
+<p class="admin-hint">
+    Everyone whose <strong>first membership starts before the founder window closes</strong> becomes a Founder
+    automatically and is emailed a welcome. The role is permanent and can also be ticked by hand on a user's page.
+    Each perk below is off until you switch it on.
+</p>
+
+<div class="admin-review-grid">
+    <div class="admin-review-main">
+        <div class="admin-card">
+            <h2>Programme</h2>
+            <form asp-action="Save" method="post">
+                <div class="admin-form__grid">
+                    <div class="admin-field">
+                        <label asp-for="Form.WindowEndsAtUtc"></label>
+                        <input asp-for="Form.WindowEndsAtUtc" type="datetime-local" />
+                        <p class="admin-field__hint">
+                            @if (Model.Form.WindowEndsAtUtc is null)
+                            {
+                                @:Not set — nobody becomes a Founder automatically.
+                            }
+                            else if (Model.IsWindowOpen)
+                            {
+                                @:Open: new members are becoming Founders now.
+                            }
+                            else
+                            {
+                                @:Closed: no new Founders unless granted by hand.
+                            }
+                        </p>
+                    </div>
+                    <div class="admin-field">
+                        <label asp-for="Form.ExtraDiscountPercent"></label>
+                        <input asp-for="Form.ExtraDiscountPercent" type="number" min="0" max="100" />
+                        <p class="admin-field__hint">Added to the member discount on paid sessions and experience tickets (capped at 100%). 0 = none.</p>
+                    </div>
+                    <div class="admin-field">
+                        <label asp-for="Form.EarlyAccessDays"></label>
+                        <input asp-for="Form.EarlyAccessDays" type="number" min="0" max="365" />
+                        <p class="admin-field__hint">For items with a "members can join from" date: Founders may join this many days earlier. 0 = none.</p>
+                    </div>
+                    <div class="admin-field">
+                        <label style="display:flex; gap:8px; align-items:center;">
+                            <input asp-for="Form.BadgeEnabled" type="checkbox" />
+                            <span>Show the Founder badge to members</span>
+                        </label>
+                        <p class="admin-field__hint">On the member card, account page and member directory.</p>
+                    </div>
+                </div>
+                <button type="submit" class="admin-btn">Save programme</button>
+            </form>
+        </div>
+
+        <div class="admin-card">
+            <h2>Founders (@Model.Founders.Count)</h2>
+            @if (Model.Founders.Count == 0)
+            {
+                <p class="admin-hint">No Founders yet.</p>
+            }
+            else
+            {
+                <div class="admin-table-scroll">
+                    <table class="admin-table" data-admin-table data-admin-table-per-page="25">
+                        <thead><tr><th>Name</th><th>Email</th><th>Founder since</th><th>Current plan</th></tr></thead>
+                        <tbody>
+                            @foreach (var f in Model.Founders)
+                            {
+                                <tr>
+                                    <td><a asp-controller="AdminUsers" asp-action="Details" asp-route-id="@f.UserId">@(string.IsNullOrWhiteSpace(f.Name) ? "—" : f.Name)</a></td>
+                                    <td>@f.Email</td>
+                                    <td>@(f.FounderSince?.ToString("dd MMM yyyy") ?? "—")</td>
+                                    <td>@(f.PlanName ?? "No current plan")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="admin-review-side">
+        <div class="admin-card">
+            <h2>Backfill</h2>
+            <p style="font-size:0.875rem;">Grant Founder to every member whose first membership began before the window closes — for the people who joined before this programme existed. Each one is emailed a welcome.</p>
+            <form asp-action="Backfill" method="post" onsubmit="return confirm('Grant Founder to every qualifying member and email them?');">
+                <button type="submit" class="admin-btn admin-btn--ghost" style="width:100%;">Backfill founders</button>
+            </form>
+        </div>
+    </div>
+</div>

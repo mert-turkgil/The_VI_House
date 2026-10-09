@@ -1,0 +1,188 @@
+@using VIHouse.Business.Abstract
+@using VIHouse.Business.Concrete
+@using VIHouse.Entities.Experiences
+@model BenefitsPageViewModel
+@{
+    ViewData["Title"] = Loc["Benefits.Title"];
+    var b = Model.Benefits;
+
+    string SessionState(SeminarAccessInfo access) => access.Outcome switch
+    {
+        SeminarAccessOutcome.Enrolled => Loc["Benefits.State.In"].Value,
+        SeminarAccessOutcome.PendingPayment => Loc["Benefits.State.Pending"].Value,
+        SeminarAccessOutcome.SoldOut => Loc["Benefits.State.Full"].Value,
+        SeminarAccessOutcome.NotOpen when access.OpensAtUtc is { } opens => Loc["Benefits.State.OpensOn", opens.ToString("d MMM yyyy, HH:mm")].Value,
+        SeminarAccessOutcome.NotOpen => Loc["Benefits.State.NotOpen"].Value,
+        _ => Loc["Benefits.State.Available"].Value,
+    };
+
+    string ExperienceState(ExperienceAccessInfo access) => access.Outcome switch
+    {
+        ExperienceAccessOutcome.AlreadyBooked => Loc["Benefits.State.In"].Value,
+        ExperienceAccessOutcome.IncludedInMembership => Loc["Benefits.State.JoinFree"].Value,
+        ExperienceAccessOutcome.NotOpen when access.OpensAtUtc is { } opens => Loc["Benefits.State.OpensOn", opens.ToString("d MMM yyyy, HH:mm")].Value,
+        ExperienceAccessOutcome.NotOpen => Loc["Benefits.State.NotOpen"].Value,
+        _ => Loc["Benefits.State.Apply"].Value,
+    };
+}
+
+<div class="account-manage">
+    <partial name="_AccountNav" />
+    <div class="account-manage__content session-portal">
+        <header class="session-portal__head">
+            <div>
+                <h1>
+                    @Loc["Benefits.Title"]
+                    @if (Model.Founder is { IsFounder: true, ShowBadge: true })
+                    {
+                        <partial name="_FounderBadge" />
+                    }
+                </h1>
+                <p class="account-lede">
+                    @if (Model.Membership is { } m)
+                    {
+                        @Loc["Benefits.Lede", m.Plan.Name]
+                    }
+                    else
+                    {
+                        @Loc["Benefits.LedeNoMembership"]
+                    }
+                </p>
+            </div>
+            @if (b is not null)
+            {
+                <dl class="session-portal__stats">
+                    <div><dt>@Loc["Benefits.Stat.Included"]</dt><dd>@b.IncludedCount</dd></div>
+                    <div><dt>@Loc["Benefits.Stat.Discounted"]</dt><dd>@b.DiscountedCount</dd></div>
+                </dl>
+            }
+        </header>
+
+        @if (b is null)
+        {
+            <div class="account-empty">
+                <span class="account-empty__icon"><partial name="_Icon" model='@("layers")' /></span>
+                <h2>@Loc["Benefits.NoMembership.Heading"]</h2>
+                <p>@Loc["Benefits.NoMembership.Body"]</p>
+                @if (Model.MembershipSales)
+                {
+                    <a class="btn btn--primary" asp-controller="Membership" asp-action="Index">@Loc["Account.SeePlans"]</a>
+                }
+                else
+                {
+                    <a class="btn btn--primary" asp-controller="Experiences" asp-action="Index" asp-route-status="@ExperienceStatus.ApplicationsOpen">@Loc["Nav.ApplyToJoin"]</a>
+                }
+            </div>
+        }
+        else
+        {
+            @if (Model.Founder.IsFounder && (Model.Founder.ExtraDiscountPercent > 0 || Model.Founder.EarlyAccessDays > 0))
+            {
+                <div class="account-note">
+                    <strong>@Loc["Benefits.Founder.Heading"]</strong>
+                    @if (Model.Founder.ExtraDiscountPercent > 0)
+                    {
+                        <span>@Loc["Benefits.Founder.Discount", Model.Founder.ExtraDiscountPercent]</span>
+                    }
+                    @if (Model.Founder.EarlyAccessDays > 0)
+                    {
+                        <span>@Loc["Benefits.Founder.EarlyAccess", Model.Founder.EarlyAccessDays]</span>
+                    }
+                </div>
+            }
+
+            <section class="session-portal__group" aria-labelledby="benefit-sessions">
+                <h2 id="benefit-sessions" class="account-section-heading">@Loc["Benefits.Sessions"] <span class="account-section-heading__count">@b.Sessions.Count</span></h2>
+                @if (b.Sessions.Count == 0)
+                {
+                    <p class="account-lede">@Loc["Benefits.Sessions.Empty"]</p>
+                }
+                else
+                {
+                    <ul class="session-portal__list">
+                        @foreach (var s in b.Sessions)
+                        {
+                            <li class="session-row">
+                                <div class="session-row__date" aria-hidden="true">
+                                    @if (s.Seminar.StartAtUtc is { } start)
+                                    {
+                                        <span class="session-row__day">@start.ToString("dd")</span>
+                                        <span class="session-row__month">@start.ToString("MMM")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="session-row__month">@Loc["Benefits.OnDemand"]</span>
+                                    }
+                                </div>
+                                <div class="session-row__body">
+                                    <a class="session-row__title" asp-controller="Seminars" asp-action="Details" asp-route-slug="@s.Seminar.Slug">@SeminarContent.Title(s.Seminar, Model.Culture)</a>
+                                    <span class="session-row__meta">
+                                        @if (s.Seminar.StartAtUtc is { } when)
+                                        {
+                                            @when.ToString("dddd d MMMM yyyy, HH:mm") @:UTC &middot;
+                                        }
+                                        @(s.Seminar.IsOnline ? Loc["Seminars.Online"].Value : s.Seminar.Location ?? Loc["Seminars.InPerson"].Value)
+                                        @if (!string.IsNullOrWhiteSpace(s.Seminar.LiveStreamUrl))
+                                        {
+                                            @: &middot; @Loc["Benefits.Streamed"]
+                                        }
+                                    </span>
+                                    @if (s.Kind == BenefitKind.Included)
+                                    {
+                                        <span class="account-grant account-grant--membership">@Loc["Benefits.Badge.Free"] <s>@MoneyFormatter.Format(s.FullPriceMinor, s.Seminar.Currency)</s></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="account-grant account-grant--purchase">@Loc["Benefits.Badge.Discount", s.DiscountPercent, MoneyFormatter.Format(s.PriceMinor, s.Seminar.Currency)] <s>@MoneyFormatter.Format(s.FullPriceMinor, s.Seminar.Currency)</s></span>
+                                    }
+                                    <span class="session-row__meta">@SessionState(s.Access)</span>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+
+            <section class="session-portal__group" aria-labelledby="benefit-experiences">
+                <h2 id="benefit-experiences" class="account-section-heading">@Loc["Benefits.Experiences"] <span class="account-section-heading__count">@b.Experiences.Count</span></h2>
+                @if (b.Experiences.Count == 0)
+                {
+                    <p class="account-lede">@Loc["Benefits.Experiences.Empty"]</p>
+                }
+                else
+                {
+                    <ul class="session-portal__list">
+                        @foreach (var e in b.Experiences)
+                        {
+                            <li class="session-row">
+                                <div class="session-row__date" aria-hidden="true">
+                                    <span class="session-row__day">@e.Experience.StartAtUtc.ToString("dd")</span>
+                                    <span class="session-row__month">@e.Experience.StartAtUtc.ToString("MMM")</span>
+                                </div>
+                                <div class="session-row__body">
+                                    <a class="session-row__title" asp-controller="Experiences" asp-action="Details" asp-route-slug="@e.Experience.Slug">@ExperienceContent.Title(e.Experience, Model.Culture)</a>
+                                    <span class="session-row__meta">
+                                        @e.Experience.StartAtUtc.ToString("d MMMM yyyy") – @e.Experience.EndAtUtc.ToString("d MMMM yyyy") &middot; @e.Experience.City
+                                        @if (!string.IsNullOrWhiteSpace(e.Experience.LiveStreamUrl))
+                                        {
+                                            @: &middot; @Loc["Benefits.Streamed"]
+                                        }
+                                    </span>
+                                    @if (e.Kind == BenefitKind.Included)
+                                    {
+                                        <span class="account-grant account-grant--membership">@Loc["Benefits.Badge.Included"]</span>
+                                    }
+                                    else if (e.FromPriceMinor is { } from && e.Currency is { } currency)
+                                    {
+                                        <span class="account-grant account-grant--purchase">@Loc["Benefits.Badge.DiscountFrom", e.DiscountPercent, MoneyFormatter.Format(from, currency)] <s>@MoneyFormatter.Format(e.FullFromPriceMinor ?? from, currency)</s></span>
+                                    }
+                                    <span class="session-row__meta">@ExperienceState(e.Access)</span>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+        }
+    </div>
+</div>

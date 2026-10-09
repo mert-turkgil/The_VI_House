@@ -31,4 +31,9 @@ public class ApplicationUser : IdentityUser<Guid>
     /// (CultureController.Set) — there is no separate "mail language" setting. Drives every
     /// notification this member receives, not just the page they happen to be viewing.</summary>
     public string? PreferredCulture { get; set; }
+
+    /// <summary>When this person became a Founder (FounderService) — the start of their first
+    /// membership for a backfilled member, the grant time otherwise. Null for everyone else.
+    /// The Founder role is the gate; this is the date the badge and the admin list show.</summary>
+    public DateTimeOffset? FounderSince { get; set; }
 }

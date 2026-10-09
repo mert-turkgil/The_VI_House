@@ -44,3 +44,6 @@ jobs:
 
       - name: Build
         run: dotnet build VIHouse.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test VIHouse.slnx --configuration Release --no-build --verbosity normal

@@ -34,6 +34,7 @@ public class PaymentService(
     IPaymentProvider paymentProvider,
     IOptions<SiteOptions> siteOptions,
     IMembershipService membershipService,
+    IFounderService founders,
     IAmbassadorService ambassadorService,
     IPaymentTransactionService transactions,
     IOutbox outbox,
@@ -44,14 +45,16 @@ public class PaymentService(
     /// payment method and the bank is confirming. Bank debits settle in days, not minutes.</summary>
     private static readonly TimeSpan ProcessingHold = TimeSpan.FromDays(14);
 
-    /// <summary>The experience's member discount, if the applicant's address belongs to a current
-    /// member; 0 otherwise. Read live, so a lapsed membership stops discounting the moment it lapses.</summary>
+    /// <summary>The experience's member discount plus any Founder extra, if the applicant's address
+    /// belongs to a current member; 0 otherwise. Read live, so a lapsed membership stops discounting
+    /// the moment it lapses.</summary>
     private async Task<int> MemberDiscountForAsync(Experience experience, string applicantEmail, CancellationToken ct)
     {
-        if (experience.MemberDiscountPercent <= 0) return 0;
         var user = await userManager.FindByEmailAsync(applicantEmail);
         if (user is null) return 0;
-        return await membershipService.GetCurrentMembershipAsync(user.Id, ct) is null ? 0 : experience.MemberDiscountPercent;
+        if (await membershipService.GetCurrentMembershipAsync(user.Id, ct) is null) return 0;
+        var perks = await founders.GetPerksAsync(user.Id, ct);
+        return MemberPricing.Combined(experience.MemberDiscountPercent, perks.ExtraDiscount);
     }
 
     public async Task<InvitationLandingInfo> GetInvitationLandingAsync(string invitationCode, CancellationToken ct = default)
