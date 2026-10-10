@@ -17,17 +17,3 @@ public class AdminGrantMembershipViewModel
     [StringLength(500)]
     public string? Note { get; set; }
 }
-
-/// <summary>Posted by the "Make ambassador" form on the user record — see AdminUsersController.MakeAmbassador.</summary>
-public class AdminMakeAmbassadorViewModel
-{
-    [Required, StringLength(100)]
-    public string Name { get; set; } = "";
-
-    [Required, StringLength(40)]
-    [RegularExpression("^[A-Za-z0-9-]+$", ErrorMessage = "Admin.Validation.LettersDigitsAndHyphensOnly")]
-    public string Code { get; set; } = "";
-
-    [Range(0, 100)]
-    public decimal CommissionPercent { get; set; } = 10;
-}

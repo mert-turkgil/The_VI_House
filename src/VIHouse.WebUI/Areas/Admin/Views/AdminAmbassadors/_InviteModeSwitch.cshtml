@@ -1,0 +1,9 @@
+@model string
+@* The two ways in, side by side at the top of both pages: a new person (invitation by email) or
+   someone who already has an account. Plain links, so each is its own page and URL. *@
+<nav class="admin-segment" aria-label="@Loc["Admin.Ambassadors.InviteTitle"]">
+    <a class="admin-segment__item @(Model == "invite" ? "is-active" : null)" asp-action="Create"
+       aria-current="@(Model == "invite" ? "page" : null)">@Loc["Admin.Influencer.Mode.Invite"]</a>
+    <a class="admin-segment__item @(Model == "member" ? "is-active" : null)" asp-action="CreateForMember"
+       aria-current="@(Model == "member" ? "page" : null)">@Loc["Admin.Influencer.Mode.Member"]</a>
+</nav>

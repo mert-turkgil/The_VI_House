@@ -1,8 +1,10 @@
 @inject Microsoft.Extensions.Options.IOptions<VIHouse.Business.Options.SiteOptions> Site
+@inject VIHouse.Business.Abstract.ISiteSettingsService SiteSettings
 @*
     "Ask the House": a guided chat that answers the common questions and, when a person is needed,
     hands over the right address — concierge@ for anything general, support@ for bookings, payments
-    and refunds. Nothing is collected here: every answer is a link to the FAQ or a page, or a mailto.
+    and refunds, the influencer programme's address (Admin › Site & SEO) for would-be and current
+    influencers. Nothing is collected here: every answer is a link to the FAQ or a page, or a mailto.
 
     The words are rendered here, in the reader's language, as a JSON island; modules/houseGuide.ts
     plays them as a conversation. Without script the same answers are shown as a plain list
@@ -16,6 +18,9 @@
 
     var concierge = Site.Value.ConciergeEmail;
     var support = Site.Value.SupportEmail;
+    var settings = await SiteSettings.GetCachedAsync();
+    var influencers = new[] { settings.InfluencerEmail, settings.ContactEmail, concierge }.First(a => !string.IsNullOrWhiteSpace(a));
+    var influencersPage = Url.Action("Index", "Influencers", new { area = "" });
 
     var data = new
     {
@@ -28,6 +33,7 @@
         {
             concierge = new { address = concierge, subject = Loc["WriteToUs.Concierge.Subject"].Value },
             support = new { address = support, subject = Loc["WriteToUs.Support.Subject"].Value },
+            influencers = new { address = influencers, subject = Loc["Influencers.MailSubject"].Value },
         },
         topics = new object[]
         {
@@ -83,6 +89,21 @@
             },
             new
             {
+                id = "influencers", label = Loc["HouseGuide.Influencers.Label"].Value, intro = Loc["HouseGuide.Influencers.Intro"].Value, mail = "influencers",
+                questions = new[]
+                {
+                    Question("Faq.Q9", Loc["Faq.A9"].Value,
+                        Link("HouseGuide.Link.Influencers", influencersPage),
+                        Link("HouseGuide.Link.Faq", Faq(9))),
+                    Question("Faq.Q10", Loc["Faq.A10"].Value,
+                        Link("HouseGuide.Link.Influencers", influencersPage),
+                        Link("HouseGuide.Link.Faq", Faq(10))),
+                    Question("HouseGuide.Influencers.Q3", Loc["HouseGuide.Influencers.A3"].Value,
+                        Link("HouseGuide.Link.InfluencerArea", Url.Action("Index", "Influencer", new { area = "" }))),
+                },
+            },
+            new
+            {
                 id = "other", label = Loc["HouseGuide.Other.Label"].Value, intro = Loc["HouseGuide.Other.Intro"].Value, mail = "concierge",
                 questions = new[]
                 {
@@ -125,6 +146,7 @@
                         <li><a href="@Faq(1)">@Loc["Faq.Q1"]</a></li>
                         <li><a href="@Faq(4)">@Loc["Faq.Q4"]</a></li>
                         <li><a href="@Faq(7)">@Loc["Faq.Q7"]</a></li>
+                        <li><a href="@Faq(9)">@Loc["Faq.Q9"]</a></li>
                         <li><a href="@faq">@Loc["HouseGuide.Link.Faq"]</a></li>
                     </ul>
                 </div>

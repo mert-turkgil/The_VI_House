@@ -5,54 +5,57 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Localization;
 using VIHouse.DataAccess.Identity;
 
 namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
 {
+    /// <summary>
+    /// Account › Security › Sign-in providers. One card per provider the House supports — Google,
+    /// Apple, LinkedIn — linked, ready to link, or not switched on yet (no keys configured in this
+    /// environment). Linking is the only way a provider can ever sign someone in: ExternalLogin
+    /// never creates an account, it only opens one that has linked that provider here.
+    /// </summary>
     public class ExternalLoginsModel : PageModel
     {
+        /// <summary>The providers shown, in this order, whether or not they are configured.</summary>
+        public static readonly string[] Providers = ["Google", "Apple", "LinkedIn"];
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IUserStore<ApplicationUser> _userStore;
+        private readonly IStringLocalizer<SharedResource> _loc;
 
         public ExternalLoginsModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IUserStore<ApplicationUser> userStore)
+            IUserStore<ApplicationUser> userStore,
+            IStringLocalizer<SharedResource> loc)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userStore = userStore;
+            _loc = loc;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public IList<UserLoginInfo> CurrentLogins { get; set; }
+        /// <param name="Name">The authentication scheme, e.g. "Apple".</param>
+        /// <param name="Login">The linked login, or null when not linked.</param>
+        /// <param name="Available">Whether the provider is configured in this environment.</param>
+        public record ProviderCard(string Name, UserLoginInfo Login, bool Available);
+
+        public IList<ProviderCard> Cards { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public IList<AuthenticationScheme> OtherLogins { get; set; }
-
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        /// False while removing the link would lock the account out: no password and no other
+        /// provider to sign in with.
         /// </summary>
         public bool ShowRemoveButton { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
@@ -64,9 +67,13 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            CurrentLogins = await _userManager.GetLoginsAsync(user);
-            OtherLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync())
-                .Where(auth => CurrentLogins.All(ul => auth.Name != ul.LoginProvider))
+            var logins = await _userManager.GetLoginsAsync(user);
+            var schemes = (await _signInManager.GetExternalAuthenticationSchemesAsync()).Select(s => s.Name).ToList();
+            Cards = Providers.Union(schemes, StringComparer.OrdinalIgnoreCase).Union(logins.Select(l => l.LoginProvider), StringComparer.OrdinalIgnoreCase)
+                .Select(name => new ProviderCard(
+                    name,
+                    logins.FirstOrDefault(l => string.Equals(l.LoginProvider, name, StringComparison.OrdinalIgnoreCase)),
+                    schemes.Contains(name, StringComparer.OrdinalIgnoreCase)))
                 .ToList();
 
             string passwordHash = null;
@@ -75,7 +82,7 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
                 passwordHash = await userPasswordStore.GetPasswordHashAsync(user, HttpContext.RequestAborted);
             }
 
-            ShowRemoveButton = passwordHash != null || CurrentLogins.Count > 1;
+            ShowRemoveButton = passwordHash != null || logins.Count > 1;
             return Page();
         }
 
@@ -90,12 +97,12 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
             var result = await _userManager.RemoveLoginAsync(user, loginProvider, providerKey);
             if (!result.Succeeded)
             {
-                StatusMessage = "The external login was not removed.";
+                StatusMessage = "Error: " + _loc["Manage.Connections.NotRemoved", loginProvider].Value;
                 return RedirectToPage();
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "The external login was removed.";
+            StatusMessage = _loc["Manage.Connections.Removed", loginProvider].Value;
             return RedirectToPage();
         }
 
@@ -103,6 +110,11 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
         {
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+            if ((await _signInManager.GetExternalAuthenticationSchemesAsync()).All(s => s.Name != provider))
+            {
+                return RedirectToPage();
+            }
 
             // Request a redirect to the external login provider to link a login for the current user
             var redirectUrl = Url.Page("./ExternalLogins", pageHandler: "LinkLoginCallback");
@@ -118,24 +130,26 @@ namespace VIHouse.WebUI.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            // Null after a cancelled or broken round trip, which ExternalSignIn.Failed sends back here.
             var userId = await _userManager.GetUserIdAsync(user);
             var info = await _signInManager.GetExternalLoginInfoAsync(userId);
             if (info == null)
             {
-                throw new InvalidOperationException($"Unexpected error occurred loading external login info.");
+                StatusMessage = "Error: " + _loc["Manage.Connections.Failed"].Value;
+                return RedirectToPage();
             }
 
             var result = await _userManager.AddLoginAsync(user, info);
             if (!result.Succeeded)
             {
-                StatusMessage = "The external login was not added. External logins can only be associated with one account.";
+                StatusMessage = "Error: " + _loc["Manage.Connections.InUse", info.ProviderDisplayName ?? info.LoginProvider].Value;
                 return RedirectToPage();
             }
 
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-            StatusMessage = "The external login was added.";
+            StatusMessage = _loc["Manage.Connections.Added", info.ProviderDisplayName ?? info.LoginProvider].Value;
             return RedirectToPage();
         }
     }

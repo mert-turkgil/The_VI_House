@@ -42,21 +42,25 @@ jobs:
       - name: Restore
         run: dotnet restore VIHouse.slnx
 
-      # Same as deploy.yml: ImageSharp 4.x refuses a Release build without a Six Labors licence,
-      # held in the SIXLABORS_LICENSE secret and written where the package's targets look for it.
+      # ImageSharp 4.x refuses a Release build without a Six Labors licence (held in the
+      # SIXLABORS_LICENSE secret). GitHub never hands secrets to pull requests from forks, so for
+      # those — outside contributors — the check builds and tests in Debug, which only warns.
+      # deploy.yml always builds Release with the licence.
       - name: Write Six Labors licence
         working-directory: src/VIHouse.WebUI
         env:
           SIXLABORS_LICENSE: ${{ secrets.SIXLABORS_LICENSE }}
         run: |
           if [ -z "$SIXLABORS_LICENSE" ]; then
-            echo "::error::Repository secret SIXLABORS_LICENSE is not available to this run — ImageSharp refuses a Release build without it."
-            exit 1
+            echo "::notice::No SIXLABORS_LICENSE in this run (a fork's pull request) — building Debug."
+            echo "BUILD_CONFIGURATION=Debug" >> "$GITHUB_ENV"
+          else
+            printf '%s' "$SIXLABORS_LICENSE" > sixlabors.lic
+            echo "BUILD_CONFIGURATION=Release" >> "$GITHUB_ENV"
           fi
-          printf '%s' "$SIXLABORS_LICENSE" > sixlabors.lic
 
       - name: Build
-        run: dotnet build VIHouse.slnx --configuration Release --no-restore
+        run: dotnet build VIHouse.slnx --configuration "$BUILD_CONFIGURATION" --no-restore
 
       - name: Test
-        run: dotnet test VIHouse.slnx --configuration Release --no-build --verbosity normal
+        run: dotnet test VIHouse.slnx --configuration "$BUILD_CONFIGURATION" --no-build --verbosity normal

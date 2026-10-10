@@ -2026,7 +2026,7 @@ Mida soovite teada?</value></data>
   <data name="Admin.Ambassadors.InviteAnAmbassador" xml:space="preserve"><value>+ Kutsu influencer</value></data>
   <data name="Admin.Ambassadors.InviteExpired" xml:space="preserve"><value>Aegunud</value></data>
   <data name="Admin.Ambassadors.InviteExpires" xml:space="preserve"><value>Aegub</value></data>
-  <data name="Admin.Ambassadors.InviteIntro" xml:space="preserve"><value>Inimesele, kellel pole VI House'i kontot. Sina sisestad siin kõik; ta saab e-kirja isikliku lingiga, mis kehtib {0} päeva, kontrollib seal andmeid, valib parooli ja nõustub influenceri tingimustega. Alles siis hakkavad tema lingid ja QR-koodid tööle. Linki sa ei näe; kui see aegub, saada see tema lehelt uuesti.</value></data>
+  <data name="Admin.Ambassadors.InviteIntro" xml:space="preserve"><value>Inimene saab e-postiga isikliku lingi, mis kehtib {0} päeva: ta kontrollib andmeid, valib parooli ja nõustub tingimustega. Seejärel hakkavad tema lingid tööle.</value></data>
   <data name="Admin.Ambassadors.InviteTitle" xml:space="preserve"><value>Kutsu influencer</value></data>
   <data name="Admin.Ambassadors.InvitedNoAccountYet" xml:space="preserve"><value>(kutsutud — kontot veel pole)</value></data>
   <data name="Admin.Ambassadors.LanguageOfTheInvitation" xml:space="preserve"><value>Kutse keel</value></data>
@@ -2064,7 +2064,6 @@ Mida soovite teada?</value></data>
   <data name="Admin.Ambassadors.NothingUnusual" xml:space="preserve"><value>Viimase {0} päeva jooksul pole midagi ebatavalist.</value></data>
   <data name="Admin.Ambassadors.NothingYetEachApplicationApprovalAnd" xml:space="preserve"><value>Veel ei midagi. Iga lingi kaudu tulnud taotlus, kinnitus ja ost ilmub siia kohe, kui see juhtub.</value></data>
   <data name="Admin.Ambassadors.OpenInNewTab" xml:space="preserve"><value>Ava uuel vahelehel</value></data>
-  <data name="Admin.Ambassadors.OpenTheirUserRecord" xml:space="preserve"><value>Ava kasutajakirje →</value></data>
   <data name="Admin.Ambassadors.OpenUserRecord" xml:space="preserve"><value>Ava kasutajakirje</value></data>
   <data name="Admin.Ambassadors.Overpaid" xml:space="preserve"><value>Ülemakstud</value></data>
   <data name="Admin.Ambassadors.Owed" xml:space="preserve"><value>Võlgnetav</value></data>
@@ -2103,7 +2102,6 @@ Mida soovite teada?</value></data>
   <data name="Admin.Ambassadors.Signals" xml:space="preserve"><value>Signaalid</value></data>
   <data name="Admin.Ambassadors.Since" xml:space="preserve"><value>Influencer alates {0}</value></data>
   <data name="Admin.Ambassadors.SiteLink" xml:space="preserve"><value>Saidi link</value></data>
-  <data name="Admin.Ambassadors.SomeoneWhoAlreadyHasAnAccount" xml:space="preserve"><value>Kellel on juba konto, tehakse influenceriks hoopis tema kasutajakirje kaudu (Kasutajad → isik → „Loo soovituslink“).</value></data>
   <data name="Admin.Ambassadors.Source" xml:space="preserve"><value>Allikas</value></data>
   <data name="Admin.Ambassadors.TaxVATId" xml:space="preserve"><value>Maksu- / KMKR nr</value></data>
   <data name="Admin.Ambassadors.Terms" xml:space="preserve"><value>Tingimused</value></data>
@@ -3183,13 +3181,10 @@ Mida soovite teada?</value></data>
   <data name="Admin.Users.BlankThePlanSOwnPeriod" xml:space="preserve"><value>Tühi = paketi enda periood alates tänasest (ühekordse paketi puhul lõppu pole).</value></data>
   <data name="Admin.Users.Bookings" xml:space="preserve"><value>Broneeringud</value></data>
   <data name="Admin.Users.Commission" xml:space="preserve"><value>Vahendustasu</value></data>
-  <data name="Admin.Users.Commission27" xml:space="preserve"><value>Vahendustasu %</value></data>
   <data name="Admin.Users.Company" xml:space="preserve"><value>Ettevõte</value></data>
   <data name="Admin.Users.Complimentary" xml:space="preserve"><value>Tasuta</value></data>
   <data name="Admin.Users.CreateAdminSendSetupLink" xml:space="preserve"><value>Loo administraator ja saada seadistuslink</value></data>
-  <data name="Admin.Users.CreateReferralLink" xml:space="preserve"><value>Loo soovituslink</value></data>
   <data name="Admin.Users.CreatesAStaffAccountAndEmails" xml:space="preserve"><value>Loob töötaja konto ja saadab e-postiga ühekordse seadistuslingi. Teie ei vali kunagi parooli — inimene määrab selle ise, seejärel peab ta kinnitama oma e-posti aadressi ja lülitama sisse kaheastmelise kinnitamise, enne kui paneel tema jaoks avaneb.</value></data>
-  <data name="Admin.Users.DisplayName" xml:space="preserve"><value>Kuvatav nimi</value></data>
   <data name="Admin.Users.EGContentPartner12Month" xml:space="preserve"><value>nt sisupartner — 12-kuuline koostöö</value></data>
   <data name="Admin.Users.EmailConfirmed" xml:space="preserve"><value>E-post kinnitatud</value></data>
   <data name="Admin.Users.EndMembership" xml:space="preserve"><value>Lõpeta liikmesus</value></data>
@@ -3214,7 +3209,6 @@ Mida soovite teada?</value></data>
   <data name="Admin.Users.Msg.AccountExists" xml:space="preserve"><value>Selle e-posti aadressiga konto on juba olemas. Andke administraatori rollid hoopis tema kliendikirjest.</value></data>
   <data name="Admin.Users.Msg.AdminCreated" xml:space="preserve"><value>Administraatori konto loodud kasutajale {0}. Talle saadeti seadistuslink e-postiga.</value></data>
   <data name="Admin.Users.Msg.ChooseRole" xml:space="preserve"><value>Valige vähemalt üks administraatori roll.</value></data>
-  <data name="Admin.Users.Msg.HasReferralLink" xml:space="preserve"><value>Tal on juba soovituslink.</value></data>
   <data name="Admin.Users.Msg.LastSuperAdmin" xml:space="preserve"><value>Olete ainus SuperAdmin — andke enne oma juurdepääsu eemaldamist õigused kellelegi teisele.</value></data>
   <data name="Admin.Users.Msg.NoEmail" xml:space="preserve"><value>Sellel kontol pole e-posti aadressi, kuhu linki saata.</value></data>
   <data name="Admin.Users.Msg.Protected" xml:space="preserve"><value>{0} on kaitstud konto ja seda ei saa paneelist muuta.</value></data>
@@ -3478,7 +3472,6 @@ Mida soovite teada?</value></data>
   <data name="Admin.Users.Msg.NotSaved" xml:space="preserve"><value>Ei salvestatud: {0}</value></data>
   <data name="Admin.Users.Msg.DetailsSaved" xml:space="preserve"><value>Andmed salvestatud.</value></data>
   <data name="Admin.Users.Msg.NotGranted" xml:space="preserve"><value>Ei antud: {0}</value></data>
-  <data name="Admin.Users.Msg.NotCreated" xml:space="preserve"><value>Ei loodud: {0}</value></data>
   <data name="Admin.Users.SearchPlaceholder" xml:space="preserve"><value>nimi, e-post või telefon</value></data>
   <data name="Admin.Users.AnyRole" xml:space="preserve"><value>Iga roll</value></data>
   <data name="Admin.Users.NoRole" xml:space="preserve"><value>Rollita</value></data>
@@ -3844,7 +3837,7 @@ Mida soovite teada?</value></data>
   <data name="Influencer.Error.CodeTaken" xml:space="preserve"><value>Kood „{0}“ on juba kasutusel.</value></data>
   <data name="Influencer.Error.AccountGone" xml:space="preserve"><value>Seda kontot enam pole.</value></data>
   <data name="Influencer.Error.AlreadyInfluencer" xml:space="preserve"><value>Ta on juba influencer.</value></data>
-  <data name="Influencer.Error.ExistingAccount" xml:space="preserve"><value>Sellel aadressil on juba konto — tee ta influenceriks hoopis kasutaja kirjest.</value></data>
+  <data name="Influencer.Error.ExistingAccount" xml:space="preserve"><value>Sellel aadressil on juba konto — tee ta hoopis olemasoleva liikmena influenceriks.</value></data>
   <data name="Influencer.Error.PendingExists" xml:space="preserve"><value>{0} on juba ootel kutse (kood {1}). Saada hoopis see uuesti.</value></data>
   <data name="Influencer.Error.OnlyPendingResend" xml:space="preserve"><value>Uuesti saab saata ainult ootel kutset.</value></data>
   <data name="Influencer.Error.InviteNotSent" xml:space="preserve"><value>Kutse on salvestatud, kuid e-kiri ei läinud välja — kontrolli E-kirju ja SMS-e ning saada see sellelt lehelt uuesti.</value></data>
@@ -3963,4 +3956,46 @@ Mida soovite teada?</value></data>
   <data name="Influencers.Cta.Heading" xml:space="preserve"><value>Huvitatud?</value></data>
   <data name="Influencers.Cta.Body" xml:space="preserve"><value>Saada meile paar rida endast ja lingid oma kanalitele.</value></data>
   <data name="Admin.Help.AdminJournal.Step5" xml:space="preserve"><value>Influencerite artiklid jõuavad jaotisse „Influencerite saadetised“. Loe, tõlgi ja avalda — või saada autorile märkusega tagasi.</value></data>
+  <data name="Faq.Q9" xml:space="preserve"><value>Kas ma saan VI House'i influenceriks?</value></data>
+  <data name="Faq.A9" xml:space="preserve"><value>Jah — kutsega, nagu House ise. Kui teie jälgijaid huvitab ettevõtete loomine, kirjutage meile paar rida endast ja lisage lingid oma kanalitele. Kui see sobib, seadistame kõik ja saadame isikliku kutse: valige parool, nõustuge influenceri tingimustega ja olete sees.</value></data>
+  <data name="Faq.Q10" xml:space="preserve"><value>Kuidas influencerid teenivad ja millal neile makstakse?</value></data>
+  <data name="Faq.A10" xml:space="preserve"><value>Igal influenceril on isiklikud lingid ja QR-koodid. Kui tema toodud inimesed saavad liikmeks, broneerivad elamuse või liituvad sessiooniga, teenib ta temaga kokku lepitud komisjonitasu, mis on kohe näha tema töölaual. Kui saldo jõuab miinimumini, esitab ta väljamaksetaotluse ja me maksame selle pangaülekandega.</value></data>
+  <data name="Faq.InfluencersLink" xml:space="preserve"><value>Lähemalt influencerite programmist</value></data>
+  <data name="HouseGuide.Influencers.Label" xml:space="preserve"><value>Influencerid ja sisuloojad</value></data>
+  <data name="HouseGuide.Influencers.Intro" xml:space="preserve"><value>Teeme koostööd väikese arvu sisuloojatega, kes toovad House'i inimesi ja teenivad, kui need liituvad. Mida soovite teada?</value></data>
+  <data name="HouseGuide.Influencers.Q3" xml:space="preserve"><value>Olen juba influencer — kus on mu lingid ja tulu?</value></data>
+  <data name="HouseGuide.Influencers.A3" xml:space="preserve"><value>Teie influenceri alas: lingid ja QR-koodid, külastused ja ostud, tulu ja väljamaksed, teie artiklid ja profiil. Logige sisse ja see avaneb teie kontolt.</value></data>
+  <data name="HouseGuide.Link.Influencers" xml:space="preserve"><value>Influencerite programm</value></data>
+  <data name="HouseGuide.Link.InfluencerArea" xml:space="preserve"><value>Ava minu influenceri ala</value></data>
+  <data name="Manage.Connections.Title" xml:space="preserve"><value>Sisselogimisteenused</value></data>
+  <data name="Manage.Connections.Lede" xml:space="preserve"><value>Siduge oma Google'i, Apple'i või LinkedIni konto ja edaspidi saate sellega sisse logida, lisaks e-postile ja paroolile. Sidumine ei jaga teie VI House'i kontot nendega.</value></data>
+  <data name="Manage.Connections.Linked" xml:space="preserve"><value>Seotud</value></data>
+  <data name="Manage.Connections.LinkedHint" xml:space="preserve"><value>Saate sisse logida teenusega {0}.</value></data>
+  <data name="Manage.Connections.NotLinkedHint" xml:space="preserve"><value>Sidumata. Siduge see, et logida sisse teenusega {0}.</value></data>
+  <data name="Manage.Connections.Soon" xml:space="preserve"><value>Varsti</value></data>
+  <data name="Manage.Connections.SoonHint" xml:space="preserve"><value>Veel pole saadaval — varsti saate selle siin siduda.</value></data>
+  <data name="Manage.Connections.Link" xml:space="preserve"><value>Seo</value></data>
+  <data name="Manage.Connections.LinkTo" xml:space="preserve"><value>Seo {0}</value></data>
+  <data name="Manage.Connections.Remove" xml:space="preserve"><value>Eemalda</value></data>
+  <data name="Manage.Connections.RemoveFrom" xml:space="preserve"><value>Eemalda {0}</value></data>
+  <data name="Manage.Connections.OnlyWayIn" xml:space="preserve"><value>Enne eemaldamist määrake parool — see on teie ainus sisenemisviis.</value></data>
+  <data name="Manage.Connections.Added" xml:space="preserve"><value>{0} on seotud. Nüüd saate sellega sisse logida.</value></data>
+  <data name="Manage.Connections.Removed" xml:space="preserve"><value>{0} pole enam seotud.</value></data>
+  <data name="Manage.Connections.NotRemoved" xml:space="preserve"><value>{0} eemaldamine ebaõnnestus. Palun proovige uuesti.</value></data>
+  <data name="Manage.Connections.InUse" xml:space="preserve"><value>See {0} konto on juba seotud teise VI House'i kontoga.</value></data>
+  <data name="Manage.Connections.Failed" xml:space="preserve"><value>Sidumine ei lõppenud. Palun proovige uuesti.</value></data>
+  <data name="Admin.Influencer.Mode.Invite" xml:space="preserve"><value>Kutsu uus inimene</value></data>
+  <data name="Admin.Influencer.Mode.Member" xml:space="preserve"><value>Olemasolev liige</value></data>
+  <data name="Admin.Influencer.Member.Find" xml:space="preserve"><value>Leia liige</value></data>
+  <data name="Admin.Influencer.Member.Lede" xml:space="preserve"><value>Tal on juba konto, seega saab temast kohe influencer. Tingimustega nõustub ta oma alas; profiili ja pangaandmed saab lisada hiljem.</value></data>
+  <data name="Admin.Influencer.Member.SearchPlaceholder" xml:space="preserve"><value>Nimi või e-post</value></data>
+  <data name="Admin.Influencer.Member.Search" xml:space="preserve"><value>Otsi</value></data>
+  <data name="Admin.Influencer.Member.NoResults" xml:space="preserve"><value>Päringule „{0}“ ei vasta ükski konto.</value></data>
+  <data name="Admin.Influencer.Member.Already" xml:space="preserve"><value>Juba influencer</value></data>
+  <data name="Admin.Influencer.Member.Change" xml:space="preserve"><value>Vali keegi teine</value></data>
+  <data name="Admin.Influencer.Member.HasLink" xml:space="preserve"><value>Sellel inimesel on juba influenceri kirje.</value></data>
+  <data name="Admin.Influencer.Member.OpenPage" xml:space="preserve"><value>Ava tema influenceri leht</value></data>
+  <data name="Admin.Influencer.Member.Submit" xml:space="preserve"><value>Tee influenceriks</value></data>
+  <data name="Admin.Influencer.Member.UseInstead" xml:space="preserve"><value>Tee ta hoopis olemasoleva liikmena influenceriks</value></data>
+  <data name="Admin.Influencer.AddChannel" xml:space="preserve"><value>Lisa kanal</value></data>
 </root>

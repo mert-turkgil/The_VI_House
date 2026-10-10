@@ -14,6 +14,7 @@ import { initMediaLibrary } from './modules/mediaLibrary';
 import { initAdminConfirm } from './modules/adminConfirm';
 import { initAdminForms } from './modules/adminForms';
 import { initJournalWriter } from './modules/journalWriter';
+import { initChannelRows } from './modules/channelRows';
 
 // Every init is called unconditionally and guards itself on the data attribute or element it needs,
 // which is the convention both entry points already follow — there is no page router.
@@ -37,4 +38,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initAdminConfirm();
   initAdminForms();
   initJournalWriter();
+  initChannelRows();
 });

@@ -1,53 +1,65 @@
 ﻿@page
 @model ExternalLoginsModel
 @{
-    ViewData["Title"] = "Manage your external logins";
+    ViewData["Title"] = Loc["Manage.Connections.Title"].Value;
     ViewData["ActivePage"] = ManageNavPages.ExternalLogins;
 }
 
+@*
+    One card per provider: linked (with Remove, unless it is the only way in), ready to link, or not
+    switched on yet. Linking goes out to the provider and back to OnGetLinkLoginCallbackAsync; from
+    then on that provider's button on the sign-in page opens this account.
+*@
+
 <partial name="_StatusMessage" for="StatusMessage" />
-@if (Model.CurrentLogins?.Count > 0)
-{
-    <h3>Registered Logins</h3>
-    <table class="table">
-        <tbody>
-            @foreach (var login in Model.CurrentLogins)
-            {
-                <tr>
-                    <td id="@($"login-provider-{login.LoginProvider}")">@login.ProviderDisplayName</td>
-                    <td>
-                        @if (Model.ShowRemoveButton)
-                        {
-                            <form id="@($"remove-login-{login.LoginProvider}")" asp-page-handler="RemoveLogin" method="post">
-                                <div>
-                                    <input asp-for="@login.LoginProvider" name="LoginProvider" type="hidden" />
-                                    <input asp-for="@login.ProviderKey" name="ProviderKey" type="hidden" />
-                                    <button type="submit" class="btn btn-primary" title="Remove this @login.ProviderDisplayName login from your account">Remove</button>
-                                </div>
-                            </form>
-                        }
-                        else
-                        {
-                            @: &nbsp;
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-@if (Model.OtherLogins?.Count > 0)
-{
-    <h4>Add another service to log in.</h4>
-    <hr />
-    <form id="link-login-form" asp-page-handler="LinkLogin" method="post" class="form-horizontal">
-        <div id="socialLoginList">
-            <p>
-                @foreach (var provider in Model.OtherLogins)
+
+<h1 class="account-security__title">@ViewData["Title"]</h1>
+<p class="account-security__lede">@Loc["Manage.Connections.Lede"]</p>
+
+<ul class="account-connections">
+    @foreach (var card in Model.Cards)
+    {
+        <li class="account-connection@(card.Available || card.Login is not null ? null : " account-connection--off")">
+            <span class="account-connection__icon"><partial name="_SignInProviderIcon" model="card.Name" /></span>
+            <span class="account-connection__text">
+                <strong>@(card.Login?.ProviderDisplayName ?? card.Name)</strong>
+                @if (card.Login is not null)
                 {
-                    <button id="@($"link-login-button-{provider.Name}")" type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                    <span class="account-pill account-pill--ok">@Loc["Manage.Connections.Linked"]</span>
+                    <span class="account-connection__hint">@Loc["Manage.Connections.LinkedHint", card.Name]</span>
                 }
-            </p>
-        </div>
-    </form>
-}
+                else if (card.Available)
+                {
+                    <span class="account-connection__hint">@Loc["Manage.Connections.NotLinkedHint", card.Name]</span>
+                }
+                else
+                {
+                    <span class="account-pill account-pill--warn">@Loc["Manage.Connections.Soon"]</span>
+                    <span class="account-connection__hint">@Loc["Manage.Connections.SoonHint"]</span>
+                }
+            </span>
+            <span class="account-connection__action">
+                @if (card.Login is not null && Model.ShowRemoveButton)
+                {
+                    <form method="post" asp-page-handler="RemoveLogin">
+                        <input type="hidden" name="LoginProvider" value="@card.Login.LoginProvider" />
+                        <input type="hidden" name="ProviderKey" value="@card.Login.ProviderKey" />
+                        <button type="submit" class="btn btn--ghost btn--sm"
+                                aria-label="@Loc["Manage.Connections.RemoveFrom", card.Name]">@Loc["Manage.Connections.Remove"]</button>
+                    </form>
+                }
+                else if (card.Login is not null)
+                {
+                    <a class="account-connection__hint" asp-page="./SetPassword">@Loc["Manage.Connections.OnlyWayIn"]</a>
+                }
+                else if (card.Available)
+                {
+                    <form method="post" asp-page-handler="LinkLogin">
+                        <button type="submit" class="btn btn--primary btn--sm" name="provider" value="@card.Name"
+                                aria-label="@Loc["Manage.Connections.LinkTo", card.Name]">@Loc["Manage.Connections.Link"]</button>
+                    </form>
+                }
+            </span>
+        </li>
+    }
+</ul>

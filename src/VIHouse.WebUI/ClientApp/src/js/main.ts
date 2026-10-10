@@ -24,6 +24,7 @@ import { initFormFeedback } from './modules/formFeedback';
 import { initMemberCard } from './modules/memberCard';
 import { initHeroParallax } from './modules/heroParallax';
 import { initMobileCta } from './modules/mobileCta';
+import { initChannelRows } from './modules/channelRows';
 
 // Each module is started on its own so that one throwing — a page shape it did not expect, a
 // browser quirk — cannot take the rest of the page's behaviour down with it. Before this, one
@@ -68,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
   run('member-card', initMemberCard);
   run('hero-parallax', initHeroParallax);
   run('mobile-cta', initMobileCta);
+  run('channel-rows', initChannelRows);
 });
 
 // PWA (brief §65) — registered on every page (Admin included, harmlessly; the service worker

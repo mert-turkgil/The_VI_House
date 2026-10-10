@@ -87,11 +87,6 @@ public class AdminUsersController(
             MembershipHistory = await membershipService.GetMembershipHistoryAsync(id, ct),
             Plans = await membershipService.GetActivePlansAsync(ct),
             Ambassador = ambassador,
-            AmbassadorForm = new AdminMakeAmbassadorViewModel
-            {
-                Name = string.Join(" ", new[] { user.FirstName, user.LastName }.Where(s => !string.IsNullOrWhiteSpace(s))),
-                Code = SuggestCode(user),
-            },
             UserId = user.Id,
             Email = user.Email ?? user.UserName ?? "—",
             Roles = (await userManager.GetRolesAsync(user)).ToList(),
@@ -483,34 +478,6 @@ public class AdminUsersController(
     // The same record an admin would create under Ambassadors, reached from the person rather
     // than from the code. Only admins hand out referral links; a user cannot ask for one.
 
-    [HttpPost("{id:guid}/make-ambassador")]
-    [ValidateAntiForgeryToken]
-    [Authorize(Roles = Roles.SuperAdmin)]
-    public async Task<IActionResult> MakeAmbassador(Guid id, AdminMakeAmbassadorViewModel form, CancellationToken ct)
-    {
-        var user = await userManager.FindByIdAsync(id.ToString());
-        if (user is null || user.Email is null) return NotFound();
-        if (RefuseIfProtected(user) is { } refused) return refused;
-        if (!ModelState.IsValid)
-        {
-            Status(loc["Admin.Users.Msg.NotCreated", string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage))].Value, isError: true);
-            return RedirectToAction(nameof(Details), new { id });
-        }
-
-        if (await ambassadorService.GetByUserIdAsync(id, ct) is not null)
-        {
-            Status(loc["Admin.Users.Msg.HasReferralLink"].Value, isError: true);
-            return RedirectToAction(nameof(Details), new { id });
-        }
-
-        var result = await ambassadorService.CreateForUserAsync(
-            user.Id, form.Name.Trim(), form.Code.Trim().ToUpperInvariant(), form.CommissionPercent, CurrentAdminId(), Ip(), ct);
-        Status(result.Success
-            ? loc["Admin.Users.Msg.ReferralCreated", result.Ambassador!.Code].Value
-            : loc[result.Error!, result.ErrorArgs].Value, isError: !result.Success);
-        return RedirectToAction(nameof(Details), new { id });
-    }
-
     [HttpPost("{id:guid}/set-ambassador-status")]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = Roles.SuperAdmin)]
@@ -527,14 +494,6 @@ public class AdminUsersController(
         await ambassadorService.UpdateAsync(ambassador, CurrentAdminId(), Ip(), ct);
         Status(loc[status == AmbassadorStatus.Active ? "Admin.Users.Msg.ReferralReactivated" : "Admin.Users.Msg.ReferralPaused"].Value);
         return RedirectToAction(nameof(Details), new { id });
-    }
-
-    /// <summary>A starting point for the code — first name, upper-cased, letters only — that the
-    /// admin can overwrite. "VI-" prefixes are the convention from the brief (§47: VI-ANTON).</summary>
-    private static string SuggestCode(ApplicationUser user)
-    {
-        var stem = new string((user.FirstName ?? "").Where(char.IsLetterOrDigit).ToArray()).ToUpperInvariant();
-        return stem.Length == 0 ? "" : $"VI-{stem}";
     }
 
     // --- Inviting a new admin -------------------------------------------------------------------

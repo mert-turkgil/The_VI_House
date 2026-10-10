@@ -1,6 +1,8 @@
 @{
     ViewData["Title"] = Loc["Faq.Title"];
-    const int QuestionCount = 8;
+    const int QuestionCount = 10;
+    // Questions 9 and 10 are about the influencer programme and point to its page.
+    const int FirstInfluencerQuestion = 9;
 }
 
 <div class="content-hero">
@@ -18,6 +20,10 @@
             <details class="faq-item" id="q@(i)">
                 <summary>@Loc[$"Faq.Q{i}"]</summary>
                 <p>@Loc[$"Faq.A{i}"]</p>
+                @if (i >= FirstInfluencerQuestion)
+                {
+                    <p><a asp-controller="Influencers" asp-action="Index">@Loc["Faq.InfluencersLink"] &rarr;</a></p>
+                }
             </details>
         }
     </div>

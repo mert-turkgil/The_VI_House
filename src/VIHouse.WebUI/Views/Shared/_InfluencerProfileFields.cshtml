@@ -3,8 +3,9 @@
 @*
     Niche, bio and the channels table — on the admin invitation form, the admin profile card and
     the influencer's own profile page. The prefix ("Profile", "ProfileForm" or "Form") is the name
-    the posting action binds. Rows with no address are
-    ignored, so a few empty ones are always offered and no script is needed to add one.
+    the posting action binds. Rows with no address are ignored, so a few empty ones are always
+    rendered; modules/channelRows.ts shows the first empty one and an "Add a channel" button for the
+    rest (without script they are simply all shown).
 *@
 @{
     var prefix = (string)ViewData["Prefix"]!;
@@ -26,7 +27,7 @@
     <span class="field-validation-error">@Error("Bio")</span>
 </div>
 
-<fieldset class="admin-channels">
+<fieldset class="admin-channels" data-channel-rows>
     <legend>@Loc["Admin.Influencer.Channels"]</legend>
     <p class="admin-field__hint">@Loc["Admin.Influencer.ChannelsHint"]</p>
     <div class="admin-channels__head" aria-hidden="true">
@@ -38,16 +39,17 @@
     {
         var row = Model.Channels[i];
         var name = $"{prefix}.Channels[{i}]";
-        <div class="admin-channels__row">
+        <div class="admin-channels__row" data-channel-row>
             <select name="@(name).Platform" aria-label="@Loc["Admin.Influencer.Platform"]">
                 @foreach (var p in platforms)
                 {
                     <option value="@p" selected="@(p == row.Platform)">@Loc.Label(p)</option>
                 }
             </select>
-            <input name="@(name).Url" value="@row.Url" type="url" maxlength="300" inputmode="url" placeholder="https://instagram.com/…" aria-label="@Loc["Admin.Influencer.ChannelUrl"]" />
+            <input name="@(name).Url" value="@row.Url" type="url" maxlength="300" inputmode="url" placeholder="https://instagram.com/…" data-no-counter aria-label="@Loc["Admin.Influencer.ChannelUrl"]" />
             <input name="@(name).Audience" value="@row.Audience" type="number" min="0" step="1" inputmode="numeric" placeholder="12000" aria-label="@Loc["Admin.Influencer.Audience"]" />
         </div>
     }
+    <button type="button" class="admin-channels__add" data-channel-add hidden>+ @Loc["Admin.Influencer.AddChannel"]</button>
     <span class="field-validation-error">@Error("Channels")</span>
 </fieldset>

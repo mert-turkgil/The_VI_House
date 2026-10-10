@@ -44,7 +44,6 @@ public class AdminCustomerDetailViewModel
     public List<MembershipPlan> Plans { get; set; } = [];
 
     public Ambassador? Ambassador { get; set; }
-    public AdminMakeAmbassadorViewModel AmbassadorForm { get; set; } = new();
     public bool TwoFactorEnabled { get; set; }
     public bool EmailConfirmed { get; set; }
     public bool IsLockedOut { get; set; }

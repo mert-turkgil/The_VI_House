@@ -2026,7 +2026,7 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Admin.Ambassadors.InviteAnAmbassador" xml:space="preserve"><value>+ Influencer davet et</value></data>
   <data name="Admin.Ambassadors.InviteExpired" xml:space="preserve"><value>Süresi doldu</value></data>
   <data name="Admin.Ambassadors.InviteExpires" xml:space="preserve"><value>Son geçerlilik</value></data>
-  <data name="Admin.Ambassadors.InviteIntro" xml:space="preserve"><value>VI House hesabı olmayan biri için. Her şeyi buraya siz girersiniz; kişi {0} gün geçerli kişisel bir bağlantı içeren bir e-posta alır, bilgileri kontrol eder, şifre seçer ve influencer şartlarını kabul eder. Bağlantıları ve QR kodları ancak bundan sonra çalışır. Bağlantıyı asla görmezsiniz; süresi dolarsa kişinin sayfasından yeniden gönderin.</value></data>
+  <data name="Admin.Ambassadors.InviteIntro" xml:space="preserve"><value>Kişiye e-postayla {0} gün geçerli kişisel bir bağlantı gider; bilgileri kontrol eder, şifre seçer ve koşulları kabul eder. Bağlantıları bundan sonra çalışmaya başlar.</value></data>
   <data name="Admin.Ambassadors.InviteTitle" xml:space="preserve"><value>Influencer davet et</value></data>
   <data name="Admin.Ambassadors.InvitedNoAccountYet" xml:space="preserve"><value>(davet edildi — henüz hesap yok)</value></data>
   <data name="Admin.Ambassadors.LanguageOfTheInvitation" xml:space="preserve"><value>Davetin dili</value></data>
@@ -2064,7 +2064,6 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Admin.Ambassadors.NothingUnusual" xml:space="preserve"><value>Son {0} günde olağandışı bir şey yok.</value></data>
   <data name="Admin.Ambassadors.NothingYetEachApplicationApprovalAnd" xml:space="preserve"><value>Henüz bir şey yok. Bağlantı üzerinden gelen her başvuru, onay ve satın alma gerçekleştiği anda burada görünür.</value></data>
   <data name="Admin.Ambassadors.OpenInNewTab" xml:space="preserve"><value>Yeni sekmede aç</value></data>
-  <data name="Admin.Ambassadors.OpenTheirUserRecord" xml:space="preserve"><value>Kullanıcı kaydını aç →</value></data>
   <data name="Admin.Ambassadors.OpenUserRecord" xml:space="preserve"><value>Kullanıcı kaydını aç</value></data>
   <data name="Admin.Ambassadors.Overpaid" xml:space="preserve"><value>Fazla ödendi</value></data>
   <data name="Admin.Ambassadors.Owed" xml:space="preserve"><value>Borç</value></data>
@@ -2103,7 +2102,6 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Admin.Ambassadors.Signals" xml:space="preserve"><value>Sinyaller</value></data>
   <data name="Admin.Ambassadors.Since" xml:space="preserve"><value>{0} tarihinden beri influencer</value></data>
   <data name="Admin.Ambassadors.SiteLink" xml:space="preserve"><value>Site bağlantısı</value></data>
-  <data name="Admin.Ambassadors.SomeoneWhoAlreadyHasAnAccount" xml:space="preserve"><value>Zaten hesabı olan biri bunun yerine kullanıcı kaydından influencer yapılır (Kullanıcılar → kişi → “Referans bağlantısı oluştur”).</value></data>
   <data name="Admin.Ambassadors.Source" xml:space="preserve"><value>Kaynak</value></data>
   <data name="Admin.Ambassadors.TaxVATId" xml:space="preserve"><value>Vergi / KDV no.</value></data>
   <data name="Admin.Ambassadors.Terms" xml:space="preserve"><value>Koşullar</value></data>
@@ -3183,13 +3181,10 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Admin.Users.BlankThePlanSOwnPeriod" xml:space="preserve"><value>Boş = planın bugünden itibaren kendi süresi (tek seferlik planda bitiş yok).</value></data>
   <data name="Admin.Users.Bookings" xml:space="preserve"><value>Rezervasyonlar</value></data>
   <data name="Admin.Users.Commission" xml:space="preserve"><value>Komisyon</value></data>
-  <data name="Admin.Users.Commission27" xml:space="preserve"><value>Komisyon %</value></data>
   <data name="Admin.Users.Company" xml:space="preserve"><value>Şirket</value></data>
   <data name="Admin.Users.Complimentary" xml:space="preserve"><value>Ücretsiz</value></data>
   <data name="Admin.Users.CreateAdminSendSetupLink" xml:space="preserve"><value>Yönetici oluştur ve kurulum bağlantısı gönder</value></data>
-  <data name="Admin.Users.CreateReferralLink" xml:space="preserve"><value>Referans bağlantısı oluştur</value></data>
   <data name="Admin.Users.CreatesAStaffAccountAndEmails" xml:space="preserve"><value>Bir personel hesabı oluşturur ve tek kullanımlık bir kurulum bağlantısı e-postalar. Parolayı asla siz seçmezsiniz — kişi kendisi belirler, ardından panel açılmadan önce e-posta adresini doğrulamalı ve iki adımlı doğrulamayı açmalıdır.</value></data>
-  <data name="Admin.Users.DisplayName" xml:space="preserve"><value>Görünen ad</value></data>
   <data name="Admin.Users.EGContentPartner12Month" xml:space="preserve"><value>ör. İçerik ortağı — 12 aylık iş birliği</value></data>
   <data name="Admin.Users.EmailConfirmed" xml:space="preserve"><value>E-posta doğrulandı</value></data>
   <data name="Admin.Users.EndMembership" xml:space="preserve"><value>Üyeliği sonlandır</value></data>
@@ -3214,7 +3209,6 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Admin.Users.Msg.AccountExists" xml:space="preserve"><value>Bu e-posta adresi için zaten bir hesap var. Yönetici rollerini bunun yerine müşteri kaydından verin.</value></data>
   <data name="Admin.Users.Msg.AdminCreated" xml:space="preserve"><value>{0} için yönetici hesabı oluşturuldu. Kurulum bağlantısı e-postayla gönderildi.</value></data>
   <data name="Admin.Users.Msg.ChooseRole" xml:space="preserve"><value>En az bir yönetici rolü seçin.</value></data>
-  <data name="Admin.Users.Msg.HasReferralLink" xml:space="preserve"><value>Kişinin zaten bir referans bağlantısı var.</value></data>
   <data name="Admin.Users.Msg.LastSuperAdmin" xml:space="preserve"><value>Tek SuperAdmin sizsiniz — kendi erişiminizi kaldırmadan önce başka birini yetkilendirin.</value></data>
   <data name="Admin.Users.Msg.NoEmail" xml:space="preserve"><value>Bu hesabın bağlantı gönderilecek e-posta adresi yok.</value></data>
   <data name="Admin.Users.Msg.Protected" xml:space="preserve"><value>{0} korumalı bir hesaptır ve panelden değiştirilemez.</value></data>
@@ -3478,7 +3472,6 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Admin.Users.Msg.NotSaved" xml:space="preserve"><value>Kaydedilmedi: {0}</value></data>
   <data name="Admin.Users.Msg.DetailsSaved" xml:space="preserve"><value>Bilgiler kaydedildi.</value></data>
   <data name="Admin.Users.Msg.NotGranted" xml:space="preserve"><value>Verilmedi: {0}</value></data>
-  <data name="Admin.Users.Msg.NotCreated" xml:space="preserve"><value>Oluşturulmadı: {0}</value></data>
   <data name="Admin.Users.SearchPlaceholder" xml:space="preserve"><value>ad, e-posta veya telefon</value></data>
   <data name="Admin.Users.AnyRole" xml:space="preserve"><value>Tüm roller</value></data>
   <data name="Admin.Users.NoRole" xml:space="preserve"><value>Rolü yok</value></data>
@@ -3844,7 +3837,7 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Influencer.Error.CodeTaken" xml:space="preserve"><value>“{0}” kodu zaten kullanılıyor.</value></data>
   <data name="Influencer.Error.AccountGone" xml:space="preserve"><value>Bu hesap artık mevcut değil.</value></data>
   <data name="Influencer.Error.AlreadyInfluencer" xml:space="preserve"><value>Zaten influencer.</value></data>
-  <data name="Influencer.Error.ExistingAccount" xml:space="preserve"><value>Bu adresin zaten bir hesabı var — bunun yerine kullanıcı kaydından influencer yapın.</value></data>
+  <data name="Influencer.Error.ExistingAccount" xml:space="preserve"><value>Bu adresin zaten bir hesabı var — bunun yerine mevcut üye olarak influencer yapın.</value></data>
   <data name="Influencer.Error.PendingExists" xml:space="preserve"><value>{0} için zaten bekleyen bir davet var (kod {1}). Bunun yerine onu yeniden gönderin.</value></data>
   <data name="Influencer.Error.OnlyPendingResend" xml:space="preserve"><value>Yalnızca bekleyen bir davet yeniden gönderilebilir.</value></data>
   <data name="Influencer.Error.InviteNotSent" xml:space="preserve"><value>Davet kaydedildi ama e-posta gönderilemedi — E-postalar ve SMS'i kontrol edin, sonra bu sayfadan yeniden gönderin.</value></data>
@@ -3963,4 +3956,46 @@ Ne öğrenmek istersiniz?</value></data>
   <data name="Influencers.Cta.Heading" xml:space="preserve"><value>İlgileniyor musunuz?</value></data>
   <data name="Influencers.Cta.Body" xml:space="preserve"><value>Kendinizi anlatan birkaç satır ve kanallarınızın bağlantılarını gönderin.</value></data>
   <data name="Admin.Help.AdminJournal.Step5" xml:space="preserve"><value>Influencer yazıları “Influencer gönderileri” altına düşer. Okuyun, çevirin ve yayınlayın — ya da yazarına bir notla geri gönderin.</value></data>
+  <data name="Faq.Q9" xml:space="preserve"><value>VI House influencer'ı olabilir miyim?</value></data>
+  <data name="Faq.A9" xml:space="preserve"><value>Evet — House'un kendisi gibi davetle. Kitleniz bir şeyler inşa etmeyi önemsiyorsa, kendinizi anlatan birkaç satır ve kanallarınızın bağlantılarıyla bize yazın. Uygun olursa hesabınızı hazırlar ve kişisel bir davet e-postası göndeririz: bir şifre seçin, influencer koşullarını kabul edin, hepsi bu.</value></data>
+  <data name="Faq.Q10" xml:space="preserve"><value>Influencer'lar nasıl kazanır ve ne zaman ödeme alır?</value></data>
+  <data name="Faq.A10" xml:space="preserve"><value>Her influencer'ın kişisel bağlantıları ve QR kodları vardır. Getirdiği kişiler üye olduğunda, bir deneyim rezerve ettiğinde ya da bir oturuma katıldığında, kendisiyle kararlaştırılan komisyonu kazanır ve bunu anında panelinde görür. Bakiye asgari tutara ulaşınca para çekme talebinde bulunur, biz de banka havalesiyle öderiz.</value></data>
+  <data name="Faq.InfluencersLink" xml:space="preserve"><value>Influencer programı hakkında daha fazlası</value></data>
+  <data name="HouseGuide.Influencers.Label" xml:space="preserve"><value>Influencer'lar ve içerik üreticileri</value></data>
+  <data name="HouseGuide.Influencers.Intro" xml:space="preserve"><value>House'a insan getiren ve bu kişiler katıldığında kazanan az sayıda içerik üreticisiyle çalışıyoruz. Ne öğrenmek istersiniz?</value></data>
+  <data name="HouseGuide.Influencers.Q3" xml:space="preserve"><value>Zaten influencer'ım — bağlantılarım ve kazançlarım nerede?</value></data>
+  <data name="HouseGuide.Influencers.A3" xml:space="preserve"><value>Influencer alanınızda: bağlantılarınız ve QR kodlarınız, ziyaretler ve satın almalar, kazançlar ve para çekme talepleri, yazılarınız ve profiliniz. Giriş yaptığınızda hesabınızdan açılır.</value></data>
+  <data name="HouseGuide.Link.Influencers" xml:space="preserve"><value>Influencer programı</value></data>
+  <data name="HouseGuide.Link.InfluencerArea" xml:space="preserve"><value>Influencer alanımı aç</value></data>
+  <data name="Manage.Connections.Title" xml:space="preserve"><value>Giriş sağlayıcıları</value></data>
+  <data name="Manage.Connections.Lede" xml:space="preserve"><value>Google, Apple veya LinkedIn hesabınızı bağlayın; bundan sonra e-posta ve şifrenizin yanı sıra onunla da giriş yapabilirsiniz. Bağlamak, VI House hesabınızı onlarla paylaşmaz.</value></data>
+  <data name="Manage.Connections.Linked" xml:space="preserve"><value>Bağlı</value></data>
+  <data name="Manage.Connections.LinkedHint" xml:space="preserve"><value>{0} ile giriş yapabilirsiniz.</value></data>
+  <data name="Manage.Connections.NotLinkedHint" xml:space="preserve"><value>Bağlı değil. {0} ile giriş yapmak için bağlayın.</value></data>
+  <data name="Manage.Connections.Soon" xml:space="preserve"><value>Yakında</value></data>
+  <data name="Manage.Connections.SoonHint" xml:space="preserve"><value>Henüz kullanılamıyor — yakında buradan bağlayabileceksiniz.</value></data>
+  <data name="Manage.Connections.Link" xml:space="preserve"><value>Bağla</value></data>
+  <data name="Manage.Connections.LinkTo" xml:space="preserve"><value>{0} hesabını bağla</value></data>
+  <data name="Manage.Connections.Remove" xml:space="preserve"><value>Kaldır</value></data>
+  <data name="Manage.Connections.RemoveFrom" xml:space="preserve"><value>{0} bağlantısını kaldır</value></data>
+  <data name="Manage.Connections.OnlyWayIn" xml:space="preserve"><value>Kaldırmadan önce bir şifre belirleyin — tek giriş yolunuz bu.</value></data>
+  <data name="Manage.Connections.Added" xml:space="preserve"><value>{0} bağlandı. Artık onunla giriş yapabilirsiniz.</value></data>
+  <data name="Manage.Connections.Removed" xml:space="preserve"><value>{0} bağlantısı kaldırıldı.</value></data>
+  <data name="Manage.Connections.NotRemoved" xml:space="preserve"><value>{0} kaldırılamadı. Lütfen tekrar deneyin.</value></data>
+  <data name="Manage.Connections.InUse" xml:space="preserve"><value>Bu {0} hesabı zaten başka bir VI House hesabına bağlı.</value></data>
+  <data name="Manage.Connections.Failed" xml:space="preserve"><value>Bağlama tamamlanmadı. Lütfen tekrar deneyin.</value></data>
+  <data name="Admin.Influencer.Mode.Invite" xml:space="preserve"><value>Yeni birini davet et</value></data>
+  <data name="Admin.Influencer.Mode.Member" xml:space="preserve"><value>Mevcut bir üye</value></data>
+  <data name="Admin.Influencer.Member.Find" xml:space="preserve"><value>Üyeyi bulun</value></data>
+  <data name="Admin.Influencer.Member.Lede" xml:space="preserve"><value>Zaten bir girişi olduğu için hemen influencer olur. Koşulları kendi alanında kabul eder; profil ve banka bilgileri sonradan eklenebilir.</value></data>
+  <data name="Admin.Influencer.Member.SearchPlaceholder" xml:space="preserve"><value>Ad veya e-posta</value></data>
+  <data name="Admin.Influencer.Member.Search" xml:space="preserve"><value>Ara</value></data>
+  <data name="Admin.Influencer.Member.NoResults" xml:space="preserve"><value>“{0}” ile eşleşen bir hesap yok.</value></data>
+  <data name="Admin.Influencer.Member.Already" xml:space="preserve"><value>Zaten influencer</value></data>
+  <data name="Admin.Influencer.Member.Change" xml:space="preserve"><value>Başka birini seç</value></data>
+  <data name="Admin.Influencer.Member.HasLink" xml:space="preserve"><value>Bu kişinin zaten bir influencer kaydı var.</value></data>
+  <data name="Admin.Influencer.Member.OpenPage" xml:space="preserve"><value>Influencer sayfasını aç</value></data>
+  <data name="Admin.Influencer.Member.Submit" xml:space="preserve"><value>Influencer yap</value></data>
+  <data name="Admin.Influencer.Member.UseInstead" xml:space="preserve"><value>Bunun yerine mevcut üye olarak influencer yapın</value></data>
+  <data name="Admin.Influencer.AddChannel" xml:space="preserve"><value>Kanal ekle</value></data>
 </root>

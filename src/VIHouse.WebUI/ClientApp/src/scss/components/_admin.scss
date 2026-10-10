@@ -2541,6 +2541,233 @@ kbd {
   }
 }
 
+// display:grid above would otherwise win over the hidden attribute (modules/channelRows.ts).
+.admin-channels__row[hidden] { display: none; }
+
+.admin-channels__add {
+  justify-self: start;
+  padding: 6px 2px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vih-green-700);
+  cursor: pointer;
+
+  &:hover { color: var(--vih-green-900); text-decoration: underline; }
+}
+
+.admin-subhead__hint { margin: 4px 0 10px; }
+
+// --- Invite an influencer (new person / existing member) ---------------------------------------
+.admin-invite {
+  display: grid;
+  gap: 16px;
+  max-width: 820px;
+}
+
+.admin-invite__form { max-width: none; gap: 16px; }
+
+// Two doors, one control: a pill-shaped switch rather than tabs, since each side is its own page.
+.admin-segment {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+  justify-self: start;
+  padding: 4px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 999px;
+  background: var(--vih-white);
+}
+
+.admin-segment__item {
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--vih-text-secondary);
+  text-decoration: none;
+  transition: background 0.2s var(--vih-ease), color 0.2s var(--vih-ease);
+
+  &:hover { color: var(--vih-ink); background: var(--vih-cream); }
+
+  &.is-active {
+    background: var(--vih-green-900);
+    color: var(--vih-cream);
+  }
+}
+
+// A numbered card per step; the optional one folds.
+.admin-step {
+  display: grid;
+  gap: 16px;
+  border-radius: 14px;
+}
+
+.admin-step__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  h2 { margin: 2px 0 4px; }
+  .admin-hint { margin: 0; max-width: 62ch; }
+}
+
+.admin-step__num {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--vih-cream);
+  color: var(--vih-green-900);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.admin-step--optional {
+  > summary {
+    list-style: none;
+    cursor: pointer;
+
+    &::-webkit-details-marker { display: none; }
+    > div { flex: 1; }
+  }
+
+  &:not([open]) { gap: 0; }
+}
+
+.admin-step__chevron {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  margin: 8px 4px 0;
+  border-right: 2px solid var(--vih-text-faint);
+  border-bottom: 2px solid var(--vih-text-faint);
+  transform: rotate(45deg);
+  transition: transform 0.2s var(--vih-ease);
+
+  [open] > summary > & { transform: rotate(-135deg); }
+}
+
+.admin-step__body {
+  display: grid;
+  gap: 16px;
+}
+
+// Finding the existing member.
+.admin-pick-search {
+  display: flex;
+  gap: 8px;
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: 11px 14px;
+    border: 1px solid var(--vih-line-on-light);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.9375rem;
+    background: var(--vih-white);
+
+    &:focus-visible {
+      outline: none;
+      border-color: var(--vih-focus-ring);
+      box-shadow: var(--vih-shadow-focus);
+    }
+  }
+}
+
+.admin-pick {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-pick__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: 12px;
+  background: var(--vih-white);
+  color: var(--vih-ink);
+  text-decoration: none;
+  transition: border-color 0.2s var(--vih-ease), box-shadow 0.2s var(--vih-ease);
+
+  &:is(a):hover {
+    border-color: var(--vih-green-900);
+    box-shadow: var(--vih-shadow-sm);
+  }
+
+  &--chosen {
+    flex-wrap: wrap;
+    background: var(--vih-surface);
+
+    .admin-pick__who { flex-basis: 180px; }
+    .admin-btn { margin-left: auto; }
+  }
+}
+
+.admin-pick__avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--vih-green-900);
+  color: var(--vih-cream);
+  font-weight: 700;
+}
+
+.admin-pick__who {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+
+  strong, span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span { font-size: 0.8125rem; color: var(--vih-text-secondary); }
+  em { justify-self: start; margin-top: 4px; font-style: normal; }
+}
+
+.admin-pick__go { color: var(--vih-text-faint); }
+
+.admin-pick__empty { margin: 0; }
+
+@media (max-width: 640px) {
+  .admin-segment {
+    justify-self: stretch;
+  }
+
+  .admin-segment__item {
+    padding: 9px 10px;
+    white-space: normal;
+  }
+
+  .admin-step { padding: 16px; }
+
+  // The primary action spans the screen, where a thumb can reach it.
+  .admin-invite__actions {
+    flex-direction: column-reverse;
+
+    .admin-btn { justify-content: center; width: 100%; }
+  }
+}
+
 .admin-checklist {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

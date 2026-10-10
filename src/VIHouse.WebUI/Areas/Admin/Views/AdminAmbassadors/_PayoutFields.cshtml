@@ -13,6 +13,7 @@
         ? entry.Errors[0].ErrorMessage : "";
 }
 <h3 class="admin-subhead">@Loc["Admin.Influencer.LegalAndBilling"]</h3>
+<p class="admin-field__hint admin-subhead__hint">@Loc["Admin.Influencer.LegalNameHint"]</p>
 <div class="admin-form__grid">
     <div class="admin-field">
         <label for="@Id("LegalFirstName")">@Loc["Admin.Influencer.LegalFirstName"]</label>
@@ -24,7 +25,6 @@
         <input id="@Id("LegalLastName")" name="@Name("LegalLastName")" value="@Model.LegalLastName" maxlength="100" autocomplete="off" />
     </div>
 </div>
-<p class="admin-field__hint" style="margin-top:-8px;">@Loc["Admin.Influencer.LegalNameHint"]</p>
 <div class="admin-form__grid">
     <div class="admin-field">
         <label for="@Id("AddressLine1")">@Loc["Admin.Influencer.AddressLine1"]</label>

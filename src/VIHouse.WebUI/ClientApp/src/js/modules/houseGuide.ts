@@ -10,14 +10,15 @@
 
 interface GuideLink { label: string; href: string | null }
 interface GuideQuestion { label: string; answer: string; links: GuideLink[] }
-interface GuideTopic { id: string; label: string; intro: string; mail: 'concierge' | 'support'; questions: GuideQuestion[] }
+type GuideMailKey = 'concierge' | 'support' | 'influencers';
+interface GuideTopic { id: string; label: string; intro: string; mail: GuideMailKey; questions: GuideQuestion[] }
 interface GuideMail { address: string; subject: string }
 interface GuideData {
   greeting: string;
   restart: string;
   stillNeed: string;
   typing: string;
-  mail: Record<'concierge' | 'support', GuideMail>;
+  mail: Record<GuideMailKey, GuideMail>;
   topics: GuideTopic[];
 }
 
@@ -141,11 +142,12 @@ export function initHouseGuide(): void {
     }))));
   };
 
-  function start(): void {
+  // An arrow, not a hoisted function, so TypeScript keeps the null check on `body` above.
+  const start = (): void => {
     body.innerHTML = '';
     progress(0);
     say(data.greeting, () => options(data.topics.map((t) => ({ label: t.label, icon: t.id, pick: () => topicPicked(t) }))));
-  }
+  };
 
   // Starts when it comes into view, so the greeting is actually seen being "typed".
   const begin = (): void => {

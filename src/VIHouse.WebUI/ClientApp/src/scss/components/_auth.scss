@@ -584,10 +584,12 @@
   }
 
   // Scaffold buttons. .btn-danger previously had no rule at all, so "Disable 2FA", "Reset
-  // authenticator key" and "Delete personal data" looked identical to a primary action.
+  // authenticator key" and "Delete personal data" looked identical to a primary action. Bare submit
+  // buttons only: the site's own .btn variants and the "Continue with Google / Apple / LinkedIn"
+  // buttons have their own looks, which this used to paint over in gold.
   .btn-primary,
   .btn-danger,
-  button[type='submit'] {
+  button[type='submit']:not(.btn):not(.auth-external__btn) {
     display: inline-flex;
     align-items: center;
     justify-content: center;

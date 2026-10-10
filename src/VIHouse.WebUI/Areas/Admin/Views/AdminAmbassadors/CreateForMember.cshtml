@@ -1,0 +1,128 @@
+@model AdminAmbassadorMemberViewModel
+@using VIHouse.DataAccess.Identity
+@{
+    ViewData["Title"] = Loc["Admin.Ambassadors.InviteTitle"].Value;
+}
+
+<div class="admin-invite">
+    <partial name="_InviteModeSwitch" model='"member"' />
+
+    @if (Model.UserId is null)
+    {
+        @* Step 1: find them. A GET form, so the results page can be bookmarked and Back works. *@
+        <section class="admin-card admin-step">
+            <header class="admin-step__head">
+                <span class="admin-step__num" aria-hidden="true">1</span>
+                <div>
+                    <h2>@Loc["Admin.Influencer.Member.Find"]</h2>
+                    <p class="admin-hint">@Loc["Admin.Influencer.Member.Lede"]</p>
+                </div>
+            </header>
+            <form asp-action="CreateForMember" method="get" class="admin-pick-search" role="search">
+                <label class="visually-hidden" for="member-q">@Loc["Admin.Influencer.Member.SearchPlaceholder"]</label>
+                <input id="member-q" name="q" type="search" value="@Model.Query" autocomplete="off" autofocus
+                       placeholder="@Loc["Admin.Influencer.Member.SearchPlaceholder"]" />
+                <button type="submit" class="admin-btn">@Loc["Admin.Influencer.Member.Search"]</button>
+            </form>
+
+            @if (Model.Results.Count > 0)
+            {
+                <ul class="admin-pick">
+                    @foreach (var row in Model.Results)
+                    {
+                        var isInfluencer = row.Roles.Contains(Roles.Ambassador);
+                        <li>
+                            <a class="admin-pick__item" asp-action="CreateForMember" asp-route-userId="@row.UserId" asp-route-q="@Model.Query">
+                                <span class="admin-pick__avatar" aria-hidden="true">@(string.IsNullOrWhiteSpace(row.Name) ? row.Email[..1].ToUpperInvariant() : row.Name[..1].ToUpperInvariant())</span>
+                                <span class="admin-pick__who">
+                                    <strong>@(string.IsNullOrWhiteSpace(row.Name) ? row.Email : row.Name)</strong>
+                                    <span>@row.Email</span>
+                                    @if (isInfluencer)
+                                    {
+                                        <em class="admin-badge admin-badge--draft">@Loc["Admin.Influencer.Member.Already"]</em>
+                                    }
+                                </span>
+                                <span class="admin-pick__go" aria-hidden="true">&rarr;</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+            else if (!string.IsNullOrWhiteSpace(Model.Query))
+            {
+                <p class="admin-hint admin-pick__empty">
+                    @Loc["Admin.Influencer.Member.NoResults", Model.Query]
+                    <a asp-action="Create">@Loc["Admin.Influencer.Mode.Invite"] &rarr;</a>
+                </p>
+            }
+        </section>
+    }
+    else
+    {
+        <form asp-action="CreateForMember" method="post" class="admin-form admin-invite__form">
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="Query" />
+            <div asp-validation-summary="ModelOnly" class="field-validation-error"></div>
+
+            <section class="admin-card admin-step">
+                <header class="admin-step__head">
+                    <span class="admin-step__num" aria-hidden="true">2</span>
+                    <div>
+                        <h2>@Loc["Admin.Influencer.Section.Basics"]</h2>
+                        <p class="admin-hint">@Loc["Admin.Influencer.Member.Lede"]</p>
+                    </div>
+                </header>
+
+                <div class="admin-pick__item admin-pick__item--chosen">
+                    <span class="admin-pick__avatar" aria-hidden="true">@((string.IsNullOrWhiteSpace(Model.MemberName) ? Model.MemberEmail : Model.MemberName)?[..1].ToUpperInvariant())</span>
+                    <span class="admin-pick__who">
+                        <strong>@(string.IsNullOrWhiteSpace(Model.MemberName) ? Model.MemberEmail : Model.MemberName)</strong>
+                        <span>@Model.MemberEmail</span>
+                    </span>
+                    <a class="admin-btn admin-btn--ghost admin-btn--sm" asp-action="CreateForMember" asp-route-q="@Model.Query">@Loc["Admin.Influencer.Member.Change"]</a>
+                </div>
+
+                @if (Model.ExistingAmbassadorId is { } existingId)
+                {
+                    <p class="admin-status-message">
+                        @Loc["Admin.Influencer.Member.HasLink"]
+                        <a asp-action="Edit" asp-route-id="@existingId">@Loc["Admin.Influencer.Member.OpenPage"] &rarr;</a>
+                    </p>
+                }
+                else
+                {
+                    <div class="admin-form__grid">
+                        <div class="admin-field">
+                            <label asp-for="Name">@Loc["Admin.Ambassadors.DisplayName"]</label>
+                            <input asp-for="Name" autocomplete="off" />
+                            <p class="admin-field__hint">@Loc["Admin.Influencer.DisplayNameHint"]</p>
+                            <span asp-validation-for="Name" class="field-validation-error"></span>
+                        </div>
+                        <div class="admin-field">
+                            <label asp-for="Code">@Loc["Admin.Ambassadors.CodeLabel"]</label>
+                            <input asp-for="Code" placeholder="VI-ANTON" autocapitalize="characters" spellcheck="false" autocomplete="off" />
+                            <span asp-validation-for="Code" class="field-validation-error"></span>
+                        </div>
+                        <div class="admin-field">
+                            <label asp-for="CommissionPercent">@Loc["Admin.Ambassadors.Commission"]</label>
+                            <input asp-for="CommissionPercent" type="number" step="0.01" min="0" max="100" inputmode="decimal" />
+                            <span asp-validation-for="CommissionPercent" class="field-validation-error"></span>
+                        </div>
+                    </div>
+                }
+            </section>
+
+            <div class="admin-form__actions admin-invite__actions">
+                @if (Model.ExistingAmbassadorId is null)
+                {
+                    <button type="submit" class="admin-btn">@Loc["Admin.Influencer.Member.Submit"]</button>
+                }
+                <a class="admin-btn admin-btn--ghost" asp-action="Index">@Loc["Admin.Common.Cancel"]</a>
+            </div>
+        </form>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

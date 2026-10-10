@@ -70,6 +70,10 @@ env:
   APPLE_TEAM_ID: ''            # 10 characters, top right of developer.apple.com
   APPLE_SIGNIN_KEY_ID: ''      # 10 characters, from the key's page under Keys
 
+  # --- Sign in with LinkedIn (see Program.cs) --------------------------------------------------------
+  # Not secret; the client secret is (LINKEDIN_CLIENT_SECRET, listed at the bottom). Empty = off.
+  LINKEDIN_CLIENT_ID: ''       # LinkedIn developer portal › your app › Auth › Client ID
+
   # --- Outbound email (Hostinger mailbox for thevihouse.com; see SmtpOptions.cs) -------------------
   # Host/port come from hPanel's "Connect apps" / "Configure email client" screen for the mailbox —
   # Hostinger sells three mail products (Hostinger Email, Titan Email, cPanel mail) with different
@@ -122,6 +126,10 @@ env:
 jobs:
   publish-and-deploy:
     runs-on: ubuntu-latest
+    # Waits for a required reviewer (Settings → Environments → Production) before anything with
+    # the production secrets runs. Repository secrets stay readable here; environment secrets,
+    # once any are added, are readable only by this job.
+    environment: Production
     timeout-minutes: 45
 
     steps:
@@ -140,6 +148,7 @@ jobs:
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           APPLE_SIGNIN_PRIVATE_KEY: ${{ secrets.APPLE_SIGNIN_PRIVATE_KEY }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
         run: |
           missing=0
           for name in FTP_SERVER FTP_USERNAME FTP_PASSWORD PROD_CONNECTION_STRING; do
@@ -154,6 +163,7 @@ jobs:
           [ -n "$STRIPE_SECRET_KEY" ]    || echo "::warning::STRIPE_TEST_SECRET_KEY is empty — payments are off."
           [ -n "$GOOGLE_CLIENT_ID" ]     || echo "::warning::GOOGLE_CLIENT_ID is empty — Google sign-in is off."
           [ -n "$APPLE_SIGNIN_PRIVATE_KEY" ] || echo "::notice::APPLE_SIGNIN_PRIVATE_KEY is empty — Sign in with Apple is off."
+          [ -n "$LINKEDIN_CLIENT_SECRET" ] || echo "::notice::LINKEDIN_CLIENT_SECRET is empty — Sign in with LinkedIn is off."
           [ -n "$CKEDITOR_LICENSE_KEY" ] || echo "::warning::CKEDITOR_LICENSE_KEY is empty — the admin rich-text editor will not load."
           # Email is how accounts are set up, confirmed and recovered — without it nobody new can get
           # in. Missing SMTP credentials fail the deploy instead of shipping a site that silently
@@ -224,6 +234,7 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           APPLE_SIGNIN_PRIVATE_KEY: ${{ secrets.APPLE_SIGNIN_PRIVATE_KEY }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
           SMS_USERNAME: ${{ secrets.SMS_USERNAME }}
@@ -250,7 +261,7 @@ jobs:
             --arg     appleClientId     "$APPLE_SIGNIN_CLIENT_ID" \
             --arg     appleTeamId       "$APPLE_TEAM_ID" \
             --arg     appleKeyId        "$APPLE_SIGNIN_KEY_ID" \
-            --arg     applePrivateKey   "$APPLE_SIGNIN_PRIVATE_KEY" \
+            --arg     applePrivateKey   "$APPLE_SIGNIN_PRIVATE_KEY"             --arg     linkedInClientId  "$LINKEDIN_CLIENT_ID"             --arg     linkedInSecret    "$LINKEDIN_CLIENT_SECRET" \
             --arg     discordToken      "$DISCORD_BOT_TOKEN" \
             --arg     discordGuild      "$DISCORD_GUILD_ID" \
             --argjson smsEnabled        "$SMS_ENABLED" \
@@ -298,7 +309,8 @@ jobs:
               },
               Authentication: {
                 Google: { ClientId: $googleClientId, ClientSecret: $googleSecret },
-                Apple: { ClientId: $appleClientId, TeamId: $appleTeamId, KeyId: $appleKeyId, PrivateKey: $applePrivateKey }
+                Apple: { ClientId: $appleClientId, TeamId: $appleTeamId, KeyId: $appleKeyId, PrivateKey: $applePrivateKey },
+                LinkedIn: { ClientId: $linkedInClientId, ClientSecret: $linkedInSecret }
               },
               Discord: { BotToken: $discordToken, GuildId: $discordGuild },
               Sms: {
@@ -547,6 +559,9 @@ jobs:
 #                           file (Apple Developer → Keys, "Sign in with Apple" enabled). The
 #                           Services ID, Team ID and Key ID are not secret: they sit in the env
 #                           block as APPLE_SIGNIN_CLIENT_ID / APPLE_TEAM_ID / APPLE_SIGNIN_KEY_ID.
+#   LINKEDIN_CLIENT_SECRET  Authentication:LinkedIn:ClientSecret — the app's Primary Client Secret
+#                           (LinkedIn developer portal › Auth). The Client ID is not secret: it sits
+#                           in the env block as LINKEDIN_CLIENT_ID.
 #   SMS_USERNAME            Sms:Username
 #   SMS_PASSWORD            Sms:Password
 #   SMTP_USERNAME           Smtp:Username  (the Hostinger mailbox's full address, e.g.

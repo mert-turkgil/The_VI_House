@@ -7,6 +7,7 @@ using VIHouse.Business;
 using VIHouse.Business.Abstract;
 using VIHouse.Business.Concrete;
 using VIHouse.Business.Options;
+using VIHouse.DataAccess.Abstract;
 using VIHouse.DataAccess.Identity;
 using VIHouse.Entities.Referrals;
 using VIHouse.WebUI.Areas.Admin.ViewModels;
@@ -27,7 +28,9 @@ public class AdminAmbassadorsController(
     IJournalService journalService,
     UserManager<ApplicationUser> userManager,
     IEmailService emailService,
+    IUserDirectory directory,
     IOptions<SiteOptions> siteOptions,
+    IOptions<SecurityOptions> security,
     IStringLocalizer<SharedResource> loc) : AdminControllerBase
 {
     /// <summary>The public referral link. Site:BaseUrl when configured (the host visitors use),
@@ -131,6 +134,68 @@ public class AdminAmbassadorsController(
             ? Message(result.Error, result.ErrorArgs)
             : loc["Admin.Ambassadors.Msg.InviteSent", form.Email.Trim(), result.Ambassador!.Code].Value, isError: result.Error is not null);
         return RedirectToAction(nameof(Edit), new { id = result.Ambassador!.Id });
+    }
+
+    /// <summary>
+    /// The other door on the same page: someone who already has an account. Search by name or
+    /// email, pick them, set the code and the rate.
+    /// </summary>
+    [HttpGet("new/member")]
+    [Authorize(Roles = AdminSections.RolesFor.Marketing)]
+    public async Task<IActionResult> CreateForMember(string? q, Guid? userId, CancellationToken ct)
+    {
+        var model = new AdminAmbassadorMemberViewModel { Query = q?.Trim() };
+        if (userId is { } id && await userManager.FindByIdAsync(id.ToString()) is { } user)
+        {
+            await DescribeMemberAsync(model, user, ct);
+            model.Name = string.Join(" ", new[] { user.FirstName, user.LastName }.Where(s => !string.IsNullOrWhiteSpace(s)));
+            model.Code = SuggestCode(user);
+        }
+        else if (!string.IsNullOrWhiteSpace(model.Query))
+        {
+            model.Results = (await directory.SearchAsync(model.Query, null, 1, 8, ct)).Rows;
+        }
+        return View(model);
+    }
+
+    [HttpPost("new/member")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = AdminSections.RolesFor.Marketing)]
+    public async Task<IActionResult> CreateForMember(AdminAmbassadorMemberViewModel form, CancellationToken ct)
+    {
+        if (form.UserId is not { } id || await userManager.FindByIdAsync(id.ToString()) is not { Email: not null } user) return NotFound();
+        await DescribeMemberAsync(form, user, ct);
+        if (security.Value.IsProtected(user.Email))
+            ModelState.AddModelError(string.Empty, loc["Admin.Users.Msg.Protected", user.Email].Value);
+        if (!ModelState.IsValid || form.ExistingAmbassadorId is not null) return View(form);
+
+        var (adminId, ip) = CurrentActor();
+        var result = await ambassadorService.CreateForUserAsync(
+            user.Id, form.Name.Trim(), form.Code.Trim().ToUpperInvariant(), form.CommissionPercent, adminId, ip, ct);
+        if (!result.Success)
+        {
+            ModelState.AddModelError(string.Empty, Message(result.Error, result.ErrorArgs));
+            return View(form);
+        }
+
+        Status(loc["Admin.Users.Msg.ReferralCreated", result.Ambassador!.Code].Value);
+        return RedirectToAction(nameof(Edit), new { id = result.Ambassador.Id });
+    }
+
+    private async Task DescribeMemberAsync(AdminAmbassadorMemberViewModel model, ApplicationUser user, CancellationToken ct)
+    {
+        model.UserId = user.Id;
+        model.MemberEmail = user.Email;
+        model.MemberName = string.Join(" ", new[] { user.FirstName, user.LastName }.Where(s => !string.IsNullOrWhiteSpace(s)));
+        model.ExistingAmbassadorId = (await ambassadorService.GetByUserIdAsync(user.Id, ct))?.Id;
+    }
+
+    /// <summary>A starting point for the code — first name, upper-cased, letters only — that the
+    /// admin can overwrite. "VI-" prefixes are the convention from the brief (§47: VI-ANTON).</summary>
+    private static string SuggestCode(ApplicationUser user)
+    {
+        var stem = new string((user.FirstName ?? "").Where(char.IsLetterOrDigit).ToArray()).ToUpperInvariant();
+        return stem.Length == 0 ? "" : $"VI-{stem}";
     }
 
     [HttpGet("{id:guid}")]

@@ -1444,6 +1444,84 @@
   }
 }
 
+// Security › Sign-in providers: one row per provider, its state in the middle, its action on the right.
+.account-connections {
+  display: grid;
+  gap: var(--vih-space-2xs);
+  max-width: 640px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.account-connection {
+  display: flex;
+  align-items: center;
+  gap: var(--vih-space-sm);
+  padding: var(--vih-space-sm) var(--vih-space-md);
+  border: 1px solid var(--vih-line-on-light);
+  border-radius: var(--vih-radius-xl);
+  background: var(--vih-white);
+
+  &--off {
+    background: var(--vih-surface);
+  }
+
+  &--off .account-connection__icon {
+    opacity: 0.5;
+  }
+}
+
+.account-connection__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+
+  .auth-external__icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.account-connection__text {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px var(--vih-space-2xs);
+  min-width: 0;
+
+  strong {
+    color: var(--vih-green-900);
+  }
+}
+
+.account-connection__hint {
+  flex-basis: 100%;
+  font-size: var(--vih-text-sm);
+  color: var(--vih-text-muted);
+}
+
+.account-connection__action {
+  flex-shrink: 0;
+  text-align: right;
+
+  .account-connection__hint {
+    display: block;
+    max-width: 16ch;
+  }
+}
+
+@media (max-width: 480px) {
+  .account-connection {
+    flex-wrap: wrap;
+  }
+
+  .account-connection__action {
+    flex-basis: 100%;
+    text-align: left;
+  }
+}
+
 // The identity card at the top of the Account page: who this is, and the state of the things
 // that keep the account safe, each with the link to where it is changed.
 .account-identity {

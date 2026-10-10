@@ -2026,7 +2026,7 @@ What would you like to know?</value></data>
   <data name="Admin.Ambassadors.InviteAnAmbassador" xml:space="preserve"><value>+ Invite an influencer</value></data>
   <data name="Admin.Ambassadors.InviteExpired" xml:space="preserve"><value>Expired</value></data>
   <data name="Admin.Ambassadors.InviteExpires" xml:space="preserve"><value>Expires</value></data>
-  <data name="Admin.Ambassadors.InviteIntro" xml:space="preserve"><value>For someone without a VI House account. You enter everything here; they get an email with a personal link, valid for {0} days, where they check the details, choose a password and accept the influencer terms. Their links and QR codes start working only after that. You never see the link; if it expires, re-send it from their page.</value></data>
+  <data name="Admin.Ambassadors.InviteIntro" xml:space="preserve"><value>They get a personal link by email, valid for {0} days, to check the details, choose a password and accept the terms. Their links start working after that.</value></data>
   <data name="Admin.Ambassadors.InviteTitle" xml:space="preserve"><value>Invite an influencer</value></data>
   <data name="Admin.Ambassadors.InvitedNoAccountYet" xml:space="preserve"><value>(invited — no account yet)</value></data>
   <data name="Admin.Ambassadors.LanguageOfTheInvitation" xml:space="preserve"><value>Language of the invitation</value></data>
@@ -2064,7 +2064,6 @@ What would you like to know?</value></data>
   <data name="Admin.Ambassadors.NothingUnusual" xml:space="preserve"><value>Nothing unusual in the last {0} days.</value></data>
   <data name="Admin.Ambassadors.NothingYetEachApplicationApprovalAnd" xml:space="preserve"><value>Nothing yet. Each application, approval and purchase through the link will appear here as it happens.</value></data>
   <data name="Admin.Ambassadors.OpenInNewTab" xml:space="preserve"><value>Open in new tab</value></data>
-  <data name="Admin.Ambassadors.OpenTheirUserRecord" xml:space="preserve"><value>Open their user record →</value></data>
   <data name="Admin.Ambassadors.OpenUserRecord" xml:space="preserve"><value>Open user record</value></data>
   <data name="Admin.Ambassadors.Overpaid" xml:space="preserve"><value>Overpaid</value></data>
   <data name="Admin.Ambassadors.Owed" xml:space="preserve"><value>Owed</value></data>
@@ -2103,7 +2102,6 @@ What would you like to know?</value></data>
   <data name="Admin.Ambassadors.Signals" xml:space="preserve"><value>Signals</value></data>
   <data name="Admin.Ambassadors.Since" xml:space="preserve"><value>Influencer since {0}</value></data>
   <data name="Admin.Ambassadors.SiteLink" xml:space="preserve"><value>Site link</value></data>
-  <data name="Admin.Ambassadors.SomeoneWhoAlreadyHasAnAccount" xml:space="preserve"><value>Someone who already has an account is made an influencer from their user record instead (Users → the person → “Create referral link”).</value></data>
   <data name="Admin.Ambassadors.Source" xml:space="preserve"><value>Source</value></data>
   <data name="Admin.Ambassadors.TaxVATId" xml:space="preserve"><value>Tax / VAT id</value></data>
   <data name="Admin.Ambassadors.Terms" xml:space="preserve"><value>Terms</value></data>
@@ -3183,13 +3181,10 @@ What would you like to know?</value></data>
   <data name="Admin.Users.BlankThePlanSOwnPeriod" xml:space="preserve"><value>Blank = the plan's own period from today (no expiry for a one-time plan).</value></data>
   <data name="Admin.Users.Bookings" xml:space="preserve"><value>Bookings</value></data>
   <data name="Admin.Users.Commission" xml:space="preserve"><value>Commission</value></data>
-  <data name="Admin.Users.Commission27" xml:space="preserve"><value>Commission %</value></data>
   <data name="Admin.Users.Company" xml:space="preserve"><value>Company</value></data>
   <data name="Admin.Users.Complimentary" xml:space="preserve"><value>Complimentary</value></data>
   <data name="Admin.Users.CreateAdminSendSetupLink" xml:space="preserve"><value>Create Admin &amp; Send Setup Link</value></data>
-  <data name="Admin.Users.CreateReferralLink" xml:space="preserve"><value>Create referral link</value></data>
   <data name="Admin.Users.CreatesAStaffAccountAndEmails" xml:space="preserve"><value>Creates a staff account and emails a one-time setup link. You never choose their password — they set their own, then must confirm their email address and switch on two-factor authentication before the panel will open for them.</value></data>
-  <data name="Admin.Users.DisplayName" xml:space="preserve"><value>Display name</value></data>
   <data name="Admin.Users.EGContentPartner12Month" xml:space="preserve"><value>e.g. Content partner — 12-month collaboration</value></data>
   <data name="Admin.Users.EmailConfirmed" xml:space="preserve"><value>Email confirmed</value></data>
   <data name="Admin.Users.EndMembership" xml:space="preserve"><value>End membership</value></data>
@@ -3214,7 +3209,6 @@ What would you like to know?</value></data>
   <data name="Admin.Users.Msg.AccountExists" xml:space="preserve"><value>An account already exists for that email address. Grant them admin roles from their customer record instead.</value></data>
   <data name="Admin.Users.Msg.AdminCreated" xml:space="preserve"><value>Admin account created for {0}. They've been emailed a setup link.</value></data>
   <data name="Admin.Users.Msg.ChooseRole" xml:space="preserve"><value>Choose at least one admin role.</value></data>
-  <data name="Admin.Users.Msg.HasReferralLink" xml:space="preserve"><value>They already have a referral link.</value></data>
   <data name="Admin.Users.Msg.LastSuperAdmin" xml:space="preserve"><value>You're the only SuperAdmin — promote someone else before removing your own access.</value></data>
   <data name="Admin.Users.Msg.NoEmail" xml:space="preserve"><value>This account has no email address to send a link to.</value></data>
   <data name="Admin.Users.Msg.Protected" xml:space="preserve"><value>{0} is a protected account and cannot be changed from the panel.</value></data>
@@ -3478,7 +3472,6 @@ What would you like to know?</value></data>
   <data name="Admin.Users.Msg.NotSaved" xml:space="preserve"><value>Not saved: {0}</value></data>
   <data name="Admin.Users.Msg.DetailsSaved" xml:space="preserve"><value>Details saved.</value></data>
   <data name="Admin.Users.Msg.NotGranted" xml:space="preserve"><value>Not granted: {0}</value></data>
-  <data name="Admin.Users.Msg.NotCreated" xml:space="preserve"><value>Not created: {0}</value></data>
   <data name="Admin.Users.SearchPlaceholder" xml:space="preserve"><value>name, email or phone</value></data>
   <data name="Admin.Users.AnyRole" xml:space="preserve"><value>Any role</value></data>
   <data name="Admin.Users.NoRole" xml:space="preserve"><value>No role</value></data>
@@ -3844,7 +3837,7 @@ What would you like to know?</value></data>
   <data name="Influencer.Error.CodeTaken" xml:space="preserve"><value>The code “{0}” is already in use.</value></data>
   <data name="Influencer.Error.AccountGone" xml:space="preserve"><value>That account no longer exists.</value></data>
   <data name="Influencer.Error.AlreadyInfluencer" xml:space="preserve"><value>They are already an influencer.</value></data>
-  <data name="Influencer.Error.ExistingAccount" xml:space="preserve"><value>That address already has an account — make them an influencer from their user record instead.</value></data>
+  <data name="Influencer.Error.ExistingAccount" xml:space="preserve"><value>That address already has an account — make them an influencer as an existing member instead.</value></data>
   <data name="Influencer.Error.PendingExists" xml:space="preserve"><value>{0} already has a pending invitation (code {1}). Re-send that one instead.</value></data>
   <data name="Influencer.Error.OnlyPendingResend" xml:space="preserve"><value>Only a pending invitation can be re-sent.</value></data>
   <data name="Influencer.Error.InviteNotSent" xml:space="preserve"><value>The invitation is saved, but the email did not go out — check Emails &amp; SMS, then re-send it from this page.</value></data>
@@ -3963,4 +3956,46 @@ What would you like to know?</value></data>
   <data name="Influencers.Cta.Heading" xml:space="preserve"><value>Interested?</value></data>
   <data name="Influencers.Cta.Body" xml:space="preserve"><value>Send us a few lines about yourself and links to your channels.</value></data>
   <data name="Admin.Help.AdminJournal.Step5" xml:space="preserve"><value>Influencers' articles arrive under “Influencer submissions”. Read, translate and publish them — or send one back with a note for its author.</value></data>
+  <data name="Faq.Q9" xml:space="preserve"><value>Can I become a VI House influencer?</value></data>
+  <data name="Faq.A9" xml:space="preserve"><value>Yes — by invitation, like the House itself. If your audience cares about building things, write to us with a few lines about yourself and links to your channels. If it's a fit, we set you up and email a personal invitation: choose a password, accept the influencer terms, and you're in.</value></data>
+  <data name="Faq.Q10" xml:space="preserve"><value>How do influencers earn, and when are they paid?</value></data>
+  <data name="Faq.A10" xml:space="preserve"><value>Every influencer has personal links and QR codes. When the people they bring become members, book an experience or join a session, the influencer earns the commission agreed with them, shown in their dashboard as it happens. Once the balance reaches the minimum, they request a withdrawal and we pay it by bank transfer.</value></data>
+  <data name="Faq.InfluencersLink" xml:space="preserve"><value>More about the influencer programme</value></data>
+  <data name="HouseGuide.Influencers.Label" xml:space="preserve"><value>Influencers &amp; creators</value></data>
+  <data name="HouseGuide.Influencers.Intro" xml:space="preserve"><value>We work with a small number of creators who bring people to the House and earn when they join. What would you like to know?</value></data>
+  <data name="HouseGuide.Influencers.Q3" xml:space="preserve"><value>I'm already an influencer — where are my links and earnings?</value></data>
+  <data name="HouseGuide.Influencers.A3" xml:space="preserve"><value>In your influencer area: your links and QR codes, visits and purchases, earnings and withdrawals, your articles and your profile. Sign in and it opens from your account.</value></data>
+  <data name="HouseGuide.Link.Influencers" xml:space="preserve"><value>The influencer programme</value></data>
+  <data name="HouseGuide.Link.InfluencerArea" xml:space="preserve"><value>Open my influencer area</value></data>
+  <data name="Manage.Connections.Title" xml:space="preserve"><value>Sign-in providers</value></data>
+  <data name="Manage.Connections.Lede" xml:space="preserve"><value>Link your Google, Apple or LinkedIn account and you can sign in with it from then on, as well as with your email and password. Linking never shares your VI House account with them.</value></data>
+  <data name="Manage.Connections.Linked" xml:space="preserve"><value>Linked</value></data>
+  <data name="Manage.Connections.LinkedHint" xml:space="preserve"><value>You can sign in with {0}.</value></data>
+  <data name="Manage.Connections.NotLinkedHint" xml:space="preserve"><value>Not linked. Link it to sign in with {0}.</value></data>
+  <data name="Manage.Connections.Soon" xml:space="preserve"><value>Coming soon</value></data>
+  <data name="Manage.Connections.SoonHint" xml:space="preserve"><value>Not available yet — you'll be able to link it here soon.</value></data>
+  <data name="Manage.Connections.Link" xml:space="preserve"><value>Link</value></data>
+  <data name="Manage.Connections.LinkTo" xml:space="preserve"><value>Link {0}</value></data>
+  <data name="Manage.Connections.Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="Manage.Connections.RemoveFrom" xml:space="preserve"><value>Remove {0}</value></data>
+  <data name="Manage.Connections.OnlyWayIn" xml:space="preserve"><value>Set a password before removing this — it's your only way in.</value></data>
+  <data name="Manage.Connections.Added" xml:space="preserve"><value>{0} is linked. You can now sign in with it.</value></data>
+  <data name="Manage.Connections.Removed" xml:space="preserve"><value>{0} is no longer linked.</value></data>
+  <data name="Manage.Connections.NotRemoved" xml:space="preserve"><value>{0} could not be removed. Please try again.</value></data>
+  <data name="Manage.Connections.InUse" xml:space="preserve"><value>That {0} account is already linked to another VI House account.</value></data>
+  <data name="Manage.Connections.Failed" xml:space="preserve"><value>Linking didn't complete. Please try again.</value></data>
+  <data name="Admin.Influencer.Mode.Invite" xml:space="preserve"><value>Invite someone new</value></data>
+  <data name="Admin.Influencer.Mode.Member" xml:space="preserve"><value>An existing member</value></data>
+  <data name="Admin.Influencer.Member.Find" xml:space="preserve"><value>Find the member</value></data>
+  <data name="Admin.Influencer.Member.Lede" xml:space="preserve"><value>They already have a login, so they're an influencer straight away. They accept the terms in their own area; profile and bank details can be added afterwards.</value></data>
+  <data name="Admin.Influencer.Member.SearchPlaceholder" xml:space="preserve"><value>Name or email</value></data>
+  <data name="Admin.Influencer.Member.Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Admin.Influencer.Member.NoResults" xml:space="preserve"><value>No account matches “{0}”.</value></data>
+  <data name="Admin.Influencer.Member.Already" xml:space="preserve"><value>Already an influencer</value></data>
+  <data name="Admin.Influencer.Member.Change" xml:space="preserve"><value>Choose someone else</value></data>
+  <data name="Admin.Influencer.Member.HasLink" xml:space="preserve"><value>This person already has an influencer record.</value></data>
+  <data name="Admin.Influencer.Member.OpenPage" xml:space="preserve"><value>Open their influencer page</value></data>
+  <data name="Admin.Influencer.Member.Submit" xml:space="preserve"><value>Make influencer</value></data>
+  <data name="Admin.Influencer.Member.UseInstead" xml:space="preserve"><value>Make them an influencer as an existing member</value></data>
+  <data name="Admin.Influencer.AddChannel" xml:space="preserve"><value>Add a channel</value></data>
 </root>

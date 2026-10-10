@@ -43,6 +43,10 @@ var supportedCultures = SiteCultures.Names;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// A fresh clone runs in Development with no secrets: LocalDB, a local admin, mail to a local catcher.
+// Anything in appsettings.Development.json, user-secrets or the environment still wins.
+DevelopmentDefaults.Apply(builder);
+
 // --- Logging -----------------------------------------------------------------------------------
 // Shared IIS hosting has no log collector and console output goes nowhere, so a failure that is
 // only logged (an SMTP rejection, a webhook error) would be invisible. Logging:File:Enabled turns on
@@ -197,9 +201,9 @@ if (!string.IsNullOrWhiteSpace(cookieDomain))
 // same secrets policy as Stripe: user-secrets in Development, appsettings.Production.json on the
 // server, never a committed file.
 //
-// Both providers share one builder and one failure handler: cancelling at Google or Apple (or a
-// broken round trip) lands back on the sign-in page with a message, not on the error page — see
-// ExternalSignIn.Failed.
+// All three providers share one builder and one failure handler: cancelling at Google, Apple or
+// LinkedIn (or a broken round trip) lands back where it started — the sign-in page or Account ›
+// Sign-in providers — with a message, not on the error page; see ExternalSignIn.Failed.
 var authentication = builder.Services.AddAuthentication();
 var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
 var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
@@ -238,6 +242,35 @@ if (!string.IsNullOrWhiteSpace(appleClientId) && !string.IsNullOrWhiteSpace(appl
         options.KeyId = appleKeyId.Trim();
         options.GenerateClientSecret = true;
         options.PrivateKey = (_, _) => Task.FromResult(applePrivateKey.AsMemory());
+        options.Events.OnRemoteFailure = ExternalSignIn.Failed;
+    });
+}
+
+// Sign in with LinkedIn — the same rules again: linked accounts only, registered only when
+// configured. LinkedIn's current product ("Sign In with LinkedIn using OpenID Connect") is plain
+// OpenID Connect, so the framework's own handler does it; the older third-party LinkedIn packages
+// still ask for the retired r_liteprofile/r_emailaddress scopes. LinkedIn returns to
+// /signin-linkedin. It does not take PKCE or pushed authorisation requests, so both are off.
+//   Authentication:LinkedIn:ClientId      the app's Client ID (developer portal › Auth)
+//   Authentication:LinkedIn:ClientSecret  the app's Primary Client Secret — a secret
+var linkedInClientId = builder.Configuration["Authentication:LinkedIn:ClientId"];
+var linkedInClientSecret = builder.Configuration["Authentication:LinkedIn:ClientSecret"];
+if (!string.IsNullOrWhiteSpace(linkedInClientId) && !string.IsNullOrWhiteSpace(linkedInClientSecret))
+{
+    authentication.AddOpenIdConnect("LinkedIn", "LinkedIn", options =>
+    {
+        options.Authority = "https://www.linkedin.com/oauth";
+        options.ClientId = linkedInClientId.Trim();
+        options.ClientSecret = linkedInClientSecret.Trim();
+        options.ResponseType = "code";
+        options.UsePkce = false;
+        options.PushedAuthorizationBehavior = Microsoft.AspNetCore.Authentication.OpenIdConnect.PushedAuthorizationBehavior.Disable;
+        options.Scope.Clear();
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+        options.CallbackPath = "/signin-linkedin";
+        options.SignInScheme = IdentityConstants.ExternalScheme;
         options.Events.OnRemoteFailure = ExternalSignIn.Failed;
     });
 }
@@ -646,6 +679,9 @@ if (app.Environment.IsProduction())
 
         var db = scope.ServiceProvider.GetRequiredService<VIHouseDbContext>();
         await DbSeeder.SeedAsync(db, userManager, roleManager, seedAdmins);
+        if (seedAdmins.Any(a => a.Email == DevelopmentDefaults.AdminEmail))
+            seedLogger.LogInformation("Development admin: {Email} / {Password} (local database only).",
+                DevelopmentDefaults.AdminEmail, DevelopmentDefaults.AdminPassword);
     }
     else if (seedAdmins.Count > 0)
     {

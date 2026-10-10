@@ -142,7 +142,8 @@
             <div class="admin-sidebar__profile">
                 <span class="admin-sidebar__avatar" aria-hidden="true">@((currentUser?.Email ?? "A")[0].ToString().ToUpperInvariant())</span>
                 <div class="admin-sidebar__profile-copy">
-                    <strong>@activeNavLabel</strong>
+                    @* Who is signed in — the section name is already the page's eyebrow. *@
+                    <strong>@(string.Join(" ", new[] { currentUser?.FirstName, currentUser?.LastName }.Where(s => !string.IsNullOrWhiteSpace(s))) is { Length: > 0 } fullName ? fullName : Loc["Admin.Shell.Admin"].Value)</strong>
                     <span>@(currentUser?.Email ?? "")</span>
                 </div>
             </div>
